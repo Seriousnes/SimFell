@@ -13,6 +13,11 @@ public class SapphireAurastone : Trait
     public const int DamageEffectId = 2347;
     public const string DamageName = "Sapphire Aurastone Damage";
     public const double PulseSeconds = 3.0;
+    /// <summary>
+    /// The first pulse comes 6s after the stone appears, then every 3s (n7zxK8harZT2wjDB fight 9: Spirit of Heroism at
+    /// 16.604s and 92.447s, first pulses at 22.615s and 98.455s, holding 6s of damage).
+    /// </summary>
+    public const double FirstPulseSeconds = 6.0;
     public static readonly double[] StoredShareByRank = [0.034, 0.063, 0.091, 0.12];
 
     public override int Id => TraitId;
@@ -29,10 +34,11 @@ public class SapphireAurastone : Trait
         void Pulse(SimulationContext ctx, int id)
         {
             if (!active || id != stone) return;
-            if (stored > 0.0)
+            var struck = stored > 0.0 ? ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies.ToList(), ctx) : [];
+            // With no enemy near it, the stone keeps what it holds for the next pulse.
+            if (struck.Count > 0)
             {
-                var struck = ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies.ToList(), ctx);
-                double each = struck.Count > 0 ? stored / struck.Count : 0.0;
+                double each = stored / struck.Count;
                 stored = 0.0;
                 foreach (var enemy in struck)
                 {
@@ -47,7 +53,7 @@ public class SapphireAurastone : Trait
             active = true;
             stored = 0.0;
             int id = ++stone;
-            ctx.Schedule(SimTime.FromSeconds(PulseSeconds), c => Pulse(c, id), DamageName);
+            ctx.Schedule(SimTime.FromSeconds(FirstPulseSeconds), c => Pulse(c, id), DamageName);
         };
         hero.SpiritOfHeroismEnded += _ => active = false;
         hero.OnDamageDealt += dmg =>
