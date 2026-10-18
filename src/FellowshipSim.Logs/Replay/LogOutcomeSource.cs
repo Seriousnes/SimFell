@@ -181,7 +181,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
         double now = ctx.CurrentTime.TotalSeconds;
         bool procced = _playerAuraIds.Contains(evidence.LogId)
             ? ClaimAuraEvidence(evidence.LogId, now)
-            : ClaimDamageEvidence(evidence.LogId, now, evidence.DelaySeconds, target);
+            : ClaimDamageEvidence(evidence.LogId, now, evidence.MinDelaySeconds, evidence.DelaySeconds, target);
         if (procced)
         {
             stats.Procs++;
@@ -207,10 +207,10 @@ public sealed class LogOutcomeSource : IOutcomeSource
     }
 
     /// <summary>A group of log hits with the proc's damage ID landing at the roll (within one server tick, plus the effect's delay).</summary>
-    private bool ClaimDamageEvidence(int logId, double now, double delay, EnemyTarget? target)
+    private bool ClaimDamageEvidence(int logId, double now, double minDelay, double delay, EnemyTarget? target)
     {
         // Hits an engine hit already accounts for (matched, or a group claimed for its targets) are not evidence of a proc.
-        var hit = _hits.Peek(logId, now - _options.SameTickSeconds, now + _options.SameTickSeconds + delay,
+        var hit = _hits.Peek(logId, now + minDelay - _options.SameTickSeconds, now + _options.SameTickSeconds + delay,
             h => !_claimedDamageEvidence.Contains(h) && !_hits.IsAccountedFor(h)
                  && (target == null || (h.Target.Id == target.Id && h.Target.Instance == target.InstanceId)));
         if (hit == null) return false;

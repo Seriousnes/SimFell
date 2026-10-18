@@ -17,6 +17,10 @@ namespace FellowshipSim.Logs;
 /// </summary>
 public static class ReplayScriptBuilder
 {
+    /// <summary>Combat log hit types: 1 a normal hit, 2 a critical strike, 22 a grievous critical strike (crit chance beyond 100%).</summary>
+    public const int HitTypeCrit = 2;
+    public const int HitTypeGrievousCrit = 22;
+
     public const string Schema = FellowshipSim.Logs.Replay.ReplayScript.SchemaVersion;
 
     private static readonly HashSet<string> AuraTypes =
@@ -256,7 +260,7 @@ public static class ReplayScriptBuilder
                     ["target"] = Unit(tgt, Instance(e, "target")),
                     ["amount"] = e["amount"]?.DeepClone() ?? 0, ["unmitigated"] = e["unmitigatedAmount"]?.DeepClone(),
                     ["absorbed"] = e["absorbed"]?.DeepClone() ?? 0, ["overkill"] = e["overkill"]?.DeepClone() ?? 0,
-                    ["crit"] = Int(e["hitType"]) == 2, ["hit_type"] = e["hitType"]?.DeepClone(), ["tick"] = e["tick"]?.GetValue<bool>() ?? false,
+                    ["crit"] = Int(e["hitType"]) is HitTypeCrit or HitTypeGrievousCrit, ["hit_type"] = e["hitType"]?.DeepClone(), ["tick"] = e["tick"]?.GetValue<bool>() ?? false,
                 });
             }
 

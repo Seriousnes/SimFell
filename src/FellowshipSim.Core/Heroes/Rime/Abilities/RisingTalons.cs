@@ -66,24 +66,13 @@ public class RisingTalons : IceComet
         double critMultiplier = Owner.CritMultiplier(now);
         for (int i = 0; i < spikes; i++)
         {
-            ctx.Schedule(SimTime.FromSeconds(FirstWaveDelaySeconds + i * WaveIntervalSeconds),
-                c => ReleaseWave(c, target, damage, critChance, critMultiplier), $"{Name} wave {i + 1}");
-        }
-        RaiseCometCast(ctx, target);
-    }
-
-    private void ReleaseWave(SimulationContext ctx, EnemyTarget target, double damage, double critChance, double critMultiplier)
-    {
-        var enemies = ctx.ActiveEnemies.ToList();
-        if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
-        foreach (var enemy in ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx))
-        {
-            ctx.ApplyDamage(Owner, enemy, DamageLogId, Name, canCrit: true,
-                c => new SimulationContext.HitNumbers(
-                    damage * Owner.DamageMultiplierAgainst(enemy, c.CurrentTime),
-                    critChance + Owner.CritChanceAgainst(enemy, c.CurrentTime) - Owner.CritChance(c.CurrentTime),
-                    critMultiplier),
-                snapshot: true);
+            bool first = i == 0;
+            ctx.Schedule(SimTime.FromSeconds(FirstWaveDelaySeconds + i * WaveIntervalSeconds), c =>
+            {
+                // Each wave is an impact with the damage of the cast; the falloff is already in it.
+                Impact(c, target, damage, critChance, critMultiplier, fixedFalloff: 1.0);
+                if (first) RaiseStruck(c, target);
+            }, $"{Name} wave {i + 1}");
         }
     }
 }

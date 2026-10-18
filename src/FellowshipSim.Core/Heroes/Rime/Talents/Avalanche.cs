@@ -3,10 +3,12 @@ using FellowshipSim.Core.Heroes.Rime.Abilities;
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
 
 /// <summary>
-/// Talent 48: an Ice Comet cast (also Rising Talons with Icy Talons, and Cold Shower's comet) has an 18% chance to bring 1
-/// more Ice Comet, else a 9% chance to bring 2; the extra comets cannot trigger it again (per the user).
-/// Values: talent text; hero_data Ice Comet "MultiStrike" (0.18 / 0.09). The roll order and the 0.3s spacing follow the
-/// old C++ sim. UNVERIFIED: no combat log has this talent.
+/// Talent 48: "Your Ice Comet ability has a 18% chance to cause 1 additional Ice Comet to strike the target, and a 9%
+/// chance to cause 2" (hero_data Ice Comet MultiStrike 0.18 / 0.09). Rolled as a 27% chance of at least one extra comet,
+/// then a 1-in-3 chance of a second: the same odds, one roll per extra comet. Rolls when a comet strikes (a cast comet,
+/// Cold Shower's, or Rising Talons' first wave); the extra comets cannot trigger it again (per the user).
+/// Combat logs (n7zxK8harZT2wjDB fight 9: 29 extra impacts over 90 casts): each extra comet strikes 5 server frames after
+/// the impact before it.
 /// </summary>
 public class Avalanche : Talent
 {
@@ -14,8 +16,12 @@ public class Avalanche : Talent
     public const string TalentName = "Avalanche";
     public const double OneExtraChance = 0.18;
     public const double TwoExtraChance = 0.09;
-    public const double CometSpacingSeconds = 0.3;
+    /// <summary>The chance of at least one extra comet, and of a second one once there is one.</summary>
+    public const double AnyExtraChance = OneExtraChance + TwoExtraChance;
+    public const double SecondExtraChance = TwoExtraChance / AnyExtraChance;
+    public const double CometSpacingSeconds = 5.0 / 30.0;
     public const string ProcKey = "avalanche";
+    public const string SecondProcKey = "avalanche_second";
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -24,17 +30,14 @@ public class Avalanche : Talent
     {
         var comet = hero.GetAbility<IceComet>();
         if (comet == null) return;
-        // Ice Comet's event: Rising Talons and Cold Shower's comet raise it too (Rising Talons is built on Ice Comet).
-        foreach (var cast in hero.Abilities.OfType<IceComet>()) cast.CometCast += (ctx, target) =>
+        // Every comet that strikes: Rising Talons is built on Ice Comet, so its first wave counts too.
+        foreach (var source in hero.Abilities.OfType<IceComet>()) source.Struck += (ctx, target) =>
         {
-            int extra = ctx.Outcomes.RollProc(ProcKey, OneExtraChance, ctx) ? 1
-                : ctx.Outcomes.RollProc(ProcKey, TwoExtraChance, ctx) ? 2 : 0;
+            if (!ctx.Outcomes.RollProc(ProcKey, AnyExtraChance, ctx)) return;
+            int extra = ctx.Outcomes.RollProc(SecondProcKey, SecondExtraChance, ctx) ? 2 : 1;
             for (int i = 1; i <= extra; i++)
             {
-                ctx.Schedule(SimTime.FromSeconds(CometSpacingSeconds * i), c =>
-                {
-                    comet.FreeCast(c, target, source: this, countsAsCast: false);
-                }, "Avalanche comet");
+                comet.FreeCast(ctx, target, source: this, countsAsCast: false, impactDelaySeconds: CometSpacingSeconds * i);
             }
         };
     }

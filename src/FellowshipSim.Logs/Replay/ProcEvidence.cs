@@ -13,10 +13,11 @@ namespace FellowshipSim.Logs.Replay;
 public static class ProcEvidence
 {
     /// <summary>
-    /// <paramref name="LogId"/> is the aura the proc applies or the hit it deals; <paramref name="DelaySeconds"/> how long
-    /// after the roll it may appear (e.g. a projectile's travel).
+    /// <paramref name="LogId"/> is the aura the proc applies or the hit it deals; it may appear up to
+    /// <paramref name="DelaySeconds"/> after the roll (e.g. a projectile's travel), and not before
+    /// <paramref name="MinDelaySeconds"/>.
     /// </summary>
-    public sealed record Evidence(string ProcKey, int LogId, double DelaySeconds = 0.0);
+    public sealed record Evidence(string ProcKey, int LogId, double DelaySeconds = 0.0, double MinDelaySeconds = 0.0);
 
     public static readonly Evidence[] All =
     [
@@ -27,6 +28,11 @@ public static class ProcEvidence
 
         // Rime
         new(BurstingSwallows.ProcKey, LogIds.Effect(BurstingIce.PulseEffectId)),
+        // Avalanche rolls as a comet strikes; its comets strike 5 and 10 server frames later.
+        new(Avalanche.ProcKey, IceComet.DamageId, DelaySeconds: 0.25, MinDelaySeconds: 0.1),
+        new(Avalanche.SecondProcKey, IceComet.DamageId, DelaySeconds: 0.42, MinDelaySeconds: 0.1),
+        // Cold Shower's comet falls first (0.30s + 1.0s/(1 + haste)).
+        new(ColdShower.ProcKey, IceComet.DamageId, DelaySeconds: 1.35, MinDelaySeconds: 0.5),
         new(FrostweaversWrath.ProcKey, FrostweaversWrath.Buff.LogId),
         new(SoulfrostTorrent.ProcKey, SoulfrostTorrent.Buff.LogId),
     ];
