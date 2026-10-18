@@ -151,7 +151,13 @@ public sealed class LogOutcomeSource : IOutcomeSource
         if (pending.Log == null)
         {
             double expected = landed.CanCrit ? 1.0 + (landed.CritChance * (landed.CritMultiplier - 1.0)) : 1.0;
-            Record(new HitPair(pending.ReleasedAt, landed.AbilityName, landed.AbilityId, target, landed.BaseDamage * expected + landed.FlatDamage, null, false, landed.CritChance, health) { Context = context });
+            Record(new HitPair(pending.ReleasedAt, landed.AbilityName, landed.AbilityId, target, landed.BaseDamage * expected + landed.FlatDamage, null, landed.CanCrit && landed.CritChance >= 1.0, landed.CritChance, health)
+            {
+                // An engine hit with no log hit still dealt its damage: it counts in the engine's totals.
+                Context = context,
+                TickFraction = landed.TickFraction,
+                LandedTime = ctx.CurrentTime.TotalSeconds,
+            });
             return expected;
         }
 
