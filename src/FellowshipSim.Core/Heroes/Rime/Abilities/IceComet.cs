@@ -91,7 +91,7 @@ public class IceComet : RimeAbility
     private void Launch(SimulationContext ctx, EnemyTarget target, double delaySeconds, bool raisesStruck)
     {
         var now = ctx.CurrentTime;
-        double damage = BaseDamage(ctx, null);
+        double damage = BaseDamage(ctx, null) * CastDamageMultiplier;
         double critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
         double critMultiplier = Owner.CritMultiplier(now);
         ctx.Schedule(SimTime.FromSeconds(delaySeconds), c =>

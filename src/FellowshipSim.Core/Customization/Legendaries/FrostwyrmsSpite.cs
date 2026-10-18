@@ -1,0 +1,72 @@
+using FellowshipSim.Core.Heroes.Rime;
+using FellowshipSim.Core.Heroes.Rime.Abilities;
+
+namespace FellowshipSim.Core.Customization.Legendaries;
+
+/// <summary>
+/// Legendary power 397 (Rime's Drakesblood Tapestry, item 5218): "Each tick of your Freezing Torrent grants you 1 stack
+/// of Frostwyrm's Spite for 15 seconds, up to 30 stacks. Your Cold Snap consumes all stacks of Frostwyrm's Spite,
+/// increasing its damage by 30% per stack. Additionally, your Cold Snap hits 1 additional enemy near your target for each
+/// stack it consumes. Frostwyrm's Spite damage is reduced beyond 3 targets."
+/// The extra hits are copies of that Cold Snap with all its bonuses but no Winter Orb (per the user), logged as effect
+/// 2265. Combat logs (PCaMVTFbZzNLrfx3 fight 5, 21 casts): the main hit takes the full bonus; each extra hit deals
+/// sqrt(3/N) of it when N extra enemies are hit beyond 3.
+/// </summary>
+public class FrostwyrmsSpite : Legendary
+{
+    public const int PowerId = 397;
+    public const int CloakItemId = 5218;
+    public const int BuffEffectId = 2264;
+    public const int DamageEffectId = 2265;
+    public const string DamageName = "Frostwyrm's Spite";
+    public const double BuffSeconds = 15.0;
+    public const int MaxStacks = 30;
+    public const double DamagePerStack = 0.30;
+    public const double ExtraHitTargetThreshold = 3;
+
+    public static readonly AuraDef Buff = AuraDef.Effect("Frostwyrm's Spite", BuffEffectId, BuffSeconds, MaxStacks);
+
+    public override int LegendaryPowerId => PowerId;
+    public override string Name => "Frostwyrm's Spite";
+    public override string HeroName => "Rime";
+    public override IReadOnlyList<int> ItemIds => [CloakItemId];
+
+    public override void Bind(Hero hero)
+    {
+        if (hero is not Rime rime) return;
+        var coldSnap = rime.GetAbility<ColdSnap>();
+        if (coldSnap == null) return;
+        int consumed = 0;
+
+        hero.OnChannelTick += (ability, _, _, ctx) =>
+        {
+            if (ability is FreezingTorrent) hero.Auras.Apply(Buff, ctx.CurrentTime);
+        };
+        // Cold Snap consumes every stack for more damage...
+        hero.OnCastResolving += cast =>
+        {
+            if (cast.Ability != coldSnap) return;
+            consumed = hero.Auras.GetStacks(Buff, cast.Time);
+            if (consumed == 0) return;
+            hero.Auras.Remove(Buff, cast.Time);
+            cast.DamageMultiplier *= DamageMultiplier(consumed);
+        };
+        // ...and copies its hit onto one more enemy near the target per stack.
+        hero.OnCastCompleted += (ability, target, _) =>
+        {
+            if (ability != coldSnap || consumed == 0 || target == null || hero.SimContext is not { } ctx) return;
+            int stacks = consumed;
+            consumed = 0;
+            var others = ctx.ActiveEnemies.Where(e => e != target).ToList();
+            var struck = ctx.Outcomes.SelectTargets(LogIds.Effect(DamageEffectId), others, ctx).Take(stacks).ToList();
+            double falloff = struck.Count > ExtraHitTargetThreshold ? Math.Sqrt(ExtraHitTargetThreshold / struck.Count) : 1.0;
+            foreach (var enemy in struck)
+            {
+                coldSnap.DealDamage(ctx, enemy, damageMultiplier: DamageMultiplier(stacks) * falloff,
+                    overrideName: DamageName, overrideId: LogIds.Effect(DamageEffectId));
+            }
+        };
+    }
+
+    public static double DamageMultiplier(int stacks) => 1.0 + DamagePerStack * stacks;
+}

@@ -17,6 +17,9 @@ public sealed class CastBonus(Ability ability, EnemyTarget? target, SimTime time
     /// <summary>Extra crit chance for the cast's hits.</summary>
     public double CritChance { get; set; }
 
+    /// <summary>Damage multiplier for the cast's hits.</summary>
+    public double DamageMultiplier { get; set; } = 1.0;
+
     /// <summary>Seconds taken off the cast's delay before it strikes (e.g. a falling comet).</summary>
     public double DelayReductionSeconds { get; set; }
 }

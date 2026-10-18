@@ -60,7 +60,7 @@ public class RisingTalons : IceComet
         var now = ctx.CurrentTime;
         int enemiesAtCast = Math.Max(1, ctx.ActiveEnemies.Count());
         double falloff = enemiesAtCast > TargetThreshold ? Math.Sqrt(TargetThreshold / enemiesAtCast) : 1.0;
-        double damage = BaseDamage(ctx, null) * falloff;
+        double damage = BaseDamage(ctx, null) * CastDamageMultiplier * falloff;
         // The waves keep the crit chance of the cast, with what talents added to it (it counts as an Ice Comet for them).
         double critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
         double critMultiplier = Owner.CritMultiplier(now);

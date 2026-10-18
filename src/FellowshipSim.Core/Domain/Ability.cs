@@ -88,6 +88,9 @@ public abstract class Ability
     /// <summary>What talents added to the cast resolving now (<see cref="ResolveCast(SimulationContext, EnemyTarget, object?)"/>); null outside a cast.</summary>
     protected CastBonus? CurrentCast { get; private set; }
 
+    /// <summary>The damage multiplier talents added to the cast resolving now (1 outside a cast).</summary>
+    protected double CastDamageMultiplier => CurrentCast?.DamageMultiplier ?? 1.0;
+
     protected Ability(Hero owner, int id, string name, AbilityCategory category = AbilityCategory.None)
     {
         Owner = owner;
@@ -224,9 +227,10 @@ public abstract class Ability
     {
         // Damage, crit chance and crit power are read when the hit lands; what talents added to the cast is kept.
         double castCrit = CurrentCast?.CritChance ?? 0.0;
+        double castDamage = CastDamageMultiplier;
         return ctx.ApplyDamage(Owner, target, overrideId ?? DamageLogId, overrideName ?? Name, canCrit,
             c => new SimulationContext.HitNumbers(
-                BaseDamage(c, target, damageMultiplier),
+                BaseDamage(c, target, damageMultiplier * castDamage),
                 Owner.CritChanceAgainst(target, c.CurrentTime) + CritChanceBonus + extraCritChance + castCrit,
                 Owner.CritMultiplier(c.CurrentTime)),
             forcedCrit, onLanded, SnapshotsDamage);
