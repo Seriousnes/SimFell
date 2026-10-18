@@ -76,8 +76,7 @@ public class GlacialBlast : RimeAbility
         if (assault) multiplier = ConsumeGlacialAssault(ctx);
         else hero.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
 
-        double crit = hero.ConsumeSpenderCritBuffs(ctx);
-        DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: assault ? (c, dealt) => Explode(c, target, dealt) : null, extraCritChance: crit);
+        DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: assault ? (c, dealt) => Explode(c, target, dealt) : null);
     }
 
     /// <summary>Removes the 4 Glacial Assault stacks; returns the damage multiplier they give.</summary>

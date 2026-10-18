@@ -34,6 +34,7 @@ public static class HeroImporter
         }
 
         hero.Initialize();
+        foreach (var ability in hero.Abilities.ToList()) ability.Connect();
 
         foreach (int talentId in build.Talents)
         {

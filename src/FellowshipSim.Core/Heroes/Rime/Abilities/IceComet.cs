@@ -1,8 +1,8 @@
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
 /// <summary>
-/// Ability 1018. Costs 2 Winter Orbs. Also the free comets of Cold Shower and Avalanche (<see cref="FreeStrike"/>), which
-/// stay plain Ice Comets even with Icy Talons (per the user). Rising Talons (Icy Talons) is built on it.
+/// Ability 1018. Costs 2 Winter Orbs. Also the free comets of Cold Shower and Avalanche, which
+/// stay plain Ice Comets even with Icy Talons (per the user); see <see cref="FreeCast"/>. Rising Talons (Icy Talons) is built on it.
 /// </summary>
 public class IceComet : RimeAbility
 {
@@ -55,15 +55,19 @@ public class IceComet : RimeAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         Rime.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
-        Strike(ctx, target, Rime.ConsumeSpenderCritBuffs(ctx), DamageLogId);
+        Strike(ctx, target, DamageLogId);
         RaiseCometCast(ctx, target);
     }
 
-    /// <summary>Cold Shower's free comet: counts as a cast (it consumes the spender crit buffs and can trigger Avalanche).</summary>
-    public void FreeCast(SimulationContext ctx, EnemyTarget target)
+    /// <summary>
+    /// A free comet from a talent's proc (<paramref name="source"/>): no cost, and it resolves as an Ice Comet cast, so
+    /// talents that add to the next Ice Comet apply. With <paramref name="countsAsCast"/> it also raises
+    /// <see cref="CometCast"/> (Cold Shower's comet can trigger Avalanche; Avalanche's own comets cannot).
+    /// </summary>
+    public void FreeCast(SimulationContext ctx, EnemyTarget target, object source, bool countsAsCast)
     {
-        FreeStrike(ctx, target, Rime.ConsumeSpenderCritBuffs(ctx));
-        RaiseCometCast(ctx, target);
+        ResolveCast(ctx, target, source, () => Strike(ctx, target, FreeCometDamageId));
+        if (countsAsCast) RaiseCometCast(ctx, target);
     }
 
     protected void RaiseCometCast(SimulationContext ctx, EnemyTarget target)
@@ -71,15 +75,11 @@ public class IceComet : RimeAbility
         if (target != null) CometCast?.Invoke(ctx, target);
     }
 
-    /// <summary>A free comet's impact alone, with no cost and no cast (Avalanche's extra comets).</summary>
-    public void FreeStrike(SimulationContext ctx, EnemyTarget target, double extraCritChance) =>
-        Strike(ctx, target, extraCritChance, FreeCometDamageId);
-
     /// <summary>One comet impact on <paramref name="target"/> and all enemies around it.</summary>
-    private void Strike(SimulationContext ctx, EnemyTarget target, double extraCritChance, int damageId)
+    private void Strike(SimulationContext ctx, EnemyTarget target, int damageId)
     {
         var enemies = ctx.ActiveEnemies.ToList();
         if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
-        DealAoeDamage(ctx, enemies, overrideId: damageId, extraCritChance: extraCritChance);
+        DealAoeDamage(ctx, enemies, overrideId: damageId);
     }
 }

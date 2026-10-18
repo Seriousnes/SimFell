@@ -22,7 +22,6 @@ public class Avalanche : Talent
 
     public override void Bind(Hero hero)
     {
-        var rime = (Rime)hero;
         var comet = hero.GetAbility<IceComet>();
         if (comet == null) return;
         // Ice Comet's event: Rising Talons and Cold Shower's comet raise it too (Rising Talons is built on Ice Comet).
@@ -34,8 +33,7 @@ public class Avalanche : Talent
             {
                 ctx.Schedule(SimTime.FromSeconds(CometSpacingSeconds * i), c =>
                 {
-                    // The extra comets consume Frostweaver's Wrath ("the next ... Ice Comet that deals damage") but not Icy Flow.
-                    comet.FreeStrike(c, target, rime.ConsumeSpenderCritBuffs(c, avalancheComet: true));
+                    comet.FreeCast(c, target, source: this, countsAsCast: false);
                 }, "Avalanche comet");
             }
         };

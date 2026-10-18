@@ -46,8 +46,8 @@ complete example, and its [NOTES.md](src/FellowshipSim.Core/Heroes/Rime/NOTES.md
 
 | Folder | What it holds |
 |---|---|
-| `src/FellowshipSim.Core` | The engine: simulation, heroes, talents, gear, build import, the replay driver and review pages |
-| `src/FellowshipSim.Logs` | FellowshipLogs API client, and the builder that turns a logged fight into a replay script |
+| `src/FellowshipSim.Core` | The engine: simulation, heroes, talents, gear, build import. Knows nothing about logs |
+| `src/FellowshipSim.Logs` | FellowshipLogs API client, the builder that turns a logged fight into a replay script, the replay and its review pages |
 | `src/FellowshipSim.Server` | Local web server: the page in `wwwroot` and its JSON API |
 | `tests/FellowshipSim.Tests` | Tests |
 | `docs/` | Contributor guides |

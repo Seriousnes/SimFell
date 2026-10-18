@@ -16,12 +16,13 @@ public class CascadingBlitz : Talent
     {
         var swallows = hero.GetAbility<FrostSwallows>();
         if (swallows == null) return;
-        ((Rime)hero).AnimaGenerated += (ctx, amount, target) =>
+        // Anima generated during Ice Blitz sends swallows, preferring the enemy the Anima came from.
+        hero.OnResourceGained += (resource, amount, from, ctx) =>
         {
-            if (!hero.Auras.HasAura(IceBlitz.Buff, ctx.CurrentTime)) return;
+            if (resource != Rime.Anima || from == null || !hero.Auras.HasAura(IceBlitz.Buff, ctx.CurrentTime)) return;
             for (int i = 0; i < (int)amount; i++)
             {
-                var enemy = ctx.Outcomes.ChooseTarget(swallows.DamageLogId, ctx.ActiveEnemies.ToList(), ctx, preferred: target);
+                var enemy = ctx.Outcomes.ChooseTarget(swallows.DamageLogId, ctx.ActiveEnemies.ToList(), ctx, preferred: from);
                 if (enemy != null) swallows.Attack(ctx, enemy, 1);
             }
         };

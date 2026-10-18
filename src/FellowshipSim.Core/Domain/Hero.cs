@@ -97,6 +97,13 @@ public abstract class Hero : Actor
     public event Action<ResourceDef, double, SimTime>? OnResourceSpent;
     /// <summary>Resource was gained past its maximum: the double is the amount that overflowed.</summary>
     public event Action<ResourceDef, double, SimTime>? OnResourceOverflow;
+    /// <summary>
+    /// Resource was gained: the amount added, and the enemy it came from if any (e.g. Anima from a Frost Bolt's target).
+    /// Not raised for Spirit Refunds, which give back what was spent.
+    /// </summary>
+    public event Action<ResourceDef, double, EnemyTarget?, SimulationContext>? OnResourceGained;
+    /// <summary>A cast is about to resolve (also free casts from procs): talents add to it here (see <see cref="CastBonus"/>).</summary>
+    public event Action<CastBonus>? OnCastResolving;
 
     /// <summary>The cast in progress, if any (abilities with a cast time between begin and completion).</summary>
     public ActiveCast? CurrentCast { get; internal set; }
@@ -133,16 +140,29 @@ public abstract class Hero : Actor
     public double ResourceAmount(ResourceDef resource) => Resources.Get(resource).Current;
 
     /// <summary>
-    /// Adds <paramref name="amount"/> up to the maximum; the part past the maximum overflows (<see cref="OnResourceOverflow"/>).
-    /// Returns the amount added.
+    /// Adds <paramref name="amount"/> up to the maximum (<see cref="OnResourceGained"/>); the part past the maximum
+    /// overflows (<see cref="OnResourceOverflow"/>). <paramref name="from"/> is the enemy it came from, if any. Returns the
+    /// amount added.
     /// </summary>
-    public double GainResource(ResourceDef resource, double amount, SimTime now)
+    public double GainResource(ResourceDef resource, double amount, SimulationContext? ctx, EnemyTarget? from = null) =>
+        AddToResource(resource, amount, ctx, from, isGain: true);
+
+    private double AddToResource(ResourceDef resource, double amount, SimulationContext? ctx, EnemyTarget? from, bool isGain)
     {
         var state = Resources.Get(resource);
         double added = Math.Min(amount, Math.Max(0.0, state.Max - state.Current));
         state.Current += added;
-        if (amount - added > 0) OnResourceOverflow?.Invoke(resource, amount - added, now);
+        if (amount - added > 0) OnResourceOverflow?.Invoke(resource, amount - added, ctx?.CurrentTime ?? default);
+        if (isGain && added > 0 && ctx != null) OnResourceGained?.Invoke(resource, added, from, ctx);
         return added;
+    }
+
+    /// <summary>Lets talents add to a cast about to resolve (<see cref="OnCastResolving"/>); see <see cref="Ability.ResolveCast(SimulationContext, EnemyTarget, object?)"/>.</summary>
+    public CastBonus PrepareCast(Ability ability, EnemyTarget? target, SimTime now, object? source = null)
+    {
+        var cast = new CastBonus(ability, target, now, source);
+        OnCastResolving?.Invoke(cast);
+        return cast;
     }
 
     /// <summary>
@@ -158,7 +178,7 @@ public abstract class Hero : Actor
         if (!RollSpiritRefund(ctx)) return;
         // Rising Spirit comes with the spend; the resource comes back a moment later.
         Auras.Apply(RisingSpirit, ctx.CurrentTime);
-        ctx.Schedule(SimTime.FromSeconds(SpiritRefundDelaySeconds), c => GainResource(resource, amount, c.CurrentTime), "Spirit Refund");
+        ctx.Schedule(SimTime.FromSeconds(SpiritRefundDelaySeconds), c => AddToResource(resource, amount, c, null, isGain: false), "Spirit Refund");
     }
 
     /// <summary>Tells effects that count spent resource (e.g. cooldown reductions per point spent) that it was spent.</summary>

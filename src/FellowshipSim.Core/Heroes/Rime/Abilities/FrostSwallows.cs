@@ -1,11 +1,9 @@
-using FellowshipSim.Core.Heroes.Rime.Talents;
-
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
 /// <summary>
 /// Ability 1033: "Rime commands Frost Swallows to attack her target." The swallows every Winter Orb sends, and Cascading
-/// Blitz's. Each hit scales with Spirit, extends Ice Blitz and may trigger Bursting Swallows. Flight of the Navir's
-/// circling swallows are the same attack logged under their own ID (<see cref="FlightOfTheNavir.CirclingSwallows"/>).
+/// Blitz's. Each hit scales with Spirit. Flight of the Navir's circling swallows are the same attack logged under their
+/// own ID (<see cref="FlightOfTheNavir.CirclingSwallows"/>).
 /// </summary>
 public class FrostSwallows : RimeAbility
 {
@@ -21,7 +19,6 @@ public class FrostSwallows : RimeAbility
     protected FrostSwallows(Rime owner, int damageLogId, double coefficient) : base(owner, damageLogId, AbilityName)
     {
         BaseCoefficient = coefficient;
-        owner.OnDamageDealt += OnSwallowHit;
     }
 
     public override double BaseDamage(SimulationContext ctx, EnemyTarget? target, double damageMultiplier = 1.0) =>
@@ -41,18 +38,6 @@ public class FrostSwallows : RimeAbility
             var target = ctx.Outcomes.ChooseTarget(DamageLogId, ctx.ActiveEnemies.ToList(), ctx);
             if (target != null) Attack(ctx, target, 1);
         }
-    }
-
-    private void OnSwallowHit(DamageContext dmg)
-    {
-        if (dmg.AbilityId != DamageLogId || dmg.SimContext == null || dmg.Target == null) return;
-        var ctx = dmg.SimContext;
-        var hero = Rime;
-
-        // "The duration of Ice Blitz is extended by 0.1 seconds each time a Frost Swallow hits an enemy."
-        hero.Auras.Extend(IceBlitz.Buff, SimTime.FromSeconds(IceBlitz.ExtensionPerSwallowSeconds));
-
-        hero.OnFrostSwallowHit(ctx, dmg.Target);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target) => Attack(ctx, target, 1);

@@ -59,11 +59,9 @@ public class TalonStrike : GlacialBlast
             hero.SpendWinterOrbs(spikes, ctx);
         }
 
-        // Every spike of the cast gets the consumed crit buffs.
-        double crit = hero.ConsumeSpenderCritBuffs(ctx);
         for (int i = 0; i < spikes; i++)
         {
-            DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: assault ? (c, dealt) => Explode(c, target, dealt) : null, extraCritChance: crit);
+            DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: assault ? (c, dealt) => Explode(c, target, dealt) : null);
         }
     }
 }

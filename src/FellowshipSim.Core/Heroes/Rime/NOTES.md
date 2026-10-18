@@ -5,8 +5,9 @@ Measured on 10 Rime logs (fights on Wyrmheart and Apostate Veras, July to Octobe
 
 ## Damage
 
-- **Class tuning:** +4% damage (hero attribute `BalancingDamageAura` 1.04) since 2026-08-27; fights before then run
-  without it (`Rime.ClassDamageAuraHistory`).
+- **Class tuning:** +4% damage (hero attribute `BalancingDamageAura` 1.04) since 2026-08-27; replays of fights before
+  then run without it (`ClassTuningHistory` in the replay). It applies to the weapon ability too: Chronoshift matches the
+  logs with it after that date and without it before.
 - **Target falloff** (damage per target beyond T targets is sqrt(T/N)): Bursting Ice 5, Rising Talons 12, Ice Comet 12,
   Glacial Assault's explosion 12, Chronoshift 5, The Vehement 5.
 - **Rising Talons:** one wave of spikes per Winter Orb; the first 0.30s after the cast, then every 4 server frames.

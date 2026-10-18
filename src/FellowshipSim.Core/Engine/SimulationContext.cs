@@ -198,7 +198,7 @@ public class SimulationContext
         // An instant off-GCD ability used mid-cast leaves that cast running.
         if (hero.CurrentCast?.Ability == ability) hero.CurrentCast = null;
         // Untargeted casts act on the hero's current target where they need one; cast events keep the cast's own target.
-        ability.Execute(this, target ?? hero.CurrentTarget);
+        ability.ResolveCast(this, target ?? hero.CurrentTarget);
         hero.TriggerCastCompleted(ability, target, CurrentTime);
 
         if (ability.IsChanneled)

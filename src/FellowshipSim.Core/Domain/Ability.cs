@@ -79,6 +79,15 @@ public abstract class Ability
     /// <summary>True when the ability's hits keep the damage they had on release instead of reading stats when they land.</summary>
     public bool SnapshotsDamage { get; protected set; }
 
+    /// <summary>
+    /// One of this ability's hits landed (under <see cref="DamageLogId"/>), with its target, damage and whether it crit.
+    /// Talents and other abilities that react to this ability's hits subscribe here.
+    /// </summary>
+    public event Action<DamageContext>? Hit;
+
+    /// <summary>What talents added to the cast resolving now (<see cref="ResolveCast(SimulationContext, EnemyTarget, object?)"/>); null outside a cast.</summary>
+    protected CastBonus? CurrentCast { get; private set; }
+
     protected Ability(Hero owner, int id, string name, AbilityCategory category = AbilityCategory.None)
     {
         Owner = owner;
@@ -86,7 +95,17 @@ public abstract class Ability
         DamageLogId = id;
         Name = name;
         Category = category;
+        owner.OnDamageDealt += dmg =>
+        {
+            if (dmg.AbilityId == DamageLogId) Hit?.Invoke(dmg);
+        };
     }
+
+    /// <summary>
+    /// Called once the hero's abilities all exist (before talents and gear bind): an ability that reacts to another
+    /// ability (e.g. to its <see cref="Hit"/>) subscribes here.
+    /// </summary>
+    public virtual void Connect() { }
 
     /// <summary>
     /// Sets the cooldown and charges. With <paramref name="scalesWithHaste"/> (game data "scalesWithHaste"), a
@@ -152,6 +171,29 @@ public abstract class Ability
     /// <summary>The ability's effects when its cast resolves (immediately for instants, at cast completion otherwise).</summary>
     public abstract void Execute(SimulationContext ctx, EnemyTarget target);
 
+    /// <summary>
+    /// Resolves a cast: talents first add to it (<see cref="Hero.OnCastResolving"/>), then <see cref="Execute"/> runs and
+    /// its hits get what they added. The engine resolves every cast this way; a proc that casts an ability for free passes
+    /// itself as <paramref name="source"/>.
+    /// </summary>
+    public void ResolveCast(SimulationContext ctx, EnemyTarget target, object? source = null) =>
+        ResolveCast(ctx, target, source, () => Execute(ctx, target));
+
+    /// <summary>Resolves <paramref name="effect"/> as a cast of this ability (a free cast that does less than <see cref="Execute"/>).</summary>
+    protected void ResolveCast(SimulationContext ctx, EnemyTarget target, object? source, Action effect)
+    {
+        var outer = CurrentCast;
+        CurrentCast = Owner.PrepareCast(this, target, ctx.CurrentTime, source);
+        try
+        {
+            effect();
+        }
+        finally
+        {
+            CurrentCast = outer;
+        }
+    }
+
     /// <summary>One channel tick. <paramref name="fraction"/> is below 1.0 for a partial final tick.</summary>
     public virtual void OnChannelTick(SimulationContext ctx, EnemyTarget target, double fraction) { }
 
@@ -180,11 +222,12 @@ public abstract class Ability
     public virtual double DealDamage(SimulationContext ctx, EnemyTarget target, double damageMultiplier = 1.0, bool canCrit = true, string? overrideName = null, int? overrideId = null, bool? forcedCrit = null,
         Action<SimulationContext, double>? onLanded = null, double extraCritChance = 0.0)
     {
-        // Damage, crit chance and crit power are read when the hit lands.
+        // Damage, crit chance and crit power are read when the hit lands; what talents added to the cast is kept.
+        double castCrit = CurrentCast?.CritChance ?? 0.0;
         return ctx.ApplyDamage(Owner, target, overrideId ?? DamageLogId, overrideName ?? Name, canCrit,
             c => new SimulationContext.HitNumbers(
                 BaseDamage(c, target, damageMultiplier),
-                Owner.CritChanceAgainst(target, c.CurrentTime) + CritChanceBonus + extraCritChance,
+                Owner.CritChanceAgainst(target, c.CurrentTime) + CritChanceBonus + extraCritChance + castCrit,
                 Owner.CritMultiplier(c.CurrentTime)),
             forcedCrit, onLanded, SnapshotsDamage);
     }

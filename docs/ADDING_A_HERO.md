@@ -13,9 +13,15 @@ src/FellowshipSim.Core/
   Heroes/<Hero>/  one folder per hero: <Hero>.cs, Abilities/ (one file each), Talents/ (one file each)
   Customization/  gear shared by all heroes: Traits/, Blessings/, Gems/, Sets/, Legendaries/, Weapons/, WeaponAbilities/
   Import/         CharacterBuild (a build by game IDs) and HeroImporter (build -> hero)
-  Replay/         replaying combat logs, the review page, PartyBuffs (buffs from other players)
   Catalog.cs      finds every class above by its ID: nothing to register by hand
+
+src/FellowshipSim.Logs/
+  Replay/         replaying combat logs and the review page, with everything only a replay needs (see section 5)
 ```
+
+The engine knows nothing about combat logs or replays: `FellowshipSim.Core` does not reference the replay. What a
+replay needs to read a log (how it reports resources, what proves a proc, buffs from other players, past balance
+values) lives in tables in `FellowshipSim.Logs/Replay`.
 
 Three rules hold everywhere:
 
@@ -46,16 +52,20 @@ it automatically, and the web page lets you replay that hero's fights once it ex
 ```csharp
 public sealed class Elarion : Hero
 {
-    /// <summary>Focus: combat logs report it as resource type N.</summary>
-    public static readonly ResourceDef Focus = new("Focus", Max: 100, LogResourceType: N, LogScale: 0.01);
+    public static readonly ResourceDef Focus = new("Focus", Max: 100);
 
-    public static readonly TalentSlot[] TalentTree = [ /* row, column, cost, talent ID */ ];
+    /// <summary>Class tuning: hero attribute BalancingDamageAura in the game data.</summary>
+    public const double BalancingDamageAura = 1.0;
+
+    public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
+        TalentSlot.InRow(1, 2, /* talent IDs in columns a, b, c */ 0, 0, 0)
+        /* ... one row per talent row in game */);
 
     public override void Initialize()
     {
         AddResource(Focus);
         SpiritRefundResource = Focus;           // Spirit Refund gives back the hero's spender resource
-        AddClassTuningAura("Elarion class tuning", ClassDamageAuraHistory);   // server-side damage tuning, by date
+        ClassDamageTuning = BalancingDamageAura;  // every hero's class tuning aura (1.0 = none)
         Abilities.Add(new FocusedShot(this));
         // ...
     }
@@ -110,10 +120,10 @@ What the base class gives you:
 | Hits on every enemy, with sqrt(T/N) falloff beyond T targets | `AoeTargetThreshold = T`, then `DealAoeDamage(ctx, ctx.ActiveEnemies)` |
 | Damage logged under an effect ID | `DamageLogId = LogIds.Effect(effectId)` |
 | A hasted damage-over-time or pulsing effect | `PeriodicEffect.BeginHasted(...)` (handles haste changes and the partial final tick) |
-| A buff | `public static readonly AuraDef Buff = AuraDef.Effect(name, effectId, seconds, maxStacks, modifiers)`, then `Owner.Auras.Apply(Buff, ctx.CurrentTime)` (replays find it and compare it with the log; an aura built at runtime instead needs `hero.Register(aura)`) |
+| A buff | `public static readonly AuraDef Buff = AuraDef.Effect(name, effectId, seconds, maxStacks, modifiers)`, then `Owner.Auras.Apply(Buff, ctx.CurrentTime)` (an aura built at runtime, e.g. from a rank, is passed to `hero.Register(aura)` so it is listed too) |
 | Spending or gaining a resource | `Owner.SpendResource(resource, amount, ctx)`, `Owner.GainResource(resource, amount, ctx.CurrentTime)` |
-| A chance to proc | `ctx.Outcomes.RollProc(key, chance, ctx, evidenceLogId)`; pass the log ID the proc produces so a replay can follow the log |
-| Procs per minute | `new RealPpm(key, ppm).Roll(hero, ctx, evidenceLogId)` |
+| A chance to proc | `ctx.Outcomes.RollProc(ProcKey, chance, ctx)` with a `public const string ProcKey` naming the proc |
+| Procs per minute | `new RealPpm(ProcKey, ppm).Roll(hero, ctx)` |
 | Something later | `ctx.Schedule(SimTime.FromSeconds(seconds), c => ..., "label")` |
 
 Action lists (APL) refer to abilities by their name in snake case (`focused_shot`), to resources by name
@@ -151,14 +161,24 @@ Hooks every hero has:
 |---|---|
 | `hero.OnCastStarted`, `hero.OnCastCompleted` | a cast starts / resolves (instants resolve at once) |
 | `hero.OnChannelTick`, `hero.OnChannelEnded` | a channel ticks / ends or is stopped |
-| `hero.OnDamageDealt` | a hit lands (with its damage and whether it crit) |
-| `hero.OnResourceSpent`, `hero.OnResourceOverflow` | resource is spent / gained past its maximum |
+| `ability.Hit` | one of that ability's hits lands (target, damage, whether it crit) |
+| `hero.OnDamageDealt` | any hit lands (with its damage and whether it crit) |
+| `hero.OnCastResolving` | a cast is about to resolve: add to it ("your next X critically strikes"), see below |
+| `hero.OnResourceGained`, `hero.OnResourceSpent`, `hero.OnResourceOverflow` | resource is gained (and from which enemy) / spent / gained past its maximum |
 | `hero.AbilityDamageMultipliers`, `hero.TargetDamageMultipliers`, `hero.TargetCritChanceBonuses`, `hero.CooldownAccelerations` | read on every hit / cooldown tick |
 | `hero.PassiveAuras` | always-on auras (stat bonuses) |
 | `hero.GuaranteedSpiritRefunds` | effects that make the next Spirit Refund certain |
 
-When a talent needs a moment the general hooks do not cover, give the ability or hero an event for it and raise it at
-that moment (Rime: `BurstingIce.Pulsed`, `FrostBolt.Landed`, `Rime.AnimaGenerated`, `IceComet.CometCast`), or a list the talent adds to (`Rime.SpenderCritBuffs`, `GlacialBlast.CastHasteBonuses`). If a talent
+"Your next X critically strikes" and similar buffs use `hero.OnCastResolving`: check the ability, use up the buff and add
+to the cast; every hit of that cast gets it (Rime: `FrostweaversWrath`, `IcyFlow`). A proc that casts an ability for
+free resolves it as a cast too (`IceComet.FreeCast`), passing itself as the source.
+
+An ability that reacts to another ability's hits subscribes to its `Hit` event in `Connect()`, which runs once all the
+hero's abilities exist (Rime: Ice Blitz extending on every Frost Swallow hit).
+
+When a talent needs a moment the general hooks do not cover, give the ability an event for it and raise it at that
+moment (Rime: `BurstingIce.Pulsed`, `FrostBolt.Landed`, `IceComet.CometCast`), or a list the talent adds to
+(`BurstingIce.PulseDamageMultipliers`, `GlacialBlast.CastHasteBonuses`). If a talent
 changes how a spell works rather than adding to it (Icy Talons replacing two abilities), set a clearly named property
 on the hero or ability from the talent's `Bind` and let the ability read it. An ability that replaces another and
 counts as it for talents inherits from it and overrides only what differs (Rime: `TalonStrike : GlacialBlast`,
@@ -181,12 +201,25 @@ All found by the catalog through their ID constants; add the file and it is used
 | Set bonus | `Customization/Sets` | `SetBonusIds` (one per main-stat variant of the set) |
 | Legendary | `Customization/Legendaries` | `HeroName` and the `ItemIds` that grant it |
 | Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | `WeaponAbilityId` |
-| Buff from another player | `Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's trait rank) |
+| Buff from another player | `FellowshipSim.Logs/Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's trait rank) |
 
 Something not modeled yet should still get a class (e.g. `UnmodeledTrait`) with its ID, name and tooltip text: the
 review then names it as unmodeled instead of an unknown ID.
 
 ## 5. Checking against combat logs
+
+A replay needs a few facts about how logs show your hero, kept in `FellowshipSim.Logs/Replay` (the engine never sees
+them):
+
+| Table | What to add |
+|---|---|
+| `LogResources` | each resource the log reports: its resource type number, scale and tolerance |
+| `ProcEvidence` | for each `ProcKey`: the aura or hit that proves in the log it procced |
+| `ClassTuningHistory` | past class tuning values, so fights from before a change replay with the value they had |
+| `PartyBuffs` | buffs other players give that change your damage |
+
+Buffs to compare with the log are found by themselves (`ModeledAuras`: every `AuraDef` constant on the hero and what it
+has).
 
 1. Run the web page (`dotnet run --project src/FellowshipSim.Server`), paste a log with your hero and click the player.
 2. Open the review. It shows damage and hits per ability against the log, every step where the engine disagreed, casts

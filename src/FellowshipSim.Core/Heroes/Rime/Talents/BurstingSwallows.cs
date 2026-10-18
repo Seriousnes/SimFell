@@ -17,12 +17,18 @@ public class BurstingSwallows : Talent
     /// <summary>"Your Frost Swallow hits have a 12% chance to trigger a pulse of Bursting Ice on the target."</summary>
     public override void Bind(Hero hero)
     {
-        var rime = (Rime)hero;
         var burstingIce = hero.GetAbility<BurstingIce>();
         if (burstingIce == null) return;
-        rime.FrostSwallowHit += (ctx, target) =>
+        // Every Frost Swallow hit, Flight of the Navir's too.
+        var swallows = new FrostSwallows?[] { hero.GetAbility<FrostSwallows>(), hero.GetAbility<FlightOfTheNavir>()?.Swallows };
+        foreach (var s in swallows.OfType<FrostSwallows>())
         {
-            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) burstingIce.DealPulse(ctx, target);
-        };
+            s.Hit += hit =>
+            {
+                var ctx = hit.SimContext;
+                if (ctx == null || hit.Target == null) return;
+                if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) burstingIce.DealPulse(ctx, hit.Target);
+            };
+        }
     }
 }

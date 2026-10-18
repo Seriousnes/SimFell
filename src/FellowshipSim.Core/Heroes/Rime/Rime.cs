@@ -39,15 +39,6 @@ public sealed class Rime : Hero
         TalentSlot.InRow(5, 3,    IcyTalons.TalentId,          FrostweaversWrath.TalentId,    SoulfrostTorrent.TalentId),
         TalentSlot.InRow(6, 1,    BitingCold.TalentId,         SupremeTorrent.TalentId,       WisdomOfTheNorth.TalentId));
 
-    /// <summary>Anima was generated (before it turns into Winter Orbs); the target is the one the Anima came from.</summary>
-    public event Action<SimulationContext, double, EnemyTarget>? AnimaGenerated;
-
-    /// <summary>Winter Orbs were gained (raised once per gain that added orbs, with how many).</summary>
-    public event Action<SimulationContext, int>? WinterOrbsGained;
-
-    /// <summary>A Frost Swallow hit an enemy.</summary>
-    public event Action<SimulationContext, EnemyTarget>? FrostSwallowHit;
-
     /// <summary>Icy Talons: Glacial Blast and Ice Comet are replaced by Talon Strike and Rising Talons.</summary>
     public bool HasIcyTalons { get; internal set; }
 
@@ -81,42 +72,24 @@ public sealed class Rime : Hero
         Abilities.Add(new FrostSwallows(this));
     }
 
-    /// <summary>
-    /// Buffs a Winter Orb spender (Glacial Blast, Ice Comet, Talon Strike, Rising Talons, free comets) consumes for crit
-    /// chance on its hits. Each talent adds its own (Frostweaver's Wrath, Icy Flow): it consumes its buff and returns the
-    /// crit chance it gives. The flag is true for Avalanche's extra comets.
-    /// </summary>
-    public List<Func<SimulationContext, bool, double>> SpenderCritBuffs { get; } = new();
-
-    /// <summary>Consumes the spender crit buffs for one cast; returns the crit chance its hits get.</summary>
-    public double ConsumeSpenderCritBuffs(SimulationContext ctx, bool avalancheComet = false) =>
-        SpenderCritBuffs.Sum(buff => buff(ctx, avalancheComet));
-
-    /// <summary>Tells talents a Frost Swallow hit (Bursting Swallows).</summary>
-    public void OnFrostSwallowHit(SimulationContext ctx, EnemyTarget target) => FrostSwallowHit?.Invoke(ctx, target);
-
     /// <summary>Spends Winter Orbs (a Spirit Refund may give them back).</summary>
     public void SpendWinterOrbs(int count, SimulationContext? ctx = null) => SpendResource(WinterOrbsResource, count, ctx);
 
     /// <summary>Gains Winter Orbs one at a time; each earned orb also sends Frost Swallows at enemies.</summary>
     public void GenerateWinterOrbs(int count, SimulationContext? ctx = null, EnemyTarget? target = null)
     {
-        int before = WinterOrbs;
         for (int i = 0; i < count; i++)
         {
             if (ctx != null) GetAbility<FrostSwallows>()?.AttackEnemies(ctx, SwallowsPerWinterOrb);
-            GainResource(WinterOrbsResource, 1, ctx?.CurrentTime ?? default);
+            GainResource(WinterOrbsResource, 1, ctx, target);
         }
-        if (ctx != null && WinterOrbs > before) WinterOrbsGained?.Invoke(ctx, WinterOrbs - before);
     }
 
     /// <summary>Adds Anima; every 9 Anima become a Winter Orb.</summary>
     public void AddAnima(double amount, SimulationContext? ctx = null, EnemyTarget? target = null)
     {
-        GainResource(Anima, amount, ctx?.CurrentTime ?? default);
-
         var primaryTarget = target ?? CurrentTarget ?? ctx?.ActiveEnemies.FirstOrDefault();
-        if (ctx != null && primaryTarget != null) AnimaGenerated?.Invoke(ctx, amount, primaryTarget);
+        GainResource(Anima, amount, ctx, primaryTarget);
 
         while (ResourceAmount(Anima) >= AnimaPerWinterOrb)
         {

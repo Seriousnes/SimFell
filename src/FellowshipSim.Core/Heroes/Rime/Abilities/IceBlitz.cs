@@ -27,4 +27,14 @@ public class IceBlitz : RimeAbility
         Rime.Auras.Apply(Buff, ctx.CurrentTime);
         TriggerCooldown(ctx);
     }
+
+    /// <summary>"The duration of Ice Blitz is extended by 0.1 seconds each time a Frost Swallow hits an enemy" (Flight of the Navir's too).</summary>
+    public override void Connect()
+    {
+        var swallows = new FrostSwallows?[] { Rime.GetAbility<FrostSwallows>(), Rime.GetAbility<FlightOfTheNavir>()?.Swallows };
+        foreach (var s in swallows.OfType<FrostSwallows>())
+        {
+            s.Hit += _ => Rime.Auras.Extend(Buff, SimTime.FromSeconds(ExtensionPerSwallowSeconds));
+        }
+    }
 }

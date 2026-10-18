@@ -23,22 +23,22 @@ public class IcyFlow : Talent
     public override string Name => TalentName;
     public override int Id => TalentId;
 
-    /// <summary>Cold Snap grants a stack; the next spender consumes it for crit, and a Glacial Blast cast with it is faster.</summary>
+    /// <summary>Cold Snap grants a stack; the next spender uses it up for crit, and a Glacial Blast cast with it is faster.</summary>
     public override void Bind(Hero hero)
     {
-        var rime = (Rime)hero;
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is ColdSnap) hero.Auras.Apply(Buff, now);
         };
-        // Avalanche's extra comets do not consume it.
-        rime.SpenderCritBuffs.Add((ctx, avalancheComet) =>
+        // The next Glacial Blast or Ice Comet (Talon Strike and Rising Talons count; Cold Shower's comet too, but not
+        // Avalanche's extra comets).
+        hero.OnCastResolving += cast =>
         {
-            if (avalancheComet || !hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 0.0;
-            hero.Auras.ConsumeStack(Buff, ctx.CurrentTime);
-            return CritChance;
-        });
+            if (cast.Ability is not (GlacialBlast or IceComet) || cast.Source is Avalanche || !hero.Auras.HasAura(Buff, cast.Time)) return;
+            hero.Auras.ConsumeStack(Buff, cast.Time);
+            cast.CritChance += CritChance;
+        };
         // "+50% Haste to you while casting" the Glacial Blast that consumes it.
-        rime.GetAbility<GlacialBlast>()?.CastHasteBonuses.Add(now => hero.Auras.HasAura(Buff, now) ? CastHaste : 0.0);
+        hero.GetAbility<GlacialBlast>()?.CastHasteBonuses.Add(now => hero.Auras.HasAura(Buff, now) ? CastHaste : 0.0);
     }
 }

@@ -26,18 +26,18 @@ public class FrostweaversWrath : Talent
 
     public override void Bind(Hero hero)
     {
-        // "Each time you generate Winter Orbs" (one roll per gain that adds orbs).
-        ((Rime)hero).WinterOrbsGained += (ctx, _) =>
+        // "Each time you generate Winter Orbs" (one roll per orb gained).
+        hero.OnResourceGained += (resource, _, _, ctx) =>
         {
-            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) hero.Auras.Apply(Buff, ctx.CurrentTime);
+            if (resource == Rime.WinterOrbsResource && ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) hero.Auras.Apply(Buff, ctx.CurrentTime);
         };
-        // "Your next Glacial Blast or Ice Comet that deals damage" crits: every spender consumes a stack, Avalanche's
-        // extra comets too.
-        ((Rime)hero).SpenderCritBuffs.Add((ctx, _) =>
+        // "Your next Glacial Blast or Ice Comet" critically strikes: Talon Strike and Rising Talons count (they are built on
+        // them), and so do the free comets of Cold Shower and Avalanche.
+        hero.OnCastResolving += cast =>
         {
-            if (!hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 0.0;
-            hero.Auras.ConsumeStack(Buff, ctx.CurrentTime);
-            return CritChance;
-        });
+            if (cast.Ability is not (GlacialBlast or IceComet) || !hero.Auras.HasAura(Buff, cast.Time)) return;
+            hero.Auras.ConsumeStack(Buff, cast.Time);
+            cast.CritChance += CritChance;
+        };
     }
 }
