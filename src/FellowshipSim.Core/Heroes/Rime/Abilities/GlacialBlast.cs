@@ -11,6 +11,9 @@ public class GlacialBlast : GlacialBlastFamily
     public const double CastTimeSeconds = 2.0;
     public const int DefaultWinterOrbCost = 2;
 
+    /// <summary>Seconds added to the cast time (Greater Glacial Blast).</summary>
+    public double ExtraCastTimeSeconds { get; set; }
+
     public GlacialBlast(Rime owner) : base(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
@@ -21,7 +24,7 @@ public class GlacialBlast : GlacialBlastFamily
     {
         // Instant with 4 Glacial Assault stacks or during Wrath of Winter.
         if (GlacialAssaultReady || Rime.Auras.HasAura(WrathOfWinter.Buff, now)) return SimTime.Zero;
-        double seconds = CastTime.TotalSeconds + (Rime.HasTalent<GreaterGlacialBlast>() ? GreaterGlacialBlast.CastTimeIncreaseSeconds : 0.0);
+        double seconds = CastTime.TotalSeconds + ExtraCastTimeSeconds;
         // Icy Flow: "+50% Haste to you while casting" the Glacial Blast that consumes it.
         double icyFlowHaste = Rime.Auras.HasAura(IcyFlow.Buff, now) ? IcyFlow.CastHaste : 0.0;
         return SimTime.FromSeconds(seconds / (1.0 + Owner.GetHaste(now) + icyFlowHaste));
@@ -29,7 +32,7 @@ public class GlacialBlast : GlacialBlastFamily
 
     public override bool CanCast(SimulationContext ctx, out string? reason)
     {
-        if (Rime.HasTalent<IcyTalons>())
+        if (Rime.HasIcyTalons)
         {
             reason = $"{Name} is replaced by Talon Strike (Icy Talons)";
             return false;

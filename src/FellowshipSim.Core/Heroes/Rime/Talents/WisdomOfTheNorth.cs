@@ -10,7 +10,18 @@ public class WisdomOfTheNorth : Talent
     public const double ReductionPerOrbSeconds = 0.3;
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    public override void Bind(Hero hero)
+    {
+        // "...for each Winters Orb you spend or that overflows your maximum."
+        hero.OnResourceSpent += (resource, amount, now) =>
+        {
+            if (resource == Rime.WinterOrbsResource) ReduceCooldowns(hero, (int)amount, now);
+        };
+        hero.OnResourceOverflow += (resource, amount, now) =>
+        {
+            if (resource == Rime.WinterOrbsResource) ReduceCooldowns(hero, (int)amount, now);
+        };
+    }
 
     public static void ReduceCooldowns(Hero hero, int orbs, SimTime now)
     {

@@ -9,5 +9,5 @@ public class IcyTalons : Talent
     public const string TalentName = "Icy Talons";
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    public override void Bind(Hero hero) => ((Rime)hero).HasIcyTalons = true;
 }

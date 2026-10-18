@@ -30,6 +30,12 @@ public class BurstingIce : RimeAbility
 
     private int _activeDebuffs;
 
+    /// <summary>Multipliers on each pulse's damage, read as the pulse goes off (Harrowing Ice).</summary>
+    public List<Func<SimulationContext, double>> PulseDamageMultipliers { get; } = new();
+
+    /// <summary>Raised after each pulse has dealt its damage (Harrowing Ice).</summary>
+    public event Action<SimulationContext>? Pulsed;
+
     /// <summary>Combat logs: pulses lose damage as sqrt(5/N) beyond 5 targets.</summary>
     public const double TargetThreshold = 5;
 
@@ -50,22 +56,10 @@ public class BurstingIce : RimeAbility
         var enemies = ctx.ActiveEnemies.ToList();
         if (enemies.Count == 0 && target != null) enemies.Add(target);
 
-        // Harrowing Ice: the pulse deals damage with the stacks held before it, then adds its own stack; the stack after 30
-        // consumes them all and shortens Flight of the Navir.
-        double harrowing = 1.0;
-        bool harrowingIce = hero.HasTalent<HarrowingIce>();
-        if (harrowingIce) harrowing += HarrowingIce.DamagePerStack * hero.Auras.GetStacks(HarrowingIce.Buff, ctx.CurrentTime);
-        DealAoeDamage(ctx, enemies, damageMultiplier: fraction * harrowing);
-        if (harrowingIce)
-        {
-            var now = ctx.CurrentTime;
-            hero.Auras.Apply(HarrowingIce.Buff, now);
-            if (hero.Auras.GetStacks(HarrowingIce.Buff, now) >= HarrowingIce.Buff.MaxStacks)
-            {
-                hero.Auras.Remove(HarrowingIce.Buff, now);
-                hero.ReduceCooldown<FlightOfTheNavir>(SimTime.FromSeconds(HarrowingIce.FlightOfTheNavirReductionSeconds), now);
-            }
-        }
+        double multiplier = fraction;
+        foreach (var pulseMultiplier in PulseDamageMultipliers) multiplier *= pulseMultiplier(ctx);
+        DealAoeDamage(ctx, enemies, damageMultiplier: multiplier);
+        Pulsed?.Invoke(ctx);
     }
 
     /// <summary>"Winter's Embrace does not affect Bursting Ice."</summary>

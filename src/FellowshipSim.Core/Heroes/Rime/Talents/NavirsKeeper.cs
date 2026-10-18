@@ -14,5 +14,12 @@ public class NavirsKeeper : Talent
     public static readonly AuraDef Buff = AuraDef.Effect("Navir's Keeper", BuffEffectId, maxStacks: StacksGranted);
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    /// <summary>Flight of the Navir grants the stacks; Cold Snap reads and consumes them.</summary>
+    public override void Bind(Hero hero)
+    {
+        hero.OnCastCompleted += (ability, _, now) =>
+        {
+            if (ability is FlightOfTheNavir) hero.Auras.Apply(Buff, now, setStacks: StacksGranted);
+        };
+    }
 }

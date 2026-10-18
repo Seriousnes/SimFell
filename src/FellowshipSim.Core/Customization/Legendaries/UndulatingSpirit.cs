@@ -24,5 +24,12 @@ public class UndulatingSpirit : Legendary
         {
             if (ability is WintersBlessing) rime.Auras.Apply(Buff, now, setStacks: StacksGranted);
         };
+        // "Your next ability that spends Winter Orbs consumes 1 stack of Undulating Spirits and always triggers a Spirit Refund."
+        hero.GuaranteedSpiritRefunds.Add(now =>
+        {
+            if (!hero.Auras.HasAura(Buff, now)) return false;
+            hero.Auras.ConsumeStack(Buff, now);
+            return true;
+        });
     }
 }

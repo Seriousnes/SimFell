@@ -218,7 +218,11 @@ public class SimulationContext
             period,
             ability.ChannelTicksOnStart,
             ability.ChannelPartialFinalTick,
-            onTick: (c, fraction) => ability.OnChannelTick(c, target ?? hero.CurrentTarget, fraction),
+            onTick: (c, fraction) =>
+            {
+                ability.OnChannelTick(c, target ?? hero.CurrentTarget, fraction);
+                hero.TriggerChannelTick(ability, target ?? hero.CurrentTarget, fraction, c);
+            },
             onEnd: (c, clipped) =>
             {
                 if (hero.CurrentChannel == channel) hero.CurrentChannel = null;

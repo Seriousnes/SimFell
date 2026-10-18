@@ -17,7 +17,11 @@ public class GreaterGlacialBlast : Talent
 
     public override void Bind(Hero hero)
     {
-        hero.GetAbility<GlacialBlast>()?.AddDamageMultiplier(DamageMultiplier);
+        if (hero.GetAbility<GlacialBlast>() is { } glacialBlast)
+        {
+            glacialBlast.AddDamageMultiplier(DamageMultiplier);
+            glacialBlast.ExtraCastTimeSeconds += CastTimeIncreaseSeconds;
+        }
         hero.GetAbility<TalonStrike>()?.AddDamageMultiplier(DamageMultiplier);
     }
 }

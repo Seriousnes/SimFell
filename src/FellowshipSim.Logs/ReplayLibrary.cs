@@ -102,7 +102,7 @@ public sealed class ReplayLibrary
     {
         options ??= new ReplayOptions { StopOnFirstFailure = false };
         var hero = ReplayDriver.CreateHero(script);
-        var result = new ReplayDriver(hero, script, ReplayMappings.ForHero(script.Player.Hero), options).Run();
+        var result = new ReplayDriver(hero, script, options).Run();
 
         string id = ReviewId(script.ReportCode, script.FightId, playerId);
         var (engineDamage, logDamage) = ReplayReportWriter.DamageTotals(result);

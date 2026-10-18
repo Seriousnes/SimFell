@@ -17,7 +17,7 @@ public class TalonStrike : GlacialBlastFamily
 
     public override bool CanCast(SimulationContext ctx, out string? reason)
     {
-        if (!Rime.HasTalent<IcyTalons>())
+        if (!Rime.HasIcyTalons)
         {
             reason = $"{Name} needs Icy Talons";
             return false;
@@ -46,7 +46,7 @@ public class TalonStrike : GlacialBlastFamily
             // INFERRED from logs (not the tooltip): cast "as if" with full Winter Orbs, it counts them as spent for Wisdom of
             // the North. Across 10 logs this removes 46 of 62 Ice Blitz cooldown misses while some casts still land right
             // as Ice Blitz comes back (so it is not too fast).
-            if (hero.HasTalent<WisdomOfTheNorth>()) WisdomOfTheNorth.ReduceCooldowns(hero, spikes, ctx.CurrentTime);
+            hero.NotifyResourceSpent(Rime.WinterOrbsResource, spikes, ctx.CurrentTime);
         }
         else
         {

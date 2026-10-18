@@ -11,6 +11,9 @@ public class FrostBolt : RimeAbility
     public const double CastTimeSeconds = 1.5;
     public const double AnimaGain = 3.0;
 
+    /// <summary>The bolt hit an enemy (after its travel), with the damage it dealt (Burstbolter).</summary>
+    public event Action<SimulationContext, EnemyTarget, double>? Landed;
+
     public FrostBolt(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Basic)
     {
         BaseCoefficient = Coefficient;
@@ -20,9 +23,6 @@ public class FrostBolt : RimeAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         Rime.AddAnima(AnimaGain, ctx, target);
-        // Talent 193 Burstbolter: "When your Frost Bolt deals damage to an enemy, it triggers a single pulse of Bursting Ice."
-        // (on the bolt's hit, after its travel: yMAZVJL9hTpFjqbC fight 7 @ 57.569 cast, 57.906 hit and pulse)
-        var pulse = Rime.HasTalent<Burstbolter>() ? Rime.GetAbility<BurstingIce>() : null;
-        DealDamage(ctx, target, onLanded: pulse == null ? null : (c, dealt) => { if (dealt > 0.0) pulse.DealPulse(c, target); });
+        DealDamage(ctx, target, onLanded: (c, dealt) => Landed?.Invoke(c, target, dealt));
     }
 }

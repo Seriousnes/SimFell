@@ -30,7 +30,7 @@ public class RisingTalons : RimeAbility
 
     public override bool CanCast(SimulationContext ctx, out string? reason)
     {
-        if (!Rime.HasTalent<IcyTalons>())
+        if (!Rime.HasIcyTalons)
         {
             reason = $"{Name} needs Icy Talons";
             return false;
@@ -64,7 +64,7 @@ public class RisingTalons : RimeAbility
             ctx.Schedule(SimTime.FromSeconds(FirstWaveDelaySeconds + i * WaveIntervalSeconds),
                 c => ReleaseWave(c, target, damage, critChance, critMultiplier), $"{Name} wave {i + 1}");
         }
-        Rime.TriggerAvalanche(ctx, target);
+        Rime.OnIceCometCast(ctx, target);
     }
 
     private void ReleaseWave(SimulationContext ctx, EnemyTarget target, double damage, double critChance, double critMultiplier)

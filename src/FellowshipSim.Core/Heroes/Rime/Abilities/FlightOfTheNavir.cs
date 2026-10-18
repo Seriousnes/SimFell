@@ -26,10 +26,6 @@ public class FlightOfTheNavir : RimeAbility
     {
         var hero = Rime;
         hero.Auras.Apply(Buff, ctx.CurrentTime);
-        if (hero.HasTalent<NavirsKeeper>())
-        {
-            hero.Auras.Apply(NavirsKeeper.Buff, ctx.CurrentTime, setStacks: NavirsKeeper.StacksGranted);
-        }
         TriggerCooldown(ctx);
     }
 }

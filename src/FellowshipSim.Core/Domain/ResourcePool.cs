@@ -1,12 +1,15 @@
 namespace FellowshipSim.Core.Domain;
 
-public enum ResourceType
+/// <summary>
+/// A resource a hero has (Anima, Winter Orbs, Focus, Spirit...), declared in the hero's file. <see cref="AplName"/> is
+/// how action lists refer to it (e.g. "winter_orbs"), plus any <see cref="Aliases"/>. When combat logs report it,
+/// <see cref="LogResourceType"/> is the log's resource type number, <see cref="LogScale"/> converts log values to engine
+/// units and <see cref="LogTolerance"/> is how far the engine may differ before a replay reports it.
+/// </summary>
+public sealed record ResourceDef(string Name, double Max, double Initial = 0, int LogResourceType = 0, double LogScale = 1.0, double LogTolerance = 0.0)
 {
-    Anima,
-    Spirit,
-    WinterOrbs,
-    Energy,
-    Mana
+    public string AplName => Name.ToLowerInvariant().Replace(' ', '_').Replace("'", "");
+    public IReadOnlyList<string> Aliases { get; init; } = [];
 }
 
 public class ResourceState
@@ -27,14 +30,14 @@ public class ResourceState
 
 public class ResourcePool
 {
-    private readonly Dictionary<ResourceType, ResourceState> _resources = new();
+    private readonly Dictionary<ResourceDef, ResourceState> _resources = new();
 
-    public void Register(ResourceType type, double max, double initial)
+    public void Register(ResourceDef type, double max, double initial)
     {
         _resources[type] = new ResourceState(max, initial);
     }
 
-    public void Add(ResourceType type, double amount)
+    public void Add(ResourceDef type, double amount)
     {
         if (_resources.TryGetValue(type, out var res))
         {
@@ -42,7 +45,7 @@ public class ResourcePool
         }
     }
 
-    public bool Consume(ResourceType type, double amount)
+    public bool Consume(ResourceDef type, double amount)
     {
         if (_resources.TryGetValue(type, out var res) && res.Current >= amount)
         {
@@ -52,7 +55,7 @@ public class ResourcePool
         return false;
     }
 
-    public ResourceState Get(ResourceType type)
+    public ResourceState Get(ResourceDef type)
     {
         if (!_resources.TryGetValue(type, out var res))
         {
@@ -70,9 +73,9 @@ public class ResourcePool
         }
     }
 
-    public Dictionary<ResourceType, double> CreateSnapshot()
+    public Dictionary<ResourceDef, double> CreateSnapshot()
     {
-        var dict = new Dictionary<ResourceType, double>();
+        var dict = new Dictionary<ResourceDef, double>();
         foreach (var (k, v) in _resources)
         {
             dict[k] = v.Current;
@@ -80,7 +83,7 @@ public class ResourcePool
         return dict;
     }
 
-    public void RestoreSnapshot(Dictionary<ResourceType, double> snapshot)
+    public void RestoreSnapshot(Dictionary<ResourceDef, double> snapshot)
     {
         foreach (var (k, v) in snapshot)
         {

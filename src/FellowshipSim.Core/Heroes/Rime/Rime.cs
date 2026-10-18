@@ -1,64 +1,79 @@
+using FellowshipSim.Core.Customization.Legendaries;
+using FellowshipSim.Core.Customization.WeaponAbilities;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime;
 
+/// <summary>
+/// Rime, the Harbinger of Winter. Her abilities build Anima; every 9 Anima become a Winter Orb, which her spenders use.
+/// Abilities live in Abilities/, talents in Talents/ (each talent hooks the events below or the abilities' own events).
+/// </summary>
 public sealed class Rime : Hero
 {
     public const int MaxWinterOrbs = 5;
     public const double AnimaPerWinterOrb = 9.0;
     /// <summary>
-    /// Undocumented in the game (datamine ability 1033 lists "Rime.AutoDamageProjectile.OrbReward" as its source):
+    /// Undocumented in the game (game data ability 1033 lists "Rime.AutoDamageProjectile.OrbReward" as its source):
     /// every Winter Orb earned sends 3 Frost Swallows at enemies.
     /// </summary>
     public const int SwallowsPerWinterOrb = 3;
-    /// <summary>Datamine ability 1016 "Rime.SpiritProc.ResourceRefund" (Spirit Refund).</summary>
-    public const string SpiritRefundProc = "spirit_refund";
-    public const double RefundDelaySeconds = 0.2;
+
+    /// <summary>Anima: combat logs report it as resource type 2, in hundredths.</summary>
+    public static readonly ResourceDef Anima = new("Anima", Max: 100, LogResourceType: 2, LogScale: 0.01, LogTolerance: 0.99);
+
+    /// <summary>Winter Orbs: combat logs report them as resource type 5, in hundredths.</summary>
+    public static readonly ResourceDef WinterOrbsResource = new("Winter Orbs", Max: MaxWinterOrbs, LogResourceType: 5, LogScale: 0.01)
+    {
+        Aliases = ["worb"],
+    };
 
     /// <summary>
     /// Rime's class tuning aura, with the date each value took effect: hero attribute BalancingDamageAura = 1.04 (+4%
-    /// damage) since 2026-08-27 (per the user; logs before then run ~4% below the engine with it). Hero attributes are not
-    /// in the Codex SDK export; source: fs_tc_uploads s3/hero_data.json (Rime.Attributes.BalancingDamageAura).
+    /// damage) since 2026-08-27 (per the user; logs before then run ~4% below the engine with it). Source:
+    /// fs_tc_uploads s3/hero_data.json (Rime.Attributes.BalancingDamageAura).
     /// </summary>
     public static readonly (DateTime From, double DamageMultiplier)[] ClassDamageAuraHistory =
     [
         (new DateTime(2026, 8, 27, 0, 0, 0, DateTimeKind.Utc), 1.04),
     ];
 
-    /// <summary>Rising Spirit (effect 3115): +5% primary stat per stack for 10s, up to 10 stacks, from Spirit Refunds.</summary>
-    public const int RisingSpiritEffectId = 3115;
-    public const double RisingSpiritSeconds = 10.0;
-    public const int RisingSpiritMaxStacks = 10;
-    public const double RisingSpiritPrimaryStatPerStack = 0.05;
-    /// <summary>Combat logs (10 Rime logs): each further Spirit Refund adds 2s to the time left instead of restarting it.</summary>
-    public const double RisingSpiritReapplySeconds = 2.0;
-
-    public static readonly AuraDef RisingSpirit = AuraDef.Effect("Rising Spirit", RisingSpiritEffectId, RisingSpiritSeconds,
-        RisingSpiritMaxStacks, StatModifier.Add(StatType.PrimaryAttributeMultiplier, RisingSpiritPrimaryStatPerStack))
-        with { ReapplyExtendsSeconds = RisingSpiritReapplySeconds };
-
     /// <summary>Every aura Rime's abilities, talents and legendary can put on her (the replay compares them with the log).</summary>
     public static readonly AuraDef[] AllAuras =
     [
         GlacialAssault.Buff, NavirsKeeper.Buff, FlightOfTheNavir.Buff, WintersBlessing.Buff, BurstingIce.WintersEmbrace,
-        BurstingIce.Debuff, IceBlitz.Buff, WrathOfWinter.Buff, Customization.Legendaries.UndulatingSpirit.Buff, RisingSpirit,
-        Customization.WeaponAbilities.Chronoshift.Barrier, HarrowingIce.Buff, IcyFlow.Buff, FrostweaversWrath.Buff,
-        SoulfrostTorrent.Buff,
+        BurstingIce.Debuff, IceBlitz.Buff, WrathOfWinter.Buff, UndulatingSpirit.Buff, RisingSpirit, Chronoshift.Barrier,
+        HarrowingIce.Buff, IcyFlow.Buff, FrostweaversWrath.Buff, SoulfrostTorrent.Buff,
     ];
+
+    /// <summary>Anima was generated (before it turns into Winter Orbs); the target is the one the Anima came from.</summary>
+    public event Action<SimulationContext, double, EnemyTarget>? AnimaGenerated;
+
+    /// <summary>Winter Orbs were gained (raised once per gain that added orbs, with how many).</summary>
+    public event Action<SimulationContext, int>? WinterOrbsGained;
+
+    /// <summary>An Ice Comet was cast at a target (Ice Comet, Rising Talons with Icy Talons, or a free Cold Shower comet).</summary>
+    public event Action<SimulationContext, EnemyTarget>? IceCometCast;
+
+    /// <summary>A Frost Swallow hit an enemy.</summary>
+    public event Action<SimulationContext, EnemyTarget>? FrostSwallowHit;
+
+    /// <summary>Icy Talons: Glacial Blast and Ice Comet are replaced by Talon Strike and Rising Talons.</summary>
+    public bool HasIcyTalons { get; internal set; }
 
     public int WinterOrbs
     {
-        get => (int)Resources.Get(ResourceType.WinterOrbs).Current;
-        set => Resources.Get(ResourceType.WinterOrbs).Current = value;
+        get => (int)ResourceAmount(WinterOrbsResource);
+        set => Resources.Get(WinterOrbsResource).Current = value;
     }
 
     public int GlacialAssaultStacks => Auras.GetStacks(GlacialAssault.Buff);
 
     public override void Initialize()
     {
-        Resources.Register(ResourceType.Anima, max: 100, initial: 0);
-        Resources.Register(ResourceType.WinterOrbs, max: MaxWinterOrbs, initial: 0);
+        AddResource(Anima);
+        AddResource(WinterOrbsResource);
+        SpiritRefundResource = WinterOrbsResource;
         foreach (var aura in AllAuras) Register(aura);
         AddClassTuningAura("Rime class tuning", ClassDamageAuraHistory);
 
@@ -101,92 +116,37 @@ public sealed class Rime : Hero
         return crit;
     }
 
-    /// <summary>Avalanche on an Ice Comet (or Rising Talons) cast: 18% for 1 extra comet, else 9% for 2.</summary>
-    public void TriggerAvalanche(SimulationContext ctx, EnemyTarget target)
+    /// <summary>Tells talents an Ice Comet was cast (Avalanche).</summary>
+    public void OnIceCometCast(SimulationContext ctx, EnemyTarget target)
     {
-        if (!HasTalent<Avalanche>() || target == null) return;
-        int extra = ctx.Outcomes.RollProc(Avalanche.ProcKey, Avalanche.OneExtraChance, ctx) ? 1
-            : ctx.Outcomes.RollProc(Avalanche.ProcKey, Avalanche.TwoExtraChance, ctx) ? 2 : 0;
-        var comet = GetAbility<ProcIceComet>();
-        for (int i = 1; comet != null && i <= extra; i++)
-        {
-            ctx.Schedule(SimTime.FromSeconds(Avalanche.CometSpacingSeconds * i), c =>
-            {
-                // The extra comets consume Frostweaver's Wrath ("the next ... Ice Comet that deals damage") but not Icy Flow.
-                comet.Strike(c, target, ConsumeSpenderCritBuffs(c, consumesIcyFlow: false));
-            }, "Avalanche comet");
-        }
+        if (target != null) IceCometCast?.Invoke(ctx, target);
     }
 
-    /// <summary>Cold Shower: a free Ice Comet on <paramref name="target"/> (it consumes spender buffs and can trigger Avalanche).</summary>
+    /// <summary>Tells talents a Frost Swallow hit (Bursting Swallows).</summary>
+    public void OnFrostSwallowHit(SimulationContext ctx, EnemyTarget target) => FrostSwallowHit?.Invoke(ctx, target);
+
+    /// <summary>A free Ice Comet on <paramref name="target"/> (Cold Shower): it consumes spender buffs and can trigger Avalanche.</summary>
     public void CastFreeIceComet(SimulationContext ctx, EnemyTarget target)
     {
         var comet = GetAbility<ProcIceComet>();
         if (comet == null || target == null) return;
         comet.Strike(ctx, target, ConsumeSpenderCritBuffs(ctx));
-        TriggerAvalanche(ctx, target);
+        OnIceCometCast(ctx, target);
     }
 
-    /// <summary>
-    /// Spends Winter Orbs. A Spirit Refund (chance equal to Spirit, or guaranteed by an Undulating Spirit stack)
-    /// gives them back and grants Rising Spirit.
-    /// </summary>
-    public void SpendWinterOrbs(int count, SimulationContext? ctx = null)
-    {
-        WinterOrbs = Math.Max(0, WinterOrbs - count);
-        if (HasTalent<WisdomOfTheNorth>()) WisdomOfTheNorth.ReduceCooldowns(this, count, ctx?.CurrentTime ?? default);
-        if (count <= 0 || ctx == null) return;
+    /// <summary>Spends Winter Orbs (a Spirit Refund may give them back).</summary>
+    public void SpendWinterOrbs(int count, SimulationContext? ctx = null) => SpendResource(WinterOrbsResource, count, ctx);
 
-        bool refund;
-        if (Auras.HasAura(Customization.Legendaries.UndulatingSpirit.Buff, ctx.CurrentTime))
-        {
-            Auras.ConsumeStack(Customization.Legendaries.UndulatingSpirit.Buff, ctx.CurrentTime);
-            refund = true;
-        }
-        else
-        {
-            // Spirit Refund chance is Spirit / (1 + Spirit) (per the user: "%/(100+%)").
-            double spirit = SpiritPercent(ctx.CurrentTime);
-            refund = ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx, RisingSpirit.LogId);
-        }
-
-        if (refund)
-        {
-            // Rising Spirit comes with the spend; the orbs come back a moment later
-            // (combat logs, 10 Rime logs: orbs show up again 0.233s (10th percentile) after, with snapshot lag; 0.2s).
-            Auras.Apply(RisingSpirit, ctx.CurrentTime);
-            ctx.Schedule(SimTime.FromSeconds(RefundDelaySeconds), c =>
-            {
-                // Refunded orbs past the maximum overflow (Wisdom of the North counts orbs that overflow your maximum).
-                int overflow = Math.Max(0, WinterOrbs + count - MaxWinterOrbs);
-                WinterOrbs = Math.Min(MaxWinterOrbs, WinterOrbs + count);
-                if (overflow > 0 && HasTalent<WisdomOfTheNorth>()) WisdomOfTheNorth.ReduceCooldowns(this, overflow, c.CurrentTime);
-            }, "Spirit Refund");
-        }
-    }
-
+    /// <summary>Gains Winter Orbs one at a time; each earned orb also sends Frost Swallows at enemies.</summary>
     public void GenerateWinterOrbs(int count, SimulationContext? ctx = null, EnemyTarget? target = null)
     {
         int before = WinterOrbs;
         for (int i = 0; i < count; i++)
         {
             if (ctx != null) GetAbility<FrostSwallows>()?.AttackEnemies(ctx, SwallowsPerWinterOrb);
-            if (WinterOrbs < MaxWinterOrbs)
-            {
-                WinterOrbs++;
-            }
-            else if (HasTalent<WisdomOfTheNorth>())
-            {
-                // Datamine talent 49: "...for each Winter Orb you spend or that overflows your maximum."
-                WisdomOfTheNorth.ReduceCooldowns(this, 1, ctx?.CurrentTime ?? default);
-            }
+            GainResource(WinterOrbsResource, 1, ctx?.CurrentTime ?? default);
         }
-        // Frostweaver's Wrath: "Each time you generate Winter Orbs" (one roll per gain that adds orbs).
-        if (ctx != null && WinterOrbs > before && HasTalent<FrostweaversWrath>()
-            && ctx.Outcomes.RollProc(FrostweaversWrath.ProcKey, FrostweaversWrath.ProcChance, ctx, FrostweaversWrath.Buff.LogId))
-        {
-            Auras.Apply(FrostweaversWrath.Buff, ctx.CurrentTime);
-        }
+        if (ctx != null && WinterOrbs > before) WinterOrbsGained?.Invoke(ctx, WinterOrbs - before);
     }
 
     /// <summary>Flight of the Navir: Cold Snap and Freezing Torrent command the 5 circling swallows to attack.</summary>
@@ -200,28 +160,17 @@ public sealed class Rime : Hero
         for (int i = 0; i < available; i++) swallows.Send(ctx, target);
     }
 
+    /// <summary>Adds Anima; every 9 Anima become a Winter Orb.</summary>
     public void AddAnima(double amount, SimulationContext? ctx = null, EnemyTarget? target = null)
     {
-        Resources.Add(ResourceType.Anima, amount);
+        GainResource(Anima, amount, ctx?.CurrentTime ?? default);
 
         var primaryTarget = target ?? CurrentTarget ?? ctx?.ActiveEnemies.FirstOrDefault();
+        if (ctx != null && primaryTarget != null) AnimaGenerated?.Invoke(ctx, amount, primaryTarget);
 
-        // Datamine talent 192 Cascading Blitz: "For each Anima you generate while your Ice Blitz is active,
-        // you conjure 1 Frost Swallow to attack your target."
-        if (ctx != null && primaryTarget != null && HasTalent<CascadingBlitz>() && Auras.HasAura(IceBlitz.Buff, ctx.CurrentTime))
+        while (ResourceAmount(Anima) >= AnimaPerWinterOrb)
         {
-            // "...attack your target" (a replay follows the log if the player briefly had another target).
-            var swallows = GetAbility<FrostSwallows>();
-            for (int i = 0; swallows != null && i < (int)amount; i++)
-            {
-                var enemy = ctx.Outcomes.ChooseTarget(swallows.DamageLogId, ctx.ActiveEnemies.ToList(), ctx, preferred: primaryTarget);
-                if (enemy != null) swallows.Attack(ctx, enemy, 1);
-            }
-        }
-
-        while (Resources.Get(ResourceType.Anima).Current >= AnimaPerWinterOrb)
-        {
-            Resources.Consume(ResourceType.Anima, AnimaPerWinterOrb);
+            Resources.Consume(Anima, AnimaPerWinterOrb);
             GenerateWinterOrbs(1, ctx, primaryTarget);
         }
     }

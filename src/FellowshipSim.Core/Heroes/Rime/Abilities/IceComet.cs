@@ -21,7 +21,7 @@ public class IceComet : RimeAbility
 
     public override bool CanCast(SimulationContext ctx, out string? reason)
     {
-        if (Rime.HasTalent<IcyTalons>())
+        if (Rime.HasIcyTalons)
         {
             reason = $"{Name} is replaced by Rising Talons (Icy Talons)";
             return false;
@@ -38,7 +38,7 @@ public class IceComet : RimeAbility
     {
         Rime.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
         Strike(this, ctx, target, Rime.ConsumeSpenderCritBuffs(ctx));
-        Rime.TriggerAvalanche(ctx, target);
+        Rime.OnIceCometCast(ctx, target);
     }
 
     /// <summary>One comet impact on <paramref name="target"/> and all enemies around it.</summary>

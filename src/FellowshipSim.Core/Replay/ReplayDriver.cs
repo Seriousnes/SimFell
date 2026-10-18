@@ -14,7 +14,6 @@ public sealed class ReplayDriver
 {
     private readonly Hero _hero;
     private readonly ReplayScript _script;
-    private readonly ReplayMappings _mappings;
     private readonly ReplayOptions _options;
     private readonly SimulationContext _ctx;
     private readonly HitLedger _ledger;
@@ -26,13 +25,12 @@ public sealed class ReplayDriver
     private readonly HashSet<ReplayCommand> _handledCommands = new();
     private (int AbilityId, double Time)? _lastCompletedCast;
 
-    public ReplayDriver(Hero hero, ReplayScript script, ReplayMappings mappings, ReplayOptions? options = null)
+    public ReplayDriver(Hero hero, ReplayScript script, ReplayOptions? options = null)
     {
         _hero = hero;
         _script = script;
-        _mappings = mappings;
         _options = options ?? new ReplayOptions();
-        _ctx = new SimulationContext(hero) { GlobalCooldownToleranceSeconds = options.GlobalCooldownToleranceSeconds };
+        _ctx = new SimulationContext(hero) { GlobalCooldownToleranceSeconds = _options.GlobalCooldownToleranceSeconds };
         _ledger = new HitLedger(script.Observations.Damage);
         _oracle = new LogOutcomeSource(script, _options, _ledger);
         _ctx.Outcomes = _oracle;
@@ -376,10 +374,11 @@ public sealed class ReplayDriver
             Math.Abs(r.Time - cmd.Time) <= _options.ResourceSnapshotWindowSeconds && r.AbilityId == cmd.AbilityId);
         if (snapshot != null)
         {
-            foreach (var (logType, mapping) in _mappings.Resources)
+            // Each resource the hero declares with its combat-log resource type.
+            foreach (var resource in _hero.ResourceDefs.Where(r => r.LogResourceType > 0))
             {
-                if (!snapshot.Resources.TryGetValue(logType, out var value)) continue;
-                var check = new ResourceCheck(mapping.Resource.ToString(), _hero.Resources.Get(mapping.Resource).Current, value.Amount * mapping.Scale, mapping.Tolerance);
+                if (!snapshot.Resources.TryGetValue(resource.LogResourceType.ToString(), out var value)) continue;
+                var check = new ResourceCheck(resource.Name, _hero.ResourceAmount(resource), value.Amount * resource.LogScale, resource.LogTolerance);
                 step.Resources.Add(check);
                 if (!check.Matches)
                 {

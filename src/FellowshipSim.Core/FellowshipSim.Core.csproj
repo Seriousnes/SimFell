@@ -11,8 +11,4 @@
     <PackageReference Include="FellowshipAnalyzer.Codex.SDK" Version="1.0.12" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Replay\Mappings\*.json" />
-  </ItemGroup>
-
 </Project>

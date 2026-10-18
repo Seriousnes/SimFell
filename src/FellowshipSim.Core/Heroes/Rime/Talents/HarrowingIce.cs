@@ -22,5 +22,24 @@ public class HarrowingIce : Talent
     public static readonly AuraDef Buff = AuraDef.Effect("Harrowing Ice", EffectId, BuffSeconds, MaxStacks);
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    /// <summary>
+    /// A pulse deals damage with the stacks held before it, then adds its own stack; the stack after 30 consumes them all
+    /// and shortens Flight of the Navir.
+    /// </summary>
+    public override void Bind(Hero hero)
+    {
+        var burstingIce = hero.GetAbility<BurstingIce>();
+        if (burstingIce == null) return;
+        burstingIce.PulseDamageMultipliers.Add(ctx => 1.0 + DamagePerStack * hero.Auras.GetStacks(Buff, ctx.CurrentTime));
+        burstingIce.Pulsed += ctx =>
+        {
+            var now = ctx.CurrentTime;
+            hero.Auras.Apply(Buff, now);
+            if (hero.Auras.GetStacks(Buff, now) >= Buff.MaxStacks)
+            {
+                hero.Auras.Remove(Buff, now);
+                hero.ReduceCooldown<FlightOfTheNavir>(SimTime.FromSeconds(FlightOfTheNavirReductionSeconds), now);
+            }
+        };
+    }
 }

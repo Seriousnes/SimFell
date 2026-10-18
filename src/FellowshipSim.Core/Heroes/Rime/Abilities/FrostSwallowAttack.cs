@@ -7,7 +7,6 @@ public abstract class FrostSwallowAttack : RimeAbility
 {
     /// <summary>"For every 1% Spirit you have, your Frost Swallows deal 1.5% more damage."</summary>
     public const double DamagePerSpiritPercent = 1.5;
-    public const string BurstingSwallowsProc = "bursting_swallows";
 
     protected FrostSwallowAttack(Rime owner, int id, string name, double coefficient) : base(owner, id, name)
     {
@@ -33,12 +32,7 @@ public abstract class FrostSwallowAttack : RimeAbility
         // "The duration of Ice Blitz is extended by 0.1 seconds each time a Frost Swallow hits an enemy."
         hero.Auras.Extend(IceBlitz.Buff, SimTime.FromSeconds(IceBlitz.ExtensionPerSwallowSeconds));
 
-        // Talent 628: "Your Frost Swallow hits have a 12% chance to trigger a pulse of Bursting Ice on the target."
-        if (hero.HasTalent<BurstingSwallows>() &&
-            ctx.Outcomes.RollProc(BurstingSwallowsProc, BurstingSwallows.ProcChance, ctx, LogIds.Effect(BurstingIce.PulseEffectId)))
-        {
-            hero.GetAbility<BurstingIce>()?.DealPulse(ctx, dmg.Target);
-        }
+        hero.OnFrostSwallowHit(ctx, dmg.Target);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target) => Attack(ctx, target, 1);

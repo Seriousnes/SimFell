@@ -43,19 +43,6 @@ public class ColdSnap : RimeAbility
         }
 
         hero.GenerateWinterOrbs(WinterOrbsGained, ctx, target);
-        if (hero.HasTalent<GlacialAssault>())
-        {
-            hero.Auras.Apply(GlacialAssault.Buff, ctx.CurrentTime);
-        }
-        if (hero.HasTalent<IcyFlow>())
-        {
-            hero.Auras.Apply(IcyFlow.Buff, ctx.CurrentTime);
-        }
-        if (hero.HasTalent<ChillingFinesse>())
-        {
-            hero.ReduceCooldown<FreezingTorrent>(SimTime.FromSeconds(ChillingFinesse.FreezingTorrentReductionSeconds), ctx.CurrentTime);
-        }
-
         DealDamage(ctx, target);
         hero.TriggerFrostSwallows(ctx, target);
     }

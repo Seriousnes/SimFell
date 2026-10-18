@@ -36,18 +36,8 @@ public class PropertyExpression : IAplExpression
         // Direct property lookups
         switch (PropertyPath)
         {
-            case "winter_orbs":
-            case "worb":
-                return (hero as Rime)?.WinterOrbs ?? 0;
-
             case "glacial_assault_stacks":
                 return (hero as Rime)?.GlacialAssaultStacks ?? 0;
-
-            case "spirit":
-                return hero.Resources.Get(ResourceType.Spirit).Current;
-
-            case "anima":
-                return hero.Resources.Get(ResourceType.Anima).Current;
 
             case "active_enemies":
                 int count = ctx.AllEnemies.Count(e => !e.IsSleeping);
@@ -62,6 +52,10 @@ public class PropertyExpression : IAplExpression
             case "fight_remains":
                 return 100.0;
         }
+
+        // A resource by name (e.g. "winter_orbs", "anima", "spirit"), optionally written "resource.<name>".
+        string resourceName = PropertyPath.StartsWith("resource.") ? PropertyPath["resource.".Length..] : PropertyPath;
+        if (hero.FindResource(resourceName) is { } resource) return hero.ResourceAmount(resource);
 
         // buff.<name>.<property>
         if (PropertyPath.StartsWith("buff."))

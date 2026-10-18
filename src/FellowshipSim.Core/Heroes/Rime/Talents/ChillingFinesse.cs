@@ -11,5 +11,15 @@ public class ChillingFinesse : Talent
     public const double FreezingTorrentReductionSeconds = 1.5;
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    public override void Bind(Hero hero)
+    {
+        hero.OnChannelTick += (ability, _, _, ctx) =>
+        {
+            if (ability is FreezingTorrent) hero.ReduceCooldown<BurstingIce>(SimTime.FromSeconds(BurstingIceReductionSeconds), ctx.CurrentTime);
+        };
+        hero.OnCastCompleted += (ability, _, now) =>
+        {
+            if (ability is ColdSnap) hero.ReduceCooldown<FreezingTorrent>(SimTime.FromSeconds(FreezingTorrentReductionSeconds), now);
+        };
+    }
 }

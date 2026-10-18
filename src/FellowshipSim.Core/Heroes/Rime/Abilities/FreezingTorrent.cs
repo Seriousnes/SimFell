@@ -54,13 +54,5 @@ public class FreezingTorrent : RimeAbility
         }
         Rime.AddAnima(AnimaPerTick, ctx, target);
         DealDamage(ctx, target, damageMultiplier: fraction, extraCritChance: _soulfrost ? SoulfrostTorrent.CritChance : 0.0);
-        if (Rime.HasTalent<ColdShower>() && ctx.Outcomes.RollProc(ColdShower.ProcKey, ColdShower.ProcChance, ctx))
-        {
-            Rime.CastFreeIceComet(ctx, target);
-        }
-        if (Rime.HasTalent<ChillingFinesse>())
-        {
-            Rime.ReduceCooldown<BurstingIce>(SimTime.FromSeconds(ChillingFinesse.BurstingIceReductionSeconds), ctx.CurrentTime);
-        }
     }
 }

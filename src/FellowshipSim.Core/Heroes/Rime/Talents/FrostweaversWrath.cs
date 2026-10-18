@@ -22,5 +22,13 @@ public class FrostweaversWrath : Talent
     public static readonly AuraDef Buff = AuraDef.Effect("Frostweaver's Wrath", EffectId, BuffSeconds, MaxStacks);
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    public override void Bind(Hero hero)
+    {
+        hero.Register(Buff);
+        // "Each time you generate Winter Orbs" (one roll per gain that adds orbs).
+        ((Rime)hero).WinterOrbsGained += (ctx, _) =>
+        {
+            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx, Buff.LogId)) hero.Auras.Apply(Buff, ctx.CurrentTime);
+        };
+    }
 }

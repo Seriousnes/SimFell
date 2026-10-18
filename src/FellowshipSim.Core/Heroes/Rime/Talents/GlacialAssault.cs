@@ -17,5 +17,12 @@ public class GlacialAssault : Talent
 
     public override string Name => TalentName;
     public override int Id => TalentId;
-    public override void Bind(Hero hero) { }
+    /// <summary>"Your Cold Snap ability grants you 1 stack of Glacial Assault." (Glacial Blast and Talon Strike use the stacks.)</summary>
+    public override void Bind(Hero hero)
+    {
+        hero.OnCastCompleted += (ability, _, now) =>
+        {
+            if (ability is ColdSnap) hero.Auras.Apply(Buff, now);
+        };
+    }
 }

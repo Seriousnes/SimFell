@@ -101,6 +101,12 @@ public abstract class Hero : Actor
     public event Action<Ability, EnemyTarget?, SimTime>? OnCastCompleted;
     public event Action<Ability, EnemyTarget?, SimTime>? OnCastCancelled;
     public event Action<Ability, EnemyTarget?, SimTime, bool>? OnChannelEnded;
+    /// <summary>A channel ticked (after the ability's own tick effects); the double is the tick's fraction (below 1 for a partial tick).</summary>
+    public event Action<Ability, EnemyTarget?, double, SimulationContext>? OnChannelTick;
+    /// <summary>Resource was spent (or counts as spent).</summary>
+    public event Action<ResourceDef, double, SimTime>? OnResourceSpent;
+    /// <summary>Resource was gained past its maximum: the double is the amount that overflowed.</summary>
+    public event Action<ResourceDef, double, SimTime>? OnResourceOverflow;
 
     /// <summary>The cast in progress, if any (abilities with a cast time between begin and completion).</summary>
     public ActiveCast? CurrentCast { get; internal set; }
@@ -113,6 +119,93 @@ public abstract class Hero : Actor
     public void TriggerCastCompleted(Ability a, EnemyTarget? t, SimTime now = default) => OnCastCompleted?.Invoke(a, t, now);
     public void TriggerCastCancelled(Ability a, EnemyTarget? t, SimTime now = default) => OnCastCancelled?.Invoke(a, t, now);
     public void TriggerChannelEnded(Ability a, EnemyTarget? t, SimTime now, bool clipped) => OnChannelEnded?.Invoke(a, t, now, clipped);
+    public void TriggerChannelTick(Ability a, EnemyTarget? t, double fraction, SimulationContext ctx) => OnChannelTick?.Invoke(a, t, fraction, ctx);
+
+    // ------------------------------------------------------------------ resources and Spirit Refund
+
+    /// <summary>Spirit Points toward the Spirit ability (every hero).</summary>
+    public static readonly ResourceDef SpiritPoints = new("Spirit", Max: 100);
+
+    /// <summary>The resources this hero has (declared with <see cref="AddResource"/> in <see cref="Initialize"/>).</summary>
+    public List<ResourceDef> ResourceDefs { get; } = new();
+
+    protected void AddResource(ResourceDef resource)
+    {
+        ResourceDefs.Add(resource);
+        Resources.Register(resource, resource.Max, resource.Initial);
+    }
+
+    /// <summary>The resource named <paramref name="aplName"/> in action lists (its <see cref="ResourceDef.AplName"/> or an alias).</summary>
+    public ResourceDef? FindResource(string aplName) =>
+        aplName == SpiritPoints.AplName ? SpiritPoints
+            : ResourceDefs.FirstOrDefault(r => r.AplName == aplName || r.Aliases.Contains(aplName));
+
+    public double ResourceAmount(ResourceDef resource) => Resources.Get(resource).Current;
+
+    /// <summary>
+    /// Adds <paramref name="amount"/> up to the maximum; the part past the maximum overflows (<see cref="OnResourceOverflow"/>).
+    /// Returns the amount added.
+    /// </summary>
+    public double GainResource(ResourceDef resource, double amount, SimTime now)
+    {
+        var state = Resources.Get(resource);
+        double added = Math.Min(amount, Math.Max(0.0, state.Max - state.Current));
+        state.Current += added;
+        if (amount - added > 0) OnResourceOverflow?.Invoke(resource, amount - added, now);
+        return added;
+    }
+
+    /// <summary>
+    /// Spends <paramref name="amount"/>. When it is the hero's <see cref="SpiritRefundResource"/>, a Spirit Refund may give
+    /// it back.
+    /// </summary>
+    public void SpendResource(ResourceDef resource, double amount, SimulationContext? ctx)
+    {
+        var state = Resources.Get(resource);
+        state.Current = Math.Max(0.0, state.Current - amount);
+        NotifyResourceSpent(resource, amount, ctx?.CurrentTime ?? default);
+        if (amount <= 0 || ctx == null || resource != SpiritRefundResource) return;
+        if (!RollSpiritRefund(ctx)) return;
+        // Rising Spirit comes with the spend; the resource comes back a moment later.
+        Auras.Apply(RisingSpirit, ctx.CurrentTime);
+        ctx.Schedule(SimTime.FromSeconds(SpiritRefundDelaySeconds), c => GainResource(resource, amount, c.CurrentTime), "Spirit Refund");
+    }
+
+    /// <summary>Tells effects that count spent resource (e.g. cooldown reductions per point spent) that it was spent.</summary>
+    public void NotifyResourceSpent(ResourceDef resource, double amount, SimTime now) => OnResourceSpent?.Invoke(resource, amount, now);
+
+    /// <summary>The resource a Spirit Refund gives back: the hero's spender resource (e.g. Rime's Winter Orbs).</summary>
+    public ResourceDef? SpiritRefundResource { get; protected set; }
+
+    public const string SpiritRefundProc = "spirit_refund";
+    /// <summary>Combat logs (10 Rime logs): refunded resource shows up again 0.233s (10th percentile) after the spend.</summary>
+    public const double SpiritRefundDelaySeconds = 0.2;
+
+    /// <summary>Rising Spirit (effect 3115): +5% primary stat per stack for 10s, up to 10 stacks, from Spirit Refunds.</summary>
+    public const int RisingSpiritEffectId = 3115;
+    public const double RisingSpiritSeconds = 10.0;
+    public const int RisingSpiritMaxStacks = 10;
+    public const double RisingSpiritPrimaryStatPerStack = 0.05;
+    /// <summary>Combat logs (10 Rime logs): each further Spirit Refund adds 2s to the time left instead of restarting it.</summary>
+    public const double RisingSpiritReapplySeconds = 2.0;
+
+    public static readonly AuraDef RisingSpirit = AuraDef.Effect("Rising Spirit", RisingSpiritEffectId, RisingSpiritSeconds,
+        RisingSpiritMaxStacks, StatModifier.Add(StatType.PrimaryAttributeMultiplier, RisingSpiritPrimaryStatPerStack))
+        with { ReapplyExtendsSeconds = RisingSpiritReapplySeconds };
+
+    /// <summary>Effects that make a Spirit Refund certain (e.g. Undulating Spirit): each returns true if it guaranteed this one.</summary>
+    public List<Func<SimTime, bool>> GuaranteedSpiritRefunds { get; } = new();
+
+    private bool RollSpiritRefund(SimulationContext ctx)
+    {
+        foreach (var guaranteed in GuaranteedSpiritRefunds)
+        {
+            if (guaranteed(ctx.CurrentTime)) return true;
+        }
+        // Spirit Refund chance is Spirit / (1 + Spirit) (per the user: "%/(100+%)").
+        double spirit = SpiritPercent(ctx.CurrentTime);
+        return ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx, RisingSpirit.LogId);
+    }
 
     // ------------------------------------------------------------------ auras
 
