@@ -299,6 +299,13 @@ public abstract class Hero : Actor
     // ------------------------------------------------------------------ stats
 
     /// <summary>Primary attribute after all multipliers.</summary>
+    /// <summary>
+    /// Main Stat, in the game's layers: the pool (base, gear, flat gem bonuses) with pool multipliers (Torment of
+    /// Bael'Aurum, Drakheim's Absolution), then x (1 + summed adds: Mote of Creation, Rising Spirit) x (1 + summed
+    /// "increased" bonuses: Martial Initiative, Willful Momentum, Vengeful Soul, Hidden Power) x each true multiplier
+    /// (Might of the Minotaur, Ancestral Surge, Ancient's Wisdom, Draconic Might). Source: community breakdown from game
+    /// files and in-game tests.
+    /// </summary>
     public double PrimaryAttribute(SimTime now)
     {
         double value = Auras.Fold(StatType.PrimaryAttribute, Stats.PrimaryStat, now);

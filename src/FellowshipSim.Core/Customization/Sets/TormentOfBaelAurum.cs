@@ -11,7 +11,8 @@ public class TormentOfBaelAurum : SetBonus
     public const int IntellectSetBonusId = 686;
     public const int StrengthSetBonusId = 687;
     public const int EffectId = 1988;
-    public const double PrimaryStatBonus = 1.05;
+    /// <summary>Main Stat pool multiplier (community game-file breakdown: x1.04, permanent; a logged Main Stat includes it).</summary>
+    public const double PrimaryStatBonus = 1.04;
 
     public static readonly AuraDef Bonus = AuraDef.Effect(SetName, EffectId,
         modifiers: StatModifier.More(StatType.PrimaryAttribute, PrimaryStatBonus));
