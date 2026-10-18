@@ -152,13 +152,7 @@ public abstract class Ability
         // Cooldown recovery (and haste for charge abilities) then sets how fast it ticks down.
         double seconds = Cooldown.TotalSeconds * cooldownMultiplier * (1.0 - Owner.Stats.CooldownReductionPct);
         if (CooldownScalesWithHaste) seconds /= 1.0 + Owner.GetHaste(ctx.CurrentTime);
-        var state = Owner.CooldownOf(this);
-        if (state.ChargesAt(ctx.CurrentTime) == 1 && state.LastChargeAt > SimTime.Zero
-            && Environment.GetEnvironmentVariable("REPLAY_SLACK") is { } slackFile)
-        {
-            File.AppendAllText(slackFile, $"{Name}\t{ctx.CurrentTime.TotalSeconds:F3}\t{(ctx.CurrentTime - state.LastChargeAt).TotalSeconds:F3}\n");
-        }
-        state.Spend(ctx.CurrentTime, seconds);
+        Owner.CooldownOf(this).Spend(ctx.CurrentTime, seconds);
     }
 
     /// <summary>The ability's effects when its cast resolves (immediately for instants, at cast completion otherwise).</summary>

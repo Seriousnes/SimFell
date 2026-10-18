@@ -1,29 +1,8 @@
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Heroes.Rime;
-using FellowshipSim.Core.Heroes.Rime.Spells;
+using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Customization.Legendaries;
-
-public class VoidbringersTouch : Legendary
-{
-    public override string Name => "Voidbringer's Touch";
-    public override bool IsModeled => false;
-    public override void Bind(Hero hero) { }
-}
-
-public class Earthbreaker : Legendary
-{
-    public override string Name => "Earthbreaker";
-    public override bool IsModeled => false;
-    public override void Bind(Hero hero) { }
-}
-
-public class RepositoryOfFrozenLight : Legendary
-{
-    public override string Name => "Repository of Frozen Light";
-    public override bool IsModeled => false;
-    public override void Bind(Hero hero) { }
-}
 
 /// <summary>
 /// Legendary power 398: Winter's Blessing grants 2 stacks of Undulating Spirit (effect 2171); the next ability that

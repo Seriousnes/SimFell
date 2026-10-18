@@ -100,8 +100,6 @@ public sealed class LogOutcomeSource : IOutcomeSource
         {
             // The target dies in the log before this hit would land: it hits nothing (no damage, no procs, no counters).
             MissedHits++;
-            if (Environment.GetEnvironmentVariable("REPLAY_TRACE_MISSED") is { } missedFile)
-                File.AppendAllText(missedFile, $"{now:F3}	{hit.AbilityName}	{target}	died {died:F3}" + Environment.NewLine);
             return new HitOutcome(false, SimTime.Zero, 1.0, null, Missed: true);
         }
 
@@ -186,11 +184,6 @@ public sealed class LogOutcomeSource : IOutcomeSource
         bool procced = _playerAuraIds.Contains(evidenceLogId)
             ? ClaimAuraEvidence(evidenceLogId, now)
             : ClaimDamageEvidence(evidenceLogId, now, effectDelaySeconds, evidenceTarget);
-        if (Environment.GetEnvironmentVariable("REPLAY_TRACE_PROCS") is { } win && win.Split('-') is [var lo, var hi]
-            && now >= double.Parse(lo, System.Globalization.CultureInfo.InvariantCulture) && now <= double.Parse(hi, System.Globalization.CultureInfo.InvariantCulture))
-        {
-            Console.Error.WriteLine($"TRACE proc {procKey} @ {now:F3}: {(procced ? "PROC" : "no")}");
-        }
         if (procced)
         {
             stats.Procs++;
@@ -222,11 +215,6 @@ public sealed class LogOutcomeSource : IOutcomeSource
         var hit = _hits.Peek(logId, now - _options.SameTickSeconds, now + _options.SameTickSeconds + delay,
             h => !_claimedDamageEvidence.Contains(h) && !_hits.IsAccountedFor(h)
                  && (target == null || (h.Target.Id == target.Id && h.Target.Instance == target.InstanceId)));
-        if (Environment.GetEnvironmentVariable("REPLAY_TRACE_PROCS") != null && hit == null)
-        {
-            var any = _hits.Peek(logId, now - _options.SameTickSeconds, now + _options.SameTickSeconds + delay, _ => true);
-            if (any != null) Console.Error.WriteLine($"TRACE evidence {logId} @ {now:F3}: first {any.Time:F3} {any.Target} claimedEvidence={_claimedDamageEvidence.Contains(any)} accounted={_hits.IsAccountedFor(any)}");
-        }
         if (hit == null) return false;
         // The whole multi-target group is one proc.
         foreach (var h in _hits.GroupOf(hit, _options)) _claimedDamageEvidence.Add(h);

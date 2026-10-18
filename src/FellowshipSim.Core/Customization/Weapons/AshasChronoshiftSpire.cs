@@ -17,4 +17,3 @@ public class AshasChronoshiftSpire : Weapon
         base.Equip(hero);
     }
 }
-

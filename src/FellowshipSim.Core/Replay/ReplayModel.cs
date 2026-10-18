@@ -20,7 +20,7 @@ public class ReplayOptions
     public HashSet<int> UnverifiedDamageIds { get; set; } = [1000101];
 
     /// <summary>Unmatched hits on a target that dies in the log before they would land hit nothing.</summary>
-    public bool MissHitsOnDyingTargets { get; set; } = Environment.GetEnvironmentVariable("REPLAY_MISSED") != "0";
+    public bool MissHitsOnDyingTargets { get; set; } = true;
     /// <summary>
     /// A partial final tick's fraction depends on where the game's 33ms server frames fall, about +/-0.1 of a full tick;
     /// its damage may differ from the engine's by that much of a full tick on top of the spread.

@@ -256,12 +256,7 @@ public abstract class Hero : Actor
 
     public void ReduceCooldown(string name, SimTime amount, SimTime now = default)
     {
-        if (Cooldowns.TryGetValue(name, out var state))
-        {
-            state.Reduce(amount, now);
-            if (Environment.GetEnvironmentVariable("REPLAY_TRACE_CD") == name)
-                Console.Error.WriteLine($"TRACE cd {name} @ {now}: -{amount} -> ready {state.NextChargeAt} charges {state.ChargesAt(now)}");
-        }
+        if (Cooldowns.TryGetValue(name, out var state)) state.Reduce(amount, now);
     }
 
     public void ReduceCooldown<T>(SimTime amount, SimTime now = default) where T : Ability
@@ -345,9 +340,6 @@ public sealed class CooldownState
     public int MaxCharges { get; }
     private bool Recharging => _charges < MaxCharges;
 
-    /// <summary>When the most recent charge came back (diagnostics: how long an ability sat ready before use).</summary>
-    public SimTime LastChargeAt { get; private set; }
-
     /// <summary>When the charge recharging now returns at the current rate (meaningful only while recharging).</summary>
     public SimTime NextChargeAt => _last + SimTime.FromSeconds(_remaining / Math.Max(1e-9, _rate));
 
@@ -423,7 +415,6 @@ public sealed class CooldownState
                     // A charge returns before the next checkpoint.
                     t += SimTime.FromSeconds(_remaining / rate);
                     _charges++;
-                    LastChargeAt = t;
                     _remaining = Recharging ? _rechargeBase : 0;
                     continue;
                 }

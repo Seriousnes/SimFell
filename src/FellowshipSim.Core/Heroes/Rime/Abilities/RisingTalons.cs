@@ -1,0 +1,83 @@
+using FellowshipSim.Core.Codex;
+using FellowshipSim.Core.Domain;
+using FellowshipSim.Core.Engine;
+using FellowshipSim.Core.Heroes.Rime.Talents;
+
+namespace FellowshipSim.Core.Heroes.Rime.Abilities;
+
+/// <summary>Ability 2224 (Icy Talons). Ice spikes per Winter Orb on the target and all nearby enemies; costs all Winter Orbs.</summary>
+public class RisingTalons : RimeAbility
+{
+    public const int AbilityId = 2224;
+
+    /// <summary>Combat logs: each spike loses damage as sqrt(12/N) beyond 12 targets.</summary>
+    public const double TargetThreshold = 12;
+
+    /// <summary>
+    /// Combat logs (10 Rime logs, 626 casts): one wave of spikes per Winter Orb; the first erupts 0.30-0.40s after the cast
+    /// (server frames; 25th percentile 0.301s, median 0.334s), then 4-5 server frames apart regardless of haste (median
+    /// 0.1447s). Each wave hits the enemies present when it erupts. The earliest usual times are used (0.30s, 4 frames),
+    /// so a wave is never released after the moment it should land.
+    /// </summary>
+    public const double FirstWaveDelaySeconds = 0.30;
+    public const double WaveIntervalSeconds = 4.0 / 30.0;
+
+    public RisingTalons(Rime owner) : base(owner, AbilityId)
+    {
+        AoeTargetThreshold = TargetThreshold;
+    }
+
+    public override bool CanCast(SimulationContext ctx, out string? reason)
+    {
+        if (!Rime.HasTalent<IcyTalons>())
+        {
+            reason = $"{Name} needs Icy Talons";
+            return false;
+        }
+        if (Rime.WinterOrbs < 1)
+        {
+            reason = $"{Name} needs a Winter Orb";
+            return false;
+        }
+        return base.CanCast(ctx, out reason);
+    }
+
+    public override void Execute(SimulationContext ctx, EnemyTarget target)
+    {
+        int spikes = Math.Max(1, Rime.WinterOrbs);
+        Rime.SpendWinterOrbs(spikes, ctx);
+
+        // Combat logs: every wave keeps the damage of the cast, even if buffs drop before it lands
+        // (yMAZVJL9hTpFjqbC fight 7 @ 168.5, 207.4, 234.1), but hits the enemies present when it erupts
+        // (@ 32.358: an enemy appearing after the cast is hit by every wave). The target falloff is fixed at the cast too
+        // (PrkThcx8Y3RgVXyq @ 38.61: waves on 19, 7 and 3 enemies deal the same per hit).
+        var now = ctx.CurrentTime;
+        int enemiesAtCast = Math.Max(1, ctx.ActiveEnemies.Count());
+        double falloff = enemiesAtCast > TargetThreshold ? Math.Sqrt(TargetThreshold / enemiesAtCast) : 1.0;
+        double damage = BaseDamage(ctx, null) * falloff;
+        // Rising Talons benefits from talents that affect Ice Comet: the crit buffs it consumes and Avalanche.
+        double critChance = Owner.CritChance(now) + CritChanceBonus + Rime.ConsumeSpenderCritBuffs(ctx);
+        double critMultiplier = Owner.CritMultiplier(now);
+        for (int i = 0; i < spikes; i++)
+        {
+            ctx.Schedule(SimTime.FromSeconds(FirstWaveDelaySeconds + i * WaveIntervalSeconds),
+                c => ReleaseWave(c, target, damage, critChance, critMultiplier), $"{Name} wave {i + 1}");
+        }
+        Rime.TriggerAvalanche(ctx, target);
+    }
+
+    private void ReleaseWave(SimulationContext ctx, EnemyTarget target, double damage, double critChance, double critMultiplier)
+    {
+        var enemies = ctx.ActiveEnemies.ToList();
+        if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
+        foreach (var enemy in ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx))
+        {
+            ctx.ApplyDamage(Owner, enemy, DamageLogId, Name, canCrit: true,
+                c => new SimulationContext.HitNumbers(
+                    damage * Owner.DamageMultiplierAgainst(enemy, c.CurrentTime),
+                    critChance + Owner.CritChanceAgainst(enemy, c.CurrentTime) - Owner.CritChance(c.CurrentTime),
+                    critMultiplier),
+                snapshot: true);
+        }
+    }
+}

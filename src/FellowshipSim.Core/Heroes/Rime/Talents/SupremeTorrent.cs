@@ -1,0 +1,22 @@
+using FellowshipSim.Core.Codex;
+using FellowshipSim.Core.Domain;
+using FellowshipSim.Core.Engine;
+using FellowshipSim.Core.Heroes.Rime.Abilities;
+
+namespace FellowshipSim.Core.Heroes.Rime.Talents;
+
+/// <summary>Talent 527: Freezing Torrent deals 20% more damage and channels 0.8s longer (hero_data DamageScale 1.2, AddedSeconds 0.8).</summary>
+public class SupremeTorrent : Talent
+{
+    public const double DamageMultiplier = 1.2;
+    public const double AddedChannelSeconds = 0.8;
+    public override string Name => "Supreme Torrent";
+    public override int Id => 527;
+
+    public override void Bind(Hero hero)
+    {
+        var torrent = hero.GetAbility<FreezingTorrent>();
+        torrent?.AddDamageMultiplier(DamageMultiplier);
+        torrent?.ExtendChannel(AddedChannelSeconds);
+    }
+}

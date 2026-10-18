@@ -95,10 +95,6 @@ public sealed class ReplayDriver
         foreach (var cmd in commands)
         {
             if (_handledCommands.Contains(cmd)) continue;
-            if (Environment.GetEnvironmentVariable("REPLAY_TRACE_COMMANDS") is { } tracePath)
-            {
-                File.AppendAllText(tracePath, $"{cmd.Time:F3} {cmd.Kind} {cmd.AbilityName}{Environment.NewLine}");
-            }
             var time = SimTime.FromSeconds(When(cmd));
             _ctx.RunUntil(time);
 
