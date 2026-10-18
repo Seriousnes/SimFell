@@ -161,7 +161,12 @@ Hooks every hero has:
 When a talent needs a moment the general hooks do not cover, give the ability or hero an event for it and raise it at
 that moment (Rime: `BurstingIce.Pulsed`, `FrostBolt.Landed`, `Rime.AnimaGenerated`, `Rime.IceCometCast`). If a talent
 changes how a spell works rather than adding to it (Icy Talons replacing two abilities), set a clearly named property
-on the hero or ability from the talent's `Bind` and let the ability read it.
+on the hero or ability from the talent's `Bind` and let the ability read it. An ability that replaces another and
+counts as it for talents inherits from it and overrides only what differs (Rime: `TalonStrike : GlacialBlast`,
+`RisingTalons : IceComet`); `hero.GetAbility<GlacialBlast>()` still returns Glacial Blast itself.
+
+A talent that deals damage of its own keeps that inside the talent: a small private `Ability` subclass for the damage
+numbers (coefficient, log ID, target falloff) and the talent's own state (Rime: `CoalescingFrost`).
 
 Also list every talent in the hero's `TalentTree`.
 

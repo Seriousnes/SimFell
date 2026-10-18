@@ -46,12 +46,7 @@ public class FreezingTorrent : RimeAbility
     {
         // Flight of the Navir: every tick (the partial one too) sends a swallow at an enemy of its choosing
         // (yMAZVJL9hTpFjqbC fight 7 @ 49.522: 10 ticks, 10 hits; @ 34.229: one per tick until Flight of the Navir ends).
-        if (Rime.Auras.HasAura(FlightOfTheNavir.Buff, ctx.CurrentTime))
-        {
-            var swallows = Rime.GetAbility<CommandedFrostSwallows>();
-            var enemy = swallows is not { Available: > 0 } ? null : ctx.Outcomes.ChooseTarget(swallows.DamageLogId, ctx.ActiveEnemies.ToList(), ctx);
-            if (enemy != null) swallows!.Send(ctx, enemy);
-        }
+        Rime.GetAbility<FlightOfTheNavir>()?.CommandSwallow(ctx);
         Rime.AddAnima(AnimaPerTick, ctx, target);
         DealDamage(ctx, target, damageMultiplier: fraction, extraCritChance: _soulfrost ? SoulfrostTorrent.CritChance : 0.0);
     }

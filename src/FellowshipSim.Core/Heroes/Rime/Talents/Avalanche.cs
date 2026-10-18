@@ -23,7 +23,7 @@ public class Avalanche : Talent
     public override void Bind(Hero hero)
     {
         var rime = (Rime)hero;
-        var comet = hero.GetAbility<ProcIceComet>();
+        var comet = hero.GetAbility<IceComet>();
         if (comet == null) return;
         rime.IceCometCast += (ctx, target) =>
         {
@@ -34,7 +34,7 @@ public class Avalanche : Talent
                 ctx.Schedule(SimTime.FromSeconds(CometSpacingSeconds * i), c =>
                 {
                     // The extra comets consume Frostweaver's Wrath ("the next ... Ice Comet that deals damage") but not Icy Flow.
-                    comet.Strike(c, target, rime.ConsumeSpenderCritBuffs(c, consumesIcyFlow: false));
+                    comet.FreeStrike(c, target, rime.ConsumeSpenderCritBuffs(c, consumesIcyFlow: false));
                 }, "Avalanche comet");
             }
         };

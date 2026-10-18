@@ -372,8 +372,12 @@ public abstract class Hero : Actor
     public Ability? GetAbility(string name) =>
         Abilities.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
+    /// <summary>
+    /// The ability of exactly type <typeparamref name="T"/>, else the first built on it (GetAbility&lt;GlacialBlast&gt; is
+    /// Glacial Blast itself, not Talon Strike).
+    /// </summary>
     public T? GetAbility<T>() where T : Ability =>
-        Abilities.OfType<T>().FirstOrDefault();
+        Abilities.OfType<T>().FirstOrDefault(a => a.GetType() == typeof(T)) ?? Abilities.OfType<T>().FirstOrDefault();
 
     public bool HasTalent<T>() where T : Talent => Talents.OfType<T>().Any();
 

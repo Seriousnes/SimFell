@@ -2,8 +2,8 @@ using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
-/// <summary>Ability 1028. Costs 2 Winter Orbs.</summary>
-public class GlacialBlast : GlacialBlastFamily
+/// <summary>Ability 1028. Costs 2 Winter Orbs. Talon Strike (Icy Talons) is built on it.</summary>
+public class GlacialBlast : RimeAbility
 {
     public const int AbilityId = 1028;
     public const string AbilityName = "Glacial Blast";
@@ -11,14 +11,30 @@ public class GlacialBlast : GlacialBlastFamily
     public const double CastTimeSeconds = 2.0;
     public const int DefaultWinterOrbCost = 2;
 
+    /// <summary>Talent 38 Glacial Assault: "deals 40% more damage" at 4 stacks.</summary>
+    public const double GlacialAssaultMultiplier = 1.40;
+    /// <summary>Talent 38: "dealing 30% of the initial damage to nearby enemies" (ability 2023's text says 20%).</summary>
+    public const double GlacialAssaultExplosionFraction = 0.30;
+    public const int GlacialAssaultExplosionId = 2023;
+    /// <summary>
+    /// Combat logs: the explosion is 30% of the hit actually dealt (crit included), never crits itself, and loses damage
+    /// as sqrt(12/N) beyond 12 targets (yMAZVJL9hTpFjqbC fight 7 @ 31.8s: explosion/spike = 0.2598 on 16, 0.2520 on 17).
+    /// </summary>
+    public const double GlacialAssaultExplosionTargetThreshold = 12;
+
     /// <summary>Seconds added to the cast time (Greater Glacial Blast).</summary>
     public double ExtraCastTimeSeconds { get; set; }
 
-    public GlacialBlast(Rime owner) : base(owner, AbilityId, AbilityName)
+    public GlacialBlast(Rime owner) : this(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
         CastTime = SimTime.FromSeconds(CastTimeSeconds);
     }
+
+    /// <summary>For abilities built on Glacial Blast (Talon Strike), which set their own values.</summary>
+    protected GlacialBlast(Rime owner, int id, string name) : base(owner, id, name, AbilityCategory.Power) { }
+
+    protected bool GlacialAssaultReady => Rime.GlacialAssaultStacks >= 4;
 
     public override SimTime GetAdjustedCastTime(SimTime now = default)
     {
@@ -30,7 +46,11 @@ public class GlacialBlast : GlacialBlastFamily
         return SimTime.FromSeconds(seconds / (1.0 + Owner.GetHaste(now) + icyFlowHaste));
     }
 
-    public override bool CanCast(SimulationContext ctx, out string? reason)
+    public override bool CanCast(SimulationContext ctx, out string? reason) =>
+        MeetsRequirements(out reason) && base.CanCast(ctx, out reason);
+
+    /// <summary>Talent and Winter Orb requirements, checked before the cooldown.</summary>
+    protected virtual bool MeetsRequirements(out string? reason)
     {
         if (Rime.HasIcyTalons)
         {
@@ -42,7 +62,8 @@ public class GlacialBlast : GlacialBlastFamily
             reason = $"{Name} needs {DefaultWinterOrbCost} Winter Orbs (have {Rime.WinterOrbs})";
             return false;
         }
-        return base.CanCast(ctx, out reason);
+        reason = null;
+        return true;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
@@ -50,17 +71,31 @@ public class GlacialBlast : GlacialBlastFamily
         var hero = Rime;
         bool assault = GlacialAssaultReady;
         double multiplier = 1.0;
-        if (assault)
-        {
-            hero.Auras.Remove(GlacialAssault.Buff, ctx.CurrentTime);
-            multiplier = GlacialAssaultMultiplier;
-        }
-        else
-        {
-            hero.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
-        }
+        if (assault) multiplier = ConsumeGlacialAssault(ctx);
+        else hero.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
 
         double crit = hero.ConsumeSpenderCritBuffs(ctx);
         DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: assault ? (c, dealt) => Explode(c, target, dealt) : null, extraCritChance: crit);
+    }
+
+    /// <summary>Removes the 4 Glacial Assault stacks; returns the damage multiplier they give.</summary>
+    protected double ConsumeGlacialAssault(SimulationContext ctx)
+    {
+        Rime.Auras.Remove(GlacialAssault.Buff, ctx.CurrentTime);
+        return GlacialAssaultMultiplier;
+    }
+
+    /// <summary>Called when a Glacial Assault hit on <paramref name="target"/> lands, with the damage it dealt.</summary>
+    protected void Explode(SimulationContext ctx, EnemyTarget target, double initialDamage)
+    {
+        if (initialDamage <= 0.0) return;
+        var nearby = ctx.Outcomes.SelectTargets(GlacialAssaultExplosionId, ctx.ActiveEnemies.Where(e => e != target).ToList(), ctx);
+        if (nearby.Count == 0) return;
+        double falloff = nearby.Count > GlacialAssaultExplosionTargetThreshold ? Math.Sqrt(GlacialAssaultExplosionTargetThreshold / nearby.Count) : 1.0;
+        double damage = initialDamage * GlacialAssaultExplosionFraction * falloff;
+        foreach (var enemy in nearby)
+        {
+            ctx.ApplyDamage(Owner, enemy, damage, GlacialAssaultExplosionId, "Glacial Assault", canCrit: false, 0.0, 1.0);
+        }
     }
 }

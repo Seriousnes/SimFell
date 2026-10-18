@@ -44,6 +44,6 @@ public class ColdSnap : RimeAbility
 
         hero.GenerateWinterOrbs(WinterOrbsGained, ctx, target);
         DealDamage(ctx, target);
-        hero.TriggerFrostSwallows(ctx, target);
+        hero.GetAbility<FlightOfTheNavir>()?.CommandSwallows(ctx, target);
     }
 }

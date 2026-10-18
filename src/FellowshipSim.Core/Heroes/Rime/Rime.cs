@@ -101,9 +101,6 @@ public sealed class Rime : Hero
         Abilities.Add(new FlightOfTheNavir(this));
         Abilities.Add(new WrathOfWinter(this));
         Abilities.Add(new FrostSwallows(this));
-        Abilities.Add(new CommandedFrostSwallows(this));
-        Abilities.Add(new ProcIceComet(this));
-        Abilities.Add(new CoalescingFrostEruption(this));
     }
 
     /// <summary>
@@ -136,15 +133,6 @@ public sealed class Rime : Hero
     /// <summary>Tells talents a Frost Swallow hit (Bursting Swallows).</summary>
     public void OnFrostSwallowHit(SimulationContext ctx, EnemyTarget target) => FrostSwallowHit?.Invoke(ctx, target);
 
-    /// <summary>A free Ice Comet on <paramref name="target"/> (Cold Shower): it consumes spender buffs and can trigger Avalanche.</summary>
-    public void CastFreeIceComet(SimulationContext ctx, EnemyTarget target)
-    {
-        var comet = GetAbility<ProcIceComet>();
-        if (comet == null || target == null) return;
-        comet.Strike(ctx, target, ConsumeSpenderCritBuffs(ctx));
-        OnIceCometCast(ctx, target);
-    }
-
     /// <summary>Spends Winter Orbs (a Spirit Refund may give them back).</summary>
     public void SpendWinterOrbs(int count, SimulationContext? ctx = null) => SpendResource(WinterOrbsResource, count, ctx);
 
@@ -158,17 +146,6 @@ public sealed class Rime : Hero
             GainResource(WinterOrbsResource, 1, ctx?.CurrentTime ?? default);
         }
         if (ctx != null && WinterOrbs > before) WinterOrbsGained?.Invoke(ctx, WinterOrbs - before);
-    }
-
-    /// <summary>Flight of the Navir: Cold Snap and Freezing Torrent command the 5 circling swallows to attack.</summary>
-    public void TriggerFrostSwallows(SimulationContext ctx, EnemyTarget target)
-    {
-        if (!Auras.HasAura(FlightOfTheNavir.Buff, ctx.CurrentTime) || target == null) return;
-        var swallows = GetAbility<CommandedFrostSwallows>();
-        if (swallows == null) return;
-        // Every swallow circling now; one that lands at once must not be sent again by the same command.
-        int available = swallows.Available;
-        for (int i = 0; i < available; i++) swallows.Send(ctx, target);
     }
 
     /// <summary>Adds Anima; every 9 Anima become a Winter Orb.</summary>
@@ -190,7 +167,6 @@ public sealed class Rime : Hero
     {
         ResetCombatState();
         GetAbility<BurstingIce>()?.ResetState();
-        GetAbility<CommandedFrostSwallows>()?.ResetState();
-        GetAbility<CoalescingFrostEruption>()?.ResetState();
+        GetAbility<FlightOfTheNavir>()?.ResetState();
     }
 }

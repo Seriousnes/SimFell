@@ -2,20 +2,27 @@ using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
-/// <summary>Ability 2223 (Icy Talons). One ice spike per Winter Orb spent; costs all Winter Orbs.</summary>
-public class TalonStrike : GlacialBlastFamily
+/// <summary>
+/// Ability 2223 (Icy Talons): replaces Glacial Blast. One ice spike per Winter Orb spent; costs all Winter Orbs. It is a
+/// Glacial Blast for talents (Glacial Assault, the spender crit buffs), so it builds on <see cref="GlacialBlast"/> and
+/// changes only the cost, the cast time and the spikes.
+/// </summary>
+public class TalonStrike : GlacialBlast
 {
-    public const int AbilityId = 2223;
-    public const string AbilityName = "Talon Strike";
+    public new const int AbilityId = 2223;
+    public new const string AbilityName = "Talon Strike";
     /// <summary>Per ice spike (40% of Glacial Blast).</summary>
-    public const double Coefficient = 4.096;
+    public new const double Coefficient = 4.096;
 
     public TalonStrike(Rime owner) : base(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
     }
 
-    public override bool CanCast(SimulationContext ctx, out string? reason)
+    /// <summary>Instant.</summary>
+    public override SimTime GetAdjustedCastTime(SimTime now = default) => SimTime.Zero;
+
+    protected override bool MeetsRequirements(out string? reason)
     {
         if (!Rime.HasIcyTalons)
         {
@@ -27,7 +34,8 @@ public class TalonStrike : GlacialBlastFamily
             reason = $"{Name} needs a Winter Orb";
             return false;
         }
-        return base.CanCast(ctx, out reason);
+        reason = null;
+        return true;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
@@ -40,9 +48,7 @@ public class TalonStrike : GlacialBlastFamily
         double multiplier = 1.0;
         if (assault)
         {
-            // Glacial Assault: no cost and 40% more damage.
-            hero.Auras.Remove(GlacialAssault.Buff, ctx.CurrentTime);
-            multiplier = GlacialAssaultMultiplier;
+            multiplier = ConsumeGlacialAssault(ctx);
             // INFERRED from logs (not the tooltip): cast "as if" with full Winter Orbs, it counts them as spent for Wisdom of
             // the North. Across 10 logs this removes 46 of 62 Ice Blitz cooldown misses while some casts still land right
             // as Ice Blitz comes back (so it is not too fast).
@@ -53,7 +59,7 @@ public class TalonStrike : GlacialBlastFamily
             hero.SpendWinterOrbs(spikes, ctx);
         }
 
-        // Talon Strike benefits from talents that affect Glacial Blast: every spike of the cast gets the consumed crit buffs.
+        // Every spike of the cast gets the consumed crit buffs.
         double crit = hero.ConsumeSpenderCritBuffs(ctx);
         for (int i = 0; i < spikes; i++)
         {

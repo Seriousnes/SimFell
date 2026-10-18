@@ -2,16 +2,20 @@ using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
-/// <summary>Ability 2224 (Icy Talons). Ice spikes per Winter Orb on the target and all nearby enemies; costs all Winter Orbs.</summary>
-public class RisingTalons : RimeAbility
+/// <summary>
+/// Ability 2224 (Icy Talons): replaces Ice Comet. Ice spikes per Winter Orb on the target and all nearby enemies; costs
+/// all Winter Orbs. It is an Ice Comet for talents (Avalanche, the spender crit buffs), so it builds on
+/// <see cref="IceComet"/> and changes only the cost and the waves of spikes.
+/// </summary>
+public class RisingTalons : IceComet
 {
-    public const int AbilityId = 2224;
-    public const string AbilityName = "Rising Talons";
+    public new const int AbilityId = 2224;
+    public new const string AbilityName = "Rising Talons";
     /// <summary>Per ice spike (40% of Ice Comet).</summary>
-    public const double Coefficient = 2.114;
+    public new const double Coefficient = 2.114;
 
     /// <summary>Combat logs: each spike loses damage as sqrt(12/N) beyond 12 targets.</summary>
-    public const double TargetThreshold = 12;
+    public new const double TargetThreshold = 12;
 
     /// <summary>
     /// Combat logs (10 Rime logs, 626 casts): one wave of spikes per Winter Orb; the first erupts 0.30-0.40s after the cast
@@ -22,13 +26,13 @@ public class RisingTalons : RimeAbility
     public const double FirstWaveDelaySeconds = 0.30;
     public const double WaveIntervalSeconds = 4.0 / 30.0;
 
-    public RisingTalons(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Power)
+    public RisingTalons(Rime owner) : base(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
         AoeTargetThreshold = TargetThreshold;
     }
 
-    public override bool CanCast(SimulationContext ctx, out string? reason)
+    protected override bool MeetsRequirements(out string? reason)
     {
         if (!Rime.HasIcyTalons)
         {
@@ -40,7 +44,8 @@ public class RisingTalons : RimeAbility
             reason = $"{Name} needs a Winter Orb";
             return false;
         }
-        return base.CanCast(ctx, out reason);
+        reason = null;
+        return true;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

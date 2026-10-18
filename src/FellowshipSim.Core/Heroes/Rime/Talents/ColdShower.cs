@@ -20,11 +20,15 @@ public class ColdShower : Talent
     public override void Bind(Hero hero)
     {
         var rime = (Rime)hero;
+        var comet = hero.GetAbility<IceComet>();
+        if (comet == null) return;
         hero.OnChannelTick += (ability, target, _, ctx) =>
         {
             if (ability is FreezingTorrent && target != null && ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx))
             {
-                rime.CastFreeIceComet(ctx, target);
+                // A free Ice Comet: it consumes the spender crit buffs and can trigger Avalanche.
+                comet.FreeStrike(ctx, target, rime.ConsumeSpenderCritBuffs(ctx));
+                rime.OnIceCometCast(ctx, target);
             }
         };
     }

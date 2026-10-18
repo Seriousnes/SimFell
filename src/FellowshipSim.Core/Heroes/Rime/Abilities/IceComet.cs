@@ -1,8 +1,9 @@
-using FellowshipSim.Core.Heroes.Rime.Talents;
-
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
-/// <summary>Ability 1018. Costs 2 Winter Orbs.</summary>
+/// <summary>
+/// Ability 1018. Costs 2 Winter Orbs. Also the free comets of Cold Shower and Avalanche (<see cref="FreeStrike"/>), which
+/// stay plain Ice Comets even with Icy Talons (per the user). Rising Talons (Icy Talons) is built on it.
+/// </summary>
 public class IceComet : RimeAbility
 {
     public const int AbilityId = 1018;
@@ -13,13 +14,26 @@ public class IceComet : RimeAbility
     /// <summary>hero_data Ice Comet TargetCountThreshold 12: damage falls off as sqrt(12/N) beyond 12 targets.</summary>
     public const double TargetThreshold = 12;
 
-    public IceComet(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Power)
+    /// <summary>
+    /// Ability 2227 ("Ice Comet", GA_Rime_Util_OnTargetPulsatingAoe): the ID free comets deal their damage under.
+    /// UNVERIFIED: no log we have shows a free comet's damage.
+    /// </summary>
+    public const int FreeCometDamageId = 2227;
+
+    public IceComet(Rime owner) : this(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
         AoeTargetThreshold = TargetThreshold;
     }
 
-    public override bool CanCast(SimulationContext ctx, out string? reason)
+    /// <summary>For abilities built on Ice Comet (Rising Talons), which set their own values.</summary>
+    protected IceComet(Rime owner, int id, string name) : base(owner, id, name, AbilityCategory.Power) { }
+
+    public override bool CanCast(SimulationContext ctx, out string? reason) =>
+        MeetsRequirements(out reason) && base.CanCast(ctx, out reason);
+
+    /// <summary>Talent and Winter Orb requirements, checked before the cooldown.</summary>
+    protected virtual bool MeetsRequirements(out string? reason)
     {
         if (Rime.HasIcyTalons)
         {
@@ -31,21 +45,26 @@ public class IceComet : RimeAbility
             reason = $"{Name} needs {DefaultWinterOrbCost} Winter Orbs (have {Rime.WinterOrbs})";
             return false;
         }
-        return base.CanCast(ctx, out reason);
+        reason = null;
+        return true;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         Rime.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
-        Strike(this, ctx, target, Rime.ConsumeSpenderCritBuffs(ctx));
+        Strike(ctx, target, Rime.ConsumeSpenderCritBuffs(ctx), DamageLogId);
         Rime.OnIceCometCast(ctx, target);
     }
 
+    /// <summary>A free comet (Cold Shower, Avalanche): the impact alone, with no cost and no cast.</summary>
+    public void FreeStrike(SimulationContext ctx, EnemyTarget target, double extraCritChance) =>
+        Strike(ctx, target, extraCritChance, FreeCometDamageId);
+
     /// <summary>One comet impact on <paramref name="target"/> and all enemies around it.</summary>
-    internal static void Strike(RimeAbility comet, SimulationContext ctx, EnemyTarget target, double extraCritChance)
+    private void Strike(SimulationContext ctx, EnemyTarget target, double extraCritChance, int damageId)
     {
         var enemies = ctx.ActiveEnemies.ToList();
         if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
-        comet.DealAoeDamage(ctx, enemies, extraCritChance: extraCritChance);
+        DealAoeDamage(ctx, enemies, overrideId: damageId, extraCritChance: extraCritChance);
     }
 }
