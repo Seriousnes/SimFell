@@ -5,9 +5,10 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// dealing 144% Main Stat frost damage to all enemies in the area with each wave. Enemies hit by the final wave are
 /// afflicted by Curse of An'zhyr permanently, taking 38.4% Main Stat frost damage every 3 seconds. Enemies afflicted by
 /// Curse of An'zhyr take +200% increased direct damage from Icicles of An'zhyr. Can be cast during Global Cooldown."
-/// Combat logs (PCaMVTFbZzNLrfx3 fight 5, 12 casts): the waves land 0.27s, 1.27s and 2.27s after the cast; the curse
-/// (effect 2286) ticks every 3s shortened by haste. UNVERIFIED: the target falloff threshold (a bigger pull is hit for
-/// less, as sqrt(T/N)) is taken from Chronoshift.
+/// Combat logs (PCaMVTFbZzNLrfx3 fight 5, 12 casts): the waves land 0.27s, 1.27s and 2.27s after the cast and keep the
+/// damage, crit chance and crit power of the cast; damage falls off as sqrt(15/N) beyond 15 enemies (every wave on 16-22
+/// enemies fits T = 15.0-15.6; all 12 casts then match within 0.97-1.06). The curse (effect 2286) ticks every 3s
+/// shortened by haste.
 /// </summary>
 public class IciclesOfAnzhyr : Ability
 {
@@ -18,7 +19,7 @@ public class IciclesOfAnzhyr : Ability
     public const int Waves = 3;
     public const double FirstWaveSeconds = 0.27;
     public const double WaveIntervalSeconds = 1.0;
-    public const double TargetThreshold = 5;
+    public const double TargetThreshold = 15;
     public const double CursedDamageMultiplier = 3.0;
 
     public const int CurseEffectId = 2286;
@@ -43,14 +44,20 @@ public class IciclesOfAnzhyr : Ability
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
+        // The waves keep the damage, crit chance and crit power of the cast.
+        var now = ctx.CurrentTime;
+        double damage = BaseDamage(ctx, null);
+        double critChance = Owner.CritChance(now) + CritChanceBonus;
+        double critMultiplier = CritMultiplierAt(now);
         for (int i = 0; i < Waves; i++)
         {
             bool final = i == Waves - 1;
-            ctx.Schedule(SimTime.FromSeconds(FirstWaveSeconds + i * WaveIntervalSeconds), c => Wave(c, target, final), $"{Name} wave {i + 1}");
+            ctx.Schedule(SimTime.FromSeconds(FirstWaveSeconds + i * WaveIntervalSeconds),
+                c => Wave(c, target, final, damage, critChance, critMultiplier), $"{Name} wave {i + 1}");
         }
     }
 
-    private void Wave(SimulationContext ctx, EnemyTarget target, bool final)
+    private void Wave(SimulationContext ctx, EnemyTarget target, bool final, double damage, double critChance, double critMultiplier)
     {
         var enemies = ctx.ActiveEnemies.ToList();
         if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
@@ -59,7 +66,13 @@ public class IciclesOfAnzhyr : Ability
         foreach (var enemy in struck)
         {
             bool cursed = enemy.Auras.HasAura(Curse, ctx.CurrentTime);
-            DealDamage(ctx, enemy, damageMultiplier: falloff * (cursed ? CursedDamageMultiplier : 1.0));
+            double multiplier = falloff * (cursed ? CursedDamageMultiplier : 1.0);
+            ctx.ApplyDamage(Owner, enemy, DamageLogId, Name, canCrit: true,
+                c => new SimulationContext.HitNumbers(
+                    damage * multiplier * Owner.DamageMultiplierAgainst(enemy, c.CurrentTime),
+                    critChance + Owner.CritChanceAgainst(enemy, c.CurrentTime) - Owner.CritChance(c.CurrentTime),
+                    critMultiplier),
+                snapshot: true);
             if (final && !cursed) Afflict(ctx, enemy);
         }
     }
