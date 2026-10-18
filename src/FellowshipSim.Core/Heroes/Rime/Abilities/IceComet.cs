@@ -20,6 +20,9 @@ public class IceComet : RimeAbility
     /// </summary>
     public const int FreeCometDamageId = 2227;
 
+    /// <summary>An Ice Comet was cast at a target: Ice Comet, Rising Talons, or Cold Shower's free comet (Avalanche).</summary>
+    public event Action<SimulationContext, EnemyTarget>? CometCast;
+
     public IceComet(Rime owner) : this(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
@@ -53,10 +56,22 @@ public class IceComet : RimeAbility
     {
         Rime.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
         Strike(ctx, target, Rime.ConsumeSpenderCritBuffs(ctx), DamageLogId);
-        Rime.OnIceCometCast(ctx, target);
+        RaiseCometCast(ctx, target);
     }
 
-    /// <summary>A free comet (Cold Shower, Avalanche): the impact alone, with no cost and no cast.</summary>
+    /// <summary>Cold Shower's free comet: counts as a cast (it consumes the spender crit buffs and can trigger Avalanche).</summary>
+    public void FreeCast(SimulationContext ctx, EnemyTarget target)
+    {
+        FreeStrike(ctx, target, Rime.ConsumeSpenderCritBuffs(ctx));
+        RaiseCometCast(ctx, target);
+    }
+
+    protected void RaiseCometCast(SimulationContext ctx, EnemyTarget target)
+    {
+        if (target != null) CometCast?.Invoke(ctx, target);
+    }
+
+    /// <summary>A free comet's impact alone, with no cost and no cast (Avalanche's extra comets).</summary>
     public void FreeStrike(SimulationContext ctx, EnemyTarget target, double extraCritChance) =>
         Strike(ctx, target, extraCritChance, FreeCometDamageId);
 

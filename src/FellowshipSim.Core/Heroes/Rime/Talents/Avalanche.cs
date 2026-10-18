@@ -25,7 +25,8 @@ public class Avalanche : Talent
         var rime = (Rime)hero;
         var comet = hero.GetAbility<IceComet>();
         if (comet == null) return;
-        rime.IceCometCast += (ctx, target) =>
+        // Ice Comet's event: Rising Talons and Cold Shower's comet raise it too (Rising Talons is built on Ice Comet).
+        foreach (var cast in hero.Abilities.OfType<IceComet>()) cast.CometCast += (ctx, target) =>
         {
             int extra = ctx.Outcomes.RollProc(ProcKey, OneExtraChance, ctx) ? 1
                 : ctx.Outcomes.RollProc(ProcKey, TwoExtraChance, ctx) ? 2 : 0;
@@ -34,7 +35,7 @@ public class Avalanche : Talent
                 ctx.Schedule(SimTime.FromSeconds(CometSpacingSeconds * i), c =>
                 {
                     // The extra comets consume Frostweaver's Wrath ("the next ... Ice Comet that deals damage") but not Icy Flow.
-                    comet.FreeStrike(c, target, rime.ConsumeSpenderCritBuffs(c, consumesIcyFlow: false));
+                    comet.FreeStrike(c, target, rime.ConsumeSpenderCritBuffs(c, avalancheComet: true));
                 }, "Avalanche comet");
             }
         };

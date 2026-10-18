@@ -158,7 +158,7 @@ Hooks every hero has:
 | `hero.GuaranteedSpiritRefunds` | effects that make the next Spirit Refund certain |
 
 When a talent needs a moment the general hooks do not cover, give the ability or hero an event for it and raise it at
-that moment (Rime: `BurstingIce.Pulsed`, `FrostBolt.Landed`, `Rime.AnimaGenerated`, `Rime.IceCometCast`). If a talent
+that moment (Rime: `BurstingIce.Pulsed`, `FrostBolt.Landed`, `Rime.AnimaGenerated`, `IceComet.CometCast`), or a list the talent adds to (`Rime.SpenderCritBuffs`, `GlacialBlast.CastHasteBonuses`). If a talent
 changes how a spell works rather than adding to it (Icy Talons replacing two abilities), set a clearly named property
 on the hero or ability from the talent's `Bind` and let the ability read it. An ability that replaces another and
 counts as it for talents inherits from it and overrides only what differs (Rime: `TalonStrike : GlacialBlast`,

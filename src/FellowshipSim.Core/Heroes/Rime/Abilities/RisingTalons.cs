@@ -69,7 +69,7 @@ public class RisingTalons : IceComet
             ctx.Schedule(SimTime.FromSeconds(FirstWaveDelaySeconds + i * WaveIntervalSeconds),
                 c => ReleaseWave(c, target, damage, critChance, critMultiplier), $"{Name} wave {i + 1}");
         }
-        Rime.OnIceCometCast(ctx, target);
+        RaiseCometCast(ctx, target);
     }
 
     private void ReleaseWave(SimulationContext ctx, EnemyTarget target, double damage, double critChance, double critMultiplier)

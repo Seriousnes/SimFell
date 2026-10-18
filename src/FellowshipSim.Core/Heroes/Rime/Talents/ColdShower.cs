@@ -26,9 +26,7 @@ public class ColdShower : Talent
         {
             if (ability is FreezingTorrent && target != null && ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx))
             {
-                // A free Ice Comet: it consumes the spender crit buffs and can trigger Avalanche.
-                comet.FreeStrike(ctx, target, rime.ConsumeSpenderCritBuffs(ctx));
-                rime.OnIceCometCast(ctx, target);
+                comet.FreeCast(ctx, target);
             }
         };
     }

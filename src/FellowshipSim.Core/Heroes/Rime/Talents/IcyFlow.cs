@@ -23,12 +23,22 @@ public class IcyFlow : Talent
     public override string Name => TalentName;
     public override int Id => TalentId;
 
-    /// <summary>Cold Snap grants a stack; the spenders read and consume it (Rime.ConsumeSpenderCritBuffs, GlacialBlast cast time).</summary>
+    /// <summary>Cold Snap grants a stack; the next spender consumes it for crit, and a Glacial Blast cast with it is faster.</summary>
     public override void Bind(Hero hero)
     {
+        var rime = (Rime)hero;
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is ColdSnap) hero.Auras.Apply(Buff, now);
         };
+        // Avalanche's extra comets do not consume it.
+        rime.SpenderCritBuffs.Add((ctx, avalancheComet) =>
+        {
+            if (avalancheComet || !hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 0.0;
+            hero.Auras.ConsumeStack(Buff, ctx.CurrentTime);
+            return CritChance;
+        });
+        // "+50% Haste to you while casting" the Glacial Blast that consumes it.
+        rime.GetAbility<GlacialBlast>()?.CastHasteBonuses.Add(now => hero.Auras.HasAura(Buff, now) ? CastHaste : 0.0);
     }
 }

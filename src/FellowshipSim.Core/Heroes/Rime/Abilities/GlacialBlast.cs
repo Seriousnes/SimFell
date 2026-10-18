@@ -25,6 +25,9 @@ public class GlacialBlast : RimeAbility
     /// <summary>Seconds added to the cast time (Greater Glacial Blast).</summary>
     public double ExtraCastTimeSeconds { get; set; }
 
+    /// <summary>Haste added to the cast while casting (Icy Flow); read when the cast starts.</summary>
+    public List<Func<SimTime, double>> CastHasteBonuses { get; } = new();
+
     public GlacialBlast(Rime owner) : this(owner, AbilityId, AbilityName)
     {
         BaseCoefficient = Coefficient;
@@ -41,9 +44,8 @@ public class GlacialBlast : RimeAbility
         // Instant with 4 Glacial Assault stacks or during Wrath of Winter.
         if (GlacialAssaultReady || Rime.Auras.HasAura(WrathOfWinter.Buff, now)) return SimTime.Zero;
         double seconds = CastTime.TotalSeconds + ExtraCastTimeSeconds;
-        // Icy Flow: "+50% Haste to you while casting" the Glacial Blast that consumes it.
-        double icyFlowHaste = Rime.Auras.HasAura(IcyFlow.Buff, now) ? IcyFlow.CastHaste : 0.0;
-        return SimTime.FromSeconds(seconds / (1.0 + Owner.GetHaste(now) + icyFlowHaste));
+        double castHaste = CastHasteBonuses.Sum(bonus => bonus(now));
+        return SimTime.FromSeconds(seconds / (1.0 + Owner.GetHaste(now) + castHaste));
     }
 
     public override bool CanCast(SimulationContext ctx, out string? reason) =>

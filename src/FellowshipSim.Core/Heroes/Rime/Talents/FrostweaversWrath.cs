@@ -31,5 +31,13 @@ public class FrostweaversWrath : Talent
         {
             if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx, Buff.LogId)) hero.Auras.Apply(Buff, ctx.CurrentTime);
         };
+        // "Your next Glacial Blast or Ice Comet that deals damage" crits: every spender consumes a stack, Avalanche's
+        // extra comets too.
+        ((Rime)hero).SpenderCritBuffs.Add((ctx, _) =>
+        {
+            if (!hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 0.0;
+            hero.Auras.ConsumeStack(Buff, ctx.CurrentTime);
+            return CritChance;
+        });
     }
 }

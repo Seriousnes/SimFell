@@ -54,9 +54,6 @@ public sealed class Rime : Hero
     /// <summary>Winter Orbs were gained (raised once per gain that added orbs, with how many).</summary>
     public event Action<SimulationContext, int>? WinterOrbsGained;
 
-    /// <summary>An Ice Comet was cast at a target (Ice Comet, Rising Talons with Icy Talons, or a free Cold Shower comet).</summary>
-    public event Action<SimulationContext, EnemyTarget>? IceCometCast;
-
     /// <summary>A Frost Swallow hit an enemy.</summary>
     public event Action<SimulationContext, EnemyTarget>? FrostSwallowHit;
 
@@ -94,31 +91,15 @@ public sealed class Rime : Hero
     }
 
     /// <summary>
-    /// The crit chance a Winter Orb spender cast (Glacial Blast, Ice Comet, Talon Strike, Rising Talons) gets from the buffs
-    /// it consumes: a Frostweaver's Wrath stack, and an Icy Flow stack when <paramref name="consumesIcyFlow"/>.
+    /// Buffs a Winter Orb spender (Glacial Blast, Ice Comet, Talon Strike, Rising Talons, free comets) consumes for crit
+    /// chance on its hits. Each talent adds its own (Frostweaver's Wrath, Icy Flow): it consumes its buff and returns the
+    /// crit chance it gives. The flag is true for Avalanche's extra comets.
     /// </summary>
-    public double ConsumeSpenderCritBuffs(SimulationContext ctx, bool consumesIcyFlow = true)
-    {
-        var now = ctx.CurrentTime;
-        double crit = 0.0;
-        if (Auras.HasAura(FrostweaversWrath.Buff, now))
-        {
-            Auras.ConsumeStack(FrostweaversWrath.Buff, now);
-            crit += FrostweaversWrath.CritChance;
-        }
-        if (consumesIcyFlow && Auras.HasAura(IcyFlow.Buff, now))
-        {
-            Auras.ConsumeStack(IcyFlow.Buff, now);
-            crit += IcyFlow.CritChance;
-        }
-        return crit;
-    }
+    public List<Func<SimulationContext, bool, double>> SpenderCritBuffs { get; } = new();
 
-    /// <summary>Tells talents an Ice Comet was cast (Avalanche).</summary>
-    public void OnIceCometCast(SimulationContext ctx, EnemyTarget target)
-    {
-        if (target != null) IceCometCast?.Invoke(ctx, target);
-    }
+    /// <summary>Consumes the spender crit buffs for one cast; returns the crit chance its hits get.</summary>
+    public double ConsumeSpenderCritBuffs(SimulationContext ctx, bool avalancheComet = false) =>
+        SpenderCritBuffs.Sum(buff => buff(ctx, avalancheComet));
 
     /// <summary>Tells talents a Frost Swallow hit (Bursting Swallows).</summary>
     public void OnFrostSwallowHit(SimulationContext ctx, EnemyTarget target) => FrostSwallowHit?.Invoke(ctx, target);
