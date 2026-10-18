@@ -22,7 +22,7 @@ public class BurstingSwallows : Talent
         if (burstingIce == null) return;
         rime.FrostSwallowHit += (ctx, target) =>
         {
-            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx, LogIds.Effect(BurstingIce.PulseEffectId))) burstingIce.DealPulse(ctx, target);
+            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) burstingIce.DealPulse(ctx, target);
         };
     }
 }

@@ -2,11 +2,9 @@ namespace FellowshipSim.Core.Domain;
 
 /// <summary>
 /// A resource a hero has (Anima, Winter Orbs, Focus, Spirit...), declared in the hero's file. <see cref="AplName"/> is
-/// how action lists refer to it (e.g. "winter_orbs"), plus any <see cref="Aliases"/>. When combat logs report it,
-/// <see cref="LogResourceType"/> is the log's resource type number, <see cref="LogScale"/> converts log values to engine
-/// units and <see cref="LogTolerance"/> is how far the engine may differ before a replay reports it.
+/// how action lists refer to it (e.g. "winter_orbs"), plus any <see cref="Aliases"/>.
 /// </summary>
-public sealed record ResourceDef(string Name, double Max, double Initial = 0, int LogResourceType = 0, double LogScale = 1.0, double LogTolerance = 0.0)
+public sealed record ResourceDef(string Name, double Max, double Initial = 0)
 {
     public string AplName => Name.ToLowerInvariant().Replace(' ', '_').Replace("'", "");
     public IReadOnlyList<string> Aliases { get; init; } = [];

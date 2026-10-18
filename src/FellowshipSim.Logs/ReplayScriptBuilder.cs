@@ -17,7 +17,7 @@ namespace FellowshipSim.Logs;
 /// </summary>
 public static class ReplayScriptBuilder
 {
-    public const string Schema = FellowshipSim.Core.Replay.ReplayScript.SchemaVersion;
+    public const string Schema = FellowshipSim.Logs.Replay.ReplayScript.SchemaVersion;
 
     private static readonly HashSet<string> AuraTypes =
     [

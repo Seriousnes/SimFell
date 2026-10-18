@@ -23,7 +23,7 @@ public class DarkProphecy : SetBonus
         var rppm = new RealPpm(ProcKey, ProcsPerMinute);
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (hero.SimContext is { } ctx && rppm.Roll(hero, ctx, Buff.LogId)) hero.Auras.Apply(Buff, now);
+            if (hero.SimContext is { } ctx && rppm.Roll(hero, ctx)) hero.Auras.Apply(Buff, now);
         };
     }
 }

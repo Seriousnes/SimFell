@@ -15,7 +15,6 @@ public static class HeroImporter
     {
         var hero = Catalog.CreateHero(build.Hero);
         hero.Name = build.Name;
-        hero.GameDate = build.GameDate;
 
         // Base stats: ratings from gear, and the character sheet's percentages when the build comes from a log
         // (they already include passive bonuses such as gem nodes and set bonuses).

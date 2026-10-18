@@ -30,7 +30,7 @@ public class SoulfrostTorrent : Talent
         hero.OnCastCompleted += (_, _, now) =>
         {
             if (hero.SimContext is { } ctx && !rime.Auras.HasAura(Buff, now)
-                && rppm.Roll(hero, ctx, Buff.LogId))
+                && rppm.Roll(hero, ctx))
             {
                 rime.Auras.Apply(Buff, now);
             }

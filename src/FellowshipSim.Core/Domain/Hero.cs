@@ -1,4 +1,3 @@
-using System.Reflection;
 using FellowshipSim.Core.Customization.Blessings;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Customization.Legendaries;
@@ -49,32 +48,16 @@ public abstract class Hero : Actor
     public List<AuraDef> PassiveAuras { get; } = new();
 
     /// <summary>
-    /// The date of the game being simulated (a replayed fight's date), for balance changes that came in on a known day;
-    /// null simulates the current game.
+    /// The class tuning aura every hero has: a damage multiplier the game sets per hero (hero attribute
+    /// BalancingDamageAura). 1.0 unless the hero sets its own value in <see cref="Initialize"/>.
     /// </summary>
-    public DateTime? GameDate { get; set; }
+    public double ClassDamageTuning { get; set; } = 1.0;
 
     /// <summary>
-    /// A hero-wide damage tuning aura applied by the game server (balance changes that are not in the datamine);
-    /// each hero declares its own in its hero file. <paramref name="history"/> lists each value with the date it took
-    /// effect; the one in force on <see cref="GameDate"/> applies (none before the first).
+    /// Auras built at runtime (from a rank or a gem node) rather than declared as <c>public static readonly AuraDef</c>
+    /// constants; see <see cref="Register"/>.
     /// </summary>
-    protected void AddClassTuningAura(string name, params (DateTime From, double DamageMultiplier)[] history)
-    {
-        var date = GameDate ?? DateTime.MaxValue;
-        double multiplier = history.Where(h => h.From <= date).OrderBy(h => h.From).Select(h => h.DamageMultiplier).LastOrDefault(1.0);
-        if (multiplier != 1.0) PassiveAuras.Add(AuraDef.Internal(name, 0, 1, StatModifier.More(StatType.DamageScale, multiplier)));
-    }
-
-    /// <summary>
-    /// Log IDs of every aura this hero's abilities and customizations can apply: the <c>AuraDef</c> constants declared on
-    /// them (found automatically) and the auras built at runtime and passed to <see cref="Register"/>. Passive auras are
-    /// left out: they are on all fight in the engine and logs do not report them as buffs.
-    /// </summary>
-    public HashSet<int> ModeledAuraLogIds =>
-        [.. DeclaredAuraLogIds().Concat(_registeredAuraLogIds).Except(PassiveAuras.Select(a => a.LogId))];
-
-    private readonly HashSet<int> _registeredAuraLogIds = new();
+    public HashSet<AuraDef> RuntimeAuras { get; } = new();
 
     /// <summary>Extra crit chance against a specific target (e.g. bonuses vs. healthy enemies).</summary>
     public List<Func<EnemyTarget, SimTime, double>> TargetCritChanceBonuses { get; } = new();
@@ -211,43 +194,19 @@ public abstract class Hero : Actor
         }
         // Spirit Refund chance is Spirit / (1 + Spirit) (per the user: "%/(100+%)").
         double spirit = SpiritPercent(ctx.CurrentTime);
-        return ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx, RisingSpirit.LogId);
+        return ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx);
     }
 
     // ------------------------------------------------------------------ auras
 
     /// <summary>
-    /// Marks an aura built at runtime (not a <c>public static readonly AuraDef</c>) as modeled, so replays compare it with
-    /// the log. Declared AuraDef constants need no call.
+    /// Lists an aura built at runtime in <see cref="RuntimeAuras"/>, so tools that look at every aura the hero can have
+    /// (the replay) see it. Declared AuraDef constants need no call.
     /// </summary>
     public AuraDef Register(AuraDef def)
     {
-        if (def.LogId > 0) _registeredAuraLogIds.Add(def.LogId);
+        RuntimeAuras.Add(def);
         return def;
-    }
-
-    /// <summary>
-    /// Log IDs of the auras declared as <c>public static readonly AuraDef</c> on the hero and on everything it has:
-    /// abilities, talents, gems, blessings, weapon, traits, legendaries and sets.
-    /// </summary>
-    private HashSet<int> DeclaredAuraLogIds()
-    {
-        var owners = new List<object> { this };
-        owners.AddRange(Abilities);
-        owners.AddRange(Talents);
-        owners.AddRange(Gems);
-        owners.AddRange(Blessings);
-        if (EquippedWeapon != null) owners.Add(EquippedWeapon);
-        owners.AddRange(Traits);
-        owners.AddRange(Legendaries);
-        owners.AddRange(Sets);
-        return owners
-            .Select(o => o.GetType()).Distinct()
-            .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-            .Where(f => f.FieldType == typeof(AuraDef))
-            .Select(f => ((AuraDef)f.GetValue(null)!).LogId)
-            .Where(id => id > 0)
-            .ToHashSet();
     }
 
     /// <summary>Activates Spirit of Heroism and the auras that last while it does.</summary>
@@ -428,6 +387,10 @@ public abstract class Hero : Actor
         GlobalCooldownEndTime = SimTime.Zero;
         CurrentCast = null;
         CurrentChannel = null;
+        if (ClassDamageTuning != 1.0)
+        {
+            Auras.Apply(AuraDef.Internal("Class tuning", 0, 1, StatModifier.More(StatType.DamageScale, ClassDamageTuning)), SimTime.Zero);
+        }
         foreach (var passive in PassiveAuras) Auras.Apply(passive, SimTime.Zero);
     }
 }

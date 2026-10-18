@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FellowshipSim.Core.Import;
 
-namespace FellowshipSim.Core.Replay;
+namespace FellowshipSim.Logs.Replay;
 
 /// <summary>
 /// A hero-agnostic replay script produced by tools/replay/build_replay_script.py.

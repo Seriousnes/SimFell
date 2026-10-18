@@ -1,4 +1,4 @@
-namespace FellowshipSim.Core.Replay;
+namespace FellowshipSim.Logs.Replay;
 
 /// <summary>
 /// Answers the engine's undecided questions from the combat log during a replay:
@@ -161,7 +161,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
 
     public void HitFinished(SimulationContext ctx) { }
 
-    public bool RollProc(string procKey, double chance, SimulationContext ctx, int evidenceLogId = 0, double effectDelaySeconds = 0.0, EnemyTarget? evidenceTarget = null)
+    public bool RollProc(string procKey, double chance, SimulationContext ctx, EnemyTarget? target = null)
     {
         if (!ProcStats.TryGetValue(procKey, out var stats))
         {
@@ -171,16 +171,17 @@ public sealed class LogOutcomeSource : IOutcomeSource
         stats.Rolls++;
         stats.ExpectedProcs += Math.Clamp(chance, 0.0, 1.0);
 
-        if (evidenceLogId == 0)
+        var evidence = ProcEvidence.For(procKey);
+        if (evidence == null)
         {
-            Report(ctx, IssueCategory.Procs, $"Proc '{procKey}' does not say what it produces (evidence log ID); treated as not procced", $"proc without evidence: {procKey}");
+            Report(ctx, IssueCategory.Procs, $"Proc '{procKey}' has no evidence listed in ProcEvidence; treated as not procced", $"proc without evidence: {procKey}");
             return false;
         }
 
         double now = ctx.CurrentTime.TotalSeconds;
-        bool procced = _playerAuraIds.Contains(evidenceLogId)
-            ? ClaimAuraEvidence(evidenceLogId, now)
-            : ClaimDamageEvidence(evidenceLogId, now, effectDelaySeconds, evidenceTarget);
+        bool procced = _playerAuraIds.Contains(evidence.LogId)
+            ? ClaimAuraEvidence(evidence.LogId, now)
+            : ClaimDamageEvidence(evidence.LogId, now, evidence.DelaySeconds, target);
         if (procced)
         {
             stats.Procs++;

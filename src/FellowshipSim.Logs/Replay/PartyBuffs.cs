@@ -1,6 +1,6 @@
 using FellowshipSim.Core.Customization.Traits;
 
-namespace FellowshipSim.Core.Replay;
+namespace FellowshipSim.Logs.Replay;
 
 /// <summary>
 /// Buffs other players put on the replayed player that change the player's damage. In a replay, a logged buff from

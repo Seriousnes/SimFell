@@ -19,24 +19,15 @@ public sealed class Rime : Hero
     /// </summary>
     public const int SwallowsPerWinterOrb = 3;
 
-    /// <summary>Anima: combat logs report it as resource type 2, in hundredths.</summary>
-    public static readonly ResourceDef Anima = new("Anima", Max: 100, LogResourceType: 2, LogScale: 0.01, LogTolerance: 0.99);
+    public static readonly ResourceDef Anima = new("Anima", Max: 100);
 
-    /// <summary>Winter Orbs: combat logs report them as resource type 5, in hundredths.</summary>
-    public static readonly ResourceDef WinterOrbsResource = new("Winter Orbs", Max: MaxWinterOrbs, LogResourceType: 5, LogScale: 0.01)
+    public static readonly ResourceDef WinterOrbsResource = new("Winter Orbs", Max: MaxWinterOrbs)
     {
         Aliases = ["worb"],
     };
 
-    /// <summary>
-    /// Rime's class tuning aura, with the date each value took effect: hero attribute BalancingDamageAura = 1.04 (+4%
-    /// damage) since 2026-08-27 (per the user; logs before then run ~4% below the engine with it). Source:
-    /// fs_tc_uploads s3/hero_data.json (Rime.Attributes.BalancingDamageAura).
-    /// </summary>
-    public static readonly (DateTime From, double DamageMultiplier)[] ClassDamageAuraHistory =
-    [
-        (new DateTime(2026, 8, 27, 0, 0, 0, DateTimeKind.Utc), 1.04),
-    ];
+    /// <summary>Class tuning: hero attribute BalancingDamageAura (fs_tc_uploads s3/hero_data.json, Rime.Attributes), +4%.</summary>
+    public const double BalancingDamageAura = 1.04;
 
     /// <summary>Rime's talent tree, as in game (players write picks as row + column: "1b + 2a + 2c ...").</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
@@ -73,7 +64,7 @@ public sealed class Rime : Hero
         AddResource(Anima);
         AddResource(WinterOrbsResource);
         SpiritRefundResource = WinterOrbsResource;
-        AddClassTuningAura("Rime class tuning", ClassDamageAuraHistory);
+        ClassDamageTuning = BalancingDamageAura;
 
         Abilities.Add(new ColdSnap(this));
         Abilities.Add(new GlacialBlast(this));

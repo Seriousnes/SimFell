@@ -44,7 +44,4 @@ public class CharacterBuild
     public List<int> LegendaryItemIds { get; set; } = new();
     /// <summary>The weapon's ability ID (the weapon tree's ability, e.g. 1558 for Asha's Chronoshift Spire).</summary>
     public int WeaponAbilityId { get; set; }
-
-    /// <summary>The date of the game to simulate (a logged fight's date) for balance changes by date; null for the current game.</summary>
-    public DateTime? GameDate { get; set; }
 }

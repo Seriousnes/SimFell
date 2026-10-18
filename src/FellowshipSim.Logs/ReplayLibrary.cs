@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using FellowshipSim.Core.Replay;
+using FellowshipSim.Logs.Replay;
 
 namespace FellowshipSim.Logs;
 

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace FellowshipSim.Core.Replay;
+namespace FellowshipSim.Logs.Replay;
 
 /// <summary>Renders a <see cref="ReplayResult"/> as a self-contained HTML review page and a short text summary.</summary>
 public static class ReplayReportWriter

@@ -1,4 +1,4 @@
-namespace FellowshipSim.Core.Replay;
+namespace FellowshipSim.Logs.Replay;
 
 public class ReplayOptions
 {

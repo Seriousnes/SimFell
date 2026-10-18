@@ -29,7 +29,7 @@ public class FrostweaversWrath : Talent
         // "Each time you generate Winter Orbs" (one roll per gain that adds orbs).
         ((Rime)hero).WinterOrbsGained += (ctx, _) =>
         {
-            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx, Buff.LogId)) hero.Auras.Apply(Buff, ctx.CurrentTime);
+            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) hero.Auras.Apply(Buff, ctx.CurrentTime);
         };
         // "Your next Glacial Blast or Ice Comet that deals damage" crits: every spender consumes a stack, Avalanche's
         // extra comets too.

@@ -1,4 +1,4 @@
-using FellowshipSim.Core.Replay;
+using FellowshipSim.Logs.Replay;
 using FellowshipSim.Logs;
 using Xunit.Abstractions;
 

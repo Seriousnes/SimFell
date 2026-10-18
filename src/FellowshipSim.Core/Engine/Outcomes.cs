@@ -29,11 +29,9 @@ public interface IOutcomeSource
 {
     /// <summary>
     /// Rolls a named proc. <paramref name="procKey"/> identifies the proc, e.g. "inspired_allegiance";
-    /// <paramref name="evidenceLogId"/> is the log ID of what a success produces (the aura it applies or the hit it deals),
-    /// and <paramref name="effectDelaySeconds"/> how long after the roll that may appear (e.g. a projectile's travel).
+    /// <paramref name="target"/> is the enemy its effect lands on, if any.
     /// </summary>
-    /// <remarks><paramref name="evidenceTarget"/>: the proc's effect lands on this enemy (a replay then only accepts evidence there).</remarks>
-    bool RollProc(string procKey, double chance, SimulationContext ctx, int evidenceLogId = 0, double effectDelaySeconds = 0.0, EnemyTarget? evidenceTarget = null);
+    bool RollProc(string procKey, double chance, SimulationContext ctx, EnemyTarget? target = null);
 
     /// <summary>
     /// Which of <paramref name="candidates"/> a multi-target hit with damage ID <paramref name="damageLogId"/> strikes
@@ -87,7 +85,7 @@ public class RandomOutcomeSource : IOutcomeSource
 
     public OutcomeMode Mode { get; set; }
 
-    public bool RollProc(string procKey, double chance, SimulationContext ctx, int evidenceLogId = 0, double effectDelaySeconds = 0.0, EnemyTarget? evidenceTarget = null) => _rng.Roll(chance);
+    public bool RollProc(string procKey, double chance, SimulationContext ctx, EnemyTarget? target = null) => _rng.Roll(chance);
 
     public IReadOnlyList<EnemyTarget> SelectTargets(int damageLogId, IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx) => candidates;
 

@@ -19,8 +19,6 @@ public class EmeraldJudgement : Trait
     public const double Coefficient = 8.0;
     public static readonly double[] ProcsPerMinuteByRank = [0.8, 1.3, 1.8, 2.3];
     public const string ProcKey = "emerald_judgement";
-    /// <summary>The spike erupts from the ground a moment after the proc (logs: about 0.5s).</summary>
-    public const double SpikeDelaySeconds = 1.0;
     public override int Id => TraitId;
     public override string Name => TraitName;
 
@@ -37,7 +35,7 @@ public class EmeraldJudgement : Trait
             var ctx = dmg.SimContext;
             // The spike erupts under the enemy whose hit triggered it.
             var target = dmg.Target;
-            if (!rppm.Roll(hero, ctx, logId, SpikeDelaySeconds, target)) return;
+            if (!rppm.Roll(hero, ctx, target)) return;
 
             // The spike also triggers First Strike, when it lands (combat logs: First Strike refreshes with the spike's hit).
             var firstStrike = hero.Gems.OfType<Emerald>().FirstOrDefault()?.FirstStrike;

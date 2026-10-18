@@ -1,6 +1,7 @@
+using FellowshipSim.Core;
 using FellowshipSim.Core.Import;
 
-namespace FellowshipSim.Core.Replay;
+namespace FellowshipSim.Logs.Replay;
 
 /// <summary>
 /// Replays a combat log through the engine using only engine commands (cast, cancel, stop channel,
@@ -34,7 +35,7 @@ public sealed class ReplayDriver
         _ledger = new HitLedger(script.Observations.Damage);
         _oracle = new LogOutcomeSource(script, _options, _ledger);
         _ctx.Outcomes = _oracle;
-        _logAuras = new LogAuraTimeline(script.Observations.Auras.Where(a => a.Target.Id == script.Player.Id), hero.ModeledAuraLogIds);
+        _logAuras = new LogAuraTimeline(script.Observations.Auras.Where(a => a.Target.Id == script.Player.Id), ModeledAuras.LogIds(hero));
         hero.Auras.OnRemoved += (aura, at) => { if (aura.LogId > 0) _engineRemoved[aura.LogId] = (at, aura.Stacks); };
         _hero.OnCastCompleted += (ability, _, now) => _lastCompletedCast = (ability.Id, now.TotalSeconds);
     }
@@ -50,8 +51,9 @@ public sealed class ReplayDriver
     public static Hero CreateHero(ReplayScript script)
     {
         var build = script.Character ?? throw new InvalidOperationException("Replay script has no character.");
-        build.GameDate ??= script.FightDate;
-        return HeroImporter.Import(build);
+        var hero = HeroImporter.Import(build);
+        ClassTuningHistory.Apply(hero, script.FightDate);
+        return hero;
     }
 
     public ReplayResult Run()
@@ -369,11 +371,12 @@ public sealed class ReplayDriver
             Math.Abs(r.Time - cmd.Time) <= _options.ResourceSnapshotWindowSeconds && r.AbilityId == cmd.AbilityId);
         if (snapshot != null)
         {
-            // Each resource the hero declares with its combat-log resource type.
-            foreach (var resource in _hero.ResourceDefs.Where(r => r.LogResourceType > 0))
+            // Each of the hero's resources that combat logs report (LogResources).
+            foreach (var logged in LogResources.All.Where(l => _hero.ResourceDefs.Contains(l.Resource)))
             {
-                if (!snapshot.Resources.TryGetValue(resource.LogResourceType.ToString(), out var value)) continue;
-                var check = new ResourceCheck(resource.Name, _hero.ResourceAmount(resource), value.Amount * resource.LogScale, resource.LogTolerance);
+                var resource = logged.Resource;
+                if (!snapshot.Resources.TryGetValue(logged.LogResourceType.ToString(), out var value)) continue;
+                var check = new ResourceCheck(resource.Name, _hero.ResourceAmount(resource), value.Amount * logged.Scale, logged.Tolerance);
                 step.Resources.Add(check);
                 if (!check.Matches)
                 {
