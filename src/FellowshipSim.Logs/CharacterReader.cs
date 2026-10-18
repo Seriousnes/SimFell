@@ -10,7 +10,7 @@ namespace FellowshipSim.Logs;
 /// Reads the build a fight was played with from the player's combatantinfo event: character-sheet stats, and talents,
 /// traits, blessings, gem powers, set pieces, legendary items and weapon by game ID.
 /// <para>
-/// Base percentages are derived from the logged ratings: every hero has 5% base Critical Strike and 10% base Spirit, and
+/// Base percentages are derived from the logged ratings: every hero has 5% base Critical Strike and no base Spirit, and
 /// ratings convert at 0.16% per point through the diminishing-returns curve. Percentage bonuses from gem nodes and set
 /// bonuses are added by their own classes.
 /// </para>

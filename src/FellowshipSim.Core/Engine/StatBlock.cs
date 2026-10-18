@@ -129,7 +129,10 @@ public static class StatDiminishingReturns
 public class StatBlock
 {
     public const double BaseCritChance = 0.05;
-    /// <summary>Every hero's base Spirit (the character sheet shows 10% with no Spirit rating).</summary>
+    /// <summary>
+    /// Every hero's base Spirit: none. (The 10% once assumed here was Oracle's Foresight II + Death's Grasp, which nearly
+    /// every logged build has; Xue, with only the gem, matches at 6%.)
+    /// </summary>
     public const double BaseSpirit = 0.0;
     public const double BaseCritMultiplier = 2.0;
     /// <summary>
