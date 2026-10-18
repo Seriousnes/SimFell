@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FellowshipSim.Core/FellowshipSim.Core.csproj" />
+    <Project Path="src/FellowshipSim.Logs/FellowshipSim.Logs.csproj" />
+    <Project Path="src/FellowshipSim.Server/FellowshipSim.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FellowshipSim.Tests/FellowshipSim.Tests.csproj" />
+  </Folder>
+</Solution>

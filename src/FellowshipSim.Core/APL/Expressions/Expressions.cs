@@ -1,0 +1,215 @@
+using FellowshipSim.Core.Domain;
+using FellowshipSim.Core.Engine;
+using FellowshipSim.Core.Heroes.Rime;
+
+namespace FellowshipSim.Core.APL.Expressions;
+
+public class ConstantExpression : IAplExpression
+{
+    public double Value { get; }
+
+    public ConstantExpression(double value) => Value = value;
+
+    public bool Evaluate(Hero hero, SimulationContext ctx) => Math.Abs(Value) > 0.00001;
+
+    public double EvaluateNumeric(Hero hero, SimulationContext ctx) => Value;
+
+    public override string ToString() => Value.ToString();
+}
+
+public class PropertyExpression : IAplExpression
+{
+    public string PropertyPath { get; }
+
+    public PropertyExpression(string propertyPath)
+    {
+        PropertyPath = propertyPath.Trim().ToLowerInvariant();
+    }
+
+    public bool Evaluate(Hero hero, SimulationContext ctx)
+    {
+        return EvaluateNumeric(hero, ctx) != 0.0;
+    }
+
+    public double EvaluateNumeric(Hero hero, SimulationContext ctx)
+    {
+        var now = ctx.CurrentTime;
+
+        // Direct property lookups
+        switch (PropertyPath)
+        {
+            case "winter_orbs":
+            case "worb":
+                return (hero as Rime)?.WinterOrbs ?? 0;
+
+            case "glacial_assault_stacks":
+                return (hero as Rime)?.GlacialAssaultStacks ?? 0;
+
+            case "spirit":
+                return hero.Resources.Get(ResourceType.Spirit).Current;
+
+            case "anima":
+                return hero.Resources.Get(ResourceType.Anima).Current;
+
+            case "active_enemies":
+                int count = ctx.AllEnemies.Count(e => !e.IsSleeping);
+                return count > 0 ? count : 1;
+
+            case "target.health.pct":
+                return ctx.Player.CurrentTarget?.HealthPercent ?? 100.0;
+
+            case "target.time_to_die":
+                return 60.0;
+
+            case "fight_remains":
+                return 100.0;
+        }
+
+        // buff.<name>.<property>
+        if (PropertyPath.StartsWith("buff."))
+        {
+            var parts = PropertyPath.Split('.');
+            if (parts.Length >= 3)
+            {
+                string buffName = parts[1];
+                string prop = parts[2];
+
+                var aura = AuraLookup.Find(hero.Auras, buffName, now);
+                int stacks = aura?.Stacks ?? 0;
+                return prop switch
+                {
+                    "up" => aura != null ? 1.0 : 0.0,
+                    "down" => aura == null ? 1.0 : 0.0,
+                    "stack" => stacks,
+                    "at_max_stacks" => aura != null && stacks >= aura.MaxStacks ? 1.0 : 0.0,
+                    "remains" => aura == null ? 0.0 : aura.ExpiresAt == SimTime.Infinite ? double.MaxValue : (aura.ExpiresAt - now).TotalSeconds,
+                    _ => aura != null ? 1.0 : 0.0
+                };
+            }
+        }
+
+        // debuff.<name>.<property>
+        if (PropertyPath.StartsWith("debuff."))
+        {
+            var parts = PropertyPath.Split('.');
+            if (parts.Length >= 3)
+            {
+                string debuffName = parts[1];
+                string prop = parts[2];
+                var target = ctx.Player.CurrentTarget;
+                var aura = target == null ? null : AuraLookup.Find(target.Auras, debuffName, now);
+                return prop switch
+                {
+                    "up" => aura != null ? 1.0 : 0.0,
+                    "down" => aura == null ? 1.0 : 0.0,
+                    "stack" => aura?.Stacks ?? 0,
+                    _ => aura != null ? 1.0 : 0.0
+                };
+            }
+        }
+
+        // cooldown.<name>.<property>
+        if (PropertyPath.StartsWith("cooldown."))
+        {
+            var parts = PropertyPath.Split('.');
+            if (parts.Length >= 3)
+            {
+                string abilityName = parts[1];
+                string prop = parts[2];
+
+                return prop switch
+                {
+                    "ready" or "up" => hero.IsCooldownReady(abilityName, now) ? 1.0 : 0.0,
+                    "remains" => hero.GetCooldownRemains(abilityName, now),
+                    "charges" => hero.IsCooldownReady(abilityName, now) ? 1.0 : 0.0,
+                    _ => hero.IsCooldownReady(abilityName, now) ? 1.0 : 0.0
+                };
+            }
+        }
+
+        return 0.0;
+    }
+
+    public override string ToString() => PropertyPath;
+}
+
+public class UnaryOpExpression : IAplExpression
+{
+    public string Operator { get; }
+    public IAplExpression Operand { get; }
+
+    public UnaryOpExpression(string op, IAplExpression operand)
+    {
+        Operator = op;
+        Operand = operand;
+    }
+
+    public bool Evaluate(Hero hero, SimulationContext ctx)
+    {
+        return Operator switch
+        {
+            "!" => !Operand.Evaluate(hero, ctx),
+            "-" => Operand.EvaluateNumeric(hero, ctx) != 0.0,
+            _ => Operand.Evaluate(hero, ctx)
+        };
+    }
+
+    public double EvaluateNumeric(Hero hero, SimulationContext ctx)
+    {
+        return Operator switch
+        {
+            "!" => Operand.Evaluate(hero, ctx) ? 0.0 : 1.0,
+            "-" => -Operand.EvaluateNumeric(hero, ctx),
+            _ => Operand.EvaluateNumeric(hero, ctx)
+        };
+    }
+
+    public override string ToString() => $"{Operator}({Operand})";
+}
+
+public class BinaryOpExpression : IAplExpression
+{
+    public IAplExpression Left { get; init; }
+    public IAplExpression Right { get; init; }
+    public string Operator { get; init; } // "&", "|", "=", "==", "!=", "<", ">", "<=", ">="
+
+    public BinaryOpExpression(IAplExpression left, string op, IAplExpression right)
+    {
+        Left = left;
+        Operator = op;
+        Right = right;
+    }
+
+    public bool Evaluate(Hero hero, SimulationContext ctx)
+    {
+        return Operator switch
+        {
+            "&" => Left.Evaluate(hero, ctx) && Right.Evaluate(hero, ctx),
+            "|" => Left.Evaluate(hero, ctx) || Right.Evaluate(hero, ctx),
+            "<" => Left.EvaluateNumeric(hero, ctx) < Right.EvaluateNumeric(hero, ctx),
+            "<=" => Left.EvaluateNumeric(hero, ctx) <= Right.EvaluateNumeric(hero, ctx),
+            ">" => Left.EvaluateNumeric(hero, ctx) > Right.EvaluateNumeric(hero, ctx),
+            ">=" => Left.EvaluateNumeric(hero, ctx) >= Right.EvaluateNumeric(hero, ctx),
+            "=" or "==" => Math.Abs(Left.EvaluateNumeric(hero, ctx) - Right.EvaluateNumeric(hero, ctx)) < 0.0001,
+            "!=" => Math.Abs(Left.EvaluateNumeric(hero, ctx) - Right.EvaluateNumeric(hero, ctx)) >= 0.0001,
+            _ => throw new InvalidOperationException($"Unsupported APL binary operator: '{Operator}'")
+        };
+    }
+
+    public double EvaluateNumeric(Hero hero, SimulationContext ctx)
+    {
+        return Evaluate(hero, ctx) ? 1.0 : 0.0;
+    }
+
+    public override string ToString() => $"({Left} {Operator} {Right})";
+}
+
+internal static class AuraLookup
+{
+    /// <summary>An active aura whose name, as an APL slug ("glacial_assault"), matches <paramref name="slug"/>.</summary>
+    public static Aura? Find(AuraContainer auras, string slug, SimTime now) =>
+        auras.Active(now).FirstOrDefault(a => Slug(a.Name) == slug || a.Key == slug);
+
+    private static string Slug(string name) =>
+        new string(name.ToLowerInvariant().Replace(' ', '_').Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
+}

@@ -1,0 +1,10 @@
+# Build output
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+.idea/
+
+# Local data: downloaded fights, replay scripts, review pages and your FellowshipLogs API settings
+data/

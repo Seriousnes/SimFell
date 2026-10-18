@@ -1,0 +1,7 @@
+{
+  // Log resource type -> engine resource. Log values are x100.
+  "resources": {
+    "2": { "resource": "Anima", "scale": 0.01, "tolerance": 0.99 },
+    "5": { "resource": "WinterOrbs", "scale": 0.01, "tolerance": 0.0 }
+  }
+}
