@@ -243,12 +243,17 @@ public class SimulationContext
     // ------------------------------------------------------------------ damage
 
     /// <summary>The numbers of a hit at a moment: base damage (before crit and spread), crit chance and crit multiplier.</summary>
-    public readonly record struct HitNumbers(double BaseDamage, double CritChance, double CritMultiplier);
+    /// <summary>
+    /// A hit's numbers. <paramref name="FlatDamage"/> is added after everything else, crit included (e.g. The Vainglorious'
+    /// "additional Main Stat damage").
+    /// </summary>
+    public readonly record struct HitNumbers(double BaseDamage, double CritChance, double CritMultiplier, double FlatDamage = 0.0);
 
     /// <summary>
     /// Deals one hit. <paramref name="compute"/> gives the hit's numbers from the current state; it is evaluated on
     /// release (to decide crit and travel) and again on landing, where damage is dealt with the stats at that moment.
-    /// Crit chance above 100% is a grievous crit: the overflow adds to the crit multiplier.
+    /// Crit chance above 100% is a grievous crit: "increases the base damage of the hit by an amount equal to the
+    /// overflowing critical strike chance" (base x (1 + overflow), then the crit multiplier; Beam Freezing Torrent crits).
     /// <paramref name="onLanded"/> is called with the damage actually dealt, once the hit lands (0 when it hit nothing).
     /// A <paramref name="snapshot"/> hit keeps the numbers it had on release.
     /// </summary>
@@ -260,13 +265,16 @@ public class SimulationContext
         HitRequest Request(SimulationContext ctx)
         {
             var n = compute(ctx);
-            double chance = 0.0, multiplier = n.CritMultiplier;
+            double chance = 0.0, baseDamage = n.BaseDamage;
             if (canCrit)
             {
-                if (n.CritChance > 1.0) multiplier += n.CritChance - 1.0;
+                if (n.CritChance > 1.0) baseDamage *= n.CritChance;
                 chance = Math.Clamp(n.CritChance, 0.0, 1.0);
             }
-            return new HitRequest(source, target, abilityId, abilityName, n.BaseDamage, canCrit, chance, multiplier, ctx.CurrentTime, tickFraction);
+            return new HitRequest(source, target, abilityId, abilityName, baseDamage, canCrit, chance, n.CritMultiplier, ctx.CurrentTime, tickFraction)
+            {
+                FlatDamage = n.FlatDamage * tickFraction,
+            };
         }
 
         var released = Request(this);
@@ -281,7 +289,7 @@ public class SimulationContext
             double multiplier = forcedCrit.HasValue
                 ? (outcome.IsCrit ? landed.CritMultiplier : 1.0)
                 : ctx.Outcomes.Land(landed, outcome, ctx);
-            dealt = landed.BaseDamage * multiplier;
+            dealt = landed.BaseDamage * multiplier + landed.FlatDamage;
 
             ctx.TotalDamage += dealt;
             ctx._abilityDamage[abilityName] = ctx._abilityDamage.GetValueOrDefault(abilityName, 0.0) + dealt;
@@ -298,7 +306,7 @@ public class SimulationContext
         if (outcome.LandingDelay > SimTime.Zero)
         {
             Schedule(outcome.LandingDelay, Land, $"{abilityName} lands");
-            return released.BaseDamage * (outcome.IsCrit ? released.CritMultiplier : 1.0);
+            return released.BaseDamage * (outcome.IsCrit ? released.CritMultiplier : 1.0) + released.FlatDamage;
         }
         Land(this);
         return dealt;

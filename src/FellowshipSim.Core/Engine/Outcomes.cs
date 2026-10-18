@@ -11,7 +11,11 @@ public readonly record struct HitRequest(
     double CritChance,
     double CritMultiplier,
     SimTime Time,
-    double TickFraction = 1.0);
+    double TickFraction = 1.0)
+{
+    /// <summary>Damage added after the crit multiplier (see <see cref="SimulationContext.HitNumbers"/>).</summary>
+    public double FlatDamage { get; init; }
+}
 
 /// <summary>
 /// What is decided when a hit is released: whether it crits, how long it travels before landing, and a damage

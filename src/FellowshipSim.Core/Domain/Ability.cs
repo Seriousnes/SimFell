@@ -45,7 +45,10 @@ public abstract class Ability
     /// <summary>Multiplier on this ability's crit power (e.g. "20% increased Critical Strike power").</summary>
     public double CritPowerMultiplier { get; set; } = 1.0;
 
-    /// <summary>Main Stat damage added to each of this ability's hits, as a coefficient (e.g. The Vainglorious).</summary>
+    /// <summary>
+    /// Main Stat damage added to each of this ability's hits after everything else (no expertise, damage buffs or crit),
+    /// as a coefficient (e.g. The Vainglorious).
+    /// </summary>
     public double BonusCoefficient { get; set; } = 0.0;
 
     public bool ScalesWithExpertise { get; protected set; } = true;
@@ -214,7 +217,7 @@ public abstract class Ability
     {
         var now = ctx.CurrentTime;
         double expertiseAmp = ScalesWithExpertise ? 1.0 + Owner.Expertise(now) : 1.0;
-        return (BaseCoefficient + BonusCoefficient)
+        return BaseCoefficient
                * Owner.PrimaryAttribute(now)
                * expertiseAmp
                * DamageScaleFor(ctx)
@@ -241,7 +244,8 @@ public abstract class Ability
             c => new SimulationContext.HitNumbers(
                 BaseDamage(c, target, damageMultiplier * castDamage),
                 Owner.CritChanceAgainst(target, c.CurrentTime) + CritChanceBonus + extraCritChance + castCrit,
-                CritMultiplierAt(c.CurrentTime)),
+                CritMultiplierAt(c.CurrentTime),
+                BonusCoefficient * Owner.PrimaryAttribute(c.CurrentTime)),
             forcedCrit, onLanded, SnapshotsDamage);
     }
 

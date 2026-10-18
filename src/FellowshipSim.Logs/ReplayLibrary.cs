@@ -110,7 +110,25 @@ public sealed class ReplayLibrary
         File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.json"), JsonSerializer.Serialize(summary, Indented));
         // The same review as plain text: issues grouped by kind, and the damage calibration per ability.
         File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.txt"), ReplayReportWriter.Summary(result));
+        // Every engine hit with the log hit it matched, for checking damage formulas in a spreadsheet.
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.hits.csv"), HitsCsv(result));
         return summary;
+    }
+
+    private static string HitsCsv(ReplayResult result)
+    {
+        var sb = new System.Text.StringBuilder("time,ability_id,ability,target,engine_amount,engine_crit,crit_chance,log_amount,log_crit,log_time,tick_fraction\n");
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        foreach (var h in result.AllHits)
+        {
+            string name = h.AbilityName.Replace(',', ' ');
+            sb.Append(string.Format(inv, "{0:F3},{1},{2},{3},{4:F1},{5},{6:F4},{7},{8},{9},{10:F3}\n",
+                h.EngineTime, h.AbilityId, name, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}",
+                h.EngineAmount, h.Crit ? 1 : 0, h.CritChance,
+                h.Log == null ? "" : h.Log.TotalAmount.ToString("F0", inv), h.Log == null ? "" : (h.Log.Crit ? "1" : "0"),
+                h.Log == null ? "" : h.Log.Time.ToString("F3", inv), h.TickFraction));
+        }
+        return sb.ToString();
     }
 
     /// <summary>Every review run so far, newest first.</summary>

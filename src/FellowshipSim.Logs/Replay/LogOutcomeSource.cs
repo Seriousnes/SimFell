@@ -133,13 +133,13 @@ public sealed class LogOutcomeSource : IOutcomeSource
         if (pending.Log == null)
         {
             double expected = landed.CanCrit ? 1.0 + (landed.CritChance * (landed.CritMultiplier - 1.0)) : 1.0;
-            Record(new HitPair(pending.ReleasedAt, landed.AbilityName, landed.AbilityId, target, landed.BaseDamage * expected, null, false, landed.CritChance, health) { Context = context });
+            Record(new HitPair(pending.ReleasedAt, landed.AbilityName, landed.AbilityId, target, landed.BaseDamage * expected + landed.FlatDamage, null, false, landed.CritChance, health) { Context = context });
             return expected;
         }
 
         var match = pending.Log;
         double multiplier = match.Crit ? landed.CritMultiplier : 1.0;
-        var pair = new HitPair(pending.ReleasedAt, landed.AbilityName, landed.AbilityId, target, landed.BaseDamage * multiplier, match, match.Crit, landed.CritChance, health)
+        var pair = new HitPair(pending.ReleasedAt, landed.AbilityName, landed.AbilityId, target, landed.BaseDamage * multiplier + landed.FlatDamage, match, match.Crit, landed.CritChance, health)
         {
             Context = context,
             TickFraction = landed.TickFraction,
