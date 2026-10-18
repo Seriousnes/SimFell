@@ -38,16 +38,15 @@ public sealed class Rime : Hero
         (new DateTime(2026, 8, 27, 0, 0, 0, DateTimeKind.Utc), 1.04),
     ];
 
-    /// <summary>Rime's talent tree.</summary>
-    public static readonly TalentSlot[] TalentTree =
-    [
-        new(1, 1, 2, Avalanche.TalentId), new(1, 2, 2, CoalescingFrost.TalentId), new(1, 3, 2, GlacialAssault.TalentId),
-        new(2, 1, 1, ColdShower.TalentId), new(2, 2, 1, ChillingFinesse.TalentId), new(2, 3, 1, Burstbolter.TalentId),
-        new(3, 1, 2, CascadingBlitz.TalentId), new(3, 2, 2, HarrowingIce.TalentId), new(3, 3, 2, IcyFlow.TalentId),
-        new(4, 1, 1, BurstingSwallows.TalentId), new(4, 2, 1, GreaterGlacialBlast.TalentId), new(4, 3, 1, NavirsKeeper.TalentId),
-        new(5, 1, 3, IcyTalons.TalentId), new(5, 2, 3, FrostweaversWrath.TalentId), new(5, 3, 3, SoulfrostTorrent.TalentId),
-        new(6, 1, 1, BitingCold.TalentId), new(6, 2, 1, SupremeTorrent.TalentId), new(6, 3, 1, WisdomOfTheNorth.TalentId),
-    ];
+    /// <summary>Rime's talent tree, as in game (players write picks as row + column: "1b + 2a + 2c ...").</summary>
+    public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
+        //              row cost  a                            b                              c
+        TalentSlot.InRow(1, 2,    Avalanche.TalentId,          CoalescingFrost.TalentId,      GlacialAssault.TalentId),
+        TalentSlot.InRow(2, 1,    ColdShower.TalentId,         ChillingFinesse.TalentId,      Burstbolter.TalentId),
+        TalentSlot.InRow(3, 2,    CascadingBlitz.TalentId,     HarrowingIce.TalentId,         IcyFlow.TalentId),
+        TalentSlot.InRow(4, 1,    BurstingSwallows.TalentId,   GreaterGlacialBlast.TalentId,  NavirsKeeper.TalentId),
+        TalentSlot.InRow(5, 3,    IcyTalons.TalentId,          FrostweaversWrath.TalentId,    SoulfrostTorrent.TalentId),
+        TalentSlot.InRow(6, 1,    BitingCold.TalentId,         SupremeTorrent.TalentId,       WisdomOfTheNorth.TalentId));
 
     /// <summary>Every aura Rime's abilities, talents and legendary can put on her (the replay compares them with the log).</summary>
     public static readonly AuraDef[] AllAuras =
