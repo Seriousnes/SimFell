@@ -42,7 +42,7 @@ public class Aura
         Def = def;
     }
 
-    /// <summary>An engine-internal aura by name (kept for code that has no datamine effect).</summary>
+    /// <summary>An engine-internal aura by name (not a game effect).</summary>
     public Aura(string name, SimTime duration, params StatModifier[] modifiers)
         : this(new AuraDef(name, 0, duration, 1, modifiers)) { }
 
@@ -129,7 +129,7 @@ public class AuraContainer
         return aura;
     }
 
-    /// <summary>Applies an engine-internal aura built inline (no datamine definition).</summary>
+    /// <summary>Applies an engine-internal aura built inline (not a game effect).</summary>
     public void Apply(Aura aura, SimTime now = default, int? explicitStacks = null) =>
         Apply(aura.Def, now, aura.Stacks, explicitStacks);
 

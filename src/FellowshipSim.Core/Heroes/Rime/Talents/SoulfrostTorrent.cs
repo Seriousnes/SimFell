@@ -19,6 +19,7 @@ public class SoulfrostTorrent : Talent
     public const string ProcKey = "soulfrost_torrent";
 
     public static readonly AuraDef Buff = AuraDef.Effect("Soulfrost Torrent", EffectId, BuffSeconds);
+
     public override string Name => TalentName;
     public override int Id => TalentId;
 

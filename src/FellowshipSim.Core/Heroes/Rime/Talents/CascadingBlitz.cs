@@ -7,8 +7,10 @@ public class CascadingBlitz : Talent
 {
     public const int TalentId = 192;
     public const string TalentName = "Cascading Blitz";
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     /// <summary>"...you conjure 1 Frost Swallow to attack your target" (a replay follows the log if the player briefly had another target).</summary>
     public override void Bind(Hero hero)
     {

@@ -20,8 +20,10 @@ public class FrostweaversWrath : Talent
     public const string ProcKey = "frostweavers_wrath";
 
     public static readonly AuraDef Buff = AuraDef.Effect("Frostweaver's Wrath", EffectId, BuffSeconds, MaxStacks);
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public override void Bind(Hero hero)
     {
         hero.Register(Buff);

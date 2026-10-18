@@ -6,7 +6,7 @@ namespace FellowshipSim.Core.Customization.Blessings;
 /// </summary>
 public abstract class Blessing
 {
-    /// <summary>The blessing's game ID (combat logs show it + 4,000,000).</summary>
+    /// <summary>The blessing's game ID. Combat logs give blessings per-item IDs, so logs are matched by <see cref="Name"/>.</summary>
     public abstract int Id { get; }
     public abstract string Name { get; }
     public int Rank { get; init; } = 1;

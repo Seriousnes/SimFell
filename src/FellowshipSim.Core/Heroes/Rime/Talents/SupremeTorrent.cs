@@ -9,6 +9,7 @@ public class SupremeTorrent : Talent
     public const string TalentName = "Supreme Torrent";
     public const double DamageMultiplier = 1.2;
     public const double AddedChannelSeconds = 0.8;
+
     public override string Name => TalentName;
     public override int Id => TalentId;
 

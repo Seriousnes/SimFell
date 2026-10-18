@@ -12,6 +12,7 @@ public class GreaterGlacialBlast : Talent
     public const string TalentName = "Greater Glacial Blast";
     public const double DamageMultiplier = 1.4;
     public const double CastTimeIncreaseSeconds = 0.5;
+
     public override string Name => TalentName;
     public override int Id => TalentId;
 

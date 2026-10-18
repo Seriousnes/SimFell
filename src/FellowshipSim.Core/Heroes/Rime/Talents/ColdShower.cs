@@ -13,8 +13,10 @@ public class ColdShower : Talent
     public const string TalentName = "Cold Shower";
     public const double ProcChance = 0.07;
     public const string ProcKey = "cold_shower";
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public override void Bind(Hero hero)
     {
         var rime = (Rime)hero;

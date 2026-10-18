@@ -11,7 +11,9 @@ public class BitingCold : Talent
     public const double CritPower = 1.1;
 
     public static readonly AuraDef Passive = AuraDef.Effect(TalentName, EffectId, modifiers: StatModifier.More(StatType.CritMultiplier, CritPower));
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public override void Bind(Hero hero) => hero.PassiveAuras.Add(Passive);
 }

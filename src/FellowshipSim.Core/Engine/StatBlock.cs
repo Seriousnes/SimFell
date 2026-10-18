@@ -1,7 +1,7 @@
 namespace FellowshipSim.Core.Engine;
 
 /// <summary>
-/// Game attributes, named as in the datamine (effect "modifiers[].attribute").
+/// Game attributes, named as in the game data (effect "modifiers[].attribute").
 /// </summary>
 public enum StatType
 {
@@ -23,7 +23,7 @@ public enum StatType
     IncomingDamageMultiplier,
 }
 
-/// <summary>Modifier operations, named as in the datamine (effect "modifiers[].op").</summary>
+/// <summary>Modifier operations, as the game data names them (effect "modifiers[].op").</summary>
 public enum ModifierOp
 {
     /// <summary>Adds the value ("+X").</summary>
@@ -40,14 +40,6 @@ public readonly record struct StatModifier(StatType Type, double Value, Modifier
     public static StatModifier Add(StatType type, double value) => new(type, value, ModifierOp.Additive);
     public static StatModifier Increased(StatType type, double multiplier) => new(type, multiplier, ModifierOp.MultiplyAdditive);
     public static StatModifier More(StatType type, double multiplier) => new(type, multiplier, ModifierOp.MultiplyCompound);
-
-    public static ModifierOp ParseOp(string datamineOp) => datamineOp switch
-    {
-        "Additive" => ModifierOp.Additive,
-        "Multiplicitive" => ModifierOp.MultiplyAdditive,
-        "MultiplyCompound" => ModifierOp.MultiplyCompound,
-        _ => throw new NotSupportedException($"Unknown datamine modifier op '{datamineOp}'")
-    };
 }
 
 /// <summary>Accumulates modifiers for one attribute and applies them to a base value.</summary>

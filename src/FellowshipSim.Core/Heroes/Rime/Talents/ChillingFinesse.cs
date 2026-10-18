@@ -9,8 +9,10 @@ public class ChillingFinesse : Talent
     public const string TalentName = "Chilling Finesse";
     public const double BurstingIceReductionSeconds = 0.2;
     public const double FreezingTorrentReductionSeconds = 1.5;
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public override void Bind(Hero hero)
     {
         hero.OnChannelTick += (ability, _, _, ctx) =>

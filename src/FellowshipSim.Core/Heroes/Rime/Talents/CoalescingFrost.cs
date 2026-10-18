@@ -18,7 +18,9 @@ public class CoalescingFrost : Talent
     public const double CoefficientPerStack = 0.56;
     public const double CritDoubleStackChance = 0.5;
     public const double TargetThreshold = 5;
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public override void Bind(Hero hero) => ((Rime)hero).GetAbility<CoalescingFrostEruption>()?.Enable(hero);
 }

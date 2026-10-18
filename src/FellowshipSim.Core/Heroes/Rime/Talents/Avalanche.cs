@@ -16,8 +16,10 @@ public class Avalanche : Talent
     public const double TwoExtraChance = 0.09;
     public const double CometSpacingSeconds = 0.3;
     public const string ProcKey = "avalanche";
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public override void Bind(Hero hero)
     {
         var rime = (Rime)hero;

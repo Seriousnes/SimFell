@@ -19,8 +19,10 @@ public class IcyFlow : Talent
     public const double CastHaste = 0.5;
 
     public static readonly AuraDef Buff = AuraDef.Effect("Icy Flow", EffectId, BuffSeconds, MaxStacks);
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     /// <summary>Cold Snap grants a stack; the spenders read and consume it (Rime.ConsumeSpenderCritBuffs, GlacialBlast cast time).</summary>
     public override void Bind(Hero hero)
     {

@@ -8,8 +8,10 @@ public class BurstingSwallows : Talent
     public const int TalentId = 628;
     public const string TalentName = "Bursting Swallows";
     public const double ProcChance = 0.12;
+
     public override string Name => TalentName;
     public override int Id => TalentId;
+
     public const string ProcKey = "bursting_swallows";
 
     /// <summary>"Your Frost Swallow hits have a 12% chance to trigger a pulse of Bursting Ice on the target."</summary>

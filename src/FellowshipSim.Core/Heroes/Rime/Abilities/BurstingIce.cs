@@ -20,6 +20,8 @@ public class BurstingIce : RimeAbility
     public const double AnimaPerPulse = 1.0;
     public const int WintersEmbraceEffectId = 2303;
     public const double WintersEmbraceDamage = 1.2;
+    /// <summary>Combat logs: pulses lose damage as sqrt(5/N) beyond 5 targets.</summary>
+    public const double TargetThreshold = 5;
 
     /// <summary>The debuff on the enemy (logged; the engine tracks the pulses itself).</summary>
     public static readonly AuraDef Debuff = AuraDef.Effect("Bursting Ice", DebuffEffectId, DurationSeconds);
@@ -35,9 +37,6 @@ public class BurstingIce : RimeAbility
 
     /// <summary>Raised after each pulse has dealt its damage (Harrowing Ice).</summary>
     public event Action<SimulationContext>? Pulsed;
-
-    /// <summary>Combat logs: pulses lose damage as sqrt(5/N) beyond 5 targets.</summary>
-    public const double TargetThreshold = 5;
 
     public BurstingIce(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Core)
     {

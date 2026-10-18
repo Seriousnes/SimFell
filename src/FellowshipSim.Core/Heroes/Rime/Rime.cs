@@ -38,9 +38,6 @@ public sealed class Rime : Hero
         (new DateTime(2026, 8, 27, 0, 0, 0, DateTimeKind.Utc), 1.04),
     ];
 
-    /// <summary>A talent in the talent tree: its row and column, its point cost and its talent ID.</summary>
-    public sealed record TalentSlot(int Row, int Column, int Cost, int TalentId);
-
     /// <summary>Rime's talent tree.</summary>
     public static readonly TalentSlot[] TalentTree =
     [

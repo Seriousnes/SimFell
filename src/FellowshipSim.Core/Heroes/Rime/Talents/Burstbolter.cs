@@ -13,6 +13,7 @@ public class Burstbolter : Talent
     public const string TalentName = "Burstbolter";
     /// <summary>Bursting Ice damage multiplier.</summary>
     public const double BurstingIceDamage = 1.3;
+
     public override string Name => TalentName;
     public override int Id => TalentId;
 

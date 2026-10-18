@@ -1,8 +1,8 @@
 # FellowshipSim
 
-A combat simulator for *Fellowship*. It models each hero's abilities, talents and gear from the game's datamine,
-and checks itself against real combat logs: any logged fight can be replayed through the engine, and a review page
-shows step by step how closely the engine matches what happened.
+A combat simulator for *Fellowship*. It models each hero's abilities, talents and gear, and checks itself against real
+combat logs: any logged fight can be replayed through the engine, and a review page shows step by step how closely the
+engine matches what happened.
 
 Supported heroes: **Rime**.
 
@@ -11,8 +11,6 @@ Supported heroes: **Rime**.
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - A FellowshipLogs API client (client ID and secret) from your [FellowshipLogs](https://www.fellowshiplogs.com) account,
   to download fights
-
-The game data (the Codex datamine) is downloaded automatically on first run and cached in `~/.fellowsim/cache/codex`.
 
 ## Replaying a fight
 
@@ -35,15 +33,22 @@ You can also set the credentials with the environment variables `FELLOWSHIPLOGS_
 dotnet test
 ```
 
-The tests run sims with every Rime talent and replay every fight you have downloaded (`data/fights`), rewriting their
+The tests run sims with Rime's talents and replay every fight you have downloaded (`data/fights`), rewriting their
 review pages.
+
+## Adding heroes, talents and gear
+
+See [docs/ADDING_A_HERO.md](docs/ADDING_A_HERO.md). Every game value is a constant at the top of its class, so adding
+content or following a game patch means editing those classes; Rime (`src/FellowshipSim.Core/Heroes/Rime`) is the
+complete example, and its [NOTES.md](src/FellowshipSim.Core/Heroes/Rime/NOTES.md) lists what the combat logs showed.
 
 ## Layout
 
 | Folder | What it holds |
 |---|---|
-| `src/FellowshipSim.Core` | The engine: simulation kernel, heroes, talents, gear, game data, the replay driver and review pages |
+| `src/FellowshipSim.Core` | The engine: simulation, heroes, talents, gear, build import, the replay driver and review pages |
 | `src/FellowshipSim.Logs` | FellowshipLogs API client, and the builder that turns a logged fight into a replay script |
 | `src/FellowshipSim.Server` | Local web server: the page in `wwwroot` and its JSON API |
 | `tests/FellowshipSim.Tests` | Tests |
+| `docs/` | Contributor guides |
 | `data/` | Your local data (not committed): downloaded fights, replay scripts, review pages, settings |
