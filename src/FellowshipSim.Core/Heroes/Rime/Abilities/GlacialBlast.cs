@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,20 +6,24 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class GlacialBlast : GlacialBlastFamily
 {
     public const int AbilityId = 1028;
+    public const string AbilityName = "Glacial Blast";
+    public const double Coefficient = 10.24;
+    public const double CastTimeSeconds = 2.0;
     public const int DefaultWinterOrbCost = 2;
 
-    public GlacialBlast(Rime owner) : base(owner, AbilityId)
+    public GlacialBlast(Rime owner) : base(owner, AbilityId, AbilityName)
     {
-        WinterOrbCost = DefaultWinterOrbCost;
+        BaseCoefficient = Coefficient;
+        CastTime = SimTime.FromSeconds(CastTimeSeconds);
     }
 
     public override SimTime GetAdjustedCastTime(SimTime now = default)
     {
         // Instant with 4 Glacial Assault stacks or during Wrath of Winter.
-        if (GlacialAssaultReady || Rime.Auras.HasAura(Rime.Aura.WrathOfWinter, now)) return SimTime.Zero;
+        if (GlacialAssaultReady || Rime.Auras.HasAura(WrathOfWinter.Buff, now)) return SimTime.Zero;
         double seconds = CastTime.TotalSeconds + (Rime.HasTalent<GreaterGlacialBlast>() ? GreaterGlacialBlast.CastTimeIncreaseSeconds : 0.0);
         // Icy Flow: "+50% Haste to you while casting" the Glacial Blast that consumes it.
-        double icyFlowHaste = Rime.Auras.HasAura(Rime.Aura.IcyFlow, now) ? IcyFlow.CastHaste : 0.0;
+        double icyFlowHaste = Rime.Auras.HasAura(IcyFlow.Buff, now) ? IcyFlow.CastHaste : 0.0;
         return SimTime.FromSeconds(seconds / (1.0 + Owner.GetHaste(now) + icyFlowHaste));
     }
 
@@ -48,7 +49,7 @@ public class GlacialBlast : GlacialBlastFamily
         double multiplier = 1.0;
         if (assault)
         {
-            hero.Auras.Remove(hero.Aura.GlacialAssault, ctx.CurrentTime);
+            hero.Auras.Remove(GlacialAssault.Buff, ctx.CurrentTime);
             multiplier = GlacialAssaultMultiplier;
         }
         else

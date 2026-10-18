@@ -1,5 +1,4 @@
 using FellowshipSim.Core.Customization.WeaponAbilities;
-using FellowshipSim.Core.Domain;
 
 namespace FellowshipSim.Core.Customization.Weapons;
 

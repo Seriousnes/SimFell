@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -12,25 +9,38 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class BurstingIce : RimeAbility
 {
     public const int AbilityId = 1031;
+    public const string AbilityName = "Bursting Ice";
+    public const double Coefficient = 0.498;
+    public const double CooldownSeconds = 10.0;
+    public const double CastTimeSeconds = 2.0;
+    public const int DebuffEffectId = 1395;
+    public const double DurationSeconds = 3.0;
+    public const double PulsePeriodSeconds = 0.5;
     public const int PulseEffectId = 1396;
     public const double AnimaPerPulse = 1.0;
+    public const int WintersEmbraceEffectId = 2303;
+    public const double WintersEmbraceDamage = 1.2;
+
+    /// <summary>The debuff on the enemy (logged; the engine tracks the pulses itself).</summary>
+    public static readonly AuraDef Debuff = AuraDef.Effect("Bursting Ice", DebuffEffectId, DurationSeconds);
+
+    /// <summary>"While Bursting Ice is active on an enemy you gain Winter's Embrace, causing you to deal 20% more damage."</summary>
+    public static readonly AuraDef WintersEmbrace = AuraDef.Effect("Winter's Embrace", WintersEmbraceEffectId,
+        modifiers: StatModifier.More(StatType.DamageScale, WintersEmbraceDamage));
 
     private int _activeDebuffs;
 
     /// <summary>Combat logs: pulses lose damage as sqrt(5/N) beyond 5 targets.</summary>
     public const double TargetThreshold = 5;
 
-    public BurstingIce(Rime owner) : base(owner, AbilityId)
+    public BurstingIce(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Core)
     {
+        BaseCoefficient = Coefficient;
+        CastTime = SimTime.FromSeconds(CastTimeSeconds);
+        SetCooldown(CooldownSeconds, scalesWithHaste: true);
         AoeTargetThreshold = TargetThreshold;
-        DamageLogId = GameData.EffectLogId(PulseEffectId);
-        var debuff = owner.Data.Effect(1395);
-        DurationSeconds = debuff.Duration ?? 3.0;
-        PulsePeriodSeconds = debuff.Period ?? 0.5;
+        DamageLogId = LogIds.Effect(PulseEffectId);
     }
-
-    public double DurationSeconds { get; }
-    public double PulsePeriodSeconds { get; }
 
     /// <summary>One pulse around <paramref name="target"/>; <paramref name="fraction"/> scales a partial final pulse.</summary>
     public void DealPulse(SimulationContext ctx, EnemyTarget target, double fraction = 1.0)
@@ -44,15 +54,15 @@ public class BurstingIce : RimeAbility
         // consumes them all and shortens Flight of the Navir.
         double harrowing = 1.0;
         bool harrowingIce = hero.HasTalent<HarrowingIce>();
-        if (harrowingIce) harrowing += HarrowingIce.DamagePerStack * hero.Auras.GetStacks(hero.Aura.HarrowingIce, ctx.CurrentTime);
+        if (harrowingIce) harrowing += HarrowingIce.DamagePerStack * hero.Auras.GetStacks(HarrowingIce.Buff, ctx.CurrentTime);
         DealAoeDamage(ctx, enemies, damageMultiplier: fraction * harrowing);
         if (harrowingIce)
         {
             var now = ctx.CurrentTime;
-            hero.Auras.Apply(hero.Aura.HarrowingIce, now);
-            if (hero.Auras.GetStacks(hero.Aura.HarrowingIce, now) >= hero.Aura.HarrowingIce.MaxStacks)
+            hero.Auras.Apply(HarrowingIce.Buff, now);
+            if (hero.Auras.GetStacks(HarrowingIce.Buff, now) >= HarrowingIce.Buff.MaxStacks)
             {
-                hero.Auras.Remove(hero.Aura.HarrowingIce, now);
+                hero.Auras.Remove(HarrowingIce.Buff, now);
                 hero.ReduceCooldown<FlightOfTheNavir>(SimTime.FromSeconds(HarrowingIce.FlightOfTheNavirReductionSeconds), now);
             }
         }
@@ -62,9 +72,9 @@ public class BurstingIce : RimeAbility
     protected override double DamageScaleFor(SimulationContext ctx)
     {
         double scale = Owner.DamageScale(ctx.CurrentTime);
-        if (Rime.Auras.HasAura(Rime.Aura.WintersEmbrace, ctx.CurrentTime))
+        if (Rime.Auras.HasAura(WintersEmbrace, ctx.CurrentTime))
         {
-            foreach (var mod in Rime.Aura.WintersEmbrace.Modifiers)
+            foreach (var mod in WintersEmbrace.Modifiers)
             {
                 if (mod.Type == StatType.DamageScale && mod.Op == ModifierOp.MultiplyCompound) scale /= mod.Value;
             }
@@ -78,7 +88,7 @@ public class BurstingIce : RimeAbility
         TriggerCooldown(ctx);
 
         _activeDebuffs++;
-        hero.Auras.Apply(hero.Aura.WintersEmbrace, ctx.CurrentTime);
+        hero.Auras.Apply(WintersEmbrace, ctx.CurrentTime);
 
         PeriodicEffect.BeginHasted(ctx, hero, Name, DurationSeconds, PulsePeriodSeconds, tickOnStart: false, partialFinalTick: true,
             // Combat logs (10 Rime logs, 526 debuffs): the final pulse deals the fraction of a pulse period left when the
@@ -86,7 +96,7 @@ public class BurstingIce : RimeAbility
             onTick: (c, fraction) => DealPulse(c, target, fraction),
             onEnd: (c, _) =>
             {
-                if (--_activeDebuffs == 0) hero.Auras.Remove(hero.Aura.WintersEmbrace, c.CurrentTime);
+                if (--_activeDebuffs == 0) hero.Auras.Remove(WintersEmbrace, c.CurrentTime);
             });
     }
 

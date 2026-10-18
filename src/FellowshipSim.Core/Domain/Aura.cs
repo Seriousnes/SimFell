@@ -1,7 +1,3 @@
-using Fellowship.SDK.Records;
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Domain;
 
 /// <summary>
@@ -27,45 +23,16 @@ public sealed record AuraDef(string Name, int LogId, SimTime Duration, int MaxSt
     public AuraDef WithModifiers(params StatModifier[] modifiers) => this with { Modifiers = modifiers };
     public AuraDef WithMaxStacks(int maxStacks) => this with { MaxStacks = maxStacks };
 
+    /// <summary>
+    /// An aura from a game effect, logged as the effect ID + 1,000,000. A <paramref name="durationSeconds"/> of 0 lasts until
+    /// removed.
+    /// </summary>
+    public static AuraDef Effect(string name, int effectId, double durationSeconds = 0, int maxStacks = 1, params StatModifier[] modifiers) =>
+        new(name, LogIds.Effect(effectId), durationSeconds > 0 ? SimTime.FromSeconds(durationSeconds) : SimTime.Infinite, maxStacks, modifiers);
+
     /// <summary>An engine-internal aura that combat logs never show.</summary>
     public static AuraDef Internal(string name, double durationSeconds, int maxStacks = 1, params StatModifier[] modifiers) =>
         new(name, 0, durationSeconds <= 0 ? SimTime.Infinite : SimTime.FromSeconds(durationSeconds), maxStacks, modifiers);
-
-    private static readonly string[] PrimaryAttributes = ["Strength", "Intellect", "Agility"];
-
-    /// <summary>
-    /// Builds the aura from its datamine effect record: name, log ID, duration, max stacks and modifiers.
-    /// Modifiers of Strength/Intellect/Agility count as the hero's primary attribute when it is <paramref name="mainStat"/>.
-    /// </summary>
-    public static AuraDef FromEffect(GameData data, int effectId, string mainStat = "Intellect")
-    {
-        var effect = data.Effect(effectId);
-        var duration = effect.Infinite == true || effect.Duration is null or <= 0
-            ? SimTime.Infinite
-            : SimTime.FromSeconds(effect.Duration.Value);
-        var modifiers = new List<StatModifier>();
-        var raw = data.Raw("effect", effectId);
-        if (raw.TryGetProperty("modifiers", out var mods))
-        {
-            foreach (var m in mods.EnumerateArray())
-            {
-                if (!m.TryGetProperty("value", out var value)) continue;
-                string attribute = m.GetProperty("attribute").GetString()!;
-                StatType stat;
-                if (Array.IndexOf(PrimaryAttributes, attribute) >= 0)
-                {
-                    if (attribute != mainStat) continue;
-                    stat = StatType.PrimaryAttribute;
-                }
-                else if (!Enum.TryParse(attribute, out stat))
-                {
-                    continue;
-                }
-                modifiers.Add(new StatModifier(stat, value.GetDouble(), StatModifier.ParseOp(m.GetProperty("op").GetString()!)));
-            }
-        }
-        return new AuraDef(effect.Name, GameData.LogId(effect), duration, effect.MaxStacks ?? 1, modifiers);
-    }
 }
 
 public class Aura

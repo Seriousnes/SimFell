@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -13,11 +10,17 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class FrostweaversWrath : Talent
 {
+    public const int TalentId = 191;
+    public const string TalentName = "Frostweaver's Wrath";
     public const int EffectId = 2305;
+    public const double BuffSeconds = 12.0;
+    public const int MaxStacks = 2;
     public const double ProcChance = 0.2;
     public const double CritChance = 1.0;
     public const string ProcKey = "frostweavers_wrath";
-    public override string Name => "Frostweaver's Wrath";
-    public override int Id => 191;
+
+    public static readonly AuraDef Buff = AuraDef.Effect("Frostweaver's Wrath", EffectId, BuffSeconds, MaxStacks);
+    public override string Name => TalentName;
+    public override int Id => TalentId;
     public override void Bind(Hero hero) { }
 }

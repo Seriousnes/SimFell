@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
@@ -29,9 +26,26 @@ public sealed class Rime : Hero
         (new DateTime(2026, 8, 27, 0, 0, 0, DateTimeKind.Utc), 1.04),
     ];
 
-    public Rime(GameData? data = null) : base(data) { }
+    /// <summary>Rising Spirit (effect 3115): +5% primary stat per stack for 10s, up to 10 stacks, from Spirit Refunds.</summary>
+    public const int RisingSpiritEffectId = 3115;
+    public const double RisingSpiritSeconds = 10.0;
+    public const int RisingSpiritMaxStacks = 10;
+    public const double RisingSpiritPrimaryStatPerStack = 0.05;
+    /// <summary>Combat logs (10 Rime logs): each further Spirit Refund adds 2s to the time left instead of restarting it.</summary>
+    public const double RisingSpiritReapplySeconds = 2.0;
 
-    public RimeAuras Aura { get; private set; } = null!;
+    public static readonly AuraDef RisingSpirit = AuraDef.Effect("Rising Spirit", RisingSpiritEffectId, RisingSpiritSeconds,
+        RisingSpiritMaxStacks, StatModifier.Add(StatType.PrimaryAttributeMultiplier, RisingSpiritPrimaryStatPerStack))
+        with { ReapplyExtendsSeconds = RisingSpiritReapplySeconds };
+
+    /// <summary>Every aura Rime's abilities, talents and legendary can put on her (the replay compares them with the log).</summary>
+    public static readonly AuraDef[] AllAuras =
+    [
+        GlacialAssault.Buff, NavirsKeeper.Buff, FlightOfTheNavir.Buff, WintersBlessing.Buff, BurstingIce.WintersEmbrace,
+        BurstingIce.Debuff, IceBlitz.Buff, WrathOfWinter.Buff, Customization.Legendaries.UndulatingSpirit.Buff, RisingSpirit,
+        Customization.WeaponAbilities.Chronoshift.Barrier, HarrowingIce.Buff, IcyFlow.Buff, FrostweaversWrath.Buff,
+        SoulfrostTorrent.Buff,
+    ];
 
     public int WinterOrbs
     {
@@ -39,13 +53,13 @@ public sealed class Rime : Hero
         set => Resources.Get(ResourceType.WinterOrbs).Current = value;
     }
 
-    public int GlacialAssaultStacks => Auras.GetStacks(Aura.GlacialAssault);
+    public int GlacialAssaultStacks => Auras.GetStacks(GlacialAssault.Buff);
 
     public override void Initialize()
     {
         Resources.Register(ResourceType.Anima, max: 100, initial: 0);
         Resources.Register(ResourceType.WinterOrbs, max: MaxWinterOrbs, initial: 0);
-        Aura = new RimeAuras(this);
+        foreach (var aura in AllAuras) Register(aura);
         AddClassTuningAura("Rime class tuning", ClassDamageAuraHistory);
 
         Abilities.Add(new ColdSnap(this));
@@ -74,14 +88,14 @@ public sealed class Rime : Hero
     {
         var now = ctx.CurrentTime;
         double crit = 0.0;
-        if (Auras.HasAura(Aura.FrostweaversWrath, now))
+        if (Auras.HasAura(FrostweaversWrath.Buff, now))
         {
-            Auras.ConsumeStack(Aura.FrostweaversWrath, now);
+            Auras.ConsumeStack(FrostweaversWrath.Buff, now);
             crit += FrostweaversWrath.CritChance;
         }
-        if (consumesIcyFlow && Auras.HasAura(Aura.IcyFlow, now))
+        if (consumesIcyFlow && Auras.HasAura(IcyFlow.Buff, now))
         {
-            Auras.ConsumeStack(Aura.IcyFlow, now);
+            Auras.ConsumeStack(IcyFlow.Buff, now);
             crit += IcyFlow.CritChance;
         }
         return crit;
@@ -124,23 +138,23 @@ public sealed class Rime : Hero
         if (count <= 0 || ctx == null) return;
 
         bool refund;
-        if (Auras.HasAura(Aura.UndulatingSpirit, ctx.CurrentTime))
+        if (Auras.HasAura(Customization.Legendaries.UndulatingSpirit.Buff, ctx.CurrentTime))
         {
-            Auras.ConsumeStack(Aura.UndulatingSpirit, ctx.CurrentTime);
+            Auras.ConsumeStack(Customization.Legendaries.UndulatingSpirit.Buff, ctx.CurrentTime);
             refund = true;
         }
         else
         {
             // Spirit Refund chance is Spirit / (1 + Spirit) (per the user: "%/(100+%)").
             double spirit = SpiritPercent(ctx.CurrentTime);
-            refund = ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx, Aura.RisingSpirit.LogId);
+            refund = ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx, RisingSpirit.LogId);
         }
 
         if (refund)
         {
             // Rising Spirit comes with the spend; the orbs come back a moment later
             // (combat logs, 10 Rime logs: orbs show up again 0.233s (10th percentile) after, with snapshot lag; 0.2s).
-            Auras.Apply(Aura.RisingSpirit, ctx.CurrentTime);
+            Auras.Apply(RisingSpirit, ctx.CurrentTime);
             ctx.Schedule(SimTime.FromSeconds(RefundDelaySeconds), c =>
             {
                 // Refunded orbs past the maximum overflow (Wisdom of the North counts orbs that overflow your maximum).
@@ -169,16 +183,16 @@ public sealed class Rime : Hero
         }
         // Frostweaver's Wrath: "Each time you generate Winter Orbs" (one roll per gain that adds orbs).
         if (ctx != null && WinterOrbs > before && HasTalent<FrostweaversWrath>()
-            && ctx.Outcomes.RollProc(FrostweaversWrath.ProcKey, FrostweaversWrath.ProcChance, ctx, Aura.FrostweaversWrath.LogId))
+            && ctx.Outcomes.RollProc(FrostweaversWrath.ProcKey, FrostweaversWrath.ProcChance, ctx, FrostweaversWrath.Buff.LogId))
         {
-            Auras.Apply(Aura.FrostweaversWrath, ctx.CurrentTime);
+            Auras.Apply(FrostweaversWrath.Buff, ctx.CurrentTime);
         }
     }
 
     /// <summary>Flight of the Navir: Cold Snap and Freezing Torrent command the 5 circling swallows to attack.</summary>
     public void TriggerFrostSwallows(SimulationContext ctx, EnemyTarget target)
     {
-        if (!Auras.HasAura(Aura.FlightOfTheNavir, ctx.CurrentTime) || target == null) return;
+        if (!Auras.HasAura(FlightOfTheNavir.Buff, ctx.CurrentTime) || target == null) return;
         var swallows = GetAbility<CommandedFrostSwallows>();
         if (swallows == null) return;
         // Every swallow circling now; one that lands at once must not be sent again by the same command.
@@ -194,7 +208,7 @@ public sealed class Rime : Hero
 
         // Datamine talent 192 Cascading Blitz: "For each Anima you generate while your Ice Blitz is active,
         // you conjure 1 Frost Swallow to attack your target."
-        if (ctx != null && primaryTarget != null && HasTalent<CascadingBlitz>() && Auras.HasAura(Aura.IceBlitz, ctx.CurrentTime))
+        if (ctx != null && primaryTarget != null && HasTalent<CascadingBlitz>() && Auras.HasAura(IceBlitz.Buff, ctx.CurrentTime))
         {
             // "...attack your target" (a replay follows the log if the player briefly had another target).
             var swallows = GetAbility<FrostSwallows>();

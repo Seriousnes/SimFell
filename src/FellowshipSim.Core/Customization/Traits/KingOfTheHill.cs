@@ -1,10 +1,13 @@
-using System.Globalization;
-using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Traits;
 
-public class KingOfTheHill : UnmodeledTrait { public override string Name => "King of the Hill"; }
+/// <summary>
+/// Trait 6: "You take 3% / 6% / 9% / 12% Reduced Damage while you are above 80% health."
+/// Not modeled yet (reported, no effect).
+/// </summary>
+public class KingOfTheHill : UnmodeledTrait
+{
+    public const int TraitId = 6;
+    public const string TraitName = "King of the Hill";
+    public override int Id => TraitId;
+    public override string Name => TraitName;
+}

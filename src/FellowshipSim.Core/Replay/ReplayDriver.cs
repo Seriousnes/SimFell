@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Import;
 
 namespace FellowshipSim.Core.Replay;
@@ -52,14 +49,14 @@ public sealed class ReplayDriver
     public static bool SupportsHero(string hero) => SupportedHeroes.Contains(hero, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>Builds the logged character from the script's snapshot.</summary>
-    public static Hero CreateHero(ReplayScript script, ICodexDataService codex)
+    public static Hero CreateHero(ReplayScript script)
     {
         var snapshot = script.CharacterSnapshot
             ?? throw new InvalidOperationException("Replay script has no character snapshot.");
         snapshot.GameDate ??= script.FightDate;
         return script.Player.Hero.ToLowerInvariant() switch
         {
-            "rime" => FellowshipImporter.ImportRime(snapshot, codex),
+            "rime" => FellowshipImporter.ImportRime(snapshot),
             _ => throw new NotSupportedException($"{script.Player.Hero} is not supported yet (supported: {string.Join(", ", SupportedHeroes)}).")
         };
     }
@@ -305,8 +302,8 @@ public sealed class ReplayDriver
     }
 
     /// <summary>
-    /// Auras other actors put on the player or on enemies. Their effect comes from the datamine effect record
-    /// (log ID - 1,000,000); the log decides when they end. Auras whose modifiers the engine does not understand are reported.
+    /// Auras other actors put on the player or on enemies. Their effect comes from the <see cref="PartyBuffs"/> catalogue;
+    /// the log decides when they end. Auras the catalogue does not list are reported.
     /// </summary>
     private void ApplyExternalAura(ReplayCommand cmd, ReplayResult result)
     {
@@ -335,50 +332,27 @@ public sealed class ReplayDriver
     private readonly Dictionary<(int LogId, int Source), AuraDef?> _externalDefs = new();
 
     /// <summary>
-    /// The aura another actor applies: its datamine effect, one instance per source (the same buff from two players stacks),
-    /// and scaled to the source player's rank when it comes from one of their traits.
+    /// The aura another actor applies, from the <see cref="PartyBuffs"/> catalogue: one instance per source (the same buff
+    /// from two players stacks), lasting until the log removes it, and scaled to the source player's rank when it comes
+    /// from one of their traits. Null for buffs the catalogue does not list.
     /// </summary>
     private AuraDef? ExternalAuraDef(int logId, int sourceId)
     {
         if (_externalDefs.TryGetValue((logId, sourceId), out var cached)) return cached;
         AuraDef? def = null;
-        if (logId >= GameData.LogIdOffset && _hero.Data.TryGet<Fellowship.SDK.Records.EffectRecord>("effect", logId - GameData.LogIdOffset, out _))
+        if (PartyBuffs.Find(logId) is { } buff)
         {
-            def = AuraDef.FromEffect(_hero.Data, logId - GameData.LogIdOffset) with { Duration = SimTime.Infinite, MaxStacks = 99, SourceId = sourceId };
-            def = ScaleToSourceTraitRank(def, sourceId);
+            def = buff.Aura with { Duration = SimTime.Infinite, MaxStacks = 99, SourceId = sourceId };
+            if (buff.ValueByGiverRank is { } byRank && _script.Players.TryGetValue(sourceId.ToString(), out var source))
+            {
+                int rank = source.GearTraits.GetValueOrDefault(buff.TraitName!)
+                           + source.WeaponTraits.GetValueOrDefault((LogIds.TraitOffset + buff.TraitId).ToString());
+                double value = byRank[Math.Clamp(rank, 1, byRank.Count) - 1];
+                def = def with { Modifiers = def.Modifiers.Select(m => m with { Value = value }).ToArray() };
+            }
         }
         _externalDefs[(logId, sourceId)] = def;
         return def;
-    }
-
-    /// <summary>
-    /// If the source player has a trait named like the aura, its modifiers take that trait's value at the player's rank
-    /// (rank = gear trait ranks + weapon-tree points, max 4); the rank series used is the one whose rank-1 value is the
-    /// datamined modifier value.
-    /// </summary>
-    private AuraDef ScaleToSourceTraitRank(AuraDef def, int sourceId)
-    {
-        if (!_script.Players.TryGetValue(sourceId.ToString(), out var source)) return def;
-        var trait = _hero.Data.All("trait").FirstOrDefault(t => t.TryGetProperty("name", out var n) && n.GetString() == def.Name);
-        if (trait.ValueKind != System.Text.Json.JsonValueKind.Object || !trait.TryGetProperty("rankRuns", out var runs)) return def;
-
-        int traitId = trait.GetProperty("id").GetInt32();
-        int rank = source.GearTraits.GetValueOrDefault(def.Name) + source.WeaponTraits.GetValueOrDefault((3_000_000 + traitId).ToString());
-        rank = Math.Clamp(rank, 1, trait.TryGetProperty("maxRank", out var max) ? max.GetInt32() : 4);
-
-        var scaled = def.Modifiers.Select(m =>
-        {
-            foreach (var run in runs.EnumerateArray())
-            {
-                var values = run.GetProperty("values");
-                if (values.GetArrayLength() > 0 && Math.Abs(values[0].GetDouble() - m.Value) < 1e-9)
-                {
-                    return m with { Value = values[Math.Min(rank, values.GetArrayLength()) - 1].GetDouble() };
-                }
-            }
-            return m;
-        }).ToArray();
-        return def with { Modifiers = scaled };
     }
 
     // ------------------------------------------------------------------ checks

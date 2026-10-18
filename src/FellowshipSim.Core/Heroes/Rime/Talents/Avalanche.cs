@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -13,11 +10,13 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class Avalanche : Talent
 {
+    public const int TalentId = 48;
+    public const string TalentName = "Avalanche";
     public const double OneExtraChance = 0.18;
     public const double TwoExtraChance = 0.09;
     public const double CometSpacingSeconds = 0.3;
     public const string ProcKey = "avalanche";
-    public override string Name => "Avalanche";
-    public override int Id => 48;
+    public override string Name => TalentName;
+    public override int Id => TalentId;
     public override void Bind(Hero hero) { }
 }

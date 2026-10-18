@@ -101,7 +101,7 @@ public sealed class ReplayLibrary
     public ReviewSummary Review(ReplayScript script, int playerId, ReplayOptions? options = null)
     {
         options ??= new ReplayOptions { StopOnFirstFailure = false };
-        var hero = ReplayDriver.CreateHero(script, _codex);
+        var hero = ReplayDriver.CreateHero(script);
         var result = new ReplayDriver(hero, script, ReplayMappings.ForHero(script.Player.Hero), options).Run();
 
         string id = ReviewId(script.ReportCode, script.FightId, playerId);

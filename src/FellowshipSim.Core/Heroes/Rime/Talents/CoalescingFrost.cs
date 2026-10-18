@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -13,13 +10,15 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class CoalescingFrost : Talent
 {
+    public const int TalentId = 36;
+    public const string TalentName = "Coalescing Frost";
     public const int DebuffEffectId = 2306;
     public const int DamageEffectId = 2300;
     public const double DurationSeconds = 3.0;
     public const double CoefficientPerStack = 0.56;
     public const double CritDoubleStackChance = 0.5;
     public const double TargetThreshold = 5;
-    public override string Name => "Coalescing Frost";
-    public override int Id => 36;
+    public override string Name => TalentName;
+    public override int Id => TalentId;
     public override void Bind(Hero hero) => ((Rime)hero).GetAbility<CoalescingFrostEruption>()?.Enable(hero);
 }

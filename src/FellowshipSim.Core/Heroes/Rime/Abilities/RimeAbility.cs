@@ -1,17 +1,14 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
-// Values come from the datamine records named in each class (ability IDs unless noted as effects).
+// Each ability lists its game values as constants at the top (IDs and numbers from the game data).
 
-/// <summary>Base for Rime's abilities, built from a datamine ability record.</summary>
+/// <summary>Base for Rime's abilities.</summary>
 public abstract class RimeAbility : Ability
 {
-    protected RimeAbility(Rime owner, int abilityId) : base(owner, abilityId) { }
-    protected RimeAbility(Rime owner, int id, string name, double coefficient) : base(owner, id, name, coefficient) { }
+    protected RimeAbility(Rime owner, int id, string name, AbilityCategory category = AbilityCategory.None)
+        : base(owner, id, name, category) { }
 
     protected Rime Rime => (Rime)Owner;
 }

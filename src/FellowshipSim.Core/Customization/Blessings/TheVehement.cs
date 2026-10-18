@@ -1,7 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Blessings;
 
 /// <summary>
@@ -12,21 +8,30 @@ namespace FellowshipSim.Core.Customization.Blessings;
 /// </summary>
 public class TheVehement : Blessing
 {
+    public const int BlessingId = 712;
+    public const string BlessingName = "The Vehement";
     public const int DamageEffectId = 3193;
+    public const string DamageName = "The Vehement's Disdain";
     public const int CounterEffectId = 3194;
     public const double TargetCountScaling = 5.0;
-    public override string Name => "The Vehement";
+    /// <summary>The eruption's bonus from Critical Strike chance is capped at this.</summary>
+    public const double CritChanceCap = 0.5;
+    /// <summary>BASIC hits per eruption.</summary>
+    public static readonly double[] HitsPerEruptionByRank = [6, 5, 4, 3];
+
+    public override int Id => BlessingId;
+    public override string Name => BlessingName;
 
     public override void Bind(Hero hero)
     {
-        int threshold = (int)RankData.EffectConstant(hero.Data, CounterEffectId, "Finesse.BasicToAoe.CounterThreshold", Rank);
-        double critCap = Constant(hero, "CritChanceThreshold");
-        var counter = hero.DefineAura(CounterEffectId).WithMaxStacks(threshold - 1) with { Duration = SimTime.Infinite };
-        int damageId = GameData.EffectLogId(DamageEffectId);
-        string damageName = hero.Data.Effect(DamageEffectId).Name;
+        int threshold = (int)ForRank(HitsPerEruptionByRank);
+        const double critCap = CritChanceCap;
+        var counter = hero.Register(AuraDef.Effect(BlessingName, CounterEffectId, maxStacks: threshold - 1));
+        int damageId = LogIds.Effect(DamageEffectId);
+        const string damageName = DamageName;
         // The counter advances when a BASIC ability's hit lands (combat logs: Frost Bolt counts when the bolt hits, not when
         // its cast completes), and the hit that reaches the threshold erupts.
-        var basicIds = hero.Abilities.Where(a => a.Category == "Basic").Select(a => a.DamageLogId).ToHashSet();
+        var basicIds = hero.Abilities.Where(a => a.Category == AbilityCategory.Basic).Select(a => a.DamageLogId).ToHashSet();
         int hits = 0;
         hero.OnDamageDealt += dmg =>
         {

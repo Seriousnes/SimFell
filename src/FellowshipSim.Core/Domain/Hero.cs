@@ -1,20 +1,17 @@
-using FellowshipSim.Core.Codex;
 using FellowshipSim.Core.Customization.Blessings;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Customization.Legendaries;
 using FellowshipSim.Core.Customization.Traits;
 using FellowshipSim.Core.Customization.Weapons;
-using FellowshipSim.Core.Engine;
 
 namespace FellowshipSim.Core.Domain;
 
 public abstract class Hero : Actor
 {
-    protected Hero(GameData? data = null)
+    protected Hero()
     {
-        Data = data ?? GameData.Default;
         // Spirit of Heroism is applied by every hero's Spirit ability; register it up front so a replay compares it from the start.
-        Register(AuraDef.FromEffect(Data, SpiritOfHeroismEffectId));
+        Register(SpiritOfHeroism);
         // Cooldown recovery depends on haste and cooldown acceleration: progress every recharge at the old rate when they change.
         Auras.OnGained += (_, _, now) => AdvanceCooldowns(now);
         Auras.OnRemoved += (_, now) => AdvanceCooldowns(now);
@@ -24,9 +21,6 @@ public abstract class Hero : Actor
     {
         foreach (var state in Cooldowns.Values) state.Advance(now);
     }
-
-    /// <summary>The datamined game data the hero's abilities and customizations read their values from.</summary>
-    public GameData Data { get; }
 
     /// <summary>The simulation the hero is in (for effects triggered by events that carry no context, e.g. casts).</summary>
     public SimulationContext? SimContext { get; internal set; }
@@ -95,6 +89,12 @@ public abstract class Hero : Actor
 
     /// <summary>Spirit of Heroism (effect 2253, granted by every hero's Spirit ability): +30% Haste.</summary>
     public const int SpiritOfHeroismEffectId = 2253;
+    public const double SpiritOfHeroismSeconds = 20.0;
+    public const double SpiritOfHeroismHaste = 0.3;
+
+    /// <summary>Spirit of Heroism: every hero's Spirit ability grants +30% Haste for 20 seconds.</summary>
+    public static readonly AuraDef SpiritOfHeroism = AuraDef.Effect("Spirit of Heroism", SpiritOfHeroismEffectId, SpiritOfHeroismSeconds,
+        modifiers: StatModifier.Add(StatType.Haste, SpiritOfHeroismHaste));
 
     public event Action<DamageContext>? OnDamageDealt;
     public event Action<Ability, EnemyTarget?, SimTime>? OnCastStarted;
@@ -116,9 +116,6 @@ public abstract class Hero : Actor
 
     // ------------------------------------------------------------------ auras
 
-    /// <summary>The aura defined by datamine effect <paramref name="effectId"/>, registered as modeled.</summary>
-    public AuraDef DefineAura(int effectId) => Register(AuraDef.FromEffect(Data, effectId));
-
     public AuraDef Register(AuraDef def)
     {
         if (def.LogId > 0) ModeledAuraLogIds.Add(def.LogId);
@@ -128,8 +125,7 @@ public abstract class Hero : Actor
     /// <summary>Activates Spirit of Heroism and the auras that last while it does.</summary>
     public void ActivateSpiritOfHeroism(SimulationContext ctx)
     {
-        var heroism = DefineAura(SpiritOfHeroismEffectId);
-        heroism = heroism.WithDuration(heroism.Duration.TotalSeconds + SpiritOfHeroismDurationBonus);
+        var heroism = SpiritOfHeroism.WithDuration(SpiritOfHeroismSeconds + SpiritOfHeroismDurationBonus);
         var applied = Auras.Apply(heroism, ctx.CurrentTime);
         foreach (var aura in SpiritOfHeroismAuras) Auras.Apply(aura, ctx.CurrentTime);
         // The companions end with Spirit of Heroism itself (on its actual expiry, which includes the server-frame lag).

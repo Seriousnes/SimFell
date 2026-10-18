@@ -1,5 +1,3 @@
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Domain;
 
 public abstract class Actor

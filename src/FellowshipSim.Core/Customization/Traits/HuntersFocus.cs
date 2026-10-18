@@ -1,27 +1,25 @@
-using System.Globalization;
-using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Traits;
 
 /// <summary>
-/// Trait 42 / effect 2141 ("Trait : Focused Haste"): targeted offensive abilities grant Haste rating for 8s, stacking to 5;
-/// lost when a targeted offensive ability is used on another enemy.
+/// Trait 42: "Your targeted offensive abilities grant you 4 / 8 / 12 / 16 Haste rating for 8 seconds, stacking up to 5
+/// times. The Haste is lost if you use a targeted offensive ability on any other enemy." (effect 2141, "Trait : Focused Haste")
 /// </summary>
 public class HuntersFocus : Trait
 {
-    public const int EffectId = 2141;
+    public const int TraitId = 42;
+    public const string TraitName = "Hunter's Focus";
+    public const int BuffEffectId = 2141;
     public const double DurationSeconds = 8.0;
-    public override string Name => "Hunter's Focus";
+    public const int MaxStacks = 5;
+    public static readonly double[] HasteRatingByRank = [4, 8, 12, 16];
+
+    public override int Id => TraitId;
+    public override string Name => TraitName;
 
     public override void Bind(Hero hero)
     {
-        var aura = hero.DefineAura(EffectId)
-            .WithDuration(DurationSeconds)
-            .WithModifiers(StatModifier.Add(StatType.HasteRating, RankValue(hero)));
+        var aura = hero.Register(AuraDef.Effect("Trait : Focused Haste", BuffEffectId, DurationSeconds, MaxStacks,
+            StatModifier.Add(StatType.HasteRating, ForRank(HasteRatingByRank))));
         EnemyTarget? focus = null;
         hero.OnCastCompleted += (ability, target, now) =>
         {

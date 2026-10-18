@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -12,8 +9,11 @@ public abstract class FrostSwallowAttack : RimeAbility
     public const double DamagePerSpiritPercent = 1.5;
     public const string BurstingSwallowsProc = "bursting_swallows";
 
-    protected FrostSwallowAttack(Rime owner, int abilityId) : base(owner, abilityId) => owner.OnDamageDealt += OnSwallowHit;
-    protected FrostSwallowAttack(Rime owner, int id, string name, double coefficient) : base(owner, id, name, coefficient) => owner.OnDamageDealt += OnSwallowHit;
+    protected FrostSwallowAttack(Rime owner, int id, string name, double coefficient) : base(owner, id, name)
+    {
+        BaseCoefficient = coefficient;
+        owner.OnDamageDealt += OnSwallowHit;
+    }
 
     public override double BaseDamage(SimulationContext ctx, EnemyTarget? target, double damageMultiplier = 1.0) =>
         base.BaseDamage(ctx, target, damageMultiplier) * (1.0 + DamagePerSpiritPercent * Owner.SpiritPercent(ctx.CurrentTime));
@@ -31,11 +31,11 @@ public abstract class FrostSwallowAttack : RimeAbility
         var hero = Rime;
 
         // "The duration of Ice Blitz is extended by 0.1 seconds each time a Frost Swallow hits an enemy."
-        hero.Auras.Extend(hero.Aura.IceBlitz, SimTime.FromSeconds(IceBlitz.ExtensionPerSwallowSeconds));
+        hero.Auras.Extend(IceBlitz.Buff, SimTime.FromSeconds(IceBlitz.ExtensionPerSwallowSeconds));
 
         // Talent 628: "Your Frost Swallow hits have a 12% chance to trigger a pulse of Bursting Ice on the target."
         if (hero.HasTalent<BurstingSwallows>() &&
-            ctx.Outcomes.RollProc(BurstingSwallowsProc, BurstingSwallows.ProcChance, ctx, GameData.EffectLogId(BurstingIce.PulseEffectId)))
+            ctx.Outcomes.RollProc(BurstingSwallowsProc, BurstingSwallows.ProcChance, ctx, LogIds.Effect(BurstingIce.PulseEffectId)))
         {
             hero.GetAbility<BurstingIce>()?.DealPulse(ctx, dmg.Target);
         }

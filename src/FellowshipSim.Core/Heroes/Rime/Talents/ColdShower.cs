@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -12,9 +9,11 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class ColdShower : Talent
 {
+    public const int TalentId = 657;
+    public const string TalentName = "Cold Shower";
     public const double ProcChance = 0.07;
     public const string ProcKey = "cold_shower";
-    public override string Name => "Cold Shower";
-    public override int Id => 657;
+    public override string Name => TalentName;
+    public override int Id => TalentId;
     public override void Bind(Hero hero) { }
 }

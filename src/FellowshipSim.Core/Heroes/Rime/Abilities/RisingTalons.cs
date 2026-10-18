@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,6 +6,9 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class RisingTalons : RimeAbility
 {
     public const int AbilityId = 2224;
+    public const string AbilityName = "Rising Talons";
+    /// <summary>Per ice spike (40% of Ice Comet).</summary>
+    public const double Coefficient = 2.114;
 
     /// <summary>Combat logs: each spike loses damage as sqrt(12/N) beyond 12 targets.</summary>
     public const double TargetThreshold = 12;
@@ -22,8 +22,9 @@ public class RisingTalons : RimeAbility
     public const double FirstWaveDelaySeconds = 0.30;
     public const double WaveIntervalSeconds = 4.0 / 30.0;
 
-    public RisingTalons(Rime owner) : base(owner, AbilityId)
+    public RisingTalons(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Power)
     {
+        BaseCoefficient = Coefficient;
         AoeTargetThreshold = TargetThreshold;
     }
 

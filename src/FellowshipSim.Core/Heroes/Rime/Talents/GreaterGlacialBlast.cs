@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -11,15 +8,16 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class GreaterGlacialBlast : Talent
 {
+    public const int TalentId = 190;
+    public const string TalentName = "Greater Glacial Blast";
+    public const double DamageMultiplier = 1.4;
     public const double CastTimeIncreaseSeconds = 0.5;
-    public override string Name => "Greater Glacial Blast";
-    public override int Id => 190;
+    public override string Name => TalentName;
+    public override int Id => TalentId;
 
     public override void Bind(Hero hero)
     {
-        double multiplier = hero.Data.Raw("effect", 1392).GetProperty("talents")
-            .GetProperty("DamageIncreaseAndCastTimeIncrease").GetProperty("AdditionalDamage").GetDouble();
-        hero.GetAbility<GlacialBlast>()?.AddDamageMultiplier(multiplier);
-        hero.GetAbility<TalonStrike>()?.AddDamageMultiplier(multiplier);
+        hero.GetAbility<GlacialBlast>()?.AddDamageMultiplier(DamageMultiplier);
+        hero.GetAbility<TalonStrike>()?.AddDamageMultiplier(DamageMultiplier);
     }
 }

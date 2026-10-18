@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -17,8 +14,9 @@ public class CoalescingFrostEruption : RimeAbility
     private SimulationContext? _subscribed;
 
     public CoalescingFrostEruption(Rime owner)
-        : base(owner, GameData.EffectLogId(CoalescingFrost.DamageEffectId), "Coalescing Frost", CoalescingFrost.CoefficientPerStack)
+        : base(owner, LogIds.Effect(CoalescingFrost.DamageEffectId), "Coalescing Frost")
     {
+        BaseCoefficient = CoalescingFrost.CoefficientPerStack;
         AoeTargetThreshold = CoalescingFrost.TargetThreshold;
     }
 

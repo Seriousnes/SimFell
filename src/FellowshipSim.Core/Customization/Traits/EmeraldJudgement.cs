@@ -1,9 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
 using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 
 namespace FellowshipSim.Core.Customization.Traits;
 
@@ -13,20 +10,26 @@ namespace FellowshipSim.Core.Customization.Traits;
 /// </summary>
 public class EmeraldJudgement : Trait
 {
+    public const int TraitId = 34;
+    public const string TraitName = "Emerald Judgement";
     public const int TraitPowerId = 376;
     public const int DamageEffectId = 93;
+    public const string DamageName = "Emerald Judgement";
+    /// <summary>"dealing 800% Main Stat damage"</summary>
+    public const double Coefficient = 8.0;
+    public static readonly double[] ProcsPerMinuteByRank = [0.8, 1.3, 1.8, 2.3];
     public const string ProcKey = "emerald_judgement";
     /// <summary>The spike erupts from the ground a moment after the proc (logs: about 0.5s).</summary>
     public const double SpikeDelaySeconds = 1.0;
-    public override string Name => "Emerald Judgement";
+    public override int Id => TraitId;
+    public override string Name => TraitName;
 
     public override void Bind(Hero hero)
     {
-        var rppm = new RealPpm(ProcKey, RankValue(hero));
-        int logId = GameData.EffectLogId(DamageEffectId);
-        string name = hero.Data.Effect(DamageEffectId).Name;
-        var match = Regex.Match(hero.Data.TraitPower(TraitPowerId).Description, @"(\d+)% Main Stat damage");
-        double coefficient = double.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture) / 100.0;
+        var rppm = new RealPpm(ProcKey, ForRank(ProcsPerMinuteByRank));
+        int logId = LogIds.Effect(DamageEffectId);
+        const string name = DamageName;
+        const double coefficient = Coefficient;
 
         hero.OnDamageDealt += dmg =>
         {

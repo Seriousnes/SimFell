@@ -1,9 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
 using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 
 namespace FellowshipSim.Core.Customization.Traits;
 
@@ -17,11 +14,18 @@ namespace FellowshipSim.Core.Customization.Traits;
 /// </summary>
 public class AmethystSplinters : Trait
 {
+    public const int TraitId = 31;
+    public const string TraitName = "Amethyst Splinters";
     public const int DotEffectId = 101;
+    public const string DotName = "Amethyst Splinter";
     public const double DurationSeconds = 8.0;
     public const double TickPeriodSeconds = 2.0;
     public const double BaseTicks = DurationSeconds / TickPeriodSeconds;
-    public override string Name => "Amethyst Splinters";
+    /// <summary>Share of each critical hit's damage dealt again over 8 seconds.</summary>
+    public static readonly double[] DamageShareByRank = [0.04, 0.06, 0.08, 0.11];
+
+    public override int Id => TraitId;
+    public override string Name => TraitName;
 
     private sealed class Splinter
     {
@@ -32,9 +36,9 @@ public class AmethystSplinters : Trait
 
     public override void Bind(Hero hero)
     {
-        double share = RankValue(hero);
-        int logId = GameData.EffectLogId(DotEffectId);
-        string name = hero.Data.Effect(DotEffectId).Name;
+        double share = ForRank(DamageShareByRank);
+        int logId = LogIds.Effect(DotEffectId);
+        const string name = DotName;
         var splinters = new Dictionary<EnemyTarget, Splinter>();
 
         void Tick(SimulationContext ctx, EnemyTarget target, Splinter s)

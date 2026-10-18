@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -12,9 +9,12 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class ProcIceComet : RimeAbility
 {
     public const int AbilityId = 2227;
+    public const string AbilityName = "Ice Comet";
+    public const double Coefficient = 5.285;
 
-    public ProcIceComet(Rime owner) : base(owner, AbilityId)
+    public ProcIceComet(Rime owner) : base(owner, AbilityId, AbilityName)
     {
+        BaseCoefficient = Coefficient;
         AoeTargetThreshold = IceComet.TargetThreshold;
     }
 

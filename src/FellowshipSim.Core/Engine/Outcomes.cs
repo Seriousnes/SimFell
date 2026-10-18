@@ -1,5 +1,3 @@
-using FellowshipSim.Core.Domain;
-
 namespace FellowshipSim.Core.Engine;
 
 /// <summary>Everything the damage pipeline knows about a hit before its random parts are decided.</summary>

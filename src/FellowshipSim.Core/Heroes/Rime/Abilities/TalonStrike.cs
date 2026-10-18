@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,8 +6,14 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class TalonStrike : GlacialBlastFamily
 {
     public const int AbilityId = 2223;
+    public const string AbilityName = "Talon Strike";
+    /// <summary>Per ice spike (40% of Glacial Blast).</summary>
+    public const double Coefficient = 4.096;
 
-    public TalonStrike(Rime owner) : base(owner, AbilityId) { }
+    public TalonStrike(Rime owner) : base(owner, AbilityId, AbilityName)
+    {
+        BaseCoefficient = Coefficient;
+    }
 
     public override bool CanCast(SimulationContext ctx, out string? reason)
     {
@@ -38,7 +41,7 @@ public class TalonStrike : GlacialBlastFamily
         if (assault)
         {
             // Glacial Assault: no cost and 40% more damage.
-            hero.Auras.Remove(hero.Aura.GlacialAssault, ctx.CurrentTime);
+            hero.Auras.Remove(GlacialAssault.Buff, ctx.CurrentTime);
             multiplier = GlacialAssaultMultiplier;
             // INFERRED from logs (not the tooltip): cast "as if" with full Winter Orbs, it counts them as spent for Wisdom of
             // the North. Across 10 logs this removes 46 of 62 Ice Blitz cooldown misses while some casts still land right

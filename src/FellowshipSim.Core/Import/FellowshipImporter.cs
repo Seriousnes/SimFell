@@ -1,11 +1,9 @@
-using FellowshipSim.Core.Codex;
 using FellowshipSim.Core.Customization.Blessings;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Customization.Legendaries;
 using FellowshipSim.Core.Customization.Sets;
 using FellowshipSim.Core.Customization.Traits;
 using FellowshipSim.Core.Customization.Weapons;
-using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Heroes.Rime;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
@@ -13,12 +11,10 @@ namespace FellowshipSim.Core.Import;
 
 public static class FellowshipImporter
 {
-    public const int StrandOfEternityEffectId = 3087;
-    public const int MoteOfCreationEffectId = 3085;
 
-    public static Rime ImportRime(CharacterSnapshotDto snapshot, ICodexDataService codex, GameData? data = null)
+    public static Rime ImportRime(CharacterSnapshotDto snapshot)
     {
-        var rime = new Rime(data) { Name = snapshot.Name, GameDate = snapshot.GameDate };
+        var rime = new Rime { Name = snapshot.Name, GameDate = snapshot.GameDate };
 
         // Base stats: ratings from gear, and the character sheet's percentages when the snapshot comes from a log
         // (they already include passive bonuses such as gem nodes and set bonuses).
@@ -91,7 +87,6 @@ public static class FellowshipImporter
                 rime.UnmodeledFeatures.Add($"Gem: {gemKey}");
                 continue;
             }
-            gem.Initialize(codex);
             rime.Gems.Add(gem);
             gem.Bind(rime);
             rime.UnmodeledFeatures.AddRange(gem.UnmodeledNodes.Select(n => $"Gem node: {n}"));
@@ -122,7 +117,6 @@ public static class FellowshipImporter
                 rime.UnmodeledFeatures.Add($"Blessing: {blessingKey} (rank {rank})");
                 if (blessing == null) continue;
             }
-            blessing.Initialize(codex);
             rime.Blessings.Add(blessing);
             blessing.Bind(rime);
         }
@@ -177,7 +171,6 @@ public static class FellowshipImporter
                 rime.UnmodeledFeatures.Add($"Trait: {traitKey} (rank {rank})");
                 if (trait == null) continue;
             }
-            trait.Initialize(codex);
             rime.Traits.Add(trait);
             trait.Bind(rime);
         }
@@ -187,22 +180,18 @@ public static class FellowshipImporter
             Legendary? legendary = Normalize(snapshot.Legendary) switch
             {
                 var l when l.Contains("undulating") => new UndulatingSpirit(),
-                var l when l.Contains("frozenlight") => new RepositoryOfFrozenLight(),
-                var l when l.Contains("voidbringer") => new VoidbringersTouch(),
-                var l when l.Contains("earthbreaker") => new Earthbreaker(),
                 _ => null
             };
             if (legendary == null || !legendary.IsModeled) rime.UnmodeledFeatures.Add($"Legendary: {snapshot.Legendary}");
             if (legendary != null)
             {
-                legendary.Initialize(codex);
                 rime.Legendaries.Add(legendary);
                 legendary.Bind(rime);
             }
             // Every legendary item also carries Strand of Eternity (effect 3087, +10% cooldown recovery) and Mote of
             // Creation (effect 3085, +10% primary stat; already in the character sheet's primary stat when imported from a log).
-            rime.PassiveAuras.Add(AuraDef.FromEffect(rime.Data, StrandOfEternityEffectId));
-            if (!rime.Stats.UsesSheetValues) rime.PassiveAuras.Add(AuraDef.FromEffect(rime.Data, MoteOfCreationEffectId));
+            rime.PassiveAuras.Add(LegendaryStats.StrandOfEternity);
+            if (!rime.Stats.UsesSheetValues) rime.PassiveAuras.Add(LegendaryStats.MoteOfCreation);
         }
 
         foreach (var setKey in snapshot.Sets)

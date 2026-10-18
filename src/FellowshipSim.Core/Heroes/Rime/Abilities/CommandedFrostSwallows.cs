@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -11,7 +8,7 @@ public class CommandedFrostSwallows : FrostSwallowAttack
     public const int EffectId = 1365;
 
     public CommandedFrostSwallows(Rime owner)
-        : base(owner, GameData.EffectLogId(EffectId), "Frost Swallows", CoefficientOf(owner.Data.Ability(FlightOfTheNavir.AbilityId))) { }
+        : base(owner, LogIds.Effect(EffectId), "Frost Swallows", FlightOfTheNavir.Coefficient) { }
 
     private int _inFlight;
 

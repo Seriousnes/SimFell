@@ -1,10 +1,13 @@
-using System.Globalization;
-using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Traits;
 
-public class IronSpikes : UnmodeledTrait { public override string Name => "Iron Spikes"; }
+/// <summary>
+/// Trait 36: "Taking damage has a chance to increase your Armor by 10% / 17% / 24% / 32% for 10 seconds. While this is active, you deal 16% / 29% / 42% / 55% Main Stat physical damage to enemies who deal damage to you. (1.5 PPM)"
+/// Not modeled yet (reported, no effect).
+/// </summary>
+public class IronSpikes : UnmodeledTrait
+{
+    public const int TraitId = 36;
+    public const string TraitName = "Iron Spikes";
+    public override int Id => TraitId;
+    public override string Name => TraitName;
+}

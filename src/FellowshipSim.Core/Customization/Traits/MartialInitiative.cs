@@ -1,28 +1,33 @@
-using System.Globalization;
-using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Traits;
 
-// Rank values come from the datamine "trait" records (rankRuns); effects from the named effect records.
-
-/// <summary>Trait 51 / effect 2174: the weapon ability grants Main Stat for a fraction of its default cooldown.</summary>
+/// <summary>
+/// Trait 51: "Your Weapon Ability grants you 10% increased Main Stat and 15% Damage Reduction for a duration equal to
+/// 10% / 18% / 25% / 32% of your Weapon Ability's default cooldown."
+/// </summary>
 public class MartialInitiative : Trait
 {
-    public const int EffectId = 2174;
-    public override string Name => "Martial Initiative";
+    public const int TraitId = 51;
+    public const string TraitName = "Martial Initiative";
+    public const int BuffEffectId = 2174;
+    public const double BuffPrimaryStat = 1.1;
+    public const double BuffDamageTaken = 0.85;
+    /// <summary>The buff lasts this fraction of the weapon ability's default cooldown.</summary>
+    public static readonly double[] WeaponCooldownFractionByRank = [0.1, 0.18, 0.25, 0.32];
+
+    public static readonly AuraDef Buff = AuraDef.Effect("Martial Initiative", BuffEffectId,
+        modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, BuffDamageTaken), StatModifier.Increased(StatType.PrimaryAttributeMultiplier, BuffPrimaryStat)]);
+
+    public override int Id => TraitId;
+    public override string Name => TraitName;
 
     public override void Bind(Hero hero)
     {
-        var aura = hero.DefineAura(EffectId);
-        double fraction = RankValue(hero);
+        hero.Register(Buff);
+        double fraction = ForRank(WeaponCooldownFractionByRank);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability != hero.WeaponAbility) return;
-            hero.Auras.Apply(aura.WithDuration(fraction * ability.Cooldown.TotalSeconds), now);
+            hero.Auras.Apply(Buff.WithDuration(fraction * ability.Cooldown.TotalSeconds), now);
         };
     }
 }

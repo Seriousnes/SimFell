@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,16 +6,25 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class IceBlitz : RimeAbility
 {
     public const int AbilityId = 1032;
+    public const string AbilityName = "Ice Blitz";
+    public const double CooldownSeconds = 60.0;
+    public const int BuffEffectId = 1397;
+    public const double BuffSeconds = 20.0;
+    public const double BuffDamage = 1.2;
     public const double ExtensionPerSwallowSeconds = 0.1;
 
-    public IceBlitz(Rime owner) : base(owner, AbilityId)
+    public static readonly AuraDef Buff = AuraDef.Effect("Ice Blitz", BuffEffectId, BuffSeconds,
+        modifiers: StatModifier.More(StatType.DamageScale, BuffDamage));
+
+    public IceBlitz(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)
     {
+        SetCooldown(CooldownSeconds);
         IgnoresGcd = true;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
-        Rime.Auras.Apply(Rime.Aura.IceBlitz, ctx.CurrentTime);
+        Rime.Auras.Apply(Buff, ctx.CurrentTime);
         TriggerCooldown(ctx);
     }
 }

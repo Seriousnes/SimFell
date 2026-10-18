@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,14 +6,16 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class IceComet : RimeAbility
 {
     public const int AbilityId = 1018;
+    public const string AbilityName = "Ice Comet";
+    public const double Coefficient = 5.285;
     public const int DefaultWinterOrbCost = 2;
 
     /// <summary>hero_data Ice Comet TargetCountThreshold 12: damage falls off as sqrt(12/N) beyond 12 targets.</summary>
     public const double TargetThreshold = 12;
 
-    public IceComet(Rime owner) : base(owner, AbilityId)
+    public IceComet(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Power)
     {
-        WinterOrbCost = DefaultWinterOrbCost;
+        BaseCoefficient = Coefficient;
         AoeTargetThreshold = TargetThreshold;
     }
 

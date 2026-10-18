@@ -1,5 +1,4 @@
 using FellowshipSim.Core.APL;
-using FellowshipSim.Core.Domain;
 
 namespace FellowshipSim.Core.Engine;
 

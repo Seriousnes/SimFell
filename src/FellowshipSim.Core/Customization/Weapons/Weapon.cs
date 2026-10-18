@@ -1,5 +1,3 @@
-using FellowshipSim.Core.Domain;
-
 namespace FellowshipSim.Core.Customization.Weapons;
 
 public abstract class Weapon

@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -8,8 +5,14 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// <summary>Talent 189: Flight of the Navir grants 2 stacks of Navir's Keeper (free Cold Snaps).</summary>
 public class NavirsKeeper : Talent
 {
+    public const int TalentId = 189;
+    public const string TalentName = "Navir's Keeper";
+    public const int BuffEffectId = 2730;
     public const int StacksGranted = 2;
-    public override string Name => "Navir's Keeper";
-    public override int Id => 189;
+
+    /// <summary>"causes your next Cold Snap to not require nor cost any charge"</summary>
+    public static readonly AuraDef Buff = AuraDef.Effect("Navir's Keeper", BuffEffectId, maxStacks: StacksGranted);
+    public override string Name => TalentName;
+    public override int Id => TalentId;
     public override void Bind(Hero hero) { }
 }

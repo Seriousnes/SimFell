@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,8 +6,10 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class FrostSwallows : FrostSwallowAttack
 {
     public const int AbilityId = 1033;
+    public const string AbilityName = "Frost Swallows";
+    public const double Coefficient = 0.469;
 
-    public FrostSwallows(Rime owner) : base(owner, AbilityId) { }
+    public FrostSwallows(Rime owner) : base(owner, AbilityId, AbilityName, Coefficient) { }
 
     /// <summary>Swallows that pick their own targets among the enemies in combat.</summary>
     public void AttackEnemies(SimulationContext ctx, int count)

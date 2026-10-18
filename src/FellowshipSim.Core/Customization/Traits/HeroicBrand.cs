@@ -1,10 +1,13 @@
-using System.Globalization;
-using System.Text.RegularExpressions;
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Traits;
 
-public class HeroicBrand : UnmodeledTrait { public override string Name => "Heroic Brand"; }
+/// <summary>
+/// Trait 50: "Your Weapon Ability Damage and Healing is increased by 24% / 42% / 60% / 80%."
+/// Not modeled yet (reported, no effect).
+/// </summary>
+public class HeroicBrand : UnmodeledTrait
+{
+    public const int TraitId = 50;
+    public const string TraitName = "Heroic Brand";
+    public override int Id => TraitId;
+    public override string Name => TraitName;
+}

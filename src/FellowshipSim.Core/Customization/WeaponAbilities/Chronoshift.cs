@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.WeaponAbilities;
 
 /// <summary>
@@ -10,19 +7,37 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 public class Chronoshift : Ability
 {
     public const int AbilityId = 1558;
-    public const int BarrierEffectId = 2279;
+    public const string AbilityName = "Chronoshift";
+    /// <summary>Per pulse, of the primary stat.</summary>
+    public const double Coefficient = 5.769;
+    public const double CooldownSeconds = 180.0;
+    public const double CastTimeSeconds = 1.0;
+    public const double ChannelSeconds = 3.0;
+    public const double PulsePeriodSeconds = 1.5;
     /// <summary>Combat logs: pulses lose damage as sqrt(5/N) beyond 5 targets.</summary>
     public const double TargetThreshold = 5;
+    public const int BarrierEffectId = 2279;
+    public const double BarrierDamageTaken = 0.5;
+    /// <summary>"800% increased cooldown recovery" while channeling.</summary>
+    public const double BarrierCooldownRecovery = 8.0;
 
-    private readonly AuraDef _barrier;
+    /// <summary>Asha's Arcane Embrace: the temporal barrier while channeling.</summary>
+    public static readonly AuraDef Barrier = AuraDef.Effect("Asha's Arcane Embrace", BarrierEffectId,
+        modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, BarrierDamageTaken), StatModifier.Increased(StatType.CooldownRecovery, BarrierCooldownRecovery)]);
 
-    public Chronoshift(Hero owner) : base(owner, AbilityId)
+    private readonly AuraDef _barrier = Barrier;
+
+    public Chronoshift(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Weapon)
     {
+        BaseCoefficient = Coefficient;
+        CastTime = SimTime.FromSeconds(CastTimeSeconds);
+        SetCooldown(CooldownSeconds);
+        SetChannel(ChannelSeconds, PulsePeriodSeconds);
         // Logs: a pulse lands as the channel starts, then every hasted period, plus a partial final pulse.
         ChannelTicksOnStart = true;
         ChannelPartialFinalTick = true;
         AoeTargetThreshold = TargetThreshold;
-        _barrier = owner.DefineAura(BarrierEffectId);
+        owner.Register(Barrier);
         // Chronoshift's own cooldown recovers at 8x while channeling too (per the user).
         OwnRecoveryAuraLogIds.Add(_barrier.LogId);
         // The barrier's CooldownRecovery 8 joins the recovery pool while channeling (+7: cooldowns tick at 8x),

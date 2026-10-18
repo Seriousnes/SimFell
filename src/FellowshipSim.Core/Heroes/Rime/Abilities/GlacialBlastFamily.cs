@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -19,7 +16,7 @@ public abstract class GlacialBlastFamily : RimeAbility
     /// </summary>
     public const double GlacialAssaultExplosionTargetThreshold = 12;
 
-    protected GlacialBlastFamily(Rime owner, int abilityId) : base(owner, abilityId) { }
+    protected GlacialBlastFamily(Rime owner, int id, string name) : base(owner, id, name, AbilityCategory.Power) { }
 
     protected bool GlacialAssaultReady => Rime.GlacialAssaultStacks >= 4;
 

@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
 
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -9,9 +6,16 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 public class FrostBolt : RimeAbility
 {
     public const int AbilityId = 1029;
+    public const string AbilityName = "Frost Bolt";
+    public const double Coefficient = 2.017;
+    public const double CastTimeSeconds = 1.5;
     public const double AnimaGain = 3.0;
 
-    public FrostBolt(Rime owner) : base(owner, AbilityId) { }
+    public FrostBolt(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Basic)
+    {
+        BaseCoefficient = Coefficient;
+        CastTime = SimTime.FromSeconds(CastTimeSeconds);
+    }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {

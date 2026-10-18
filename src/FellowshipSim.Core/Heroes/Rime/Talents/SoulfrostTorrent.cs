@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -12,13 +9,18 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class SoulfrostTorrent : Talent
 {
+    public const int TalentId = 195;
+    public const string TalentName = "Soulfrost Torrent";
     public const int EffectId = 1373;
+    public const double BuffSeconds = 18.0;
     public const double ProcsPerMinute = 1.2;
     public const double TickRateMultiplier = 1.4;
     public const double CritChance = 1.0;
     public const string ProcKey = "soulfrost_torrent";
-    public override string Name => "Soulfrost Torrent";
-    public override int Id => 195;
+
+    public static readonly AuraDef Buff = AuraDef.Effect("Soulfrost Torrent", EffectId, BuffSeconds);
+    public override string Name => TalentName;
+    public override int Id => TalentId;
 
     public override void Bind(Hero hero)
     {
@@ -26,10 +28,10 @@ public class SoulfrostTorrent : Talent
         var rppm = new RealPpm(ProcKey, ProcsPerMinute);
         hero.OnCastCompleted += (_, _, now) =>
         {
-            if (hero.SimContext is { } ctx && !rime.Auras.HasAura(rime.Aura.SoulfrostTorrent, now)
-                && rppm.Roll(hero, ctx, rime.Aura.SoulfrostTorrent.LogId))
+            if (hero.SimContext is { } ctx && !rime.Auras.HasAura(Buff, now)
+                && rppm.Roll(hero, ctx, Buff.LogId))
             {
-                rime.Auras.Apply(rime.Aura.SoulfrostTorrent, now);
+                rime.Auras.Apply(Buff, now);
             }
         };
     }

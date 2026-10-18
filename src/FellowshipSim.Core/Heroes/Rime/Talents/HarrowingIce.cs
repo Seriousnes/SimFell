@@ -1,6 +1,3 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
@@ -14,10 +11,16 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 /// </summary>
 public class HarrowingIce : Talent
 {
+    public const int TalentId = 627;
+    public const string TalentName = "Harrowing Ice";
     public const int EffectId = 2839;
+    public const double BuffSeconds = 12.0;
+    public const int MaxStacks = 31;
     public const double DamagePerStack = 0.03;
     public const double FlightOfTheNavirReductionSeconds = 5.0;
-    public override string Name => "Harrowing Ice";
-    public override int Id => 627;
+
+    public static readonly AuraDef Buff = AuraDef.Effect("Harrowing Ice", EffectId, BuffSeconds, MaxStacks);
+    public override string Name => TalentName;
+    public override int Id => TalentId;
     public override void Bind(Hero hero) { }
 }

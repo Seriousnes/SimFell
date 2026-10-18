@@ -1,7 +1,13 @@
-using FellowshipSim.Core.Codex;
-using FellowshipSim.Core.Domain;
-using FellowshipSim.Core.Engine;
-
 namespace FellowshipSim.Core.Customization.Blessings;
 
-public class TheVainglorious : UnmodeledBlessing { public override string Name => "The Vainglorious"; }
+/// <summary>
+/// Blessing 707: "Your BASIC abilities deal an additional 25% / 40% / 65% / 100% Main Stat damage."
+/// Not modeled yet (reported, no effect).
+/// </summary>
+public class TheVainglorious : UnmodeledBlessing
+{
+    public const int BlessingId = 707;
+    public const string BlessingName = "The Vainglorious";
+    public override int Id => BlessingId;
+    public override string Name => BlessingName;
+}

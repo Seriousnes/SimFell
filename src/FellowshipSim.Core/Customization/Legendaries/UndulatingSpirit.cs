@@ -1,4 +1,3 @@
-using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Heroes.Rime;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
 
@@ -10,15 +9,20 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 /// </summary>
 public class UndulatingSpirit : Legendary
 {
+    public const int PowerId = 398;
+    public const int BuffEffectId = 2171;
     public const int StacksGranted = 2;
+    public override int LegendaryPowerId => PowerId;
     public override string Name => "Undulating Spirit";
+
+    public static readonly AuraDef Buff = AuraDef.Effect("Undulating Spirit", BuffEffectId, maxStacks: StacksGranted);
 
     public override void Bind(Hero hero)
     {
         if (hero is not Rime rime) return;
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (ability is WintersBlessing) rime.Auras.Apply(rime.Aura.UndulatingSpirit, now, setStacks: StacksGranted);
+            if (ability is WintersBlessing) rime.Auras.Apply(Buff, now, setStacks: StacksGranted);
         };
     }
 }

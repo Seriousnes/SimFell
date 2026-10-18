@@ -1,5 +1,3 @@
-using FellowshipSim.Core.Domain;
-
 namespace FellowshipSim.Core.Customization.Relics;
 
 public abstract class Relic

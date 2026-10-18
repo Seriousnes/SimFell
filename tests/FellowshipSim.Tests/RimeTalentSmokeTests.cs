@@ -84,7 +84,7 @@ public class RimeTalentSmokeTests
         var snapshot = System.Text.Json.JsonSerializer.Deserialize<CharacterSnapshotDto>(
             File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
         snapshot.Talents = talents.ToList();
-        var hero = FellowshipImporter.ImportRime(snapshot, codex);
+        var hero = FellowshipImporter.ImportRime(snapshot);
         var gained = new Dictionary<string, int>();
         hero.Auras.OnGained += (aura, _, _) => gained[aura.Def.Name] = gained.GetValueOrDefault(aura.Def.Name) + 1;
         var result = new MonteCarloSimulator(hero, AplParser.ParseScript(Apl)).Run(SimTime.FromSeconds(300), iterations, targets);
