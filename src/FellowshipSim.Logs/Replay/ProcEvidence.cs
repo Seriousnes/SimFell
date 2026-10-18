@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Customization.Blessings;
 using FellowshipSim.Core.Customization.Sets;
 using FellowshipSim.Core.Customization.Traits;
 using FellowshipSim.Core.Heroes.Rime.Abilities;
@@ -25,6 +26,18 @@ public static class ProcEvidence
         new(DarkProphecy.ProcKey, DarkProphecy.Buff.LogId),
         // The spike erupts from the ground a moment after the proc (logs: about 0.5s).
         new(EmeraldJudgement.ProcKey, LogIds.Effect(EmeraldJudgement.DamageEffectId), DelaySeconds: 1.0),
+        new(DraconicMight.ProcKey, DraconicMight.Buff.LogId),
+        new(VengefulSoul.ProcKey, VengefulSoul.Buff.LogId),
+        new(HiddenPower.ProcKey, HiddenPower.Stack.LogId),
+        new(TopazWinds.ProcKey, TopazWinds.Buff.LogId),
+        new(InspiredAllegiance.ProcKey, InspiredAllegiance.Buff.LogId),
+        // Damage over time: the first tick comes one (hasted) period after the proc.
+        new(Kindling.ProcKey, LogIds.Effect(Kindling.DamageEffectId), DelaySeconds: 1.6),
+        new(DiamondStrike.ProcKey, LogIds.Effect(DiamondStrike.DamageEffectId), DelaySeconds: 1.0),
+        new(RubyStorm.ProcKey, LogIds.Effect(RubyStorm.DamageEffectId), DelaySeconds: 1.0),
+        new(TheHeretic.ProcKey, LogIds.Effect(TheHeretic.DamageEffectId), DelaySeconds: 0.5),
+        new(TheUsurper.ProcKey, LogIds.Effect(TheUsurper.DamageEffectId), DelaySeconds: 0.5),
+        .. NavigatorsIntuition.Buffs.Select(b => new Evidence(NavigatorsIntuition.ProcKey(b.Rating), LogIds.Effect(b.EffectId))),
 
         // Rime
         new(BurstingSwallows.ProcKey, LogIds.Effect(BurstingIce.PulseEffectId)),

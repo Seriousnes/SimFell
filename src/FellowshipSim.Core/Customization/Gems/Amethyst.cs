@@ -37,8 +37,8 @@ public class Amethyst : Gem
                 hero.PassiveAuras.Add(AuraDef.Internal(node.Name, 0, 1,
                     StatModifier.More(StatType.CritMultiplier, 1.0 + node.Value("CritPowerBonus"))));
                 return true;
-            default: // Reaper's Reprieve (healing) is defensive.
-                return false;
+            default: // Reaper's Reprieve (healing) does not affect damage.
+                return true;
         }
     }
 }

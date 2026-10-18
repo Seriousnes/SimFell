@@ -1,8 +1,9 @@
 namespace FellowshipSim.Core.Customization.Traits;
 
 /// <summary>
-/// Trait 36: "Taking damage has a chance to increase your Armor by 10% / 17% / 24% / 32% for 10 seconds. While this is active, you deal 16% / 29% / 42% / 55% Main Stat physical damage to enemies who deal damage to you. (1.5 PPM)"
-/// Not modeled yet (reported, no effect).
+/// Trait 36: "Taking damage has a chance to increase your Armor by 10% / 17% / 24% / 32% for 10 seconds. While this is
+/// active, you deal 16% / 29% / 42% / 55% Main Stat physical damage to enemies who deal damage to you. (1.5 PPM)"
+/// Not modeled: it reacts to damage taken, which the engine does not simulate (reported, no effect).
 /// </summary>
 public class IronSpikes : UnmodeledTrait
 {

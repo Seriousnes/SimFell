@@ -10,16 +10,16 @@ namespace FellowshipSim.Logs;
 /// Reads the build a fight was played with from the player's combatantinfo event: character-sheet stats, and talents,
 /// traits, blessings, gem powers, set pieces, legendary items and weapon by game ID.
 /// <para>
-/// Character-sheet percentages are derived from the logged ratings: every hero has 5% base Critical Strike and 10% base
-/// Spirit, ratings convert at 0.16% per point through the diminishing-returns curve, and the Amethyst/Emerald gem nodes
-/// unlocked by the gem powers add their Critical Strike / Expertise bonuses (reproduces the logged sheet exactly).
+/// Base percentages are derived from the logged ratings: every hero has 5% base Critical Strike and 10% base Spirit, and
+/// ratings convert at 0.16% per point through the diminishing-returns curve. Percentage bonuses from gem nodes and set
+/// bonuses are added by their own classes.
 /// </para>
 /// </summary>
 public static class CharacterReader
 {
     public const double PercentPerRating = 0.0016;
     public const double BaseCrit = 0.05;
-    public const double BaseSpirit = 0.10;
+    public const double BaseSpirit = 0.0;
     public const int MaxTraitRank = 4;
 
     private static readonly double[] Breakpoints = [0.10, 0.15, 0.20, 0.25];
@@ -32,12 +32,10 @@ public static class CharacterReader
     {
         var gemPower = GemOrder.ToDictionary(c => c, c => Num(combatant[c.ToString().ToLowerInvariant()]));
 
-        // ---- Character sheet: always-on gem nodes raise the sheet's percentages.
-        double crit = BaseCrit + Diminishing(Num(combatant["crit"]) * PercentPerRating)
-                      + GemBonus(Amethyst.AllNodes, "Killer Instinct", "CritChanceBonus", gemPower[GemColor.Amethyst]);
+        // ---- Base percentages from the ratings (gem and set percentage bonuses are added by their classes).
+        double crit = BaseCrit + Diminishing(Num(combatant["crit"]) * PercentPerRating);
         double haste = Diminishing(Num(combatant["haste"]) * PercentPerRating);
-        double expertise = Diminishing(Num(combatant["expertise"]) * PercentPerRating)
-                           + GemBonus(Emerald.AllNodes, "Tactician's Accumen", "ExpertiseBonus", gemPower[GemColor.Emerald]);
+        double expertise = Diminishing(Num(combatant["expertise"]) * PercentPerRating);
         double spirit = BaseSpirit + Diminishing(Num(combatant["spirit"]) * PercentPerRating);
         static double Sheet(double value) => Math.Round(value * 10000) / 10000.0;
 
@@ -48,6 +46,7 @@ public static class CharacterReader
             // Only the hero's own primary stat is non-zero.
             PrimaryStat = new[] { "strength", "agility", "intellect" }.Max(k => Num(combatant[k])),
             Stamina = Num(combatant["stamina"]),
+            MaxHealth = Num(combatant["health"]),
             Armor = Num(combatant["armor"]),
             CritRating = Num(combatant["crit"]),
             HasteRating = Num(combatant["haste"]),
@@ -142,10 +141,6 @@ public static class CharacterReader
     }
 
     /// <summary>The bonus of the highest unlocked node of a gem whose name starts with <paramref name="namePrefix"/>.</summary>
-    private static double GemBonus(IEnumerable<GemNode> nodes, string namePrefix, string key, double power) =>
-        nodes.Where(n => n.Name.StartsWith(namePrefix, StringComparison.Ordinal) && power >= n.RequiredPower && n.Values.ContainsKey(key))
-            .OrderBy(n => n.RequiredPower)
-            .LastOrDefault()?.Value(key) ?? 0.0;
 
     private static string? Str(JsonNode? n) => n is JsonValue v && v.TryGetValue<string>(out var s) ? s : null;
 

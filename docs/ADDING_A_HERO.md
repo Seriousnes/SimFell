@@ -167,6 +167,9 @@ Hooks every hero has:
 | `hero.OnResourceGained`, `hero.OnResourceSpent`, `hero.OnResourceOverflow` | resource is gained (and from which enemy) / spent / gained past its maximum |
 | `hero.AbilityDamageMultipliers`, `hero.TargetDamageMultipliers`, `hero.TargetCritChanceBonuses`, `hero.CooldownAccelerations` | read on every hit / cooldown tick |
 | `hero.PassiveAuras` | always-on auras (stat bonuses) |
+| `hero.SituationalAuras` | auras that depend on what the engine does not simulate (your health, standing still, a boss fight): up all fight in a sim, following the log in a replay |
+| `hero.OnSpiritRefund`, `hero.SpiritOfHeroismStarted`, `hero.SpiritOfHeroismEnded` | a Spirit Refund triggers / Spirit of Heroism starts or ends |
+| `ability.BonusCoefficient`, `ability.CritPowerMultiplier`, `ability.CritChanceBonus` | extra Main Stat damage, crit power and crit chance on one ability's hits |
 | `hero.GuaranteedSpiritRefunds` | effects that make the next Spirit Refund certain |
 
 "Your next X critically strikes" and similar buffs use `hero.OnCastResolving`: check the ability, use up the buff and add
@@ -202,6 +205,10 @@ All found by the catalog through their ID constants; add the file and it is used
 | Legendary | `Customization/Legendaries` | `HeroName` and the `ItemIds` that grant it |
 | Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | `WeaponAbilityId` |
 | Buff from another player | `FellowshipSim.Logs/Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's trait rank) |
+
+Percentage bonuses to crit, haste, expertise or spirit go in `hero.Stats.Bonus*` (they apply in replays too: logs only give
+ratings). Flat or percentage Main Stat bonuses apply only when `!hero.Stats.UsesSheetValues`, since a logged Main Stat
+already includes them. A trait with no effect on damage derives from `NoDamageTrait`.
 
 Something not modeled yet should still get a class (e.g. `UnmodeledTrait`) with its ID, name and tooltip text: the
 review then names it as unmodeled instead of an unknown ID.

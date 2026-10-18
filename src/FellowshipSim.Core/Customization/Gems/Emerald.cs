@@ -52,8 +52,8 @@ public class Emerald : Gem
             case 5: // Blessing of the Commander: ability cooldown reduction.
                 hero.Stats.CooldownReductionPct += node.Value("CooldownReduction");
                 return true;
-            default: // Sentinel's Bastion (shield) is defensive.
-                return false;
+            default: // Sentinel's Bastion (shield) does not affect damage.
+                return true;
         }
     }
 }

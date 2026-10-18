@@ -1,13 +1,48 @@
 namespace FellowshipSim.Core.Customization.Traits;
 
 /// <summary>
-/// Trait 28: "Your Damage Effects have a chance (2.1 PPM) to burn the target, dealing 483% / 882% / 1281% / 1680% of your Main Stat in fire damage to them over 9 seconds. Your Healing Effects have a chance (2.1 PPM) to cauterize the target, healing them for 483% / 882% / 1281% / 1680% of your Main Stat over 9 seconds."
-/// Not modeled yet (reported, no effect).
+/// Trait 28: "Your damage effects apply a Damage over Time to the target, dealing fire damage equal to
+/// 66% / 79% / 92% / 106% of your primary stat every 1.5 seconds over 9 seconds. (1.5 PPM)" (damage effect 104; the heal
+/// over time does not affect damage). UNVERIFIED: no log has this trait; the ticks are hasted like other damage over
+/// time, and a new proc on the same enemy restarts it.
 /// </summary>
-public class Kindling : UnmodeledTrait
+public class Kindling : Trait
 {
     public const int TraitId = 28;
     public const string TraitName = "Kindling";
+    public const int DamageEffectId = 104;
+    public const double DurationSeconds = 9.0;
+    public const double TickSeconds = 1.5;
+    public const double ProcsPerMinute = 1.5;
+    public const string ProcKey = "kindling";
+    public static readonly double[] CoefficientByRank = [0.66, 0.79, 0.92, 1.06];
+
     public override int Id => TraitId;
     public override string Name => TraitName;
+
+    public override void Bind(Hero hero)
+    {
+        var dot = new KindlingDot(hero, ForRank(CoefficientByRank));
+        var rppm = new RealPpm(ProcKey, ProcsPerMinute);
+        var burning = new Dictionary<EnemyTarget, PeriodicEffect>();
+        hero.OnDamageDealt += dmg =>
+        {
+            if (dmg.Target is not { } target || dmg.SimContext is not { } ctx || dmg.AbilityId == dot.DamageLogId) return;
+            if (!rppm.Roll(hero, ctx, target)) return;
+            if (burning.TryGetValue(target, out var old) && old.IsActive) old.Stop(ctx);
+            burning[target] = PeriodicEffect.BeginHasted(ctx, hero, TraitName, DurationSeconds, TickSeconds,
+                tickOnStart: false, partialFinalTick: false,
+                onTick: (c, fraction) => { if (!target.IsSleeping) dot.DealDamage(c, target, damageMultiplier: fraction); });
+        };
+    }
+
+    private sealed class KindlingDot : Ability
+    {
+        public KindlingDot(Hero owner, double coefficient) : base(owner, LogIds.Effect(DamageEffectId), TraitName)
+        {
+            BaseCoefficient = coefficient;
+        }
+
+        public override void Execute(SimulationContext ctx, EnemyTarget target) { }
+    }
 }

@@ -108,6 +108,8 @@ public sealed class ReplayLibrary
         const string navigation = "<nav class=\"fightnav\"><a href=\"/\">&larr; All reviews</a></nav>";
         ReplayReportWriter.Write(result, Path.Combine(ReviewsDirectory, summary.HtmlFile), navigation);
         File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.json"), JsonSerializer.Serialize(summary, Indented));
+        // The same review as plain text: issues grouped by kind, and the damage calibration per ability.
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.txt"), ReplayReportWriter.Summary(result));
         return summary;
     }
 

@@ -43,8 +43,8 @@ public class Sapphire : Gem
                 HeroismDurationBonus = node.Value("DurationBonus");
                 hero.SpiritOfHeroismDurationBonus += HeroismDurationBonus;
                 return true;
-            default: // Resonating Soul is defensive.
-                return false;
+            default: // Resonating Soul (damage reduction) does not affect damage.
+                return true;
         }
     }
 }

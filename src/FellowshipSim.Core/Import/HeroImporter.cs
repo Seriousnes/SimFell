@@ -20,6 +20,7 @@ public static class HeroImporter
         // (they already include passive bonuses such as gem nodes and set bonuses).
         hero.Stats.PrimaryStat = build.PrimaryStat;
         hero.Stats.Stamina = build.Stamina;
+        if (build.MaxHealth > 0) hero.Stats.LoggedMaxHealth = build.MaxHealth;
         hero.Stats.Armor = build.Armor;
         hero.Stats.CritRating = build.CritRating;
         hero.Stats.HasteRating = build.HasteRating;

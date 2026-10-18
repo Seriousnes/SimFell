@@ -20,6 +20,8 @@ public class CharacterBuild
     // ---- character sheet
     public double PrimaryStat { get; set; }
     public double Stamina { get; set; }
+    /// <summary>Maximum health (the log's combatantinfo); 0 when unknown.</summary>
+    public double MaxHealth { get; set; }
     public double Armor { get; set; }
     public double CritRating { get; set; }
     public double HasteRating { get; set; }

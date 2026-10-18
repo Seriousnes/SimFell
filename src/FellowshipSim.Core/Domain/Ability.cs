@@ -42,6 +42,12 @@ public abstract class Ability
     /// <summary>Extra crit chance on this ability's hits.</summary>
     public double CritChanceBonus { get; set; } = 0.0;
 
+    /// <summary>Multiplier on this ability's crit power (e.g. "20% increased Critical Strike power").</summary>
+    public double CritPowerMultiplier { get; set; } = 1.0;
+
+    /// <summary>Main Stat damage added to each of this ability's hits, as a coefficient (e.g. The Vainglorious).</summary>
+    public double BonusCoefficient { get; set; } = 0.0;
+
     public bool ScalesWithExpertise { get; protected set; } = true;
 
     /// <summary>The cooldown is divided by (1 + haste) once, when it starts (game data "scalesWithHaste", single charge).</summary>
@@ -208,7 +214,7 @@ public abstract class Ability
     {
         var now = ctx.CurrentTime;
         double expertiseAmp = ScalesWithExpertise ? 1.0 + Owner.Expertise(now) : 1.0;
-        return BaseCoefficient
+        return (BaseCoefficient + BonusCoefficient)
                * Owner.PrimaryAttribute(now)
                * expertiseAmp
                * DamageScaleFor(ctx)
@@ -217,6 +223,9 @@ public abstract class Ability
                * DamageMultiplier
                * damageMultiplier;
     }
+
+    /// <summary>This ability's crit multiplier at <paramref name="now"/>.</summary>
+    public double CritMultiplierAt(SimTime now) => Owner.CritMultiplier(now) * CritPowerMultiplier;
 
     /// <summary>Outgoing damage multiplier from auras for this ability (abilities excluded from some auras override this).</summary>
     protected virtual double DamageScaleFor(SimulationContext ctx) => Owner.DamageScale(ctx.CurrentTime);
@@ -232,7 +241,7 @@ public abstract class Ability
             c => new SimulationContext.HitNumbers(
                 BaseDamage(c, target, damageMultiplier * castDamage),
                 Owner.CritChanceAgainst(target, c.CurrentTime) + CritChanceBonus + extraCritChance + castCrit,
-                Owner.CritMultiplier(c.CurrentTime)),
+                CritMultiplierAt(c.CurrentTime)),
             forcedCrit, onLanded, SnapshotsDamage);
     }
 

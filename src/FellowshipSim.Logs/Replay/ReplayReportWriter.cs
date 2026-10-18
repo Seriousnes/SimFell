@@ -28,7 +28,6 @@ public static class ReplayReportWriter
                 }
             }
         }
-        foreach (var w in r.PreflightWarnings) sb.AppendLine($"  preflight: {w}");
         if (r.AllHits.Count > 0)
         {
             sb.AppendLine("  calibration (mean log/engine over matched hits; spread averages out to 1.000):");
@@ -155,13 +154,6 @@ td.diff-bad{color:var(--bad)}td.diff-ok{color:var(--ok)}tr.total td{font-weight:
         }
         sb.Append("<div class=\"panel\"><span class=\"tag\">Open item</span>Amethyst Splinter (1000101) damage is not checked yet; its hits must still match.</div>");
         RenderDamageOverview(sb, r);
-
-        if (r.PreflightWarnings.Count > 0)
-        {
-            sb.Append("<h2>Character sheet vs engine stats</h2><div class=\"panel\"><ul>");
-            foreach (var w in r.PreflightWarnings) sb.Append($"<li class=\"warn\">{E(w)}</li>");
-            sb.Append("</ul></div>");
-        }
 
         // Every step with issues, collapsed (the halted step open); the "All steps" table links to them.
         var failing = r.Steps.Where(s => !s.Passed).ToList();

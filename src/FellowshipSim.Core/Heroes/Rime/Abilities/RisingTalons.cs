@@ -63,7 +63,7 @@ public class RisingTalons : IceComet
         double damage = BaseDamage(ctx, null) * CastDamageMultiplier * falloff;
         // The waves keep the crit chance of the cast, with what talents added to it (it counts as an Ice Comet for them).
         double critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
-        double critMultiplier = Owner.CritMultiplier(now);
+        double critMultiplier = CritMultiplierAt(now);
         for (int i = 0; i < spikes; i++)
         {
             bool first = i == 0;

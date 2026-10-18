@@ -129,42 +129,56 @@ public static class StatDiminishingReturns
 public class StatBlock
 {
     public const double BaseCritChance = 0.05;
+    /// <summary>Every hero's base Spirit (the character sheet shows 10% with no Spirit rating).</summary>
+    public const double BaseSpirit = 0.0;
     public const double BaseCritMultiplier = 2.0;
+    /// <summary>
+    /// Maximum health per point of Stamina, for sims without a logged health value. UNVERIFIED: measured on one log
+    /// (PcaMVTFbZzNLrfx3: 32,563 health with 581 Stamina).
+    /// </summary>
+    public const double HealthPerStamina = 56.0;
 
     /// <summary>The primary stat (Intellect, Strength or Agility) from the character sheet.</summary>
     public double PrimaryStat { get; set; }
     public double Stamina { get; set; } = 635;
     public double Armor { get; set; } = 539;
 
+    /// <summary>Maximum health: the logged value when known, else estimated from Stamina.</summary>
+    public double? LoggedMaxHealth { get; set; }
+    public double MaxHealth => LoggedMaxHealth ?? Stamina * HealthPerStamina;
+
     public double CritRating { get; set; }
     public double HasteRating { get; set; }
     public double ExpertiseRating { get; set; }
     public double SpiritRating { get; set; }
 
-    /// <summary>Permanent percent bonuses beyond ratings (gem nodes, set bonuses), used when no sheet value is known.</summary>
+    /// <summary>Permanent percent bonuses beyond ratings (gem nodes, set bonuses), added on top of the base percentages.</summary>
     public double BonusCritChance { get; set; }
     public double BonusHaste { get; set; }
     public double BonusExpertise { get; set; }
     public double BonusSpirit { get; set; }
 
-    /// <summary>Character-sheet percentages from the log; when set they replace the derived base percentages.</summary>
+    /// <summary>Base percentages from the log's ratings; when set they replace the derived base percentages.</summary>
     public double? SheetCritChance { get; set; }
     public double? SheetHaste { get; set; }
     public double? SheetExpertise { get; set; }
     public double? SheetSpirit { get; set; }
 
-    /// <summary>True when base percentages come from an imported character sheet (which already includes passive bonuses).</summary>
+    /// <summary>
+    /// True when the stats come from a log. Its primary stat already includes always-on primary stat bonuses (gem nodes,
+    /// set bonuses), so those apply only when this is false; percentage bonuses always apply (the log has only ratings).
+    /// </summary>
     public bool UsesSheetValues => SheetCritChance.HasValue;
 
-    public double DerivedCritChance => BaseCritChance + StatDiminishingReturns.FromRating(CritRating) + BonusCritChance;
-    public double DerivedHaste => StatDiminishingReturns.FromRating(HasteRating) + BonusHaste;
-    public double DerivedExpertise => StatDiminishingReturns.FromRating(ExpertiseRating) + BonusExpertise;
-    public double DerivedSpirit => StatDiminishingReturns.FromRating(SpiritRating) + BonusSpirit;
+    public double DerivedCritChance => BaseCritChance + StatDiminishingReturns.FromRating(CritRating);
+    public double DerivedHaste => StatDiminishingReturns.FromRating(HasteRating);
+    public double DerivedExpertise => StatDiminishingReturns.FromRating(ExpertiseRating);
+    public double DerivedSpirit => BaseSpirit + StatDiminishingReturns.FromRating(SpiritRating);
 
-    public double CritPercent => SheetCritChance ?? DerivedCritChance;
-    public double HastePercent => SheetHaste ?? DerivedHaste;
-    public double ExpertisePercent => SheetExpertise ?? DerivedExpertise;
-    public double SpiritPercent => SheetSpirit ?? DerivedSpirit;
+    public double CritPercent => (SheetCritChance ?? DerivedCritChance) + BonusCritChance;
+    public double HastePercent => (SheetHaste ?? DerivedHaste) + BonusHaste;
+    public double ExpertisePercent => (SheetExpertise ?? DerivedExpertise) + BonusExpertise;
+    public double SpiritPercent => (SheetSpirit ?? DerivedSpirit) + BonusSpirit;
 
     public double CooldownReductionPct { get; set; }
 

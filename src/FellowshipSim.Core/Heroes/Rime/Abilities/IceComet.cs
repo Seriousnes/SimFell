@@ -93,7 +93,7 @@ public class IceComet : RimeAbility
         var now = ctx.CurrentTime;
         double damage = BaseDamage(ctx, null) * CastDamageMultiplier;
         double critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
-        double critMultiplier = Owner.CritMultiplier(now);
+        double critMultiplier = CritMultiplierAt(now);
         ctx.Schedule(SimTime.FromSeconds(delaySeconds), c =>
         {
             Impact(c, target, damage, critChance, critMultiplier, fixedFalloff: null);

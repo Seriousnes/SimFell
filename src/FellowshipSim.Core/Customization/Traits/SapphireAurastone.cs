@@ -1,13 +1,58 @@
 namespace FellowshipSim.Core.Customization.Traits;
 
 /// <summary>
-/// Trait 32: "Your Spirit Ability causes you to conjure a Sapphire Aurastone near you or your selected target on activation. The Sapphire Aurastone lasts as long as the Spirit of Heroism effect from your Spirit Ability is active on you. While active, 3.4% / 6.3% / 9.1% / 12% of all damage you deal is accumulated into the Sapphire Aurastone and released in a pulse of damage, evenly split between nearby enemies every 3 seconds. While active, 4.6% / 8.4% / 12% / 16% of all healing you do is accumulated into the Sapphire Aurastone and released in a pulse of healing, evenly split between nearby allies every 3 seconds. Each pulse empties the accumulated Damage or Healing stored within it."
-/// Not modeled yet (reported, no effect).
+/// Trait 32: "Your Spirit Ability causes you to conjure a Sapphire Aurastone ... The Sapphire Aurastone lasts as long as
+/// the Spirit of Heroism effect from your Spirit Ability is active on you. While active, 3.4% / 6.3% / 9.1% / 12% of all
+/// damage you deal is accumulated into the Sapphire Aurastone and released in a pulse of damage, evenly split between
+/// nearby enemies every 3 seconds." (damage effect 2347; it never crits and is not scaled again)
 /// </summary>
-public class SapphireAurastone : UnmodeledTrait
+public class SapphireAurastone : Trait
 {
     public const int TraitId = 32;
     public const string TraitName = "Sapphire Aurastone";
+    public const int DamageEffectId = 2347;
+    public const string DamageName = "Sapphire Aurastone Damage";
+    public const double PulseSeconds = 3.0;
+    public static readonly double[] StoredShareByRank = [0.034, 0.063, 0.091, 0.12];
+
     public override int Id => TraitId;
     public override string Name => TraitName;
+
+    public override void Bind(Hero hero)
+    {
+        double share = ForRank(StoredShareByRank);
+        int logId = LogIds.Effect(DamageEffectId);
+        double stored = 0.0;
+        int stone = 0;
+        bool active = false;
+
+        void Pulse(SimulationContext ctx, int id)
+        {
+            if (!active || id != stone) return;
+            if (stored > 0.0)
+            {
+                var struck = ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies.ToList(), ctx);
+                double each = struck.Count > 0 ? stored / struck.Count : 0.0;
+                stored = 0.0;
+                foreach (var enemy in struck)
+                {
+                    ctx.ApplyDamage(hero, enemy, logId, DamageName, canCrit: false, _ => new SimulationContext.HitNumbers(each, 0.0, 1.0));
+                }
+            }
+            ctx.Schedule(SimTime.FromSeconds(PulseSeconds), c => Pulse(c, id), DamageName);
+        }
+
+        hero.SpiritOfHeroismStarted += ctx =>
+        {
+            active = true;
+            stored = 0.0;
+            int id = ++stone;
+            ctx.Schedule(SimTime.FromSeconds(PulseSeconds), c => Pulse(c, id), DamageName);
+        };
+        hero.SpiritOfHeroismEnded += _ => active = false;
+        hero.OnDamageDealt += dmg =>
+        {
+            if (active && dmg.AbilityId != logId) stored += share * dmg.Amount;
+        };
+    }
 }

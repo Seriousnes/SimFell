@@ -134,7 +134,6 @@ public sealed class ReplayResult
     public int TotalSteps { get; init; }
 
     public List<ReplayStep> Steps { get; } = new();
-    public List<string> PreflightWarnings { get; } = new();
     public ReplayStep? HaltedAt { get; set; }
     public List<ReplayIssue> HaltIssues { get; } = new();
     public Dictionary<string, int> UnmodeledAbilities { get; } = new(StringComparer.OrdinalIgnoreCase);

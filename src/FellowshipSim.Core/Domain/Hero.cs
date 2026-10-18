@@ -48,6 +48,12 @@ public abstract class Hero : Actor
     public List<AuraDef> PassiveAuras { get; } = new();
 
     /// <summary>
+    /// Auras that depend on what the engine does not simulate (your own health, standing still, fighting a boss). A sim
+    /// keeps them up all fight; a replay applies and removes them when the log does.
+    /// </summary>
+    public List<AuraDef> SituationalAuras { get; } = new();
+
+    /// <summary>
     /// The class tuning aura every hero has: a damage multiplier the game sets per hero (hero attribute
     /// BalancingDamageAura). 1.0 unless the hero sets its own value in <see cref="Initialize"/>.
     /// </summary>
@@ -102,6 +108,11 @@ public abstract class Hero : Actor
     /// Not raised for Spirit Refunds, which give back what was spent.
     /// </summary>
     public event Action<ResourceDef, double, EnemyTarget?, SimulationContext>? OnResourceGained;
+    /// <summary>Spirit of Heroism started / ended.</summary>
+    public event Action<SimulationContext>? SpiritOfHeroismStarted;
+    public event Action<SimulationContext>? SpiritOfHeroismEnded;
+    /// <summary>A Spirit Refund triggered on a spend of the resource (the refund itself arrives a moment later).</summary>
+    public event Action<ResourceDef, double, SimulationContext>? OnSpiritRefund;
     /// <summary>A cast is about to resolve (also free casts from procs): talents add to it here (see <see cref="CastBonus"/>).</summary>
     public event Action<CastBonus>? OnCastResolving;
 
@@ -178,6 +189,7 @@ public abstract class Hero : Actor
         if (!RollSpiritRefund(ctx)) return;
         // Rising Spirit comes with the spend; the resource comes back a moment later.
         Auras.Apply(RisingSpirit, ctx.CurrentTime);
+        OnSpiritRefund?.Invoke(resource, amount, ctx);
         ctx.Schedule(SimTime.FromSeconds(SpiritRefundDelaySeconds), c => AddToResource(resource, amount, c, null, isGain: false), "Spirit Refund");
     }
 
@@ -235,11 +247,13 @@ public abstract class Hero : Actor
         var heroism = SpiritOfHeroism.WithDuration(SpiritOfHeroismSeconds + SpiritOfHeroismDurationBonus);
         var applied = Auras.Apply(heroism, ctx.CurrentTime);
         foreach (var aura in SpiritOfHeroismAuras) Auras.Apply(aura, ctx.CurrentTime);
+        SpiritOfHeroismStarted?.Invoke(ctx);
         // The companions end with Spirit of Heroism itself (on its actual expiry, which includes the server-frame lag).
         ctx.ScheduleAt(applied.ExpiresAt, c =>
         {
             if (Auras.HasAura(heroism, c.CurrentTime)) return;
             foreach (var aura in SpiritOfHeroismAuras) Auras.Remove(aura, c.CurrentTime);
+            SpiritOfHeroismEnded?.Invoke(c);
         }, "Spirit of Heroism ends");
     }
 
@@ -412,6 +426,7 @@ public abstract class Hero : Actor
             Auras.Apply(AuraDef.Internal("Class tuning", 0, 1, StatModifier.More(StatType.DamageScale, ClassDamageTuning)), SimTime.Zero);
         }
         foreach (var passive in PassiveAuras) Auras.Apply(passive, SimTime.Zero);
+        foreach (var situational in SituationalAuras) Auras.Apply(situational, SimTime.Zero);
     }
 }
 

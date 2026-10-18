@@ -59,6 +59,7 @@ public sealed class ReplayDriver
     public ReplayResult Run()
     {
         _hero.ResetForIteration();
+        FollowSituationalAuras();
 
         // An enemy's arrival is only known from its first event in the log, so it was there a little earlier.
         double When(ReplayCommand c) => c.Kind == CommandKind.EnemyArise ? c.Time - _options.EnemyAriseLeadSeconds : c.Time;
@@ -79,7 +80,6 @@ public sealed class ReplayDriver
             result.LogCasts[c.AbilityName] = result.LogCasts.GetValueOrDefault(c.AbilityName) + 1;
         }
         _hero.OnCastCompleted += (ability, _, _) => result.EngineCasts[ability.Name] = result.EngineCasts.GetValueOrDefault(ability.Name) + 1;
-        Preflight(result);
 
         var cancelFor = MatchCastEnds(commands);
         ReplayStep? step = null;
@@ -350,6 +350,30 @@ public sealed class ReplayDriver
         return def;
     }
 
+    /// <summary>
+    /// Situational auras (<see cref="Hero.SituationalAuras"/>) depend on what the engine does not simulate, so the replay
+    /// gives the hero each one exactly when the log does. One whose first logged event is a loss was up as the fight began.
+    /// </summary>
+    private void FollowSituationalAuras()
+    {
+        foreach (var aura in _hero.SituationalAuras)
+        {
+            var events = _script.Observations.Auras
+                .Where(a => a.AbilityId == aura.LogId && a.Target.Id == _script.Player.Id)
+                .OrderBy(a => a.Time).ToList();
+            _hero.Auras.Remove(aura, SimTime.Zero);
+            if (events.FirstOrDefault() is { IsLoss: true }) _hero.Auras.Apply(aura, SimTime.Zero);
+            foreach (var e in events)
+            {
+                _ctx.Schedule(SimTime.FromSeconds(Math.Max(0.0, e.Time)), c =>
+                {
+                    if (e.Type is "removebuff" or "removedebuff") c.Player.Auras.Remove(aura, c.CurrentTime);
+                    else if (e.IsGain || e.Stack != null) c.Player.Auras.Apply(aura, c.CurrentTime, setStacks: e.Stack ?? 1);
+                }, $"{aura.Name} (log)");
+            }
+        }
+    }
+
     // ------------------------------------------------------------------ checks
 
     private ReplayStep BeginStep(ReplayCommand cmd, int index) => new()
@@ -447,21 +471,6 @@ public sealed class ReplayDriver
         return true;
     }
 
-    private void Preflight(ReplayResult result)
-    {
-        var sheet = _script.Character?.SheetPercents;
-        if (sheet == null || sheet.Count == 0) return;
-        void Compare(string stat, double engine)
-        {
-            if (sheet.TryGetValue(stat, out var logged) && Math.Abs(engine - logged) > 0.001)
-            {
-                result.PreflightWarnings.Add($"{stat}: engine {engine:P2} vs character sheet {logged:P2}");
-            }
-        }
-        Compare("crit", _hero.Stats.CritPercent);
-        Compare("haste", _hero.Stats.HastePercent);
-        Compare("expertise", _hero.Stats.ExpertisePercent);
-    }
 
     // ------------------------------------------------------------------ lookups
 

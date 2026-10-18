@@ -26,3 +26,9 @@ public abstract class UnmodeledTrait : Trait
     public override bool IsModeled => false;
     public override void Bind(Hero hero) { }
 }
+
+/// <summary>A defensive or utility trait: it has no effect on damage, so the engine leaves it out.</summary>
+public abstract class NoDamageTrait : Trait
+{
+    public override void Bind(Hero hero) { }
+}
