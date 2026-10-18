@@ -41,22 +41,17 @@ public sealed class ReplayDriver
 
     public SimulationContext Context => _ctx;
 
-    /// <summary>Heroes the engine can replay (each needs an importer and replay mappings).</summary>
-    public static IReadOnlyList<string> SupportedHeroes { get; } = ["Rime"];
+    /// <summary>Heroes the engine can replay (every hero class in Heroes/).</summary>
+    public static IReadOnlyList<string> SupportedHeroes => Catalog.Heroes.Keys.ToList();
 
-    public static bool SupportsHero(string hero) => SupportedHeroes.Contains(hero, StringComparer.OrdinalIgnoreCase);
+    public static bool SupportsHero(string hero) => Catalog.HasHero(hero);
 
-    /// <summary>Builds the logged character from the script's snapshot.</summary>
+    /// <summary>Builds the logged character from the script.</summary>
     public static Hero CreateHero(ReplayScript script)
     {
-        var snapshot = script.CharacterSnapshot
-            ?? throw new InvalidOperationException("Replay script has no character snapshot.");
-        snapshot.GameDate ??= script.FightDate;
-        return script.Player.Hero.ToLowerInvariant() switch
-        {
-            "rime" => FellowshipImporter.ImportRime(snapshot),
-            _ => throw new NotSupportedException($"{script.Player.Hero} is not supported yet (supported: {string.Join(", ", SupportedHeroes)}).")
-        };
+        var build = script.Character ?? throw new InvalidOperationException("Replay script has no character.");
+        build.GameDate ??= script.FightDate;
+        return HeroImporter.Import(build);
     }
 
     public ReplayResult Run()
@@ -451,7 +446,7 @@ public sealed class ReplayDriver
 
     private void Preflight(ReplayResult result)
     {
-        var sheet = _script.CharacterSnapshot?.SheetPercents;
+        var sheet = _script.Character?.SheetPercents;
         if (sheet == null || sheet.Count == 0) return;
         void Compare(string stat, double engine)
         {

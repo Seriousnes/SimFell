@@ -38,6 +38,20 @@ public sealed class Rime : Hero
         (new DateTime(2026, 8, 27, 0, 0, 0, DateTimeKind.Utc), 1.04),
     ];
 
+    /// <summary>A talent in the talent tree: its row and column, its point cost and its talent ID.</summary>
+    public sealed record TalentSlot(int Row, int Column, int Cost, int TalentId);
+
+    /// <summary>Rime's talent tree.</summary>
+    public static readonly TalentSlot[] TalentTree =
+    [
+        new(1, 1, 2, Avalanche.TalentId), new(1, 2, 2, CoalescingFrost.TalentId), new(1, 3, 2, GlacialAssault.TalentId),
+        new(2, 1, 1, ColdShower.TalentId), new(2, 2, 1, ChillingFinesse.TalentId), new(2, 3, 1, Burstbolter.TalentId),
+        new(3, 1, 2, CascadingBlitz.TalentId), new(3, 2, 2, HarrowingIce.TalentId), new(3, 3, 2, IcyFlow.TalentId),
+        new(4, 1, 1, BurstingSwallows.TalentId), new(4, 2, 1, GreaterGlacialBlast.TalentId), new(4, 3, 1, NavirsKeeper.TalentId),
+        new(5, 1, 3, IcyTalons.TalentId), new(5, 2, 3, FrostweaversWrath.TalentId), new(5, 3, 3, SoulfrostTorrent.TalentId),
+        new(6, 1, 1, BitingCold.TalentId), new(6, 2, 1, SupremeTorrent.TalentId), new(6, 3, 1, WisdomOfTheNorth.TalentId),
+    ];
+
     /// <summary>Every aura Rime's abilities, talents and legendary can put on her (the replay compares them with the log).</summary>
     public static readonly AuraDef[] AllAuras =
     [

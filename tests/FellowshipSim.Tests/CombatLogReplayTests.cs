@@ -1,4 +1,3 @@
-using FellowshipSim.Core.Codex;
 using FellowshipSim.Core.Replay;
 using FellowshipSim.Logs;
 using Xunit.Abstractions;
@@ -15,8 +14,7 @@ public class CombatLogReplayTests(ITestOutputHelper output)
     [Fact]
     public async Task AllDownloadedFights_Replay_And_Write_Reviews()
     {
-        var codex = new CodexDataService();
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"), codex);
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
         var fights = library.ListDownloadedFights();
         if (fights.Count == 0)
         {

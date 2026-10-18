@@ -10,7 +10,7 @@ namespace FellowshipSim.Core.Replay;
 /// </summary>
 public class ReplayScript
 {
-    public const string SchemaVersion = "fellowship-replay/1";
+    public const string SchemaVersion = "fellowship-replay/2";
 
     [JsonPropertyName("schema")] public string Schema { get; set; } = string.Empty;
     [JsonPropertyName("report_code")] public string ReportCode { get; set; } = string.Empty;
@@ -20,7 +20,7 @@ public class ReplayScript
     [JsonPropertyName("fight_date")] public DateTime? FightDate { get; set; }
     [JsonPropertyName("duration_s")] public double DurationSeconds { get; set; }
     [JsonPropertyName("player")] public ReplayPlayer Player { get; set; } = new();
-    [JsonPropertyName("character_snapshot")] public CharacterSnapshotDto? CharacterSnapshot { get; set; }
+    [JsonPropertyName("character")] public CharacterBuild? Character { get; set; }
     /// <summary>Every player's trait ranks, by player ID (buffs they give scale with their rank).</summary>
     [JsonPropertyName("players")] public Dictionary<string, ReplayPartyMember> Players { get; set; } = new();
     [JsonPropertyName("commands")] public List<ReplayCommand> Commands { get; set; } = new();

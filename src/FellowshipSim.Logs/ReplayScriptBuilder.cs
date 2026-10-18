@@ -1,5 +1,5 @@
 using System.Text.Json.Nodes;
-using FellowshipSim.Core.Codex;
+using System.Text.Json;
 
 namespace FellowshipSim.Logs;
 
@@ -17,7 +17,7 @@ namespace FellowshipSim.Logs;
 /// </summary>
 public static class ReplayScriptBuilder
 {
-    public const string Schema = "fellowship-replay/1";
+    public const string Schema = FellowshipSim.Core.Replay.ReplayScript.SchemaVersion;
 
     private static readonly HashSet<string> AuraTypes =
     [
@@ -51,7 +51,7 @@ public static class ReplayScriptBuilder
             .ToList();
     }
 
-    public static JsonObject Build(JsonObject raw, int playerId, GameData data)
+    public static JsonObject Build(JsonObject raw, int playerId)
     {
         var fight = raw["fight"]!.AsObject();
         double f0 = Num(fight["startTime"]);
@@ -321,8 +321,8 @@ public static class ReplayScriptBuilder
             ["combatant_info"] = combatant?.DeepClone(),
             ["players"] = players,
             // The character as it was in this fight (its combatantinfo event).
-            ["character_snapshot"] = combatant == null ? null : CharacterSnapshotBuilder.FromCombatantInfo(combatant.AsObject(), playerName ?? "player", hero ?? "", data),
-            ["character_source"] = combatant == null ? null : "combatantinfo",
+            ["character"] = combatant == null ? null
+                : JsonSerializer.SerializeToNode(CharacterReader.FromCombatantInfo(combatant.AsObject(), playerName ?? "player", hero ?? "")),
             ["enemies"] = enemies,
             ["commands"] = new JsonArray(sortedCommands.Select(c => (JsonNode?)c).ToArray()),
             ["ignored_casts"] = ignoredCasts,

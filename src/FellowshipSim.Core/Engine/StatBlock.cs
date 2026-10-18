@@ -139,7 +139,8 @@ public class StatBlock
     public const double BaseCritChance = 0.05;
     public const double BaseCritMultiplier = 2.0;
 
-    public double BaseIntellect { get; set; } = 342;
+    /// <summary>The primary stat (Intellect, Strength or Agility) from the character sheet.</summary>
+    public double PrimaryStat { get; set; }
     public double Stamina { get; set; } = 635;
     public double Armor { get; set; } = 539;
 

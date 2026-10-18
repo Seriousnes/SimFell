@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using FellowshipSim.Core.Codex;
 using FellowshipSim.Core.Replay;
 
 namespace FellowshipSim.Logs;
@@ -36,12 +35,9 @@ public sealed class ReplayLibrary
 {
     private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
 
-    private readonly ICodexDataService _codex;
-
-    public ReplayLibrary(string dataDirectory, ICodexDataService codex)
+    public ReplayLibrary(string dataDirectory)
     {
         DataDirectory = Path.GetFullPath(dataDirectory);
-        _codex = codex;
         Directory.CreateDirectory(FightsDirectory);
         Directory.CreateDirectory(ScriptsDirectory);
         Directory.CreateDirectory(ReviewsDirectory);
@@ -77,7 +73,6 @@ public sealed class ReplayLibrary
     public async Task<ReviewSummary> RunReviewAsync(FellowshipLogsClient? client, string reportCode, int fightId, int playerId,
         ReplayOptions? options = null, IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        await _codex.WarmupCacheAsync(ct);
         var raw = await GetRawFightAsync(client, reportCode, fightId, progress, ct);
         var player = ReplayScriptBuilder.Players(raw).FirstOrDefault(p => p.Id == playerId)
             ?? throw new ArgumentException($"Player {playerId} did not take part in fight {fightId}.");
@@ -88,7 +83,7 @@ public sealed class ReplayLibrary
 
         progress?.Report("Building the replay script");
         string id = ReviewId(reportCode, fightId, playerId);
-        var scriptJson = ReplayScriptBuilder.Build(raw, playerId, GameData.Default).ToJsonString();
+        var scriptJson = ReplayScriptBuilder.Build(raw, playerId).ToJsonString();
         await File.WriteAllTextAsync(Path.Combine(ScriptsDirectory, $"{id}.replay.json"), scriptJson, ct);
 
         progress?.Report("Replaying the fight");

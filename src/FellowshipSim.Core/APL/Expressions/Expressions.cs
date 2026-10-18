@@ -36,9 +36,6 @@ public class PropertyExpression : IAplExpression
         // Direct property lookups
         switch (PropertyPath)
         {
-            case "glacial_assault_stacks":
-                return (hero as Rime)?.GlacialAssaultStacks ?? 0;
-
             case "active_enemies":
                 int count = ctx.AllEnemies.Count(e => !e.IsSleeping);
                 return count > 0 ? count : 1;

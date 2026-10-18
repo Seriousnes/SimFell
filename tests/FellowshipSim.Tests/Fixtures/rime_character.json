@@ -1,62 +1,128 @@
 {
   "Name": "sww",
-  "HeroClass": "Rime",
-  "Intellect": 342,
+  "Hero": "Rime",
+  "PrimaryStat": 342,
   "Stamina": 635,
   "Armor": 539,
+  "CritRating": 141,
   "HasteRating": 161,
   "ExpertiseRating": 100,
-  "CritRating": 141,
-  "Spirit": 127,
-  "BaseCritPercent": 0.289,
-  "BaseHastePercent": 0.2473,
-  "VersatilityPercent": 0.0,
-  "Gems": {
-    "sapphire_power": 1500,
-    "amethyst_power": 625,
-    "emerald_power": 625
-  },
-  "Blessings": {
-    "the_monarch": 1,
-    "the_trickster": 4,
-    "the_herald": 3,
-    "the_philosopher": 4,
-    "the_mystic": 4
-  },
-  "WeaponTraits": {
-    "martial_initiative": 2,
-    "amethyst_splinters": 4,
-    "visions_of_grandeur": 3,
-    "emerald_judgement": 1,
-    "hunters_focus": 1,
-    "latent_resurgence": 1,
-    "seized_opportunity": 1,
-    "king_of_the_hill": 1
-  },
-  "Talents": [
-    "glacial_assault",
-    "navirs_keeper",
-    "cascading_blitz",
-    "greater_glacial_blast",
-    "bursting_swallows",
-    "biting_cold",
-    "icy_talons",
-    "burstbolter",
-    "chilling_finesse",
-    "wisdom_of_the_north"
-  ],
-  "Sets": [
-    "deaths_grasp",
-    "drakheims_absolution",
-    "seal_of_the_heskyr",
-    "torment_of_baelaurum"
-  ],
-  "Legendary": "undulating_spirit",
-  "Weapon": "chronoshift",
+  "SpiritRating": 127,
   "SheetPercents": {
     "crit": 0.289,
     "haste": 0.2473,
     "expertise": 0.1784,
     "spirit": 0.2991
-  }
+  },
+  "Talents": [
+    38,
+    189,
+    192,
+    190,
+    628,
+    51,
+    658,
+    193,
+    43,
+    49
+  ],
+  "Traits": [
+    {
+      "Id": 51,
+      "Rank": 2,
+      "Name": "Martial Initiative"
+    },
+    {
+      "Id": 31,
+      "Rank": 4,
+      "Name": "Amethyst Splinters"
+    },
+    {
+      "Id": 47,
+      "Rank": 3,
+      "Name": "Visions of Grandeur"
+    },
+    {
+      "Id": 34,
+      "Rank": 1,
+      "Name": "Emerald Judgement"
+    },
+    {
+      "Id": 42,
+      "Rank": 1,
+      "Name": null
+    },
+    {
+      "Id": 38,
+      "Rank": 1,
+      "Name": null
+    },
+    {
+      "Id": 4,
+      "Rank": 1,
+      "Name": null
+    },
+    {
+      "Id": 6,
+      "Rank": 1,
+      "Name": null
+    },
+    {
+      "Id": 53,
+      "Rank": 1,
+      "Name": null
+    },
+    {
+      "Id": 61,
+      "Rank": 1,
+      "Name": null
+    }
+  ],
+  "Blessings": [
+    {
+      "Id": 705,
+      "Rank": 1,
+      "Name": "The Monarch"
+    },
+    {
+      "Id": 700,
+      "Rank": 4,
+      "Name": "The Trickster"
+    },
+    {
+      "Id": 699,
+      "Rank": 3,
+      "Name": "The Herald"
+    },
+    {
+      "Id": 709,
+      "Rank": 4,
+      "Name": "The Philosopher"
+    },
+    {
+      "Id": 706,
+      "Rank": 4,
+      "Name": "The Mystic"
+    }
+  ],
+  "GemPower": {
+    "Sapphire": 1500,
+    "Amethyst": 625,
+    "Emerald": 625
+  },
+  "SetBonusIds": [
+    686,
+    691,
+    5638,
+    691,
+    1771,
+    5638,
+    686,
+    1771
+  ],
+  "LegendaryItemIds": [
+    5220
+  ],
+  "WeaponAbilityId": 1558,
+  "GameDate": null
 }

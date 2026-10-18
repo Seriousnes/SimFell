@@ -4,7 +4,7 @@ public abstract class Actor
 {
     public int Id { get; init; }
     public int InstanceId { get; init; } = 1;
-    public string Name { get; init; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public bool IsSleeping { get; set; } = false;
 
     public ResourcePool Resources { get; } = new();

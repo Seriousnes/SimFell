@@ -1,11 +1,15 @@
 namespace FellowshipSim.Core.Customization.Weapons;
 
+/// <summary>
+/// A weapon. Weapons are identified by their weapon ability (combat logs list it in the weapon tree), which
+/// <see cref="Equip"/> gives the hero.
+/// </summary>
 public abstract class Weapon
 {
-    public abstract int Id { get; }
+    /// <summary>The weapon ability's game ID.</summary>
+    public abstract int WeaponAbilityId { get; }
     public abstract string Name { get; }
     public virtual Ability? Ability { get; protected set; }
-    public int ItemLevel { get; set; }
 
     public virtual void Equip(Hero hero)
     {
@@ -20,4 +24,3 @@ public abstract class Weapon
         }
     }
 }
-

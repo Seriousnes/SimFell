@@ -12,8 +12,11 @@ public class UndulatingSpirit : Legendary
     public const int PowerId = 398;
     public const int BuffEffectId = 2171;
     public const int StacksGranted = 2;
+    public const int RingItemId = 5220;
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Undulating Spirit";
+    public override string HeroName => "Rime";
+    public override IReadOnlyList<int> ItemIds => [RingItemId];
 
     public static readonly AuraDef Buff = AuraDef.Effect("Undulating Spirit", BuffEffectId, maxStacks: StacksGranted);
 

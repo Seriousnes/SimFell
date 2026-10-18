@@ -7,8 +7,4 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FellowshipAnalyzer.Codex.SDK" Version="1.0.12" />
-  </ItemGroup>
-
 </Project>

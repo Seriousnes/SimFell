@@ -34,7 +34,7 @@ public abstract class Hero : Actor
     public List<Legendary> Legendaries { get; } = new();
     public List<Gem> Gems { get; } = new();
     public List<Talent> Talents { get; } = new();
-    public HashSet<string> TalentNames { get; } = new(StringComparer.OrdinalIgnoreCase);
+    public List<Customization.Sets.SetBonus> Sets { get; } = new();
 
     public Dictionary<string, CooldownState> Cooldowns { get; } = new(StringComparer.OrdinalIgnoreCase);
     public SimTime GlobalCooldownEndTime { get; set; } = SimTime.Zero;
@@ -273,7 +273,7 @@ public abstract class Hero : Actor
     /// <summary>Primary attribute after all multipliers.</summary>
     public double PrimaryAttribute(SimTime now)
     {
-        double value = Auras.Fold(StatType.PrimaryAttribute, Stats.BaseIntellect, now);
+        double value = Auras.Fold(StatType.PrimaryAttribute, Stats.PrimaryStat, now);
         return value * Auras.Fold(StatType.PrimaryAttributeMultiplier, 1.0, now);
     }
 
@@ -375,19 +375,11 @@ public abstract class Hero : Actor
     public T? GetAbility<T>() where T : Ability =>
         Abilities.OfType<T>().FirstOrDefault();
 
-    public bool HasTalent<T>() where T : Talent =>
-        Talents.OfType<T>().Any() ||
-        TalentNames.Any(n => n.Replace("_", "").Replace(" ", "").Replace("'", "").Equals(typeof(T).Name, StringComparison.OrdinalIgnoreCase));
+    public bool HasTalent<T>() where T : Talent => Talents.OfType<T>().Any();
 
     public T? GetTalent<T>() where T : Talent =>
         Talents.OfType<T>().FirstOrDefault();
 
-    public bool HasTalent(string name)
-    {
-        string norm = name.Replace("_", "").Replace(" ", "").Replace("'", "").ToLowerInvariant();
-        return Talents.Any(t => t.Name.Replace("_", "").Replace(" ", "").Replace("'", "").ToLowerInvariant().Contains(norm)) ||
-               TalentNames.Any(n => n.Replace("_", "").Replace(" ", "").Replace("'", "").ToLowerInvariant().Contains(norm));
-    }
 
     protected void ResetCombatState()
     {

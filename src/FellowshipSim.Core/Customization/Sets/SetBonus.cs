@@ -6,6 +6,9 @@ namespace FellowshipSim.Core.Customization.Sets;
 /// </summary>
 public abstract class SetBonus
 {
+    /// <summary>Gear pieces of a set needed for its bonus.</summary>
+    public const int PiecesForBonus = 2;
+
     public abstract string Name { get; }
 
     /// <summary>The set-bonus IDs of this set (combat logs show them on each gear piece).</summary>
