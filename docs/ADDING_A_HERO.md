@@ -55,7 +55,6 @@ public sealed class Elarion : Hero
     {
         AddResource(Focus);
         SpiritRefundResource = Focus;           // Spirit Refund gives back the hero's spender resource
-        Register(SomeAbility.Buff);             // every aura the hero can gain, so replays compare it with the log
         AddClassTuningAura("Elarion class tuning", ClassDamageAuraHistory);   // server-side damage tuning, by date
         Abilities.Add(new FocusedShot(this));
         // ...
@@ -111,7 +110,7 @@ What the base class gives you:
 | Hits on every enemy, with sqrt(T/N) falloff beyond T targets | `AoeTargetThreshold = T`, then `DealAoeDamage(ctx, ctx.ActiveEnemies)` |
 | Damage logged under an effect ID | `DamageLogId = LogIds.Effect(effectId)` |
 | A hasted damage-over-time or pulsing effect | `PeriodicEffect.BeginHasted(...)` (handles haste changes and the partial final tick) |
-| A buff | `public static readonly AuraDef Buff = AuraDef.Effect(name, effectId, seconds, maxStacks, modifiers)`, then `Owner.Auras.Apply(Buff, ctx.CurrentTime)` |
+| A buff | `public static readonly AuraDef Buff = AuraDef.Effect(name, effectId, seconds, maxStacks, modifiers)`, then `Owner.Auras.Apply(Buff, ctx.CurrentTime)` (replays find it and compare it with the log; an aura built at runtime instead needs `hero.Register(aura)`) |
 | Spending or gaining a resource | `Owner.SpendResource(resource, amount, ctx)`, `Owner.GainResource(resource, amount, ctx.CurrentTime)` |
 | A chance to proc | `ctx.Outcomes.RollProc(key, chance, ctx, evidenceLogId)`; pass the log ID the proc produces so a replay can follow the log |
 | Procs per minute | `new RealPpm(key, ppm).Roll(hero, ctx, evidenceLogId)` |

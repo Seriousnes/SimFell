@@ -22,7 +22,6 @@ public class MartialInitiative : Trait
 
     public override void Bind(Hero hero)
     {
-        hero.Register(Buff);
         double fraction = ForRank(WeaponCooldownFractionByRank);
         hero.OnCastCompleted += (ability, _, now) =>
         {

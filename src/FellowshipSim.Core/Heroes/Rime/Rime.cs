@@ -48,14 +48,6 @@ public sealed class Rime : Hero
         TalentSlot.InRow(5, 3,    IcyTalons.TalentId,          FrostweaversWrath.TalentId,    SoulfrostTorrent.TalentId),
         TalentSlot.InRow(6, 1,    BitingCold.TalentId,         SupremeTorrent.TalentId,       WisdomOfTheNorth.TalentId));
 
-    /// <summary>Every aura Rime's abilities, talents and legendary can put on her (the replay compares them with the log).</summary>
-    public static readonly AuraDef[] AllAuras =
-    [
-        GlacialAssault.Buff, NavirsKeeper.Buff, FlightOfTheNavir.Buff, WintersBlessing.Buff, BurstingIce.WintersEmbrace,
-        BurstingIce.Debuff, IceBlitz.Buff, WrathOfWinter.Buff, UndulatingSpirit.Buff, RisingSpirit, Chronoshift.Barrier,
-        HarrowingIce.Buff, IcyFlow.Buff, FrostweaversWrath.Buff, SoulfrostTorrent.Buff,
-    ];
-
     /// <summary>Anima was generated (before it turns into Winter Orbs); the target is the one the Anima came from.</summary>
     public event Action<SimulationContext, double, EnemyTarget>? AnimaGenerated;
 
@@ -84,7 +76,6 @@ public sealed class Rime : Hero
         AddResource(Anima);
         AddResource(WinterOrbsResource);
         SpiritRefundResource = WinterOrbsResource;
-        foreach (var aura in AllAuras) Register(aura);
         AddClassTuningAura("Rime class tuning", ClassDamageAuraHistory);
 
         Abilities.Add(new ColdSnap(this));

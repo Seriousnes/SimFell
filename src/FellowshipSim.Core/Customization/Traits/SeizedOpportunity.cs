@@ -21,7 +21,6 @@ public class SeizedOpportunity : Trait
 
     public override void Bind(Hero hero)
     {
-        hero.Register(Counter);
         var buff = hero.Register(AuraDef.Effect("Seized Opportunity", BuffEffectId, DurationSeconds,
             modifiers: StatModifier.Add(StatType.CritRating, ForRank(CritRatingByRank))));
         hero.OnDamageDealt += dmg =>

@@ -20,7 +20,6 @@ public class DarkProphecy : SetBonus
 
     public override void Bind(Hero hero)
     {
-        hero.Register(Buff);
         var rppm = new RealPpm(ProcKey, ProcsPerMinute);
         hero.OnCastCompleted += (ability, _, now) =>
         {

@@ -19,7 +19,6 @@ public class DrakheimsAbsolution : SetBonus
 
     public override void Bind(Hero hero)
     {
-        hero.Register(Buff);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability.Category == AbilityCategory.Spirit) hero.Auras.Apply(Buff, now);

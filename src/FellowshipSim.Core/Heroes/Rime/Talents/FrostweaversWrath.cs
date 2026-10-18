@@ -26,7 +26,6 @@ public class FrostweaversWrath : Talent
 
     public override void Bind(Hero hero)
     {
-        hero.Register(Buff);
         // "Each time you generate Winter Orbs" (one roll per gain that adds orbs).
         ((Rime)hero).WinterOrbsGained += (ctx, _) =>
         {

@@ -37,7 +37,6 @@ public class Chronoshift : Ability
         ChannelTicksOnStart = true;
         ChannelPartialFinalTick = true;
         AoeTargetThreshold = TargetThreshold;
-        owner.Register(Barrier);
         // Chronoshift's own cooldown recovers at 8x while channeling too (per the user).
         OwnRecoveryAuraLogIds.Add(_barrier.LogId);
         // The barrier's CooldownRecovery 8 joins the recovery pool while channeling (+7: cooldowns tick at 8x),

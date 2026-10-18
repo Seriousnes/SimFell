@@ -28,7 +28,6 @@ public class ThePhilosopher : Blessing
 
     public override void Bind(Hero hero)
     {
-        hero.Register(Buff);
         double spiritPerStep = ForRank(SpiritPercentPerStepByRank);
         // Applied once the MAJOR ability resolves, so its own effects (e.g. Winter's Blessing's Spirit) count.
         hero.OnCastCompleted += (ability, _, now) =>

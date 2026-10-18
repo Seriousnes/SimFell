@@ -1,3 +1,4 @@
+using System.Reflection;
 using FellowshipSim.Core.Customization.Blessings;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Customization.Legendaries;
@@ -11,7 +12,6 @@ public abstract class Hero : Actor
     protected Hero()
     {
         // Spirit of Heroism is applied by every hero's Spirit ability; register it up front so a replay compares it from the start.
-        Register(SpiritOfHeroism);
         // Cooldown recovery depends on haste and cooldown acceleration: progress every recharge at the old rate when they change.
         Auras.OnGained += (_, _, now) => AdvanceCooldowns(now);
         Auras.OnRemoved += (_, now) => AdvanceCooldowns(now);
@@ -66,8 +66,15 @@ public abstract class Hero : Actor
         if (multiplier != 1.0) PassiveAuras.Add(AuraDef.Internal(name, 0, 1, StatModifier.More(StatType.DamageScale, multiplier)));
     }
 
-    /// <summary>Log IDs of every aura this hero's abilities and customizations can apply.</summary>
-    public HashSet<int> ModeledAuraLogIds { get; } = new();
+    /// <summary>
+    /// Log IDs of every aura this hero's abilities and customizations can apply: the <c>AuraDef</c> constants declared on
+    /// them (found automatically) and the auras built at runtime and passed to <see cref="Register"/>. Passive auras are
+    /// left out: they are on all fight in the engine and logs do not report them as buffs.
+    /// </summary>
+    public HashSet<int> ModeledAuraLogIds =>
+        [.. DeclaredAuraLogIds().Concat(_registeredAuraLogIds).Except(PassiveAuras.Select(a => a.LogId))];
+
+    private readonly HashSet<int> _registeredAuraLogIds = new();
 
     /// <summary>Extra crit chance against a specific target (e.g. bonuses vs. healthy enemies).</summary>
     public List<Func<EnemyTarget, SimTime, double>> TargetCritChanceBonuses { get; } = new();
@@ -209,10 +216,38 @@ public abstract class Hero : Actor
 
     // ------------------------------------------------------------------ auras
 
+    /// <summary>
+    /// Marks an aura built at runtime (not a <c>public static readonly AuraDef</c>) as modeled, so replays compare it with
+    /// the log. Declared AuraDef constants need no call.
+    /// </summary>
     public AuraDef Register(AuraDef def)
     {
-        if (def.LogId > 0) ModeledAuraLogIds.Add(def.LogId);
+        if (def.LogId > 0) _registeredAuraLogIds.Add(def.LogId);
         return def;
+    }
+
+    /// <summary>
+    /// Log IDs of the auras declared as <c>public static readonly AuraDef</c> on the hero and on everything it has:
+    /// abilities, talents, gems, blessings, weapon, traits, legendaries and sets.
+    /// </summary>
+    private HashSet<int> DeclaredAuraLogIds()
+    {
+        var owners = new List<object> { this };
+        owners.AddRange(Abilities);
+        owners.AddRange(Talents);
+        owners.AddRange(Gems);
+        owners.AddRange(Blessings);
+        if (EquippedWeapon != null) owners.Add(EquippedWeapon);
+        owners.AddRange(Traits);
+        owners.AddRange(Legendaries);
+        owners.AddRange(Sets);
+        return owners
+            .Select(o => o.GetType()).Distinct()
+            .SelectMany(t => t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+            .Where(f => f.FieldType == typeof(AuraDef))
+            .Select(f => ((AuraDef)f.GetValue(null)!).LogId)
+            .Where(id => id > 0)
+            .ToHashSet();
     }
 
     /// <summary>Activates Spirit of Heroism and the auras that last while it does.</summary>
