@@ -18,5 +18,6 @@ public class SupremeTorrent : Talent
         var torrent = hero.GetAbility<FreezingTorrent>();
         torrent?.AddDamageMultiplier(DamageMultiplier);
         torrent?.ExtendChannel(AddedChannelSeconds);
+        if (torrent != null) torrent.FullFinalTick = true;
     }
 }

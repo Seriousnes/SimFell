@@ -56,7 +56,7 @@ public class CoalescingFrost : Talent
         }
 
         // "Freezing Torrent critical strikes have a 50% chance to apply 2 stacks."
-        int added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx) ? 2 : 1;
+        int added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx, target) ? 2 : 1;
         var (stacks, version) = _stacks.GetValueOrDefault(target);
         int expected = version + 1;
         _stacks[target] = (stacks + added, expected);

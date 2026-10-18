@@ -64,7 +64,11 @@ public class IciclesOfAnzhyr : Ability
         }
     }
 
-    /// <summary>Curse of An'zhyr: permanent, ticking every 3s (hasted) while the enemy lives.</summary>
+    /// <summary>
+    /// Curse of An'zhyr: permanent, ticking every 3s (hasted) while the enemy lives, with the stats at each tick.
+    /// UNVERIFIED: PCaMVTFbZzNLrfx3 fight 5 ticks are 13% below the engine this way, and 20% below if the curse snapshots
+    /// the stats it was applied with (Icicles is usually cast during burst buffs).
+    /// </summary>
     private void Afflict(SimulationContext ctx, EnemyTarget enemy)
     {
         enemy.Auras.Apply(Curse, ctx.CurrentTime);
@@ -77,7 +81,7 @@ public class IciclesOfAnzhyr : Ability
         HastedTimer.Start(ctx, Owner, CurseTickSeconds, Tick, CurseName);
     }
 
-    /// <summary>One tick of the curse (logged as effect 2286).</summary>
+    /// <summary>The curse's damage numbers (logged as effect 2286).</summary>
     private sealed class CurseTick : Ability
     {
         public CurseTick(Hero owner) : base(owner, LogIds.Effect(CurseEffectId), CurseName, AbilityCategory.Weapon)

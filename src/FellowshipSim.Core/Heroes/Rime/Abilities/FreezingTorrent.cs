@@ -29,6 +29,13 @@ public class FreezingTorrent : RimeAbility
 
     private bool _soulfrost;
 
+    /// <summary>
+    /// The channel's final tick deals full damage instead of the part of a tick left (Supreme Torrent). Combat logs
+    /// (PCaMVTFbZzNLrfx3 fight 5, 16 channels): with Supreme Torrent every final tick is as big as the ticks before it,
+    /// even 0.03s after the previous one; without it (10 earlier logs) the final tick is partial.
+    /// </summary>
+    public bool FullFinalTick { get; set; }
+
     /// <summary>Soulfrost Torrent: the channel it empowers ticks 40% faster.</summary>
     public override double ChannelTickPeriodFor(SimulationContext ctx) =>
         _soulfrost ? ChannelTickPeriodSeconds / SoulfrostTorrent.TickRateMultiplier : ChannelTickPeriodSeconds;
@@ -44,6 +51,7 @@ public class FreezingTorrent : RimeAbility
 
     public override void OnChannelTick(SimulationContext ctx, EnemyTarget target, double fraction)
     {
+        if (FullFinalTick) fraction = 1.0;
         // Flight of the Navir: every tick (the partial one too) sends a swallow at an enemy of its choosing
         // (yMAZVJL9hTpFjqbC fight 7 @ 49.522: 10 ticks, 10 hits; @ 34.229: one per tick until Flight of the Navir ends).
         Rime.GetAbility<FlightOfTheNavir>()?.CommandSwallow(ctx);

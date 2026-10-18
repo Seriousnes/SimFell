@@ -16,9 +16,10 @@ public static class ProcEvidence
     /// <summary>
     /// <paramref name="LogId"/> is the aura the proc applies or the hit it deals; it may appear up to
     /// <paramref name="DelaySeconds"/> after the roll (e.g. a projectile's travel), and not before
-    /// <paramref name="MinDelaySeconds"/>.
+    /// <paramref name="MinDelaySeconds"/>. With <paramref name="StackJump"/>, the proof is instead that debuff on the
+    /// proc's enemy gaining that many stacks at once.
     /// </summary>
-    public sealed record Evidence(string ProcKey, int LogId, double DelaySeconds = 0.0, double MinDelaySeconds = 0.0);
+    public sealed record Evidence(string ProcKey, int LogId, double DelaySeconds = 0.0, double MinDelaySeconds = 0.0, int StackJump = 0);
 
     public static readonly Evidence[] All =
     [
@@ -48,6 +49,8 @@ public static class ProcEvidence
         new(ColdShower.ProcKey, IceComet.DamageId, DelaySeconds: 1.35, MinDelaySeconds: 0.5),
         new(FrostweaversWrath.ProcKey, FrostweaversWrath.Buff.LogId),
         new(SoulfrostTorrent.ProcKey, SoulfrostTorrent.Buff.LogId),
+        // A Freezing Torrent crit adding 2 stacks of Coalescing Frost at once instead of 1.
+        new(CoalescingFrost.DoubleStackProc, LogIds.Effect(CoalescingFrost.DebuffEffectId), StackJump: 2),
     ];
 
     private static readonly Dictionary<string, Evidence> ByKey = All.ToDictionary(e => e.ProcKey);

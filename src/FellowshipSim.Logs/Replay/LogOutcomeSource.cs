@@ -26,6 +26,21 @@ public sealed class LogOutcomeSource : IOutcomeSource
             .OrderBy(a => a.Time)
             .ToList();
         _playerAuraIds = _playerAuraEvents.Select(a => a.AbilityId).ToHashSet();
+        // The player's debuffs on enemies, with how many stacks each event added (for stack-jump evidence).
+        foreach (var group in script.Observations.Auras
+                     .Where(a => a.Source.Id == script.Player.Id && a.Target.Id != script.Player.Id)
+                     .GroupBy(a => (a.AbilityId, a.Target)))
+        {
+            int stacks = 0;
+            var list = new List<(LogAura Event, int Added)>();
+            foreach (var a in group.OrderBy(a => a.Time))
+            {
+                int now = a.Type is "removedebuff" or "removebuff" ? 0 : a.Stack ?? (a.IsGain ? Math.Max(stacks, 1) : stacks);
+                if (a.IsGain && now > stacks) list.Add((a, now - stacks));
+                stacks = now;
+            }
+            _enemyStackGains[group.Key] = list;
+        }
         foreach (var c in script.Commands.Where(c => c.Kind == CommandKind.EnemyDemise && c.Enemy != null))
         {
             _demise[new UnitRef(c.Enemy!.Id, c.Enemy.Instance)] = c.Time;
@@ -33,6 +48,9 @@ public sealed class LogOutcomeSource : IOutcomeSource
     }
 
     private readonly Dictionary<UnitRef, double> _demise = new();
+    private readonly Dictionary<(int LogId, UnitRef Target), List<(LogAura Event, int Added)>> _enemyStackGains = new();
+    private readonly HashSet<LogAura> _claimedStackEvidence = new();
+    private const double StackEvidenceWindowSeconds = 0.1;
 
     /// <summary>Hits that would have landed on an enemy already dead in the log (the projectile hit nothing).</summary>
     public int MissedHits { get; private set; }
@@ -179,7 +197,9 @@ public sealed class LogOutcomeSource : IOutcomeSource
         }
 
         double now = ctx.CurrentTime.TotalSeconds;
-        bool procced = _playerAuraIds.Contains(evidence.LogId)
+        bool procced = evidence.StackJump > 0
+            ? ClaimStackEvidence(evidence.LogId, evidence.StackJump, now, target)
+            : _playerAuraIds.Contains(evidence.LogId)
             ? ClaimAuraEvidence(evidence.LogId, now)
             : ClaimDamageEvidence(evidence.LogId, now, evidence.MinDelaySeconds, evidence.DelaySeconds, target);
         if (procced)
@@ -191,6 +211,21 @@ public sealed class LogOutcomeSource : IOutcomeSource
             }
         }
         return procced;
+    }
+
+    /// <summary>Proof of a proc that adds extra stacks: the debuff on <paramref name="target"/> gains <paramref name="jump"/> stacks at once.</summary>
+    private bool ClaimStackEvidence(int logId, int jump, double now, EnemyTarget? target)
+    {
+        if (target == null || !_enemyStackGains.TryGetValue((logId, new UnitRef(target.Id, target.InstanceId)), out var gains)) return false;
+        // The gain closest to the roll: the hit's own (engine hits can land a few server frames from the log's, and the
+        // hits that add stacks are at least 0.17s apart).
+        var gain = gains
+            .Where(g => Math.Abs(g.Event.Time - now) <= StackEvidenceWindowSeconds && !_claimedStackEvidence.Contains(g.Event))
+            .OrderBy(g => Math.Abs(g.Event.Time - now))
+            .FirstOrDefault();
+        if (gain.Event == null) return false;
+        _claimedStackEvidence.Add(gain.Event);
+        return gain.Added >= jump;
     }
 
     private bool ClaimAuraEvidence(int logId, double now)
