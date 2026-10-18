@@ -117,16 +117,19 @@ public sealed class ReplayLibrary
 
     private static string HitsCsv(ReplayResult result)
     {
-        var sb = new System.Text.StringBuilder("time,ability_id,ability,target,engine_amount,engine_crit,crit_chance,log_amount,log_crit,log_time,tick_fraction\n");
+        var sb = new System.Text.StringBuilder("time,ability_id,ability,target,engine_amount,engine_crit,crit_chance,log_amount,log_crit,log_time,tick_fraction,player_auras\n");
         var inv = System.Globalization.CultureInfo.InvariantCulture;
         foreach (var h in result.AllHits)
         {
             string name = h.AbilityName.Replace(',', ' ');
-            sb.Append(string.Format(inv, "{0:F3},{1},{2},{3},{4:F1},{5},{6:F4},{7},{8},{9},{10:F3}\n",
+            // The engine's buffs on the player when the hit landed: log IDs, then engine-only auras by name.
+            string auras = h.Context == null ? "" : string.Join(" ",
+                h.Context.AuraLogIds.Select(id => id.ToString(inv)).Concat(h.Context.InternalAuras.Select(n => n.Replace(' ', '_').Replace(',', '_'))));
+            sb.Append(string.Format(inv, "{0:F3},{1},{2},{3},{4:F1},{5},{6:F4},{7},{8},{9},{10:F3},{11}\n",
                 h.EngineTime, h.AbilityId, name, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}",
                 h.EngineAmount, h.Crit ? 1 : 0, h.CritChance,
                 h.Log == null ? "" : h.Log.TotalAmount.ToString("F0", inv), h.Log == null ? "" : (h.Log.Crit ? "1" : "0"),
-                h.Log == null ? "" : h.Log.Time.ToString("F3", inv), h.TickFraction));
+                h.Log == null ? "" : h.Log.Time.ToString("F3", inv), h.TickFraction, auras));
         }
         return sb.ToString();
     }
