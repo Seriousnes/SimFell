@@ -27,13 +27,15 @@ public class VoidbringersTouch : Ability
 
     public VoidbringersTouch(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Weapon)
     {
+        BaseCoefficient = CapCoefficient;
         SetCooldown(CooldownSeconds, scalesWithHaste: true);
         IgnoresGcd = true;
         owner.OnDamageDealt += dmg =>
         {
             if (_target == null || dmg.AbilityId == DamageLogId || dmg.SimContext is not { } ctx) return;
             _stored += StoredShare * dmg.Amount;
-            if (_stored >= Cap(ctx)) Erupt(ctx);
+            // It erupts on reaching the cap, or as soon as it holds more than the enemy's remaining health.
+            if (_stored >= Cap(ctx) || (_target.MaxHealth > 0 && _stored >= _target.CurrentHealth)) Erupt(ctx);
         };
     }
 
@@ -56,16 +58,22 @@ public class VoidbringersTouch : Ability
         ctx.Schedule(SimTime.FromSeconds(DurationSeconds), c => { if (touch == _touch) Erupt(c); }, $"{Name} expires");
     }
 
+    /// <summary>
+    /// The explosion: the cap's damage (42.5 x Main Stat, with Martial Initiative and other Main Stat buffs) scaled like any
+    /// hit of yours, by Expertise, damage buffs (Winter's Embrace, Ice Blitz, ...) and weapon bonuses, then crit; short of
+    /// the cap, the share of it stored (per the user: weapons interact with buffs like any ability).
+    /// </summary>
     private void Erupt(SimulationContext ctx)
     {
         if (_target is not { } target) return;
-        double stored = Math.Min(_stored, Cap(ctx));
+        double share = Math.Min(1.0, _stored / Cap(ctx));
         _target = null;
         _stored = 0.0;
         _touch++;
-        if (stored <= 0.0) return;
-        var now = ctx.CurrentTime;
-        ctx.ApplyDamage(Owner, target, DamageLogId, Name, canCrit: true, _ => new SimulationContext.HitNumbers(
-            stored, Owner.CritChanceAgainst(target, now) + CritChance, CritMultiplierAt(now)));
+        if (share <= 0.0) return;
+        // Always a crit, but with no grievous overflow: exactly 100% crit chance (n7zxK8harZT2wjDB fight 9: with the
+        // overflow every eruption was ~1.37x the log's).
+        double ownCrit = Owner.CritChanceAgainst(target, ctx.CurrentTime) + CritChanceBonus;
+        DealDamage(ctx, target, damageMultiplier: share, extraCritChance: CritChance - ownCrit);
     }
 }
