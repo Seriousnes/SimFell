@@ -20,6 +20,8 @@ public class SoulfrostTorrent : Talent
     /// overflow, i.e. +200%. Target dummy test (per the user, 30% crit): Soulfrost ticks 1,996-2,311 vs normal crit ticks
     /// 1,150-1,378, ratio 1.70 against (3 + 0.30) / 2 = 1.65 (the tooltip would give 1.15). PCaMVTFbZzNLrfx3 fight 5:
     /// Soulfrost ticks are 3.57x a normal hit, an overflow of ~1.37 with ~37% crit.
+    /// POSSIBLE GAME BUG: other "+100% crit chance" effects (Frostweaver's Wrath, Voidbringer's Touch) count once, as their
+    /// tooltips say; only Soulfrost Torrent counts twice. Modeled as the game behaves; recheck after patches.
     /// </summary>
     public const double CritChance = 2.0;
     public const string ProcKey = "soulfrost_torrent";

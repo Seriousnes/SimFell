@@ -18,6 +18,11 @@ Measured on 10 Rime logs (fights on Wyrmheart and Apostate Veras, July to Octobe
 - **Harrowing Ice** (fight g6zBdpvJCmh2HfrD #31): a pulse deals damage with the stacks held before it, then adds its own;
   stacks reach 31 (the tooltip says 30) and are consumed at once.
 
+- **Grievous crits:** crit chance above 100% gives base x (2 + overflow) x (1 + crit power).
+- **Soulfrost Torrent (possible game bug):** its "+100% crit chance" counts twice on the Torrent it empowers, acting as
+  +200% (target dummy at 30% crit: Soulfrost ticks 1.70x a normal crit, against 1.65 for +200% and 1.15 for +100%).
+  Frostweaver's Wrath and Voidbringer's Touch count their +100% once.
+
 ## Timing
 
 - **Bursting Ice:** pulses are hasted and re-time the moment haste changes. The debuff ends 1/60s after its 3s, with a
