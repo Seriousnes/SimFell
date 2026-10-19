@@ -10,6 +10,13 @@ public abstract class Hero : Actor
 {
     protected Hero()
     {
+        AddResource(SpiritPoints);
+        // Spirit Points from damage: a hit earns its share of the enemy's health times the enemy's Spirit Point value.
+        OnDamageDealt += dmg =>
+        {
+            if (dmg.Target is not { SpiritPointValue: > 0, MaxHealth: > 0 } enemy || dmg.Amount <= 0) return;
+            GainResource(SpiritPoints, Math.Min(dmg.Amount, enemy.MaxHealth) / enemy.MaxHealth * enemy.SpiritPointValue, dmg.SimContext);
+        };
         // Spirit of Heroism is applied by every hero's Spirit ability; register it up front so a replay compares it from the start.
         // Cooldown recovery depends on haste and cooldown acceleration: progress every recharge at the old rate when they change.
         Auras.OnGained += (_, _, now) => AdvanceCooldowns(now);
@@ -132,7 +139,40 @@ public abstract class Hero : Actor
     // ------------------------------------------------------------------ resources and Spirit Refund
 
     /// <summary>Spirit Points toward the Spirit ability (every hero).</summary>
+    /// <summary>
+    /// Spirit Points: they fill the Spirit ability (hero_data Attributes MaxSpiritPoints 100). Every hero regains 1 every
+    /// 3 seconds in combat and earns enemies' Spirit Points through damage (combat logs report them as resource type 4).
+    /// </summary>
     public static readonly ResourceDef SpiritPoints = new("Spirit", Max: 100);
+    public const double SpiritPointRegenSeconds = 3.0;
+    public const double SpiritPointRegenAmount = 1.0;
+    /// <summary>The Spirit ability's cost (hero_data Ultimate SpiritPointCost 100).</summary>
+    public const double SpiritAbilityBaseCost = 100.0;
+
+    /// <summary>Spirit Points a Spirit Refund grants (hero_data SpiritProc FlatSpiritPointGain: 1, Rime 2).</summary>
+    public double SpiritPointsPerSpiritRefund { get; protected set; } = 1.0;
+
+    /// <summary>Spirit Points at the start of a dungeon (The Herald, Undulating Spirit...).</summary>
+    public double StartingSpiritPoints { get; set; }
+
+    /// <summary>Share taken off the Spirit ability's cost (Blessing of the Prophet).</summary>
+    public double SpiritAbilityCostReduction { get; set; }
+
+    public double SpiritAbilityCost => SpiritAbilityBaseCost * (1.0 - SpiritAbilityCostReduction);
+
+    /// <summary>Raises the maximum Spirit Points (Ancestral Surge).</summary>
+    public void AddMaxSpiritPoints(double amount) => Resources.Get(SpiritPoints).Max += amount;
+
+    /// <summary>Starts what runs for the whole fight on its own: the Spirit Point regeneration.</summary>
+    public void BeginFight(SimulationContext ctx)
+    {
+        void Regen(SimulationContext c)
+        {
+            GainResource(SpiritPoints, SpiritPointRegenAmount, c);
+            c.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
+        }
+        ctx.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
+    }
 
     /// <summary>The resources this hero has (declared with <see cref="AddResource"/> in <see cref="Initialize"/>).</summary>
     public List<ResourceDef> ResourceDefs { get; } = new();
@@ -190,6 +230,7 @@ public abstract class Hero : Actor
         // Rising Spirit comes with the spend; the resource comes back a moment later.
         Auras.Apply(RisingSpirit, ctx.CurrentTime);
         OnSpiritRefund?.Invoke(resource, amount, ctx);
+        GainResource(SpiritPoints, SpiritPointsPerSpiritRefund, ctx);
         ctx.Schedule(SimTime.FromSeconds(SpiritRefundDelaySeconds), c => AddToResource(resource, amount, c, null, isGain: false), "Spirit Refund");
     }
 
@@ -422,6 +463,7 @@ public abstract class Hero : Actor
 
     protected void ResetCombatState()
     {
+        Resources.Get(SpiritPoints).Initial = StartingSpiritPoints;
         Resources.Reset();
         Auras.ClearAll();
         Cooldowns.Clear();

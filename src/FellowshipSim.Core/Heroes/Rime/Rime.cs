@@ -29,6 +29,9 @@ public sealed class Rime : Hero
     /// <summary>Class tuning: hero attribute BalancingDamageAura (fs_tc_uploads s3/hero_data.json, Rime.Attributes), +4%.</summary>
     public const double BalancingDamageAura = 1.04;
 
+    /// <summary>Spirit Points per Spirit Refund (hero_data Rime SpiritProc ResourceRefund FlatSpiritPointGain 2).</summary>
+    public const double SpiritPointsPerRefund = 2.0;
+
     /// <summary>Rime's talent tree, as in game (players write picks as row + column: "1b + 2a + 2c ...").</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                            b                              c
@@ -56,6 +59,7 @@ public sealed class Rime : Hero
         AddResource(WinterOrbsResource);
         SpiritRefundResource = WinterOrbsResource;
         ClassDamageTuning = BalancingDamageAura;
+        SpiritPointsPerSpiritRefund = SpiritPointsPerRefund;
 
         Abilities.Add(new ColdSnap(this));
         Abilities.Add(new GlacialBlast(this));

@@ -35,6 +35,7 @@ public class MonteCarloSimulator
         {
             var ctx = new SimulationContext(_hero);
             _hero.ResetForIteration();
+            _hero.BeginFight(ctx);
 
             // Populate enemies
             for (int i = 1; i <= targetCount; i++)

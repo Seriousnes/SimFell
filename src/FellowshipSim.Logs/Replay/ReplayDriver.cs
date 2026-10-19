@@ -63,6 +63,8 @@ public sealed class ReplayDriver
     public ReplayResult Run()
     {
         _hero.ResetForIteration();
+        StartFromLoggedResources();
+        _hero.BeginFight(_ctx);
         FollowSituationalAuras();
 
         // An enemy's arrival is only known from its first event in the log, so it was there a little earlier.
@@ -353,6 +355,28 @@ public sealed class ReplayDriver
         }
         _externalDefs[(logId, sourceId)] = def;
         return def;
+    }
+
+    /// <summary>
+    /// Resources that carry over from earlier pulls of the dungeon (Spirit Points) start at the log's first reading.
+    /// </summary>
+    private void StartFromLoggedResources()
+    {
+        foreach (var logged in LogResources.All.Where(l => l.StartsFromLog && _hero.ResourceDefs.Contains(l.Resource)))
+        {
+            var first = _script.Observations.Resources
+                .Where(r => r.Resources.ContainsKey(logged.LogResourceType.ToString()))
+                .OrderBy(r => r.Time).FirstOrDefault();
+            if (first == null) continue;
+            // Set at the moment of the reading, so what the engine gains before it (regeneration) does not count twice.
+            double value = first.Resources[logged.LogResourceType.ToString()].Amount * logged.Scale;
+            var resource = logged.Resource;
+            _ctx.ScheduleAt(SimTime.FromSeconds(Math.Max(0.0, first.Time - 0.001)), c =>
+            {
+                var state = _hero.Resources.Get(resource);
+                state.Current = Math.Min(state.Max, value);
+            }, $"{resource.Name} from the log");
+        }
     }
 
     /// <summary>

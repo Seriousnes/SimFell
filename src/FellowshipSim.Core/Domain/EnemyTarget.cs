@@ -7,6 +7,9 @@ public class EnemyTarget : Actor
     public double HealthPercent => HealthFraction * 100.0;
     public double HealthFraction => MaxHealth > 0 ? CurrentHealth / MaxHealth : 0.0;
 
+    /// <summary>The Spirit Points this enemy is worth (heroes earn them as their damage takes its health down).</summary>
+    public double SpiritPointValue { get; set; }
+
     public EnemyTarget(int id, int instanceId = 1, string name = "Enemy")
     {
         Id = id;

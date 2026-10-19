@@ -2,8 +2,7 @@ namespace FellowshipSim.Core.Customization.Blessings;
 
 /// <summary>
 /// Blessing 702: "Your [POWER] abilities have a 5% / 8% / 13% / 20% chance to generate 1 Spirit Point toward your SPIRIT
-/// ability." No effect on damage yet: the engine does not track Spirit Points (replays follow the log's Spirit ability
-/// casts).
+/// ability." UNVERIFIED: no log checked.
 /// </summary>
 public class TheCelestial : Blessing
 {
@@ -14,5 +13,18 @@ public class TheCelestial : Blessing
     public override int Id => BlessingId;
     public override string Name => BlessingName;
 
-    public override void Bind(Hero hero) { }
+    public const string ProcKey = "the_celestial";
+    public const double SpiritPointsGained = 1.0;
+
+    public override void Bind(Hero hero)
+    {
+        double chance = ForRank(ChanceByRank);
+        hero.OnCastCompleted += (ability, _, _) =>
+        {
+            if (ability.Category == AbilityCategory.Power && hero.SimContext is { } ctx && ctx.Outcomes.RollProc(ProcKey, chance, ctx))
+            {
+                hero.GainResource(Hero.SpiritPoints, SpiritPointsGained, ctx);
+            }
+        };
+    }
 }

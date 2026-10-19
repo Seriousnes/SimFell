@@ -62,7 +62,7 @@ public class SimulationContext
         var key = (id, instanceId);
         if (!_enemyLookup.TryGetValue(key, out var enemy))
         {
-            enemy = new EnemyTarget(id, instanceId, name);
+            enemy = new EnemyTarget(id, instanceId, name) { SpiritPointValue = Enemies.CreatureSpiritPoints.For(name) };
             _enemyLookup[key] = enemy;
             _enemies.Add(enemy);
         }

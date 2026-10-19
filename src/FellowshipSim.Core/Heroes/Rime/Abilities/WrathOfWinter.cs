@@ -26,9 +26,22 @@ public class WrathOfWinter : RimeAbility
         IgnoresGcd = true;
     }
 
+    /// <summary>Rime's Spirit ability: it needs and spends the Spirit ability's cost in Spirit Points.</summary>
+    public override bool CanCast(SimulationContext ctx, out string? reason)
+    {
+        double points = Owner.ResourceAmount(Hero.SpiritPoints);
+        if (points < Owner.SpiritAbilityCost)
+        {
+            reason = $"{Name} needs {Owner.SpiritAbilityCost:0} Spirit Points (have {points:0.#})";
+            return false;
+        }
+        return base.CanCast(ctx, out reason);
+    }
+
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         var hero = Rime;
+        hero.Resources.Consume(Hero.SpiritPoints, Math.Min(hero.SpiritAbilityCost, hero.ResourceAmount(Hero.SpiritPoints)));
         hero.ActivateSpiritOfHeroism(ctx);
         hero.Auras.Apply(Buff, ctx.CurrentTime);
 

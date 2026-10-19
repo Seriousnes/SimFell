@@ -31,7 +31,8 @@ public class Sapphire : Gem
     {
         switch (node.Slot)
         {
-            case 1: // Ancestral Surge: primary attribute bonus while Spirit of Heroism is active.
+            case 1: // Ancestral Surge: more maximum Spirit Points, and Main Stat while Spirit of Heroism is active.
+                hero.AddMaxSpiritPoints(node.Value("SpiritPointsBonus"));
                 hero.SpiritOfHeroismAuras.Add(hero.Register(node.Grants!));
                 return true;
             case 2: // Mystic's Intuition: flat Stamina/Spirit rating (in the sheet ratings).
@@ -39,7 +40,8 @@ public class Sapphire : Gem
             case 4: // Oracle's Foresight: Spirit.
                 hero.Stats.BonusSpirit += node.Value("SpiritBonus");
                 return true;
-            case 5: // Blessing of the Prophet: longer Spirit of Heroism (the Spirit cost reduction does not affect damage).
+            case 5: // Blessing of the Prophet: a cheaper Spirit ability and a longer Spirit of Heroism.
+                hero.SpiritAbilityCostReduction += node.Value("CostReduction");
                 HeroismDurationBonus = node.Value("DurationBonus");
                 hero.SpiritOfHeroismDurationBonus += HeroismDurationBonus;
                 return true;
