@@ -18,7 +18,11 @@ public class CoalescingFrost : Talent
     public const double DurationSeconds = 3.0;
     public const double CoefficientPerStack = 0.56;
     public const double CritDoubleStackChance = 0.5;
-    public const double TargetThreshold = 5;
+    /// <summary>
+    /// Damage falls off as sqrt(T/N) beyond T enemies. The game data says 5 (hero_data "DelayedAoe" TargetCountThreshold),
+    /// but combat logs fit 6 (PCaMVTFbZzNLrfx3 fight 5: 1.10 with 5, 0.96 with 7, 1.02 with 6).
+    /// </summary>
+    public const double TargetThreshold = 6;
     public const string DoubleStackProc = "coalescing_frost_double";
 
     public override string Name => TalentName;

@@ -111,9 +111,11 @@ public sealed class LogOutcomeSource : IOutcomeSource
         if (match != null) _hits.RecordTravel(hit.AbilityId, match.Time - now);
 
         if (match == null && _options.MissHitsOnDyingTargets && target != null && _demise.TryGetValue(target, out var died)
-            && died >= now - _options.SameTickSeconds && died <= now + _hits.TypicalTravelSeconds(hit.AbilityId, _options) + PeriodicEffect.ServerFrameSeconds)
+            && died >= now - _options.SameTickSeconds && died <= now + _hits.LongestTravelSeconds(hit.AbilityId, _options) + PeriodicEffect.ServerFrameSeconds)
         {
-            // The target dies in the log before this hit would land: it hits nothing (no damage, no procs, no counters).
+            // The target dies in the log before this hit could land (the log has no hit for it, and its flight can be as
+            // long as the longest seen; Frost Bolt's varies with distance, 0.03-1.9s): it hits nothing (no damage, no
+            // procs, no counters).
             MissedHits++;
             return new HitOutcome(false, SimTime.Zero, 1.0, null, Missed: true);
         }
@@ -363,6 +365,10 @@ public sealed class HitLedger
     }
 
     public double TypicalTravelSeconds(int logId, ReplayOptions options) => TypicalTravel(logId, options);
+
+    /// <summary>The longest travel seen for this damage ID (recent hits), or the default before any.</summary>
+    public double LongestTravelSeconds(int logId, ReplayOptions options) =>
+        _travel.TryGetValue(logId, out var list) && list.Count > 0 ? Math.Max(options.DefaultTravelSeconds, list.Skip(Math.Max(0, list.Count - 50)).Max()) : options.DefaultTravelSeconds;
 
     private double TypicalTravel(int logId, ReplayOptions options)
     {
