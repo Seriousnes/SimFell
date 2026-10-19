@@ -49,15 +49,23 @@ public class IciclesOfAnzhyr : Ability
         double damage = BaseDamage(ctx, null);
         double critChance = Owner.CritChance(now) + CritChanceBonus;
         double critMultiplier = CritMultiplierAt(now);
+        // The curse this cast applies (or re-applies) snapshots the cast too.
+        var curse = new CurseSnapshot(_curse.BaseDamage(ctx, null), critChance, critMultiplier);
         for (int i = 0; i < Waves; i++)
         {
             bool final = i == Waves - 1;
             ctx.Schedule(SimTime.FromSeconds(FirstWaveSeconds + i * WaveIntervalSeconds),
-                c => Wave(c, target, final, damage, critChance, critMultiplier), $"{Name} wave {i + 1}");
+                c => Wave(c, target, final, damage, critChance, critMultiplier, curse), $"{Name} wave {i + 1}");
         }
     }
 
-    private void Wave(SimulationContext ctx, EnemyTarget target, bool final, double damage, double critChance, double critMultiplier)
+    /// <summary>The curse's numbers, taken when Icicles is cast.</summary>
+    private sealed record CurseSnapshot(double Damage, double CritChance, double CritMultiplier);
+
+    /// <summary>Each cursed enemy's current curse (a re-application replaces its snapshot).</summary>
+    private readonly Dictionary<EnemyTarget, CurseSnapshot> _curses = new();
+
+    private void Wave(SimulationContext ctx, EnemyTarget target, bool final, double damage, double critChance, double critMultiplier, CurseSnapshot curse)
     {
         var enemies = ctx.ActiveEnemies.ToList();
         if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
@@ -73,22 +81,32 @@ public class IciclesOfAnzhyr : Ability
                     critChance + Owner.CritChanceAgainst(enemy, c.CurrentTime) - Owner.CritChance(c.CurrentTime),
                     critMultiplier),
                 snapshot: true);
-            if (final && !cursed) Afflict(ctx, enemy);
+            if (final)
+            {
+                // Re-applying the curse gives it the new cast's snapshot; a new curse also starts ticking.
+                bool ticking = _curses.ContainsKey(enemy) && cursed;
+                _curses[enemy] = curse;
+                if (!ticking) Afflict(ctx, enemy);
+            }
         }
     }
 
     /// <summary>
-    /// Curse of An'zhyr: permanent, ticking every 3s (hasted) while the enemy lives, with the stats at each tick.
-    /// UNVERIFIED: PCaMVTFbZzNLrfx3 fight 5 ticks are 13% below the engine this way, and 20% below if the curse snapshots
-    /// the stats it was applied with (Icicles is usually cast during burst buffs).
+    /// Curse of An'zhyr: permanent, ticking every 3s (hasted) while the enemy lives. Each tick deals the snapshot of the
+    /// Icicles cast that last applied it (per the user: every re-application is a new snapshot).
     /// </summary>
     private void Afflict(SimulationContext ctx, EnemyTarget enemy)
     {
         enemy.Auras.Apply(Curse, ctx.CurrentTime);
         void Tick(SimulationContext c)
         {
-            if (enemy.IsSleeping) return;
-            _curse.DealDamage(c, enemy);
+            if (enemy.IsSleeping || !_curses.TryGetValue(enemy, out var snap)) return;
+            c.ApplyDamage(Owner, enemy, _curse.DamageLogId, CurseName, canCrit: true,
+                cc => new SimulationContext.HitNumbers(
+                    snap.Damage * Owner.DamageMultiplierAgainst(enemy, cc.CurrentTime),
+                    snap.CritChance + Owner.CritChanceAgainst(enemy, cc.CurrentTime) - Owner.CritChance(cc.CurrentTime),
+                    snap.CritMultiplier),
+                snapshot: true);
             HastedTimer.Start(c, Owner, CurseTickSeconds, Tick, CurseName);
         }
         HastedTimer.Start(ctx, Owner, CurseTickSeconds, Tick, CurseName);

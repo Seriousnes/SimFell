@@ -29,7 +29,6 @@ public class VoidbringersTouch : Ability
     public VoidbringersTouch(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Weapon)
     {
         BaseCoefficient = CapCoefficient;
-        ScalesWithExpertise = false;
         SetCooldown(CooldownSeconds, scalesWithHaste: true);
         IgnoresGcd = true;
         owner.OnDamageDealt += dmg =>

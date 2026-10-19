@@ -253,7 +253,8 @@ public class SimulationContext
     /// Deals one hit. <paramref name="compute"/> gives the hit's numbers from the current state; it is evaluated on
     /// release (to decide crit and travel) and again on landing, where damage is dealt with the stats at that moment.
     /// Crit chance above 100% is a grievous crit: "increases the base damage of the hit by an amount equal to the
-    /// overflowing critical strike chance" (base x (1 + overflow), then the crit multiplier; Beam Freezing Torrent crits).
+    /// overflowing critical strike chance": base x (2 + overflow) x (1 + crit power) (community measurements on a training
+    /// dummy and Season 3 logs), i.e. the overflow joins the 2x crit double and only crit power scales it.
     /// <paramref name="onLanded"/> is called with the damage actually dealt, once the hit lands (0 when it hit nothing).
     /// A <paramref name="snapshot"/> hit keeps the numbers it had on release.
     /// </summary>
@@ -268,7 +269,8 @@ public class SimulationContext
             double chance = 0.0, baseDamage = n.BaseDamage;
             if (canCrit)
             {
-                if (n.CritChance > 1.0) baseDamage *= n.CritChance;
+                // Grievous: base x (2 + overflow) x (1 + crit power), i.e. the overflow is added to the crit double.
+                if (n.CritChance > 1.0) baseDamage *= (StatBlock.BaseCritMultiplier + n.CritChance - 1.0) / StatBlock.BaseCritMultiplier;
                 chance = Math.Clamp(n.CritChance, 0.0, 1.0);
             }
             return new HitRequest(source, target, abilityId, abilityName, baseDamage, canCrit, chance, n.CritMultiplier, ctx.CurrentTime, tickFraction)
