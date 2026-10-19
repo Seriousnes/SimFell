@@ -22,7 +22,7 @@ public class CascadingBlitz : Talent
             if (resource != Rime.Anima || from == null || !hero.Auras.HasAura(IceBlitz.Buff, ctx.CurrentTime)) return;
             for (int i = 0; i < (int)amount; i++)
             {
-                var enemy = ctx.Outcomes.ChooseTarget(swallows.DamageLogId, ctx.ActiveEnemies.ToList(), ctx, preferred: from);
+                var enemy = ctx.Outcomes.ChooseTarget(swallows.DamageLogId, ctx.ActiveEnemies, ctx, preferred: from);
                 if (enemy != null) swallows.Attack(ctx, enemy, 1);
             }
         };

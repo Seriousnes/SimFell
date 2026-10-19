@@ -35,7 +35,7 @@ public class FrostSwallows : RimeAbility
     {
         for (int i = 0; i < count; i++)
         {
-            var target = ctx.Outcomes.ChooseTarget(DamageLogId, ctx.ActiveEnemies.ToList(), ctx);
+            var target = ctx.Outcomes.ChooseTarget(DamageLogId, ctx.ActiveEnemies, ctx);
             if (target != null) Attack(ctx, target, 1);
         }
     }

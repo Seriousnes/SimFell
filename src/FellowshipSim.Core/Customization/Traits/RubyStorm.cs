@@ -27,7 +27,7 @@ public class RubyStorm : Trait
         {
             if (target == null || ability.BaseCoefficient <= 0 || hero.SimContext is not { } ctx || !rppm.Roll(hero, ctx)) return;
             double damage = share * hero.Stats.MaxHealth;
-            foreach (var enemy in ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies.ToList(), ctx))
+            foreach (var enemy in ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies, ctx))
             {
                 ctx.ApplyDamage(hero, enemy, logId, TraitName, canCrit: false, _ => new SimulationContext.HitNumbers(damage, 0.0, 1.0));
             }

@@ -57,9 +57,10 @@ public class Aura
     public int MaxStacks => Def.MaxStacks;
     public IReadOnlyList<StatModifier> Modifiers => Def.Modifiers;
 
-    public SimTime AppliedAt { get; set; } = SimTime.Zero;
-    public SimTime ExpiresAt { get; set; } = SimTime.Infinite;
-    public int Stacks { get; set; } = 1;
+    public SimTime AppliedAt { get; internal set; } = SimTime.Zero;
+    // Only AuraContainer changes these, so it can cache its folds and next expiry.
+    public SimTime ExpiresAt { get; internal set; } = SimTime.Infinite;
+    public int Stacks { get; internal set; } = 1;
 
     public bool IsExpired(SimTime now) => now >= ExpiresAt;
 }
@@ -69,6 +70,49 @@ public class AuraContainer
     private readonly Dictionary<string, Aura> _auras = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, long> _uptimeMs = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, SimTime> _activeSince = new(StringComparer.OrdinalIgnoreCase);
+
+    // Speed: _version changes whenever an aura or its stacks change, which invalidates the cached folds; _nextExpiry is
+    // never later than the earliest expiry, so CleanExpired only looks at the auras once one may have run out.
+    private int _version;
+    private SimTime _nextExpiry = SimTime.Infinite;
+    private readonly ModifierFold[] _folds = new ModifierFold[Enum.GetValues<StatType>().Length];
+    private readonly int[] _foldVersions = Enumerable.Repeat(-1, Enum.GetValues<StatType>().Length).ToArray();
+    private readonly double[] _bonuses = new double[Enum.GetValues<StatType>().Length];
+    private readonly int[] _bonusVersions = Enumerable.Repeat(-1, Enum.GetValues<StatType>().Length).ToArray();
+
+    // Hasted timers re-read haste on every aura change. They are kept in a list rather than subscribing to the events,
+    // since adding and removing event handlers copies the handler list each time (many timers start and stop per second).
+    private readonly List<HastedTimer> _timers = new();
+
+    private int _finishedTimers;
+    private int _notifying;
+
+    internal void AddTimer(HastedTimer timer) => _timers.Add(timer);
+
+    /// <summary>A timer finished: finished timers are cleared out in batches (they ignore updates meanwhile).</summary>
+    internal void RemoveTimer(HastedTimer timer)
+    {
+        if (++_finishedTimers < 32 || _finishedTimers * 2 < _timers.Count || _notifying > 0) return;
+        _timers.RemoveAll(t => !t.IsActive);
+        _finishedTimers = 0;
+    }
+
+    /// <summary>Timers only depend on haste, so only an aura with a haste modifier can change them.</summary>
+    private void NotifyTimers(Aura aura)
+    {
+        var mods = aura.Modifiers;
+        bool haste = false;
+        for (int i = 0; i < mods.Count && !haste; i++) haste = mods[i].Type is StatType.Haste or StatType.HasteRating;
+        if (!haste) return;
+        // Timers started meanwhile are new (they read haste themselves); finished ones are only cleared out between updates.
+        _notifying++;
+        try
+        {
+            int count = _timers.Count;
+            for (int i = 0; i < count; i++) _timers[i].Update();
+        }
+        finally { _notifying--; }
+    }
 
     /// <summary>Raised whenever an aura is applied, stacked or refreshed (aura, stacks before, time).</summary>
     public event Action<Aura, int, SimTime>? OnGained;
@@ -113,7 +157,9 @@ public class AuraContainer
             }
             existing.ExpiresAt = expires;
             existing.Stacks = Math.Clamp(setStacks ?? (existing.Stacks + stacks), 1, existing.MaxStacks);
+            Changed(expires);
             OnGained?.Invoke(existing, before, now);
+            NotifyTimers(existing);
             return existing;
         }
 
@@ -125,8 +171,17 @@ public class AuraContainer
         };
         _auras[def.Key] = aura;
         _activeSince[def.Key] = now;
+        Changed(expires);
         OnGained?.Invoke(aura, 0, now);
+        NotifyTimers(aura);
         return aura;
+    }
+
+    /// <summary>An aura was added or changed: cached folds are stale, and it may now be the next to run out.</summary>
+    private void Changed(SimTime expires)
+    {
+        _version++;
+        if (expires < _nextExpiry) _nextExpiry = expires;
     }
 
     /// <summary>Applies an engine-internal aura built inline (not a game effect).</summary>
@@ -151,6 +206,7 @@ public class AuraContainer
         if (_auras.TryGetValue(key, out var aura) && aura.ExpiresAt != SimTime.Infinite)
         {
             aura.ExpiresAt += duration;
+            Changed(aura.ExpiresAt);
         }
     }
 
@@ -159,7 +215,11 @@ public class AuraContainer
         CleanExpired(now);
         if (_auras.TryGetValue(key, out var aura))
         {
-            if (aura.Stacks > count) aura.Stacks -= count;
+            if (aura.Stacks > count)
+            {
+                aura.Stacks -= count;
+                _version++;
+            }
             else Remove(key, now);
         }
     }
@@ -168,6 +228,7 @@ public class AuraContainer
     {
         if (_auras.Remove(key, out var aura))
         {
+            _version++;
             if (_activeSince.Remove(key, out var start))
             {
                 var endTime = aura.ExpiresAt != SimTime.Infinite && aura.ExpiresAt < now ? aura.ExpiresAt : now;
@@ -175,6 +236,7 @@ public class AuraContainer
                 _uptimeMs[key] = _uptimeMs.GetValueOrDefault(key, 0L) + dur;
             }
             OnRemoved?.Invoke(aura, now);
+            NotifyTimers(aura);
         }
     }
 
@@ -204,15 +266,21 @@ public class AuraContainer
 
     public void CleanExpired(SimTime now)
     {
-        if (now == default) return;
+        if (now == default || now < _nextExpiry) return;
         List<Aura>? expired = null;
+        var next = SimTime.Infinite;
         foreach (var aura in _auras.Values)
         {
             if (aura.IsExpired(now))
             {
                 (expired ??= new()).Add(aura);
             }
+            else if (aura.ExpiresAt < next)
+            {
+                next = aura.ExpiresAt;
+            }
         }
+        _nextExpiry = next;
         if (expired == null) return;
         foreach (var aura in expired)
         {
@@ -235,15 +303,47 @@ public class AuraContainer
     public double Fold(StatType type, double baseValue, SimTime now = default)
     {
         CleanExpired(now);
-        var fold = new ModifierFold();
-        foreach (var aura in _auras.Values)
+        int t = (int)type;
+        if (_foldVersions[t] != _version)
         {
-            foreach (var mod in aura.Modifiers)
+            var fold = new ModifierFold();
+            foreach (var aura in _auras.Values)
             {
-                if (mod.Type == type) fold.Accept(mod, aura.Stacks);
+                var mods = aura.Modifiers;
+                for (int i = 0; i < mods.Count; i++)
+                {
+                    if (mods[i].Type == type) fold.Accept(mods[i], aura.Stacks);
+                }
             }
+            _folds[t] = fold;
+            _foldVersions[t] = _version;
         }
-        return fold.Apply(baseValue);
+        return _folds[t].Apply(baseValue);
+    }
+
+    /// <summary>
+    /// Sum of (value - 1) over every active modifier of <paramref name="type"/>, ignoring stacks and how it combines (how
+    /// cooldown recovery multipliers add up).
+    /// </summary>
+    public double SumBonuses(StatType type, SimTime now = default)
+    {
+        CleanExpired(now);
+        int t = (int)type;
+        if (_bonusVersions[t] != _version)
+        {
+            double sum = 0.0;
+            foreach (var aura in _auras.Values)
+            {
+                var mods = aura.Modifiers;
+                for (int i = 0; i < mods.Count; i++)
+                {
+                    if (mods[i].Type == type) sum += mods[i].Value - 1.0;
+                }
+            }
+            _bonuses[t] = sum;
+            _bonusVersions[t] = _version;
+        }
+        return _bonuses[t];
     }
 
     /// <summary>Sum of additive modifiers of <paramref name="type"/>.</summary>
@@ -253,6 +353,8 @@ public class AuraContainer
     {
         _auras.Clear();
         _activeSince.Clear();
+        _version++;
+        _nextExpiry = SimTime.Infinite;
     }
 
     public void FinalizeUptimes(SimTime combatEndTime)

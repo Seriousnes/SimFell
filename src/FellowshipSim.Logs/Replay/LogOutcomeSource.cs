@@ -21,6 +21,13 @@ public sealed class LogOutcomeSource : IOutcomeSource
     {
         _options = options;
         _hits = hits;
+        if (options.FreeDiceSeed.HasValue)
+        {
+            // Free dice: the engine rolls its own outcomes, so this only collects issues (no log lookups to build).
+            _playerAuraEvents = [];
+            _playerAuraIds = [];
+            return;
+        }
         _playerAuraEvents = script.Observations.Auras
             .Where(a => a.Target.Id == script.Player.Id && a.Source.Id == script.Player.Id)
             .OrderBy(a => a.Time)

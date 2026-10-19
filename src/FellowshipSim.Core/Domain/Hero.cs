@@ -317,13 +317,21 @@ public abstract class Hero : Actor
     {
         bool weaponOwnOnly = ability.IgnoresCooldownRecovery;
         double pool = 1.0 + (weaponOwnOnly ? 0.0 : CooldownAcceleration(ability, now));
-        foreach (var aura in Auras.Active(now))
+        if (!weaponOwnOnly)
         {
-            // Weapon abilities only speed up from their own recovery effects (Chronoshift's barrier, per the user).
-            if (weaponOwnOnly && !ability.OwnRecoveryAuraLogIds.Contains(aura.Def.LogId)) continue;
-            foreach (var mod in aura.Modifiers)
+            pool += Auras.SumBonuses(StatType.CooldownRecovery, now);
+        }
+        else
+        {
+            foreach (var aura in Auras.Active(now))
             {
-                if (mod.Type == StatType.CooldownRecovery) pool += mod.Value - 1.0;
+                // Weapon abilities only speed up from their own recovery effects (Chronoshift's barrier, per the user).
+                if (!ability.OwnRecoveryAuraLogIds.Contains(aura.Def.LogId)) continue;
+                var mods = aura.Modifiers;
+                for (int i = 0; i < mods.Count; i++)
+                {
+                    if (mods[i].Type == StatType.CooldownRecovery) pool += mods[i].Value - 1.0;
+                }
             }
         }
         return pool + (ability.ChargesRechargeWithHaste ? GetHaste(now) : 0.0);

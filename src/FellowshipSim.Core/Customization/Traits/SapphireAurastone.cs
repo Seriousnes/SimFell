@@ -34,7 +34,7 @@ public class SapphireAurastone : Trait
         void Pulse(SimulationContext ctx, int id)
         {
             if (!active || id != stone) return;
-            var struck = stored > 0.0 ? ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies.ToList(), ctx) : [];
+            var struck = stored > 0.0 ? ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies, ctx) : [];
             // With no enemy near it, the stone keeps what it holds for the next pulse.
             if (struck.Count > 0)
             {

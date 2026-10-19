@@ -74,17 +74,17 @@ public sealed class PeriodicEffect
         for (int k = firstTick; k <= fullTicks; k++)
         {
             var at = start + SimTime.FromSeconds(Math.Min(k * periodSeconds + tickDelaySeconds, durationSeconds));
-            effect._events.Add(ctx.Kernel.ScheduleAt(at, c => effect.Tick(c, 1.0), $"{name} tick {k}"));
+            effect._events.Add(ctx.Kernel.ScheduleAt(at, c => effect.Tick(c, 1.0), name));
         }
 
         double remainder = durationSeconds - fullTicks * periodSeconds;
         if (partialFinalTick && remainder >= ServerFrameSeconds)
         {
             double fraction = remainder / periodSeconds;
-            effect._events.Add(ctx.Kernel.ScheduleAt(end, c => effect.Tick(c, fraction), $"{name} partial tick"));
+            effect._events.Add(ctx.Kernel.ScheduleAt(end, c => effect.Tick(c, fraction), name));
         }
 
-        effect._events.Add(ctx.Kernel.ScheduleAt(end, c => effect.Finish(c, clipped: false), $"{name} end"));
+        effect._events.Add(ctx.Kernel.ScheduleAt(end, c => effect.Finish(c, clipped: false), name));
 
         if (tickOnStart && tickDelaySeconds <= 0)
         {
@@ -132,12 +132,12 @@ public sealed class PeriodicEffect
         {
             if (retimeOnHasteChange)
             {
-                effect._nextHastedTick = HastedTimer.Start(c, hero, basePeriodSeconds, Fire, $"{name} tick");
+                effect._nextHastedTick = HastedTimer.Start(c, hero, basePeriodSeconds, Fire, name);
                 return;
             }
             // The period is fixed by the haste when the previous tick fired.
             var period = SimTime.FromSeconds(basePeriodSeconds / (1.0 + hero.GetHaste(c.CurrentTime)));
-            effect._events.Add(c.Kernel.ScheduleAt(c.CurrentTime + period, Fire, $"{name} tick"));
+            effect._events.Add(c.Kernel.ScheduleAt(c.CurrentTime + period, Fire, name));
         }
 
         // The duration runs out at the nominal end (no more ticks; the partial tick is measured there) ...
@@ -159,7 +159,7 @@ public sealed class PeriodicEffect
             if (!effect.IsActive) return;
             if (partial > 0) effect.Tick(c, partial);
             effect.Finish(c, clipped: false);
-        }, $"{name} end"));
+        }, name));
 
         if (tickOnStart) effect.Tick(ctx, 1.0);
         if (effect.IsActive) ScheduleNext(ctx);

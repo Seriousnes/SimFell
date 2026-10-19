@@ -9,7 +9,25 @@ public class SimulationContext
     public Hero Player { get; }
     public SimTime CurrentTime { get; private set; } = SimTime.Zero;
     public IReadOnlyList<EnemyTarget> AllEnemies => _enemies;
-    public IEnumerable<EnemyTarget> ActiveEnemies => _enemies.Where(e => !e.IsSleeping);
+
+    /// <summary>The enemies in combat now (a snapshot: rebuilt, not changed, when one arrives, dies or leaves).</summary>
+    public IReadOnlyList<EnemyTarget> ActiveEnemies
+    {
+        get
+        {
+            if (_activeEnemies == null)
+            {
+                var active = new List<EnemyTarget>();
+                foreach (var e in _enemies)
+                {
+                    if (!e.IsSleeping) active.Add(e);
+                }
+                _activeEnemies = active;
+            }
+            return _activeEnemies;
+        }
+    }
+    private List<EnemyTarget>? _activeEnemies;
 
     public SimulationKernel Kernel { get; } = new();
 
@@ -65,6 +83,8 @@ public class SimulationContext
             enemy = new EnemyTarget(id, instanceId, name) { SpiritPointValue = Enemies.CreatureSpiritPoints.For(name) };
             _enemyLookup[key] = enemy;
             _enemies.Add(enemy);
+            enemy.SleepChanged = () => _activeEnemies = null;
+            _activeEnemies = null;
         }
         return enemy;
     }
@@ -142,7 +162,7 @@ public class SimulationContext
         }
 
         var cast = new ActiveCast(ability, target, CurrentTime, CurrentTime + castTime);
-        cast.CompletionEvent = ScheduleAt(cast.EndTime, c => c.CompleteCast(hero), $"{ability.Name} cast complete");
+        cast.CompletionEvent = ScheduleAt(cast.EndTime, c => c.CompleteCast(hero), ability.Name);
         hero.CurrentCast = cast;
         return CastAttempt.Casting(castTime);
     }
@@ -156,7 +176,7 @@ public class SimulationContext
         var cast = hero.CurrentCast;
         if (cast == null) return false;
         cast.CompletionEvent?.Cancel();
-        cast.CompletionEvent = ScheduleAt(time, c => { if (hero.CurrentCast == cast) c.CompleteCast(hero); }, $"{cast.Ability.Name} cast complete");
+        cast.CompletionEvent = ScheduleAt(time, c => { if (hero.CurrentCast == cast) c.CompleteCast(hero); }, cast.Ability.Name);
         return true;
     }
 
@@ -307,7 +327,7 @@ public class SimulationContext
         // The hit lands (and triggers procs) after its travel time; damage uses the stats at landing.
         if (outcome.LandingDelay > SimTime.Zero)
         {
-            Schedule(outcome.LandingDelay, Land, $"{abilityName} lands");
+            Schedule(outcome.LandingDelay, Land, abilityName);
             return released.BaseDamage * (outcome.IsCrit ? released.CritMultiplier : 1.0) + released.FlatDamage;
         }
         Land(this);

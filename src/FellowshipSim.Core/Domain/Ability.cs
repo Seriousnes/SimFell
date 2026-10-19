@@ -252,7 +252,7 @@ public abstract class Ability
     public virtual double DealAoeDamage(SimulationContext ctx, IEnumerable<EnemyTarget> targets, double damageMultiplier = 1.0, bool canCrit = true, string? overrideName = null, int? overrideId = null, bool? forcedCrit = null,
         double extraCritChance = 0.0)
     {
-        var targetList = ctx.Outcomes.SelectTargets(overrideId ?? DamageLogId, targets.ToList(), ctx);
+        var targetList = ctx.Outcomes.SelectTargets(overrideId ?? DamageLogId, targets as IReadOnlyList<EnemyTarget> ?? targets.ToList(), ctx);
         if (targetList.Count == 0) return 0.0;
 
         double falloffMultiplier = 1.0;

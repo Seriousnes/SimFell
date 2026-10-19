@@ -32,7 +32,8 @@ public sealed class ReplayDriver
         _script = script;
         _options = options ?? new ReplayOptions();
         _ctx = new SimulationContext(hero) { GlobalCooldownToleranceSeconds = _options.GlobalCooldownToleranceSeconds };
-        _ledger = new HitLedger(script.Observations.Damage);
+        // Free dice matches no log hits.
+        _ledger = new HitLedger(_options.FreeDiceSeed.HasValue ? [] : script.Observations.Damage);
         _oracle = new LogOutcomeSource(script, _options, _ledger);
         _ctx.Outcomes = _options.FreeDiceSeed is { } seed
             ? new FreeDiceOutcomeSource(script, new SimulationRng(seed))
@@ -69,7 +70,7 @@ public sealed class ReplayDriver
 
         // An enemy's arrival is only known from its first event in the log, so it was there a little earlier.
         double When(ReplayCommand c) => c.Kind == CommandKind.EnemyArise ? c.Time - _options.EnemyAriseLeadSeconds : c.Time;
-        var commands = _script.Commands.OrderBy(When).ToList();
+        var commands = SortedCommands(_script, _options.EnemyAriseLeadSeconds, When);
         var result = new ReplayResult
         {
             ReportCode = _script.ReportCode,
@@ -131,6 +132,17 @@ public sealed class ReplayDriver
             foreach (var a in s.UntrackedLogAuras) result.UntrackedLogAuras[a] = result.UntrackedLogAuras.GetValueOrDefault(a) + 1;
         }
         return result;
+    }
+
+    // The script's commands in replay order, sorted once per script (free dice replays one script many times).
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ReplayScript, Tuple<double, List<ReplayCommand>>> _sorted = new();
+
+    private static List<ReplayCommand> SortedCommands(ReplayScript script, double ariseLead, Func<ReplayCommand, double> when)
+    {
+        if (_sorted.TryGetValue(script, out var cached) && cached.Item1 == ariseLead) return cached.Item2;
+        var commands = script.Commands.OrderBy(when).ToList();
+        _sorted.AddOrUpdate(script, Tuple.Create(ariseLead, commands));
+        return commands;
     }
 
     // ------------------------------------------------------------------ commands
@@ -414,7 +426,8 @@ public sealed class ReplayDriver
         AbilityName = cmd.AbilityName,
         Target = cmd.Target is { Id: > 0 } t ? t.ToString() : null,
         ActiveEnemies = _ctx.ActiveEnemies.Count(),
-        ExternalAurasOnPlayer = _externalAurasOnPlayer.Values.Distinct().OrderBy(n => n).ToList(),
+        // For the review page only (free dice has none).
+        ExternalAurasOnPlayer = FreeDice ? [] : _externalAurasOnPlayer.Values.Distinct().OrderBy(n => n).ToList(),
     };
 
     /// <summary>Tier 2: resources and tracked auras before the action match the log.</summary>

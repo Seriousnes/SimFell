@@ -47,7 +47,7 @@ public class TheVehement : Blessing
             hits = 0;
             hero.Auras.Remove(counter, dmg.Timestamp);
             var ctx = dmg.SimContext;
-            var enemies = ctx.Outcomes.SelectTargets(damageId, ctx.ActiveEnemies.ToList(), ctx);
+            var enemies = ctx.Outcomes.SelectTargets(damageId, ctx.ActiveEnemies, ctx);
             if (enemies.Count == 0) return;
             double falloff = enemies.Count > TargetCountScaling ? Math.Sqrt(TargetCountScaling / enemies.Count) : 1.0;
             double damage = dmg.Amount * (1.0 + Math.Min(hero.CritChance(dmg.Timestamp), critCap)) * falloff;

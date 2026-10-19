@@ -9,18 +9,18 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
 {
     private readonly SimulationRng _rng;
     private readonly double[] _castTimes;
-    private readonly HashSet<UnitRef>[] _engaged;
+    private readonly HashSet<(int Id, int Instance)>[] _engaged;
 
     public FreeDiceOutcomeSource(ReplayScript script, SimulationRng rng) : base(rng, OutcomeMode.Discrete)
     {
         _rng = rng;
         _castTimes = script.Commands.Where(c => c.IsPlayerAction).Select(c => c.Time).Distinct().Order().ToArray();
         // Window i runs from cast i to cast i + 1; window 0 also covers anything before the first cast.
-        _engaged = new HashSet<UnitRef>[Math.Max(1, _castTimes.Length)];
-        for (int i = 0; i < _engaged.Length; i++) _engaged[i] = new HashSet<UnitRef>();
+        _engaged = new HashSet<(int Id, int Instance)>[Math.Max(1, _castTimes.Length)];
+        for (int i = 0; i < _engaged.Length; i++) _engaged[i] = new HashSet<(int Id, int Instance)>();
         foreach (var hit in script.Observations.Damage)
         {
-            _engaged[Window(hit.Time)].Add(hit.Target);
+            _engaged[Window(hit.Time)].Add((hit.Target.Id, hit.Target.Instance));
         }
     }
 
@@ -34,7 +34,12 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
     private List<EnemyTarget> Engaged(IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx)
     {
         var engaged = _engaged[Window(ctx.CurrentTime.TotalSeconds)];
-        return candidates.Where(e => engaged.Contains(new UnitRef(e.Id, e.InstanceId))).ToList();
+        var list = new List<EnemyTarget>(Math.Min(candidates.Count, engaged.Count));
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            if (engaged.Contains((candidates[i].Id, candidates[i].InstanceId))) list.Add(candidates[i]);
+        }
+        return list;
     }
 
     public override IReadOnlyList<EnemyTarget> SelectTargets(int damageLogId, IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx) =>

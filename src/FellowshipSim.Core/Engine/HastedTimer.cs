@@ -18,6 +18,10 @@ public sealed class HastedTimer
     private SimTime _lastUpdate;
     private ScheduledEvent? _event;
     private bool _updating;
+    // Made once per timer: rescheduling happens on every haste change.
+    private readonly Action<SimulationContext> _check;
+    private readonly Action<SimulationContext> _due;
+    private readonly string _checkLabel;
 
     private HastedTimer(SimulationContext ctx, Hero hero, double baseSeconds, Action<SimulationContext> onFire, string label)
     {
@@ -29,6 +33,14 @@ public sealed class HastedTimer
         _remainingBase = baseSeconds;
         _lastUpdate = ctx.CurrentTime;
         _haste = hero.GetHaste(ctx.CurrentTime);
+        _check = _ => Update();
+        _due = c =>
+        {
+            if (!IsActive) return;
+            Finish();
+            _onFire(c);
+        };
+        _checkLabel = $"{label} haste check";
     }
 
     public bool IsActive { get; private set; } = true;
@@ -40,8 +52,7 @@ public sealed class HastedTimer
     public static HastedTimer Start(SimulationContext ctx, Hero hero, double baseSeconds, Action<SimulationContext> onFire, string label)
     {
         var timer = new HastedTimer(ctx, hero, baseSeconds, onFire, label);
-        hero.Auras.OnGained += timer.OnAuraGained;
-        hero.Auras.OnRemoved += timer.OnAuraRemoved;
+        hero.Auras.AddTimer(timer);
         timer.Reschedule();
         return timer;
     }
@@ -52,11 +63,11 @@ public sealed class HastedTimer
         Finish();
     }
 
-    private void OnAuraGained(Aura aura, int stacksBefore, SimTime now) => Update();
-    private void OnAuraRemoved(Aura aura, SimTime now) => Update();
-
-    /// <summary>Banks the progress made at the old haste, then re-reads haste and reschedules.</summary>
-    private void Update()
+    /// <summary>
+    /// Called by the hero's auras whenever one is gained or removed: banks the progress made at the old haste, then
+    /// re-reads haste and reschedules.
+    /// </summary>
+    internal void Update()
     {
         if (!IsActive || _updating) return;
         _updating = true;
@@ -81,22 +92,16 @@ public sealed class HastedTimer
         var checkpoint = _hero.Auras.NextExpiry(now);
         if (checkpoint < due)
         {
-            _event = _ctx.ScheduleAt(checkpoint, _ => Update(), $"{_label} haste check");
+            _event = _ctx.ScheduleAt(checkpoint, _check, _checkLabel);
             return;
         }
-        _event = _ctx.ScheduleAt(due, c =>
-        {
-            if (!IsActive) return;
-            Finish();
-            _onFire(c);
-        }, _label);
+        _event = _ctx.ScheduleAt(due, _due, _label);
     }
 
     private void Finish()
     {
         IsActive = false;
         _event?.Cancel();
-        _hero.Auras.OnGained -= OnAuraGained;
-        _hero.Auras.OnRemoved -= OnAuraRemoved;
+        _hero.Auras.RemoveTimer(this);
     }
 }

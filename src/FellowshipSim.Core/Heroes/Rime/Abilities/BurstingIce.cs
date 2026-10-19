@@ -52,8 +52,7 @@ public class BurstingIce : RimeAbility
     {
         var hero = Rime;
         hero.AddAnima(AnimaPerPulse, ctx, target);
-        var enemies = ctx.ActiveEnemies.ToList();
-        if (enemies.Count == 0 && target != null) enemies.Add(target);
+        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target != null ? [target] : ctx.ActiveEnemies;
 
         double multiplier = fraction;
         foreach (var pulseMultiplier in PulseDamageMultipliers) multiplier *= pulseMultiplier(ctx);
@@ -67,9 +66,10 @@ public class BurstingIce : RimeAbility
         double scale = Owner.DamageScale(ctx.CurrentTime);
         if (Rime.Auras.HasAura(WintersEmbrace, ctx.CurrentTime))
         {
-            foreach (var mod in WintersEmbrace.Modifiers)
+            var mods = WintersEmbrace.Modifiers;
+            for (int i = 0; i < mods.Count; i++)
             {
-                if (mod.Type == StatType.DamageScale && mod.Op == ModifierOp.MultiplyCompound) scale /= mod.Value;
+                if (mods[i].Type == StatType.DamageScale && mods[i].Op == ModifierOp.MultiplyCompound) scale /= mods[i].Value;
             }
         }
         return scale;

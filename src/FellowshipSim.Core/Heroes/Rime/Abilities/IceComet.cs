@@ -112,8 +112,7 @@ public class IceComet : RimeAbility
     /// </summary>
     protected void Impact(SimulationContext ctx, EnemyTarget target, double damage, double critChance, double critMultiplier, double? fixedFalloff)
     {
-        var enemies = ctx.ActiveEnemies.ToList();
-        if (enemies.Count == 0 && target is { IsSleeping: false }) enemies.Add(target);
+        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         double falloff = fixedFalloff ?? (AoeTargetThreshold > 0 && struck.Count > AoeTargetThreshold ? Math.Sqrt(AoeTargetThreshold / struck.Count) : 1.0);
         foreach (var enemy in struck)

@@ -51,7 +51,7 @@ public class FlightOfTheNavir : RimeAbility
     public void CommandSwallow(SimulationContext ctx)
     {
         if (!Rime.Auras.HasAura(Buff, ctx.CurrentTime) || Swallows.Available == 0) return;
-        var enemy = ctx.Outcomes.ChooseTarget(Swallows.DamageLogId, ctx.ActiveEnemies.ToList(), ctx);
+        var enemy = ctx.Outcomes.ChooseTarget(Swallows.DamageLogId, ctx.ActiveEnemies, ctx);
         if (enemy != null) Swallows.Send(ctx, enemy);
     }
 
