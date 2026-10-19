@@ -15,7 +15,13 @@ public class SoulfrostTorrent : Talent
     public const double BuffSeconds = 18.0;
     public const double ProcsPerMinute = 1.2;
     public const double TickRateMultiplier = 1.4;
-    public const double CritChance = 1.0;
+    /// <summary>
+    /// The tooltip says +100% crit chance, but it counts twice: once to guarantee the crit and again in the grievous
+    /// overflow, i.e. +200%. Target dummy test (per the user, 30% crit): Soulfrost ticks 1,996-2,311 vs normal crit ticks
+    /// 1,150-1,378, ratio 1.70 against (3 + 0.30) / 2 = 1.65 (the tooltip would give 1.15). PCaMVTFbZzNLrfx3 fight 5:
+    /// Soulfrost ticks are 3.57x a normal hit, an overflow of ~1.37 with ~37% crit.
+    /// </summary>
+    public const double CritChance = 2.0;
     public const string ProcKey = "soulfrost_torrent";
 
     public static readonly AuraDef Buff = AuraDef.Effect("Soulfrost Torrent", EffectId, BuffSeconds);
