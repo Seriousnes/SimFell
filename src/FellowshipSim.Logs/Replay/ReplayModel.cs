@@ -2,6 +2,12 @@ namespace FellowshipSim.Logs.Replay;
 
 public class ReplayOptions
 {
+    /// <summary>
+    /// Free dice: the engine rolls its own crits, procs and damage spread with this seed; the log only supplies the
+    /// casts, enemies and situational auras, and nothing is compared step by step (see <see cref="FreeDiceReplay"/>).
+    /// </summary>
+    public int? FreeDiceSeed { get; set; }
+
     /// <summary>Stop at the first step with any issue, for review.</summary>
     public bool StopOnFirstFailure { get; set; } = true;
     public int? MaxSteps { get; set; }
@@ -126,6 +132,9 @@ public sealed record AuraCheck(string Aura, int EngineStacks, int LogStacks)
 
 public sealed class ReplayResult
 {
+    /// <summary>All damage the engine dealt.</summary>
+    public double EngineTotalDamage { get; set; }
+
     public string ReportCode { get; init; } = string.Empty;
     public int FightId { get; init; }
     public string FightName { get; init; } = string.Empty;

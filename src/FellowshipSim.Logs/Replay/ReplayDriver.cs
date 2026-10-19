@@ -34,13 +34,17 @@ public sealed class ReplayDriver
         _ctx = new SimulationContext(hero) { GlobalCooldownToleranceSeconds = _options.GlobalCooldownToleranceSeconds };
         _ledger = new HitLedger(script.Observations.Damage);
         _oracle = new LogOutcomeSource(script, _options, _ledger);
-        _ctx.Outcomes = _oracle;
+        _ctx.Outcomes = _options.FreeDiceSeed is { } seed
+            ? new RandomOutcomeSource(new SimulationRng(seed), OutcomeMode.Discrete)
+            : _oracle;
         _logAuras = new LogAuraTimeline(script.Observations.Auras.Where(a => a.Target.Id == script.Player.Id), ModeledAuras.LogIds(hero));
         hero.Auras.OnRemoved += (aura, at) => { if (aura.LogId > 0) _engineRemoved[aura.LogId] = (at, aura.Stacks); };
         _hero.OnCastCompleted += (ability, _, now) => _lastCompletedCast = (ability.Id, now.TotalSeconds);
     }
 
     public SimulationContext Context => _ctx;
+
+    private bool FreeDice => _options.FreeDiceSeed.HasValue;
 
     /// <summary>Heroes the engine can replay (every hero class in Heroes/).</summary>
     public static IReadOnlyList<string> SupportedHeroes => Catalog.Heroes.Keys.ToList();
@@ -92,14 +96,14 @@ public sealed class ReplayDriver
 
             if (cmd.IsPlayerAction)
             {
-                Settle(cmd.Time);
+                if (!FreeDice) Settle(cmd.Time);
                 if (Halt(result)) break;
                 if (_options.MaxSteps.HasValue && result.Steps.Count >= _options.MaxSteps.Value) break;
 
                 step = BeginStep(cmd, result.Steps.Count + 1);
                 result.Steps.Add(step);
                 _oracle.CurrentStep = step;
-                CheckState(step, cmd);
+                if (!FreeDice) CheckState(step, cmd);
             }
 
             Execute(cmd, step, cancelFor, result);
@@ -110,10 +114,11 @@ public sealed class ReplayDriver
         if (result.HaltedAt == null)
         {
             _ctx.RunUntil(SimTime.FromSeconds(_script.DurationSeconds + _options.SettleSeconds));
-            Settle(double.MaxValue);
+            if (!FreeDice) Settle(double.MaxValue);
             Halt(result);
         }
 
+        result.EngineTotalDamage = _ctx.TotalDamage;
         result.LogHits = _ledger.TotalHits;
         result.MatchedLogHits = _ledger.MatchedHits;
         result.ProcStats.AddRange(_oracle.ProcStats.Values.OrderBy(p => p.Key));
