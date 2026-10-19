@@ -31,6 +31,8 @@ public class TheVehement : Blessing
         const string damageName = DamageName;
         // The counter advances when a BASIC ability's hit lands (combat logs: Frost Bolt counts when the bolt hits, not when
         // its cast completes), and the hit that reaches the threshold erupts.
+        // OPEN: gpfHLmTBrqcd3Zn4 fight 37 erupts one hit early 12 times, each on a Cold Snap that consumed Frostwyrm's Spite
+        // with the counter at 2; PCaMVTFbZzNLrfx3 fight 5 never does in the same situation (10 times). Not modeled.
         var basicIds = hero.Abilities.Where(a => a.Category == AbilityCategory.Basic).Select(a => a.DamageLogId).ToHashSet();
         int hits = 0;
         hero.OnDamageDealt += dmg =>

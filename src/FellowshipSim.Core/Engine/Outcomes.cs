@@ -91,9 +91,9 @@ public class RandomOutcomeSource : IOutcomeSource
 
     public bool RollProc(string procKey, double chance, SimulationContext ctx, EnemyTarget? target = null) => _rng.Roll(chance);
 
-    public IReadOnlyList<EnemyTarget> SelectTargets(int damageLogId, IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx) => candidates;
+    public virtual IReadOnlyList<EnemyTarget> SelectTargets(int damageLogId, IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx) => candidates;
 
-    public EnemyTarget? ChooseTarget(int damageLogId, IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx, EnemyTarget? preferred = null) =>
+    public virtual EnemyTarget? ChooseTarget(int damageLogId, IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx, EnemyTarget? preferred = null) =>
         preferred ?? (candidates.Count == 0 ? null : candidates[(int)(_rng.NextDouble() * candidates.Count) % candidates.Count]);
 
     public HitOutcome ResolveHit(in HitRequest hit, SimulationContext ctx)

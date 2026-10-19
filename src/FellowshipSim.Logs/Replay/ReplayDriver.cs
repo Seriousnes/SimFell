@@ -35,7 +35,7 @@ public sealed class ReplayDriver
         _ledger = new HitLedger(script.Observations.Damage);
         _oracle = new LogOutcomeSource(script, _options, _ledger);
         _ctx.Outcomes = _options.FreeDiceSeed is { } seed
-            ? new RandomOutcomeSource(new SimulationRng(seed), OutcomeMode.Discrete)
+            ? new FreeDiceOutcomeSource(script, new SimulationRng(seed))
             : _oracle;
         _logAuras = new LogAuraTimeline(script.Observations.Auras.Where(a => a.Target.Id == script.Player.Id), ModeledAuras.LogIds(hero));
         hero.Auras.OnRemoved += (aura, at) => { if (aura.LogId > 0) _engineRemoved[aura.LogId] = (at, aura.Stacks); };
