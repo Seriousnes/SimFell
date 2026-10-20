@@ -94,7 +94,7 @@ public static class ReplayReportWriter
         return RenderBody(sb, r);
     }
 
-    private static string Head(string title)
+    internal static string Head(string title)
     {
         var sb = new StringBuilder();
         sb.Append("""

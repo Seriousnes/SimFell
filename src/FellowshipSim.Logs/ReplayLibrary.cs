@@ -24,6 +24,9 @@ public sealed record ReviewSummary(
     DateTime CreatedAt)
 {
     public string HtmlFile => $"{Id}.html";
+
+    /// <summary>The latest free-dice run of the same fight, if any.</summary>
+    public FreeDiceSummary? FreeDice { get; init; }
 }
 
 /// <summary>
@@ -139,8 +142,15 @@ public sealed class ReplayLibrary
         Directory.GetFiles(ReviewsDirectory, "*.summary.json")
             .Select(f => JsonSerializer.Deserialize<ReviewSummary>(File.ReadAllText(f)))
             .Where(s => s != null && File.Exists(Path.Combine(ReviewsDirectory, s.HtmlFile)))
+            .Select(s => s! with { FreeDice = LoadFreeDice(s.Id) })
             .OrderByDescending(s => s!.CreatedAt)
             .ToList()!;
+
+    private FreeDiceSummary? LoadFreeDice(string id)
+    {
+        string path = Path.Combine(ReviewsDirectory, $"{id}.freedice.json");
+        return File.Exists(path) ? JsonSerializer.Deserialize<FreeDiceSummary>(File.ReadAllText(path)) : null;
+    }
 
     /// <summary>Fights already downloaded (report code, fight ID).</summary>
     public IReadOnlyList<(string ReportCode, int FightId)> ListDownloadedFights() =>

@@ -165,6 +165,15 @@ async function loadReviews() {
       const hits = r.logHits ? r.matchedHits / r.logHits : 0;
       const damage = r.logDamage ? r.engineDamage / r.logDamage : 0;
       const date = r.fightDate ? new Date(r.fightDate).toLocaleDateString() : "";
+      const fd = r.freeDice;
+      const fdDamage = fd ? fd.engineMean / fd.logDamage : 0;
+      // Where the log lands among the free-dice runs: near 50% is a typical run, near 0% or 100% means the engine is off.
+      const fdPlace = fd ? fd.logPercentile : 0;
+      const placeClass = !fd ? "" : fdPlace >= 0.1 && fdPlace <= 0.9 ? "good" : fdPlace >= 0.03 && fdPlace <= 0.97 ? "warn" : "bad";
+      const freeDiceCells = fd
+        ? `<td class="num ${ratioClass(fdDamage, 0.02, 0.05)}" title="${fd.runs} runs, engine 5-95%: ${Math.round(fd.engine5).toLocaleString()} - ${Math.round(fd.engine95).toLocaleString()}"><a href="/reviews/${encodeURIComponent(r.id)}.freedice.html" target="_blank" rel="noopener">${(fdDamage * 100).toFixed(1)}%</a></td>
+          <td class="num ${placeClass}">${Math.round(fdPlace * 100)}%</td>`
+        : `<td class="num">-</td><td class="num">-</td>`;
       return `<tr>
           <td><a href="/reviews/${encodeURIComponent(r.htmlFile)}" target="_blank" rel="noopener">${escapeHtml(r.playerName)}</a></td>
           <td>${escapeHtml(r.hero)}</td>
@@ -172,6 +181,7 @@ async function loadReviews() {
           <td>${date}</td>
           <td class="num ${ratioClass(hits, 0.02, 0.05)}">${(hits * 100).toFixed(1)}%</td>
           <td class="num ${ratioClass(damage, 0.03, 0.08)}">${(damage * 100).toFixed(1)}%</td>
+          ${freeDiceCells}
           <td class="num">${r.passedSteps}/${r.totalSteps}</td>
           <td class="num">${r.forcedCasts}</td>
         </tr>`;
@@ -181,7 +191,9 @@ async function loadReviews() {
       <thead><tr>
         <th>Player</th><th>Hero</th><th>Fight</th><th>Logged</th>
         <th class="num" title="Log hits the engine reproduced">Hits matched</th>
-        <th class="num" title="Engine damage as a share of the log's">Damage vs log</th>
+        <th class="num" title="Exact replay (the log decides crits, procs and targets): engine damage as a share of the log's">Replay vs log</th>
+        <th class="num" title="Free dice (only the casts follow the log; the engine rolls its own crits and procs): the engine's average over many runs as a share of the log">Free dice vs log</th>
+        <th class="num" title="Share of free-dice runs that dealt less than the log: near 50% means the log is a typical run; near 0% the engine is too high, near 100% too low">Log's place</th>
         <th class="num" title="Replay steps with no issues">Clean steps</th>
         <th class="num" title="Casts the engine would have refused but were forced to follow the log">Forced casts</th>
       </tr></thead><tbody>${rows}</tbody></table></div>`;
