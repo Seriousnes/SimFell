@@ -4,8 +4,8 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 
 /// <summary>
 /// Talent 193: Frost Bolt damage triggers a single Bursting Ice pulse, and Bursting Ice deals more damage.
-/// The description says 20% more; combat logs match the game data's constant on Bursting Ice
-/// ("Talent.IncreasedCastedDebuffAoeDamageDamage.DamageScaler" = 1.3).
+/// The description says 20% more; it is 30% (per the user), as the game data's constant on Bursting Ice says
+/// ("Talent.IncreasedCastedDebuffAoeDamageDamage.DamageScaler" = 1.3) and combat logs match.
 /// </summary>
 public class Burstbolter : Talent
 {

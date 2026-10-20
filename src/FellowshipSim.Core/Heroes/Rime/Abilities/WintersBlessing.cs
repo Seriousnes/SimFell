@@ -18,7 +18,7 @@ public class WintersBlessing : RimeAbility
 
     public WintersBlessing(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)
     {
-        SetCooldown(CooldownSeconds, scalesWithHaste: true);
+        SetCooldown(CooldownSeconds);
         IgnoresGcd = true;
     }
 

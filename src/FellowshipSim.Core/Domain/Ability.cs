@@ -53,12 +53,12 @@ public abstract class Ability
 
     public bool ScalesWithExpertise { get; protected set; } = true;
 
-    /// <summary>The cooldown is divided by (1 + haste) once, when it starts (game data "scalesWithHaste", single charge).</summary>
+    /// <summary>The cooldown is divided by (1 + haste) once, when it starts (game data "cooldownTimeRateScalesOff" lists Haste, single charge).</summary>
     public bool CooldownScalesWithHaste { get; protected set; } = false;
 
     /// <summary>
     /// Charges recharge with "Cooldown Acceleration equal to your Haste": haste adds to the recovery rate while recharging
-    /// (game data "scalesWithHaste" on an ability with charges).
+    /// (game data "cooldownTimeRateScalesOff" lists Haste, on an ability with charges).
     /// </summary>
     public bool ChargesRechargeWithHaste { get; protected set; } = false;
 
@@ -120,8 +120,9 @@ public abstract class Ability
     public virtual void Connect() { }
 
     /// <summary>
-    /// Sets the cooldown and charges. With <paramref name="scalesWithHaste"/> (game data "scalesWithHaste"), a
-    /// single-charge cooldown is divided by haste when it starts and charges recharge with haste added to their rate.
+    /// Sets the cooldown and charges. With <paramref name="scalesWithHaste"/> (game data "cooldownTimeRateScalesOff" lists
+    /// Haste; for Rime only Cold Snap), a single-charge cooldown is divided by haste when it starts and charges recharge
+    /// with haste added to their rate.
     /// Weapon abilities ignore haste.
     /// </summary>
     protected void SetCooldown(double seconds, int charges = 1, bool scalesWithHaste = false)

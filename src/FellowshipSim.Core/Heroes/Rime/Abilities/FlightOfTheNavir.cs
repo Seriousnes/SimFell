@@ -27,7 +27,7 @@ public class FlightOfTheNavir : RimeAbility
     public FlightOfTheNavir(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)
     {
         BaseCoefficient = Coefficient;
-        SetCooldown(CooldownSeconds, scalesWithHaste: true);
+        SetCooldown(CooldownSeconds);
         Swallows = new CirclingSwallows(owner);
     }
 

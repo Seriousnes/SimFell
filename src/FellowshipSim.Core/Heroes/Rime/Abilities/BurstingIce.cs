@@ -42,7 +42,7 @@ public class BurstingIce : RimeAbility
     {
         BaseCoefficient = Coefficient;
         CastTime = SimTime.FromSeconds(CastTimeSeconds);
-        SetCooldown(CooldownSeconds, scalesWithHaste: true);
+        SetCooldown(CooldownSeconds);
         AoeTargetThreshold = TargetThreshold;
         DamageLogId = LogIds.Effect(PulseEffectId);
     }

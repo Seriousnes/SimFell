@@ -17,7 +17,7 @@ public class FreezingTorrent : RimeAbility
     public FreezingTorrent(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Core)
     {
         BaseCoefficient = Coefficient;
-        SetCooldown(CooldownSeconds, scalesWithHaste: true);
+        SetCooldown(CooldownSeconds);
         SetChannel(ChannelSeconds, TickPeriodSeconds);
         // Combat logs: a tick lands as the channel starts, then every hasted period, plus a partial final tick.
         ChannelTicksOnStart = true;
