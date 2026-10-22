@@ -31,9 +31,10 @@ public class VoidbringersTouch : Ability
         BaseCoefficient = CapCoefficient;
         SetCooldown(CooldownSeconds, scalesWithHaste: true);
         IgnoresGcd = true;
-        owner.OnDamageDealt += dmg =>
+        owner.OnDamageDealt += (in dmg) =>
         {
-            if (_target == null || dmg.AbilityId == DamageLogId || dmg.SimContext is not { } ctx) return;
+            // A touch from an earlier fight stores nothing in this one.
+            if (_target == null || dmg.AbilityId == DamageLogId || dmg.SimContext is not { } ctx || ctx != _fight) return;
             _stored += StoredShare * dmg.Amount;
             // It erupts on reaching the cap, or as soon as it holds more than the enemy's remaining health.
             if (_stored >= Cap(ctx) || (_target.MaxHealth > 0 && _stored >= _target.CurrentHealth)) Erupt(ctx);
@@ -56,7 +57,7 @@ public class VoidbringersTouch : Ability
         _target = target;
         _stored = 0.0;
         int touch = ++_touch;
-        ctx.Schedule(SimTime.FromSeconds(DurationSeconds), c => { if (touch == _touch) Erupt(c); }, $"{Name} expires");
+        ctx.Schedule(SimTime.FromSeconds(DurationSeconds), c => { if (touch == _touch) Erupt(c); }, Name);
     }
 
     /// <summary>

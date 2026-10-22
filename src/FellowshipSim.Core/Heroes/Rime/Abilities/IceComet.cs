@@ -45,20 +45,20 @@ public class IceComet : RimeAbility
     /// <summary>For abilities built on Ice Comet (Rising Talons), which set their own values.</summary>
     protected IceComet(Rime owner, int id, string name) : base(owner, id, name, AbilityCategory.Power) { }
 
-    public override bool CanCast(SimulationContext ctx, out string? reason) =>
-        MeetsRequirements(out reason) && base.CanCast(ctx, out reason);
+    protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason) =>
+        MeetsRequirements(explain, out reason) && base.CanCast(ctx, explain, out reason);
 
     /// <summary>Talent and Winter Orb requirements, checked before the cooldown.</summary>
-    protected virtual bool MeetsRequirements(out string? reason)
+    protected virtual bool MeetsRequirements(bool explain, out string? reason)
     {
         if (Rime.HasIcyTalons)
         {
-            reason = $"{Name} is replaced by Rising Talons (Icy Talons)";
+            reason = explain ? $"{Name} is replaced by Rising Talons (Icy Talons)" : null;
             return false;
         }
         if (Rime.WinterOrbs < DefaultWinterOrbCost)
         {
-            reason = $"{Name} needs {DefaultWinterOrbCost} Winter Orbs (have {Rime.WinterOrbs})";
+            reason = explain ? $"{Name} needs {DefaultWinterOrbCost} Winter Orbs (have {Rime.WinterOrbs})" : null;
             return false;
         }
         reason = null;
@@ -98,7 +98,7 @@ public class IceComet : RimeAbility
         {
             Impact(c, target, damage, critChance, critMultiplier, fixedFalloff: null);
             if (raisesStruck) RaiseStruck(c, target);
-        }, $"{Name} impact");
+        }, Name);
     }
 
     protected void RaiseStruck(SimulationContext ctx, EnemyTarget target)
@@ -117,12 +117,9 @@ public class IceComet : RimeAbility
         double falloff = fixedFalloff ?? (AoeTargetThreshold > 0 && struck.Count > AoeTargetThreshold ? Math.Sqrt(AoeTargetThreshold / struck.Count) : 1.0);
         foreach (var enemy in struck)
         {
-            ctx.ApplyDamage(Owner, enemy, DamageLogId, Name, canCrit: true,
-                c => new SimulationContext.HitNumbers(
-                    damage * falloff * Owner.DamageMultiplierAgainst(enemy, c.CurrentTime),
-                    critChance + Owner.CritChanceAgainst(enemy, c.CurrentTime) - Owner.CritChance(c.CurrentTime),
-                    critMultiplier),
-                snapshot: true);
+            var now = ctx.CurrentTime;
+            ctx.ApplyDamage(Owner, enemy, damage * falloff * Owner.DamageMultiplierAgainst(enemy, now), DamageLogId, Name, canCrit: true,
+                critChance + Owner.CritChanceAgainst(enemy, now) - Owner.CritChance(now), critMultiplier, snapshot: true);
         }
     }
 }

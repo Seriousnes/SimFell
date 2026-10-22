@@ -1,10 +1,17 @@
+using System.Runtime.InteropServices;
+
 namespace FellowshipSim.Core.Engine;
 
 public class SimulationContext
 {
     private readonly Dictionary<(int Id, int InstanceId), EnemyTarget> _enemyLookup = new();
     private readonly List<EnemyTarget> _enemies = new();
-    private readonly Dictionary<string, double> _abilityDamage = new(StringComparer.OrdinalIgnoreCase);
+
+    // Damage by name, in the order the names first dealt damage; names equal but for case share one total. Speed: a hit
+    // finds its total by its name's string instance (hits use a few, mostly constants) without hashing the characters.
+    private readonly List<(string Name, double Damage)> _damageByName = new();
+    private readonly Dictionary<string, int> _damageSlotByName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, int> _damageSlotByInstance = new(ReferenceEqualityComparer.Instance);
 
     public Hero Player { get; }
     public SimTime CurrentTime { get; private set; } = SimTime.Zero;
@@ -29,6 +36,26 @@ public class SimulationContext
     }
     private List<EnemyTarget>? _activeEnemies;
 
+    /// <summary>The enemies in combat now other than <paramref name="target"/>, in the same order (a snapshot, like <see cref="ActiveEnemies"/>).</summary>
+    public IReadOnlyList<EnemyTarget> ActiveEnemiesExcept(EnemyTarget? target)
+    {
+        // Speed: the list is kept until the enemies in combat or the target change; it is never changed once made.
+        var active = ActiveEnemies;
+        if (_others == null || !ReferenceEquals(active, _othersOf) || target != _othersExcept)
+        {
+            var others = new List<EnemyTarget>(active.Count);
+            foreach (var e in active)
+            {
+                if (e != target) others.Add(e);
+            }
+            (_others, _othersOf, _othersExcept) = (others, active, target);
+        }
+        return _others;
+    }
+    private List<EnemyTarget>? _others;
+    private IReadOnlyList<EnemyTarget>? _othersOf;
+    private EnemyTarget? _othersExcept;
+
     public SimulationKernel Kernel { get; } = new();
 
     /// <summary>The fraction of a full tick being dealt right now (below 1 during a partial final tick of a periodic effect).</summary>
@@ -40,12 +67,36 @@ public class SimulationContext
     public IOutcomeSource Outcomes { get; set; }
 
     public double TotalDamage { get; private set; }
-    public IReadOnlyDictionary<string, double> AbilityDamage => _abilityDamage;
+
+    /// <summary>Damage dealt by name (a new dictionary of the totals so far, in the order the names first dealt damage).</summary>
+    public IReadOnlyDictionary<string, double> AbilityDamage
+    {
+        get
+        {
+            var totals = new Dictionary<string, double>(_damageByName.Count, StringComparer.OrdinalIgnoreCase);
+            foreach (var (name, damage) in _damageByName) totals[name] = damage;
+            return totals;
+        }
+    }
+
+    /// <summary>The slot of <paramref name="name"/>'s total, added when the name first deals damage.</summary>
+    private int DamageSlot(string name)
+    {
+        if (!_damageSlotByName.TryGetValue(name, out int slot))
+        {
+            slot = _damageByName.Count;
+            _damageByName.Add((name, 0.0));
+            _damageSlotByName[name] = slot;
+        }
+        _damageSlotByInstance[name] = slot;
+        return slot;
+    }
 
     public SimulationContext(Hero player)
     {
         Player = player;
         player.SimContext = this;
+        player.Auras.RunOutIn(this);
         Outcomes = new RandomOutcomeSource(Rng);
     }
 
@@ -58,8 +109,8 @@ public class SimulationContext
         Kernel.ScheduleAt(time < CurrentTime ? CurrentTime : time, action, label);
 
     /// <summary>
-    /// Advances the clock to <paramref name="time"/>, firing every queued event due on the way in time order.
-    /// This is the only way simulation time moves forward.
+    /// Advances the clock to <paramref name="time"/>, firing every queued event due on the way in time order (the hero's
+    /// aura expiries among them). This is the only way simulation time moves forward.
     /// </summary>
     public void RunUntil(SimTime time)
     {
@@ -67,10 +118,10 @@ public class SimulationContext
         {
             if (ev.Time > CurrentTime) CurrentTime = ev.Time;
             ev.HasFired = true;
-            ev.Action(this);
+            if (ev.Hit is { } hit) Land(hit);
+            else ev.Action!(this);
         }
         if (time > CurrentTime) CurrentTime = time;
-        Player.Auras.CleanExpired(CurrentTime);
     }
 
     // ------------------------------------------------------------------ enemies
@@ -233,7 +284,7 @@ public class SimulationContext
         ActiveChannel? channel = null;
         var ticks = PeriodicEffect.Begin(
             this,
-            $"{ability.Name} channel",
+            ability.Name,
             ability.ChannelDuration.TotalSeconds,
             period,
             ability.ChannelTicksOnStart,
@@ -282,62 +333,114 @@ public class SimulationContext
         Func<SimulationContext, HitNumbers> compute, bool? forcedCrit = null, Action<SimulationContext, double>? onLanded = null,
         bool snapshot = false)
     {
-        double tickFraction = CurrentTickFraction;
-        HitRequest Request(SimulationContext ctx)
-        {
-            var n = compute(ctx);
-            double chance = 0.0, baseDamage = n.BaseDamage;
-            if (canCrit)
-            {
-                // Grievous: base x (2 + overflow) x (1 + crit power), i.e. the overflow is added to the crit double.
-                if (n.CritChance > 1.0) baseDamage *= (StatBlock.BaseCritMultiplier + n.CritChance - 1.0) / StatBlock.BaseCritMultiplier;
-                chance = Math.Clamp(n.CritChance, 0.0, 1.0);
-            }
-            return new HitRequest(source, target, abilityId, abilityName, baseDamage, canCrit, chance, n.CritMultiplier, ctx.CurrentTime, tickFraction)
-            {
-                FlatDamage = n.FlatDamage * tickFraction,
-            };
-        }
+        var hit = RentHit(source, target, abilityId, abilityName, canCrit, forcedCrit, onLanded, snapshot);
+        hit.FromCompute(compute);
+        return ApplyDamage(hit);
+    }
 
-        var released = Request(this);
-        var outcome = forcedCrit.HasValue ? new HitOutcome(forcedCrit.Value) : Outcomes.ResolveHit(released, this);
-        double dealt = 0.0;
+    /// <summary>
+    /// Deals one hit with fixed numbers (no dependence on the moment it lands). A <paramref name="snapshot"/> hit lands
+    /// with the time of its release.
+    /// </summary>
+    public double ApplyDamage(Hero source, EnemyTarget? target, double baseDamage, int abilityId, string abilityName,
+        bool canCrit, double critChance, double critMultiplier, bool? forcedCrit = null, bool snapshot = false)
+    {
+        var hit = RentHit(source, target, abilityId, abilityName, canCrit, forcedCrit, onLanded: null, snapshot);
+        hit.FromNumbers(new HitNumbers(baseDamage, critChance, critMultiplier));
+        return ApplyDamage(hit);
+    }
 
-        void Land(SimulationContext ctx)
-        {
-            // A hit on a target already gone hits nothing; its projectile still finishes (e.g. a swallow comes back).
-            if (outcome.Missed) { onLanded?.Invoke(ctx, 0.0); return; }
-            var landed = snapshot || ctx.CurrentTime == released.Time ? released : Request(ctx);
-            double multiplier = forcedCrit.HasValue
-                ? (outcome.IsCrit ? landed.CritMultiplier : 1.0)
-                : ctx.Outcomes.Land(landed, outcome, ctx);
-            dealt = landed.BaseDamage * multiplier + landed.FlatDamage;
+    // Speed: hits are pooled. A hit returns to the pool once it has landed; one still travelling when the fight resets
+    // leaves the queue with it.
+    private readonly Stack<PendingHit> _hitPool = new();
 
-            ctx.TotalDamage += dealt;
-            ctx._abilityDamage[abilityName] = ctx._abilityDamage.GetValueOrDefault(abilityName, 0.0) + dealt;
-            if (target != null && target.MaxHealth > 0)
-            {
-                target.CurrentHealth = Math.Max(0.0, target.CurrentHealth - dealt);
-            }
-            source.TriggerDamageDealt(new DamageContext(source, target, abilityId, abilityName, dealt, outcome.IsCrit, ctx.CurrentTime, ctx));
-            if (!forcedCrit.HasValue) ctx.Outcomes.HitFinished(ctx);
-            onLanded?.Invoke(ctx, dealt);
-        }
+    /// <summary>A hit from the pool, to be filled with its numbers and dealt with <see cref="ApplyDamage(PendingHit)"/>.</summary>
+    internal PendingHit RentHit(Hero source, EnemyTarget? target, int abilityId, string abilityName, bool canCrit, bool? forcedCrit,
+        Action<SimulationContext, double>? onLanded, bool snapshot)
+    {
+        var hit = _hitPool.TryPop(out var pooled) ? pooled : new PendingHit();
+        hit.Begin(source, target, abilityId, abilityName, canCrit, forcedCrit, onLanded, snapshot);
+        return hit;
+    }
+
+    /// <summary>Releases <paramref name="hit"/>: decides its crit and travel, and lands it now or after its travel time.</summary>
+    internal double ApplyDamage(PendingHit hit)
+    {
+        hit.TickFraction = CurrentTickFraction;
+        var released = Request(hit);
+        hit.Released = released;
+        var outcome = hit.ForcedCrit.HasValue ? new HitOutcome(hit.ForcedCrit.Value) : Outcomes.ResolveHit(released, this);
+        hit.Outcome = outcome;
 
         // The hit lands (and triggers procs) after its travel time; damage uses the stats at landing.
         if (outcome.LandingDelay > SimTime.Zero)
         {
-            Schedule(outcome.LandingDelay, Land, abilityName);
+            Kernel.ScheduleAt(CurrentTime + outcome.LandingDelay, hit, hit.AbilityName);
             return released.BaseDamage * (outcome.IsCrit ? released.CritMultiplier : 1.0) + released.FlatDamage;
         }
-        Land(this);
+        return Land(hit);
+    }
+
+    private HitRequest Request(PendingHit hit)
+    {
+        var n = hit.Compute(this);
+        double chance = 0.0, baseDamage = n.BaseDamage;
+        if (hit.CanCrit)
+        {
+            // Grievous: base x (2 + overflow) x (1 + crit power), i.e. the overflow is added to the crit double.
+            if (n.CritChance > 1.0) baseDamage *= (StatBlock.BaseCritMultiplier + n.CritChance - 1.0) / StatBlock.BaseCritMultiplier;
+            chance = Math.Clamp(n.CritChance, 0.0, 1.0);
+        }
+        double tickFraction = hit.TickFraction;
+        return new HitRequest(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, baseDamage, hit.CanCrit, chance, n.CritMultiplier, CurrentTime, tickFraction)
+        {
+            FlatDamage = n.FlatDamage * tickFraction,
+        };
+    }
+
+    /// <summary>The hit lands: deals its damage, raises <see cref="Hero.OnDamageDealt"/> and returns it to the pool.</summary>
+    private double Land(PendingHit hit)
+    {
+        var outcome = hit.Outcome;
+        var onLanded = hit.OnLanded;
+        double dealt = 0.0;
+        // A hit on a target already gone hits nothing; its projectile still finishes (e.g. a swallow comes back).
+        if (outcome.Missed)
+        {
+            onLanded?.Invoke(this, 0.0);
+            ReturnHit(hit);
+            return dealt;
+        }
+        var released = hit.Released;
+        var landed = hit.Snapshot || CurrentTime == released.Time ? released : Request(hit);
+        bool forced = hit.ForcedCrit.HasValue;
+        double multiplier = forced
+            ? (outcome.IsCrit ? landed.CritMultiplier : 1.0)
+            : Outcomes.Land(landed, outcome, this);
+        dealt = landed.BaseDamage * multiplier + landed.FlatDamage;
+
+        var source = hit.Source;
+        var target = hit.Target;
+        string abilityName = hit.AbilityName;
+        TotalDamage += dealt;
+        if (!_damageSlotByInstance.TryGetValue(abilityName, out int slot)) slot = DamageSlot(abilityName);
+        CollectionsMarshal.AsSpan(_damageByName)[slot].Damage += dealt;
+        if (target != null && target.MaxHealth > 0)
+        {
+            target.CurrentHealth = Math.Max(0.0, target.CurrentHealth - dealt);
+        }
+        source.TriggerDamageDealt(new DamageContext(source, target, hit.AbilityId, abilityName, dealt, outcome.IsCrit, CurrentTime, this));
+        if (!forced) Outcomes.HitFinished(this);
+        onLanded?.Invoke(this, dealt);
+        ReturnHit(hit);
         return dealt;
     }
 
-    /// <summary>Deals one hit with fixed numbers (no dependence on the moment it lands).</summary>
-    public double ApplyDamage(Hero source, EnemyTarget? target, double baseDamage, int abilityId, string abilityName,
-        bool canCrit, double critChance, double critMultiplier, bool? forcedCrit = null) =>
-        ApplyDamage(source, target, abilityId, abilityName, canCrit, _ => new HitNumbers(baseDamage, critChance, critMultiplier), forcedCrit);
+    private void ReturnHit(PendingHit hit)
+    {
+        hit.Clear();
+        _hitPool.Push(hit);
+    }
 
     /// <summary>Deals one hit using the source's crit chance (plus <paramref name="bonusCritChance"/>) and crit multiplier at landing.</summary>
     public double ApplyDamage(
@@ -357,8 +460,12 @@ public class SimulationContext
     {
         CurrentTime = SimTime.Zero;
         Kernel.Clear();
+        // The cleared queue lost the event of the hero's next aura expiry.
+        Player.Auras.RunOutIn(this);
         TotalDamage = 0;
-        _abilityDamage.Clear();
+        _damageByName.Clear();
+        _damageSlotByName.Clear();
+        _damageSlotByInstance.Clear();
         foreach (var enemy in _enemies)
         {
             enemy.Auras.ClearAll();

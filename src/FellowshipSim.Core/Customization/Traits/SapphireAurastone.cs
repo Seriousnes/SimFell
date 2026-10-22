@@ -42,7 +42,7 @@ public class SapphireAurastone : Trait
                 stored = 0.0;
                 foreach (var enemy in struck)
                 {
-                    ctx.ApplyDamage(hero, enemy, logId, DamageName, canCrit: false, _ => new SimulationContext.HitNumbers(each, 0.0, 1.0));
+                    ctx.ApplyDamage(hero, enemy, each, logId, DamageName, canCrit: false, 0.0, 1.0);
                 }
             }
             ctx.Schedule(SimTime.FromSeconds(PulseSeconds), c => Pulse(c, id), DamageName);
@@ -56,7 +56,7 @@ public class SapphireAurastone : Trait
             ctx.Schedule(SimTime.FromSeconds(FirstPulseSeconds), c => Pulse(c, id), DamageName);
         };
         hero.SpiritOfHeroismEnded += _ => active = false;
-        hero.OnDamageDealt += dmg =>
+        hero.OnDamageDealt += (in dmg) =>
         {
             if (active && dmg.AbilityId != logId) stored += share * dmg.Amount;
         };

@@ -32,16 +32,16 @@ public class RisingTalons : IceComet
         AoeTargetThreshold = TargetThreshold;
     }
 
-    protected override bool MeetsRequirements(out string? reason)
+    protected override bool MeetsRequirements(bool explain, out string? reason)
     {
         if (!Rime.HasIcyTalons)
         {
-            reason = $"{Name} needs Icy Talons";
+            reason = explain ? $"{Name} needs Icy Talons" : null;
             return false;
         }
         if (Rime.WinterOrbs < 1)
         {
-            reason = $"{Name} needs a Winter Orb";
+            reason = explain ? $"{Name} needs a Winter Orb" : null;
             return false;
         }
         reason = null;
@@ -58,7 +58,7 @@ public class RisingTalons : IceComet
         // (@ 32.358: an enemy appearing after the cast is hit by every wave). The target falloff is fixed at the cast too
         // (PrkThcx8Y3RgVXyq @ 38.61: waves on 19, 7 and 3 enemies deal the same per hit).
         var now = ctx.CurrentTime;
-        int enemiesAtCast = Math.Max(1, ctx.ActiveEnemies.Count());
+        int enemiesAtCast = Math.Max(1, ctx.ActiveEnemies.Count);
         double falloff = enemiesAtCast > TargetThreshold ? Math.Sqrt(TargetThreshold / enemiesAtCast) : 1.0;
         double damage = BaseDamage(ctx, null) * CastDamageMultiplier * falloff;
         // The waves keep the crit chance of the cast, with what talents added to it (it counts as an Ice Comet for them).
@@ -72,7 +72,7 @@ public class RisingTalons : IceComet
                 // Each wave is an impact with the damage of the cast; the falloff is already in it.
                 Impact(c, target, damage, critChance, critMultiplier, fixedFalloff: 1.0);
                 if (first) RaiseStruck(c, target);
-            }, $"{Name} wave {i + 1}");
+            }, Name);
         }
     }
 }

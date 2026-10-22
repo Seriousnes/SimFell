@@ -21,6 +21,8 @@ public enum AbilityCategory
 /// An ability of a hero. Each ability class lists its game values as constants at the top (ID, name, coefficient,
 /// cooldown, cast time...) and passes them in its constructor; <see cref="Execute"/> is what it does.
 /// </summary>
+/// <remarks>Its non-public methods are kept for <see cref="APL.AplVocabulary"/>, which finds the overrides of <see cref="CanCast(SimulationContext)"/>.</remarks>
+[System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicMethods)]
 public abstract class Ability
 {
     public int Id { get; }
@@ -92,7 +94,13 @@ public abstract class Ability
     /// One of this ability's hits landed (under <see cref="DamageLogId"/>), with its target, damage and whether it crit.
     /// Talents and other abilities that react to this ability's hits subscribe here.
     /// </summary>
-    public event Action<DamageContext>? Hit;
+    public event DamageDealtHandler? Hit;
+
+    /// <summary>The state <see cref="Hero.CooldownOf"/> last found for this ability, at <see cref="KnownCooldownVersion"/>.</summary>
+    internal CooldownState? KnownCooldown;
+
+    /// <summary>The owner's <see cref="Hero.CooldownsVersion"/> when <see cref="KnownCooldown"/> was found.</summary>
+    internal int KnownCooldownVersion = -1;
 
     /// <summary>What talents added to the cast resolving now (<see cref="ResolveCast(SimulationContext, EnemyTarget, object?)"/>); null outside a cast.</summary>
     protected CastBonus? CurrentCast { get; private set; }
@@ -107,11 +115,10 @@ public abstract class Ability
         DamageLogId = id;
         Name = name;
         Category = category;
-        owner.OnDamageDealt += dmg =>
-        {
-            if (dmg.AbilityId == DamageLogId) Hit?.Invoke(dmg);
-        };
+        owner.SubscribeHits(this);
     }
+
+    internal void RaiseHit(in DamageContext hit) => Hit?.Invoke(in hit);
 
     /// <summary>
     /// Called once the hero's abilities all exist (before talents and gear bind): an ability that reacts to another
@@ -155,20 +162,36 @@ public abstract class Ability
 
     public bool IsReady(SimTime now) => Owner.IsCooldownReady(Name, now);
 
+    /// <summary>Whether the ability can be cast right now.</summary>
+    public bool CanCast(SimulationContext ctx) => CanCast(ctx, explain: false, out _);
+
+    /// <summary>Whether the ability can be cast right now, and the reason when it cannot.</summary>
+    public bool CanCast(SimulationContext ctx, out string? reason) => CanCast(ctx, explain: true, out reason);
+
     /// <summary>
     /// Whether the ability can be cast right now. The default checks charges/cooldown;
     /// abilities with resource costs or other requirements add their own checks.
     /// </summary>
-    public virtual bool CanCast(SimulationContext ctx, out string? reason)
+    /// <param name="explain">Build <paramref name="reason"/>. Action lists check every decision and discard the reason.</param>
+    protected virtual bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
         if (Cooldown > SimTime.Zero && Owner.CooldownOf(this).ChargesAt(ctx.CurrentTime) == 0)
         {
-            reason = $"{Name} on cooldown ({Owner.GetCooldownRemains(Name, ctx.CurrentTime):F2}s remaining)";
+            reason = explain ? $"{Name} on cooldown ({Owner.GetCooldownRemains(Name, ctx.CurrentTime):F2}s remaining)" : null;
             return false;
         }
         reason = null;
         return true;
     }
+
+    /// <summary>
+    /// The earliest time after now at which <see cref="CanCast(SimulationContext)"/> can change with no event before it:
+    /// the return of a charge while none is left. The resources and auras the checks read change in events.
+    /// </summary>
+    public SimTime NextCastChange(SimulationContext ctx) =>
+        Cooldown > SimTime.Zero && Owner.Cooldowns.TryGetValue(Name, out var state) && state.ChargesAt(ctx.CurrentTime) == 0
+            ? state.NextChargeAt
+            : SimTime.Infinite;
 
     /// <summary>Spends a charge and starts its recharge.</summary>
     public virtual void TriggerCooldown(SimulationContext ctx, double cooldownMultiplier = 1.0)
@@ -189,8 +212,20 @@ public abstract class Ability
     /// its hits get what they added. The engine resolves every cast this way; a proc that casts an ability for free passes
     /// itself as <paramref name="source"/>.
     /// </summary>
-    public void ResolveCast(SimulationContext ctx, EnemyTarget target, object? source = null) =>
-        ResolveCast(ctx, target, source, () => Execute(ctx, target));
+    public void ResolveCast(SimulationContext ctx, EnemyTarget target, object? source = null)
+    {
+        // As ResolveCast with an effect, without making a delegate for each cast.
+        var outer = CurrentCast;
+        CurrentCast = Owner.PrepareCast(this, target, ctx.CurrentTime, source);
+        try
+        {
+            Execute(ctx, target);
+        }
+        finally
+        {
+            CurrentCast = outer;
+        }
+    }
 
     /// <summary>Resolves <paramref name="effect"/> as a cast of this ability (a free cast that does less than <see cref="Execute"/>).</summary>
     protected void ResolveCast(SimulationContext ctx, EnemyTarget target, object? source, Action effect)
@@ -241,13 +276,9 @@ public abstract class Ability
         // Damage, crit chance and crit power are read when the hit lands; what talents added to the cast is kept.
         double castCrit = CurrentCast?.CritChance ?? 0.0;
         double castDamage = CastDamageMultiplier;
-        return ctx.ApplyDamage(Owner, target, overrideId ?? DamageLogId, overrideName ?? Name, canCrit,
-            c => new SimulationContext.HitNumbers(
-                BaseDamage(c, target, damageMultiplier * castDamage),
-                Owner.CritChanceAgainst(target, c.CurrentTime) + CritChanceBonus + extraCritChance + castCrit,
-                CritMultiplierAt(c.CurrentTime),
-                BonusCoefficient * Owner.PrimaryAttribute(c.CurrentTime)),
-            forcedCrit, onLanded, SnapshotsDamage);
+        var hit = ctx.RentHit(Owner, target, overrideId ?? DamageLogId, overrideName ?? Name, canCrit, forcedCrit, onLanded, SnapshotsDamage);
+        hit.FromAbility(this, damageMultiplier * castDamage, castCrit, extraCritChance);
+        return ctx.ApplyDamage(hit);
     }
 
     public virtual double DealAoeDamage(SimulationContext ctx, IEnumerable<EnemyTarget> targets, double damageMultiplier = 1.0, bool canCrit = true, string? overrideName = null, int? overrideId = null, bool? forcedCrit = null,
@@ -263,9 +294,10 @@ public abstract class Ability
         }
 
         double total = 0.0;
-        foreach (var t in targetList)
+        // By index: a foreach over the list interface allocates its enumerator.
+        for (int i = 0; i < targetList.Count; i++)
         {
-            total += DealDamage(ctx, t, damageMultiplier * falloffMultiplier, canCrit, overrideName, overrideId, forcedCrit, extraCritChance: extraCritChance);
+            total += DealDamage(ctx, targetList[i], damageMultiplier * falloffMultiplier, canCrit, overrideName, overrideId, forcedCrit, extraCritChance: extraCritChance);
         }
         return total;
     }

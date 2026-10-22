@@ -19,7 +19,11 @@ public class ColdSnap : RimeAbility
         SetCooldown(CooldownSeconds, Charges, scalesWithHaste: true);
     }
 
-    public override bool CanCast(SimulationContext ctx, out string? reason)
+    private FlightOfTheNavir? _flightOfTheNavir;
+
+    public override void Connect() => _flightOfTheNavir = Rime.GetAbility<FlightOfTheNavir>();
+
+    protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
         // Navir's Keeper: "causes your next Cold Snap to not require nor cost any charge"
         if (Rime.Auras.HasAura(NavirsKeeper.Buff, ctx.CurrentTime))
@@ -27,7 +31,7 @@ public class ColdSnap : RimeAbility
             reason = null;
             return true;
         }
-        return base.CanCast(ctx, out reason);
+        return base.CanCast(ctx, explain, out reason);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
@@ -44,6 +48,6 @@ public class ColdSnap : RimeAbility
 
         hero.GenerateWinterOrbs(WinterOrbsGained, ctx, target);
         DealDamage(ctx, target);
-        hero.GetAbility<FlightOfTheNavir>()?.CommandSwallows(ctx, target);
+        _flightOfTheNavir?.CommandSwallows(ctx, target);
     }
 }

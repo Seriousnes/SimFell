@@ -41,13 +41,13 @@ public class CoalescingFrost : Talent
         var torrent = rime.GetAbility<FreezingTorrent>();
         if (torrent == null) return;
         _eruption = new Eruption(rime);
-        hero.OnDamageDealt += dmg =>
+        hero.OnDamageDealtBy(torrent.DamageLogId, (in dmg) =>
         {
-            if (dmg.AbilityId == torrent.DamageLogId && dmg.Amount > 0 && dmg.Target != null && dmg.SimContext != null)
+            if (dmg.Amount > 0 && dmg.Target != null && dmg.SimContext != null)
             {
                 AddStacks(dmg.SimContext, dmg.Target, dmg.IsCrit);
             }
-        };
+        });
     }
 
     private void AddStacks(SimulationContext ctx, EnemyTarget target, bool crit)
@@ -74,7 +74,7 @@ public class CoalescingFrost : Talent
     private void Erupt(SimulationContext ctx, EnemyTarget target, bool dying)
     {
         if (!_stacks.Remove(target, out var state) || state.Stacks <= 0) return;
-        var enemies = ctx.ActiveEnemies.Where(e => !dying || e != target).ToList();
+        var enemies = dying ? ctx.ActiveEnemiesExcept(target) : ctx.ActiveEnemies;
         if (enemies.Count == 0) return;
         _eruption!.DealAoeDamage(ctx, enemies, damageMultiplier: state.Stacks);
     }

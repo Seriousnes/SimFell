@@ -13,7 +13,8 @@ src/FellowshipSim.Core/
   Heroes/<Hero>/  one folder per hero: <Hero>.cs, Abilities/ (one file each), Talents/ (one file each)
   Customization/  gear shared by all heroes: Traits/, Blessings/, Gems/, Sets/, Legendaries/, Weapons/, WeaponAbilities/
   Import/         CharacterBuild (a build by game IDs) and HeroImporter (build -> hero)
-  Catalog.cs      finds every class above by its ID: nothing to register by hand
+  Catalog.cs      finds every class above by its ID: nothing to register by hand. The IDs (Id, WeaponAbilityId,
+                  SetBonusIds, ItemIds, HeroName) are constants or lists of constants, read at build time
 
 src/FellowshipSim.Logs/
   Replay/         replaying combat logs and the review page, with everything only a replay needs (see section 5)
@@ -60,6 +61,8 @@ public sealed class Elarion : Hero
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         TalentSlot.InRow(1, 2, /* talent IDs in columns a, b, c */ 0, 0, 0)
         /* ... one row per talent row in game */);
+
+    public override IReadOnlyList<TalentSlot> TalentTreeSlots => TalentTree;
 
     public override void Initialize()
     {
@@ -190,7 +193,8 @@ counts as it for talents inherits from it and overrides only what differs (Rime:
 A talent that deals damage of its own keeps that inside the talent: a small private `Ability` subclass for the damage
 numbers (coefficient, log ID, target falloff) and the talent's own state (Rime: `CoalescingFrost`).
 
-Also list every talent in the hero's `TalentTree`, one `TalentSlot.InRow(row, cost, a, b, c)` per row as in game.
+Also list every talent in the hero's `TalentTree`, one `TalentSlot.InRow(row, cost, a, b, c)` per row as in game, and return it
+from `TalentTreeSlots`. The action-list editor lists the auras of every talent in it.
 
 ## 4. Gear and other content
 
