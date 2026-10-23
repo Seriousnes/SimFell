@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.JavaScript" Version="13.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FellowshipSim.EngineServer\FellowshipSim.EngineServer.csproj" />
     <ProjectReference Include="..\FellowshipSim.Service\FellowshipSim.Service.csproj" />
   </ItemGroup>
