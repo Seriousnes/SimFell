@@ -65,7 +65,11 @@ public sealed class ReplayDriver
         return hero;
     }
 
-    public ReplayResult Run()
+    /// <summary>
+    /// Replays the script. <paramref name="cancellationToken"/> stops the replay between player actions with an
+    /// <see cref="OperationCanceledException"/>.
+    /// </summary>
+    public ReplayResult Run(CancellationToken cancellationToken = default)
     {
         _hero.ResetForIteration();
         StartFromLoggedResources();
@@ -102,6 +106,7 @@ public sealed class ReplayDriver
 
             if (cmd.IsPlayerAction)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!FreeDice) Settle(cmd.Time);
                 if (Halt(result)) break;
                 if (_options.MaxSteps.HasValue && result.Steps.Count >= _options.MaxSteps.Value) break;

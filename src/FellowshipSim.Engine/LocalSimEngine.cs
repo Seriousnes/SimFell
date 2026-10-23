@@ -52,7 +52,7 @@ public sealed class LocalSimEngine : ISimEngine
             ?? throw new SimEngineException("The raw fight is empty.");
         try
         {
-            return await Task.Run(() => ReplayReview.Run(raw, playerId, progress: progress), ct);
+            return await Task.Run(() => ReplayReview.Run(raw, playerId, progress: progress, cancellationToken: ct), ct);
         }
         catch (Exception e) when (e is NotSupportedException or ArgumentException)
         {

@@ -37,6 +37,20 @@ public class CombatLogReplayTests(ITestOutputHelper output)
             }
         }
     }
+
+    [Fact]
+    public async Task A_Cancelled_Replay_Stops_At_Its_First_Step()
+    {
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        if (library.ListDownloadedFights() is not [var (reportCode, fightId), ..]) return;
+
+        var raw = await library.GetRawFightAsync(null, reportCode, fightId);
+        var player = ReplayScriptBuilder.Players(raw).First(p => ReplayDriver.SupportsHero(p.Hero));
+        var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id).ToJsonString());
+        var driver = new ReplayDriver(ReplayDriver.CreateHero(script), script, new ReplayOptions { StopOnFirstFailure = false });
+
+        Assert.Throws<OperationCanceledException>(() => driver.Run(new CancellationToken(canceled: true)));
+    }
 }
 
 internal static class TestPaths
