@@ -37,10 +37,10 @@ public sealed class BuildCatalog
             .Select(r => new BuildOption(r.Id, r.Name, null))
             .OrderBy(o => o.Name).ToList();
         Augmentations = Catalog.AllAugmentations
-            .Select(t => new BuildOption(t.Id, t.Name, GameIcons.Traits.GetValueOrDefault(t.Id), MaxRank: GameIcons.TraitMaxRanks.GetValueOrDefault(t.Id, DefaultMaxRank)))
+            .Select(t => new BuildOption(t.Id, t.Name, GameIcons.Augmentations.GetValueOrDefault(t.Id), MaxRank: GameIcons.AugmentationMaxRanks.GetValueOrDefault(t.Id, DefaultMaxRank)))
             .OrderBy(o => o.Name).ToList();
         Glyphs = Catalog.AllGlyphs
-            .Select(b => new BuildOption(b.Id, b.Name, GameIcons.Blessings.GetValueOrDefault(b.Id), MaxRank: GameIcons.BlessingMaxRanks.GetValueOrDefault(b.Id, DefaultMaxRank)))
+            .Select(b => new BuildOption(b.Id, b.Name, GameIcons.Glyphs.GetValueOrDefault(b.Id), MaxRank: GameIcons.GlyphMaxRanks.GetValueOrDefault(b.Id, DefaultMaxRank)))
             .OrderBy(o => o.Name).ToList();
     }
 
