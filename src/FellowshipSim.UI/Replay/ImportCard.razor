@@ -1,0 +1,82 @@
+@inject ReportLookup Reports
+
+<Card Title="Import a fight">
+    <form class="row" @onsubmit="LoadAsync">
+        <input placeholder="FellowshipLogs report link or code" autocomplete="off" required @bind="_link" />
+        <button type="submit">Load report</button>
+        <button type="button" class="secondary-button" @onclick="OnEditSettings">API settings</button>
+    </form>
+    <Message Kind="Status.Kind">@Status.Text</Message>
+    <div>
+        @if (_report is { } report)
+        {
+            <div class="fights">
+                @foreach (var f in report.Fights.Where(f => f.Players.Count > 0))
+                {
+                    bool selected = f.Id == report.SelectedFightId;
+                    <div @key="f.Id" class="fight @(selected ? "selected" : "")">
+                        <div class="fight-head">
+                            <span class="fight-name">@f.Name</span>
+                            <span class="meta">
+                                Fight @f.Id · @FormatDuration(f.DurationSeconds) · @(f.Kill ? "kill" : "wipe/ongoing")@(f.Downloaded ? " · downloaded" : "")
+                            </span>
+                        </div>
+                        <div class="players">
+                            @foreach (var p in f.Players)
+                            {
+                                bool highlight = selected && p.Id == report.SelectedPlayerId;
+                                <button @key="p.Id" type="button" class="@(p.Supported ? null : "unsupported")"
+                                        disabled="@(!p.Supported || Busy)"
+                                        title="@(p.Supported ? $"Replay {p.Name}'s {p.Hero}" : $"{p.Hero} is not supported yet")"
+                                        style="@(highlight ? "outline: 2px solid var(--accent)" : null)"
+                                        @onclick="() => OnReplay.InvokeAsync(new ReviewTarget(report.Code, f.Id, p.Id))">
+                                    @p.Name <span class="meta">@p.Hero</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</Card>
+
+@code {
+    [Parameter] public MessageState Status { get; set; } = MessageState.None;
+
+    [Parameter] public EventCallback<MessageState> StatusChanged { get; set; }
+
+    /// <summary>True while a replay runs: the player buttons are disabled.</summary>
+    [Parameter] public bool Busy { get; set; }
+
+    [Parameter] public EventCallback OnEditSettings { get; set; }
+
+    [Parameter] public EventCallback<ReviewTarget> OnReplay { get; set; }
+
+    private string _link = "";
+    private Report? _report;
+
+    private static string FormatDuration(double seconds)
+    {
+        int m = (int)Math.Floor(seconds / 60);
+        int s = (int)Math.Round(seconds % 60, MidpointRounding.AwayFromZero);
+        return $"{m}:{s:00}";
+    }
+
+    private async Task LoadAsync()
+    {
+        await StatusChanged.InvokeAsync(new MessageState("Loading report..."));
+        _report = null;
+        try
+        {
+            var loaded = await Reports.FindAsync(_link);
+            await StatusChanged.InvokeAsync(
+                new MessageState($"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. Pick a player to replay."));
+            _report = loaded;
+        }
+        catch (Exception e)
+        {
+            await StatusChanged.InvokeAsync(new MessageState(e.Message, MessageKind.Error));
+        }
+    }
+}

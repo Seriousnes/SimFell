@@ -1,5 +1,22 @@
 @inherits LayoutComponentBase
 
-<main>
+<header class="top">
+    <div class="heading">
+        <h1>FellowshipSim</h1>
+        <nav class="nav">
+            <NavLink href="" Match="NavLinkMatch.All">Replay</NavLink>
+            <NavLink href="sim">Sim</NavLink>
+        </nav>
+    </div>
+    <span class="subtitle"><SectionOutlet SectionName="@SubtitleSection" /></span>
+</header>
+
+<main class="main">
+    <JobsPanel />
     @Body
 </main>
+
+@code {
+    /// <summary>Name of the section each page fills with its line under the heading.</summary>
+    public const string SubtitleSection = "subtitle";
+}
