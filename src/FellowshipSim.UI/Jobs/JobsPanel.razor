@@ -3,7 +3,6 @@
 @using FellowshipSim.Logs
 @implements IDisposable
 @inject SimJobQueue Queue
-@inject IReviewPages Pages
 
 <Card Title="Jobs">
     @if (Queue.List() is { Count: > 0 } jobs)
@@ -40,7 +39,7 @@
                     else if (job is { Status: SimJobStatus.Done, Result: ReviewSummary review })
                     {
                         <p class="review">
-                            <a href="@Pages.Url(review.HtmlFile)" target="_blank" rel="noopener">Review of @review.PlayerName in @review.FightName</a>
+                            <a href="@Review.Href(review.HtmlFile)">Review of @review.PlayerName in @review.FightName</a>
                         </p>
                     }
                 </li>

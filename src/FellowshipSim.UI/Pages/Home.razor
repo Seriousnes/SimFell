@@ -5,7 +5,6 @@
 @inject ReplayLibrary Library
 @inject ReviewJobs ReviewJobs
 @inject SimJobQueue Queue
-@inject IReviewPages Pages
 
 <PageTitle>FellowshipSim</PageTitle>
 
@@ -29,7 +28,7 @@
             case SimJobStatus.Done when job.Result is ReviewSummary r:
                 <Message Kind="MessageKind.Ok">
                     Done:
-                    <a href="@Pages.Url(r.HtmlFile)" target="_blank" rel="noopener">open the review of @r.PlayerName in @r.FightName</a>
+                    <a href="@Review.Href(r.HtmlFile)">open the review of @r.PlayerName in @r.FightName</a>
                 </Message>
                 break;
             case SimJobStatus.Failed or SimJobStatus.Cancelled:

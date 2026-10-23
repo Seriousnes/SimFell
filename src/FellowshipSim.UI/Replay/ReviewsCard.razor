@@ -1,6 +1,5 @@
 @using System.Globalization
 @using FellowshipSim.Logs
-@inject IReviewPages Pages
 
 <Card Title="Reviews">
     <div>
@@ -34,7 +33,7 @@
                             string date = r.FightDate is { } d ? d.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : "";
                             var fd = r.FreeDice;
                             <tr @key="r.Id">
-                                <td><a href="@Pages.Url(r.HtmlFile)" target="_blank" rel="noopener">@r.PlayerName</a></td>
+                                <td><a href="@Review.Href(r.HtmlFile)">@r.PlayerName</a></td>
                                 <td>@r.Hero</td>
                                 <td>@r.FightName <span class="meta">@r.ReportCode #@r.FightId</span></td>
                                 <td>@date</td>
@@ -45,7 +44,7 @@
                                     double fdDamage = fd.EngineMean / fd.LogDamage;
                                     <td class="num @RatioClass(fdDamage, 0.02, 0.05)"
                                         title="@($"{fd.Runs} runs, engine 5-95%: {Math.Round(fd.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(fd.Engine95, MidpointRounding.AwayFromZero):N0}")">
-                                        <a href="@Pages.Url($"{r.Id}.freedice.html")" target="_blank" rel="noopener">@Percent(fdDamage)</a>
+                                        <a href="@Review.Href($"{r.Id}.freedice.html")">@Percent(fdDamage)</a>
                                     </td>
                                     <td class="num @PlaceClass(fd.LogPercentile)">@(Math.Round(fd.LogPercentile * 100, MidpointRounding.AwayFromZero))%</td>
                                 }
