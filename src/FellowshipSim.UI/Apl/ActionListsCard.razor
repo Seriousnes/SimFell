@@ -1,2 +1,316 @@
-@* Placeholder until the APL editor port replaces this file. *@
-<Card Title="Action lists" />
+@using FellowshipSim.Core.APL
+@implements IAsyncDisposable
+@inject ISimEngine Engine
+@inject ActionListStore Store
+@inject IJSRuntime JS
+@* Visual action-list editor: one section per action list, each with its actions in priority order. *@
+<Card Title="Action lists">
+    <div @ref="_root">
+        @if (_editor.Vocabulary is not { } v)
+        {
+            <Message Kind="_editor.Status.Kind">@_editor.Status.Text</Message>
+        }
+        else
+        {
+            <CascadingValue Value="_editor" IsFixed="true">
+                <p class="hint">
+                    Each time the hero can act, they cast the first action from the top of the default list with a ready ability and
+                    a true condition. Run action list and Call action list run the actions of another list.
+                </p>
+                <div class="row toolbar">
+                    <label class="field">
+                        Hero
+                        <select value="@v.Hero" @onchange="e => SelectHero((string?)e.Value ?? string.Empty)">
+                            @foreach (string hero in _heroes)
+                            {
+                                <option @key="hero">@hero</option>
+                            }
+                        </select>
+                    </label>
+                    <label class="field">
+                        Saved
+                        <select value="@_selectedSaved" @onchange="e => PickSaved((string?)e.Value ?? string.Empty)">
+                            <option value="">New action list</option>
+                            @foreach (var saved in _saved)
+                            {
+                                <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero)</option>
+                            }
+                        </select>
+                    </label>
+                    <input @ref="_nameInput" placeholder="Action list name" autocomplete="off" @bind="_name" />
+                    <button type="button" @onclick="Save">Save</button>
+                </div>
+                <Message Kind="_editor.Status.Kind">@_editor.Status.Text</Message>
+                <div>
+                    @foreach (var list in _editor.Lists)
+                    {
+                        <ListSection @key="list.Name" Vocabulary="v" Lists="_editor.Lists" List="list" Open="_editor.Open" DragFrom="_editor.DragFrom" />
+                    }
+                </div>
+                <div class="row add-list">
+                    <input @ref="_newListInput" placeholder="New action list name (aoe)" spellcheck="false" autocomplete="off" @bind="_newList" />
+                    <button type="button" class="secondary-button" @onclick="AddList">Add action list</button>
+                </div>
+                <details @key="_textKey" class="text" open="@_textOpen">
+                    <summary>Action list text</summary>
+                    <textarea spellcheck="false" rows="10" @bind="_text"></textarea>
+                    <div class="row">
+                        <button type="button" class="secondary-button" @onclick="LoadText">Load this text into the editor</button>
+                    </div>
+                    <Message Kind="_textStatus.Kind">@_textStatus.Text</Message>
+                </details>
+            </CascadingValue>
+        }
+    </div>
+</Card>
+
+@code {
+    private ActionListEditor _editor = null!;
+    private SavedActionLists _savedLists = null!;
+    private IReadOnlyList<string> _heroes = [];
+    private IReadOnlyList<ActionListEntry> _saved = [];
+    private string _selectedSaved = "";
+    private string _name = "";
+    private string _newList = "";
+    private string _text = "";
+    // The text's section opens when a saved list does not parse: a new key renders it anew with its open attribute.
+    private bool _textOpen;
+    private int _textKey;
+    private MessageState _textStatus = MessageState.None;
+    private ElementReference _root, _nameInput, _newListInput;
+    private IJSObjectReference? _module, _drag;
+    // The lists and vocabulary the action-list text is written for, and the write waiting for its delay.
+    private IReadOnlyList<ActionList>? _writtenLists;
+    private AplVocabulary? _writtenVocabulary;
+    private CancellationTokenSource? _write;
+
+    private static string SavedValue(ActionListEntry saved) => $"{saved.Hero}/{saved.Name}";
+
+    protected override void OnInitialized()
+    {
+        _editor = new ActionListEditor(Engine);
+        _savedLists = new SavedActionLists(Store, Engine);
+        _editor.Changed += EditorChanged;
+        _editor.ConditionModePicked += StoreConditionMode;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _heroes = await Engine.GetHeroesAsync();
+            var v = await VocabularyOf(_heroes[0]);
+            _saved = await _savedLists.ListAsync();
+            _editor.Load(v, []);
+        }
+        catch (Exception e)
+        {
+            _editor.SetStatus(MessageState.Error(e.Message));
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/apl/actionListsCard.js");
+            _editor.ConditionMode = await _module.InvokeAsync<string>("readConditionMode");
+            _drag = await _module.InvokeAsync<IJSObjectReference>("attachDrag", _root);
+        }
+        catch (JSDisconnectedException)
+        {
+            // The page closed before the module loaded.
+        }
+    }
+
+    private void EditorChanged()
+    {
+        WriteText();
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private async void StoreConditionMode(string mode)
+    {
+        try
+        {
+            if (_module != null) await _module.InvokeVoidAsync("writeConditionMode", mode);
+        }
+        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        {
+            // The choice lasts until the page reloads.
+        }
+    }
+
+    private async Task<AplVocabulary> VocabularyOf(string hero) =>
+        await Engine.GetVocabularyAsync(hero) ?? throw new KeyNotFoundException($"No hero named {hero}.");
+
+    private void Fail(Exception e) => _editor.SetStatus(MessageState.Error(e.Message));
+
+    // The action-list text follows every change to the actions, 250 ms after the last one.
+    private void WriteText()
+    {
+        if (_editor.Vocabulary is not { } v) return;
+        var lists = _editor.Lists;
+        if (ReferenceEquals(lists, _writtenLists) && ReferenceEquals(v, _writtenVocabulary)) return;
+        _writtenLists = lists;
+        _writtenVocabulary = v;
+        _write?.Cancel();
+        _write = new CancellationTokenSource();
+        _ = Write(v, lists, _write.Token);
+    }
+
+    private async Task Write(AplVocabulary v, IReadOnlyList<ActionList> lists, CancellationToken ct)
+    {
+        MessageState? status = null;
+        string? text = null;
+        try
+        {
+            await Task.Delay(250, ct);
+            var result = await Engine.WriteActionListAsync(ActionListModel.DocumentActions(lists), ct);
+            if (result.Text != null) text = result.Text;
+            else status = MessageState.Error(ActionListModel.ErrorText(v, lists, result.Errors));
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            return;
+        }
+        catch (Exception e)
+        {
+            status = MessageState.Error(e.Message);
+        }
+        await InvokeAsync(() =>
+        {
+            if (ct.IsCancellationRequested) return;
+            if (text != null)
+            {
+                _text = text;
+                _textStatus = MessageState.None;
+            }
+            else
+            {
+                _textStatus = status!;
+            }
+            StateHasChanged();
+        });
+    }
+
+    private async Task SelectHero(string hero)
+    {
+        try
+        {
+            _editor.SetVocabulary(await VocabularyOf(hero));
+        }
+        catch (Exception e)
+        {
+            Fail(e);
+        }
+    }
+
+    private async Task LoadSavedLists(string selected = "")
+    {
+        _saved = await _savedLists.ListAsync();
+        _selectedSaved = selected;
+    }
+
+    private async Task AddList()
+    {
+        if (_editor.AddList(_newList.Trim())) _newList = "";
+        else await _newListInput.FocusAsync();
+    }
+
+    private async Task LoadText()
+    {
+        try
+        {
+            var result = await Engine.ParseActionListAsync(_text);
+            _editor.Load(_editor.Vocabulary!, result.Actions);
+            _editor.SetStatus(MessageState.Ok($"Loaded {result.Actions.Count} actions."));
+        }
+        catch (Exception e)
+        {
+            _textStatus = MessageState.Error(e.Message);
+        }
+    }
+
+    private async Task PickSaved(string value)
+    {
+        _selectedSaved = value;
+        _editor.SetStatus(MessageState.None);
+        if (value.Length == 0)
+        {
+            _name = "";
+            _editor.Load(_editor.Vocabulary!, []);
+            return;
+        }
+        string[] parts = value.Split('/');
+        string hero = parts[0], savedName = parts.Length > 1 ? parts[1] : "";
+        try
+        {
+            var list = await _savedLists.ReadAsync(hero, savedName);
+            var heroVocabulary = await VocabularyOf(hero);
+            _editor.SetVocabulary(heroVocabulary);
+            _name = savedName;
+            if (list.Error != null)
+            {
+                _text = list.Text;
+                _textOpen = true;
+                _textKey++;
+                _editor.SetStatus(MessageState.Error($"The saved text does not parse: {list.Error}"));
+                return;
+            }
+            _editor.Load(heroVocabulary, list.Actions ?? []);
+        }
+        catch (Exception e)
+        {
+            Fail(e);
+        }
+    }
+
+    private async Task Save()
+    {
+        var v = _editor.Vocabulary!;
+        string listName = _name.Trim();
+        if (listName.Length == 0)
+        {
+            _editor.SetStatus(MessageState.Error("Name the action list first."));
+            await _nameInput.FocusAsync();
+            return;
+        }
+        var lists = _editor.Lists;
+        try
+        {
+            string path = await _savedLists.SaveAsync(v.Hero, listName, ActionListModel.DocumentActions(lists));
+            _editor.SetStatus(MessageState.Ok($"Saved to {path}."));
+            await LoadSavedLists($"{v.Hero}/{listName}");
+        }
+        catch (ActionListNotSavedException e)
+        {
+            _editor.SetStatus(MessageState.Error($"{e.Message} {ActionListModel.ErrorText(v, lists, e.Errors)}".Trim()));
+        }
+        catch (Exception e)
+        {
+            Fail(e);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _editor.Changed -= EditorChanged;
+        _editor.ConditionModePicked -= StoreConditionMode;
+        _write?.Cancel();
+        try
+        {
+            if (_drag != null)
+            {
+                await _drag.InvokeVoidAsync("dispose");
+                await _drag.DisposeAsync();
+            }
+            if (_module != null) await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // The page is gone, and the listeners with it.
+        }
+    }
+}
