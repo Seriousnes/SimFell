@@ -177,15 +177,17 @@
 
 .tree-row {
   display: grid;
-  grid-template-columns: 48px repeat(3, minmax(0, 1fr));
+  grid-template-columns: 84px repeat(3, minmax(0, 1fr));
   gap: 8px;
   align-items: stretch;
 }
 
+/* "I - 2 pt" on one line, as wide as it needs. */
 .tier {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
   font-family: var(--heading-font);
   color: var(--muted);
 }
@@ -314,7 +316,7 @@
 
 @media (max-width: 700px) {
   .tree-row {
-    grid-template-columns: 36px repeat(3, minmax(0, 1fr));
+    grid-template-columns: 72px repeat(3, minmax(0, 1fr));
   }
 
   .talent {
