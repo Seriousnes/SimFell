@@ -34,6 +34,21 @@ public sealed class LogsSettingsStore(ReplayLibrary library, IHttpClientFactory 
     public void Save(LogsCredentials credentials) =>
         File.WriteAllText(SettingsPath, JsonSerializer.Serialize(credentials, new JsonSerializerOptions { WriteIndented = true }));
 
+    /// <summary>
+    /// Saves the credentials after checking they can sign in. Throws <see cref="ArgumentException"/> when either is blank,
+    /// and <see cref="FellowshipLogsException"/> when FellowshipLogs refuses them.
+    /// </summary>
+    public async Task SignInAndSaveAsync(string clientId, string clientSecret, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+        {
+            throw new ArgumentException("Enter both the client ID and the client secret.");
+        }
+        var credentials = new LogsCredentials(clientId.Trim(), clientSecret.Trim());
+        await Create(credentials).QueryAsync("query { __typename }", ct: ct);
+        Save(credentials);
+    }
+
     /// <summary>A client signed in with the stored credentials, or null when none are set.</summary>
     public FellowshipLogsClient? CreateClient() =>
         Credentials is { } c ? Create(c) : null;

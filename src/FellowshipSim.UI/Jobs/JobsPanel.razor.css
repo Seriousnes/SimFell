@@ -1,0 +1,117 @@
+.jobs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.job {
+  padding: 8px 0 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.job:first-child {
+  padding-top: 0;
+}
+
+.job:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.job-head {
+  display: flex;
+  align-items: center;
+  gap: 4px 10px;
+  flex-wrap: wrap;
+  min-height: 30px;
+}
+
+.kind {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 6px;
+}
+
+.job-title {
+  flex: 1 1 240px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.running .status {
+  color: var(--accent);
+}
+
+.done .status {
+  color: var(--good);
+}
+
+.failed .status {
+  color: var(--bad);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.actions button {
+  padding: 3px 10px;
+  font-size: 13px;
+}
+
+.actions .icon-button {
+  padding: 3px 8px;
+}
+
+.bar {
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 4px;
+  background: var(--row-hover);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s linear;
+}
+
+.done .fill {
+  background: var(--good);
+}
+
+.failed .fill {
+  background: var(--bad);
+}
+
+.cancelled .fill {
+  background: var(--muted);
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.percent {
+  font-variant-numeric: tabular-nums;
+}
+
+.review {
+  margin: 6px 0 0;
+}

@@ -1,0 +1,52 @@
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  margin: 10px 0 6px;
+}
+
+.stats div {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stats dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.abilities {
+  width: 100%;
+  max-width: 520px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.abilities th,
+.abilities td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.abilities th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.abilities .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.abilities tbody tr:hover {
+  background: var(--row-hover);
+}

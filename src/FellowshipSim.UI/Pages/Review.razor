@@ -1,0 +1,30 @@
+@page "/review"
+@inject IReviewPages ReviewPages
+
+<PageTitle>Review - FellowshipSim</PageTitle>
+
+<SectionContent SectionName="@MainLayout.SubtitleSection">
+    Replay review
+</SectionContent>
+
+<p class="back"><a href="">Back to the reviews</a></p>
+
+@if (string.IsNullOrEmpty(Page))
+{
+    <p class="hint">No review page.</p>
+}
+else
+{
+    <iframe class="page" src="@ReviewPages.Url(Page)" title="Replay review"></iframe>
+}
+
+@code {
+    /// <summary>
+    /// File name of the review page in the reviews folder. The page is in an iframe because the desktop app's review
+    /// address is unreachable from the system browser, and a top-level link would replace the app page.
+    /// </summary>
+    [SupplyParameterFromQuery(Name = "page")] public string? Page { get; set; }
+
+    /// <summary>Address of the page that shows the review page <paramref name="htmlFile"/>.</summary>
+    public static string Href(string htmlFile) => $"review?page={Uri.EscapeDataString(htmlFile)}";
+}
