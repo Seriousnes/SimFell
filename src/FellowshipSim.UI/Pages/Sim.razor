@@ -14,7 +14,7 @@
     <p class="hint">Load a <code>.simc</code> profile or paste its text.</p>
     <form @onsubmit="Start">
         <InputFile class="file" accept=".simc,.txt" OnChange="LoadFileAsync" />
-        <textarea class="profile" rows="14" spellcheck="false" placeholder="rime=&quot;name&quot;" @bind="_text"></textarea>
+        <textarea class="profile" rows="14" spellcheck="false" placeholder='rime="name"' @bind="_text"></textarea>
         <div class="settings">
             <label>
                 Iterations
