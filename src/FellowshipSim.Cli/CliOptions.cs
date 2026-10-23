@@ -47,7 +47,7 @@ public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOut
             int eq = arg.IndexOf('=');
             string name = eq < 0 ? arg : arg[..eq];
             string value = eq >= 0 ? arg[(eq + 1)..]
-                : i + 1 < args.Count ? args[++i]
+                : i + 1 < args.Count && !args[i + 1].StartsWith("--", StringComparison.Ordinal) ? args[++i]
                 : throw new CliUsageException($"{name} needs a value.");
             switch (name)
             {

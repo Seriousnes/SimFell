@@ -18,9 +18,9 @@ public class CliOptionsTests
     public void Every_Option_Sets_Its_Setting()
     {
         var options = CliOptions.Parse(["--profile", "rime.simc", "--iterations", "200", "--duration=90.5", "--targets", "3",
-            "--seed", "7", "--threads", "2", "--format", "json"])!;
+            "--seed", "-7", "--threads", "2", "--format", "json"])!;
 
-        Assert.Equal(new Engine.SimSettings(200, 90.5, TargetCount: 3, FirstSeed: 7, DegreeOfParallelism: 2), options.Settings);
+        Assert.Equal(new Engine.SimSettings(200, 90.5, TargetCount: 3, FirstSeed: -7, DegreeOfParallelism: 2), options.Settings);
         Assert.Equal(CliOutputFormat.Json, options.Format);
     }
 
@@ -35,6 +35,7 @@ public class CliOptionsTests
     [Theory]
     [InlineData("--iterations 5")]
     [InlineData("--profile")]
+    [InlineData("--profile --iterations 5")]
     [InlineData("--profile a.simc --iterations 0")]
     [InlineData("--profile a.simc --duration -1")]
     [InlineData("--profile a.simc --threads two")]
