@@ -75,13 +75,11 @@
     @if (_hasArguments)
     {
         <label for="@($"{Id}-arguments")">Other arguments</label>
-        <input id="@($"{Id}-arguments")" class="arguments" spellcheck="false" autocomplete="off" value="@(Action.Arguments ?? "")"
-               @oninput="e => Change(a => a with { Arguments = (string?)e.Value ?? string.Empty })" />
+        <input id="@($"{Id}-arguments")" class="arguments" spellcheck="false" autocomplete="off" @bind="ArgumentsText" @bind:event="oninput" />
     }
 
     <label for="@($"{Id}-comment")">Comment</label>
-    <textarea id="@($"{Id}-comment")" class="comment" rows="2" value="@(Action.Comment ?? "")"
-              @oninput="e => Change(a => a with { Comment = (string?)e.Value ?? string.Empty })"></textarea>
+    <textarea id="@($"{Id}-comment")" class="comment" rows="2" @bind="CommentText" @bind:event="oninput"></textarea>
 </div>
 
 @code {
@@ -99,6 +97,18 @@
     private bool _hasArguments;
 
     private string Id => $"apl-{Action.Key}";
+
+    private string ArgumentsText
+    {
+        get => Action.Arguments ?? "";
+        set => Change(a => a with { Arguments = value });
+    }
+
+    private string CommentText
+    {
+        get => Action.Comment ?? "";
+        set => Change(a => a with { Comment = value });
+    }
 
     private bool ListAction => ActionListModel.IsListAction(Vocabulary, Action);
 

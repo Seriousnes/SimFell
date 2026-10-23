@@ -20,7 +20,7 @@
                 <div class="row toolbar">
                     <label class="field">
                         Hero
-                        <select value="@v.Hero" @onchange="e => SelectHero((string?)e.Value ?? string.Empty)">
+                        <select @bind:get="v.Hero" @bind:set="SelectHero">
                             @foreach (string hero in _heroes)
                             {
                                 <option @key="hero">@hero</option>
@@ -29,7 +29,7 @@
                     </label>
                     <label class="field">
                         Saved
-                        <select value="@_selectedSaved" @onchange="e => PickSaved((string?)e.Value ?? string.Empty)">
+                        <select @bind:get="_selectedSaved" @bind:set="PickSaved">
                             <option value="">New action list</option>
                             @foreach (var saved in _saved)
                             {

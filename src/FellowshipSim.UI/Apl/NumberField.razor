@@ -1,6 +1,6 @@
 @using System.Globalization
 @* The number a comparison reads; the condition takes it on leaving the field or on Enter. *@
-<input type="number" step="any" class="value" aria-label="Value" value="@_draft" @onchange="Commit" />
+<input type="number" step="any" class="value" aria-label="Value" @bind="_draft" @bind:after="Commit" />
 
 @code {
     [Parameter] public double Value { get; set; }
@@ -11,9 +11,6 @@
 
     protected override void OnInitialized() => _draft = ConditionBuilder.Number(Value);
 
-    private Task Commit(ChangeEventArgs e)
-    {
-        _draft = e.Value as string ?? "";
-        return OnChange.InvokeAsync(double.TryParse(_draft, NumberStyles.Float, CultureInfo.InvariantCulture, out double number) ? number : 0);
-    }
+    private Task Commit() =>
+        OnChange.InvokeAsync(double.TryParse(_draft, NumberStyles.Float, CultureInfo.InvariantCulture, out double number) ? number : 0);
 }
