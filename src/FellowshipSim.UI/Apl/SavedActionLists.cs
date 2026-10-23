@@ -53,6 +53,13 @@ public sealed class SavedActionLists(ActionListStore store, ISimEngine engine, V
         return new ActionListEntry(known, name);
     }
 
+    /// <summary>Removes one of the visitor's own lists. A shared or built-in list throws <see cref="InvalidOperationException"/>.</summary>
+    public Task DeleteAsync(ActionListEntry entry, CancellationToken ct = default)
+    {
+        if (entry.Shared || entry.BuiltIn) throw new InvalidOperationException($"{entry.Name} is not one of your lists, so it stays.");
+        return store.DeleteAsync(visitor, entry.Hero, entry.Name, ct);
+    }
+
     /// <summary>The engine's name for <paramref name="hero"/>, or null when the engine has no such hero.</summary>
     private async Task<string?> HeroNamed(string hero, CancellationToken ct) =>
         (await engine.GetHeroesAsync(ct)).FirstOrDefault(h => h.Equals(hero, StringComparison.OrdinalIgnoreCase));

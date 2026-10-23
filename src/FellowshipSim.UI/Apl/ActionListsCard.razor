@@ -29,18 +29,18 @@
                             }
                         </select>
                     </label>
-                    <label class="field">
-                        Saved
-                        <select @bind:get="State.SelectedSaved" @bind:set="PickSaved">
-                            <option value="">New action list</option>
-                            @foreach (var saved in State.Saved)
-                            {
-                                <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero@(saved.BuiltIn ? ", built in" : saved.Shared ? ", shared" : ""))</option>
-                            }
-                        </select>
-                    </label>
-                    <input @ref="_nameInput" placeholder="Action list name" autocomplete="off" @bind="State.Name" />
-                    <button type="button" @onclick="Save">Save</button>
+                    <input @ref="_nameInput" aria-label="Action list name" placeholder="Action list name" autocomplete="off" @bind="State.Name" />
+                    <select aria-label="Saved action lists" @bind:get="State.SelectedSaved" @bind:set="PickSaved">
+                        <option value="">Load list...</option>
+                        @foreach (var saved in State.Saved)
+                        {
+                            <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero@(saved.BuiltIn ? ", built in" : saved.Shared ? ", shared" : ""))</option>
+                        }
+                    </select>
+                    <button type="button" class="secondary-button" @onclick="Save">Save</button>
+                    <button type="button" class="secondary-button" @onclick="New">New</button>
+                    <button type="button" class="secondary-button" @onclick="Duplicate">Duplicate</button>
+                    <button type="button" class="secondary-button delete" disabled="@(!CanDelete)" title="@(CanDelete ? null : "Only your own saved lists can be deleted")" @onclick="Delete">Delete</button>
                 </div>
                 <Message Kind="State.Editor.Status.Kind">@State.Editor.Status.Text</Message>
                 <div>
@@ -264,6 +264,37 @@
                 return;
             }
             State.Editor.Load(heroVocabulary, list.Actions ?? []);
+        }
+        catch (Exception e)
+        {
+            Fail(e);
+        }
+    }
+
+    // The saved list picked, when it is one of the visitor's own.
+    private ActionListEntry? PickedOwnList =>
+        State.Saved.FirstOrDefault(s => SavedValue(s) == State.SelectedSaved) is { Shared: false, BuiltIn: false } own ? own : null;
+
+    private bool CanDelete => PickedOwnList != null;
+
+    private Task New() => PickSaved("");
+
+    // A copy of the lists, not saved yet: Save keeps it under its new name.
+    private void Duplicate()
+    {
+        State.Name = State.Name.Length > 0 ? $"{State.Name} copy" : "copy";
+        State.SelectedSaved = "";
+        State.Editor.SetStatus(MessageState.Ok($"Copied to {State.Name}; save it to keep it."));
+    }
+
+    private async Task Delete()
+    {
+        if (PickedOwnList is not { } list) return;
+        try
+        {
+            await _savedLists.DeleteAsync(list);
+            await LoadSavedLists();
+            State.Editor.SetStatus(MessageState.Ok($"Deleted {list.Name}. The editor keeps its actions until you change them."));
         }
         catch (Exception e)
         {

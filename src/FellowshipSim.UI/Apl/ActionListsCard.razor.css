@@ -6,6 +6,14 @@
   flex: 1 1 200px;
 }
 
+.toolbar button {
+  min-height: 40px;
+}
+
+.delete {
+  color: var(--bad);
+}
+
 .field {
   display: flex;
   align-items: center;

@@ -57,6 +57,10 @@ public sealed partial class ActionListStore(ReplayLibrary library, IBlobStore st
     public Task SaveAsync(Visitor visitor, string hero, string name, string text, CancellationToken ct = default) =>
         store.WriteAsync(KeyOf(visitor, hero, name), text, ct);
 
+    /// <summary>Removes one of the visitor's own lists; a shared or built-in list stays.</summary>
+    public Task DeleteAsync(Visitor visitor, string hero, string name, CancellationToken ct = default) =>
+        IsValidName(name) ? store.DeleteAsync(KeyOf(visitor, hero, name), ct) : Task.CompletedTask;
+
     /// <summary>Path of the list in <see cref="SharedDirectory"/>.</summary>
     public string PathOf(string hero, string name) => Path.Combine(SharedDirectory, hero, $"{name}.simc");
 

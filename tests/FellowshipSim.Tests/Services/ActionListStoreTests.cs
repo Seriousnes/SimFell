@@ -52,6 +52,16 @@ public sealed class ActionListStoreTests : IDisposable
             await _lists.ListAsync(Visitor.DataFolderOwner, ["Rime"]));
     }
 
+    [Fact]
+    public async Task A_Visitor_Deletes_Their_Own_List_And_Not_The_Shared_One()
+    {
+        await _lists.SaveAsync(A, "Rime", "default", "actions+=/cold_snap");
+        await _lists.DeleteAsync(A, "Rime", "default");
+
+        Assert.Equal([new ActionListEntry("Rime", "default", Shared: true)], await _lists.ListAsync(A, ["Rime"]));
+        Assert.True(File.Exists(_lists.PathOf("Rime", "default")));
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_data)) Directory.Delete(_data, recursive: true);
