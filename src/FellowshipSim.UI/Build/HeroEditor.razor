@@ -27,28 +27,46 @@
 
 <div class="hero-grid">
     <Card Title="Hero">
-        <div class="hero">
-            @if (BuildCatalog.PortraitUrl(Build.Hero) is { } portrait)
+        <div class="hero-select" @onkeydown="OnHeroKeyDown">
+            <button type="button" class="hero-current @(_heroMenuOpen ? "open" : "")" aria-haspopup="listbox" aria-expanded="@(_heroMenuOpen ? "true" : "false")"
+                    @onclick="() => _heroMenuOpen = !_heroMenuOpen">
+                @if (BuildCatalog.PortraitUrl(Build.Hero) is { } portrait)
+                {
+                    <img src="@portrait" alt="" loading="lazy" />
+                }
+                <span class="hero-name">
+                    <strong>@Build.Hero</strong>
+                    <span class="meta">Change hero</span>
+                </span>
+                <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+            </button>
+            @if (_heroMenuOpen)
             {
-                <img src="@portrait" alt="" loading="lazy" />
-            }
-            <div class="hero-name">
-                <strong>@Build.Hero</strong>
-            </div>
-        </div>
-        <div class="heroes" role="group" aria-label="Hero">
-            @foreach (string hero in BuildCatalog.GameHeroes)
-            {
-                bool supported = _heroes.Contains(hero, StringComparer.OrdinalIgnoreCase);
-                bool picked = hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase);
-                <button @key="hero" type="button" class="hero-pick @(picked ? "picked" : "")" aria-pressed="@picked" disabled="@(!supported)"
-                        title="@(supported ? hero : $"{hero}: not in the engine yet")" @onclick="() => PickHero(hero)">
-                    @if (BuildCatalog.PortraitUrl(hero) is { } face)
+                <div class="hero-backdrop" @onclick="() => _heroMenuOpen = false"></div>
+                <div class="hero-menu" role="listbox" aria-label="Hero">
+                    <span class="group">In the engine</span>
+                    @foreach (string hero in BuildCatalog.GameHeroes.Where(IsSupported))
                     {
-                        <img src="@face" alt="" loading="lazy" />
+                        bool picked = hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase);
+                        <button @key="hero" type="button" role="option" class="hero-option @(picked ? "picked" : "")" aria-selected="@(picked ? "true" : "false")"
+                                @onclick="() => PickHeroFromMenu(hero)">
+                            <GameIcon Url="@BuildCatalog.PortraitUrl(hero)" Size="36" />
+                            <span class="option-name">@hero</span>
+                            @if (picked)
+                            {
+                                <svg class="check" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                            }
+                        </button>
                     }
-                    <span>@hero</span>
-                </button>
+                    <span class="group">Not in the engine yet</span>
+                    @foreach (string hero in BuildCatalog.GameHeroes.Where(h => !IsSupported(h)))
+                    {
+                        <button @key="hero" type="button" role="option" class="hero-option" aria-selected="false" disabled>
+                            <GameIcon Url="@BuildCatalog.PortraitUrl(hero)" Size="36" />
+                            <span class="option-name">@hero</span>
+                        </button>
+                    }
+                </div>
             }
         </div>
         <h3 class="section">Stats</h3>
@@ -213,6 +231,21 @@
     }
 
     private Task ClearTalents() => Set(Editor.ClearTalents);
+
+    private bool _heroMenuOpen;
+
+    private bool IsSupported(string hero) => _heroes.Contains(hero, StringComparer.OrdinalIgnoreCase);
+
+    private void OnHeroKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") _heroMenuOpen = false;
+    }
+
+    private Task PickHeroFromMenu(string hero)
+    {
+        _heroMenuOpen = false;
+        return PickHero(hero);
+    }
 
     private Task PickHero(string hero)
     {
