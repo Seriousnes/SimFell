@@ -62,8 +62,10 @@ dotnet run --project src/FellowshipSim.Desktop -c Release -f net10.0-windows10.0
 On macOS, use the target framework `net10.0-maccatalyst`. Its data folder is `FellowshipSim` in your local application
 data (`%LOCALAPPDATA%\FellowshipSim` on Windows).
 
-The desktop app has the same pages as the web app, each as a tab. A job (a sim or a replay) and a review page each open in their
-own tab, which you can close. A tab keeps what you entered while another tab shows.
+The desktop app has the same pages as the web app, each as a tab. Starting a sim opens its tab, which shows its progress
+and then its result. A replay started from **Import** opens its review page in a tab when it finishes. Picking a job
+from the **Jobs** list also opens its tab. You can close these tabs; the page tabs stay. A tab keeps what you entered while
+another tab shows.
 
 ## Sim a profile
 
