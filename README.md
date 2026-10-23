@@ -5,40 +5,43 @@ against real combat logs from [FellowshipLogs](https://www.fellowshiplogs.com).
 
 Supported heroes: **Rime**.
 
+SimFell runs in three ways. They share the same engine:
+
+- **Web app**: a Blazor page served by FellowshipSim.Service. The engine runs in its own process.
+- **Desktop app**: a .NET MAUI app for Windows and macOS. It shows the same pages and runs the engine in-process.
+- **`simfell`**: a command-line tool that sims a `.simc` profile in-process.
+
 ## You need
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js](https://nodejs.org) 22.12 or later and [pnpm](https://pnpm.io) 11, for the web page
-- The [Aspire CLI](https://aspire.dev), to run the services together
+- The [Aspire CLI](https://aspire.dev), to run the web app
+- The .NET MAUI workload (`dotnet workload install maui`), to build the desktop app
 - A FellowshipLogs API client ID and secret (from your FellowshipLogs account), to download fights
 
 ## Build
 
 ```
-cd src/FellowshipSim.Web
-pnpm install
-cd ../..
 dotnet build -c Release
 ```
 
-Building FellowshipSim.Service writes the page's types and requests, `src/FellowshipSim.Web/src/api.ts`, from the
-service's OpenAPI document (NSwag). The file is not committed. Run `dotnet build` before `pnpm run dev`, `typecheck` or
-`lint` in `src/FellowshipSim.Web`, and again after a change to the service's controllers or the types they return.
+On Windows the solution builds the desktop app for Windows; on macOS it builds it for Mac Catalyst.
 
-## Run the web page (download and replay fights)
+## Run the web app
 
 ```
 aspire run
 ```
 
-Aspire starts the engine, FellowshipSim.Service and the web page, and prints the dashboard address. Open the page at
-http://simfell.dev.localhost:5173, then:
+Aspire starts the engine and FellowshipSim.Service, and prints the dashboard address. Open the page at
+http://simfell.dev.localhost:5173.
+
+The **Replay** page downloads and replays fights:
 
 1. Enter your FellowshipLogs client ID and secret (saved in `data/settings.json`, which is not committed).
 2. Paste a FellowshipLogs report link and load it.
-3. Click a player. The fight is downloaded, replayed, and shows up in the review list.
+3. Click a player. The fight is downloaded and replayed as a job, then shows up in the review list.
 
-Or pass the credentials as environment variables instead:
+To pass the credentials as environment variables instead, set them before you start the app:
 
 ```
 # PowerShell
@@ -47,18 +50,49 @@ $env:FELLOWSHIPLOGS_CLIENT_ID = "..."; $env:FELLOWSHIPLOGS_CLIENT_SECRET = "..."
 export FELLOWSHIPLOGS_CLIENT_ID=... FELLOWSHIPLOGS_CLIENT_SECRET=...
 ```
 
-## The desktop app
+## Run the desktop app
 
 ```
-dotnet publish src/FellowshipSim.Desktop -c Release -r win-x64 -o publish
+dotnet run --project src/FellowshipSim.Desktop -c Release -f net10.0-windows10.0.19041.0
 ```
 
-`publish/FellowshipSim.exe` is the whole app in one file: the engine, FellowshipSim.Service and the page, in a window. Its
-data folder is `%LOCALAPPDATA%\FellowshipSim`; the environment variable `DataDirectory` sets another.
+On macOS, use the target framework `net10.0-maccatalyst`. The desktop app has the same pages as the web app. Its data
+folder is `FellowshipSim` in your local application data (`%LOCALAPPDATA%\FellowshipSim` on Windows).
+
+## Sim a profile
+
+A profile is a `.simc` file: the hero, stats, talents, traits, blessings, gear and its `actions` lines, which are the
+action list. Keep profiles in `data/profiles/<Hero>/`.
+
+The **Sim** page loads a profile file or pasted text, sets iterations, fight duration and targets, and adds the sim to
+the jobs list.
+
+The jobs list is at the top of every page. Each job shows its progress, and you can cancel or remove it. Two jobs
+run at once and the rest wait in the queue. A finished sim shows mean, minimum and maximum DPS, the standard deviation,
+and DPS for each ability. A finished replay links to its review page.
+
+### Sim from the command line
+
+```
+dotnet run --project src/FellowshipSim.Cli -c Release -- --profile data/profiles/Rime/PROFILE.simc --iterations 10000 --threads 8
+```
+
+Replace `PROFILE` with the name of your profile file.
+
+`simfell` writes the result to stdout and its progress to stderr. Ctrl+C cancels the sim. You can run several at once.
+Its options are the following:
+
+- `--profile <file>`: the profile to sim (required)
+- `--iterations <n>`: fights (default 100)
+- `--duration <seconds>`: length of each fight (default 300)
+- `--targets <n>`: targets in each fight (default 1)
+- `--seed <n>`: seed of the first fight; fight i has seed + i (default 1)
+- `--threads <n>`: most threads the fights use (default 80% of the logical processors)
+- `--format <text|json>`: a text summary, or the `SimResult` record as JSON (default `text`)
 
 ## Edit action lists
 
-The **Action lists** section of the web page edits an action list without writing its text. Each action has an
+The **Action lists** section of the Replay page edits an action list without writing its text. Each action has an
 ability, a condition, a target and a comment; drag the handle or use the arrows to change the order. Each name in a
 condition has a colour for its kind (buff, debuff, cooldown, resource), and a wavy underline marks a name the hero
 does not have. Conditions in the editor chain with `and`, `or` and `not`; the text has `&`, `|` and `!`. A `&`, `|`
@@ -96,7 +130,7 @@ The review list shows both. Free dice has its own page per fight (click its numb
 
 ## Run free dice
 
-Free dice runs from the tests, over fights you have already downloaded with the web page:
+Free dice runs from the tests, over fights you have already downloaded with the web app or the desktop app:
 
 ```
 # every downloaded fight, 1000 runs each (about 1.5 minutes)
@@ -108,7 +142,7 @@ FREEDICE_REVIEW=yMAZVJL9hTpFjqbC_fight7_p1 FREEDICE_ITERATIONS=1000 dotnet test 
 
 In PowerShell set the variables first: `$env:FREEDICE_REVIEW = "all"; $env:FREEDICE_ITERATIONS = "1000"`.
 `FREEDICE_SEED` sets the first seed (default 1, so runs repeat exactly; `random` for a new one).
-Refresh the web page afterwards to see the new numbers.
+Refresh the page afterwards to see the new numbers.
 
 ## Tests
 
@@ -122,18 +156,18 @@ Runs the engine tests and replays every downloaded fight, rewriting its review p
 
 | Folder | What's there |
 |---|---|
-| `src/FellowshipSim.Core` | The engine: simulation, heroes, talents, gear. Knows nothing about logs |
+| `src/FellowshipSim.Core` | The engine: simulation, heroes, talents, gear, `.simc` profiles (`Import/SimcProfile.cs`). Knows nothing about logs |
 | `src/FellowshipSim.Logs` | FellowshipLogs client, and the data folder's fights and reviews. Knows nothing about the engine |
 | `src/FellowshipSim.Engine` | The engine library: turning a logged fight into a replay script, exact replay and free dice, their pages (`Replay/`), `ISimEngine` and its in-process `LocalSimEngine`, and the sim job queue (`Jobs/`) |
 | `src/FellowshipSim.EngineServer` | The engine service: `LocalSimEngine` over HTTP. Only FellowshipSim.Service can call it (shared key) |
-| `src/FellowshipSim.UI` | The Blazor pages, layout and app services (`Services/`: saved action lists, FellowshipLogs settings, review jobs); `AddSimFellUI` registers the services |
-| `src/FellowshipSim.Service` | FellowshipSim.Service: FellowshipLogs access, imports, replay progress, saved action lists, review pages |
-| `src/FellowshipSim.Web` | The web page (React, TypeScript 7, Vite; `pnpm run lint` and `pnpm run format` run oxlint and oxfmt). Each component has its styles in `X.module.scss` beside `X.tsx`; `src/app.css` has the colours, fonts and element defaults, and `src/_design-system.scss` the rules several components share |
-| `src/FellowshipSim.AppHost` | Aspire: runs the engine, FellowshipSim.Service and the page together |
-| `src/FellowshipSim.Desktop` | The desktop app: both services and the page in one window (Photino) |
+| `src/FellowshipSim.UI` | Every page, component and style (Razor class library): the Replay page (`Replay/`), the Sim page, the jobs list (`Jobs/`), the action-list editor (`Apl/`) and the app services (`Services/`). Each component has its styles in `X.razor.css` beside `X.razor`; `wwwroot/css/app.css` has the colours, fonts and element defaults, and `wwwroot/css/design-system.css` the classes several components share. `AddSimFellUI` registers the services |
+| `src/FellowshipSim.Service` | The web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. `RemoteSimEngine` calls the engine service |
+| `src/FellowshipSim.AppHost` | Aspire: runs the engine service and FellowshipSim.Service together |
+| `src/FellowshipSim.Desktop` | The desktop app: FellowshipSim.UI in a .NET MAUI BlazorWebView, with the engine in-process |
+| `src/FellowshipSim.Cli` | `simfell`, the command-line sim |
 | `tests/FellowshipSim.Tests` | Tests, including the free-dice runner |
 | `docs/` | [Adding a hero](docs/ADDING_A_HERO.md) |
-| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `apls/` saved action lists, `settings.json` |
+| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `apls/` saved action lists, `profiles/` `.simc` profiles, `settings.json` |
 
 Game values are constants at the top of each class. Rime (`src/FellowshipSim.Core/Heroes/Rime`) is the complete
 example; its `NOTES.md` lists what the combat logs showed.

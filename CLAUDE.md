@@ -1,0 +1,91 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+SimFell is a combat simulator for *Fellowship* (.NET 10, C# preview language version). It checks itself against
+FellowshipLogs combat logs. Rime is the only hero. `README.md` has setup and use. `docs/ADDING_A_HERO.md` has the engine
+layout, the hook tables and the conventions for heroes, abilities, talents and gear. Read it before adding or changing
+game content.
+
+## Commands
+
+```
+# the solution (the desktop app needs the maui workload)
+dotnet build -c Release
+
+# the web app: engine and FellowshipSim.Service (http://simfell.dev.localhost:5173)
+aspire run
+
+# the desktop app on Windows
+dotnet run --project src/FellowshipSim.Desktop -c Release -f net10.0-windows10.0.19041.0
+
+# a sim from the command line
+dotnet run --project src/FellowshipSim.Cli -c Release -- --profile data/profiles/Rime/PROFILE.simc --iterations 1000 --threads 8
+
+# all tests (also replays every fight in data/fights and rewrites its review page)
+dotnet test -c Release
+
+# one test class or method
+dotnet test tests/FellowshipSim.Tests -c Release --filter "FullyQualifiedName~AplParserTests"
+
+# free dice over downloaded fights (FREEDICE_REVIEW=all or one review ID; FREEDICE_SEED, default 1)
+FREEDICE_REVIEW=all FREEDICE_ITERATIONS=1000 dotnet test tests/FellowshipSim.Tests -c Release --filter FreeDice
+```
+
+The AppHost starts its projects from `bin/Debug`, so `aspire run` or `dotnet run --project src/FellowshipSim.AppHost`
+needs a Debug build.
+
+Tests are xUnit. Replay and free-dice tests do nothing without fights in `data/fights` (downloaded through the web app
+or the desktop app).
+
+## Architecture
+
+- **FellowshipSim.Core** is the simulation and has no reference to logs or replays. `Engine/SimulationKernel` is the
+  event queue; `SimulationContext` is the state for one run; `MonteCarloSimulator` runs iterations. Every random
+  outcome (crit, proc, spread, travel time) goes through `IOutcomeSource`. `RandomOutcomeSource` rolls dice;
+  `LogOutcomeSource` (exact replay) and `FreeDiceOutcomeSource` (free dice) in FellowshipSim.Engine are the other two.
+  `Import/SimcProfile` reads and writes `.simc` profiles.
+- **Catalog** (`Core/Catalog.cs`) finds heroes, talents, traits, blessings, sets, legendaries and weapons by reflection
+  over their ID constants. A new class with its ID constant and a parameterless constructor needs no registration.
+- **Talents** attach to the hero in `Bind` through events and multiplier lists on `Hero` and `Ability`. Abilities never
+  check for talents.
+- **APL** (`Core/APL`) is a simc-style action-list grammar parsed with Superpower, plus a formatter.
+- **FellowshipSim.Engine** is a class library. `ISimEngine` is every call a frontend makes: heroes, action-list
+  vocabulary, checks, parse and write, reviews and sims. `LocalSimEngine` runs them in-process. Every argument and result
+  round-trips through JSON (`SimEngineContractTests`). `Replay/` has replay-script building from a logged fight, exact
+  replay, free dice, their HTML review pages, and everything a replay needs to read a log (`LogResources`,
+  `ProcEvidence`, `ClassTuningHistory`, `PartyBuffs`); none of it is in Core. `Jobs/SimJobQueue` runs sims and reviews
+  as jobs with progress, a few at once, the rest queued.
+- **FellowshipSim.EngineServer** is `LocalSimEngine` over HTTP. A sim streams NDJSON (`SimStreamLine`). Every request
+  needs the bearer `EngineKey`; AppHost generates it per run and gives it to FellowshipSim.Service alone.
+- **FellowshipSim.UI** (Razor class library) has every page, component and style, and the app services: `ReplayLibrary`
+  access, FellowshipLogs settings and report lookup, saved action lists (`data/apls/<hero>/<name>.simc`), review jobs
+  and the job queue. `AddSimFellUI` registers them; the host registers `ISimEngine` and `IReviewPages`. Pages run in
+  Interactive Server and in BlazorWebView, so no component uses `HttpContext` or static server rendering. The
+  action-list editor is in `Apl/`, with JS only for caret, drag and stored-mode work (`wwwroot/apl`).
+- **FellowshipSim.Service** is the web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. Its
+  `RemoteSimEngine` calls the engine server. It serves review pages at `/reviews`.
+- **FellowshipSim.Desktop** is a .NET MAUI Blazor Hybrid app (`net10.0-windows10.0.19041.0`, `net10.0-maccatalyst`)
+  hosting FellowshipSim.UI, with `LocalSimEngine` in-process and the data folder in local application data. Review
+  pages come from a WebView2 virtual host on Windows and a URL scheme handler on Mac Catalyst.
+- **FellowshipSim.Cli** is `simfell`: one `LocalSimEngine.SimulateAsync` of a `.simc` profile, result on stdout,
+  progress on stderr.
+- **FellowshipSim.Logs** is the FellowshipLogs client and the data folder's fights and reviews. It has no reference to
+  the engine.
+- Each component has its styles in `X.razor.css` beside `X.razor`. `wwwroot/css/app.css` in FellowshipSim.UI has
+  colours, fonts and element defaults; `wwwroot/css/design-system.css` has classes several components share.
+
+The desktop app and the CLI run fights in-process, so they copy the engine server's runtime options: `CallCountingDelayMs=0`, server GC
+on and concurrent GC off (Windows only on the desktop app, since Mac Catalyst has no server GC). Without them fights take
+about 2.5 times as long.
+
+`data/` is local and not committed: `fights/`, `scripts/`, `reviews/`, `apls/`, `profiles/`, `settings.json`.
+
+## Conventions
+
+- One class per file, named after the class.
+- Game values are public constants at the top of the class. Nothing reads game data at runtime. Each value's comment
+  names its source (tooltip text, game data record or combat logs); `UNVERIFIED` marks a value no log has confirmed.
+- Combat log IDs are game IDs plus an offset: effects + 1,000,000, talents + 2,000,000, traits + 3,000,000
+  (`Domain/LogIds.cs`). Logs match blessings by name.
+- `Heroes/Rime/NOTES.md` lists the mechanics the combat logs showed for Rime.
