@@ -1,4 +1,4 @@
-using FellowshipSim.Logs.Replay;
+using FellowshipSim.Engine.Replay;
 using FellowshipSim.Logs;
 using Xunit.Abstractions;
 
@@ -27,7 +27,9 @@ public class CombatLogReplayTests(ITestOutputHelper output)
             var raw = await library.GetRawFightAsync(null, reportCode, fightId);
             foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => ReplayDriver.SupportsHero(p.Hero)))
             {
-                var review = await library.RunReviewAsync(null, reportCode, fightId, player.Id);
+                var artifacts = ReplayReview.Run(raw, player.Id);
+                library.Save(artifacts);
+                var review = artifacts.Summary;
                 output.WriteLine($"{review.PlayerName} ({review.Hero}) {review.FightName}: {review.MatchedHits}/{review.LogHits} hits, " +
                                  $"damage {review.EngineDamage / review.LogDamage:P1} of log, {review.PassedSteps}/{review.TotalSteps} clean steps " +
                                  $"-> {Path.Combine(library.ReviewsDirectory, review.HtmlFile)}");

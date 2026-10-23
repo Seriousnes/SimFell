@@ -56,14 +56,26 @@ public class MonteCarloSimulator
     /// (<see cref="DefaultDegreeOfParallelism"/> when null). Fight i uses seed <paramref name="firstSeed"/> + i, so a run
     /// can be repeated exactly. <paramref name="keepFightDamage"/> keeps each fight's damage in
     /// <see cref="MonteCarloResult.IterationDamage"/>.
+    /// <para>
+    /// <paramref name="progress"/> receives the count of completed fights: once per batch of about 1% of the fights (at
+    /// most <see cref="MaxProgressBatch"/>) on each thread, and <paramref name="iterations"/> last. Counts only rise, and
+    /// no two calls overlap. <paramref name="cancellationToken"/> stops the run between fights with an
+    /// <see cref="OperationCanceledException"/>.
+    /// </para>
     /// </summary>
     public MonteCarloResult Run(SimTime duration, int iterations = 100, int targetCount = 1, int firstSeed = 1,
-        int? degreeOfParallelism = null, bool keepFightDamage = false)
+        int? degreeOfParallelism = null, bool keepFightDamage = false, Action<int>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         double totalSeconds = Math.Max(1.0, duration.TotalSeconds);
         double[]? fightDamage = keepFightDamage ? new double[iterations] : null;
         var total = new Totals();
-        var options = new ParallelOptions { MaxDegreeOfParallelism = degreeOfParallelism ?? DefaultDegreeOfParallelism };
+        var options = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = degreeOfParallelism ?? DefaultDegreeOfParallelism,
+            CancellationToken = cancellationToken,
+        };
+        var reporter = progress == null ? null : new ProgressReporter(progress, Math.Clamp(iterations / 100, 1, MaxProgressBatch));
 
         Parallel.For(0, iterations, options,
             () => (Worker: _idle.TryTake(out var worker) ? worker : NewWorker(), Totals: new Totals()),
@@ -72,6 +84,7 @@ public class MonteCarloSimulator
                 double damage = Fight(local.Worker, duration, targetCount, firstSeed + i, local.Totals.AbilityDamage);
                 local.Totals.Add(damage / totalSeconds);
                 if (fightDamage != null) fightDamage[i] = damage;
+                reporter?.FightDone(local.Totals);
                 return local;
             },
             local =>
@@ -79,6 +92,7 @@ public class MonteCarloSimulator
                 lock (total) total.Merge(local.Totals);
                 _idle.Add(local.Worker);
             });
+        reporter?.Finish(iterations);
 
         var abilityDps = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
         foreach (var (ability, totalDmg) in total.AbilityDamage)
@@ -158,12 +172,46 @@ public class MonteCarloSimulator
         return next;
     }
 
+    /// <summary>The most fights a thread runs between two progress reports.</summary>
+    public const int MaxProgressBatch = 1000;
+
     private sealed record Worker(Hero Hero, AplProgram Program);
+
+    /// <summary>
+    /// Completed fights of a run, sent to the progress callback per batch of a thread's fights. A fight costs one
+    /// comparison; a batch costs one interlocked add and one lock.
+    /// </summary>
+    private sealed class ProgressReporter(Action<int> progress, int batch)
+    {
+        private int _completed;
+        private int _reported;
+
+        public void FightDone(Totals local)
+        {
+            if (local.Count - local.Reported < batch) return;
+            local.Reported = local.Count;
+            Report(Interlocked.Add(ref _completed, batch));
+        }
+
+        public void Finish(int iterations) => Report(iterations);
+
+        private void Report(int completed)
+        {
+            lock (this)
+            {
+                if (completed <= _reported) return;
+                _reported = completed;
+                progress(completed);
+            }
+        }
+    }
 
     /// <summary>Running totals of fight DPS (Welford's mean and sum of squared deviations) and of each ability's damage.</summary>
     private sealed class Totals
     {
         public long Count;
+        /// <summary><see cref="Count"/> at this thread's last progress report.</summary>
+        public long Reported;
         public double Mean;
         public double M2;
         public double Min = double.PositiveInfinity;

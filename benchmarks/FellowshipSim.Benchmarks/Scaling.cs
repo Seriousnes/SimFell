@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FellowshipSim.Core.Engine;
-using FellowshipSim.Logs.Replay;
+using FellowshipSim.Engine.Replay;
 
 namespace FellowshipSim.Benchmarks;
 

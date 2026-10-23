@@ -16,13 +16,13 @@ src/FellowshipSim.Core/
   Catalog.cs      finds every class above by its ID: nothing to register by hand. The IDs (Id, WeaponAbilityId,
                   SetBonusIds, ItemIds, HeroName) are constants or lists of constants, read at build time
 
-src/FellowshipSim.Logs/
+src/FellowshipSim.Engine/
   Replay/         replaying combat logs and the review page, with everything only a replay needs (see section 5)
 ```
 
 The engine knows nothing about combat logs or replays: `FellowshipSim.Core` does not reference the replay. What a
 replay needs to read a log (how it reports resources, what proves a proc, buffs from other players, past balance
-values) lives in tables in `FellowshipSim.Logs/Replay`.
+values) lives in tables in `FellowshipSim.Engine/Replay`.
 
 Three rules hold everywhere:
 
@@ -208,7 +208,7 @@ All found by the catalog through their ID constants; add the file and it is used
 | Set bonus | `Customization/Sets` | `SetBonusIds` (one per main-stat variant of the set) |
 | Legendary | `Customization/Legendaries` | `HeroName` and the `ItemIds` that grant it |
 | Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | `WeaponAbilityId` |
-| Buff from another player | `FellowshipSim.Logs/Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's trait rank) |
+| Buff from another player | `FellowshipSim.Engine/Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's trait rank) |
 
 Percentage bonuses to crit, haste, expertise or spirit go in `hero.Stats.Bonus*` (they apply in replays too: logs only give
 ratings). Flat or percentage Main Stat bonuses apply only when `!hero.Stats.UsesSheetValues`, since a logged Main Stat
@@ -219,7 +219,7 @@ review then names it as unmodeled instead of an unknown ID.
 
 ## 5. Checking against combat logs
 
-A replay needs a few facts about how logs show your hero, kept in `FellowshipSim.Logs/Replay` (the engine never sees
+A replay needs a few facts about how logs show your hero, kept in `FellowshipSim.Engine/Replay` (the engine never sees
 them):
 
 | Table | What to add |
@@ -232,7 +232,7 @@ them):
 Buffs to compare with the log are found by themselves (`ModeledAuras`: every `AuraDef` constant on the hero and what it
 has).
 
-1. Run the web page (`dotnet run --project src/FellowshipSim.Server`), paste a log with your hero and click the player.
+1. Run the web page (`aspire run`), paste a log with your hero and click the player.
 2. Open the review. It shows damage and hits per ability against the log, every step where the engine disagreed, casts
    the engine would have refused, and anything the build uses that is not modeled.
 3. Fix the biggest differences first; a whole ability off by a constant factor usually means a missing talent, buff or

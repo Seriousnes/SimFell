@@ -4,7 +4,7 @@ using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
 using FellowshipSim.Benchmarks;
 using FellowshipSim.Core.Engine;
-using FellowshipSim.Logs.Replay;
+using FellowshipSim.Engine.Replay;
 
 // counters: the work done in one fight. sequence <targets>: fights one after another on one hero, with each one's time
 // and work. profile <mc|mc8|mc-idle|mc8-idle|freedice> <seconds>: fights back to back on one thread, for a trace.

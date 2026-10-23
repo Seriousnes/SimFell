@@ -1,7 +1,7 @@
 using System.Reflection;
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Engine;
-using FellowshipSim.Logs.Replay;
+using FellowshipSim.Engine.Replay;
 
 namespace FellowshipSim.Benchmarks;
 

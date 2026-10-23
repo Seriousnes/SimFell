@@ -1,6 +1,7 @@
 using FellowshipSim.Core;
 using FellowshipSim.Core.APL;
 using FellowshipSim.Core.APL.Expressions;
+using FellowshipSim.Core.Customization.WeaponAbilities;
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime;
@@ -152,6 +153,17 @@ public class AplEditorTests
     }
 
     [Fact]
+    public void Cooldown_Of_The_Weapon_Ability_Is_Up_Until_It_Is_Cast()
+    {
+        var (hero, ctx) = Fight(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000, WeaponAbilityId = Chronoshift.AbilityId }, 100);
+        var up = AplParser.ParseExpression("cooldown.chronoshift.up");
+        Assert.True(up.Evaluate(hero, ctx));
+        Assert.True(AplParser.ParseActionLine("chronoshift")!.Execute(hero, ctx));
+        ctx.RunUntil(SimTime.FromSeconds(5));
+        Assert.False(up.Evaluate(hero, ctx));
+    }
+
+    [Fact]
     public void Document_Round_Trips_Text()
     {
         const string text = """
@@ -288,10 +300,18 @@ public class AplEditorTests
         var vocabulary = AplVocabulary.For("rime");
         Assert.Equal("Rime", vocabulary.Hero);
         var (hero, ctx) = Fight(100);
-        Assert.Equal(hero.Abilities.Count, vocabulary.Abilities.Count);
-        foreach (var ability in vocabulary.Abilities)
+        foreach (var ability in hero.Abilities)
         {
-            Assert.Equal(ability.Name, new AplAction { AbilityName = ability.Slug }.ResolveAbility(hero)?.Name);
+            var name = new AplName(AplNames.Slug(ability.Name), ability.Name);
+            Assert.Contains(name, vocabulary.Abilities);
+            Assert.Equal(ability.Name, new AplAction { AbilityName = name.Slug }.ResolveAbility(hero)?.Name);
+        }
+        // Every weapon ability, whichever weapon the hero has.
+        foreach (var weapon in Catalog.AllWeapons)
+        {
+            weapon.Equip(Catalog.CreateHero("Rime"));
+            Assert.Contains(vocabulary.Abilities, a => a.Name == weapon.Ability!.Name);
+            Assert.DoesNotContain(AplNames.Slug(weapon.Ability!.Name), vocabulary.RepeatableAbilities);
         }
         Assert.Contains(new AplName("winters_blessing", WintersBlessing.AbilityName), vocabulary.Abilities);
         Assert.Contains(vocabulary.Resources, r => r.Slug == "worb");
@@ -313,6 +333,8 @@ public class AplEditorTests
     [InlineData("buff.glacial_assault.stack", AplTokenKind.Buff)]
     [InlineData("debuff.glacial_assault.remains", AplTokenKind.Debuff)]
     [InlineData("cooldown.winters_blessing.ready", AplTokenKind.Cooldown)]
+    [InlineData("cooldown.chronoshift.up", AplTokenKind.Cooldown)]
+    [InlineData("cooldown.icicles_of_anzhyr.ready", AplTokenKind.Cooldown)]
     [InlineData("buff.glacial_assault.colour", AplTokenKind.Unknown)]
     [InlineData("buff.no_such_aura.up", AplTokenKind.Unknown)]
     [InlineData("cooldown.no_such_ability.ready", AplTokenKind.Unknown)]
@@ -322,6 +344,66 @@ public class AplEditorTests
         var (kind, problem) = AplVocabulary.For("Rime").Classify(new PropertyExpression(path));
         Assert.Equal(expected, kind);
         Assert.Equal(expected == AplTokenKind.Unknown, problem != null);
+    }
+
+    [Fact]
+    public void Condition_Rows_Keep_Each_Join_And_Group_Parentheses()
+    {
+        var rows = AplCondition.Rows(AplParser.ParseExpression("a & b | c"))!;
+        Assert.Equal([null, "and", "or"], rows.Select(r => r.Join));
+        Assert.Equal(["a", "b", "c"], rows.Select(r => r.Path));
+
+        rows = AplCondition.Rows(AplParser.ParseExpression("worb<5&!(buff.x.up|buff.y.up)"))!;
+        Assert.Equal(2, rows.Count);
+        Assert.Equal(new AplConditionItem(null, false, "worb", "<", 5), rows[0]);
+        Assert.True(rows[1] is { Join: "and", Not: true, Items.Count: 2 });
+        Assert.Equal(["buff.x.up", "buff.y.up"], rows[1].Items!.Select(r => r.Path));
+        Assert.Equal("or", rows[1].Items![1].Join);
+
+        Assert.Equal(new AplConditionItem(null, true, "worb", ">=", 5), Assert.Single(AplCondition.Rows(AplParser.ParseExpression("!(worb>=5)"))!));
+        Assert.Equal(new AplConditionItem(null, true, "buff.x.up"), Assert.Single(AplCondition.Rows(AplParser.ParseExpression("!buff.x.up"))!));
+        Assert.Equal(-1, Assert.Single(AplCondition.Rows(AplParser.ParseExpression("worb>=-1"))!).Value);
+    }
+
+    [Theory]
+    [InlineData("worb+1>=5")]
+    [InlineData("worb>=spirit")]
+    [InlineData("3")]
+    [InlineData("!worb>=5")]
+    public void Condition_Rows_Are_Null_For_Parts_With_No_Row(string text)
+    {
+        Assert.Null(AplCondition.Rows(AplParser.ParseExpression(text)));
+        Assert.Null(AplVocabulary.For("Rime").Check(text).Condition);
+    }
+
+    // The editor writes rows back as text this way: each join as its word, a group in parentheses, 'not' before a value
+    // or a group, and a negated comparison in parentheses.
+    [Theory]
+    [InlineData("(spirit >= 70 or buff.ice_blitz.up) and (cooldown.cold_snap.charges = 0 or worb >= 5) and target.time_to_die >= 10")]
+    [InlineData("a and b or c and not (d or e)")]
+    [InlineData("not (worb >= 5) or not buff.x.up")]
+    public void Condition_Rows_Written_Back_Read_The_Same(string text)
+    {
+        static string Write(IEnumerable<AplConditionItem> items) => string.Concat(items.Select(item =>
+        {
+            string value = item.Items != null ? $"({Write(item.Items)})"
+                : item.Comparison != null ? $"{item.Path} {item.Comparison} {item.Value}" : item.Path!;
+            string negated = !item.Not ? value : item.Comparison != null ? $"not ({value})" : $"not {value}";
+            return item.Join == null ? negated : $" {item.Join} {negated}";
+        }));
+
+        var rows = AplCondition.Rows(AplParser.ParseExpression(text))!;
+        Assert.Equal(text, Write(rows));
+        Assert.Equal(rows, AplCondition.Rows(AplParser.ParseExpression(Write(rows)))!, new ConditionComparer());
+    }
+
+    private sealed class ConditionComparer : IEqualityComparer<AplConditionItem>
+    {
+        public bool Equals(AplConditionItem? x, AplConditionItem? y) =>
+            x! with { Items = null } == y! with { Items = null }
+            && (x.Items == null ? y.Items == null : y.Items != null && x.Items.SequenceEqual(y.Items, this));
+
+        public int GetHashCode(AplConditionItem obj) => 0;
     }
 
     [Fact]
@@ -348,9 +430,12 @@ public class AplEditorTests
         Assert.Equal(2, badCharacter.ErrorStart);
     }
 
-    private static (Hero Hero, SimulationContext Ctx) Fight(params double[] healthPercents)
+    private static (Hero Hero, SimulationContext Ctx) Fight(params double[] healthPercents) =>
+        Fight(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000 }, healthPercents);
+
+    private static (Hero Hero, SimulationContext Ctx) Fight(CharacterBuild build, params double[] healthPercents)
     {
-        var hero = HeroImporter.Import(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000 });
+        var hero = HeroImporter.Import(build);
         var ctx = new SimulationContext(hero);
         hero.ResetForIteration();
         hero.BeginFight(ctx);

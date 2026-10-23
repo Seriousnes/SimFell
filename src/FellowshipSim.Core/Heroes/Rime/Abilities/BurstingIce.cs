@@ -23,7 +23,7 @@ public class BurstingIce : RimeAbility
     /// <summary>Combat logs: pulses lose damage as sqrt(5/N) beyond 5 targets.</summary>
     public const double TargetThreshold = 5;
 
-    /// <summary>The debuff on the enemy (logged; the engine tracks the pulses itself).</summary>
+    /// <summary>The debuff on the enemy. Action lists read it; the pulses run on their own timer.</summary>
     public static readonly AuraDef Debuff = AuraDef.Effect("Bursting Ice", DebuffEffectId, DurationSeconds);
 
     /// <summary>"While Bursting Ice is active on an enemy you gain Winter's Embrace, causing you to deal 20% more damage."</summary>
@@ -82,6 +82,7 @@ public class BurstingIce : RimeAbility
 
         _activeDebuffs++;
         hero.Auras.Apply(WintersEmbrace, ctx.CurrentTime);
+        target?.Auras.Apply(Debuff, ctx.CurrentTime);
 
         PeriodicEffect.BeginHasted(ctx, hero, Name, DurationSeconds, PulsePeriodSeconds, tickOnStart: false, partialFinalTick: true,
             // Combat logs (10 Rime logs, 526 debuffs): the final pulse deals the fraction of a pulse period left when the

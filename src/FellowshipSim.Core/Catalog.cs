@@ -39,6 +39,17 @@ public static partial class Catalog
 
     public static Legendary? CreateLegendary(string hero, int itemId) => NewLegendary(hero.ToLowerInvariant(), itemId);
 
+    /// <summary>One instance of every trait, at rank 1.</summary>
+    public static IEnumerable<Trait> AllTraits => TraitClasses.Select(t => (Trait)Activator.CreateInstance(t)!);
+
+    /// <summary>One instance of every blessing, at rank 1.</summary>
+    public static IEnumerable<Blessing> AllBlessings => BlessingClasses.Select(t => (Blessing)Activator.CreateInstance(t)!);
+
+    /// <summary>One instance of every weapon.</summary>
+    public static IEnumerable<Weapon> AllWeapons => WeaponClasses.Select(t => (Weapon)Activator.CreateInstance(t)!);
+
+    public static IEnumerable<SetBonus> AllSets => SetClasses.Select(t => (SetBonus)Activator.CreateInstance(t)!);
+
     /// <summary>The trait, blessing, weapon, set and legendary classes <paramref name="hero"/> can have.</summary>
     public static IEnumerable<Type> GearTypes(string hero) =>
         TraitClasses.Concat(BlessingClasses).Concat(WeaponClasses).Concat(SetClasses)

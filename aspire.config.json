@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "src/FellowshipSim.AppHost/FellowshipSim.AppHost.csproj"
+  }
+}

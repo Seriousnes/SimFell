@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using FellowshipSim.Logs.Replay;
 
 namespace FellowshipSim.Logs;
 
@@ -28,6 +27,17 @@ public sealed record ReviewSummary(
     /// <summary>The latest free-dice run of the same fight, if any.</summary>
     public FreeDiceSummary? FreeDice { get; init; }
 }
+
+/// <summary>A free-dice run of a fight, as shown next to its review (saved as &lt;review&gt;.freedice.json).</summary>
+public sealed record FreeDiceSummary(
+    int Runs, double LogDamage, double EngineMean, double Engine5, double Engine95, double LogPercentile, DateTime CreatedAt);
+
+/// <summary>
+/// A replay review's files: the replay script, the review page, the review as plain text (issues grouped by kind, and the
+/// damage calibration per ability), and every engine hit with the log hit it matched, for checking damage formulas in a
+/// spreadsheet.
+/// </summary>
+public sealed record ReviewArtifacts(ReviewSummary Summary, string ScriptJson, string Html, string SummaryText, string HitsCsv);
 
 /// <summary>
 /// The local library of fights and replay reviews, kept in a data folder:
@@ -59,82 +69,36 @@ public sealed class ReplayLibrary
     public async Task<JsonObject> GetRawFightAsync(FellowshipLogsClient? client, string reportCode, int fightId,
         IProgress<string>? progress = null, CancellationToken ct = default)
     {
+        string path = await GetRawFightFileAsync(client, reportCode, fightId, progress, ct);
+        return JsonNode.Parse(await File.ReadAllTextAsync(path, ct))!.AsObject();
+    }
+
+    /// <summary>The path of the fight's raw events, downloaded from FellowshipLogs the first time.</summary>
+    public async Task<string> GetRawFightFileAsync(FellowshipLogsClient? client, string reportCode, int fightId,
+        IProgress<string>? progress = null, CancellationToken ct = default)
+    {
         string path = RawFightPath(reportCode, fightId);
         if (File.Exists(path))
         {
             progress?.Report("Using the downloaded fight");
-            return JsonNode.Parse(await File.ReadAllTextAsync(path, ct))!.AsObject();
+            return path;
         }
         if (client == null) throw new FellowshipLogsException("Set your FellowshipLogs API client ID and secret to download fights.");
         progress?.Report("Downloading the fight from FellowshipLogs");
         var raw = await client.DownloadFightAsync(reportCode, fightId, progress, ct);
         await File.WriteAllTextAsync(path, raw.ToJsonString(), ct);
-        return raw;
+        return path;
     }
 
-    /// <summary>Downloads (if needed) the fight, builds the player's replay script, replays it and writes the review.</summary>
-    public async Task<ReviewSummary> RunReviewAsync(FellowshipLogsClient? client, string reportCode, int fightId, int playerId,
-        ReplayOptions? options = null, IProgress<string>? progress = null, CancellationToken ct = default)
+    /// <summary>Writes a review's replay script, page, summary, text and hits.</summary>
+    public void Save(ReviewArtifacts review)
     {
-        var raw = await GetRawFightAsync(client, reportCode, fightId, progress, ct);
-        var player = ReplayScriptBuilder.Players(raw).FirstOrDefault(p => p.Id == playerId)
-            ?? throw new ArgumentException($"Player {playerId} did not take part in fight {fightId}.");
-        if (!ReplayDriver.SupportsHero(player.Hero))
-        {
-            throw new NotSupportedException($"{player.Name} plays {player.Hero}, which is not supported yet (supported: {string.Join(", ", ReplayDriver.SupportedHeroes)}).");
-        }
-
-        progress?.Report("Building the replay script");
-        string id = ReviewId(reportCode, fightId, playerId);
-        var scriptJson = ReplayScriptBuilder.Build(raw, playerId).ToJsonString();
-        await File.WriteAllTextAsync(Path.Combine(ScriptsDirectory, $"{id}.replay.json"), scriptJson, ct);
-
-        progress?.Report("Replaying the fight");
-        var summary = Review(ReplayScript.FromJson(scriptJson), playerId, options);
-        progress?.Report("Done");
-        return summary;
-    }
-
-    /// <summary>Replays a script and writes its review page and summary.</summary>
-    public ReviewSummary Review(ReplayScript script, int playerId, ReplayOptions? options = null)
-    {
-        options ??= new ReplayOptions { StopOnFirstFailure = false };
-        var hero = ReplayDriver.CreateHero(script);
-        var result = new ReplayDriver(hero, script, options).Run();
-
-        string id = ReviewId(script.ReportCode, script.FightId, playerId);
-        var (engineDamage, logDamage) = ReplayReportWriter.DamageTotals(result);
-        var summary = new ReviewSummary(id, script.ReportCode, script.FightId, script.FightName, script.FightDate, playerId,
-            result.PlayerName, script.Player.Hero, result.PassedSteps, result.Steps.Count, result.MatchedLogHits, result.LogHits,
-            engineDamage, logDamage, result.ForcedCasts.Count, DateTime.UtcNow);
-
-        const string navigation = "<nav class=\"fightnav\"><a href=\"/\">&larr; All reviews</a></nav>";
-        ReplayReportWriter.Write(result, Path.Combine(ReviewsDirectory, summary.HtmlFile), navigation);
-        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.json"), JsonSerializer.Serialize(summary, Indented));
-        // The same review as plain text: issues grouped by kind, and the damage calibration per ability.
-        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.txt"), ReplayReportWriter.Summary(result));
-        // Every engine hit with the log hit it matched, for checking damage formulas in a spreadsheet.
-        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.hits.csv"), HitsCsv(result));
-        return summary;
-    }
-
-    private static string HitsCsv(ReplayResult result)
-    {
-        var sb = new System.Text.StringBuilder("time,ability_id,ability,target,engine_amount,engine_crit,crit_chance,log_amount,log_crit,log_time,tick_fraction,player_auras\n");
-        var inv = System.Globalization.CultureInfo.InvariantCulture;
-        foreach (var h in result.AllHits)
-        {
-            string name = h.AbilityName.Replace(',', ' ');
-            // The engine's buffs on the player when the hit landed: log IDs, then engine-only auras by name.
-            string auras = h.Context == null ? "" : string.Join(" ",
-                h.Context.AuraLogIds.Select(id => id.ToString(inv)).Concat(h.Context.InternalAuras.Select(n => n.Replace(' ', '_').Replace(',', '_'))));
-            sb.Append(string.Format(inv, "{0:F3},{1},{2},{3},{4:F1},{5},{6:F4},{7},{8},{9},{10:F3},{11}\n",
-                h.EngineTime, h.AbilityId, name, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}",
-                h.EngineAmount, h.Crit ? 1 : 0, h.CritChance,
-                h.Log == null ? "" : h.Log.TotalAmount.ToString("F0", inv), h.Log == null ? "" : (h.Log.Crit ? "1" : "0"),
-                h.Log == null ? "" : h.Log.Time.ToString("F3", inv), h.TickFraction, auras));
-        }
-        return sb.ToString();
+        string id = review.Summary.Id;
+        File.WriteAllText(Path.Combine(ScriptsDirectory, $"{id}.replay.json"), review.ScriptJson);
+        File.WriteAllText(Path.Combine(ReviewsDirectory, review.Summary.HtmlFile), review.Html);
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.json"), JsonSerializer.Serialize(review.Summary, Indented));
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.txt"), review.SummaryText);
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.hits.csv"), review.HitsCsv);
     }
 
     /// <summary>Every review run so far, newest first.</summary>

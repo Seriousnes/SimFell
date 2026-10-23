@@ -1,0 +1,5 @@
+allowBuilds:
+  # Only sass's --watch command uses it. Vite compiles the styles.
+  "@parcel/watcher": false
+minimumReleaseAgeExclude:
+  - sass@1.106.1

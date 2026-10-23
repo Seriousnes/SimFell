@@ -8,7 +8,7 @@ public class GlacialBlast : RimeAbility
     public const int AbilityId = 1028;
     public const string AbilityName = "Glacial Blast";
     public const double Coefficient = 10.24;
-    public const double CastTimeSeconds = 2.0;
+    public const double CastTimeSeconds = 1.5;
     public const int DefaultWinterOrbCost = 2;
 
     /// <summary>Talent 38 Glacial Assault: "deals 40% more damage" at 4 stacks.</summary>

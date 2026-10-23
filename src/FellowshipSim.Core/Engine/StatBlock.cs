@@ -119,6 +119,22 @@ public static class StatDiminishingReturns
 
     public static double FromRating(double rating) => Apply(rating * PercentPerRating);
 
+    /// <summary>The rating whose percentage is <paramref name="percent"/>: the inverse of <see cref="FromRating"/>.</summary>
+    public static double ToRating(double percent)
+    {
+        double unmitigated = Math.Min(percent, Breakpoints[0]) / Multipliers[0];
+        double output = Breakpoints[0];
+        int i = 1;
+        for (; i < Breakpoints.Length && percent > output; i++)
+        {
+            double segment = Math.Min(percent, Breakpoints[i]) - output;
+            unmitigated += segment / Multipliers[i];
+            output += segment;
+        }
+        if (percent > output) unmitigated += (percent - output) / Multipliers[^1];
+        return unmitigated / PercentPerRating;
+    }
+
     public static double CalculateEffectiveExpertise(double rating, double flatBonus = 0.0) => FromRating(rating) + flatBonus;
 }
 

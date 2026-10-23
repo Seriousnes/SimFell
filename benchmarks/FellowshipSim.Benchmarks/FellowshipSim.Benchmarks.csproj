@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\FellowshipSim.Core\FellowshipSim.Core.csproj" />
-    <ProjectReference Include="..\..\src\FellowshipSim.Logs\FellowshipSim.Logs.csproj" />
+    <ProjectReference Include="..\..\src\FellowshipSim.Engine\FellowshipSim.Engine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

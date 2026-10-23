@@ -34,19 +34,23 @@ public enum AplTokenKind
 public sealed record AplTokenSpan(int Start, int Length, AplTokenKind Kind, string? Problem = null);
 
 /// <summary>
-/// An expression's tokens, its parse error (with the error's offset in the text) when it does not parse, and the text with
-/// <c>&amp;</c>, <c>|</c> and <c>!</c> written <c>and</c>, <c>or</c> and <c>not</c> (<see cref="InWords"/>, null when it does not tokenize).
+/// An expression's tokens, its parse error (with the error's offset in the text) when it does not parse, the text with
+/// <c>&amp;</c>, <c>|</c> and <c>!</c> written <c>and</c>, <c>or</c> and <c>not</c> (<see cref="InWords"/>, null when it does not tokenize),
+/// and its builder rows (<see cref="Condition"/>, null when it does not parse or has a part with no row).
 /// </summary>
-public sealed record AplExpressionCheck(IReadOnlyList<AplTokenSpan> Tokens, string? Error, int? ErrorStart, string? InWords = null);
+public sealed record AplExpressionCheck(
+    IReadOnlyList<AplTokenSpan> Tokens, string? Error, int? ErrorStart, string? InWords = null,
+    IReadOnlyList<AplConditionItem>? Condition = null);
 
 /// <summary>
-/// The names an action list for one hero can use: the hero's abilities, resources and auras (its own, its abilities',
-/// every talent in its tree, and all gear it can wear), with the named values and scoped properties
-/// <see cref="PropertyExpression"/> reads.
+/// The names an action list for one hero can use: the hero's abilities (with every weapon ability), resources and auras
+/// (its own, its abilities', every talent in its tree, and all gear it can wear), with the named values and scoped
+/// properties <see cref="PropertyExpression"/> reads.
 /// </summary>
 public sealed class AplVocabulary
 {
-    private readonly Hero _hero;
+    /// <summary>The hero <see cref="Classify"/> finds abilities on; null in a vocabulary read from JSON.</summary>
+    private readonly Hero? _hero;
 
     public string Hero { get; }
     public IReadOnlyList<AplName> Abilities { get; }
@@ -54,6 +58,14 @@ public sealed class AplVocabulary
     public IReadOnlyList<AplName> Auras { get; }
     public IReadOnlyCollection<string> Named => PropertyExpression.Named.Keys.ToList();
     public IReadOnlyDictionary<string, IReadOnlyCollection<string>> Scopes => PropertyExpression.Scopes;
+    /// <summary>The names each scope in <see cref="Scopes"/> reads: auras for buff and debuff, abilities for cooldown.</summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<AplName>> ScopeNames => new Dictionary<string, IReadOnlyList<AplName>>
+    {
+        [PropertyExpression.BuffScope] = Auras,
+        [PropertyExpression.DebuffScope] = Auras,
+        [PropertyExpression.CooldownScope] = Abilities,
+    };
+    public string ResourcePrefix => PropertyExpression.ResourcePrefix;
     public IReadOnlyList<AplTargetSelectionName> TargetSelections { get; } = Enum.GetValues<AplTargetSelection>()
         .Select(s => new AplTargetSelectionName(s, AplTargetIf.Prefix(s), AplTargetIf.Label(s))).ToList();
     /// <summary><c>run_action_list</c> and <c>call_action_list</c>.</summary>
@@ -64,6 +76,21 @@ public sealed class AplVocabulary
     /// no cast requirement of their own (<see cref="Ability.CanCast"/> not overridden), ready on every decision.
     /// </summary>
     public IReadOnlyList<string> RepeatableAbilities { get; }
+
+    /// <summary>
+    /// A vocabulary read from JSON: the hero's names without the hero. <see cref="Check"/> and <see cref="Classify"/> need
+    /// the hero, so only <see cref="For"/> gives a vocabulary that checks expressions.
+    /// </summary>
+    [JsonConstructor]
+    public AplVocabulary(string hero, IReadOnlyList<AplName> abilities, IReadOnlyList<AplName> resources, IReadOnlyList<AplName> auras,
+        IReadOnlyList<string> repeatableAbilities)
+    {
+        Hero = hero;
+        Abilities = abilities;
+        Resources = resources;
+        Auras = auras;
+        RepeatableAbilities = repeatableAbilities;
+    }
 
     private AplVocabulary(string heroName, Hero hero)
     {
@@ -87,11 +114,15 @@ public sealed class AplVocabulary
             .DistinctBy(n => n.Slug).OrderBy(n => n.Slug, StringComparer.Ordinal).ToList();
     }
 
-    /// <summary>The vocabulary of <paramref name="heroName"/> (a name in <see cref="Catalog.Heroes"/>), with every talent of its tree.</summary>
+    /// <summary>
+    /// The vocabulary of <paramref name="heroName"/> (a name in <see cref="Catalog.Heroes"/>), with every talent of its tree
+    /// and every weapon ability.
+    /// </summary>
     public static AplVocabulary For(string heroName)
     {
         var tree = Catalog.CreateHero(heroName).TalentTreeSlots;
         var hero = HeroImporter.Import(new CharacterBuild { Hero = heroName, Talents = tree.Select(s => s.TalentId).ToList() });
+        foreach (var weapon in Catalog.AllWeapons) weapon.Equip(hero);
         return new AplVocabulary(Catalog.Heroes.Keys.First(k => k.Equals(heroName, StringComparison.OrdinalIgnoreCase)), hero);
     }
 
@@ -109,7 +140,8 @@ public sealed class AplVocabulary
         }
         if (property.Scope == PropertyExpression.CooldownScope)
         {
-            return AplNames.FindAbility(_hero, property.Name!) != null
+            var hero = _hero ?? throw new InvalidOperationException($"This vocabulary of {Hero} was read from JSON and has no hero to check against.");
+            return AplNames.FindAbility(hero, property.Name!) != null
                 ? (AplTokenKind.Cooldown, null)
                 : (AplTokenKind.Unknown, $"{Hero} has no ability named `{property.Name}`.");
         }
@@ -141,8 +173,8 @@ public sealed class AplVocabulary
 
         try
         {
-            AplParser.ParseExpression(text);
-            return new AplExpressionCheck(tokens, null, null, inWords);
+            var expression = AplParser.ParseExpression(text);
+            return new AplExpressionCheck(tokens, null, null, inWords, AplCondition.Rows(expression));
         }
         catch (ParseException e)
         {

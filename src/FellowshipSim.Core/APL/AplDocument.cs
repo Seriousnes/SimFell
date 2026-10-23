@@ -21,6 +21,15 @@ public sealed record AplDocumentAction(
 /// <summary>A problem with one field of one action: its index in the list, the field ("condition"), and the parse error.</summary>
 public sealed record AplDocumentError(int Action, string Field, string Message);
 
+/// <summary>Text of an action list, or of one expression.</summary>
+public sealed record AplText(string Text);
+
+/// <summary>The actions of an action list, in order.</summary>
+public sealed record AplDocumentActions(IReadOnlyList<AplDocumentAction> Actions);
+
+/// <summary>The text of an action list's actions (null when a field does not parse), and the problem with each field.</summary>
+public sealed record AplDocumentText(string? Text, IReadOnlyList<AplDocumentError> Errors);
+
 /// <summary>Converts between action-list text and the actions the visual editor holds.</summary>
 public static class AplDocument
 {
