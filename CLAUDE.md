@@ -13,7 +13,7 @@ game content.
 # the solution (the desktop app needs the maui workload)
 dotnet build -c Release
 
-# the web app: engine and FellowshipSim.Service (http://simfell.dev.localhost:5173)
+# the web app: engine and FellowshipSim.Service (http://simfell.dev.localhost:5000)
 aspire run
 
 # the desktop app on Windows

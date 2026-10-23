@@ -13,7 +13,7 @@ builder.AddProject<Projects.FellowshipSim_Service>("service")
     .WithEndpoint("http", e =>
     {
         e.TargetHost = "simfell.dev.localhost";
-        e.Port = 5173;
+        e.Port = 5000;
     })
     .WithExternalHttpEndpoints();
 

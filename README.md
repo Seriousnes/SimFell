@@ -33,8 +33,9 @@ aspire run
 ```
 
 Aspire starts the engine and FellowshipSim.Service, and prints the dashboard address. Open the app at
-http://simfell.dev.localhost:5173. It opens on the **Sim** page. The menu has the other pages: **Import**, **Reviews**,
-**Action lists** and **Setup**.
+http://simfell.dev.localhost:5000. It opens on the **Sim** page. The top bar has the other sections, **Log Replay**
+(import a fight, and the reviews) and **APL Editor**; the **Logs API** badge opens the settings. On macOS, port 5000 is
+taken by AirPlay Receiver: turn it off in System Settings > General > AirDrop & Handoff.
 
 Each browser is a visitor, known by a cookie the app sets on the first visit. Every tab of that browser is the same
 visitor. A visitor sees only their own sims, replays, reviews and action lists, and cancels only their own jobs. All
