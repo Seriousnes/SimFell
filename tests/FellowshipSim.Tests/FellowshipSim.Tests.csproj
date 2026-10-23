@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FellowshipSim.Core\FellowshipSim.Core.csproj" />
     <ProjectReference Include="..\..\src\FellowshipSim.Engine\FellowshipSim.Engine.csproj" />
+    <ProjectReference Include="..\..\src\FellowshipSim.UI\FellowshipSim.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
