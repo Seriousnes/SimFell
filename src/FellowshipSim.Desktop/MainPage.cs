@@ -33,13 +33,18 @@ public sealed class MainPage : ContentPage
         Content = view;
     }
 
-    // A review page in an iframe loads in the web view. A link to one leaves the app, and the system browser has no route
-    // to the web view's review address, so the link opens the file itself.
+    // Review addresses in the web view. On Windows this event sees only the top frame, so an iframe loads without it and a
+    // link opens the file itself: the system browser has no route to the virtual host. On Mac Catalyst the event also sees
+    // each iframe, and only the web view has the URL scheme, so every review address stays in the web view.
     private void OnUrlLoading(object? sender, UrlLoadingEventArgs e)
     {
         if (_reviews.File(e.Url) is not { } path)
             return;
+#if MACCATALYST
+        e.UrlLoadingStrategy = UrlLoadingStrategy.OpenInWebView;
+#else
         e.UrlLoadingStrategy = UrlLoadingStrategy.CancelLoad;
         _ = Launcher.OpenAsync(new OpenFileRequest(Path.GetFileName(path), new ReadOnlyFile(path)));
+#endif
     }
 }
