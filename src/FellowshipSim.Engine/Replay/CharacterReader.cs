@@ -4,7 +4,7 @@ using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Import;
 
-namespace FellowshipSim.Logs;
+namespace FellowshipSim.Engine.Replay;
 
 /// <summary>
 /// Reads the build a fight was played with from the player's combatantinfo event: character-sheet stats, and talents,
