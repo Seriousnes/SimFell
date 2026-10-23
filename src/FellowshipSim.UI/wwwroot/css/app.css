@@ -1,4 +1,4 @@
-/* The page's colours, fonts and element defaults. Each component's own rules are in its X.module.scss. */
+/* The page's colours, fonts and element defaults. Each component's own rules are in its X.razor.css; rules several components share are in design-system.css. */
 
 :root {
   --bg: #f6f7f9;
