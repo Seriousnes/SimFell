@@ -72,32 +72,6 @@
   gap: 10px;
 }
 
-.actions ::deep .settings {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--muted);
-}
-
-.actions ::deep .settings:hover,
-.actions ::deep .settings.active {
-  color: var(--heading);
-  border-color: var(--accent);
-}
-
-.actions ::deep .settings svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
 .main {
   max-width: 1280px;
   margin: 0 auto;

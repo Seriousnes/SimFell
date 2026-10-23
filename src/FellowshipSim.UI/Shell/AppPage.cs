@@ -17,7 +17,7 @@ public sealed record AppPage(string Title, Type Component)
     /// <summary>The menu, in order. The first page opens when the app starts.</summary>
     public static IReadOnlyList<AppPage> All { get; } = [Sim, LogReplay, AplEditor, Setup];
 
-    /// <summary>The sections of the web app's top bar; <see cref="Setup"/> opens from its settings button.</summary>
+    /// <summary>The sections of the web app's top bar; <see cref="Setup"/> opens from the FellowshipLogs status (ApiStatus).</summary>
     public static IReadOnlyList<AppPage> Sections { get; } = [Sim, LogReplay, AplEditor];
 
     /// <summary>Address of the page relative to the base address, from the component's first <c>@page</c> template.</summary>
