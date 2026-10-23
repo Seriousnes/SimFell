@@ -110,6 +110,14 @@ public sealed class ReplayLibrary
             .OrderByDescending(s => s!.CreatedAt)
             .ToList()!;
 
+    /// <summary>The review <paramref name="id"/>, or null when its summary or page is not in the reviews folder.</summary>
+    public ReviewSummary? GetReview(string id)
+    {
+        string path = Path.Combine(ReviewsDirectory, $"{Path.GetFileName(id)}.summary.json");
+        if (!File.Exists(path) || JsonSerializer.Deserialize<ReviewSummary>(File.ReadAllText(path)) is not { } summary) return null;
+        return File.Exists(Path.Combine(ReviewsDirectory, summary.HtmlFile)) ? summary with { FreeDice = LoadFreeDice(summary.Id) } : null;
+    }
+
     private FreeDiceSummary? LoadFreeDice(string id)
     {
         string path = Path.Combine(ReviewsDirectory, $"{id}.freedice.json");

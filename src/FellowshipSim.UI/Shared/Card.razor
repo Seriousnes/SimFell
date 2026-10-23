@@ -1,0 +1,17 @@
+@* A section of the page, with its title when the section is one of several. *@
+<section class="card" hidden="@Hidden">
+    @if (Title != null)
+    {
+        <h2 class="title">@Title</h2>
+    }
+    @ChildContent
+</section>
+
+@code {
+    /// <summary>Heading of the section; none when the section is the whole page and the menu names it.</summary>
+    [Parameter] public string? Title { get; set; }
+
+    [Parameter] public bool Hidden { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

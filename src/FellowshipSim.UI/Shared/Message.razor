@@ -1,0 +1,15 @@
+@* A status line under a form: plain, Ok (green) or Error (red). *@
+<p class="message @KindClass">@ChildContent</p>
+
+@code {
+    [Parameter] public MessageKind Kind { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string KindClass => Kind switch
+    {
+        MessageKind.Ok => "ok",
+        MessageKind.Error => "error",
+        _ => "",
+    };
+}

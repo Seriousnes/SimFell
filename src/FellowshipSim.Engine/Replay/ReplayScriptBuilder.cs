@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using System.Text.Json;
 
-namespace FellowshipSim.Logs;
+namespace FellowshipSim.Engine.Replay;
 
 /// <summary>
 /// Turns a raw fight (every log event of one fight, see <see cref="FellowshipLogsReports.DownloadFightAsync"/>) into a

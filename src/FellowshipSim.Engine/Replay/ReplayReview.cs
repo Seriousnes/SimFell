@@ -5,8 +5,12 @@ namespace FellowshipSim.Engine.Replay;
 /// <summary>A replay review of one player in a raw fight: the replay script, the replay, and the review's files.</summary>
 public static class ReplayReview
 {
-    /// <summary>Builds the player's replay script from the raw fight, replays it and renders the review.</summary>
-    public static ReviewArtifacts Run(JsonObject raw, int playerId, ReplayOptions? options = null, IProgress<string>? progress = null)
+    /// <summary>
+    /// Builds the player's replay script from the raw fight, replays it and renders the review.
+    /// <paramref name="cancellationToken"/> stops it between steps with an <see cref="OperationCanceledException"/>.
+    /// </summary>
+    public static ReviewArtifacts Run(JsonObject raw, int playerId, ReplayOptions? options = null, IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         var player = ReplayScriptBuilder.Players(raw).FirstOrDefault(p => p.Id == playerId)
             ?? throw new ArgumentException($"Player {playerId} did not take part in fight {raw["fight"]?["id"]}.");
@@ -18,16 +22,18 @@ public static class ReplayReview
         progress?.Report("Building the replay script");
         var scriptJson = ReplayScriptBuilder.Build(raw, playerId).ToJsonString();
 
+        cancellationToken.ThrowIfCancellationRequested();
         progress?.Report("Replaying the fight");
-        return Run(ReplayScript.FromJson(scriptJson), scriptJson, playerId, options);
+        return Run(ReplayScript.FromJson(scriptJson), scriptJson, playerId, options, cancellationToken);
     }
 
     /// <summary>Replays a script and renders its review.</summary>
-    public static ReviewArtifacts Run(ReplayScript script, string scriptJson, int playerId, ReplayOptions? options = null)
+    public static ReviewArtifacts Run(ReplayScript script, string scriptJson, int playerId, ReplayOptions? options = null,
+        CancellationToken cancellationToken = default)
     {
         options ??= new ReplayOptions { StopOnFirstFailure = false };
         var hero = ReplayDriver.CreateHero(script);
-        var result = new ReplayDriver(hero, script, options).Run();
+        var result = new ReplayDriver(hero, script, options).Run(cancellationToken);
 
         string id = ReplayLibrary.ReviewId(script.ReportCode, script.FightId, playerId);
         var (engineDamage, logDamage) = ReplayReportWriter.DamageTotals(result);
@@ -35,8 +41,7 @@ public static class ReplayReview
             result.PlayerName, script.Player.Hero, result.PassedSteps, result.Steps.Count, result.MatchedLogHits, result.LogHits,
             engineDamage, logDamage, result.ForcedCasts.Count, DateTime.UtcNow);
 
-        const string navigation = "<nav class=\"fightnav\"><a href=\"/\">&larr; All reviews</a></nav>";
-        return new ReviewArtifacts(summary, scriptJson, ReplayReportWriter.Render(result, navigation), ReplayReportWriter.Summary(result), HitsCsv(result));
+        return new ReviewArtifacts(summary, scriptJson, ReplayReportWriter.Render(result), ReplayReportWriter.Summary(result), HitsCsv(result));
     }
 
     private static string HitsCsv(ReplayResult result)

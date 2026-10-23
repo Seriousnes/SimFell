@@ -36,16 +36,16 @@ public static partial class Catalog
     public static Legendary? CreateLegendary(string hero, int itemId) => NewLegendary(hero.ToLowerInvariant(), itemId);
 
     /// <summary>One instance of every augmentation (aspects, sigils and protective enchants), at rank 1.</summary>
-    public static IEnumerable<Augmentation> AllAugmentations => AugmentationClasses.Select(t => (Augmentation)Activator.CreateInstance(t)!);
+    public static IEnumerable<Augmentation> AllAugmentations => NewAugmentations();
 
     /// <summary>One instance of every glyph, at rank 1.</summary>
-    public static IEnumerable<Glyph> AllGlyphs => GlyphClasses.Select(t => (Glyph)Activator.CreateInstance(t)!);
+    public static IEnumerable<Glyph> AllGlyphs => NewGlyphs();
 
     /// <summary>One instance of every weapon.</summary>
-    public static IEnumerable<Weapon> AllWeapons => WeaponClasses.Select(t => (Weapon)Activator.CreateInstance(t)!);
+    public static IEnumerable<Weapon> AllWeapons => NewWeapons();
 
     /// <summary>One instance of every relic passive.</summary>
-    public static IEnumerable<RelicPassive> AllRelicPassives => RelicPassiveClasses.Select(t => (RelicPassive)Activator.CreateInstance(t)!);
+    public static IEnumerable<RelicPassive> AllRelicPassives => NewRelicPassives();
 
     /// <summary>The augmentation, glyph, weapon, relic passive and legendary classes <paramref name="hero"/> can have.</summary>
     public static IEnumerable<Type> GearTypes(string hero) =>

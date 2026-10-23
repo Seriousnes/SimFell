@@ -102,6 +102,12 @@ public abstract class Hero : Actor
     /// </summary>
     public double ClassDamageTuning { get; set; } = 1.0;
 
+    /// <summary>
+    /// Talent points every hero has to spend on its tree (in game; combat logs: sww's Rime spends all 14, e.g. 1c + 2b +
+    /// 2c + 3a + 4a + 4b + 4c + 5a + 6a + 6c).
+    /// </summary>
+    public const int TalentPoints = 14;
+
     /// <summary>The hero's talent tree, as in game.</summary>
     public abstract IReadOnlyList<TalentSlot> TalentTreeSlots { get; }
 

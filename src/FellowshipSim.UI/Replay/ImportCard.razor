@@ -1,0 +1,89 @@
+@inject ReportLookup Reports
+@inject ImportPageState State
+
+<Card Title="Import a fight">
+    <form class="row" @onsubmit="LoadAsync">
+        <input placeholder="FellowshipLogs report link or code" autocomplete="off" required @bind="State.Link" />
+        <button type="submit">Load report</button>
+        <button type="button" class="secondary-button" @onclick="OnEditSettings">API settings</button>
+    </form>
+    <Message Kind="State.Status.Kind">@State.Status.Text</Message>
+    <div>
+        @if (State.Report is { } report)
+        {
+            <div class="fights">
+                @foreach (var f in report.Fights.Where(f => f.Players.Count > 0))
+                {
+                    bool selected = f.Id == report.SelectedFightId;
+                    <div @key="f.Id" class="fight @(selected ? "selected" : "")">
+                        <div class="fight-head">
+                            <span class="fight-name">@f.Name</span>
+                            <span class="meta">
+                                Fight @f.Id · @FormatDuration(f.DurationSeconds) · @(f.Kill ? "kill" : "wipe/ongoing")@(f.Downloaded ? " · downloaded" : "")
+                            </span>
+                        </div>
+                        <div class="players">
+                            @foreach (var p in f.Players)
+                            {
+                                bool highlight = selected && p.Id == report.SelectedPlayerId;
+                                <button @key="p.Id" type="button" class="@(p.Supported ? null : "unsupported")"
+                                        disabled="@(!p.Supported || Busy)"
+                                        title="@(p.Supported ? $"{Action} {p.Name}'s {p.Hero}" : $"{p.Hero} is not supported yet")"
+                                        style="@(highlight ? "outline: 2px solid var(--accent)" : null)"
+                                        @onclick="() => OnPick(report, f, p)">
+                                    @p.Name <span class="meta">@p.Hero</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</Card>
+
+@code {
+    /// <summary>True while a replay runs: the player buttons are disabled.</summary>
+    [Parameter] public bool Busy { get; set; }
+
+    [Parameter] public EventCallback OnEditSettings { get; set; }
+
+    [Parameter] public EventCallback<ReviewTarget> OnReplay { get; set; }
+
+    /// <summary>Called with the player picked, instead of <see cref="OnReplay"/>, when set.</summary>
+    [Parameter] public EventCallback<PickedPlayer> OnPlayer { get; set; }
+
+    /// <summary>What picking a player does, before the player's name in each button's tooltip: "Replay", "Use the build of".</summary>
+    [Parameter] public string Action { get; set; } = "Replay";
+
+    /// <summary>The line after a report loads, saying what to pick.</summary>
+    [Parameter] public string PickHint { get; set; } = "Pick a player to replay.";
+
+    private Task OnPick(Report report, ReportFight fight, FightPlayer player) =>
+        OnPlayer.HasDelegate
+            ? OnPlayer.InvokeAsync(new PickedPlayer(report.Code, fight, player))
+            : OnReplay.InvokeAsync(new ReviewTarget(report.Code, fight.Id, player.Id));
+
+    private static string FormatDuration(double seconds)
+    {
+        int m = (int)Math.Floor(seconds / 60);
+        int s = (int)Math.Round(seconds % 60, MidpointRounding.AwayFromZero);
+        return $"{m}:{s:00}";
+    }
+
+    private async Task LoadAsync()
+    {
+        State.Status = new MessageState("Loading report...");
+        State.Report = null;
+        try
+        {
+            var loaded = await Reports.FindAsync(State.Link);
+            State.Status = new MessageState($"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. {PickHint}");
+            State.Report = loaded;
+        }
+        catch (Exception e)
+        {
+            State.Status = new MessageState(e.Message, MessageKind.Error);
+        }
+    }
+}

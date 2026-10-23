@@ -1,0 +1,31 @@
+@* A done sim's DPS, and its DPS per ability, highest first. *@
+
+<dl class="stats">
+    <div><dt>Mean DPS</dt><dd>@Result.MeanDps.ToString("N0")</dd></div>
+    <div><dt>Min</dt><dd>@Result.MinDps.ToString("N0")</dd></div>
+    <div><dt>Max</dt><dd>@Result.MaxDps.ToString("N0")</dd></div>
+    <div><dt>Std dev</dt><dd>@Result.StandardDeviation.ToString("N0")</dd></div>
+    <div><dt>Iterations</dt><dd>@Result.Iterations.ToString("N0")</dd></div>
+    <div><dt>Duration</dt><dd>@Result.DurationSeconds.ToString("0.##") s</dd></div>
+</dl>
+<table class="abilities">
+    <thead>
+        <tr>
+            <th>Ability</th>
+            <th class="num">DPS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var (ability, dps) in Result.AbilityDps.OrderByDescending(a => a.Value))
+        {
+            <tr @key="ability">
+                <td>@ability</td>
+                <td class="num">@dps.ToString("N0")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter, EditorRequired] public SimResult Result { get; set; } = null!;
+}
