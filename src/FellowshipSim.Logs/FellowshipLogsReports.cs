@@ -78,7 +78,7 @@ public static class FellowshipLogsReports
 
     /// <summary>
     /// Downloads every event of one fight, with the report's actors and abilities, as a raw fight
-    /// (the input of <see cref="ReplayScriptBuilder"/>).
+    /// (the input of the engine's <c>ReplayScriptBuilder</c>).
     /// </summary>
     public static async Task<JsonObject> DownloadFightAsync(this FellowshipLogsClient client, string reportCode, int fightId,
         IProgress<string>? progress = null, CancellationToken ct = default)
