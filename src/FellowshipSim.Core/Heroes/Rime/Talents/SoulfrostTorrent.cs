@@ -3,7 +3,7 @@ using FellowshipSim.Core.Heroes.Rime.Abilities;
 namespace FellowshipSim.Core.Heroes.Rime.Talents;
 
 /// <summary>
-/// Talent 195 / effect 1373 (18s): casting an ability can grant Soulfrost Torrent (1.2 PPM, not while it is up); the next
+/// Talent 195 / effect 1373 (24s): casting an ability can grant Soulfrost Torrent (1.2 PPM, not while it is up); the next
 /// Freezing Torrent ticks 40% faster and has +100% crit chance. hero_data Freezing Torrent "BoostByCritProc"
 /// (Ppm 1.2, ChannelTickRateIncrease 1.4, CritChance 1.0). UNVERIFIED: no combat log has this talent.
 /// </summary>
@@ -12,7 +12,8 @@ public class SoulfrostTorrent : Talent
     public const int TalentId = 195;
     public const string TalentName = "Soulfrost Torrent";
     public const int EffectId = 1373;
-    public const double BuffSeconds = 18.0;
+    /// <summary>Datamine export 26136736: effect 1373 duration 24 and the tooltip's "24 seconds" (18 before the patch).</summary>
+    public const double BuffSeconds = 24.0;
     public const double ProcsPerMinute = 1.2;
     public const double TickRateMultiplier = 1.4;
     /// <summary>
