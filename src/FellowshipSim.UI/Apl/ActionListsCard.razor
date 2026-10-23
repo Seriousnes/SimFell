@@ -2,6 +2,7 @@
 @implements IAsyncDisposable
 @inject ISimEngine Engine
 @inject ActionListStore Store
+@inject Visitor Visitor
 @inject IJSRuntime JS
 @inject ActionListsState State
 @* Visual action-list editor: one section per action list, each with its actions in priority order. *@
@@ -34,7 +35,7 @@
                             <option value="">New action list</option>
                             @foreach (var saved in State.Saved)
                             {
-                                <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero)</option>
+                                <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero@(saved.Shared ? ", shared" : ""))</option>
                             }
                         </select>
                     </label>
@@ -74,11 +75,13 @@
     private AplVocabulary? _writtenVocabulary;
     private CancellationTokenSource? _write;
 
-    private static string SavedValue(ActionListEntry saved) => $"{saved.Hero}/{saved.Name}";
+    private const string SharedValue = "shared";
+
+    private static string SavedValue(ActionListEntry saved) => $"{(saved.Shared ? SharedValue : "own")}/{saved.Hero}/{saved.Name}";
 
     protected override void OnInitialized()
     {
-        _savedLists = new SavedActionLists(Store, Engine);
+        _savedLists = new SavedActionLists(Store, Engine, Visitor);
         State.Editor.Changed += EditorChanged;
         State.Editor.ConditionModePicked += StoreConditionMode;
     }
@@ -241,10 +244,10 @@
             return;
         }
         string[] parts = value.Split('/');
-        string hero = parts[0], savedName = parts.Length > 1 ? parts[1] : "";
+        string hero = parts.Length > 1 ? parts[1] : "", savedName = parts.Length > 2 ? parts[2] : "";
         try
         {
-            var list = await _savedLists.ReadAsync(hero, savedName);
+            var list = await _savedLists.ReadAsync(new ActionListEntry(hero, savedName, Shared: parts[0] == SharedValue));
             var heroVocabulary = await VocabularyOf(hero);
             State.Editor.SetVocabulary(heroVocabulary);
             State.Name = savedName;
@@ -277,9 +280,11 @@
         var lists = State.Editor.Lists;
         try
         {
-            string path = await _savedLists.SaveAsync(v.Hero, listName, ActionListModel.DocumentActions(lists));
-            State.Editor.SetStatus(MessageState.Ok($"Saved to {path}."));
-            await LoadSavedLists($"{v.Hero}/{listName}");
+            var saved = await _savedLists.SaveAsync(v.Hero, listName, ActionListModel.DocumentActions(lists));
+            State.Editor.SetStatus(MessageState.Ok(Visitor.OwnsDataFolder
+                ? $"Saved to {Store.PathOf(saved.Hero, saved.Name)}."
+                : $"Saved {saved.Name} to your action lists."));
+            await LoadSavedLists(SavedValue(saved));
         }
         catch (ActionListNotSavedException e)
         {

@@ -1,42 +1,43 @@
 using System.Text.Json;
-using FellowshipSim.Logs;
 
 namespace FellowshipSim.UI.Services;
 
-/// <summary>Finished sims in the data folder's <c>results</c> folder, one JSON file each, so they outlast a restart.</summary>
-public sealed class SimResultLibrary(ReplayLibrary library)
+/// <summary>
+/// Finished sims, one JSON file each at the visitor's <c>results/&lt;job id&gt;.json</c> in the <see cref="IBlobStore"/>,
+/// so they outlast a restart. A visitor reads only their own.
+/// </summary>
+public sealed class SimResultLibrary(IBlobStore store)
 {
-    public string ResultsDirectory => Path.Combine(library.DataDirectory, "results");
+    public Task SaveAsync(Visitor visitor, SavedSim sim, CancellationToken ct = default) =>
+        store.WriteAsync(KeyOf(visitor, sim.Id), JsonSerializer.Serialize(sim, JsonSerializerOptions.Web), ct);
 
-    public void Save(SavedSim sim)
+    /// <summary>The visitor's saved sim <paramref name="id"/>, or null when they have none.</summary>
+    public async Task<SavedSim?> GetAsync(Visitor visitor, string id, CancellationToken ct = default) =>
+        DiskBlobStore.IsSegment(id) && await store.ReadAsync(KeyOf(visitor, id), ct) is { } json ? Parse(json) : null;
+
+    /// <summary>The visitor's saved sims, newest first. A file that does not read is left out.</summary>
+    public async Task<IReadOnlyList<SavedSim>> ListAsync(Visitor visitor, CancellationToken ct = default)
     {
-        Directory.CreateDirectory(ResultsDirectory);
-        File.WriteAllText(PathOf(sim.Id), JsonSerializer.Serialize(sim, JsonSerializerOptions.Web));
+        var sims = new List<SavedSim>();
+        foreach (string key in await store.ListAsync(visitor.Key("results"), ct))
+        {
+            if (key.EndsWith(".json", StringComparison.Ordinal) && await store.ReadAsync(key, ct) is { } json && Parse(json) is { } sim)
+            {
+                sims.Add(sim);
+            }
+        }
+        return sims.OrderByDescending(s => s.CreatedAt).ToList();
     }
 
-    /// <summary>The saved sim <paramref name="id"/>, or null when there is none.</summary>
-    public SavedSim? Get(string id)
-    {
-        string path = PathOf(id);
-        return File.Exists(path) ? Read(path) : null;
-    }
+    private static string KeyOf(Visitor visitor, string id) => visitor.Key($"results/{id}.json");
 
-    /// <summary>Every saved sim, newest first. A file that does not read is left out.</summary>
-    public IReadOnlyList<SavedSim> List() =>
-        Directory.Exists(ResultsDirectory)
-            ? Directory.GetFiles(ResultsDirectory, "*.json").Select(Read).OfType<SavedSim>().OrderByDescending(s => s.CreatedAt).ToList()
-            : [];
-
-    // Only the ID's last path segment names the file, so no ID reaches outside the folder.
-    private string PathOf(string id) => Path.Combine(ResultsDirectory, $"{Path.GetFileName(id)}.json");
-
-    private static SavedSim? Read(string path)
+    private static SavedSim? Parse(string json)
     {
         try
         {
-            return JsonSerializer.Deserialize<SavedSim>(File.ReadAllText(path), JsonSerializerOptions.Web);
+            return JsonSerializer.Deserialize<SavedSim>(json, JsonSerializerOptions.Web);
         }
-        catch (Exception e) when (e is JsonException or IOException)
+        catch (JsonException)
         {
             return null;
         }

@@ -59,10 +59,16 @@ or the desktop app).
 - **FellowshipSim.EngineServer** is `LocalSimEngine` over HTTP. A sim streams NDJSON (`SimStreamLine`). Every request
   needs the bearer `EngineKey`; AppHost generates it per run and gives it to FellowshipSim.Service alone.
 - **FellowshipSim.UI** (Razor class library) has every page, component and style, and the app services: `ReplayLibrary`
-  access, FellowshipLogs settings and report lookup, saved action lists (`data/apls/<hero>/<name>.simc`), finished sims
-  (`SimResultLibrary`, `data/results/<job id>.json`), review jobs and the job queue. `AddSimFellUI` registers them with
-  each page's state, scoped to the circuit or window so a page keeps its input while another shows. The host registers
-  `ISimEngine`, `IReviewPages` and its shell: `AddSimFellWebShell` (`Routes` with `Layout/MainLayout`, each page at its
+  access, FellowshipLogs settings and report lookup, saved action lists (`ActionListStore`), finished sims
+  (`SimResultLibrary`), each visitor's reviews (`VisitorReviews`), review jobs and the job queue. Every job has an owner,
+  and `SimJobQueue` lists, reads, cancels and removes a job for its owner alone; components reach the queue only through
+  `VisitorJobs`, the queue as one `Visitor` sees it. A web visitor is one browser (a cookie, `VisitorIdentity` in the
+  Service), and their files are under `visitors/<id>/` in the `IBlobStore` (`DiskBlobStore` in the data folder). The
+  desktop user is `Visitor.DataFolderOwner`: their files are directly in the data folder (`results/`, `apls/`, every
+  review), and only they save FellowshipLogs credentials. A web visitor reads the shared `data/apls` lists without
+  changing them. A job's work outlives its circuit, so it captures singletons and values only. `AddSimFellUI` registers
+  them with each page's state, scoped to the circuit or window so a page keeps its input while another shows. The host
+  registers `ISimEngine`, `IReviewPages`, the `Visitor` and its shell: `AddSimFellWebShell` (`Routes` with `Layout/MainLayout`, each page at its
   own address) or `AddSimFellDesktopShell` (`Shell/DesktopShell`, a tab per page, job and review page, with ‹ › and an
   open list when the result tabs overflow). Both frames have `Jobs/ResultsSidebar`: the queue with live progress, then
   the saved sims and reviews. `Shell/AppPage` lists the menu pages; their routes come from each page's `@page`. Every
@@ -70,7 +76,8 @@ or the desktop app).
   rendering. The action-list editor is in `Apl/`, with JS only for caret, drag and stored-mode work (`wwwroot/apl`);
   `wwwroot/shell` scrolls the desktop result tabs.
 - **FellowshipSim.Service** is the web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. Its
-  `RemoteSimEngine` calls the engine server. It serves review pages at `/reviews`.
+  `RemoteSimEngine` calls the engine server. It serves a review's files at `/reviews` to the visitor who ran it alone.
+  Its FellowshipLogs credentials come from the host's environment (or `data/settings.json`).
 - **FellowshipSim.Desktop** is a .NET MAUI Blazor Hybrid app (`net10.0-windows10.0.19041.0`, `net10.0-maccatalyst`)
   hosting FellowshipSim.UI, with `LocalSimEngine` in-process and the data folder in local application data. Review
   pages come from a WebView2 virtual host on Windows and a URL scheme handler on Mac Catalyst.
@@ -85,7 +92,8 @@ The desktop app and the CLI run fights in-process, so they copy the engine serve
 on and concurrent GC off (Windows only on the desktop app, since Mac Catalyst has no server GC). Without them fights take
 about 2.5 times as long.
 
-`data/` is local and not committed: `fights/`, `scripts/`, `reviews/`, `results/`, `apls/`, `profiles/`, `settings.json`.
+`data/` is local and not committed: `fights/`, `scripts/`, `reviews/`, `results/`, `apls/`, `profiles/`, `settings.json`,
+and for the web app `visitors/` and `keys/` (the visitor cookie keys).
 
 ## Conventions
 

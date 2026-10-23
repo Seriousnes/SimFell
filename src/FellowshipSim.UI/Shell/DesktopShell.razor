@@ -1,7 +1,7 @@
 @using Microsoft.JSInterop
 @implements IAsyncDisposable
 @inject DesktopTabs Tabs
-@inject SimJobQueue Queue
+@inject VisitorJobs Jobs
 @inject FollowedReviews Followed
 @inject IJSRuntime JS
 @*
@@ -107,7 +107,7 @@
     protected override void OnInitialized()
     {
         Tabs.Changed += OnTabsChanged;
-        Queue.Changed += OnChanged;
+        Jobs.Changed += OnChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -161,7 +161,7 @@
     public async ValueTask DisposeAsync()
     {
         Tabs.Changed -= OnTabsChanged;
-        Queue.Changed -= OnChanged;
+        Jobs.Changed -= OnChanged;
         try
         {
             if (_scrolling != null)

@@ -1,6 +1,6 @@
 @inherits LayoutComponentBase
 @implements IDisposable
-@inject SimJobQueue Queue
+@inject VisitorJobs Jobs
 @inject FollowedReviews Followed
 @inject IAppViews Views
 @* The web app's frame: the heading, the menu of pages, the jobs menu and the page's line under the heading. *@
@@ -26,7 +26,7 @@
     /// <summary>Name of the section each page fills with its line under the heading.</summary>
     public const string SubtitleSection = "subtitle";
 
-    protected override void OnInitialized() => Queue.Changed += OnChanged;
+    protected override void OnInitialized() => Jobs.Changed += OnChanged;
 
     // A review started from the Import page opens when it is done, whichever page shows.
     private void OnChanged(SimJob job) => _ = InvokeAsync(() =>
@@ -35,5 +35,5 @@
         else Followed.Forget(job);
     });
 
-    public void Dispose() => Queue.Changed -= OnChanged;
+    public void Dispose() => Jobs.Changed -= OnChanged;
 }

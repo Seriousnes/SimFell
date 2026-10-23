@@ -36,15 +36,12 @@ Aspire starts the engine and FellowshipSim.Service, and prints the dashboard add
 http://simfell.dev.localhost:5173. It opens on the **Sim** page. The menu has the other pages: **Import**, **Reviews**,
 **Action lists** and **Setup**.
 
-To download and replay a fight:
+Each browser is a visitor, known by a cookie the app sets on the first visit. Every tab of that browser is the same
+visitor. A visitor sees only their own sims, replays, reviews and action lists, and cancels only their own jobs. All
+visitors share one job queue, and each queued job shows how many jobs are ahead of it. A visitor's files are in
+`data/visitors/<visitor id>/`. The cookie keys are in `data/keys/`, so visitors keep their files when the app restarts.
 
-1. On **Setup**, enter your FellowshipLogs client ID and secret (saved in `data/settings.json`, which is not
-   committed).
-2. On **Import**, paste a FellowshipLogs report link and load it.
-3. Click a player. The fight is downloaded and replayed as a job. When the job is done, its review page opens. The
-   **Reviews** page lists every review.
-
-To pass the credentials as environment variables instead, set them before you start the app:
+The web app downloads fights with the host's FellowshipLogs API client. Set its credentials before you start the app:
 
 ```
 # PowerShell
@@ -53,6 +50,14 @@ $env:FELLOWSHIPLOGS_CLIENT_ID = "..."; $env:FELLOWSHIPLOGS_CLIENT_SECRET = "..."
 export FELLOWSHIPLOGS_CLIENT_ID=... FELLOWSHIPLOGS_CLIENT_SECRET=...
 ```
 
+Without them, the app reads `data/settings.json`. **Setup** shows whether API access is set up.
+
+To download and replay a fight:
+
+1. On **Import**, paste a FellowshipLogs report link and load it.
+2. Click a player. The fight is downloaded and replayed as a job. When the job is done, its review page opens. The
+   **Reviews** page lists your reviews.
+
 ## Run the desktop app
 
 ```
@@ -60,7 +65,8 @@ dotnet run --project src/FellowshipSim.Desktop -c Release -f net10.0-windows10.0
 ```
 
 On macOS, use the target framework `net10.0-maccatalyst`. Its data folder is `FellowshipSim` in your local application
-data (`%LOCALAPPDATA%\FellowshipSim` on Windows).
+data (`%LOCALAPPDATA%\FellowshipSim` on Windows). The data folder is yours alone: every review in it is listed, and
+**Setup** saves your FellowshipLogs client ID and secret in its `settings.json`.
 
 The desktop app has the same pages as the web app, each as a tab. Starting a sim opens its tab, which shows its progress
 and then its result. A replay started from **Import** opens its review page in a tab when it finishes. Picking a result
@@ -79,11 +85,12 @@ The **Sim** page loads a profile file or pasted text, sets iterations, fight dur
 The sim's page (a tab in the desktop app) shows its progress, then its result: mean, minimum and maximum DPS, the
 standard deviation, and DPS for each ability.
 
-Each finished sim is saved in `data/results/`, so it stays after a restart.
+Each finished sim is saved in `data/results/` (the desktop app) or `data/visitors/<visitor id>/results/` (the web app),
+so it stays after a restart.
 
-The **Results** button at the top right counts the running jobs. It opens a sidebar with the sims and replays still in
-the queue, with their progress and buttons to cancel or remove them, then the recent sims and replays, newest first.
-Select one to open its page. Two jobs run at once and the rest wait in the queue.
+The **Results** button at the top right counts your running jobs. It opens a sidebar with your sims and replays still
+in the queue, with their progress and buttons to cancel or remove them, then your recent sims and replays, newest
+first. Select one to open its page. Two jobs run at once and the rest wait in the queue.
 
 ### Sim from the command line
 
@@ -114,7 +121,9 @@ or `!` typed in the editor becomes its word when you leave the field. Parenthese
 condition as rows: each row has its `and` or `or`, its `not`, and a buff, debuff, cooldown, resource or fight value with
 an optional comparison; **Group ( )** adds rows in parentheses. **Text** shows the condition as text. Typing a name, a `.`
 or Ctrl+Space lists the names that fit; Enter or Tab writes the one picked. A condition with arithmetic has no rows, so
-it shows as text. **Action list text** has the text of the list. Text pasted there loads into the editor. **Save** writes `data/apls/<hero>/<name>.simc`.
+it shows as text. **Action list text** has the text of the list. Text pasted there loads into the editor. **Save** writes `data/apls/<hero>/<name>.simc` in the desktop app. In the web
+app, **Save** writes one of your own lists in `data/visitors/<visitor id>/apls/`, and **Saved** also lists the shared
+lists in `data/apls/`, marked "shared". A shared list loads into the editor, and saving it makes your own copy.
 
 A target picks the enemy for the cast, written `target_if=` in the text:
 
@@ -181,7 +190,7 @@ Runs the engine tests and replays every downloaded fight, rewriting its review p
 | `src/FellowshipSim.Cli` | `simfell`, the command-line sim |
 | `tests/FellowshipSim.Tests` | Tests, including the free-dice runner |
 | `docs/` | [Adding a hero](docs/ADDING_A_HERO.md) |
-| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `results/` finished sims, `apls/` saved action lists, `profiles/` `.simc` profiles, `settings.json` |
+| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `results/` finished sims, `apls/` saved action lists, `profiles/` `.simc` profiles, `settings.json`; for the web app, `visitors/` each visitor's sims, reviews and action lists, and `keys/` the visitor cookie keys |
 
 Game values are constants at the top of each class. Rime (`src/FellowshipSim.Core/Heroes/Rime`) is the complete
 example; its `NOTES.md` lists what the combat logs showed.

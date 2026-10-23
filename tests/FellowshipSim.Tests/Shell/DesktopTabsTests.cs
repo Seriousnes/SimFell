@@ -35,7 +35,7 @@ public class DesktopTabsTests
     public void A_Job_Opens_In_Its_Own_Tab()
     {
         var tabs = new DesktopTabs();
-        var job = new SimJobQueue().Enqueue(SimJobKind.Sim, "sim", _ => Task.FromResult(1));
+        var job = new SimJobQueue().Enqueue("a", SimJobKind.Sim, "sim", _ => Task.FromResult(1));
         tabs.ShowJob(job);
         tabs.ShowJob(job);
 
@@ -88,7 +88,7 @@ public class DesktopTabsTests
     public void A_Saved_Sim_Opens_In_The_Tab_Of_Its_Job()
     {
         var tabs = new DesktopTabs();
-        var job = new SimJobQueue().Enqueue(SimJobKind.Sim, "sim", _ => Task.FromResult(1));
+        var job = new SimJobQueue().Enqueue("a", SimJobKind.Sim, "sim", _ => Task.FromResult(1));
         tabs.ShowJob(job);
         tabs.ShowPage(AppPage.Sim);
         tabs.ShowSavedSim(new SavedSim(job.Id, "sim", "Rime", "sww", "", 1,

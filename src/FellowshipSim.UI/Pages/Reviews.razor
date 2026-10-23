@@ -1,8 +1,8 @@
 @page "/reviews"
 @using FellowshipSim.Logs
 @implements IDisposable
-@inject ReplayLibrary Library
-@inject SimJobQueue Queue
+@inject VisitorReviews VisitorReviews
+@inject VisitorJobs Jobs
 
 <PageTitle>Reviews - FellowshipSim</PageTitle>
 
@@ -16,29 +16,29 @@
     private IReadOnlyList<ReviewSummary> _reviews = [];
     private readonly HashSet<string> _doneReviews = [];
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        LoadReviews();
-        Queue.Changed += OnChanged;
+        Jobs.Changed += OnChanged;
+        await LoadReviews();
     }
 
     // A review that finishes adds a row.
     private void OnChanged(SimJob job)
     {
         if (job is not { Kind: SimJobKind.Review, Status: SimJobStatus.Done }) return;
-        _ = InvokeAsync(() =>
+        _ = InvokeAsync(async () =>
         {
             if (!_doneReviews.Add(job.Id)) return;
-            LoadReviews();
+            await LoadReviews();
             StateHasChanged();
         });
     }
 
-    private void LoadReviews()
+    private async Task LoadReviews()
     {
         try
         {
-            _reviews = Library.ListReviews();
+            _reviews = await VisitorReviews.ListAsync(Jobs.Visitor);
         }
         catch (Exception)
         {
@@ -46,5 +46,5 @@
         }
     }
 
-    public void Dispose() => Queue.Changed -= OnChanged;
+    public void Dispose() => Jobs.Changed -= OnChanged;
 }

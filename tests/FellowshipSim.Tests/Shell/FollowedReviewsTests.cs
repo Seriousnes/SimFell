@@ -17,7 +17,7 @@ public class FollowedReviewsTests
     {
         var queue = new SimJobQueue();
         var followed = new FollowedReviews();
-        var job = queue.Enqueue(SimJobKind.Review, "review", _ => Task.FromResult(Review));
+        var job = queue.Enqueue("a", SimJobKind.Review, "review", _ => Task.FromResult(Review));
         followed.Follow(job);
         await Finished(queue, job);
 
@@ -32,7 +32,7 @@ public class FollowedReviewsTests
         var queue = new SimJobQueue();
         var followed = new FollowedReviews();
         var gate = new TaskCompletionSource<ReviewSummary>();
-        var job = queue.Enqueue(SimJobKind.Review, "review", _ => gate.Task);
+        var job = queue.Enqueue("a", SimJobKind.Review, "review", _ => gate.Task);
         followed.Follow(job);
 
         Assert.False(followed.TakeDone(job, out _));
@@ -44,7 +44,7 @@ public class FollowedReviewsTests
     {
         var queue = new SimJobQueue();
         var followed = new FollowedReviews();
-        var job = queue.Enqueue<ReviewSummary>(SimJobKind.Review, "review", _ => throw new InvalidOperationException("no"));
+        var job = queue.Enqueue<ReviewSummary>("a", SimJobKind.Review, "review", _ => throw new InvalidOperationException("no"));
         followed.Follow(job);
         await Finished(queue, job);
 
@@ -58,7 +58,7 @@ public class FollowedReviewsTests
     public async Task An_Unfollowed_Review_Does_Not_Open()
     {
         var queue = new SimJobQueue();
-        var job = queue.Enqueue(SimJobKind.Review, "review", _ => Task.FromResult(Review));
+        var job = queue.Enqueue("a", SimJobKind.Review, "review", _ => Task.FromResult(Review));
         await Finished(queue, job);
 
         Assert.False(new FollowedReviews().TakeDone(job, out _));

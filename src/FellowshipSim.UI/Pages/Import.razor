@@ -2,7 +2,7 @@
 @implements IDisposable
 @inject LogsSettingsStore Settings
 @inject ReviewJobs ReviewJobs
-@inject SimJobQueue Queue
+@inject VisitorJobs Jobs
 @inject ImportPageState State
 @inject FollowedReviews Followed
 @inject IAppViews Views
@@ -13,7 +13,11 @@
     Replay a logged fight through the engine and review how closely it matches
 </SectionContent>
 
-@if (!_hasCredentials)
+@if (!_hasCredentials && !Jobs.Visitor.OwnsDataFolder)
+{
+    <Message Kind="MessageKind.Error">This app has no FellowshipLogs API access, so it downloads no fights. Fights downloaded before still replay.</Message>
+}
+else if (!_hasCredentials)
 {
     <p class="hint">
         Fights download with your FellowshipLogs API client.
@@ -68,7 +72,7 @@
             State.Status = new MessageState(e.Message, MessageKind.Error);
         }
         Settings.Saved += OnSettingsSaved;
-        Queue.Changed += OnChanged;
+        Jobs.Changed += OnChanged;
     }
 
     private void OnSettingsSaved() => _ = InvokeAsync(() =>
@@ -88,7 +92,7 @@
         State.StartError = null;
         try
         {
-            State.ReviewJob = ReviewJobs.Start(target.ReportCode, target.FightId, target.PlayerId);
+            State.ReviewJob = ReviewJobs.Start(Jobs.Visitor, target.ReportCode, target.FightId, target.PlayerId);
             Followed.Follow(State.ReviewJob);
         }
         catch (Exception e)
@@ -101,6 +105,6 @@
     public void Dispose()
     {
         Settings.Saved -= OnSettingsSaved;
-        Queue.Changed -= OnChanged;
+        Jobs.Changed -= OnChanged;
     }
 }

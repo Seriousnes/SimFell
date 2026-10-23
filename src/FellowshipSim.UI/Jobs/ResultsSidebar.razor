@@ -1,8 +1,8 @@
 @using System.Globalization
 @implements IDisposable
-@inject SimJobQueue Queue
+@inject VisitorJobs Jobs
 @inject SimResultLibrary Results
-@inject ReplayLibrary Library
+@inject VisitorReviews Reviews
 @inject IAppViews Views
 @*
     The Results button counts the running jobs and opens a sidebar over the page from the right: the jobs still in the
@@ -28,7 +28,7 @@
                 <button type="button" class="icon-button" title="Close" aria-label="Close" @onclick="Close">✕</button>
             </div>
             <div class="sidebar-body">
-                @if (Queue.List().Where(j => j.Status != SimJobStatus.Done).Reverse().ToList() is { Count: > 0 } jobs)
+                @if (Jobs.List().Where(j => j.Status != SimJobStatus.Done).Reverse().ToList() is { Count: > 0 } jobs)
                 {
                     <h3>In the queue</h3>
                     <ul class="items">
@@ -46,10 +46,10 @@
                                 <span class="actions">
                                     @if (!job.IsFinished)
                                     {
-                                        <button type="button" class="secondary-button" @onclick="() => Queue.Cancel(job.Id)">Cancel</button>
+                                        <button type="button" class="secondary-button" @onclick="() => Jobs.Cancel(job.Id)">Cancel</button>
                                     }
                                     <button type="button" class="icon-button danger-button" title="Remove" aria-label="Remove"
-                                            @onclick="() => Queue.Remove(job.Id)">✕</button>
+                                            @onclick="() => Jobs.Remove(job.Id)">✕</button>
                                 </span>
                             </li>
                         }
@@ -92,20 +92,20 @@
     private bool _open;
     private IReadOnlyList<RecentResult> _recent = [];
 
-    private int Running => Queue.List().Count(j => j.Status == SimJobStatus.Running);
+    private int Running => Jobs.List().Count(j => j.Status == SimJobStatus.Running);
 
-    protected override void OnInitialized() => Queue.Changed += OnChanged;
+    protected override void OnInitialized() => Jobs.Changed += OnChanged;
 
-    private void OnChanged(SimJob job) => _ = InvokeAsync(() =>
+    private void OnChanged(SimJob job) => _ = InvokeAsync(async () =>
     {
-        if (_open && job.Status == SimJobStatus.Done) LoadRecent();
+        if (_open && job.Status == SimJobStatus.Done) await LoadRecent();
         StateHasChanged();
     });
 
-    private void Open()
+    private async Task Open()
     {
-        LoadRecent();
         _open = true;
+        await LoadRecent();
     }
 
     private void Close() => _open = false;
@@ -115,12 +115,12 @@
         if (e.Key == "Escape") _open = false;
     }
 
-    private void LoadRecent()
+    private async Task LoadRecent()
     {
         try
         {
-            _recent = Results.List().Select(RecentResult.Of)
-                .Concat(Library.ListReviews().Select(RecentResult.Of))
+            _recent = (await Results.ListAsync(Jobs.Visitor)).Select(RecentResult.Of)
+                .Concat((await Reviews.ListAsync(Jobs.Visitor)).Select(RecentResult.Of))
                 .OrderByDescending(r => r.CreatedAt)
                 .Take(RecentCount)
                 .ToList();
@@ -144,5 +144,5 @@
         else if (result.Review != null) Views.ShowReview(result.Review.HtmlFile, ReviewTitle.Replay(result.Review));
     }
 
-    public void Dispose() => Queue.Changed -= OnChanged;
+    public void Dispose() => Jobs.Changed -= OnChanged;
 }
