@@ -27,7 +27,12 @@
 /* A button of lesser weight than the accent button next to it. */
 .secondary-button {
   background: transparent;
-  color: var(--accent);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.secondary-button:hover:not(:disabled) {
+  border-color: var(--accent);
 }
 
 /* A button with one icon. */

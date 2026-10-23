@@ -1,18 +1,35 @@
+/* Full width under the top bar, its steps in line with the page; it stays in view while the page scrolls. */
+.steps {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 12px;
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+  background: var(--bar);
+  border-bottom: 1px solid var(--border);
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  border-bottom: 1px solid var(--border);
-  margin-top: 8px;
 }
 
 .tab {
-  padding: 8px 16px;
+  padding: 16px 18px;
   background: transparent;
   color: var(--muted);
   border: none;
   border-bottom: 2px solid transparent;
   border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .tab:hover {
@@ -20,9 +37,30 @@
 }
 
 .tab.selected {
-  color: var(--text);
-  border-bottom-color: var(--accent);
-  font-weight: 600;
+  color: var(--heading);
+  border-bottom-color: var(--heading);
+}
+
+.run {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 8px 0;
+}
+
+.summary {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.run-button {
+  min-height: 40px;
+  padding: 10px 22px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 ::deep .file {
@@ -106,24 +144,4 @@
   width: 160px;
   color: var(--text);
   font-size: 15px;
-}
-
-.run {
-  position: sticky;
-  bottom: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 12px;
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-}
-
-.summary {
-  color: var(--muted);
-  font-size: 14px;
 }

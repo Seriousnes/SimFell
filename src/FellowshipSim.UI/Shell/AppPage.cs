@@ -10,13 +10,15 @@ namespace FellowshipSim.UI.Shell;
 public sealed record AppPage(string Title, Type Component)
 {
     public static readonly AppPage Sim = new("Sim", typeof(Pages.Sim));
-    public static readonly AppPage Import = new("Import", typeof(Pages.Import));
-    public static readonly AppPage Reviews = new("Reviews", typeof(Pages.Reviews));
-    public static readonly AppPage ActionLists = new("Action lists", typeof(Pages.ActionLists));
-    public static readonly AppPage Setup = new("Setup", typeof(Pages.Setup));
+    public static readonly AppPage LogReplay = new("Log Replay", typeof(Pages.LogReplay));
+    public static readonly AppPage AplEditor = new("APL Editor", typeof(Pages.ActionLists));
+    public static readonly AppPage Setup = new("Settings", typeof(Pages.Setup));
 
     /// <summary>The menu, in order. The first page opens when the app starts.</summary>
-    public static IReadOnlyList<AppPage> All { get; } = [Sim, Import, Reviews, ActionLists, Setup];
+    public static IReadOnlyList<AppPage> All { get; } = [Sim, LogReplay, AplEditor, Setup];
+
+    /// <summary>The sections of the web app's top bar; <see cref="Setup"/> opens from its settings button.</summary>
+    public static IReadOnlyList<AppPage> Sections { get; } = [Sim, LogReplay, AplEditor];
 
     /// <summary>Address of the page relative to the base address, from the component's first <c>@page</c> template.</summary>
     public string Route { get; } = Component.GetCustomAttribute<RouteAttribute>()!.Template.TrimStart('/');

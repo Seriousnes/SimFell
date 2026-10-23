@@ -3,19 +3,28 @@
 @inject VisitorJobs Jobs
 @inject FollowedReviews Followed
 @inject IAppViews Views
-@* The web app's frame: the heading, the menu of pages, the jobs menu and the page's line under the heading. *@
+@* The web app's frame: the name, the sections, the FellowshipLogs status, the sim results and settings. *@
 <header class="top">
-    <div class="heading">
-        <h1>FellowshipSim</h1>
-        <nav class="nav">
-            @foreach (var item in AppPage.All)
-            {
-                <NavLink @key="item.Route" href="@item.Route" Match="NavLinkMatch.All">@item.Title</NavLink>
-            }
-        </nav>
-        <div class="results"><ResultsSidebar /></div>
+    <a class="brand" href="">
+        <span class="name"><span class="white">SIM</span><span class="gold">FELL</span></span>
+        <span class="tagline">Fellowship simulator</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+        @foreach (var item in AppPage.Sections)
+        {
+            <NavLink @key="item.Route" href="@item.Route" Match="NavLinkMatch.All">@item.Title</NavLink>
+        }
+    </nav>
+    <div class="actions">
+        <ApiStatus />
+        <ResultsSidebar />
+        <NavLink class="settings" href="@AppPage.Setup.Route" title="Settings" aria-label="Settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+            </svg>
+        </NavLink>
     </div>
-    <span class="subtitle"><SectionOutlet SectionName="@SubtitleSection" /></span>
 </header>
 
 <main class="main">
@@ -23,12 +32,12 @@
 </main>
 
 @code {
-    /// <summary>Name of the section each page fills with its line under the heading.</summary>
+    /// <summary>Name of the section each page fills with its line under the heading. The frame shows none.</summary>
     public const string SubtitleSection = "subtitle";
 
     protected override void OnInitialized() => Jobs.Changed += OnChanged;
 
-    // A review started from the Import page opens when it is done, whichever page shows.
+    // A review started from the Log Replay page opens when it is done, whichever page shows.
     private void OnChanged(SimJob job) => _ = InvokeAsync(() =>
     {
         if (Followed.TakeDone(job, out var review)) Views.ShowReview(review.HtmlFile, ReviewTitle.Replay(review));

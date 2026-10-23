@@ -7,95 +7,104 @@
 @inject SimPageState State
 @* The Hero tab: the build's saved copies, hero, talents, stats and gear. *@
 
-<Card Title="Build">
+<Card>
     <div class="row toolbar">
         <input aria-label="Build name" placeholder="Build name" autocomplete="off" @bind="Build.Name" @bind:after="Changed" />
         <select aria-label="Saved builds" @bind:get="State.SavedName" @bind:set="LoadSavedAsync">
-            <option value="">Saved builds...</option>
+            <option value="">Load build...</option>
             @foreach (var saved in _saved)
             {
                 <option @key="saved.Name" value="@saved.Name">@saved.Name</option>
             }
         </select>
-        <button type="button" @onclick="SaveAsync">Save</button>
+        <button type="button" class="secondary-button" @onclick="SaveAsync">Save</button>
         <button type="button" class="secondary-button" @onclick="New">New</button>
-        <button type="button" class="secondary-button" disabled="@(State.SavedName.Length == 0)" @onclick="DeleteAsync">Delete</button>
+        <button type="button" class="secondary-button" @onclick="Duplicate">Duplicate</button>
+        <button type="button" class="secondary-button delete" disabled="@(State.SavedName.Length == 0)" @onclick="DeleteAsync">Delete</button>
     </div>
-    <p class="hint">Save keeps the build under its name; save it under another name to copy it.</p>
     <Message Kind="State.BuildStatus.Kind">@State.BuildStatus.Text</Message>
 </Card>
 
-<Card Title="Hero">
-    <div class="heroes">
-        @foreach (string hero in _heroes)
-        {
-            bool picked = hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase);
-            <button @key="hero" type="button" class="hero @(picked ? "picked" : "")" aria-pressed="@picked" @onclick="() => PickHero(hero)">
-                @if (BuildCatalog.PortraitUrl(hero) is { } portrait)
+<div class="hero-grid">
+    <Card Title="Hero">
+        <div class="hero">
+            @if (BuildCatalog.PortraitUrl(Build.Hero) is { } portrait)
+            {
+                <img src="@portrait" alt="" loading="lazy" />
+            }
+            <div class="hero-name">
+                <strong>@Build.Hero</strong>
+                @if (_heroes.Count > 1)
                 {
-                    <img src="@portrait" alt="" loading="lazy" />
-                }
-                <span>@hero</span>
-            </button>
-        }
-    </div>
-</Card>
-
-<Card Title="Talents">
-    <div class="points">
-        <span><strong>@Editor.PointsLeft</strong> / @FellowshipSim.Core.Domain.Hero.TalentPoints points left</span>
-        <button type="button" class="secondary-button" @onclick="ClearTalents">Clear all</button>
-    </div>
-    <div class="tree">
-        @foreach (var row in Catalog.Talents.GroupBy(t => t.Slot.Row))
-        {
-            <div @key="row.Key" class="tree-row">
-                <span class="tier">@Roman(row.Key)<span class="meta">@row.First().Slot.Cost pt</span></span>
-                @foreach (var t in row)
-                {
-                    bool picked = Editor.HasTalent(t.Slot.TalentId);
-                    bool affordable = picked || t.Slot.Cost <= Editor.PointsLeft;
-                    <button @key="t.Slot.TalentId" type="button" class="talent @(picked ? "picked" : "")" aria-pressed="@picked"
-                            disabled="@(!affordable)" title="@TalentTitle(t)"
-                            @onclick="() => ToggleTalent(t)">
-                        <GameIcon Url="@t.Talent.IconUrl" />
-                        <span class="name">@t.Talent.Name</span>
-                        @if (!t.Talent.Modeled)
+                    <select aria-label="Hero" @bind:get="Build.Hero" @bind:set="PickHero">
+                        @foreach (string hero in _heroes)
                         {
-                            <span class="badge">not modeled</span>
+                            <option @key="hero" value="@hero">@hero</option>
                         }
-                    </button>
+                    </select>
+                }
+                else
+                {
+                    <span class="meta">The only hero in the engine so far</span>
                 }
             </div>
-        }
-    </div>
-</Card>
-
-<Card Title="Stats">
-    <p class="hint">Ratings from gear. Each shows the character-sheet percentage it gives; a build from a log keeps the log's sheet until you change the rating.</p>
-    <div class="stats">
-        <label>
-            Main stat
-            <input type="number" min="0" step="1" @bind:get="Build.PrimaryStat" @bind:set="v => Set(() => Build.PrimaryStat = Math.Max(0, v))" />
-        </label>
-        <label>
-            Stamina
-            <input type="number" min="0" step="1" @bind:get="Build.Stamina" @bind:set="v => Set(() => Build.Stamina = Math.Max(0, v))" />
-        </label>
-        <label>
-            Armor
-            <input type="number" min="0" step="1" @bind:get="Build.Armor" @bind:set="v => Set(() => Build.Armor = Math.Max(0, v))" />
-        </label>
-        @foreach (var stat in Enum.GetValues<RatedStat>())
-        {
-            <label @key="stat">
-                @stat rating
-                <input type="number" min="0" step="1" @bind:get="Math.Round(Editor.Rating(stat), 2)" @bind:set="v => Set(() => Editor.SetRating(stat, v))" />
-                <span class="meta">@Editor.Percent(stat).ToString("P2", CultureInfo.CurrentCulture)@(Editor.PercentFromLog(stat) ? " (log's sheet)" : "")</span>
+        </div>
+        <h3 class="section">Stats</h3>
+        <div class="stats two">
+            <label>
+                Main stat
+                <input type="number" min="0" step="1" @bind:get="Build.PrimaryStat" @bind:set="v => Set(() => Build.PrimaryStat = Math.Max(0, v))" />
             </label>
-        }
+            <label>
+                Stamina
+                <input type="number" min="0" step="1" @bind:get="Build.Stamina" @bind:set="v => Set(() => Build.Stamina = Math.Max(0, v))" />
+            </label>
+            <label>
+                Armor
+                <input type="number" min="0" step="1" @bind:get="Build.Armor" @bind:set="v => Set(() => Build.Armor = Math.Max(0, v))" />
+            </label>
+            @foreach (var stat in Enum.GetValues<RatedStat>())
+            {
+                <label @key="stat" title="@SheetNote(stat)">
+                    <span>@stat rating · <span class="percent">@Editor.Percent(stat).ToString("P2", CultureInfo.CurrentCulture)</span></span>
+                    <input type="number" min="0" step="1" @bind:get="Math.Round(Editor.Rating(stat), 2)" @bind:set="v => Set(() => Editor.SetRating(stat, v))" />
+                </label>
+            }
+        </div>
+    </Card>
+
+    <div class="talents">
+        <Card Title="Talents">
+            <div class="points">
+                <span class="meta">AVAILABLE <strong>@Editor.PointsLeft</strong> / @FellowshipSim.Core.Domain.Hero.TalentPoints</span>
+                <button type="button" class="secondary-button small" @onclick="ClearTalents">Clear all</button>
+            </div>
+            <div class="tree">
+                @foreach (var row in Catalog.Talents.GroupBy(t => t.Slot.Row))
+                {
+                    <div @key="row.Key" class="tree-row">
+                        <span class="tier">@Roman(row.Key)<span class="meta">@row.First().Slot.Cost pt</span></span>
+                        @foreach (var t in row)
+                        {
+                            bool picked = Editor.HasTalent(t.Slot.TalentId);
+                            bool affordable = picked || t.Slot.Cost <= Editor.PointsLeft;
+                            <button @key="t.Slot.TalentId" type="button" class="talent @(picked ? "picked" : "")" aria-pressed="@picked"
+                                    disabled="@(!affordable)" title="@TalentTitle(t)"
+                                    @onclick="() => ToggleTalent(t)">
+                                <GameIcon Url="@t.Talent.IconUrl" Size="36" />
+                                <span class="name">@t.Talent.Name</span>
+                                @if (!t.Talent.Modeled)
+                                {
+                                    <span class="badge">not modeled</span>
+                                }
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        </Card>
     </div>
-</Card>
+</div>
 
 <Card Title="Gear">
     <div class="stats">
@@ -120,39 +129,42 @@
             </select>
         </label>
     </div>
-    <h3 class="subtitle">Set bonuses <span class="meta">(two pieces)</span></h3>
-    <div class="choices">
+    <h3 class="section">Set bonuses <span class="meta">· @Catalog.Sets.Count(s => Editor.HasSet(s.Id)) active, two pieces each</span></h3>
+    <div class="chips">
         @foreach (var s in Catalog.Sets)
         {
-            <label @key="s.Id" class="choice" title="@s.Note">
-                <input type="checkbox" checked="@Editor.HasSet(s.Id)" @onchange="e => Set(() => Editor.SetSet(s.Id, e.Value is true))" />
+            bool on = Editor.HasSet(s.Id);
+            <button @key="s.Id" type="button" class="chip @(on ? "picked" : "")" aria-pressed="@on" title="@s.Note"
+                    @onclick="() => Set(() => Editor.SetSet(s.Id, !on))">
                 @s.Name
                 @if (s.Note != null)
                 {
                     <span class="badge">partly modeled</span>
                 }
-            </label>
+            </button>
         }
     </div>
-    <h3 class="subtitle">Gem powers</h3>
-    <div class="stats">
+    <h3 class="section">Gem powers</h3>
+    <div class="gems">
         @foreach (var color in BuildCatalog.GemColors)
         {
-            <label @key="color">
-                <span class="with-icon"><GameIcon Url="@BuildCatalog.GemIconUrl(color)" Size="20" />@color</span>
+            <label @key="color" class="gem">
+                <GameIcon Url="@BuildCatalog.GemIconUrl(color)" Size="28" />
+                <span class="gem-name">@color</span>
                 <input type="number" min="0" step="25" @bind:get="Editor.Gem(color)" @bind:set="v => Set(() => Editor.SetGem(color, v))" />
             </label>
         }
     </div>
 </Card>
 
-<Card Title="Traits">
-    <RankedChoices Options="Catalog.Traits" RankOf="Editor.TraitRank" SetRank="(o, r) => Set(() => Editor.SetTraitRank(o, r))" />
-</Card>
-
-<Card Title="Blessings">
-    <RankedChoices Options="Catalog.Blessings" RankOf="Editor.BlessingRank" SetRank="(o, r) => Set(() => Editor.SetBlessingRank(o, r))" />
-</Card>
+<div class="pair">
+    <Card Title="Traits">
+        <RankedChoices Options="Catalog.Traits" RankOf="Editor.TraitRank" SetRank="(o, r) => Set(() => Editor.SetTraitRank(o, r))" />
+    </Card>
+    <Card Title="Blessings">
+        <RankedChoices Options="Catalog.Blessings" RankOf="Editor.BlessingRank" SetRank="(o, r) => Set(() => Editor.SetBlessingRank(o, r))" />
+    </Card>
+</div>
 
 @code {
     /// <summary>Called after every change to the build.</summary>
@@ -213,6 +225,20 @@
         State.Editor = new BuildEditor(BuildEditor.NewBuild(Build.Hero));
         State.SavedName = "";
         State.BuildStatus = MessageState.None;
+        return Changed();
+    }
+
+    // The rating's percentage is the log's character sheet until the rating changes.
+    private string? SheetNote(RatedStat stat) => Editor.PercentFromLog(stat) ? "From the log's character sheet until you change the rating" : null;
+
+    // A copy of the build, not saved yet, named after it.
+    private Task Duplicate()
+    {
+        var copy = SimcProfile.Parse(new SimcProfile(Build, "").Format()).Build;
+        copy.Name = $"{Build.Name} copy";
+        State.Editor = new BuildEditor(copy);
+        State.SavedName = "";
+        State.BuildStatus = MessageState.Ok($"Copied to {copy.Name}; save it to keep it.");
         return Changed();
     }
 

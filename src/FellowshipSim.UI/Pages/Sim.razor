@@ -16,15 +16,22 @@
     Build a character, pick the fight and the action list, and sim it
 </SectionContent>
 
-<nav class="tabs" role="tablist" aria-label="Sim">
-    @foreach (var tab in Enum.GetValues<SimTab>())
-    {
-        bool selected = tab == State.Tab;
-        <button @key="tab" type="button" role="tab" class="tab @(selected ? "selected" : "")" aria-selected="@selected" @onclick="() => State.Tab = tab">
-            @tab
-        </button>
-    }
-</nav>
+<div class="steps">
+    <nav class="tabs" role="tablist" aria-label="Sim steps">
+        @foreach (var tab in Enum.GetValues<SimTab>())
+        {
+            bool selected = tab == State.Tab;
+            <button @key="tab" type="button" role="tab" class="tab @(selected ? "selected" : "")" aria-selected="@selected" @onclick="() => State.Tab = tab">
+                @StepTitle(tab)
+            </button>
+        }
+    </nav>
+    <div class="run">
+        <span class="summary">@Summary()</span>
+        <button type="button" class="run-button" @onclick="Start">Run sim</button>
+    </div>
+</div>
+<Message Kind="State.Status.Kind">@State.Status.Text</Message>
 
 <div role="tabpanel" aria-label="@State.Tab">
     @switch (State.Tab)
@@ -96,11 +103,6 @@
     }
 </div>
 
-<div class="run">
-    <span class="summary">@Summary()</span>
-    <button type="button" @onclick="Start">Start sim</button>
-</div>
-<Message Kind="State.Status.Kind">@State.Status.Text</Message>
 
 @code {
     /// <summary>Largest profile file the page reads.</summary>
@@ -113,7 +115,15 @@
     private string ActionListName() =>
         ActionLists.Loaded ? (ActionLists.Name.Length > 0 ? ActionLists.Name : "edited list") : DefaultActionLists.DefaultName;
 
-    private string Summary() => string.Format(CultureInfo.CurrentCulture, "{0} ({1}) · {2} · {3} s · {4:N0} iterations · {5} list",
+    private static string StepTitle(SimTab tab) => tab switch
+    {
+        SimTab.Import => "1. Import",
+        SimTab.Hero => "2. Hero & loadout",
+        SimTab.Modes => "3. Modes",
+        _ => "4. Advanced & APL",
+    };
+
+    private string Summary() => string.Format(CultureInfo.CurrentCulture, "{0} ({1}) · {2} · {3} s · {4:N0} fights · {5} APL",
         State.Build.Name, State.Build.Hero,
         State.Mode == SimMode.SingleTarget ? "single target" : $"{State.AoeTargets} targets",
         State.DurationSeconds, State.Iterations, ActionListName());

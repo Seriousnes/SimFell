@@ -1,5 +1,6 @@
 @page "/review"
 @inject IAppViews Views
+@inject LogReplayState Replay
 
 <PageTitle>Review - FellowshipSim</PageTitle>
 
@@ -7,7 +8,7 @@
     Replay review
 </SectionContent>
 
-<p class="back"><button type="button" class="link-button" @onclick="() => Views.ShowPage(AppPage.Reviews)">Back to the reviews</button></p>
+<p class="back"><button type="button" class="link-button" @onclick="ShowReviews">Back to the reviews</button></p>
 
 @if (string.IsNullOrEmpty(Page))
 {
@@ -24,4 +25,10 @@ else
 
     /// <summary>Address of the page that shows the review page <paramref name="htmlFile"/>.</summary>
     public static string Href(string htmlFile) => $"review?page={Uri.EscapeDataString(htmlFile)}";
+
+    private void ShowReviews()
+    {
+        Replay.Tab = LogReplayTab.Reviews;
+        Views.ShowPage(AppPage.LogReplay);
+    }
 }

@@ -24,7 +24,7 @@ public class DesktopTabsTests
     {
         var tabs = new DesktopTabs();
         tabs.ShowReview("a.html", "Review: a");
-        tabs.ShowPage(AppPage.Reviews);
+        tabs.ShowPage(AppPage.LogReplay);
         tabs.ShowReview("a.html", "Review: a");
 
         Assert.Single(tabs.Tabs, t => t.Kind == DesktopTabKind.Review);
@@ -65,10 +65,10 @@ public class DesktopTabsTests
     {
         var tabs = new DesktopTabs();
         tabs.ShowReview("a.html", "a");
-        tabs.ShowPage(AppPage.Import);
+        tabs.ShowPage(AppPage.AplEditor);
         tabs.Close(tabs.Tabs.Single(t => t.ReviewFile == "a.html"));
 
-        Assert.Equal(AppPage.Import, tabs.Selected.Page);
+        Assert.Equal(AppPage.AplEditor, tabs.Selected.Page);
         Assert.DoesNotContain(tabs.Tabs, t => t.Kind == DesktopTabKind.Review);
     }
 
@@ -110,6 +110,6 @@ public class DesktopTabsTests
     [Fact]
     public void Each_Page_Route_Comes_From_Its_Page_Directive()
     {
-        Assert.Equal(["", "import", "reviews", "action-lists", "setup"], AppPage.All.Select(p => p.Route));
+        Assert.Equal(["", "replay", "apl", "setup"], AppPage.All.Select(p => p.Route));
     }
 }

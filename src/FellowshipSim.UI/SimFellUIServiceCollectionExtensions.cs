@@ -40,6 +40,7 @@ public static class SimFellUIServiceCollectionExtensions
         services.AddScoped<FollowedReviews>();
         services.AddScoped<SimPageState>();
         services.AddScoped<ImportPageState>();
+        services.AddScoped<LogReplayState>();
         services.AddScoped<ActionListsState>();
         return services;
     }
