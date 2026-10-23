@@ -1,4 +1,4 @@
-using FellowshipSim.UI;
+using FellowshipSim.UI.Shell;
 using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 #if WINDOWS
@@ -8,7 +8,7 @@ using Microsoft.Web.WebView2.Core;
 namespace FellowshipSim.Desktop;
 
 /// <summary>
-/// The window's page: <see cref="Routes"/> in a BlazorWebView. The web view also serves the reviews folder at the
+/// The window's page: <see cref="DesktopShell"/> in a BlazorWebView. The web view also serves the reviews folder at the
 /// <see cref="ReviewPages"/> addresses.
 /// </summary>
 public sealed class MainPage : ContentPage
@@ -19,7 +19,7 @@ public sealed class MainPage : ContentPage
     {
         _reviews = reviews;
         var view = new BlazorWebView { HostPage = "wwwroot/index.html" };
-        view.RootComponents.Add(new RootComponent { Selector = "#app", ComponentType = typeof(Routes) });
+        view.RootComponents.Add(new RootComponent { Selector = "#app", ComponentType = typeof(DesktopShell) });
 #if MACCATALYST
         view.BlazorWebViewInitializing += (_, e) =>
             e.Configuration.SetUrlSchemeHandler(new ReviewSchemeHandler(reviews), ReviewPages.Scheme);

@@ -1,0 +1,24 @@
+@page "/jobs/{Id}"
+@inject SimJobQueue Queue
+
+<PageTitle>Job - FellowshipSim</PageTitle>
+
+<SectionContent SectionName="@MainLayout.SubtitleSection">
+    A sim or review in the job queue
+</SectionContent>
+
+@if (Queue.Get(Id) is { } job)
+{
+    <JobView Job="job" />
+}
+else
+{
+    <p class="hint">No job with this ID. It was removed from the queue, or the app restarted.</p>
+}
+
+@code {
+    [Parameter] public string Id { get; set; } = "";
+
+    /// <summary>Address of the page of the job <paramref name="id"/>.</summary>
+    public static string Href(string id) => $"jobs/{Uri.EscapeDataString(id)}";
+}

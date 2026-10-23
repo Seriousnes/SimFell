@@ -1,22 +1,39 @@
 @inherits LayoutComponentBase
-
+@implements IDisposable
+@inject SimJobQueue Queue
+@inject FollowedReviews Followed
+@inject IAppViews Views
+@* The web app's frame: the heading, the menu of pages, the jobs menu and the page's line under the heading. *@
 <header class="top">
     <div class="heading">
         <h1>FellowshipSim</h1>
         <nav class="nav">
-            <NavLink href="" Match="NavLinkMatch.All">Replay</NavLink>
-            <NavLink href="sim">Sim</NavLink>
+            @foreach (var item in AppPage.All)
+            {
+                <NavLink @key="item.Route" href="@item.Route" Match="NavLinkMatch.All">@item.Title</NavLink>
+            }
         </nav>
+        <div class="jobs"><JobsMenu /></div>
     </div>
     <span class="subtitle"><SectionOutlet SectionName="@SubtitleSection" /></span>
 </header>
 
 <main class="main">
-    <JobsPanel />
     @Body
 </main>
 
 @code {
     /// <summary>Name of the section each page fills with its line under the heading.</summary>
     public const string SubtitleSection = "subtitle";
+
+    protected override void OnInitialized() => Queue.Changed += OnChanged;
+
+    // A review started from the Import page opens when it is done, whichever page shows.
+    private void OnChanged(SimJob job) => _ = InvokeAsync(() =>
+    {
+        if (Followed.TakeDone(job, out var review)) Views.ShowReview(review.HtmlFile, ReviewTitle.Replay(review));
+        else Followed.Forget(job);
+    });
+
+    public void Dispose() => Queue.Changed -= OnChanged;
 }

@@ -1,0 +1,94 @@
+.shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+}
+
+.bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  flex: none;
+  max-width: 260px;
+  border-bottom: 2px solid transparent;
+}
+
+.tab.selected {
+  border-bottom-color: var(--accent);
+}
+
+.tab.closable {
+  max-width: 300px;
+  margin-left: 2px;
+  border-left: 1px solid var(--border);
+}
+
+.select {
+  min-width: 0;
+  padding: 8px 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: inherit;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.select:hover,
+.selected .select {
+  color: var(--text);
+}
+
+.close {
+  flex: none;
+  margin-right: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+}
+
+.close:hover {
+  color: var(--bad);
+}
+
+.jobs {
+  flex: none;
+  padding-bottom: 6px;
+}
+
+.panel {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 16px 24px;
+}

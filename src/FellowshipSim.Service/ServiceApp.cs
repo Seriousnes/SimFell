@@ -37,7 +37,7 @@ public static class ServiceApp
             .AddHubOptions(o => o.MaximumReceiveMessageSize = 1024 * 1024);
         builder.Services.AddHttpClient<ISimEngine, RemoteSimEngine>(c => c.Timeout = Timeout.InfiniteTimeSpan);
         builder.Services.AddSingleton<IReviewPages, ReviewPages>();
-        builder.Services.AddSimFellUI(dataDirectory);
+        builder.Services.AddSimFellUI(dataDirectory).AddSimFellWebShell();
 
         var app = builder.Build();
 

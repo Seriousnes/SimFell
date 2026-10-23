@@ -1,8 +1,10 @@
-@page "/sim"
+@page "/"
 @using System.Globalization
 @using FellowshipSim.Core.Import
 @inject ISimEngine Engine
 @inject SimJobQueue Queue
+@inject SimPageState State
+@inject IAppViews Views
 
 <PageTitle>Sim - FellowshipSim</PageTitle>
 
@@ -14,73 +16,68 @@
     <p class="hint">Load a <code>.simc</code> profile or paste its text.</p>
     <form @onsubmit="Start">
         <InputFile class="file" accept=".simc,.txt" OnChange="LoadFileAsync" />
-        <textarea class="profile" rows="14" spellcheck="false" placeholder='rime="name"' @bind="_text"></textarea>
+        <textarea class="profile" rows="14" spellcheck="false" placeholder='rime="name"' @bind="State.Text"></textarea>
         <div class="settings">
             <label>
                 Iterations
-                <input type="number" min="1" step="1" required @bind="_iterations" />
+                <input type="number" min="1" step="1" required @bind="State.Iterations" />
             </label>
             <label>
                 Duration (seconds)
-                <input type="number" min="1" step="any" required @bind="_durationSeconds" />
+                <input type="number" min="1" step="any" required @bind="State.DurationSeconds" />
             </label>
             <label>
                 Targets
-                <input type="number" min="1" step="1" required @bind="_targets" />
+                <input type="number" min="1" step="1" required @bind="State.Targets" />
             </label>
             <button type="submit">Start sim</button>
         </div>
     </form>
-    <Message Kind="_status.Kind">@_status.Text</Message>
+    <Message Kind="State.Status.Kind">@State.Status.Text</Message>
 </Card>
 
 @code {
     /// <summary>Largest profile file the page reads.</summary>
     private const long MaxProfileBytes = 1024 * 1024;
 
-    private string _text = "";
-    private int _iterations = 1000;
-    private double _durationSeconds = 300;
-    private int _targets = 1;
-    private MessageState _status = MessageState.None;
-
     private async Task LoadFileAsync(InputFileChangeEventArgs e)
     {
         try
         {
             using var reader = new StreamReader(e.File.OpenReadStream(MaxProfileBytes));
-            _text = await reader.ReadToEndAsync();
-            _status = MessageState.None;
+            State.Text = await reader.ReadToEndAsync();
+            State.Status = MessageState.None;
         }
         catch (Exception ex)
         {
-            _status = new MessageState(ex.Message, MessageKind.Error);
+            State.Status = new MessageState(ex.Message, MessageKind.Error);
         }
     }
 
     private void Start()
     {
-        if (_iterations < 1 || _durationSeconds <= 0 || _targets < 1)
+        if (State.Iterations < 1 || State.DurationSeconds <= 0 || State.Targets < 1)
         {
-            _status = new MessageState("Iterations and targets are at least 1, and the duration is above 0 seconds.", MessageKind.Error);
+            State.Status = new MessageState("Iterations and targets are at least 1, and the duration is above 0 seconds.", MessageKind.Error);
             return;
         }
         SimcProfile profile;
         try
         {
-            profile = SimcProfile.Parse(_text);
+            profile = SimcProfile.Parse(State.Text);
         }
         catch (FormatException e)
         {
-            _status = new MessageState(e.Message, MessageKind.Error);
+            State.Status = new MessageState(e.Message, MessageKind.Error);
             return;
         }
-        var settings = new SimSettings(_iterations, _durationSeconds, _targets);
+        var settings = new SimSettings(State.Iterations, State.DurationSeconds, State.Targets);
         string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
-            profile.Build.Name, profile.Build.Hero, _iterations, _durationSeconds, _targets, _targets == 1 ? "target" : "targets");
-        Queue.Enqueue(SimJobKind.Sim, title,
+            profile.Build.Name, profile.Build.Hero, State.Iterations, State.DurationSeconds, State.Targets, State.Targets == 1 ? "target" : "targets");
+        var job = Queue.Enqueue(SimJobKind.Sim, title,
             c => Engine.SimulateAsync(profile, settings with { DegreeOfParallelism = c.DegreeOfParallelism }, c, c.CancellationToken),
             profile);
-        _status = new MessageState($"Queued: {title}.", MessageKind.Ok);
+        State.Status = new MessageState($"Queued: {title}.", MessageKind.Ok);
+        Views.ShowJob(job);
     }
 }

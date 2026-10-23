@@ -3,16 +3,17 @@
 @inject ISimEngine Engine
 @inject ActionListStore Store
 @inject IJSRuntime JS
+@inject ActionListsState State
 @* Visual action-list editor: one section per action list, each with its actions in priority order. *@
-<Card Title="Action lists">
+<Card>
     <div @ref="_root">
-        @if (_editor.Vocabulary is not { } v)
+        @if (State.Editor.Vocabulary is not { } v)
         {
-            <Message Kind="_editor.Status.Kind">@_editor.Status.Text</Message>
+            <Message Kind="State.Editor.Status.Kind">@State.Editor.Status.Text</Message>
         }
         else
         {
-            <CascadingValue Value="_editor" IsFixed="true">
+            <CascadingValue Value="State.Editor" IsFixed="true">
                 <p class="hint">
                     Each time the hero can act, they cast the first action from the top of the default list with a ready ability and
                     a true condition. Run action list and Call action list run the actions of another list.
@@ -21,7 +22,7 @@
                     <label class="field">
                         Hero
                         <select @bind:get="v.Hero" @bind:set="SelectHero">
-                            @foreach (string hero in _heroes)
+                            @foreach (string hero in State.Heroes)
                             {
                                 <option @key="hero">@hero</option>
                             }
@@ -29,35 +30,35 @@
                     </label>
                     <label class="field">
                         Saved
-                        <select @bind:get="_selectedSaved" @bind:set="PickSaved">
+                        <select @bind:get="State.SelectedSaved" @bind:set="PickSaved">
                             <option value="">New action list</option>
-                            @foreach (var saved in _saved)
+                            @foreach (var saved in State.Saved)
                             {
                                 <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero)</option>
                             }
                         </select>
                     </label>
-                    <input @ref="_nameInput" placeholder="Action list name" autocomplete="off" @bind="_name" />
+                    <input @ref="_nameInput" placeholder="Action list name" autocomplete="off" @bind="State.Name" />
                     <button type="button" @onclick="Save">Save</button>
                 </div>
-                <Message Kind="_editor.Status.Kind">@_editor.Status.Text</Message>
+                <Message Kind="State.Editor.Status.Kind">@State.Editor.Status.Text</Message>
                 <div>
-                    @foreach (var list in _editor.Lists)
+                    @foreach (var list in State.Editor.Lists)
                     {
-                        <ListSection @key="list.Name" Vocabulary="v" Lists="_editor.Lists" List="list" Open="_editor.Open" DragFrom="_editor.DragFrom" />
+                        <ListSection @key="list.Name" Vocabulary="v" Lists="State.Editor.Lists" List="list" Open="State.Editor.Open" DragFrom="State.Editor.DragFrom" />
                     }
                 </div>
                 <div class="row add-list">
-                    <input @ref="_newListInput" placeholder="New action list name (aoe)" spellcheck="false" autocomplete="off" @bind="_newList" />
+                    <input @ref="_newListInput" placeholder="New action list name (aoe)" spellcheck="false" autocomplete="off" @bind="State.NewList" />
                     <button type="button" class="secondary-button" @onclick="AddList">Add action list</button>
                 </div>
-                <details @key="_textKey" class="text" open="@_textOpen">
+                <details @key="State.TextKey" class="text" open="@State.TextOpen">
                     <summary>Action list text</summary>
-                    <textarea spellcheck="false" rows="10" @bind="_text"></textarea>
+                    <textarea spellcheck="false" rows="10" @bind="State.Text"></textarea>
                     <div class="row">
                         <button type="button" class="secondary-button" @onclick="LoadText">Load this text into the editor</button>
                     </div>
-                    <Message Kind="_textStatus.Kind">@_textStatus.Text</Message>
+                    <Message Kind="State.TextStatus.Kind">@State.TextStatus.Text</Message>
                 </details>
             </CascadingValue>
         }
@@ -65,18 +66,7 @@
 </Card>
 
 @code {
-    private ActionListEditor _editor = null!;
     private SavedActionLists _savedLists = null!;
-    private IReadOnlyList<string> _heroes = [];
-    private IReadOnlyList<ActionListEntry> _saved = [];
-    private string _selectedSaved = "";
-    private string _name = "";
-    private string _newList = "";
-    private string _text = "";
-    // The text's section opens when a saved list does not parse: a new key renders it anew with its open attribute.
-    private bool _textOpen;
-    private int _textKey;
-    private MessageState _textStatus = MessageState.None;
     private ElementReference _root, _nameInput, _newListInput;
     private IJSObjectReference? _module, _drag;
     // The lists and vocabulary the action-list text is written for, and the write waiting for its delay.
@@ -88,24 +78,31 @@
 
     protected override void OnInitialized()
     {
-        _editor = new ActionListEditor(Engine);
         _savedLists = new SavedActionLists(Store, Engine);
-        _editor.Changed += EditorChanged;
-        _editor.ConditionModePicked += StoreConditionMode;
+        State.Editor.Changed += EditorChanged;
+        State.Editor.ConditionModePicked += StoreConditionMode;
     }
 
     protected override async Task OnInitializedAsync()
     {
+        // The state keeps the editor's lists from an earlier visit to the page; their text is written again in case the
+        // visit ended inside the write's delay.
+        if (State.Loaded)
+        {
+            WriteText();
+            return;
+        }
         try
         {
-            _heroes = await Engine.GetHeroesAsync();
-            var v = await VocabularyOf(_heroes[0]);
-            _saved = await _savedLists.ListAsync();
-            _editor.Load(v, []);
+            State.Heroes = await Engine.GetHeroesAsync();
+            var v = await VocabularyOf(State.Heroes[0]);
+            State.Saved = await _savedLists.ListAsync();
+            State.Editor.Load(v, []);
+            State.Loaded = true;
         }
         catch (Exception e)
         {
-            _editor.SetStatus(MessageState.Error(e.Message));
+            State.Editor.SetStatus(MessageState.Error(e.Message));
         }
     }
 
@@ -115,7 +112,7 @@
         try
         {
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/apl/actionListsCard.js");
-            _editor.ConditionMode = await _module.InvokeAsync<string>("readConditionMode");
+            State.Editor.ConditionMode = await _module.InvokeAsync<string>("readConditionMode");
             _drag = await _module.InvokeAsync<IJSObjectReference>("attachDrag", _root);
         }
         catch (JSDisconnectedException)
@@ -145,13 +142,13 @@
     private async Task<AplVocabulary> VocabularyOf(string hero) =>
         await Engine.GetVocabularyAsync(hero) ?? throw new KeyNotFoundException($"No hero named {hero}.");
 
-    private void Fail(Exception e) => _editor.SetStatus(MessageState.Error(e.Message));
+    private void Fail(Exception e) => State.Editor.SetStatus(MessageState.Error(e.Message));
 
     // The action-list text follows every change to the actions, 250 ms after the last one.
     private void WriteText()
     {
-        if (_editor.Vocabulary is not { } v) return;
-        var lists = _editor.Lists;
+        if (State.Editor.Vocabulary is not { } v) return;
+        var lists = State.Editor.Lists;
         if (ReferenceEquals(lists, _writtenLists) && ReferenceEquals(v, _writtenVocabulary)) return;
         _writtenLists = lists;
         _writtenVocabulary = v;
@@ -184,12 +181,12 @@
             if (ct.IsCancellationRequested) return;
             if (text != null)
             {
-                _text = text;
-                _textStatus = MessageState.None;
+                State.Text = text;
+                State.TextStatus = MessageState.None;
             }
             else
             {
-                _textStatus = status!;
+                State.TextStatus = status!;
             }
             StateHasChanged();
         });
@@ -199,7 +196,7 @@
     {
         try
         {
-            _editor.SetVocabulary(await VocabularyOf(hero));
+            State.Editor.SetVocabulary(await VocabularyOf(hero));
         }
         catch (Exception e)
         {
@@ -209,13 +206,13 @@
 
     private async Task LoadSavedLists(string selected = "")
     {
-        _saved = await _savedLists.ListAsync();
-        _selectedSaved = selected;
+        State.Saved = await _savedLists.ListAsync();
+        State.SelectedSaved = selected;
     }
 
     private async Task AddList()
     {
-        if (_editor.AddList(_newList.Trim())) _newList = "";
+        if (State.Editor.AddList(State.NewList.Trim())) State.NewList = "";
         else await _newListInput.FocusAsync();
     }
 
@@ -223,24 +220,24 @@
     {
         try
         {
-            var result = await Engine.ParseActionListAsync(_text);
-            _editor.Load(_editor.Vocabulary!, result.Actions);
-            _editor.SetStatus(MessageState.Ok($"Loaded {result.Actions.Count} actions."));
+            var result = await Engine.ParseActionListAsync(State.Text);
+            State.Editor.Load(State.Editor.Vocabulary!, result.Actions);
+            State.Editor.SetStatus(MessageState.Ok($"Loaded {result.Actions.Count} actions."));
         }
         catch (Exception e)
         {
-            _textStatus = MessageState.Error(e.Message);
+            State.TextStatus = MessageState.Error(e.Message);
         }
     }
 
     private async Task PickSaved(string value)
     {
-        _selectedSaved = value;
-        _editor.SetStatus(MessageState.None);
+        State.SelectedSaved = value;
+        State.Editor.SetStatus(MessageState.None);
         if (value.Length == 0)
         {
-            _name = "";
-            _editor.Load(_editor.Vocabulary!, []);
+            State.Name = "";
+            State.Editor.Load(State.Editor.Vocabulary!, []);
             return;
         }
         string[] parts = value.Split('/');
@@ -249,17 +246,17 @@
         {
             var list = await _savedLists.ReadAsync(hero, savedName);
             var heroVocabulary = await VocabularyOf(hero);
-            _editor.SetVocabulary(heroVocabulary);
-            _name = savedName;
+            State.Editor.SetVocabulary(heroVocabulary);
+            State.Name = savedName;
             if (list.Error != null)
             {
-                _text = list.Text;
-                _textOpen = true;
-                _textKey++;
-                _editor.SetStatus(MessageState.Error($"The saved text does not parse: {list.Error}"));
+                State.Text = list.Text;
+                State.TextOpen = true;
+                State.TextKey++;
+                State.Editor.SetStatus(MessageState.Error($"The saved text does not parse: {list.Error}"));
                 return;
             }
-            _editor.Load(heroVocabulary, list.Actions ?? []);
+            State.Editor.Load(heroVocabulary, list.Actions ?? []);
         }
         catch (Exception e)
         {
@@ -269,24 +266,24 @@
 
     private async Task Save()
     {
-        var v = _editor.Vocabulary!;
-        string listName = _name.Trim();
+        var v = State.Editor.Vocabulary!;
+        string listName = State.Name.Trim();
         if (listName.Length == 0)
         {
-            _editor.SetStatus(MessageState.Error("Name the action list first."));
+            State.Editor.SetStatus(MessageState.Error("Name the action list first."));
             await _nameInput.FocusAsync();
             return;
         }
-        var lists = _editor.Lists;
+        var lists = State.Editor.Lists;
         try
         {
             string path = await _savedLists.SaveAsync(v.Hero, listName, ActionListModel.DocumentActions(lists));
-            _editor.SetStatus(MessageState.Ok($"Saved to {path}."));
+            State.Editor.SetStatus(MessageState.Ok($"Saved to {path}."));
             await LoadSavedLists($"{v.Hero}/{listName}");
         }
         catch (ActionListNotSavedException e)
         {
-            _editor.SetStatus(MessageState.Error($"{e.Message} {ActionListModel.ErrorText(v, lists, e.Errors)}".Trim()));
+            State.Editor.SetStatus(MessageState.Error($"{e.Message} {ActionListModel.ErrorText(v, lists, e.Errors)}".Trim()));
         }
         catch (Exception e)
         {
@@ -296,8 +293,8 @@
 
     public async ValueTask DisposeAsync()
     {
-        _editor.Changed -= EditorChanged;
-        _editor.ConditionModePicked -= StoreConditionMode;
+        State.Editor.Changed -= EditorChanged;
+        State.Editor.ConditionModePicked -= StoreConditionMode;
         _write?.Cancel();
         try
         {

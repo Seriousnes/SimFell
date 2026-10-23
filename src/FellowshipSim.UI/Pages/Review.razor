@@ -1,5 +1,5 @@
 @page "/review"
-@inject IReviewPages ReviewPages
+@inject IAppViews Views
 
 <PageTitle>Review - FellowshipSim</PageTitle>
 
@@ -7,7 +7,7 @@
     Replay review
 </SectionContent>
 
-<p class="back"><a href="">Back to the reviews</a></p>
+<p class="back"><button type="button" class="link-button" @onclick="() => Views.ShowPage(AppPage.Reviews)">Back to the reviews</button></p>
 
 @if (string.IsNullOrEmpty(Page))
 {
@@ -15,14 +15,11 @@
 }
 else
 {
-    <iframe class="page" src="@ReviewPages.Url(Page)" title="Replay review"></iframe>
+    <ReviewFrame HtmlFile="@Page" />
 }
 
 @code {
-    /// <summary>
-    /// File name of the review page in the reviews folder. The page is in an iframe because the desktop app's review
-    /// address is unreachable from the system browser, and a top-level link would replace the app page.
-    /// </summary>
+    /// <summary>File name of the review page in the reviews folder.</summary>
     [SupplyParameterFromQuery(Name = "page")] public string? Page { get; set; }
 
     /// <summary>Address of the page that shows the review page <paramref name="htmlFile"/>.</summary>

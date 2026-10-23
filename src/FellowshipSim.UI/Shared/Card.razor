@@ -1,11 +1,15 @@
-@* A section of the page, with its title. *@
+@* A section of the page, with its title when the section is one of several. *@
 <section class="card" hidden="@Hidden">
-    <h2 class="title">@Title</h2>
+    @if (Title != null)
+    {
+        <h2 class="title">@Title</h2>
+    }
     @ChildContent
 </section>
 
 @code {
-    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    /// <summary>Heading of the section; none when the section is the whole page and the menu names it.</summary>
+    [Parameter] public string? Title { get; set; }
 
     [Parameter] public bool Hidden { get; set; }
 

@@ -1,14 +1,15 @@
 @inject ReportLookup Reports
+@inject ImportPageState State
 
 <Card Title="Import a fight">
     <form class="row" @onsubmit="LoadAsync">
-        <input placeholder="FellowshipLogs report link or code" autocomplete="off" required @bind="_link" />
+        <input placeholder="FellowshipLogs report link or code" autocomplete="off" required @bind="State.Link" />
         <button type="submit">Load report</button>
         <button type="button" class="secondary-button" @onclick="OnEditSettings">API settings</button>
     </form>
-    <Message Kind="Status.Kind">@Status.Text</Message>
+    <Message Kind="State.Status.Kind">@State.Status.Text</Message>
     <div>
-        @if (_report is { } report)
+        @if (State.Report is { } report)
         {
             <div class="fights">
                 @foreach (var f in report.Fights.Where(f => f.Players.Count > 0))
@@ -42,19 +43,12 @@
 </Card>
 
 @code {
-    [Parameter] public MessageState Status { get; set; } = MessageState.None;
-
-    [Parameter] public EventCallback<MessageState> StatusChanged { get; set; }
-
     /// <summary>True while a replay runs: the player buttons are disabled.</summary>
     [Parameter] public bool Busy { get; set; }
 
     [Parameter] public EventCallback OnEditSettings { get; set; }
 
     [Parameter] public EventCallback<ReviewTarget> OnReplay { get; set; }
-
-    private string _link = "";
-    private Report? _report;
 
     private static string FormatDuration(double seconds)
     {
@@ -65,18 +59,17 @@
 
     private async Task LoadAsync()
     {
-        await StatusChanged.InvokeAsync(new MessageState("Loading report..."));
-        _report = null;
+        State.Status = new MessageState("Loading report...");
+        State.Report = null;
         try
         {
-            var loaded = await Reports.FindAsync(_link);
-            await StatusChanged.InvokeAsync(
-                new MessageState($"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. Pick a player to replay."));
-            _report = loaded;
+            var loaded = await Reports.FindAsync(State.Link);
+            State.Status = new MessageState($"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. Pick a player to replay.");
+            State.Report = loaded;
         }
         catch (Exception e)
         {
-            await StatusChanged.InvokeAsync(new MessageState(e.Message, MessageKind.Error));
+            State.Status = new MessageState(e.Message, MessageKind.Error);
         }
     }
 }

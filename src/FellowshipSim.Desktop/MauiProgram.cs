@@ -20,7 +20,8 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
 #endif
 
-        builder.Services.AddSimFellUI(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FellowshipSim"));
+        builder.Services.AddSimFellUI(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FellowshipSim"))
+            .AddSimFellDesktopShell();
         builder.Services.AddSingleton<ISimEngine, LocalSimEngine>();
         builder.Services.AddSingleton<ReviewPages>();
         builder.Services.AddSingleton<IReviewPages>(s => s.GetRequiredService<ReviewPages>());

@@ -1,0 +1,69 @@
+@implements IDisposable
+@inject DesktopTabs Tabs
+@inject SimJobQueue Queue
+@inject FollowedReviews Followed
+@*
+    The desktop app's frame: a tab for each menu page, then a closable tab for each job and review page opened, and the
+    jobs menu. Each tab's content stays rendered once shown, and only the selected tab's content is visible.
+*@
+<div class="shell">
+    <header class="bar">
+        <nav class="tabs" role="tablist">
+            @foreach (var tab in Tabs.Tabs)
+            {
+                bool selected = tab == Tabs.Selected;
+                <div @key="tab.Key" class="tab @(selected ? "selected" : "") @(tab.Closable ? "closable" : "")">
+                    <button type="button" class="select" role="tab" aria-selected="@(selected ? "true" : "false")" title="@tab.Title"
+                            @onclick="() => Tabs.Select(tab)">
+                        @tab.Title
+                    </button>
+                    @if (tab.Closable)
+                    {
+                        <button type="button" class="close" title="Close" aria-label="@($"Close {tab.Title}")" @onclick="() => Tabs.Close(tab)">✕</button>
+                    }
+                </div>
+            }
+        </nav>
+        <div class="jobs"><JobsMenu /></div>
+    </header>
+    @foreach (var tab in Tabs.Tabs.Where(Tabs.IsShown))
+    {
+        <section @key="tab.Key" class="panel" role="tabpanel" hidden="@(tab != Tabs.Selected)">
+            <div class="content">
+                @switch (tab)
+                {
+                    case { Kind: DesktopTabKind.Page, Page: { } menuPage }:
+                        <DynamicComponent Type="menuPage.Component" />
+                        break;
+                    case { Kind: DesktopTabKind.Job, Job: { } job }:
+                        <JobView Job="job" />
+                        break;
+                    case { Kind: DesktopTabKind.Review, ReviewFile: { } file }:
+                        <ReviewFrame HtmlFile="@file" />
+                        break;
+                }
+            </div>
+        </section>
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Tabs.Changed += StateHasChanged;
+        Queue.Changed += OnChanged;
+    }
+
+    // A review started from the Import tab opens as a tab when it is done.
+    private void OnChanged(SimJob job) => _ = InvokeAsync(() =>
+    {
+        if (Followed.TakeDone(job, out var review)) Tabs.ShowReview(review.HtmlFile, ReviewTitle.Replay(review));
+        else Followed.Forget(job);
+    });
+
+    public void Dispose()
+    {
+        Tabs.Changed -= StateHasChanged;
+        Queue.Changed -= OnChanged;
+    }
+}

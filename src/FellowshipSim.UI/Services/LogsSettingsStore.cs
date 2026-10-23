@@ -31,8 +31,14 @@ public sealed class LogsSettingsStore(ReplayLibrary library, IHttpClientFactory 
         }
     }
 
-    public void Save(LogsCredentials credentials) =>
+    /// <summary>Raised after <see cref="Save"/> writes new credentials.</summary>
+    public event Action? Saved;
+
+    public void Save(LogsCredentials credentials)
+    {
         File.WriteAllText(SettingsPath, JsonSerializer.Serialize(credentials, new JsonSerializerOptions { WriteIndented = true }));
+        Saved?.Invoke();
+    }
 
     /// <summary>
     /// Saves the credentials after checking they can sign in. Throws <see cref="ArgumentException"/> when either is blank,

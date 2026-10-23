@@ -1,0 +1,158 @@
+.jobs-menu {
+  position: relative;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+  padding: 5px 10px;
+}
+
+.toggle.open {
+  border-color: var(--accent);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Covers the page, review iframes included, so a click outside the list closes it. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 21;
+  width: min(440px, calc(100vw - 32px));
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+
+.jobs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.job {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: start;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.job:last-child {
+  border-bottom: none;
+}
+
+.open {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 6px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+.open:hover {
+  background: var(--row-hover);
+}
+
+.job-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.kind {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 5px;
+}
+
+.job-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.status {
+  flex: none;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status.running {
+  color: var(--accent);
+}
+
+.status.done {
+  color: var(--good);
+}
+
+.status.failed {
+  color: var(--bad);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.actions button {
+  padding: 3px 10px;
+  font-size: 13px;
+}
+
+.actions .icon-button {
+  padding: 3px 8px;
+}
+
+.empty {
+  margin: 0;
+  padding: 12px 14px;
+}

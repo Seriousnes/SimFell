@@ -1,4 +1,4 @@
-@* Every page of the app. A host renders this component as its root. *@
+@* The web app's pages, routed by address. The web host renders this component as its root; the desktop app renders DesktopShell. *@
 <Router AppAssembly="typeof(Routes).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />

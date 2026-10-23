@@ -1,0 +1,50 @@
+@page "/reviews"
+@using FellowshipSim.Logs
+@implements IDisposable
+@inject ReplayLibrary Library
+@inject SimJobQueue Queue
+
+<PageTitle>Reviews - FellowshipSim</PageTitle>
+
+<SectionContent SectionName="@MainLayout.SubtitleSection">
+    Each replayed fight and how closely the engine matched its log
+</SectionContent>
+
+<ReviewsCard Reviews="_reviews" />
+
+@code {
+    private IReadOnlyList<ReviewSummary> _reviews = [];
+    private readonly HashSet<string> _doneReviews = [];
+
+    protected override void OnInitialized()
+    {
+        LoadReviews();
+        Queue.Changed += OnChanged;
+    }
+
+    // A review that finishes adds a row.
+    private void OnChanged(SimJob job)
+    {
+        if (job is not { Kind: SimJobKind.Review, Status: SimJobStatus.Done }) return;
+        _ = InvokeAsync(() =>
+        {
+            if (!_doneReviews.Add(job.Id)) return;
+            LoadReviews();
+            StateHasChanged();
+        });
+    }
+
+    private void LoadReviews()
+    {
+        try
+        {
+            _reviews = Library.ListReviews();
+        }
+        catch (Exception)
+        {
+            // The list keeps its rows; the next finished review reads the folder again.
+        }
+    }
+
+    public void Dispose() => Queue.Changed -= OnChanged;
+}
