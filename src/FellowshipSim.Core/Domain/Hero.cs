@@ -1,7 +1,8 @@
-using FellowshipSim.Core.Customization.Blessings;
+using FellowshipSim.Core.Customization.Augmentations;
 using FellowshipSim.Core.Customization.Gems;
+using FellowshipSim.Core.Customization.Glyphs;
 using FellowshipSim.Core.Customization.Legendaries;
-using FellowshipSim.Core.Customization.Traits;
+using FellowshipSim.Core.Customization.RelicPassives;
 using FellowshipSim.Core.Customization.Weapons;
 
 namespace FellowshipSim.Core.Domain;
@@ -30,23 +31,19 @@ public abstract class Hero : Actor
     private static readonly int CooldownRecoveryStat = AuraDef.MaskOf(StatType.CooldownRecovery);
 
     /// <summary>
-    /// An aura with cooldown recovery or haste, or one a cooldown acceleration reads, progresses every recharge to now at
-    /// the old rate and reads the new one. Speed: any other aura leaves the recharges, whose rate it cannot change.
+    /// An aura with cooldown recovery or haste progresses every recharge to now at the old rate and reads the new one.
+    /// Speed: any other aura leaves the recharges, whose rate it cannot change.
     /// </summary>
     private void AuraChanged(Aura aura, SimTime now)
     {
-        bool acceleration = CooldownAccelerationAuraKeys.Count > 0 && CooldownAccelerationAuraKeys.Contains(aura.Key);
-        if (acceleration) _accelerationAuraChanges++;
-        if (!acceleration && !aura.Def.Changes(CooldownRateStats)) return;
+        if (!aura.Def.Changes(CooldownRateStats)) return;
         foreach (var state in Cooldowns.Values) state.Advance(now);
     }
 
-    // Speed: CooldownRate reads only the auras' cooldown recovery and haste, the auras a cooldown acceleration reads (counted
-    // as they change), the accelerations and the stat block. A recharge reads its rate again only after one of them changed;
-    // the rate it would read is the rate it has.
-    private (int Recovery, int Haste, int HasteRating, int Accelerations, int AccelerationAuras, StatBlock? Stats, int StatsVersion) _rateInputs;
+    // Speed: CooldownRate reads only the auras' cooldown recovery and haste, the accelerations and the stat block. A
+    // recharge reads its rate again only after one of them changed; the rate it would read is the rate it has.
+    private (int Recovery, int Haste, int HasteRating, int Accelerations, StatBlock? Stats, int StatsVersion) _rateInputs;
     private long _rateInputsVersion;
-    private int _accelerationAuraChanges;
 
     /// <summary>
     /// Changes whenever something <see cref="CooldownRate"/> reads may have changed. Expired auras are removed first, as the
@@ -56,7 +53,7 @@ public abstract class Hero : Actor
     {
         Auras.CleanExpired(now);
         var inputs = (Auras.StatVersion(StatType.CooldownRecovery), Auras.StatVersion(StatType.Haste), Auras.StatVersion(StatType.HasteRating),
-            CooldownAccelerations.Count, _accelerationAuraChanges, Stats, Stats.Version);
+            CooldownAccelerations.Count, Stats, Stats.Version);
         if (inputs != _rateInputs)
         {
             _rateInputs = inputs;
@@ -72,12 +69,12 @@ public abstract class Hero : Actor
     public Weapon? EquippedWeapon { get; set; }
     public Ability? WeaponAbility { get; set; }
     public List<Ability> Abilities { get; } = new();
-    public List<Blessing> Blessings { get; } = new();
-    public List<Trait> Traits { get; } = new();
+    public List<Glyph> Glyphs { get; } = new();
+    public List<Augmentation> Augmentations { get; } = new();
     public List<Legendary> Legendaries { get; } = new();
     public List<Gem> Gems { get; } = new();
     public List<Talent> Talents { get; } = new();
-    public List<Customization.Sets.SetBonus> Sets { get; } = new();
+    public RelicPassive? RelicPassive { get; set; }
 
     public Dictionary<string, CooldownState> Cooldowns { get; } = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>Changes whenever a cooldown state is added to <see cref="Cooldowns"/> or they are cleared.</summary>
@@ -125,9 +122,6 @@ public abstract class Hero : Actor
 
     /// <summary>Cooldown acceleration for specific abilities (0.05 = cooldown recovers 5% faster).</summary>
     public List<Func<Ability, SimTime, double>> CooldownAccelerations { get; } = new();
-
-    /// <summary>Keys of the auras a <see cref="CooldownAccelerations"/> entry reads, other than through haste (e.g. Inspired Arms).</summary>
-    public HashSet<string> CooldownAccelerationAuraKeys { get; } = new(StringComparer.Ordinal);
 
     /// <summary>Seconds added to Spirit of Heroism.</summary>
     public double SpiritOfHeroismDurationBonus { get; set; }
@@ -247,9 +241,6 @@ public abstract class Hero : Actor
 
     /// <summary>Spirit Points a Spirit Refund grants (hero_data SpiritProc FlatSpiritPointGain: 1, Rime 2).</summary>
     public double SpiritPointsPerSpiritRefund { get; protected set; } = 1.0;
-
-    /// <summary>Spirit Points at the start of a dungeon (The Herald, Undulating Spirit...).</summary>
-    public double StartingSpiritPoints { get; set; }
 
     /// <summary>Share taken off the Spirit ability's cost (Blessing of the Prophet).</summary>
     public double SpiritAbilityCostReduction { get; set; }
@@ -616,7 +607,6 @@ public abstract class Hero : Actor
 
     protected void ResetCombatState()
     {
-        Resources.Get(SpiritPoints).Initial = StartingSpiritPoints;
         Resources.Reset();
         Auras.ClearAll();
         Auras.ClearTimers();

@@ -2,8 +2,8 @@ namespace FellowshipSim.Engine.Replay;
 
 /// <summary>
 /// The auras the engine models for a hero, which a replay compares with the logged buffs: every aura declared as a
-/// <c>public static readonly AuraDef</c> on the hero and on everything it has (abilities, talents, gems, blessings,
-/// weapon, traits, legendaries, sets), plus the auras it built at runtime (<see cref="Hero.RuntimeAuras"/>).
+/// <c>public static readonly AuraDef</c> on the hero and on everything it has (abilities, talents, gems, glyphs,
+/// weapon, augmentations, legendaries, relic passive), plus the auras it built at runtime (<see cref="Hero.RuntimeAuras"/>).
 /// </summary>
 public static class ModeledAuras
 {
@@ -13,11 +13,11 @@ public static class ModeledAuras
         owners.AddRange(hero.Abilities);
         owners.AddRange(hero.Talents);
         owners.AddRange(hero.Gems);
-        owners.AddRange(hero.Blessings);
+        owners.AddRange(hero.Glyphs);
         if (hero.EquippedWeapon != null) owners.Add(hero.EquippedWeapon);
-        owners.AddRange(hero.Traits);
+        owners.AddRange(hero.Augmentations);
         owners.AddRange(hero.Legendaries);
-        owners.AddRange(hero.Sets);
+        if (hero.RelicPassive != null) owners.Add(hero.RelicPassive);
         var declared = AuraDef.DeclaredOn(owners.Select(o => o.GetType()));
         // Passive auras are left out: they are on all fight in the engine and logs do not report them as buffs.
         return declared.Concat(hero.RuntimeAuras)

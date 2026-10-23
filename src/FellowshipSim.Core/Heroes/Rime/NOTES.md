@@ -13,8 +13,7 @@ Measured on 10 Rime logs (fights on Wyrmheart and Apostate Veras, July to Octobe
 - **Rising Talons:** one wave of spikes per Winter Orb; the first 0.30s after the cast, then every 4 server frames.
   Every wave keeps the damage and target falloff of the cast, but hits the enemies present when it erupts.
 - **Glacial Assault's explosion:** 30% of the hit actually dealt (crit included); it never crits itself.
-- **Burstbolter:** Bursting Ice deals 1.3x (the game data's constant), not the tooltip's 20%. The pulse comes when the
-  Frost Bolt lands, not when it is cast.
+- **Burstbolter:** the pulse comes when the Frost Bolt lands.
 - **Harrowing Ice** (fight g6zBdpvJCmh2HfrD #31): a pulse deals damage with the stacks held before it, then adds its own;
   stacks reach 31 (the tooltip says 30) and are consumed at once.
 

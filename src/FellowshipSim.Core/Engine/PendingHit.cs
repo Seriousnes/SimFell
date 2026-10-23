@@ -72,8 +72,7 @@ public sealed class PendingHit
             return new SimulationContext.HitNumbers(
                 ability.BaseDamage(ctx, Target, DamageMultiplier),
                 owner.CritChanceAgainst(Target, now) + ability.CritChanceBonus + ExtraCritChance + CastCritChance,
-                ability.CritMultiplierAt(now),
-                ability.BonusCoefficient * owner.PrimaryAttribute(now));
+                ability.CritMultiplierAt(now));
         }
         return _compute != null ? _compute(ctx) : _fixed;
     }

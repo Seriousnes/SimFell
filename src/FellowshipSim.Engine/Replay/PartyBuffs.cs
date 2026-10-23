@@ -1,4 +1,4 @@
-using FellowshipSim.Core.Customization.Traits;
+using FellowshipSim.Core.Customization.Sigils;
 
 namespace FellowshipSim.Engine.Replay;
 
@@ -10,20 +10,20 @@ namespace FellowshipSim.Engine.Replay;
 public static class PartyBuffs
 {
     /// <summary>
-    /// A buff from another player. When it comes from one of the giver's traits, <see cref="ValueByGiverRank"/> holds its
-    /// modifier value at each trait rank, and the giver's rank (gear trait ranks + weapon-tree points) picks the value.
+    /// A buff from another player. When it comes from one of the giver's sigils, <see cref="ValueByGiverRank"/> holds its
+    /// modifier value at each sigil rank, and the giver's rank (gear ranks + weapon-tree points) picks the value.
     /// </summary>
-    public sealed record PartyBuff(AuraDef Aura, IReadOnlyList<double>? ValueByGiverRank = null, string? TraitName = null, int TraitId = 0);
+    public sealed record PartyBuff(AuraDef Aura, IReadOnlyList<double>? ValueByGiverRank = null, string? SigilName = null, int SigilId = 0);
 
     public const int ImbuedBloodEffectId = 55;
     public const int ShadowsDefeatEffectId = 2221;
 
     public static readonly PartyBuff[] All =
     [
-        // Inspired Allegiance (trait 2): Haste rating for the giver and allies, by the giver's rank.
-        new(AuraDef.Effect(InspiredAllegiance.TraitName, InspiredAllegiance.BuffEffectId,
+        // Inspired Allegiance (sigil 2): Haste rating for the giver and allies, by the giver's rank.
+        new(AuraDef.Effect(InspiredAllegiance.SigilName, InspiredAllegiance.BuffEffectId,
                 modifiers: StatModifier.Add(StatType.HasteRating, InspiredAllegiance.HasteRatingByRank[0])),
-            InspiredAllegiance.HasteRatingByRank, InspiredAllegiance.TraitName, InspiredAllegiance.TraitId),
+            InspiredAllegiance.HasteRatingByRank, InspiredAllegiance.SigilName, InspiredAllegiance.SigilId),
 
         // Imbued Blood: +1% Expertise per stack, up to 15 stacks.
         new(AuraDef.Effect("Imbued Blood", ImbuedBloodEffectId, maxStacks: 15, modifiers: StatModifier.Add(StatType.Expertise, 0.01))),

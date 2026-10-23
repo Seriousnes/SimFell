@@ -364,7 +364,7 @@ public sealed class ReplayDriver
     /// <summary>
     /// The aura another actor applies, from the <see cref="PartyBuffs"/> catalogue: one instance per source (the same buff
     /// from two players stacks), lasting until the log removes it, and scaled to the source player's rank when it comes
-    /// from one of their traits. Null for buffs the catalogue does not list.
+    /// from one of their sigils. Null for buffs the catalogue does not list.
     /// </summary>
     private AuraDef? ExternalAuraDef(int logId, int sourceId)
     {
@@ -375,8 +375,8 @@ public sealed class ReplayDriver
             def = buff.Aura with { Duration = SimTime.Infinite, MaxStacks = 99, SourceId = sourceId };
             if (buff.ValueByGiverRank is { } byRank && _script.Players.TryGetValue(sourceId.ToString(), out var source))
             {
-                int rank = source.GearTraits.GetValueOrDefault(buff.TraitName!)
-                           + source.WeaponTraits.GetValueOrDefault((LogIds.TraitOffset + buff.TraitId).ToString());
+                int rank = source.GearTraits.GetValueOrDefault(buff.SigilName!)
+                           + source.WeaponTraits.GetValueOrDefault((LogIds.AugmentationOffset + buff.SigilId).ToString());
                 double value = byRank[Math.Clamp(rank, 1, byRank.Count) - 1];
                 def = def with { Modifiers = def.Modifiers.Select(m => m with { Value = value }).ToArray() };
             }

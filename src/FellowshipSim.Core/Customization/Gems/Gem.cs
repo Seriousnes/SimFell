@@ -23,7 +23,7 @@ public sealed record GemNode(int Id, int Node, string Name, double RequiredPower
 }
 
 /// <summary>
-/// A gem colour's trait tree. Each colour lists its nodes (with their game values) at the top of its class, and applies
+/// A gem colour's tree. Each colour lists its nodes (with their game values) at the top of its class, and applies
 /// the unlocked ones it models in <see cref="BindNode"/>.
 /// </summary>
 public abstract class Gem

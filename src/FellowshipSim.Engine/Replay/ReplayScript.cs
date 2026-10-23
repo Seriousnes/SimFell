@@ -21,7 +21,7 @@ public class ReplayScript
     [JsonPropertyName("duration_s")] public double DurationSeconds { get; set; }
     [JsonPropertyName("player")] public ReplayPlayer Player { get; set; } = new();
     [JsonPropertyName("character")] public CharacterBuild? Character { get; set; }
-    /// <summary>Every player's trait ranks, by player ID (buffs they give scale with their rank).</summary>
+    /// <summary>Every player's augmentation ranks, by player ID (buffs they give scale with their rank).</summary>
     [JsonPropertyName("players")] public Dictionary<string, ReplayPartyMember> Players { get; set; } = new();
     [JsonPropertyName("commands")] public List<ReplayCommand> Commands { get; set; } = new();
     [JsonPropertyName("observations")] public ReplayObservations Observations { get; set; } = new();
@@ -51,7 +51,7 @@ public class ReplayPartyMember
 {
     [JsonPropertyName("name")] public string? Name { get; set; }
     [JsonPropertyName("gear_traits")] public Dictionary<string, int> GearTraits { get; set; } = new();
-    /// <summary>Weapon-tree points by log trait ID (3,000,000 + datamine trait ID).</summary>
+    /// <summary>Weapon-tree points by log augmentation ID (3,000,000 + datamine augmentation ID).</summary>
     [JsonPropertyName("weapon_traits")] public Dictionary<string, int> WeaponTraits { get; set; } = new();
 }
 

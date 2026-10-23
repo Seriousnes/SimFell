@@ -12,20 +12,18 @@ public class UndulatingSpirit : Legendary
     public const int PowerId = 398;
     public const int BuffEffectId = 2171;
     public const int StacksGranted = 2;
-    public const int RingItemId = 5220;
-    /// <summary>"You start each dungeon with 50 Spirit Points" (legendary power 398 generates 50).</summary>
-    public const double StartingSpiritPoints = 50;
+    /// <summary>Harbinger of Winter Furs.</summary>
+    public const int ChestItemId = 5898;
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Undulating Spirit";
     public override string HeroName => "Rime";
-    public override IReadOnlyList<int> ItemIds => [RingItemId];
+    public override IReadOnlyList<int> ItemIds => [ChestItemId];
 
     public static readonly AuraDef Buff = AuraDef.Effect("Undulating Spirit", BuffEffectId, maxStacks: StacksGranted);
 
     public override void Bind(Hero hero)
     {
         if (hero is not Rime rime) return;
-        hero.StartingSpiritPoints += StartingSpiritPoints;
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is WintersBlessing) rime.Auras.Apply(Buff, now, setStacks: StacksGranted);
