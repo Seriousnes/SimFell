@@ -289,6 +289,10 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         Types(s, "BlessingClasses", Distinct(byKind[Kind.Blessing]));
         Types(s, "WeaponClasses", Distinct(byKind[Kind.Weapon]));
         Types(s, "SetClasses", Distinct(byKind[Kind.Set]));
+        Instances(s, "NewTraits", "global::FellowshipSim.Core.Customization.Traits.Trait", Distinct(byKind[Kind.Trait]));
+        Instances(s, "NewBlessings", "global::FellowshipSim.Core.Customization.Blessings.Blessing", Distinct(byKind[Kind.Blessing]));
+        Instances(s, "NewWeapons", "global::FellowshipSim.Core.Customization.Weapons.Weapon", Distinct(byKind[Kind.Weapon]));
+        Instances(s, "NewSets", "global::FellowshipSim.Core.Customization.Sets.SetBonus", Distinct(byKind[Kind.Set]));
         s.AppendLine("    private static (string Hero, global::System.Type Type)[] LegendaryClasses =>");
         s.AppendLine("    [");
         foreach (var (hero, _, entry) in legendaries) s.AppendLine($"        ({Literal(hero)}, typeof({entry.TypeName})),");
@@ -313,6 +317,15 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         s.AppendLine($"    private static global::System.Type[] {field} =>");
         s.AppendLine("    [");
         foreach (var entry in classes) s.AppendLine($"        typeof({entry.TypeName}),");
+        s.AppendLine("    ];");
+        s.AppendLine();
+    }
+
+    private static void Instances(StringBuilder s, string method, string baseType, IEnumerable<Entry> classes)
+    {
+        s.AppendLine($"    private static {baseType}[] {method}() =>");
+        s.AppendLine("    [");
+        foreach (var entry in classes) s.AppendLine($"        new {entry.TypeName}(),");
         s.AppendLine("    ];");
         s.AppendLine();
     }

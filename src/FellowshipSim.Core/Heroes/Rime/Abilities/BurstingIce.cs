@@ -48,7 +48,7 @@ public class BurstingIce : RimeAbility
     }
 
     /// <summary>One pulse around <paramref name="target"/>; <paramref name="fraction"/> scales a partial final pulse.</summary>
-    public void DealPulse(SimulationContext ctx, EnemyTarget target, double fraction = 1.0)
+    public void DealPulse(SimulationContext ctx, EnemyTarget? target, double fraction = 1.0)
     {
         var hero = Rime;
         hero.AddAnima(AnimaPerPulse, ctx, target);
