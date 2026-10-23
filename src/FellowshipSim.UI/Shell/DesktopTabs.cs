@@ -1,4 +1,5 @@
 using FellowshipSim.Engine.Jobs;
+using FellowshipSim.UI.Services;
 
 namespace FellowshipSim.UI.Shell;
 
@@ -57,10 +58,24 @@ public sealed class DesktopTabs : IAppViews
 
     public void ShowPage(AppPage page) => Select(_tabs.First(t => t.Page == page));
 
-    public void ShowJob(SimJob job) => Open(new DesktopTab($"job:{job.Id}", DesktopTabKind.Job, job.Title, Job: job));
+    public void ShowJob(SimJob job) => Open(new DesktopTab(JobKey(job.Id), DesktopTabKind.Job, job.Title, Job: job));
+
+    public void ShowSavedSim(SavedSim sim) => Open(new DesktopTab(JobKey(sim.Id), DesktopTabKind.Job, sim.Title, SavedSim: sim));
 
     public void ShowReview(string htmlFile, string title) =>
         Open(new DesktopTab($"review:{htmlFile}", DesktopTabKind.Review, title, ReviewFile: htmlFile));
+
+    /// <summary>Closes every job and review tab; a closed selected tab passes the selection to the first page.</summary>
+    public void CloseResults()
+    {
+        _tabs.RemoveAll(t => t.Closable);
+        _shown.RemoveWhere(key => _tabs.All(t => t.Key != key));
+        if (!_tabs.Contains(Selected)) Selected = _tabs[0];
+        Changed?.Invoke();
+    }
+
+    // A sim's live job and its saved result share a tab.
+    private static string JobKey(string id) => $"job:{id}";
 
     private void Open(DesktopTab tab)
     {

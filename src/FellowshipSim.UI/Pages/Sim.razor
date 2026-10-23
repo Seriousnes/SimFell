@@ -5,6 +5,7 @@
 @inject SimJobQueue Queue
 @inject SimPageState State
 @inject IAppViews Views
+@inject SimResultLibrary Results
 
 <PageTitle>Sim - FellowshipSim</PageTitle>
 
@@ -74,9 +75,14 @@
         var settings = new SimSettings(State.Iterations, State.DurationSeconds, State.Targets);
         string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
             profile.Build.Name, profile.Build.Hero, State.Iterations, State.DurationSeconds, State.Targets, State.Targets == 1 ? "target" : "targets");
-        var job = Queue.Enqueue(SimJobKind.Sim, title,
-            c => Engine.SimulateAsync(profile, settings with { DegreeOfParallelism = c.DegreeOfParallelism }, c, c.CancellationToken),
-            profile);
+        string profileText = State.Text;
+        var job = Queue.Enqueue(SimJobKind.Sim, title, async c =>
+        {
+            var result = await Engine.SimulateAsync(profile, settings with { DegreeOfParallelism = c.DegreeOfParallelism }, c, c.CancellationToken);
+            var saved = new SavedSim(c.Job.Id, title, profile.Build.Hero, profile.Build.Name, profileText, settings.TargetCount, result, DateTime.UtcNow);
+            Results.Save(saved);
+            return saved;
+        }, profile);
         State.Status = new MessageState($"Queued: {title}.", MessageKind.Ok);
         Views.ShowJob(job);
     }

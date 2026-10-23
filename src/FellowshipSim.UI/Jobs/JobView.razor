@@ -21,8 +21,8 @@
         case { Status: SimJobStatus.Failed }:
             <p class="field-error">@Job.Error</p>
             break;
-        case { Status: SimJobStatus.Done, Result: SimResult sim }:
-            <SimJobResult Result="sim" />
+        case { Status: SimJobStatus.Done, Result: SavedSim sim }:
+            <SimJobResult Result="sim.Result" />
             break;
     }
 </Card>

@@ -14,7 +14,7 @@ public static class SimFellUIServiceCollectionExtensions
     /// <summary>
     /// The app services the pages inject: the data folder at <paramref name="dataDirectory"/> (<see cref="ReplayLibrary"/>),
     /// <see cref="LogsSettingsStore"/>, <see cref="ActionListStore"/>, the <see cref="SimJobQueue"/> with
-    /// <paramref name="jobs"/>, <see cref="ReviewJobs"/> and <see cref="ReportLookup"/>, and each page's state for one
+    /// <paramref name="jobs"/>, <see cref="ReviewJobs"/>, <see cref="ReportLookup"/>, <see cref="SimResultLibrary"/>, and each page's state for one
     /// circuit or window. The host registers the <see cref="Engine.ISimEngine"/>, the <see cref="IReviewPages"/>, and its
     /// shell with <see cref="AddSimFellWebShell"/> or <see cref="AddSimFellDesktopShell"/>.
     /// </summary>
@@ -27,6 +27,7 @@ public static class SimFellUIServiceCollectionExtensions
         services.AddSingleton(new SimJobQueue(jobs));
         services.AddSingleton<ReviewJobs>();
         services.AddSingleton<ReportLookup>();
+        services.AddSingleton<SimResultLibrary>();
         services.AddScoped<FollowedReviews>();
         services.AddScoped<SimPageState>();
         services.AddScoped<ImportPageState>();

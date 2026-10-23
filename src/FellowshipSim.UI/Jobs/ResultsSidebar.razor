@@ -1,0 +1,148 @@
+@using System.Globalization
+@implements IDisposable
+@inject SimJobQueue Queue
+@inject SimResultLibrary Results
+@inject ReplayLibrary Library
+@inject IAppViews Views
+@*
+    The Results button counts the running jobs and opens a sidebar over the page from the right: the jobs still in the
+    queue with their live progress, then the saved sims and reviews, newest first. Picking one shows it.
+*@
+<div class="results" @onkeydown="OnKeyDown">
+    <button type="button" class="toggle" aria-haspopup="true" aria-expanded="@(_open ? "true" : "false")" @onclick="Open">
+        <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M2.5 4h11M2.5 8h11M2.5 12h7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+        <span>Results</span>
+        @if (Running > 0)
+        {
+            <span class="count" aria-label="@($"{Running} running")">@Running</span>
+        }
+    </button>
+    @if (_open)
+    {
+        <div class="backdrop" @onclick="Close"></div>
+        <aside class="sidebar" aria-label="Results">
+            <div class="sidebar-head">
+                <h2>Results</h2>
+                <button type="button" class="icon-button" title="Close" aria-label="Close" @onclick="Close">✕</button>
+            </div>
+            <div class="sidebar-body">
+                @if (Queue.List().Where(j => j.Status != SimJobStatus.Done).Reverse().ToList() is { Count: > 0 } jobs)
+                {
+                    <h3>In the queue</h3>
+                    <ul class="items">
+                        @foreach (var job in jobs)
+                        {
+                            <li @key="job.Id" class="item">
+                                <button type="button" class="pick" @onclick="() => Show(job)">
+                                    <span class="item-head">
+                                        <span class="kind">@job.Kind</span>
+                                        <span class="item-title" title="@job.Title">@job.Title</span>
+                                        <span class="status @job.Status.ToString().ToLowerInvariant()">@job.Status</span>
+                                    </span>
+                                    <JobProgress Job="job" />
+                                </button>
+                                <span class="actions">
+                                    @if (!job.IsFinished)
+                                    {
+                                        <button type="button" class="secondary-button" @onclick="() => Queue.Cancel(job.Id)">Cancel</button>
+                                    }
+                                    <button type="button" class="icon-button danger-button" title="Remove" aria-label="Remove"
+                                            @onclick="() => Queue.Remove(job.Id)">✕</button>
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                }
+                <h3>Recent</h3>
+                @if (_recent.Count == 0)
+                {
+                    <p class="hint">No results yet. Finished sims and replays show here.</p>
+                }
+                else
+                {
+                    <ul class="items">
+                        @foreach (var result in _recent)
+                        {
+                            <li @key="result.Key" class="item">
+                                <button type="button" class="pick" @onclick="() => Show(result)">
+                                    <span class="item-head">
+                                        <span class="kind">@result.Kind</span>
+                                        <span class="item-title" title="@result.Title">@result.Title</span>
+                                    </span>
+                                    <span class="item-meta">
+                                        <span>@result.Value</span>
+                                        <span>@result.CreatedAt.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)</span>
+                                    </span>
+                                </button>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </aside>
+    }
+</div>
+
+@code {
+    /// <summary>Most recent results the sidebar lists.</summary>
+    private const int RecentCount = 50;
+
+    private bool _open;
+    private IReadOnlyList<RecentResult> _recent = [];
+
+    private int Running => Queue.List().Count(j => j.Status == SimJobStatus.Running);
+
+    protected override void OnInitialized() => Queue.Changed += OnChanged;
+
+    private void OnChanged(SimJob job) => _ = InvokeAsync(() =>
+    {
+        if (_open && job.Status == SimJobStatus.Done) LoadRecent();
+        StateHasChanged();
+    });
+
+    private void Open()
+    {
+        LoadRecent();
+        _open = true;
+    }
+
+    private void Close() => _open = false;
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") _open = false;
+    }
+
+    private void LoadRecent()
+    {
+        try
+        {
+            _recent = Results.List().Select(RecentResult.Of)
+                .Concat(Library.ListReviews().Select(RecentResult.Of))
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(RecentCount)
+                .ToList();
+        }
+        catch (IOException)
+        {
+            // The list keeps its rows; the next opening reads the folders again.
+        }
+    }
+
+    private void Show(SimJob job)
+    {
+        _open = false;
+        Views.ShowJob(job);
+    }
+
+    private void Show(RecentResult result)
+    {
+        _open = false;
+        if (result.Sim != null) Views.ShowSavedSim(result.Sim);
+        else if (result.Review != null) Views.ShowReview(result.Review.HtmlFile, ReviewTitle.Replay(result.Review));
+    }
+
+    public void Dispose() => Queue.Changed -= OnChanged;
+}

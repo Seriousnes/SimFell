@@ -59,14 +59,16 @@ or the desktop app).
 - **FellowshipSim.EngineServer** is `LocalSimEngine` over HTTP. A sim streams NDJSON (`SimStreamLine`). Every request
   needs the bearer `EngineKey`; AppHost generates it per run and gives it to FellowshipSim.Service alone.
 - **FellowshipSim.UI** (Razor class library) has every page, component and style, and the app services: `ReplayLibrary`
-  access, FellowshipLogs settings and report lookup, saved action lists (`data/apls/<hero>/<name>.simc`), review jobs
-  and the job queue. `AddSimFellUI` registers them with each page's state, scoped to the circuit or window so a page
-  keeps its input while another shows. The host registers `ISimEngine`, `IReviewPages` and its shell:
-  `AddSimFellWebShell` (`Routes` with `Layout/MainLayout`, each page at its own address) or `AddSimFellDesktopShell`
-  (`Shell/DesktopShell`, a tab per page, job and review page). `Shell/AppPage` lists the menu pages; their routes
-  come from each page's `@page`. Every link inside the app goes through `IAppViews`, since the desktop app has no
-  router. Pages run in Interactive Server and in BlazorWebView, so no component uses `HttpContext` or static server
-  rendering. The action-list editor is in `Apl/`, with JS only for caret, drag and stored-mode work (`wwwroot/apl`).
+  access, FellowshipLogs settings and report lookup, saved action lists (`data/apls/<hero>/<name>.simc`), finished sims
+  (`SimResultLibrary`, `data/results/<job id>.json`), review jobs and the job queue. `AddSimFellUI` registers them with
+  each page's state, scoped to the circuit or window so a page keeps its input while another shows. The host registers
+  `ISimEngine`, `IReviewPages` and its shell: `AddSimFellWebShell` (`Routes` with `Layout/MainLayout`, each page at its
+  own address) or `AddSimFellDesktopShell` (`Shell/DesktopShell`, a tab per page, job and review page, with ‹ › and an
+  open list when the result tabs overflow). Both frames have `Jobs/ResultsSidebar`: the queue with live progress, then
+  the saved sims and reviews. `Shell/AppPage` lists the menu pages; their routes come from each page's `@page`. Every
+  link inside the app goes through `IAppViews`, since the desktop app has no router. Pages run in Interactive Server and in BlazorWebView, so no component uses `HttpContext` or static server
+  rendering. The action-list editor is in `Apl/`, with JS only for caret, drag and stored-mode work (`wwwroot/apl`);
+  `wwwroot/shell` scrolls the desktop result tabs.
 - **FellowshipSim.Service** is the web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. Its
   `RemoteSimEngine` calls the engine server. It serves review pages at `/reviews`.
 - **FellowshipSim.Desktop** is a .NET MAUI Blazor Hybrid app (`net10.0-windows10.0.19041.0`, `net10.0-maccatalyst`)
@@ -83,7 +85,7 @@ The desktop app and the CLI run fights in-process, so they copy the engine serve
 on and concurrent GC off (Windows only on the desktop app, since Mac Catalyst has no server GC). Without them fights take
 about 2.5 times as long.
 
-`data/` is local and not committed: `fights/`, `scripts/`, `reviews/`, `apls/`, `profiles/`, `settings.json`.
+`data/` is local and not committed: `fights/`, `scripts/`, `reviews/`, `results/`, `apls/`, `profiles/`, `settings.json`.
 
 ## Conventions
 

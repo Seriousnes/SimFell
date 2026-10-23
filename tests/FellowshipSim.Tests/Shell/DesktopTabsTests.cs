@@ -1,4 +1,6 @@
+using FellowshipSim.Engine;
 using FellowshipSim.Engine.Jobs;
+using FellowshipSim.UI.Services;
 using FellowshipSim.UI.Shell;
 
 namespace FellowshipSim.Tests.Shell;
@@ -68,6 +70,32 @@ public class DesktopTabsTests
 
         Assert.Equal(AppPage.Import, tabs.Selected.Page);
         Assert.DoesNotContain(tabs.Tabs, t => t.Kind == DesktopTabKind.Review);
+    }
+
+    [Fact]
+    public void Close_All_Leaves_The_Page_Tabs_And_Selects_The_First_Page()
+    {
+        var tabs = new DesktopTabs();
+        tabs.ShowReview("a.html", "a");
+        tabs.ShowReview("b.html", "b");
+        tabs.CloseResults();
+
+        Assert.Equal(AppPage.All, tabs.Tabs.Select(t => t.Page));
+        Assert.Equal(AppPage.All[0], tabs.Selected.Page);
+    }
+
+    [Fact]
+    public void A_Saved_Sim_Opens_In_The_Tab_Of_Its_Job()
+    {
+        var tabs = new DesktopTabs();
+        var job = new SimJobQueue().Enqueue(SimJobKind.Sim, "sim", _ => Task.FromResult(1));
+        tabs.ShowJob(job);
+        tabs.ShowPage(AppPage.Sim);
+        tabs.ShowSavedSim(new SavedSim(job.Id, "sim", "Rime", "sww", "", 1,
+            new SimResult(1, 1, 1, 0, new Dictionary<string, double>(), 1, 1), DateTime.UtcNow));
+
+        Assert.Single(tabs.Tabs, t => t.Kind == DesktopTabKind.Job);
+        Assert.Same(job, tabs.Selected.Job);
     }
 
     [Fact]

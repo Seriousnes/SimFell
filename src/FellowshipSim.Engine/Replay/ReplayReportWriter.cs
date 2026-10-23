@@ -102,7 +102,7 @@ public static class ReplayReportWriter
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Replay Parity Review</title>
 <style>
-:root{--bg:#f7f7f5;--panel:#fff;--text:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--ok:#1f7a4d;--ok-bg:#e5f3ec;--bad:#b42318;--bad-bg:#fdecea;--warn:#9a6700;--warn-bg:#fff4d6;--accent:#3b5bdb}
+:root{color-scheme:light dark;--bg:#f7f7f5;--panel:#fff;--text:#1d1d1b;--muted:#6b6b66;--line:#e2e1dc;--ok:#1f7a4d;--ok-bg:#e5f3ec;--bad:#b42318;--bad-bg:#fdecea;--warn:#9a6700;--warn-bg:#fff4d6;--accent:#3b5bdb}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151514;--panel:#1e1e1c;--text:#ecebe6;--muted:#a3a29b;--line:#34332f;--ok:#5cc58f;--ok-bg:#16301f;--bad:#ff8a80;--bad-bg:#3a1a17;--warn:#f2c14e;--warn-bg:#3a3014;--accent:#8ea2ff}}
 :root[data-theme="dark"]{--bg:#151514;--panel:#1e1e1c;--text:#ecebe6;--muted:#a3a29b;--line:#34332f;--ok:#5cc58f;--ok-bg:#16301f;--bad:#ff8a80;--bad-bg:#3a1a17;--warn:#f2c14e;--warn-bg:#3a3014;--accent:#8ea2ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}

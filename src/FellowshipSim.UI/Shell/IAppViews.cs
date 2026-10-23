@@ -1,4 +1,5 @@
 using FellowshipSim.Engine.Jobs;
+using FellowshipSim.UI.Services;
 
 namespace FellowshipSim.UI.Shell;
 
@@ -12,6 +13,9 @@ public interface IAppViews
 
     /// <summary>The job's progress, then its result.</summary>
     void ShowJob(SimJob job);
+
+    /// <summary>A finished sim read back from the data folder.</summary>
+    void ShowSavedSim(SavedSim sim);
 
     /// <summary>The review page <paramref name="htmlFile"/> in the reviews folder, titled <paramref name="title"/>.</summary>
     void ShowReview(string htmlFile, string title);

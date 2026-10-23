@@ -63,9 +63,12 @@ On macOS, use the target framework `net10.0-maccatalyst`. Its data folder is `Fe
 data (`%LOCALAPPDATA%\FellowshipSim` on Windows).
 
 The desktop app has the same pages as the web app, each as a tab. Starting a sim opens its tab, which shows its progress
-and then its result. A replay started from **Import** opens its review page in a tab when it finishes. Picking a job
-from the **Jobs** list also opens its tab. You can close these tabs; the page tabs stay. A tab keeps what you entered while
-another tab shows.
+and then its result. A replay started from **Import** opens its review page in a tab when it finishes. Picking a result
+from the **Results** sidebar also opens its tab. You can close these tabs; the page tabs stay. A tab keeps what you
+entered while another tab shows.
+
+When the result tabs don't fit, ‹ and › scroll them, as does the mouse wheel over them. The **N open** list beside them
+names every open result tab, selects or closes one, and closes them all.
 
 ## Sim a profile
 
@@ -76,9 +79,11 @@ The **Sim** page loads a profile file or pasted text, sets iterations, fight dur
 The sim's page (a tab in the desktop app) shows its progress, then its result: mean, minimum and maximum DPS, the
 standard deviation, and DPS for each ability.
 
-The **Jobs** button at the top right counts the running jobs. It opens a list of every sim and replay with its
-progress, where you can cancel or remove a job, or select it to open its page. Two jobs run at once and the rest wait
-in the queue.
+Each finished sim is saved in `data/results/`, so it stays after a restart.
+
+The **Results** button at the top right counts the running jobs. It opens a sidebar with the sims and replays still in
+the queue, with their progress and buttons to cancel or remove them, then the recent sims and replays, newest first.
+Select one to open its page. Two jobs run at once and the rest wait in the queue.
 
 ### Sim from the command line
 
@@ -169,14 +174,14 @@ Runs the engine tests and replays every downloaded fight, rewriting its review p
 | `src/FellowshipSim.Logs` | FellowshipLogs client, and the data folder's fights and reviews. Knows nothing about the engine |
 | `src/FellowshipSim.Engine` | The engine library: turning a logged fight into a replay script, exact replay and free dice, their pages (`Replay/`), `ISimEngine` and its in-process `LocalSimEngine`, and the sim job queue (`Jobs/`) |
 | `src/FellowshipSim.EngineServer` | The engine service: `LocalSimEngine` over HTTP. Only FellowshipSim.Service can call it (shared key) |
-| `src/FellowshipSim.UI` | Every page, component and style (Razor class library): the pages (`Pages/`), the web app's frame (`Layout/`) and the desktop app's tabs (`Shell/`), the import and review parts (`Replay/`), the jobs menu and job page (`Jobs/`), the action-list editor (`Apl/`) and the app services (`Services/`). Each component has its styles in `X.razor.css` beside `X.razor`; `wwwroot/css/app.css` has the colours, fonts and element defaults, and `wwwroot/css/design-system.css` the classes several components share. `AddSimFellUI` registers the services |
+| `src/FellowshipSim.UI` | Every page, component and style (Razor class library): the pages (`Pages/`), the web app's frame (`Layout/`) and the desktop app's tabs (`Shell/`), the import and review parts (`Replay/`), the Results sidebar and job pages (`Jobs/`), the action-list editor (`Apl/`) and the app services (`Services/`). Each component has its styles in `X.razor.css` beside `X.razor`; `wwwroot/css/app.css` has the colours, fonts and element defaults, and `wwwroot/css/design-system.css` the classes several components share. `AddSimFellUI` registers the services |
 | `src/FellowshipSim.Service` | The web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. `RemoteSimEngine` calls the engine service |
 | `src/FellowshipSim.AppHost` | Aspire: runs the engine service and FellowshipSim.Service together |
 | `src/FellowshipSim.Desktop` | The desktop app: FellowshipSim.UI in a .NET MAUI BlazorWebView, with the engine in-process |
 | `src/FellowshipSim.Cli` | `simfell`, the command-line sim |
 | `tests/FellowshipSim.Tests` | Tests, including the free-dice runner |
 | `docs/` | [Adding a hero](docs/ADDING_A_HERO.md) |
-| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `apls/` saved action lists, `profiles/` `.simc` profiles, `settings.json` |
+| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `results/` finished sims, `apls/` saved action lists, `profiles/` `.simc` profiles, `settings.json` |
 
 Game values are constants at the top of each class. Rime (`src/FellowshipSim.Core/Heroes/Rime`) is the complete
 example; its `NOTES.md` lists what the combat logs showed.
