@@ -34,20 +34,23 @@
             }
             <div class="hero-name">
                 <strong>@Build.Hero</strong>
-                @if (_heroes.Count > 1)
-                {
-                    <select aria-label="Hero" @bind:get="Build.Hero" @bind:set="PickHero">
-                        @foreach (string hero in _heroes)
-                        {
-                            <option @key="hero" value="@hero">@hero</option>
-                        }
-                    </select>
-                }
-                else
-                {
-                    <span class="meta">The only hero in the engine so far</span>
-                }
+                <span class="meta">@_heroes.Count of @BuildCatalog.GameHeroes.Count heroes are in the engine</span>
             </div>
+        </div>
+        <div class="heroes" role="group" aria-label="Hero">
+            @foreach (string hero in BuildCatalog.GameHeroes)
+            {
+                bool supported = _heroes.Contains(hero, StringComparer.OrdinalIgnoreCase);
+                bool picked = hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase);
+                <button @key="hero" type="button" class="hero-pick @(picked ? "picked" : "")" aria-pressed="@picked" disabled="@(!supported)"
+                        title="@(supported ? hero : $"{hero}: not in the engine yet")" @onclick="() => PickHero(hero)">
+                    @if (BuildCatalog.PortraitUrl(hero) is { } face)
+                    {
+                        <img src="@face" alt="" loading="lazy" />
+                    }
+                    <span>@hero</span>
+                </button>
+            }
         </div>
         <h3 class="section">Stats</h3>
         <div class="stats two">
@@ -83,7 +86,7 @@
                 @foreach (var row in Catalog.Talents.GroupBy(t => t.Slot.Row))
                 {
                     <div @key="row.Key" class="tree-row">
-                        <span class="tier">@Roman(row.Key)<span class="meta">@row.First().Slot.Cost pt</span></span>
+                        <span class="tier">@Roman(row.Key) <span class="meta">- @row.First().Slot.Cost pt</span></span>
                         @foreach (var t in row)
                         {
                             bool picked = Editor.HasTalent(t.Slot.TalentId);
@@ -217,6 +220,10 @@
         if (hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase)) return Task.CompletedTask;
         State.Editor = new BuildEditor(BuildEditor.NewBuild(hero));
         State.SavedName = "";
+        // Another hero runs its own default list.
+        State.ActionListValue = $"builtin/{hero}/{FellowshipSim.Core.APL.DefaultActionLists.DefaultName}";
+        State.ActionListName = FellowshipSim.Core.APL.DefaultActionLists.DefaultName;
+        State.ActionListText = null;
         return Changed();
     }
 

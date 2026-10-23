@@ -54,6 +54,47 @@
   object-fit: cover;
 }
 
+.heroes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.hero-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  background: var(--input);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.hero-pick img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hero-pick:disabled img {
+  filter: grayscale(1);
+}
+
+.hero-pick:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.hero-pick.picked {
+  background: var(--selected);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .hero-name {
   display: flex;
   flex-direction: column;
