@@ -26,6 +26,7 @@ public sealed class ReportLookup(ReplayLibrary library, LogsSettingsStore settin
             parsed.PlayerId,
             summary.Fights.Select(f => new ReportFight(
                 f.Id, f.Name, f.Kill, f.DurationSeconds, downloaded.Contains(f.Id),
-                f.Players.Select(p => new FightPlayer(p.Id, p.Name, p.Hero, heroes.Contains(p.Hero))).ToList())).ToList());
+                f.Players.Select(p => new FightPlayer(p.Id, p.Name, p.Hero, heroes.Contains(p.Hero))).ToList())).ToList(),
+            summary.LogVersion);
     }
 }

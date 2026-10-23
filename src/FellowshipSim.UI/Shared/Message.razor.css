@@ -10,3 +10,7 @@
 .ok {
   color: var(--good);
 }
+
+.warning {
+  color: var(--warn);
+}

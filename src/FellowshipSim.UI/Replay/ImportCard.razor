@@ -1,3 +1,4 @@
+@using FellowshipSim.Logs
 @inject ReportLookup Reports
 @inject ImportPageState State
 
@@ -11,6 +12,10 @@
     <div>
         @if (State.Report is { } report)
         {
+            @if (!report.CurrentPatch)
+            {
+                <Message Kind="MessageKind.Warning">@OldPatchWarning(report)</Message>
+            }
             <div class="fights">
                 @foreach (var f in report.Fights.Where(f => f.Players.Count > 0))
                 {
@@ -61,8 +66,12 @@
 
     private Task OnPick(Report report, ReportFight fight, FightPlayer player) =>
         OnPlayer.HasDelegate
-            ? OnPlayer.InvokeAsync(new PickedPlayer(report.Code, fight, player))
+            ? OnPlayer.InvokeAsync(new PickedPlayer(report.Code, fight, player, report.CurrentPatch))
             : OnReplay.InvokeAsync(new ReviewTarget(report.Code, fight.Id, player.Id));
+
+    private static string OldPatchWarning(Report report) =>
+        $"This log is from before patch {GamePatch.Current.Name} (logged {report.StartTime.ToLocalTime():d}). The engine models " +
+        $"{GamePatch.Current.Name}, so a replay or a build from this log may not match: talents, traits and blessings changed.";
 
     private static string FormatDuration(double seconds)
     {

@@ -42,3 +42,15 @@
 .bad {
   color: var(--bad);
 }
+
+/* A review of a fight logged before the patch the engine models. */
+.old-patch {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 1px solid var(--warn);
+  border-radius: 999px;
+  color: var(--warn);
+  font-size: 11px;
+  white-space: nowrap;
+}

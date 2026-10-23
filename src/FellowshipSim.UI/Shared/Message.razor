@@ -1,4 +1,4 @@
-@* A status line under a form: plain, Ok (green) or Error (red). *@
+@* A status line under a form: plain, Ok (green), Error (red) or Warning (amber). *@
 <p class="message @KindClass">@ChildContent</p>
 
 @code {
@@ -10,6 +10,7 @@
     {
         MessageKind.Ok => "ok",
         MessageKind.Error => "error",
+        MessageKind.Warning => "warning",
         _ => "",
     };
 }

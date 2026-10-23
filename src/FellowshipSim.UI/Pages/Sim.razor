@@ -208,6 +208,12 @@
             var progress = new Progress<string>(m => { State.ImportStatus = new MessageState($"{m}..."); InvokeAsync(StateHasChanged); });
             var build = await Characters.ReadAsync(picked.ReportCode, picked.Fight.Id, picked.Player, progress);
             UseBuild(build, $"{picked.Player.Name}'s {picked.Player.Hero} in {picked.Fight.Name}");
+            if (!picked.CurrentPatch)
+            {
+                State.ImportStatus = State.BuildStatus = new MessageState(
+                    $"{State.ImportStatus.Text} This log is from before patch {FellowshipSim.Logs.GamePatch.Current.Name}: check its talents, traits and blessings.",
+                    MessageKind.Warning);
+            }
         }
         catch (Exception e)
         {

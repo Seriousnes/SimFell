@@ -2,8 +2,8 @@ using System.Text.Json.Nodes;
 
 namespace FellowshipSim.Logs;
 
-/// <summary>A report's fights and who played in each.</summary>
-public sealed record ReportSummary(string Code, string Title, long StartTime, IReadOnlyList<FightSummary> Fights);
+/// <summary>A report's fights and who played in each, and its combat-log format version (<see cref="GamePatch.LogVersion"/>).</summary>
+public sealed record ReportSummary(string Code, string Title, long StartTime, IReadOnlyList<FightSummary> Fights, int? LogVersion = null);
 
 public sealed record FightSummary(int Id, string Name, bool Kill, double DurationSeconds, IReadOnlyList<ReportPlayer> Players);
 
@@ -19,7 +19,7 @@ public static class FellowshipLogsReports
             report(code: $code) {
               title startTime
               fights { id name kill startTime endTime friendlyPlayers }
-              masterData { actors(type: "Player") { id name subType } }
+              masterData { logVersion actors(type: "Player") { id name subType } }
             }
           }
         }
@@ -73,7 +73,7 @@ public static class FellowshipLogsReports
                 ids.Where(players.ContainsKey).Select(id => players[id]).ToList()));
         }
         return new ReportSummary(reportCode, report["title"]?.GetValue<string>() ?? reportCode,
-            report["startTime"]?.GetValue<long>() ?? 0, fights);
+            report["startTime"]?.GetValue<long>() ?? 0, fights, report["masterData"]?["logVersion"]?.GetValue<int?>());
     }
 
     /// <summary>

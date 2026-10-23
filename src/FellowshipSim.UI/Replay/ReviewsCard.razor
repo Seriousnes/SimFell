@@ -37,7 +37,13 @@
                                 <td><button type="button" class="link-button" @onclick="() => Views.ShowReview(r.HtmlFile, ReviewTitle.Replay(r))">@r.PlayerName</button></td>
                                 <td>@r.Hero</td>
                                 <td>@r.FightName <span class="meta">@r.ReportCode #@r.FightId</span></td>
-                                <td>@date</td>
+                                <td>
+                                    @date
+                                    @if (r.FightDate is { } logged && !GamePatch.Current.Covers(logged, null))
+                                    {
+                                        <span class="old-patch" title="@($"Logged before patch {GamePatch.Current.Name}, which the engine models: this review is no guide to the engine's accuracy now.")">old patch</span>
+                                    }
+                                </td>
                                 <td class="num @RatioClass(hits, 0.02, 0.05)">@Percent(hits)</td>
                                 <td class="num @RatioClass(damage, 0.03, 0.08)">@Percent(damage)</td>
                                 @if (fd != null)
