@@ -73,6 +73,12 @@ textarea {
   font: inherit;
 }
 
+/* Each page load focuses its first heading (FocusOnNavigate) for screen readers; it needs no ring. */
+h1:focus,
+h2:focus {
+  outline: none;
+}
+
 input:focus,
 select:focus,
 textarea:focus {
