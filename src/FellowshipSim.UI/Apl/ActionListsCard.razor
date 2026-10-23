@@ -35,7 +35,7 @@
                             <option value="">New action list</option>
                             @foreach (var saved in State.Saved)
                             {
-                                <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero@(saved.Shared ? ", shared" : ""))</option>
+                                <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name (@saved.Hero@(saved.BuiltIn ? ", built in" : saved.Shared ? ", shared" : ""))</option>
                             }
                         </select>
                     </label>
@@ -76,8 +76,9 @@
     private CancellationTokenSource? _write;
 
     private const string SharedValue = "shared";
+    private const string BuiltInValue = "builtin";
 
-    private static string SavedValue(ActionListEntry saved) => $"{(saved.Shared ? SharedValue : "own")}/{saved.Hero}/{saved.Name}";
+    private static string SavedValue(ActionListEntry saved) => $"{(saved.BuiltIn ? BuiltInValue : saved.Shared ? SharedValue : "own")}/{saved.Hero}/{saved.Name}";
 
     protected override void OnInitialized()
     {
@@ -247,7 +248,7 @@
         string hero = parts.Length > 1 ? parts[1] : "", savedName = parts.Length > 2 ? parts[2] : "";
         try
         {
-            var list = await _savedLists.ReadAsync(new ActionListEntry(hero, savedName, Shared: parts[0] == SharedValue));
+            var list = await _savedLists.ReadAsync(new ActionListEntry(hero, savedName, Shared: parts[0] == SharedValue, BuiltIn: parts[0] == BuiltInValue));
             var heroVocabulary = await VocabularyOf(hero);
             State.Editor.SetVocabulary(heroVocabulary);
             State.Name = savedName;

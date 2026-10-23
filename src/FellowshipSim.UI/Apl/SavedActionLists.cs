@@ -1,23 +1,29 @@
+using FellowshipSim.Core.APL;
 using FellowshipSim.Engine;
 using FellowshipSim.UI.Services;
 
 namespace FellowshipSim.UI.Apl;
 
 /// <summary>
-/// A visitor's saved action lists of the engine's heroes, and the shared ones: listing, reading with the engine's parse,
-/// and saving the engine's text as one of the visitor's own lists.
+/// A visitor's saved action lists of the engine's heroes, the shared ones and the ones built into the engine: listing,
+/// reading with the engine's parse, and saving the engine's text as one of the visitor's own lists.
 /// </summary>
 public sealed class SavedActionLists(ActionListStore store, ISimEngine engine, Visitor visitor)
 {
     /// <summary>Every saved action list the visitor reads.</summary>
-    public async Task<IReadOnlyList<ActionListEntry>> ListAsync(CancellationToken ct = default) =>
-        await store.ListAsync(visitor, await engine.GetHeroesAsync(ct), ct);
+    public async Task<IReadOnlyList<ActionListEntry>> ListAsync(CancellationToken ct = default)
+    {
+        var heroes = await engine.GetHeroesAsync(ct);
+        var saved = await store.ListAsync(visitor, heroes, ct);
+        return saved.Concat(heroes.SelectMany(hero => DefaultActionLists.Names(hero).Select(name => new ActionListEntry(hero, name, BuiltIn: true))))
+            .OrderBy(e => e.Hero).ThenBy(e => e.BuiltIn ? 0 : 1).ToList();
+    }
 
     /// <summary>A saved action list's text and actions. An unknown hero or list throws <see cref="KeyNotFoundException"/>.</summary>
     public async Task<SavedActionList> ReadAsync(ActionListEntry entry, CancellationToken ct = default)
     {
         string known = await HeroNamed(entry.Hero, ct) ?? throw new KeyNotFoundException($"No hero named {entry.Hero}.");
-        string text = await store.ReadAsync(visitor, entry with { Hero = known }, ct)
+        string text = (entry.BuiltIn ? DefaultActionLists.Read(known, entry.Name) : await store.ReadAsync(visitor, entry with { Hero = known }, ct))
                       ?? throw new KeyNotFoundException($"No action list named {entry.Name}.");
         try
         {

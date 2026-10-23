@@ -3,8 +3,11 @@ using FellowshipSim.Logs;
 
 namespace FellowshipSim.UI.Services;
 
-/// <summary>A saved action list: its hero, its name, and true for a shared list, which a web visitor reads but never changes.</summary>
-public sealed record ActionListEntry(string Hero, string Name, bool Shared = false);
+/// <summary>
+/// A saved action list: its hero, its name, true for a shared list, which a web visitor reads but never changes, and true
+/// for a list built into the engine (<see cref="Core.APL.DefaultActionLists"/>), which every visitor reads.
+/// </summary>
+public sealed record ActionListEntry(string Hero, string Name, bool Shared = false, bool BuiltIn = false);
 
 /// <summary>
 /// Saved action lists. A visitor's own lists are their <c>apls/&lt;hero&gt;/&lt;name&gt;.simc</c> in the
