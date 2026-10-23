@@ -14,7 +14,7 @@ namespace FellowshipSim.Tests;
 
 /// <summary>
 /// <see cref="RemoteSimEngine"/> against the engine server's endpoints (<see cref="EngineApp"/> on a test server): each
-/// call has the result <see cref="LocalSimEngine"/> has, and each refusal throws what <see cref="ISimEngine"/> names.
+/// call has the result <see cref="LocalSimEngine"/> has, and each refusal throws the exception <see cref="ISimEngine"/> names.
 /// </summary>
 public sealed class RemoteSimEngineTests : IAsyncLifetime
 {
@@ -104,7 +104,7 @@ public sealed class RemoteSimEngineTests : IAsyncLifetime
         var result = await _engine.SimulateAsync(profile, settings, progress);
 
         Assert.Equal(Json(await _local.SimulateAsync(profile, settings)), Json(result));
-        Assert.All(progress.Reports, p => Assert.Equal(20, p.Fights));
+        Assert.Equal(new SimProgress(20, 20), progress.Reports[^1]);
     }
 
     [Fact]

@@ -108,7 +108,7 @@ public sealed class RemoteSimEngine : ISimEngine
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(RequestTimeout);
-        // The request is not disposed: disposing it disposes a review's fight stream, which belongs to the caller.
+        // The request is not disposed. Disposing it disposes a review's fight stream, and the caller owns that stream.
         var request = new HttpRequestMessage(method, path) { Content = content };
         try
         {
