@@ -1,0 +1,149 @@
+.toolbar input {
+  flex: 1 1 200px;
+}
+
+.heroes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.hero img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.hero.picked,
+.talent.picked {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.points {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tree-row {
+  display: grid;
+  grid-template-columns: 48px repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-items: stretch;
+}
+
+.tier {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.talent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.talent:disabled {
+  opacity: 0.45;
+}
+
+.talent .name {
+  min-width: 0;
+  font-size: 14px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px 12px;
+}
+
+.stats label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.stats input,
+.stats select {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subtitle {
+  margin: 16px 0 8px;
+  font-size: 14px;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 6px 12px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 1px solid var(--warn);
+  color: var(--warn);
+  font-size: 11px;
+}
+
+@media (max-width: 700px) {
+  .tree-row {
+    grid-template-columns: 36px repeat(3, minmax(0, 1fr));
+  }
+
+  .talent {
+    flex-direction: column;
+    text-align: center;
+    padding: 6px;
+  }
+
+  .talent .name {
+    font-size: 12px;
+  }
+}

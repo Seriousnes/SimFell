@@ -28,9 +28,9 @@
                                 bool highlight = selected && p.Id == report.SelectedPlayerId;
                                 <button @key="p.Id" type="button" class="@(p.Supported ? null : "unsupported")"
                                         disabled="@(!p.Supported || Busy)"
-                                        title="@(p.Supported ? $"Replay {p.Name}'s {p.Hero}" : $"{p.Hero} is not supported yet")"
+                                        title="@(p.Supported ? $"{Action} {p.Name}'s {p.Hero}" : $"{p.Hero} is not supported yet")"
                                         style="@(highlight ? "outline: 2px solid var(--accent)" : null)"
-                                        @onclick="() => OnReplay.InvokeAsync(new ReviewTarget(report.Code, f.Id, p.Id))">
+                                        @onclick="() => OnPick(report, f, p)">
                                     @p.Name <span class="meta">@p.Hero</span>
                                 </button>
                             }
@@ -50,6 +50,20 @@
 
     [Parameter] public EventCallback<ReviewTarget> OnReplay { get; set; }
 
+    /// <summary>Called with the player picked, instead of <see cref="OnReplay"/>, when set.</summary>
+    [Parameter] public EventCallback<PickedPlayer> OnPlayer { get; set; }
+
+    /// <summary>What picking a player does, before the player's name in each button's tooltip: "Replay", "Use the build of".</summary>
+    [Parameter] public string Action { get; set; } = "Replay";
+
+    /// <summary>The line after a report loads, saying what to pick.</summary>
+    [Parameter] public string PickHint { get; set; } = "Pick a player to replay.";
+
+    private Task OnPick(Report report, ReportFight fight, FightPlayer player) =>
+        OnPlayer.HasDelegate
+            ? OnPlayer.InvokeAsync(new PickedPlayer(report.Code, fight, player))
+            : OnReplay.InvokeAsync(new ReviewTarget(report.Code, fight.Id, player.Id));
+
     private static string FormatDuration(double seconds)
     {
         int m = (int)Math.Floor(seconds / 60);
@@ -64,7 +78,7 @@
         try
         {
             var loaded = await Reports.FindAsync(State.Link);
-            State.Status = new MessageState($"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. Pick a player to replay.");
+            State.Status = new MessageState($"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. {PickHint}");
             State.Report = loaded;
         }
         catch (Exception e)

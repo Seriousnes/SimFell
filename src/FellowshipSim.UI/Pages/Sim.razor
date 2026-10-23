@@ -1,81 +1,216 @@
 @page "/"
 @using System.Globalization
+@using FellowshipSim.Core.APL
 @using FellowshipSim.Core.Import
 @inject ISimEngine Engine
 @inject VisitorJobs Jobs
 @inject SimPageState State
+@inject ActionListsState ActionLists
+@inject CharacterImport Characters
 @inject IAppViews Views
 @inject SimResultLibrary Results
 
 <PageTitle>Sim - FellowshipSim</PageTitle>
 
 <SectionContent SectionName="@MainLayout.SubtitleSection">
-    Monte Carlo sim of a .simc character profile
+    Build a character, pick the fight and the action list, and sim it
 </SectionContent>
 
-<Card Title="Profile">
-    <p class="hint">Load a <code>.simc</code> profile or paste its text.</p>
-    <form @onsubmit="Start">
-        <InputFile class="file" accept=".simc,.txt" OnChange="LoadFileAsync" />
-        <textarea class="profile" rows="14" spellcheck="false" placeholder='rime="name"' @bind="State.Text"></textarea>
-        <div class="settings">
-            <label>
-                Iterations
-                <input type="number" min="1" step="1" required @bind="State.Iterations" />
-            </label>
-            <label>
-                Duration (seconds)
-                <input type="number" min="1" step="any" required @bind="State.DurationSeconds" />
-            </label>
-            <label>
-                Targets
-                <input type="number" min="1" step="1" required @bind="State.Targets" />
-            </label>
-            <button type="submit">Start sim</button>
-        </div>
-    </form>
-    <Message Kind="State.Status.Kind">@State.Status.Text</Message>
-</Card>
+<nav class="tabs" role="tablist" aria-label="Sim">
+    @foreach (var tab in Enum.GetValues<SimTab>())
+    {
+        bool selected = tab == State.Tab;
+        <button @key="tab" type="button" role="tab" class="tab @(selected ? "selected" : "")" aria-selected="@selected" @onclick="() => State.Tab = tab">
+            @tab
+        </button>
+    }
+</nav>
+
+<div role="tabpanel" aria-label="@State.Tab">
+    @switch (State.Tab)
+    {
+        case SimTab.Import:
+            <ImportCard Action="Use the build of" PickHint="Pick a player to use their build." OnEditSettings="() => Views.ShowPage(AppPage.Setup)" OnPlayer="ImportPlayerAsync" />
+            <Card Title="Import a .simc profile">
+                <p class="hint">Load a <code>.simc</code> file or paste its text. Its build goes to the Hero tab, and its action list, if it has one, to Advanced.</p>
+                <InputFile class="file" accept=".simc,.txt" OnChange="LoadFileAsync" />
+                <textarea class="profile" rows="10" spellcheck="false" placeholder='rime="name"' @bind="State.ProfileText"></textarea>
+                <div class="row actions">
+                    <button type="button" @onclick="ImportProfileAsync">Use this profile</button>
+                </div>
+            </Card>
+            <Message Kind="State.ImportStatus.Kind">@State.ImportStatus.Text</Message>
+            break;
+
+        case SimTab.Hero:
+            <HeroEditor OnChanged="StateHasChanged" />
+            break;
+
+        case SimTab.Modes:
+            <Card Title="Fight">
+                <div class="modes" role="radiogroup" aria-label="Fight">
+                    <label class="mode @(State.Mode == SimMode.SingleTarget ? "selected" : "")">
+                        <input type="radio" name="mode" checked="@(State.Mode == SimMode.SingleTarget)" @onchange="() => State.Mode = SimMode.SingleTarget" />
+                        <strong>Single target</strong>
+                        <span class="meta">One target for the whole fight.</span>
+                    </label>
+                    <label class="mode @(State.Mode == SimMode.Aoe ? "selected" : "")">
+                        <input type="radio" name="mode" checked="@(State.Mode == SimMode.Aoe)" @onchange="() => State.Mode = SimMode.Aoe" />
+                        <strong>AoE</strong>
+                        <span class="meta">Several targets for the whole fight.</span>
+                    </label>
+                </div>
+                <div class="settings">
+                    <label>
+                        Duration (seconds)
+                        <input type="number" min="1" step="any" @bind="State.DurationSeconds" />
+                    </label>
+                    @if (State.Mode == SimMode.Aoe)
+                    {
+                        <label>
+                            Targets
+                            <input type="number" min="2" step="1" @bind="State.AoeTargets" />
+                        </label>
+                    }
+                </div>
+            </Card>
+            break;
+
+        case SimTab.Advanced:
+            <Card Title="Sim">
+                <div class="settings">
+                    <label>
+                        Iterations
+                        <input type="number" min="1" step="1" @bind="State.Iterations" />
+                    </label>
+                </div>
+            </Card>
+            <h2 class="section">Action list</h2>
+            <p class="hint">The sim runs the list below. Rime starts with the built-in Default list, which picks its list by talent.</p>
+            <ActionListsCard />
+            <Card Title="Profile">
+                <p class="hint">The <code>.simc</code> profile the sim runs: the build, then the action list.</p>
+                <pre class="profile preview">@ProfilePreview()</pre>
+            </Card>
+            break;
+    }
+</div>
+
+<div class="run">
+    <span class="summary">@Summary()</span>
+    <button type="button" @onclick="Start">Start sim</button>
+</div>
+<Message Kind="State.Status.Kind">@State.Status.Text</Message>
 
 @code {
     /// <summary>Largest profile file the page reads.</summary>
     private const long MaxProfileBytes = 1024 * 1024;
+
+    // The action list the sim runs: the editor's, or the hero's default list before the editor first loads.
+    private string ActionListText() =>
+        ActionLists.Text.Length > 0 || ActionLists.Loaded ? ActionLists.Text : DefaultActionLists.Read(State.Build.Hero, DefaultActionLists.DefaultName) ?? "";
+
+    private string ActionListName() =>
+        ActionLists.Loaded ? (ActionLists.Name.Length > 0 ? ActionLists.Name : "edited list") : DefaultActionLists.DefaultName;
+
+    private string Summary() => string.Format(CultureInfo.CurrentCulture, "{0} ({1}) · {2} · {3} s · {4:N0} iterations · {5} list",
+        State.Build.Name, State.Build.Hero,
+        State.Mode == SimMode.SingleTarget ? "single target" : $"{State.AoeTargets} targets",
+        State.DurationSeconds, State.Iterations, ActionListName());
+
+    private string ProfilePreview()
+    {
+        try
+        {
+            return new SimcProfile(State.Build, ActionListText()).Format();
+        }
+        catch (Exception e)
+        {
+            return e.Message;
+        }
+    }
+
+    private async Task ImportPlayerAsync(PickedPlayer picked)
+    {
+        State.ImportStatus = new MessageState($"Reading {picked.Player.Name}'s character...");
+        StateHasChanged();
+        try
+        {
+            var progress = new Progress<string>(m => { State.ImportStatus = new MessageState($"{m}..."); InvokeAsync(StateHasChanged); });
+            var build = await Characters.ReadAsync(picked.ReportCode, picked.Fight.Id, picked.Player, progress);
+            UseBuild(build, $"{picked.Player.Name}'s {picked.Player.Hero} in {picked.Fight.Name}");
+        }
+        catch (Exception e)
+        {
+            State.ImportStatus = MessageState.Error(e.Message);
+        }
+    }
 
     private async Task LoadFileAsync(InputFileChangeEventArgs e)
     {
         try
         {
             using var reader = new StreamReader(e.File.OpenReadStream(MaxProfileBytes));
-            State.Text = await reader.ReadToEndAsync();
-            State.Status = MessageState.None;
+            State.ProfileText = await reader.ReadToEndAsync();
+            await ImportProfileAsync();
         }
         catch (Exception ex)
         {
-            State.Status = new MessageState(ex.Message, MessageKind.Error);
+            State.ImportStatus = MessageState.Error(ex.Message);
         }
+    }
+
+    private async Task ImportProfileAsync()
+    {
+        try
+        {
+            var profile = SimcProfile.Parse(State.ProfileText);
+            if (profile.ActionList.Trim().Length > 0) await ActionLists.LoadTextAsync(profile.ActionList);
+            UseBuild(profile.Build, profile.ActionList.Trim().Length > 0 ? "the profile, with its action list" : "the profile");
+        }
+        catch (FormatException e)
+        {
+            State.ImportStatus = MessageState.Error(e.Message);
+        }
+    }
+
+    private void UseBuild(CharacterBuild build, string from)
+    {
+        var removed = BuildEditor.RemoveUnknown(build);
+        State.Editor = new BuildEditor(build);
+        State.SavedName = "";
+        State.ImportStatus = MessageState.Ok($"Using the build of {from}." + (removed.Count > 0 ? $" Left out (not in the engine): {string.Join(", ", removed)}." : ""));
+        State.BuildStatus = State.ImportStatus;
+        State.Tab = SimTab.Hero;
     }
 
     private void Start()
     {
         if (State.Iterations < 1 || State.DurationSeconds <= 0 || State.Targets < 1)
         {
-            State.Status = new MessageState("Iterations and targets are at least 1, and the duration is above 0 seconds.", MessageKind.Error);
+            State.Status = MessageState.Error("Iterations and targets are at least 1, and the duration is above 0 seconds.");
             return;
         }
+        string profileText;
         SimcProfile profile;
         try
         {
-            profile = SimcProfile.Parse(State.Text);
+            profileText = new SimcProfile(State.Build, ActionListText()).Format();
+            profile = SimcProfile.Parse(profileText);
         }
-        catch (FormatException e)
+        catch (Exception e) when (e is FormatException or InvalidOperationException)
         {
-            State.Status = new MessageState(e.Message, MessageKind.Error);
+            State.Status = MessageState.Error(e.Message);
+            return;
+        }
+        if (profile.ActionList.Trim().Length == 0)
+        {
+            State.Status = MessageState.Error("The action list is empty: pick one on the Advanced tab.");
             return;
         }
         var settings = new SimSettings(State.Iterations, State.DurationSeconds, State.Targets);
         string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
             profile.Build.Name, profile.Build.Hero, State.Iterations, State.DurationSeconds, State.Targets, State.Targets == 1 ? "target" : "targets");
-        string profileText = State.Text;
         // The job outlives this page's circuit, so the work captures the engine, the results library and values alone.
         var (engine, results, visitor) = (Engine, Results, Jobs.Visitor);
         var job = Jobs.Enqueue(SimJobKind.Sim, title, async c =>
@@ -85,7 +220,7 @@
             await results.SaveAsync(visitor, saved, CancellationToken.None);
             return saved;
         }, profile);
-        State.Status = new MessageState($"Queued: {title}.", MessageKind.Ok);
+        State.Status = MessageState.Ok($"Queued: {title}.");
         Views.ShowJob(job);
     }
 }

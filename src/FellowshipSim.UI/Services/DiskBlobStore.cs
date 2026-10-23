@@ -24,6 +24,12 @@ public sealed partial class DiskBlobStore(string root) : IBlobStore
         await File.WriteAllTextAsync(path, text, ct);
     }
 
+    public Task DeleteAsync(string key, CancellationToken ct = default)
+    {
+        File.Delete(PathOf(key));
+        return Task.CompletedTask;
+    }
+
     public Task<IReadOnlyList<string>> ListAsync(string prefix, CancellationToken ct = default)
     {
         string folder = PathOf(prefix);

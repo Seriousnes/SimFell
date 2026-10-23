@@ -12,6 +12,9 @@ public interface IBlobStore
 
     Task WriteAsync(string key, string text, CancellationToken ct = default);
 
+    /// <summary>Removes <paramref name="key"/>; nothing happens when there is none.</summary>
+    Task DeleteAsync(string key, CancellationToken ct = default);
+
     /// <summary>Every key under the folder <paramref name="prefix"/>, at any depth.</summary>
     Task<IReadOnlyList<string>> ListAsync(string prefix, CancellationToken ct = default);
 }

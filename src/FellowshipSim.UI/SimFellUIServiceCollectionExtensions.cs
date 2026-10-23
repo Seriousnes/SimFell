@@ -32,6 +32,8 @@ public static class SimFellUIServiceCollectionExtensions
         services.AddSingleton(new SimJobQueue(jobs));
         services.AddSingleton<ReviewJobs>();
         services.AddSingleton<ReportLookup>();
+        services.AddSingleton<CharacterImport>();
+        services.AddSingleton<ProfileStore>();
         services.AddSingleton<SimResultLibrary>();
         services.AddSingleton<VisitorReviews>();
         services.AddScoped<VisitorJobs>();

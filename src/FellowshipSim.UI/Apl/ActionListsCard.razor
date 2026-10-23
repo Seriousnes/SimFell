@@ -103,6 +103,10 @@
             State.Saved = await _savedLists.ListAsync();
             State.Editor.Load(v, []);
             State.Loaded = true;
+            // Text given before the editor loaded (a profile's actions on the Sim page), otherwise the hero's default list.
+            string defaultList = SavedValue(new ActionListEntry(v.Hero, DefaultActionLists.DefaultName, BuiltIn: true));
+            if (State.Text.Length > 0) await LoadText();
+            else if (State.Saved.Any(s => SavedValue(s) == defaultList)) await PickSaved(defaultList);
         }
         catch (Exception e)
         {
