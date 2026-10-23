@@ -10,7 +10,7 @@ public static class SimFellUIServiceCollectionExtensions
     /// <summary>
     /// The app services the pages inject: the data folder at <paramref name="dataDirectory"/> (<see cref="ReplayLibrary"/>),
     /// <see cref="LogsSettingsStore"/>, <see cref="ActionListStore"/>, the <see cref="SimJobQueue"/> with
-    /// <paramref name="jobs"/>, and <see cref="ReviewJobs"/>. The host registers the <see cref="Engine.ISimEngine"/>.
+    /// <paramref name="jobs"/>, <see cref="ReviewJobs"/> and <see cref="ReportLookup"/>. The host registers the <see cref="Engine.ISimEngine"/>.
     /// </summary>
     public static IServiceCollection AddSimFellUI(this IServiceCollection services, string dataDirectory, SimJobQueueOptions? jobs = null)
     {
@@ -20,6 +20,7 @@ public static class SimFellUIServiceCollectionExtensions
         services.AddSingleton<ActionListStore>();
         services.AddSingleton(new SimJobQueue(jobs));
         services.AddSingleton<ReviewJobs>();
+        services.AddSingleton<ReportLookup>();
         return services;
     }
 }
