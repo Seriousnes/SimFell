@@ -4,4 +4,8 @@ namespace FellowshipSim.UI.Shared;
 public sealed record MessageState(string Text, MessageKind Kind = MessageKind.Plain)
 {
     public static readonly MessageState None = new("");
+
+    public static MessageState Error(string text) => new(text, MessageKind.Error);
+
+    public static MessageState Ok(string text) => new(text, MessageKind.Ok);
 }
