@@ -32,7 +32,9 @@ public static class ServiceApp
         string dataDirectory = builder.Configuration["DataDirectory"] ?? DefaultDataDirectory(builder.Environment.ContentRootPath);
 
         builder.AddServiceDefaults();
-        builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+        // A pasted profile or action list reaches the circuit as one message; SignalR's default limit is 32 KB.
+        builder.Services.AddRazorComponents().AddInteractiveServerComponents()
+            .AddHubOptions(o => o.MaximumReceiveMessageSize = 1024 * 1024);
         builder.Services.AddHttpClient<ISimEngine, RemoteSimEngine>(c => c.Timeout = Timeout.InfiniteTimeSpan);
         builder.Services.AddSingleton<IReviewPages, ReviewPages>();
         builder.Services.AddSimFellUI(dataDirectory);
