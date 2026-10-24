@@ -90,7 +90,7 @@ public sealed class ReplayVerifier
                 $"{landed.AbilityName} at {log.Time:F3}: the engine forces {(forced ? "a crit" : "no crit")}, the log hit {(log.Crit ? "crit" : "did not crit")}",
                 $"forced crit: {landed.AbilityName}", new ExpectedRange(forced ? 1 : 0, forced ? 1 : 0, "crit"), log.Crit ? 1 : 0, state);
         }
-        if (!_options.UnverifiedDamageIds.Contains(landed.AbilityId) && !range.Contains(log.UnblockedAmount))
+        if (!range.Contains(log.UnblockedAmount))
         {
             Report(ctx, IssueCategory.Damage,
                 $"{landed.AbilityName} on {target} at {log.Time:F3}: log {log.ComparedAmountText()}{(log.Crit ? " (crit)" : "")} vs engine {average:F0}",

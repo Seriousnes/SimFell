@@ -19,11 +19,6 @@ public class ReplayOptions
     /// explained by Rime's class tuning aura.
     /// </summary>
     public double UnexplainedHighMargin { get; set; } = 0.0;
-    /// <summary>
-    /// OPEN ITEM: damage IDs whose amounts are not checked yet (their hits must still match the log one to one).
-    /// 1000101 Amethyst Splinter: per-crit 4-tick re-spread fits early in the fight but not throughout.
-    /// </summary>
-    public HashSet<int> UnverifiedDamageIds { get; set; } = [1000101];
 
     /// <summary>Unmatched hits on a target that dies in the log before they would land hit nothing.</summary>
     public bool MissHitsOnDyingTargets { get; set; } = true;

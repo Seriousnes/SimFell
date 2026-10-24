@@ -38,7 +38,6 @@ public static class ReplayReportWriter
         }
         foreach (var i in r.HaltIssues) sb.AppendLine($"  {i}");
         sb.AppendLine($"  log hits matched: {r.MatchedLogHits}/{r.LogHits}; dealt by the replay: {r.LoggedHitsDealt}");
-        sb.AppendLine("  open item: Amethyst Splinter (1000101) damage not checked yet (hits still must match)");
         return sb.ToString();
     }
 
@@ -159,7 +158,6 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
             foreach (var f in r.ForcedCasts) sb.Append($"<li>{E(f)}</li>");
             sb.Append("</ul></details>");
         }
-        sb.Append("<div class=\"panel\"><span class=\"tag\">Open item</span>Amethyst Splinter (1000101) damage is not checked yet; its hits must still match.</div>");
         RenderDamageOverview(sb, r);
         DisagreementsSection.Render(sb, r.Issues.Count > 0 ? r.Issues : r.Steps.SelectMany(s => s.Issues).ToList());
 

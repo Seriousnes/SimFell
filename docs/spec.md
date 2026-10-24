@@ -132,8 +132,7 @@ In every check the expected range comes from the engine and the observed value f
 | Proc with zero chance | `Procs` | No proc | Proc evidence at the roll |
 
 `IssueCategory` gains `GlobalCooldown`, `Cooldown` and `Ticks`. `ReplayOptions` gains `TickTimeToleranceSeconds`,
-default `PeriodicEffect.ServerFrameSeconds`. A hit with a damage ID in `UnverifiedDamageIds` has its range recorded on
-its `HitPair` and raises no issue.
+default `PeriodicEffect.ServerFrameSeconds`.
 
 ### Disagreement record
 
