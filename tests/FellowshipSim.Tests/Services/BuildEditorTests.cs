@@ -72,7 +72,7 @@ public sealed class BuildEditorTests : IDisposable
         editor.Relic1 = catalog.Relics[0].ItemId;
         editor.Relic2 = catalog.Relics[1].ItemId;
         editor.SetGem(GemColor.Sapphire, 1500);
-        editor.SetAugmentationRank(catalog.Augmentations[0], 9);
+        editor.SetAugmentationRank(catalog.Aspects[0], 9);
         editor.SetGlyphRank(catalog.Glyphs[0], 2);
 
         var read = SimcProfile.Parse(new SimcProfile(editor.Build, "actions=frost_bolt").Format());
@@ -84,7 +84,7 @@ public sealed class BuildEditorTests : IDisposable
         Assert.Equal(editor.Relic1, back.Relic1);
         Assert.Equal(editor.Relic2, back.Relic2);
         Assert.Equal(1500, back.Gem(GemColor.Sapphire));
-        Assert.Equal(catalog.Augmentations[0].MaxRank, back.AugmentationRank(catalog.Augmentations[0].Id));
+        Assert.Equal(catalog.Aspects[0].MaxRank, back.AugmentationRank(catalog.Aspects[0].Id));
         Assert.Equal(2, back.GlyphRank(catalog.Glyphs[0].Id));
         Assert.Equal("actions=frost_bolt", read.ActionList.Trim());
     }
