@@ -1,4 +1,6 @@
+using FellowshipSim.Core;
 using FellowshipSim.Core.Customization.Gems;
+using FellowshipSim.Core.Customization.RelicPassives;
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Heroes.Rime.Talents;
@@ -19,9 +21,9 @@ public sealed class BuildEditorTests : IDisposable
         var catalog = BuildCatalog.For("rime");
         Assert.Equal(18, catalog.Talents.Count);
         Assert.All(catalog.Talents, t => Assert.True(t.Talent.Modeled && t.Talent.Icon != null, t.Talent.Name));
-        Assert.Equal(3, catalog.Weapons.Count);
+        Assert.Equal(Catalog.AllWeapons.Count(), catalog.Weapons.Count);
         Assert.Contains(catalog.Legendaries, l => l.Name == "Frostwyrm's Spite");
-        Assert.Contains(catalog.RelicPassives, r => r.Name == "Accursed Trophy");
+        Assert.Contains(catalog.Relics, r => r.Name == AccursedTrophy.OrbItemName && r.PassiveName == AccursedTrophy.RelicPassiveName);
         Assert.All(catalog.Glyphs, g => Assert.Equal(4, g.MaxRank));
         Assert.NotNull(BuildCatalog.PortraitUrl("Rime"));
     }
@@ -67,7 +69,8 @@ public sealed class BuildEditorTests : IDisposable
         editor.SetRating(RatedStat.Haste, 300);
         editor.Weapon = catalog.Weapons[0].Id;
         editor.Legendary = catalog.Legendaries.First(l => l.Modeled).Id;
-        editor.RelicPassive = catalog.RelicPassives[0].Id;
+        editor.Relic1 = catalog.Relics[0].ItemId;
+        editor.Relic2 = catalog.Relics[1].ItemId;
         editor.SetGem(GemColor.Sapphire, 1500);
         editor.SetAugmentationRank(catalog.Augmentations[0], 9);
         editor.SetGlyphRank(catalog.Glyphs[0], 2);
@@ -78,7 +81,8 @@ public sealed class BuildEditorTests : IDisposable
         Assert.Equal(editor.Percent(RatedStat.Haste), back.Percent(RatedStat.Haste), 4);
         Assert.Equal(editor.Weapon, back.Weapon);
         Assert.Equal(editor.Legendary, back.Legendary);
-        Assert.Equal(editor.RelicPassive, back.RelicPassive);
+        Assert.Equal(editor.Relic1, back.Relic1);
+        Assert.Equal(editor.Relic2, back.Relic2);
         Assert.Equal(1500, back.Gem(GemColor.Sapphire));
         Assert.Equal(catalog.Augmentations[0].MaxRank, back.AugmentationRank(catalog.Augmentations[0].Id));
         Assert.Equal(2, back.GlyphRank(catalog.Glyphs[0].Id));
