@@ -28,6 +28,12 @@ dotnet test -c Release
 # one test class or method
 dotnet test tests/FellowshipSim.Tests -c Release --filter "FullyQualifiedName~AplParserTests"
 
+# one hero's current-patch fights from FellowshipLogs into data/fights
+dotnet run tools/fetch-fights.cs -- --hero Rime --count 12
+
+# one hero's accuracy over those fights, saved as data/accuracy/<Hero>/<label>.txt (docs/REPLAY_ACCURACY.md)
+ACCURACY_HERO=Rime ACCURACY_LABEL=baseline dotnet test tests/FellowshipSim.Tests -c Release --filter HeroAccuracyTests
+
 # free dice over downloaded fights (FREEDICE_REVIEW=all or one review ID; FREEDICE_SEED, default 1)
 FREEDICE_REVIEW=all FREEDICE_ITERATIONS=1000 dotnet test tests/FellowshipSim.Tests -c Release --filter FreeDice
 ```
@@ -42,7 +48,8 @@ or the desktop app).
 
 - **FellowshipSim.Core** is the simulation and has no reference to logs or replays. `Engine/SimulationKernel` is the
   event queue; `SimulationContext` is the state for one run; `MonteCarloSimulator` runs iterations. Every random
-  outcome (crit, proc, spread, travel time) goes through `IOutcomeSource`. `RandomOutcomeSource` rolls dice;
+  outcome (crit, proc, spread, travel time), each hit's damage (`Land`) and each periodic tick's time with a damage log ID
+  (`TickAt`) go through `IOutcomeSource`. `RandomOutcomeSource` rolls dice;
   `LogOutcomeSource` (exact replay) and `FreeDiceOutcomeSource` (free dice) in FellowshipSim.Engine are the other two.
   `Import/SimcProfile` reads and writes `.simc` profiles.
 - **Catalog** (`Core/Catalog.cs`) finds heroes, talents, traits, blessings, sets, legendaries and weapons by reflection

@@ -123,7 +123,7 @@ What the base class gives you:
 | One hit | `DealDamage(ctx, target, damageMultiplier, canCrit, ..., onLanded, extraCritChance)` |
 | Hits on every enemy, with sqrt(T/N) falloff beyond T targets | `AoeTargetThreshold = T`, then `DealAoeDamage(ctx, ctx.ActiveEnemies)` |
 | Damage logged under an effect ID | `DamageLogId = LogIds.Effect(effectId)` |
-| A hasted damage-over-time or pulsing effect | `PeriodicEffect.BeginHasted(...)` (handles haste changes and the partial final tick) |
+| A hasted damage-over-time or pulsing effect | `PeriodicEffect.BeginHasted(...)` (handles haste changes and the partial final tick), with `damageLogId` and, for an effect on one enemy, `target`: an exact replay fires each tick at its log tick |
 | A buff | `public static readonly AuraDef Buff = AuraDef.Effect(name, effectId, seconds, maxStacks, modifiers)`, then `Owner.Auras.Apply(Buff, ctx.CurrentTime)` (an aura built at runtime, e.g. from a rank, is passed to `hero.Register(aura)` so it is listed too) |
 | Spending or gaining a resource | `Owner.SpendResource(resource, amount, ctx)`, `Owner.GainResource(resource, amount, ctx.CurrentTime)` |
 | A chance to proc | `ctx.Outcomes.RollProc(ProcKey, chance, ctx)` with a `public const string ProcKey` naming the proc |
@@ -236,3 +236,6 @@ has).
 3. Fix the biggest differences first; a whole ability off by a constant factor usually means a missing talent, buff or
    multiplier, while scattered single hits are usually timing.
 4. `dotnet test` replays every downloaded fight (`data/fights`) and checks each talent of Rime's tree in a normal sim.
+
+`docs/REPLAY_ACCURACY.md` has the accuracy targets and the measure over many fights; `/replay-accuracy <Hero>` runs that
+work for one hero in its own worktree.
