@@ -1,4 +1,4 @@
-@* Traits or blessings: each with its icon, name and rank, from 0 (not taken) to its highest rank. *@
+@* Augmentations or glyphs: each with its icon, name and rank, from 0 (not taken) to its highest rank. *@
 <p class="hint">@Options.Count(o => RankOf(o.Id) > 0) taken, @Options.Sum(o => RankOf(o.Id)) ranks in all.</p>
 <div class="grid">
     @foreach (var option in Options)

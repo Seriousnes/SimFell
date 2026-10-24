@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using FellowshipSim.Core;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Customization.Legendaries;
-using FellowshipSim.Core.Customization.Sets;
 using FellowshipSim.Core.Domain;
 
 namespace FellowshipSim.UI.Build;
@@ -13,7 +12,7 @@ namespace FellowshipSim.UI.Build;
 /// </summary>
 public sealed class BuildCatalog
 {
-    /// <summary>The highest rank of a trait or blessing the datamine gives none for.</summary>
+    /// <summary>The highest rank of an augmentation or glyph the datamine gives none for.</summary>
     public const int DefaultMaxRank = 4;
 
     private static readonly ConcurrentDictionary<string, BuildCatalog> Heroes = new(StringComparer.OrdinalIgnoreCase);
@@ -34,14 +33,14 @@ public sealed class BuildCatalog
             .Where(l => l.ItemIds.Count > 0)
             .Select(l => new BuildOption(l.ItemIds[0], l.Name, GameIcons.LegendaryPowers.GetValueOrDefault(l.LegendaryPowerId), l.IsModeled))
             .OrderBy(o => o.Name).ToList();
-        Sets = Catalog.AllSets
-            .Select(s => new BuildOption(s.SetBonusIds[0], s.Name, null, Note: s.UnmodeledParts.Count > 0 ? $"Not modeled: {string.Join("; ", s.UnmodeledParts)}" : null))
+        RelicPassives = Catalog.AllRelicPassives
+            .Select(r => new BuildOption(r.Id, r.Name, null))
             .OrderBy(o => o.Name).ToList();
-        Traits = Catalog.AllTraits
-            .Select(t => new BuildOption(t.Id, t.Name, GameIcons.Traits.GetValueOrDefault(t.Id), t.IsModeled, GameIcons.TraitMaxRanks.GetValueOrDefault(t.Id, DefaultMaxRank)))
+        Augmentations = Catalog.AllAugmentations
+            .Select(t => new BuildOption(t.Id, t.Name, GameIcons.Augmentations.GetValueOrDefault(t.Id), MaxRank: GameIcons.AugmentationMaxRanks.GetValueOrDefault(t.Id, DefaultMaxRank)))
             .OrderBy(o => o.Name).ToList();
-        Blessings = Catalog.AllBlessings
-            .Select(b => new BuildOption(b.Id, b.Name, GameIcons.Blessings.GetValueOrDefault(b.Id), b.IsModeled, GameIcons.BlessingMaxRanks.GetValueOrDefault(b.Id, DefaultMaxRank)))
+        Glyphs = Catalog.AllGlyphs
+            .Select(b => new BuildOption(b.Id, b.Name, GameIcons.Glyphs.GetValueOrDefault(b.Id), MaxRank: GameIcons.GlyphMaxRanks.GetValueOrDefault(b.Id, DefaultMaxRank)))
             .OrderBy(o => o.Name).ToList();
     }
 
@@ -57,11 +56,11 @@ public sealed class BuildCatalog
 
     public IReadOnlyList<BuildOption> Legendaries { get; }
 
-    public IReadOnlyList<BuildOption> Sets { get; }
+    public IReadOnlyList<BuildOption> RelicPassives { get; }
 
-    public IReadOnlyList<BuildOption> Traits { get; }
+    public IReadOnlyList<BuildOption> Augmentations { get; }
 
-    public IReadOnlyList<BuildOption> Blessings { get; }
+    public IReadOnlyList<BuildOption> Glyphs { get; }
 
     public static IReadOnlyList<GemColor> GemColors { get; } = Enum.GetValues<GemColor>();
 

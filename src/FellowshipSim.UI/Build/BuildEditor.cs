@@ -1,5 +1,4 @@
 using FellowshipSim.Core.Customization.Gems;
-using FellowshipSim.Core.Customization.Sets;
 using FellowshipSim.Core.Engine;
 using FellowshipSim.Core.Import;
 using CoreCatalog = FellowshipSim.Core.Catalog;
@@ -69,7 +68,7 @@ public sealed class BuildEditor(CharacterBuild build)
     public double Percent(RatedStat stat) =>
         Build.SheetPercents.TryGetValue(Key(stat), out double sheet) ? sheet : BasePercent(stat) + StatDiminishingReturns.FromRating(Rating(stat));
 
-    /// <summary>True when <see cref="Percent"/> is the log's character sheet, which counts gem nodes and set bonuses too.</summary>
+    /// <summary>True when <see cref="Percent"/> is the log's character sheet, which counts gem nodes too.</summary>
     public bool PercentFromLog(RatedStat stat) => Build.SheetPercents.ContainsKey(Key(stat));
 
     /// <summary>The weapon's ability ID, or null for no weapon.</summary>
@@ -90,16 +89,11 @@ public sealed class BuildEditor(CharacterBuild build)
         }
     }
 
-    /// <summary>True when the build has the bonus of the set whose first set-bonus ID is <paramref name="setId"/>.</summary>
-    public bool HasSet(int setId) =>
-        CoreCatalog.SetOf(setId) is { } type && Build.SetBonusIds.Count(id => CoreCatalog.SetOf(id) == type) >= SetBonus.PiecesForBonus;
-
-    /// <summary>Wears two pieces of the set (its bonus), or none.</summary>
-    public void SetSet(int setId, bool on)
+    /// <summary>The relic's passive ID, or null for no relic passive.</summary>
+    public int? RelicPassive
     {
-        if (CoreCatalog.SetOf(setId) is not { } type) return;
-        Build.SetBonusIds.RemoveAll(id => CoreCatalog.SetOf(id) == type);
-        if (on) Build.SetBonusIds.AddRange(Enumerable.Repeat(setId, SetBonus.PiecesForBonus));
+        get => Build.RelicPassiveId == 0 ? null : Build.RelicPassiveId;
+        set => Build.RelicPassiveId = value ?? 0;
     }
 
     public double Gem(GemColor color) => Build.GemPower.GetValueOrDefault(color);
@@ -110,13 +104,13 @@ public sealed class BuildEditor(CharacterBuild build)
         else Build.GemPower.Remove(color);
     }
 
-    public int TraitRank(int id) => Build.Traits.FirstOrDefault(t => t.Id == id)?.Rank ?? 0;
+    public int AugmentationRank(int id) => Build.Augmentations.FirstOrDefault(a => a.Id == id)?.Rank ?? 0;
 
-    public void SetTraitRank(BuildOption trait, int rank) => SetRank(Build.Traits, trait, rank);
+    public void SetAugmentationRank(BuildOption augmentation, int rank) => SetRank(Build.Augmentations, augmentation, rank);
 
-    public int BlessingRank(int id) => Build.Blessings.FirstOrDefault(b => b.Id == id)?.Rank ?? 0;
+    public int GlyphRank(int id) => Build.Glyphs.FirstOrDefault(g => g.Id == id)?.Rank ?? 0;
 
-    public void SetBlessingRank(BuildOption blessing, int rank) => SetRank(Build.Blessings, blessing, rank);
+    public void SetGlyphRank(BuildOption glyph, int rank) => SetRank(Build.Glyphs, glyph, rank);
 
     private static void SetRank(List<BuildEntry> entries, BuildOption option, int rank)
     {
@@ -143,15 +137,20 @@ public sealed class BuildEditor(CharacterBuild build)
             build.Talents.Remove(id);
             removed.Add($"talent {id}");
         }
-        foreach (var t in build.Traits.Where(t => CoreCatalog.CreateTrait(t.Id, t.Rank) == null).ToList())
+        foreach (var a in build.Augmentations.Where(a => CoreCatalog.CreateAugmentation(a.Id, a.Rank) == null).ToList())
         {
-            build.Traits.Remove(t);
-            removed.Add($"trait {t.Name ?? t.Id.ToString()}");
+            build.Augmentations.Remove(a);
+            removed.Add($"augmentation {a.Name ?? a.Id.ToString()}");
         }
-        foreach (var b in build.Blessings.Where(b => CoreCatalog.CreateBlessing(b.Id, b.Rank) == null).ToList())
+        foreach (var g in build.Glyphs.Where(g => CoreCatalog.CreateGlyph(g.Id, g.Rank) == null).ToList())
         {
-            build.Blessings.Remove(b);
-            removed.Add($"blessing {b.Name ?? b.Id.ToString()}");
+            build.Glyphs.Remove(g);
+            removed.Add($"glyph {g.Name ?? g.Id.ToString()}");
+        }
+        if (build.RelicPassiveId != 0 && CoreCatalog.CreateRelicPassive(build.RelicPassiveId) == null)
+        {
+            removed.Add($"relic passive {build.RelicPassiveId}");
+            build.RelicPassiveId = 0;
         }
         foreach (int id in build.LegendaryItemIds.Where(id => CoreCatalog.CreateLegendary(build.Hero, id) == null).ToList())
         {

@@ -1,6 +1,6 @@
 namespace FellowshipSim.Core.Customization.Gems;
 
-/// <summary>The Diamond gem tree. Node values are from the game data (gem-trait records).</summary>
+/// <summary>The Diamond gem tree. Node values are from the game data (gem-ability records).</summary>
 public class Diamond : Gem
 {
     public const double HarmoniousSoulSeconds = 5.0;

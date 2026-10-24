@@ -1,23 +1,30 @@
 using System.Globalization;
 using System.Text;
 using FellowshipSim.Core.APL;
+using FellowshipSim.Core.Customization.Aspects;
+using FellowshipSim.Core.Customization.Augmentations;
 using FellowshipSim.Core.Customization.Gems;
+using FellowshipSim.Core.Customization.ProtectiveEnchants;
+using FellowshipSim.Core.Customization.Sigils;
 
 namespace FellowshipSim.Core.Import;
 
 /// <summary>
 /// A character profile in simc style: one <c>key=value</c> per line, names as action-list names ("winters_blessing").
-/// Stats are exact percentages; each rating is the one that gives its percentage.
+/// Stats are exact percentages; each rating is the one that gives its percentage. With percentages, <c>gems</c> is the
+/// character sheet's gem power (Covetous Greed included).
 /// <code>
 /// rime="sww"
 /// primary_stat=300
 /// crit=30%
 /// haste=24%
 /// talents=avalanche/coalescing_frost/...
-/// traits=martial_initiative:2/...
-/// blessings=the_monarch:1/...
+/// aspects=martial_initiative:2/...
+/// sigils=hunters_focus:1/...
+/// protective_enchant=the_oak:1
+/// glyphs=the_monarch:1/...
 /// gems=sapphire:1500/...
-/// set_bonus=dark_prophecy_2pc=1
+/// relic=accursed_trophy
 /// legendary=frostwyrms_spite,id=5899
 /// weapon=ashas_chronoshift_spire
 /// actions+=/frost_bolt
@@ -26,8 +33,6 @@ namespace FellowshipSim.Core.Import;
 /// </summary>
 public sealed record SimcProfile(CharacterBuild Build, string ActionList)
 {
-    private const string SetBonusSuffix = "_2pc";
-
     public static SimcProfile Load(string path) => Parse(File.ReadAllText(path));
 
     public static SimcProfile Parse(string text)
@@ -99,16 +104,13 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 var tree = hero.TalentTreeSlots.Select(s => Catalog.CreateTalent(s.TalentId)).OfType<Talent>().Select(t => (t.Name, t.Id));
                 foreach (string name in List(value)) build.Talents.Add(IdOf(name, tree, "talent"));
                 break;
-            case "traits":
+            case "aspects": AddAugmentations<Aspect>(build, value, "aspect"); break;
+            case "sigils": AddAugmentations<Sigil>(build, value, "sigil"); break;
+            case "protective_enchant": AddAugmentations<ProtectiveEnchant>(build, value, "protective enchant"); break;
+            case "glyphs":
                 foreach (var (name, rank) in Ranked(value))
                 {
-                    build.Traits.Add(new BuildEntry(IdOf(name, Catalog.AllTraits.Select(t => (t.Name, t.Id)), "trait"), rank));
-                }
-                break;
-            case "blessings":
-                foreach (var (name, rank) in Ranked(value))
-                {
-                    build.Blessings.Add(new BuildEntry(IdOf(name, Catalog.AllBlessings.Select(b => (b.Name, b.Id)), "blessing"), rank));
+                    build.Glyphs.Add(new BuildEntry(IdOf(name, Catalog.AllGlyphs.Select(g => (g.Name, g.Id)), "glyph"), rank));
                 }
                 break;
             case "gems":
@@ -120,16 +122,9 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                     build.GemPower[colors[0]] = power;
                 }
                 break;
-            case "set_bonus":
-            {
-                var (pieces, enabled) = Pair(value);
-                if (!pieces.EndsWith(SetBonusSuffix)) throw new FormatException($"a set bonus is <set>{SetBonusSuffix}=1");
-                string name = pieces[..^SetBonusSuffix.Length];
-                var set = Catalog.AllSets.FirstOrDefault(s => AplNames.Slug(s.Name) == name)
-                          ?? throw new FormatException($"no set '{name}'");
-                if (enabled != 0) build.SetBonusIds.AddRange(Enumerable.Repeat(set.SetBonusIds[0], Customization.Sets.SetBonus.PiecesForBonus));
+            case "relic":
+                build.RelicPassiveId = IdOf(value, Catalog.AllRelicPassives.Select(r => (r.Name, r.Id)), "relic passive");
                 break;
-            }
             case "legendary":
             {
                 var options = Options(value);
@@ -168,22 +163,29 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         {
             s.AppendLine($"talents={string.Join('/', build.Talents.Select(id => AplNames.Slug(Catalog.CreateTalent(id)?.Name ?? throw new InvalidOperationException($"Talent {id} is not modeled"))))}");
         }
-        if (build.Traits.Count > 0)
+        var augmentations = build.Augmentations
+            .Select(a => (Entry: a, Augmentation: Catalog.CreateAugmentation(a.Id, a.Rank) ?? throw new InvalidOperationException($"Augmentation {a.Id} is not in the catalog")))
+            .ToList();
+        void AppendAugmentations<T>(string key) where T : Augmentation
         {
-            s.AppendLine($"traits={string.Join('/', build.Traits.Select(t => $"{AplNames.Slug(Catalog.CreateTrait(t.Id, t.Rank)?.Name ?? throw new InvalidOperationException($"Trait {t.Id} is not in the catalog"))}:{t.Rank}"))}");
+            var ofKind = augmentations.Where(a => a.Augmentation is T).ToList();
+            if (ofKind.Count > 0) s.AppendLine($"{key}={string.Join('/', ofKind.Select(a => $"{AplNames.Slug(a.Augmentation.Name)}:{a.Entry.Rank}"))}");
         }
-        if (build.Blessings.Count > 0)
+        AppendAugmentations<Aspect>("aspects");
+        AppendAugmentations<Sigil>("sigils");
+        AppendAugmentations<ProtectiveEnchant>("protective_enchant");
+        if (build.Glyphs.Count > 0)
         {
-            s.AppendLine($"blessings={string.Join('/', build.Blessings.Select(b => $"{AplNames.Slug(Catalog.CreateBlessing(b.Id, b.Rank)?.Name ?? throw new InvalidOperationException($"Blessing {b.Id} is not in the catalog"))}:{b.Rank}"))}");
+            s.AppendLine($"glyphs={string.Join('/', build.Glyphs.Select(g => $"{AplNames.Slug(Catalog.CreateGlyph(g.Id, g.Rank)?.Name ?? throw new InvalidOperationException($"Glyph {g.Id} is not in the catalog"))}:{g.Rank}"))}");
         }
         if (build.GemPower.Count > 0)
         {
             s.AppendLine($"gems={string.Join('/', build.GemPower.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{Text(g.Value)}"))}");
         }
-        foreach (var set in build.SetBonusIds.Select(Catalog.SetOf).OfType<Type>().GroupBy(t => t)
-                     .Where(g => g.Count() >= Customization.Sets.SetBonus.PiecesForBonus).Select(g => Catalog.CreateSet(g.Key)))
+        if (build.RelicPassiveId != 0)
         {
-            s.AppendLine($"set_bonus={AplNames.Slug(set.Name)}{SetBonusSuffix}=1");
+            var relicPassive = Catalog.CreateRelicPassive(build.RelicPassiveId) ?? throw new InvalidOperationException($"Relic passive {build.RelicPassiveId} is not in the catalog");
+            s.AppendLine($"relic={AplNames.Slug(relicPassive.Name)}");
         }
         foreach (int itemId in build.LegendaryItemIds)
         {
@@ -205,6 +207,13 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
 
     private static FormatException Error(int lineNumber, string line, string problem) =>
         new($"Profile line {lineNumber} '{line}': {problem}.");
+
+    /// <summary>Ranked augmentations of one kind (<typeparamref name="T"/>): "name:rank/...".</summary>
+    private static void AddAugmentations<T>(CharacterBuild build, string value, string kind) where T : Augmentation
+    {
+        var known = Catalog.AllAugmentations.OfType<T>().Select(a => (a.Name, a.Id)).ToList();
+        foreach (var (name, rank) in Ranked(value)) build.Augmentations.Add(new BuildEntry(IdOf(name, known, kind), rank));
+    }
 
     private static IEnumerable<string> List(string value) => value.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 

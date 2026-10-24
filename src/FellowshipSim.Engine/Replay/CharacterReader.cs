@@ -8,7 +8,7 @@ namespace FellowshipSim.Engine.Replay;
 
 /// <summary>
 /// Reads the build a fight was played with from the player's combatantinfo event: character-sheet stats, and talents,
-/// traits, blessings, gem powers, set pieces, legendary items and weapon by game ID.
+/// augmentations, glyphs, gem powers, relic passive, legendary items and weapon by game ID.
 /// <para>
 /// Base percentages are derived from the logged ratings: every hero has 5% base Critical Strike and no base Spirit, and
 /// ratings convert at 0.16% per point through the diminishing-returns curve. Percentage bonuses from gem nodes and set
@@ -20,7 +20,7 @@ public static class CharacterReader
     public const double PercentPerRating = 0.0016;
     public const double BaseCrit = 0.05;
     public const double BaseSpirit = 0.0;
-    public const int MaxTraitRank = 4;
+    public const int MaxAugmentationRank = 4;
 
     private static readonly double[] Breakpoints = [0.10, 0.15, 0.20, 0.25];
     private static readonly double[] Multipliers = [1.0, 0.98, 0.96 * 0.98, 0.94 * 0.96 * 0.98, 0.92 * 0.94 * 0.96 * 0.98];
@@ -68,40 +68,42 @@ public static class CharacterReader
             if (id > 0) build.Talents.Add(id);
         }
 
-        // Gear: traits (trait ID + 3,000,000), blessings, set pieces and legendary items. Blessings carry per-item IDs in
-        // logs, so they are matched to the game's blessings by name.
-        var traits = new List<(int Id, int Rank, string? Name)>();
-        var blessings = new List<(int Id, int Rank, string? Name)>();
+        // Gear: augmentations (augmentation ID + 3,000,000), glyphs, the relic and legendary items. Glyphs carry per-item
+        // IDs in logs, so they are matched to the game's glyphs by name.
+        var augmentations = new List<(int Id, int Rank, string? Name)>();
+        var glyphs = new List<(int Id, int Rank, string? Name)>();
+        var relicPassives = Catalog.AllRelicPassives.ToList();
         foreach (var item in combatant["gear"]?.AsArray() ?? [])
         {
             if (item == null) continue;
+            int itemId = (int)Num(item["id"]);
+            if (relicPassives.FirstOrDefault(r => r.ItemIds.Contains(itemId)) is { } relicPassive) build.RelicPassiveId = relicPassive.Id;
             foreach (var t in item["traits"]?.AsArray() ?? [])
             {
-                AddRank(traits, (int)Num(t?["id"]) - LogIds.TraitOffset, (int)Num(t?["rank"], 1), Str(t?["name"]));
+                AddRank(augmentations, (int)Num(t?["id"]) - LogIds.AugmentationOffset, (int)Num(t?["rank"], 1), Str(t?["name"]));
             }
             foreach (var b in item["blessings"]?.AsArray() ?? [])
             {
                 string name = Str(b?["name"]) ?? "";
-                int i = blessings.FindIndex(x => x.Name == name);
-                if (i < 0) blessings.Add((Catalog.BlessingIdByName(name), (int)Num(b?["level"], 1), name));
-                else blessings[i] = (blessings[i].Id, blessings[i].Rank + (int)Num(b?["level"], 1), name);
+                int i = glyphs.FindIndex(x => x.Name == name);
+                if (i < 0) glyphs.Add((Catalog.GlyphIdByName(name), (int)Num(b?["level"], 1), name));
+                else glyphs[i] = (glyphs[i].Id, glyphs[i].Rank + (int)Num(b?["level"], 1), name);
             }
-            if (item["set"] is JsonObject set && Num(set["id"]) > 0) build.SetBonusIds.Add((int)Num(set["id"]));
-            if (Num(item["quality"]) >= 6) build.LegendaryItemIds.Add((int)Num(item["id"]));
+            if (Num(item["quality"]) >= 6) build.LegendaryItemIds.Add(itemId);
         }
 
-        // Weapon and neck trees: trait IDs + 3,000,000 with the points spent; the weapon ability is listed by its own ID.
+        // Weapon and neck trees: augmentation IDs + 3,000,000 with the points spent; the weapon ability is listed by its own ID.
         foreach (var t in (combatant["weaponTraits"]?.AsArray() ?? []).Concat(combatant["neckTraits"]?.AsArray() ?? []))
         {
             int id = (int)Num(t?["id"]);
             int points = (int)Num(t?["points"]);
             if (points <= 0) continue;
-            if (id >= LogIds.TraitOffset) AddRank(traits, id - LogIds.TraitOffset, points, null, cap: true);
+            if (id >= LogIds.AugmentationOffset) AddRank(augmentations, id - LogIds.AugmentationOffset, points, null, cap: true);
             else if (build.WeaponAbilityId == 0) build.WeaponAbilityId = id;
         }
 
-        build.Traits.AddRange(traits.Select(t => new BuildEntry(t.Id, Math.Min(MaxTraitRank, t.Rank), t.Name)));
-        build.Blessings.AddRange(blessings.Select(b => new BuildEntry(b.Id, b.Rank, b.Name)));
+        build.Augmentations.AddRange(augmentations.Select(t => new BuildEntry(t.Id, Math.Min(MaxAugmentationRank, t.Rank), t.Name)));
+        build.Glyphs.AddRange(glyphs.Select(b => new BuildEntry(b.Id, b.Rank, b.Name)));
         foreach (var colour in GemOrder)
         {
             if (gemPower[colour] != 0) build.GemPower[colour] = gemPower[colour];
@@ -116,11 +118,11 @@ public static class CharacterReader
         int i = list.FindIndex(e => e.Id == id);
         if (i < 0)
         {
-            list.Add((id, cap ? Math.Min(MaxTraitRank, rank) : rank, name));
+            list.Add((id, cap ? Math.Min(MaxAugmentationRank, rank) : rank, name));
             return;
         }
         int total = list[i].Rank + rank;
-        list[i] = (id, cap ? Math.Min(MaxTraitRank, total) : total, list[i].Name ?? name);
+        list[i] = (id, cap ? Math.Min(MaxAugmentationRank, total) : total, list[i].Name ?? name);
     }
 
     /// <summary>A rating percentage after diminishing returns (the same curve as the engine's StatDiminishingReturns).</summary>

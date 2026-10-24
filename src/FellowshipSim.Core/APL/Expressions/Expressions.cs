@@ -129,9 +129,9 @@ public class PropertyExpression : IAplExpression
         new Dictionary<string, Func<Hero, string, bool>>
         {
             [TalentScope] = (hero, name) => hero.Talents.Any(t => AplNames.Slug(t.Name) == name),
-            [BlessingScope] = (hero, name) => hero.Blessings.Any(b => AplNames.Slug(b.Name) == name),
+            [BlessingScope] = (hero, name) => hero.Glyphs.Any(b => AplNames.Slug(b.Name) == name),
             [LegendaryScope] = (hero, name) => hero.Legendaries.Any(l => AplNames.Slug(l.Name) == name),
-            [WeaponTraitScope] = (hero, name) => hero.Traits.Any(t => AplNames.Slug(t.Name) == name),
+            [WeaponTraitScope] = (hero, name) => hero.Augmentations.Any(t => AplNames.Slug(t.Name) == name),
             [WeaponScope] = (hero, name) =>
                 (hero.EquippedWeapon != null && AplNames.Slug(hero.EquippedWeapon.Name).StartsWith(name, StringComparison.Ordinal))
                 || (hero.WeaponAbility != null && AplNames.Slug(hero.WeaponAbility.Name).StartsWith(name, StringComparison.Ordinal)),

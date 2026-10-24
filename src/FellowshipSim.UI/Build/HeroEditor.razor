@@ -148,21 +148,16 @@
                 }
             </select>
         </label>
-    </div>
-    <h3 class="section">Set bonuses <span class="meta">· @Catalog.Sets.Count(s => Editor.HasSet(s.Id)) active, two pieces each</span></h3>
-    <div class="chips">
-        @foreach (var s in Catalog.Sets)
-        {
-            bool on = Editor.HasSet(s.Id);
-            <button @key="s.Id" type="button" class="chip @(on ? "picked" : "")" aria-pressed="@on" title="@s.Note"
-                    @onclick="() => Set(() => Editor.SetSet(s.Id, !on))">
-                @s.Name
-                @if (s.Note != null)
+        <label>
+            Relic passive
+            <select @bind:get="Editor.RelicPassive?.ToString() ?? string.Empty" @bind:set="v => Set(() => Editor.RelicPassive = Id(v))">
+                <option value="">None</option>
+                @foreach (var r in Catalog.RelicPassives)
                 {
-                    <span class="badge">partly modeled</span>
+                    <option @key="r.Id" value="@r.Id">@r.Name</option>
                 }
-            </button>
-        }
+            </select>
+        </label>
     </div>
     <h3 class="section">Gem powers</h3>
     <div class="gems">
@@ -178,11 +173,11 @@
 </Card>
 
 <div class="pair">
-    <Card Title="Traits">
-        <RankedChoices Options="Catalog.Traits" RankOf="Editor.TraitRank" SetRank="(o, r) => Set(() => Editor.SetTraitRank(o, r))" />
+    <Card Title="Augmentations">
+        <RankedChoices Options="Catalog.Augmentations" RankOf="Editor.AugmentationRank" SetRank="(o, r) => Set(() => Editor.SetAugmentationRank(o, r))" />
     </Card>
-    <Card Title="Blessings">
-        <RankedChoices Options="Catalog.Blessings" RankOf="Editor.BlessingRank" SetRank="(o, r) => Set(() => Editor.SetBlessingRank(o, r))" />
+    <Card Title="Glyphs">
+        <RankedChoices Options="Catalog.Glyphs" RankOf="Editor.GlyphRank" SetRank="(o, r) => Set(() => Editor.SetGlyphRank(o, r))" />
     </Card>
 </div>
 

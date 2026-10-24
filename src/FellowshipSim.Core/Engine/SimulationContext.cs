@@ -314,11 +314,7 @@ public class SimulationContext
     // ------------------------------------------------------------------ damage
 
     /// <summary>The numbers of a hit at a moment: base damage (before crit and spread), crit chance and crit multiplier.</summary>
-    /// <summary>
-    /// A hit's numbers. <paramref name="FlatDamage"/> is added after everything else, crit included (e.g. The Vainglorious'
-    /// "additional Main Stat damage").
-    /// </summary>
-    public readonly record struct HitNumbers(double BaseDamage, double CritChance, double CritMultiplier, double FlatDamage = 0.0);
+    public readonly record struct HitNumbers(double BaseDamage, double CritChance, double CritMultiplier);
 
     /// <summary>
     /// Deals one hit. <paramref name="compute"/> gives the hit's numbers from the current state; it is evaluated on
@@ -376,7 +372,7 @@ public class SimulationContext
         if (outcome.LandingDelay > SimTime.Zero)
         {
             Kernel.ScheduleAt(CurrentTime + outcome.LandingDelay, hit, hit.AbilityName);
-            return released.BaseDamage * (outcome.IsCrit ? released.CritMultiplier : 1.0) + released.FlatDamage;
+            return released.BaseDamage * (outcome.IsCrit ? released.CritMultiplier : 1.0);
         }
         return Land(hit);
     }
@@ -392,10 +388,7 @@ public class SimulationContext
             chance = Math.Clamp(n.CritChance, 0.0, 1.0);
         }
         double tickFraction = hit.TickFraction;
-        return new HitRequest(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, baseDamage, hit.CanCrit, chance, n.CritMultiplier, CurrentTime, tickFraction)
-        {
-            FlatDamage = n.FlatDamage * tickFraction,
-        };
+        return new HitRequest(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, baseDamage, hit.CanCrit, chance, n.CritMultiplier, CurrentTime, tickFraction);
     }
 
     /// <summary>The hit lands: deals its damage, raises <see cref="Hero.OnDamageDealt"/> and returns it to the pool.</summary>
@@ -417,7 +410,7 @@ public class SimulationContext
         double multiplier = forced
             ? (outcome.IsCrit ? landed.CritMultiplier : 1.0)
             : Outcomes.Land(landed, outcome, this);
-        dealt = landed.BaseDamage * multiplier + landed.FlatDamage;
+        dealt = landed.BaseDamage * multiplier;
 
         var source = hit.Source;
         var target = hit.Target;

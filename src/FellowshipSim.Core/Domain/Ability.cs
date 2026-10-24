@@ -47,12 +47,6 @@ public abstract class Ability
     /// <summary>Multiplier on this ability's crit power (e.g. "20% increased Critical Strike power").</summary>
     public double CritPowerMultiplier { get; set; } = 1.0;
 
-    /// <summary>
-    /// Main Stat damage added to each of this ability's hits after everything else (no expertise, damage buffs or crit),
-    /// as a coefficient (e.g. The Vainglorious).
-    /// </summary>
-    public double BonusCoefficient { get; set; } = 0.0;
-
     public bool ScalesWithExpertise { get; protected set; } = true;
 
     /// <summary>The cooldown is divided by (1 + haste) once, when it starts (game data "cooldownTimeRateScalesOff" lists Haste, single charge).</summary>

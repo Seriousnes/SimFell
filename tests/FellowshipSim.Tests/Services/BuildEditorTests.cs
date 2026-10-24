@@ -21,8 +21,8 @@ public sealed class BuildEditorTests : IDisposable
         Assert.All(catalog.Talents, t => Assert.True(t.Talent.Modeled && t.Talent.Icon != null, t.Talent.Name));
         Assert.Equal(3, catalog.Weapons.Count);
         Assert.Contains(catalog.Legendaries, l => l.Name == "Frostwyrm's Spite");
-        Assert.Contains(catalog.Traits, t => !t.Modeled);
-        Assert.All(catalog.Blessings, b => Assert.Equal(4, b.MaxRank));
+        Assert.Contains(catalog.RelicPassives, r => r.Name == "Accursed Trophy");
+        Assert.All(catalog.Glyphs, g => Assert.Equal(4, g.MaxRank));
         Assert.NotNull(BuildCatalog.PortraitUrl("Rime"));
     }
 
@@ -67,10 +67,10 @@ public sealed class BuildEditorTests : IDisposable
         editor.SetRating(RatedStat.Haste, 300);
         editor.Weapon = catalog.Weapons[0].Id;
         editor.Legendary = catalog.Legendaries.First(l => l.Modeled).Id;
-        editor.SetSet(catalog.Sets[0].Id, true);
+        editor.RelicPassive = catalog.RelicPassives[0].Id;
         editor.SetGem(GemColor.Sapphire, 1500);
-        editor.SetTraitRank(catalog.Traits[0], 9);
-        editor.SetBlessingRank(catalog.Blessings[0], 2);
+        editor.SetAugmentationRank(catalog.Augmentations[0], 9);
+        editor.SetGlyphRank(catalog.Glyphs[0], 2);
 
         var read = SimcProfile.Parse(new SimcProfile(editor.Build, "actions=frost_bolt").Format());
         var back = new BuildEditor(read.Build);
@@ -78,10 +78,10 @@ public sealed class BuildEditorTests : IDisposable
         Assert.Equal(editor.Percent(RatedStat.Haste), back.Percent(RatedStat.Haste), 4);
         Assert.Equal(editor.Weapon, back.Weapon);
         Assert.Equal(editor.Legendary, back.Legendary);
-        Assert.True(back.HasSet(catalog.Sets[0].Id));
+        Assert.Equal(editor.RelicPassive, back.RelicPassive);
         Assert.Equal(1500, back.Gem(GemColor.Sapphire));
-        Assert.Equal(catalog.Traits[0].MaxRank, back.TraitRank(catalog.Traits[0].Id));
-        Assert.Equal(2, back.BlessingRank(catalog.Blessings[0].Id));
+        Assert.Equal(catalog.Augmentations[0].MaxRank, back.AugmentationRank(catalog.Augmentations[0].Id));
+        Assert.Equal(2, back.GlyphRank(catalog.Glyphs[0].Id));
         Assert.Equal("actions=frost_bolt", read.ActionList.Trim());
     }
 
@@ -90,11 +90,11 @@ public sealed class BuildEditorTests : IDisposable
     {
         var build = BuildEditor.NewBuild("Rime");
         build.Talents.AddRange([IcyTalons.TalentId, 999_999]);
-        build.Traits.Add(new BuildEntry(999_999, 1, "Made-up trait"));
+        build.Augmentations.Add(new BuildEntry(999_999, 1, "Made-up augmentation"));
         build.WeaponAbilityId = 999_999;
 
         var removed = BuildEditor.RemoveUnknown(build);
-        Assert.Equal(["talent 999999", "trait Made-up trait", "weapon with ability 999999"], removed);
+        Assert.Equal(["talent 999999", "augmentation Made-up augmentation", "weapon with ability 999999"], removed);
         Assert.Equal([IcyTalons.TalentId], build.Talents);
         new SimcProfile(build, "").Format();
     }

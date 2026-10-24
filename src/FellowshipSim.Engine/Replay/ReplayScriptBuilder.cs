@@ -283,7 +283,7 @@ public static class ReplayScriptBuilder
             .ThenBy(c => KindOrder.GetValueOrDefault(Str(c["kind"]), 5))
             .ToList();
 
-        // Every player's trait ranks (buffs other players give scale with the giver's rank).
+        // Every player's augmentation ranks (buffs other players give scale with the giver's rank).
         var players = new JsonObject();
         foreach (var e in events.Where(e => Str(e["type"]) == "combatantinfo"))
         {
@@ -303,7 +303,7 @@ public static class ReplayScriptBuilder
             {
                 ["name"] = actors.TryGetValue(sid, out var who) ? who["name"]?.DeepClone() : null,
                 ["gear_traits"] = new JsonObject(gearTraits.Select(kv => KeyValuePair.Create(kv.Key, (JsonNode?)kv.Value))),
-                // weapon-tree trait IDs are 3,000,000 + datamine trait ID
+                // weapon-tree augmentation IDs are 3,000,000 + datamine augmentation ID
                 ["weapon_traits"] = weaponTraits,
             };
         }

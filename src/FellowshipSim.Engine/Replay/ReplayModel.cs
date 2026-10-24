@@ -150,7 +150,7 @@ public sealed class ReplayResult
     public Dictionary<string, int> UnmodeledExternalAuras { get; } = new(StringComparer.OrdinalIgnoreCase);
     public List<ProcRollStats> ProcStats { get; } = new();
     public List<HitPair> AllHits { get; } = new();
-    /// <summary>Talents, traits, blessings, gem nodes and set parts of the character the engine does not model.</summary>
+    /// <summary>Talents, augmentations, glyphs, gem nodes and relic passive of the character the engine does not model.</summary>
     public List<string> UnmodeledCustomizations { get; } = new();
     public int LogHits { get; set; }
     /// <summary>Casts the engine would have refused but made to follow the log (with the reason).</summary>
