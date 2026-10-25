@@ -18,8 +18,21 @@ public sealed class BuildEditor(CharacterBuild build)
 
     public BuildCatalog Catalog => BuildCatalog.For(Build.Hero);
 
+    /// <summary>The main stat every hero has before gear (per the user); the editor takes the gear's bonus over it.</summary>
+    public const double BaseMainStat = 100;
+
+    /// <summary>The rated stats in the in-game character sheet's order.</summary>
+    public static IReadOnlyList<RatedStat> InGameOrder { get; } = [RatedStat.Crit, RatedStat.Expertise, RatedStat.Haste, RatedStat.Spirit];
+
     /// <summary>A new build of <paramref name="hero"/> with nothing picked.</summary>
-    public static CharacterBuild NewBuild(string hero) => new() { Hero = hero, Name = "New build", PrimaryStat = 100 };
+    public static CharacterBuild NewBuild(string hero) => new() { Hero = hero, Name = "New build", PrimaryStat = BaseMainStat };
+
+    /// <summary>The main stat over <see cref="BaseMainStat"/>: what the gear adds.</summary>
+    public double MainStatBonus
+    {
+        get => Math.Max(0, Build.PrimaryStat - BaseMainStat);
+        set => Build.PrimaryStat = BaseMainStat + Math.Max(0, value);
+    }
 
     public int PointsLeft => Catalog.PointsLeft(Build.Talents);
 
@@ -53,6 +66,9 @@ public sealed class BuildEditor(CharacterBuild build)
         RatedStat.Expertise => Build.ExpertiseRating,
         _ => Build.SpiritRating,
     };
+
+    /// <summary>The stat's rating with the stat enchants' rating: what the sim and the character sheet count.</summary>
+    public double TotalRating(RatedStat stat) => Rating(stat) + Build.EnchantRating(RatingType(stat));
 
     public void SetRating(RatedStat stat, double rating)
     {
