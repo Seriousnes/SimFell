@@ -5,8 +5,8 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 
 /// <summary>
 /// Legendary power 396 (Rime's Harbinger of Winter Leggings, item 5900): "Your Bursting Ice lasts 2 seconds longer"
-/// (datamine export 26136736). UNVERIFIED: no replay has checked the longer debuff's pulses yet (worn in
-/// AY1m6jPKTZyx4vz2 fights 8 and 9, 4Ln6PQZCRzc7Wpta fight 72).
+/// (legendary-power 396, datamine export 26136736). Combat logs: the debuff (effect 1395) is applied with a duration of
+/// 5000ms against 3000ms without it (AY1m6jPKTZyx4vz2 fight 9, NhBnFXmy3bJg9Cav fights 32 and 33).
 /// </summary>
 public class SkandisDecree : Legendary
 {

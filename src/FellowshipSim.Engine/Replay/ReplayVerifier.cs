@@ -258,11 +258,20 @@ public sealed class ReplayVerifier
 
     // ------------------------------------------------------------------ state before a cast
 
+    /// <summary>Whether the log marks ability activations on its cast events.</summary>
+    private bool? _activationMarked;
+
     /// <summary>Resources and tracked auras before the action match the log.</summary>
     public void CheckState(SimulationContext ctx, ReplayStep step, ReplayCommand cmd)
     {
+        // The cast's own activation event: a cast-time ability's completion at the same moment carries the resources
+        // before its own gains and spends (combat logs, the 15 Rime fights of patch 0.5.0.0: 333 begincasts right after the
+        // same ability's completion, whose activation event has no resources, took that completion's reading, and 239 of
+        // them differed in Anima). A log without activation marks keeps the nearest reading of the ability.
+        _activationMarked ??= _script.Observations.Resources.Any(r => r.Activation);
         var snapshot = _script.Observations.Resources.FirstOrDefault(r =>
-            Math.Abs(r.Time - cmd.Time) <= _options.ResourceSnapshotWindowSeconds && r.AbilityId == cmd.AbilityId);
+            Math.Abs(r.Time - cmd.Time) <= _options.ResourceSnapshotWindowSeconds && r.AbilityId == cmd.AbilityId
+            && (r.Activation || _activationMarked == false));
         if (snapshot != null)
         {
             // Each of the hero's resources that combat logs report (LogResources).

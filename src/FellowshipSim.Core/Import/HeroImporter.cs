@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Customization.CommonAbilities;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Customization.Legendaries;
 using StatEnchants = FellowshipSim.Core.Customization.StatEnchants;
@@ -52,6 +53,7 @@ public static class HeroImporter
         }
 
         hero.Initialize();
+        hero.Abilities.AddRange(CommonAbilities.For(hero));
         foreach (var ability in hero.Abilities.ToList()) ability.Connect();
 
         foreach (int talentId in build.Talents)
@@ -127,7 +129,10 @@ public static class HeroImporter
                 legendary.Bind(hero);
             }
             hero.PassiveAuras.Add(LegendaryStats.StrandOfEternity);
-            if (!hero.Stats.UsesSheetValues) hero.PassiveAuras.Add(LegendaryStats.MoteOfCreation);
+            // A logged Main Stat already includes Mote of Creation. It adds to the same sum as Rising Spirit, so it comes out
+            // of the sheet and applies as its aura.
+            if (hero.Stats.UsesSheetValues) hero.Stats.PrimaryStat /= 1.0 + LegendaryStats.MoteOfCreationPrimaryStat;
+            hero.PassiveAuras.Add(LegendaryStats.MoteOfCreation);
         }
 
         return hero;

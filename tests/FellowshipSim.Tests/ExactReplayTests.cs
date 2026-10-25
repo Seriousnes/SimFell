@@ -103,7 +103,9 @@ public class ExactReplayTests
     {
         var (commands, boltId, _) = FrostBoltCast(Script([], []));
         var script = Script(commands, []);
-        var driver = new ReplayDriver(ReplayDriver.CreateHero(script), script, new ReplayOptions { StopOnFirstFailure = false });
+        // Frost Bolt is one of the damage IDs whose unmatched hits hit nothing by default.
+        var options = new ReplayOptions { StopOnFirstFailure = false, UnmatchedHitsMissIds = [] };
+        var driver = new ReplayDriver(ReplayDriver.CreateHero(script), script, options);
 
         var result = driver.Run();
 
@@ -202,6 +204,31 @@ public class ExactReplayTests
         Assert.Equal(log, fight.Fired);
         Assert.Equal(log.Count, fight.Ledger.MatchedHits);
         // 20ms from the prediction is within the tick time tolerance (a server frame).
+        Assert.Empty(fight.Verifier.Issues);
+    }
+
+    [Fact]
+    public void A_Damage_Over_Time_Tick_Fires_At_Its_Reserved_Log_Tick()
+    {
+        // The period timer's next period runs from the moved tick: each tick is due one hasted period after the log tick
+        // before it, and the log has each 20ms later.
+        var probe = new TickFight();
+        double period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
+        var log = new List<double>();
+        for (double t = 0; ;)
+        {
+            t = (SimTime.FromSeconds(t) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
+            if (t > 3.9) break;
+            log.Add(Math.Round(t, 3));
+        }
+        var fight = new TickFight(log.ToArray());
+        PeriodicEffect.BeginHasted(fight.Ctx, fight.Hero, "Test Dot", log[^1] + period / 2, 1.0, tickOnStart: false, partialFinalTick: false,
+            onTick: (c, _) => fight.Tick(c), damageLogId: TickId, target: fight.Enemy, damageOverTime: true);
+
+        fight.Ctx.RunUntil(SimTime.FromSeconds(6));
+
+        Assert.Equal(log, fight.Fired);
+        Assert.Equal(log.Count, fight.Ledger.MatchedHits);
         Assert.Empty(fight.Verifier.Issues);
     }
 

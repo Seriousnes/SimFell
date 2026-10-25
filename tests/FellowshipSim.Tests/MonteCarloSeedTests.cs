@@ -34,6 +34,23 @@ public class MonteCarloSeedTests
     }
 
     [Fact]
+    public void A_Run_Gives_The_Same_Totals_On_Any_Number_Of_Threads()
+    {
+        var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+        MonteCarloResult RunOn(int threads) => new MonteCarloSimulator(build, AplParser.ParseScript(Apl))
+            .Run(SimTime.FromSeconds(60), iterations: 250, targetCount: 2, firstSeed: 1, degreeOfParallelism: threads);
+
+        var one = RunOn(1);
+        var four = RunOn(4);
+        Assert.Equal(one.MeanDps, four.MeanDps);
+        Assert.Equal(one.StandardDeviation, four.StandardDeviation);
+        Assert.Equal(one.TotalMeanDamage, four.TotalMeanDamage);
+        Assert.Equal(one.AbilityDpsBreakdown, four.AbilityDpsBreakdown);
+        Assert.Equal(one.PrimaryTargetDps, four.PrimaryTargetDps);
+    }
+
+    [Fact]
     public void A_Seed_Repeats_Its_Fight()
     {
         var first = Run(Apl, iterations: 5, firstSeed: 3);
@@ -55,19 +72,19 @@ public class MonteCarloSeedTests
         }
     }
 
-    /// <summary>Totals of fights 1-4 of each hero's default action list, captured at commit 8fecd72.</summary>
+    /// <summary>Totals of fights 1-4 of each hero's default action list, captured after Rime replay accuracy v1 (#8).</summary>
     [Theory]
-    [InlineData("Rime", 120, 3, new[] { 3065348.164364021, 2844345.624924346, 2586790.2809684295, 2826773.541334825 })]
-    [InlineData("Rime", 300, 1, new[] { 7872715.6917813085, 8752259.817411212, 8604763.571995698, 8861947.45083851 })]
-    [InlineData("Ardeos", 120, 3, new[] { 1847837.1115456694, 2054980.736083649, 1936607.7508904785, 1953843.794033505 })]
-    [InlineData("Ardeos", 300, 1, new[] { 3623429.388401441, 3545005.846612877, 3385237.950039354, 3227405.2486445424 })]
-    [InlineData("Gunde", 120, 3, new[] { 3411873.057643108, 3676642.4235181487, 3663297.493065301, 3894994.09916709 })]
-    [InlineData("Gunde", 300, 1, new[] { 6052496.876257931, 6029016.467322267, 5538107.514025447, 6347232.759195004 })]
-    [InlineData("Mara", 120, 3, new[] { 1633623.2702913966, 1141078.5666773887, 1392297.1570090842, 1461812.038685851 })]
-    [InlineData("Mara", 300, 1, new[] { 3786242.7066847594, 3396084.100169657, 3398590.5212257053, 3391223.1314318073 })]
-    [InlineData("Tariq", 120, 3, new[] { 1453563.3278640977, 1552281.144037157, 1504112.8646380526, 1522586.9304606495 })]
-    [InlineData("Tariq", 300, 1, new[] { 2582605.552998744, 2626938.8995864824, 2760472.34265179, 3129809.457215084 })]
-    public void Each_Seed_Gives_The_Totals_Of_Commit_8fecd72(string hero, int seconds, int targets, double[] totals)
+    [InlineData("Rime", 120, 3, new[] { 2870678.2440036838, 2843688.0938747828, 2929791.065455927, 2897177.6522508198 })]
+    [InlineData("Rime", 300, 1, new[] { 7233920.9662274774, 7623903.1019708812, 7579174.9157335293, 7815783.4910974968 })]
+    [InlineData("Ardeos", 120, 3, new[] { 1845987.3390204795, 2042634.8375148706, 1929449.9252678133, 1949523.0494714687 })]
+    [InlineData("Ardeos", 300, 1, new[] { 3608322.4011011017, 3532991.629864017, 3372426.210184026, 3220176.1674971473 })]
+    [InlineData("Gunde", 120, 3, new[] { 3811424.4034362095, 3560833.2644922696, 3234331.2926150644, 3706322.8886219356 })]
+    [InlineData("Gunde", 300, 1, new[] { 5973349.8170667086, 5268126.14582658, 5361702.123513517, 6138935.9951158399 })]
+    [InlineData("Mara", 120, 3, new[] { 1516517.1318114088, 1069946.8106850635, 1299322.9615743649, 1367035.5049298343 })]
+    [InlineData("Mara", 300, 1, new[] { 3533874.9679868752, 3179579.6722181421, 3178372.0824673641, 3172106.5293867188 })]
+    [InlineData("Tariq", 120, 3, new[] { 1414937.2808608001, 1377475.57163405, 1307630.9678825177, 1512618.7135326373 })]
+    [InlineData("Tariq", 300, 1, new[] { 2669110.3478315724, 2636357.4835497807, 3006694.6476314552, 2885783.5698467265 })]
+    public void Each_Seed_Gives_The_Totals_Of_Rime_Accuracy_V1(string hero, int seconds, int targets, double[] totals)
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
             File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", $"{hero.ToLowerInvariant()}_character.json")))!;
