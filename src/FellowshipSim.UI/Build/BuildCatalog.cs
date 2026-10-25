@@ -30,13 +30,17 @@ public sealed class BuildCatalog
                 ? new BuildOption(talent.Id, talent.Name, GameIcons.Talents.GetValueOrDefault(talent.Id))
                 : new BuildOption(slot.TalentId, $"Talent {slot.TalentId}", GameIcons.Talents.GetValueOrDefault(slot.TalentId), Modeled: false)))
             .ToList();
+        // The hero's own weapons (four each in the game).
         Weapons = Catalog.AllWeapons
-            .Select(w => new BuildOption(w.WeaponAbilityId, w.Name, GameIcons.WeaponAbilities.GetValueOrDefault(w.WeaponAbilityId)))
+            .Where(w => !GameIcons.WeaponHeroes.TryGetValue(w.WeaponAbilityId, out var heroes) || heroes.Contains(hero, StringComparer.OrdinalIgnoreCase))
+            .Select(w =>new BuildOption(w.WeaponAbilityId, w.Name, GameIcons.WeaponAbilities.GetValueOrDefault(w.WeaponAbilityId)))
             .OrderBy(o => o.Name).ToList();
         Legendaries = Catalog.GearTypes(hero).Where(t => typeof(Legendary).IsAssignableFrom(t) && !t.IsAbstract)
             .Select(t => (Legendary)Activator.CreateInstance(t)!)
             .Where(l => l.ItemIds.Count > 0)
-            .Select(l => new BuildOption(l.ItemIds[0], l.Name, GameIcons.LegendaryPowers.GetValueOrDefault(l.LegendaryPowerId), l.IsModeled))
+            // The power's icon, else the hero's legendary item's.
+            .Select(l => new BuildOption(l.ItemIds[0], l.Name,
+                GameIcons.LegendaryPowers.GetValueOrDefault(l.LegendaryPowerId) ?? GameIcons.LegendaryItems.GetValueOrDefault($"{hero}:{l.ItemIds[0]}"), l.IsModeled))
             .OrderBy(o => o.Name).ToList();
         Relics = Catalog.AllRelicPassives
             .SelectMany(r => r.Items.Select(i => new RelicOption(i.Id, i.Name, r.Name)))
@@ -87,6 +91,9 @@ public sealed class BuildCatalog
 
     /// <summary>The icon's image of gem colour <paramref name="color"/>, or null.</summary>
     public static string? GemIconUrl(GemColor color) => GameIcons.Gems.TryGetValue(color.ToString(), out var icon) ? GameIcons.Url(icon) : null;
+
+    /// <summary>The icon's image of gem <paramref name="gem"/> (its colour and size), or null.</summary>
+    public static string? GemIconUrl(GemItem gem) => GameIcons.GemItems.TryGetValue(gem.Id, out var icon) ? GameIcons.Url(icon) : null;
 
     /// <summary>Every hero of the game (the datamine's), by name; <see cref="Catalog.Heroes"/> are the ones the engine has.</summary>
     public static IReadOnlyList<string> GameHeroes { get; } = GameIcons.Heroes.Keys.Order(StringComparer.OrdinalIgnoreCase).ToList();

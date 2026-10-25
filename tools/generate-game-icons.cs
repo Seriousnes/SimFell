@@ -1,7 +1,7 @@
 // Writes src/FellowshipSim.UI/Build/GameIcons.cs from a Codex datamine export (entities.jsonl).
 //
 // The UI shows each talent, augmentation (aspect, sigil and protective enchant), glyph, legendary, weapon ability, stat
-// enchant, gem and hero with its game icon from the Codex CDN.
+// enchant, gem (each colour, and each gem of each size), relic item and hero with its game icon from the Codex CDN.
 // Run it again after a new datamine:
 //
 //     dotnet run tools/generate-game-icons.cs [path/to/entities.jsonl]
@@ -40,7 +40,18 @@ lines.AddRange(ById("Augmentations", augmentations));
 lines.AddRange(ById("Glyphs", ["glyph"]));
 lines.AddRange(ById("LegendaryPowers", ["legendary-power"]));
 lines.AddRange(ById("WeaponAbilities", ["ability"], r => Text(r, "category") == "Weapon"));
+// Each weapon has a version per hero, and each hero four weapons: the heroes a weapon ability is for.
+lines.Add("    /// <summary>The heroes each weapon ability's weapon is for, by ability ID.</summary>");
+lines.Add("    public static IReadOnlyDictionary<int, string[]> WeaponHeroes { get; } = new Dictionary<int, string[]>");
+lines.Add("    {");
+lines.AddRange(OfKinds(["ability"]).Where(r => Text(r, "category") == "Weapon").DistinctBy(r => Int(r, "id"))
+    .Select(r => $"        [{Int(r, "id")}] = [{string.Join(", ", (r["heroes"]?.AsArray() ?? []).Select(h => Cs(h!.GetValue<string>())))}],"));
+lines.Add("    };");
+lines.Add("");
 lines.AddRange(ById("StatEnchants", ["enchant"]));
+// Each gem of each size ("Splendid Amethyst"), and the relic items (an item record per hero, one icon per item).
+lines.AddRange(ById("GemItems", ["gem"]));
+lines.AddRange(ById("RelicItems", ["item"], r => Text(r, "slot") == "Relic"));
 lines.AddRange(MaxRanks("AugmentationMaxRanks", augmentations));
 lines.AddRange(MaxRanks("GlyphMaxRanks", ["glyph"]));
 
@@ -60,6 +71,18 @@ lines.Add("    {");
 lines.AddRange(rows.Where(r => Text(r, "$type") == "hero" && !string.IsNullOrEmpty(Text(r, "portrait")))
     .OrderBy(r => Text(r, "name"), StringComparer.Ordinal)
     .Select(r => $"        [{Cs(Text(r, "name")!)}] = {Cs(Text(r, "portrait")!)},"));
+lines.Add("    };");
+lines.Add("");
+
+// A legendary item has a record (and an icon) per hero; some legendary powers have no icon of their own.
+lines.Add("    /// <summary>Icons of the legendary items, by hero and item ID (\"Rime:5899\").</summary>");
+lines.Add("    public static IReadOnlyDictionary<string, string> LegendaryItems { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)");
+lines.Add("    {");
+lines.AddRange(rows.Where(r => Text(r, "$type") == "item" && Text(r, "hero") is { Length: > 0 } && (Text(r, "icon") ?? "").EndsWith("-legendary", StringComparison.Ordinal))
+    .Select(r => (Key: $"{Text(r, "hero")}:{Int(r, "id")}", Icon: Text(r, "icon")!))
+    .DistinctBy(x => x.Key)
+    .OrderBy(x => x.Key, StringComparer.Ordinal)
+    .Select(x => $"        [{Cs(x.Key)}] = {Cs(x.Icon)},"));
 lines.Add("    };");
 lines.Add("}");
 lines.Add("");

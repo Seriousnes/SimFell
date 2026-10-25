@@ -21,8 +21,10 @@ public sealed class BuildEditorTests : IDisposable
         var catalog = BuildCatalog.For("rime");
         Assert.Equal(18, catalog.Talents.Count);
         Assert.All(catalog.Talents, t => Assert.True(t.Talent.Modeled && t.Talent.Icon != null, t.Talent.Name));
-        Assert.Equal(Catalog.AllWeapons.Count(), catalog.Weapons.Count);
+        // Rime's four weapons alone, by their abilities: Voidbringer's Touch, Nature's Fury, Chronoshift, Icicles of An'zhyr.
+        Assert.Equal([155, 161, 1558, 1561], catalog.Weapons.Select(w => w.Id).Order());
         Assert.Contains(catalog.Legendaries, l => l.Name == "Frostwyrm's Spite");
+        Assert.Contains(catalog.Legendaries, l => l.Name == "Skandi's Decree" && l.Modeled);
         Assert.Contains(catalog.Relics, r => r.Name == AccursedTrophy.OrbItemName && r.PassiveName == AccursedTrophy.RelicPassiveName);
         Assert.All(catalog.Glyphs, g => Assert.Equal(4, g.MaxRank));
         Assert.NotNull(BuildCatalog.PortraitUrl("Rime"));
@@ -58,6 +60,21 @@ public sealed class BuildEditorTests : IDisposable
         editor.SetRating(RatedStat.Crit, 500);
         Assert.False(editor.PercentFromLog(RatedStat.Crit));
         Assert.Equal(StatBlock.BaseCritChance + StatDiminishingReturns.FromRating(500), editor.Percent(RatedStat.Crit));
+    }
+
+    [Fact]
+    public void Gem_Nodes_Add_Their_Bonus_To_The_Sheet_Percentage_As_The_Sim_Does()
+    {
+        var editor = new BuildEditor(BuildEditor.NewBuild("Rime"));
+        double crit = editor.Percent(RatedStat.Crit);
+
+        editor.SetGem(GemColor.Amethyst, 300);
+        Assert.Equal(crit + 0.02, editor.Percent(RatedStat.Crit), 6);
+        editor.SetGem(GemColor.Amethyst, 1250);
+        Assert.Equal(crit + 0.06, editor.Percent(RatedStat.Crit), 6);
+        // The sim reads the build through its profile.
+        var simmed = HeroImporter.Import(SimcProfile.Parse(new SimcProfile(editor.Build, "").Format()).Build);
+        Assert.Equal(simmed.Stats.CritPercent, editor.Percent(RatedStat.Crit), 4);
     }
 
     [Fact]
