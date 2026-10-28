@@ -40,7 +40,7 @@
     @switch (State.Tab)
     {
         case SimTab.Import:
-            <ImportCard Title="Import Hero" PickHint="Pick a player, then Import to use their build." OnEditSettings="() => Views.ShowPage(AppPage.Setup)" OnPlayer="ImportPlayerAsync" />
+            <ImportCard Title="Import Hero" PickHint="Pick a player, then Import to use their build." OnPlayer="ImportPlayerAsync" />
             <Card Title="Import a .simc profile">
                 <p class="hint">Load a <code>.simc</code> file or paste its text. Its build goes to the Hero tab, and its action list, if it has one, to Advanced.</p>
                 <InputFile class="file" accept=".simc,.txt" OnChange="LoadFileAsync" />
@@ -109,7 +109,7 @@
     private const long MaxProfileBytes = 1024 * 1024;
 
     /// <summary>The most threads a sim can ask for: the machine's logical processors.</summary>
-    private static int MaxThreads => Environment.ProcessorCount;
+    private static int MaxThreads => SimThreads.Available;
 
     private SavedActionLists _savedLists = null!;
     private IReadOnlyList<ActionListEntry> _lists = [];
@@ -282,7 +282,8 @@
         DegreeOfParallelism: Math.Clamp(State.Threads, 1, MaxThreads),
         LengthVariance: State.VaryLength ? State.LengthVariancePercent / 100 : 0,
         HealthFollowsTime: true,
-        StartingSpirit: State.StartWithSpirit ? State.StartingSpirit : 0);
+        StartingSpirit: State.StartWithSpirit ? State.StartingSpirit : 0,
+        Boss: State.Boss);
 
     private async Task StartAsync()
     {

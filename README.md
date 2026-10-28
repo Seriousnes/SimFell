@@ -16,8 +16,9 @@ SimFell runs in three ways. They share the same engine:
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - The [Aspire CLI](https://aspire.dev), to run the web app
 - The .NET MAUI workload (`dotnet workload install maui`), to build the desktop app
-- A FellowshipLogs API client ID and secret, to download fights: sign in to FellowshipLogs, create a client on
-  [API clients](https://www.fellowshiplogs.com/api/clients/), and copy its client ID and secret
+- A FellowshipLogs API client ID and secret, to download fights (developers only for now: FellowshipLogs' terms keep a
+  client to its owner, so no page of the app takes one). Put it in `settings.json` at the repository's root, which git
+  ignores: `{ "FELLOWSHIPLOGS_CLIENT_ID": "...", "FELLOWSHIPLOGS_CLIENT_SECRET": "..." }`. Every app's build copies it in
 
 ## Build
 
@@ -59,7 +60,7 @@ dotnet user-secrets set FELLOWSHIPLOGS_CLIENT_ID ... --id simfell
 dotnet user-secrets set FELLOWSHIPLOGS_CLIENT_SECRET ... --id simfell
 ```
 
-Without either, the app reads `data/settings.json`. **Setup** shows whether API access is set up.
+Without either, the app reads the repository's `settings.json` (see above).
 
 To download and replay a fight:
 
@@ -75,7 +76,7 @@ dotnet run --project src/FellowshipSim.Desktop -c Release -f net10.0-windows10.0
 
 On macOS, use the target framework `net10.0-maccatalyst`. Its data folder is `FellowshipSim` in your local application
 data (`%LOCALAPPDATA%\FellowshipSim` on Windows). The data folder is yours alone: every review in it is listed, and
-**Setup** saves your FellowshipLogs client ID and secret in its `settings.json`.
+Its FellowshipLogs client ID and secret come from the repository's `settings.json` (see above).
 
 The desktop app has the same pages as the web app, each as a tab. Starting a sim opens its tab, which shows its progress
 and then its result. A replay started from **Import** opens its review page in a tab when it finishes. Picking a result
@@ -84,6 +85,25 @@ entered while another tab shows.
 
 When the result tabs don't fit, ‹ and › scroll them, as does the mouse wheel over them. The **N open** list beside them
 names every open result tab, selects or closes one, and closes them all.
+
+## Run the browser app
+
+The browser app is the same app as a static site: every sim and replay runs on the visitor's own computer, and nothing
+runs on a server. Sims spread over web workers, one per core but the page's (up to 16); each worker is a .NET runtime of
+its own, and a sim gives the same result as on the desktop app. Its files stay in the browser (IndexedDB): builds and
+action lists, settings, the newest 20 sims and the newest 10 reviews; a replay downloads its fight on a worker and keeps
+only the review. Builds and action lists
+also download as `.simc` files. It takes no FellowshipLogs API client from its visitors (FellowshipLogs' terms keep a
+client to its owner), so the deployed site imports and replays no fights. Locally its build takes the repository's
+`settings.json` as its `wwwroot/appsettings.json`.
+
+```
+dotnet run --project src/FellowshipSim.Web
+```
+
+The **Deploy web app** workflow (Actions, run by hand) publishes it ahead-of-time compiled to
+https://simfelldev.github.io, from the public SimFellDev/simfelldev.github.io. It needs the secret `SIMFELL_PAGES`, a
+fine-grained token with "Contents: Read and write" on that repository alone.
 
 ## Sim a profile
 
@@ -203,6 +223,7 @@ Runs the engine tests and replays every downloaded fight, rewriting its review p
 | `src/FellowshipSim.Service` | The web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. `RemoteSimEngine` calls the engine service |
 | `src/FellowshipSim.AppHost` | Aspire: runs the engine service and FellowshipSim.Service together |
 | `src/FellowshipSim.Desktop` | The desktop app: FellowshipSim.UI in a .NET MAUI BlazorWebView, with the engine in-process |
+| `src/FellowshipSim.Web` | The browser app: FellowshipSim.UI in Blazor WebAssembly, sims and replays on web workers (`wwwroot/sim/`), its files in the browser's IndexedDB (`BrowserDataFolder`) |
 | `src/FellowshipSim.Cli` | `simfell`, the command-line sim |
 | `tests/FellowshipSim.Tests` | Tests, including the free-dice runner |
 | `docs/` | [Adding a hero](docs/ADDING_A_HERO.md) |

@@ -16,6 +16,9 @@ dotnet build -c Release
 # the web app: engine and FellowshipSim.Service (http://simfell.dev.localhost:5000)
 aspire run
 
+# the browser app (a static site; sims and replays on the visitor's web workers)
+dotnet run --project src/FellowshipSim.Web
+
 # the desktop app on Windows
 dotnet run --project src/FellowshipSim.Desktop -c Release -f net10.0-windows10.0.19041.0
 
@@ -86,10 +89,19 @@ or the desktop app).
   `title` (`TooltipTests`).
 - **FellowshipSim.Service** is the web app: a Blazor Web App (Interactive Server) hosting FellowshipSim.UI. Its
   `RemoteSimEngine` calls the engine server. It serves a review's files at `/reviews` to the visitor who ran it alone.
-  Its FellowshipLogs credentials come from the host's environment, the `simfell` user secrets in development, or `data/settings.json`.
+  Its FellowshipLogs credentials come from the host's environment, the `simfell` user secrets in development, or the
+  repository's git-ignored `settings.json`, which the desktop, web and browser apps' builds copy in. No page takes or saves
+  them: for now only developers set an API client.
 - **FellowshipSim.Desktop** is a .NET MAUI Blazor Hybrid app (`net10.0-windows10.0.19041.0`, `net10.0-maccatalyst`)
   hosting FellowshipSim.UI, with `LocalSimEngine` in-process and the data folder in local application data. Review
   pages come from a WebView2 virtual host on Windows and a URL scheme handler on Mac Catalyst.
+- **FellowshipSim.Web** is the browser app: Blazor WebAssembly hosting FellowshipSim.UI as a static site (published to
+  simfelldev.github.io by the Deploy web app workflow), its one visitor `Visitor.DataFolderOwner`. `WorkerSimEngine` runs
+  sims and replays on web workers (`wwwroot/sim/`), each a .NET runtime of its own calling `SimWorker`'s `[JSExport]`
+  methods: a sim's chunks (`SimChunks`, `MonteCarloSimulator.RunChunk`) spread over them and combine to the same result
+  as `LocalSimEngine`'s. A replay downloads its fight and replays it on a worker (`WorkerFightReviewer`, the
+  browser's `IFightReviewer`), so no fight sits in the page. The data folder is in the runtime's in-memory file system,
+  copied to IndexedDB (`BrowserDataFolder`).
 - **FellowshipSim.Cli** is `simfell`: one `LocalSimEngine.SimulateAsync` of a `.simc` profile, result on stdout,
   progress on stderr.
 - **FellowshipSim.Logs** is the FellowshipLogs client and the data folder's fights and reviews. It has no reference to
