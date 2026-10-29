@@ -46,39 +46,59 @@ public class PropertyExpression : IAplExpression
     /// <summary>The sim's fights have no raid events: none exist, and the next one never comes.</summary>
     public const double NoRaidEventIn = 10_000.0;
 
+    /// <summary>The target's time to die in every fight.</summary>
+    public const double TargetTimeToDie = 60.0;
+
+    /// <summary>The fight's remaining time in every fight.</summary>
+    public const double FightRemains = 100.0;
+
     /// <summary>Values named by their whole path.</summary>
-    public static IReadOnlyDictionary<string, Func<Hero, SimulationContext, double>> Named { get; } =
-        new Dictionary<string, Func<Hero, SimulationContext, double>>
+    public static IReadOnlyDictionary<string, AplDescribed<Func<Hero, SimulationContext, double>>> Named { get; } =
+        new Dictionary<string, AplDescribed<Func<Hero, SimulationContext, double>>>
         {
-            ["active_enemies"] = (_, ctx) => Math.Max(1, ctx.ActiveEnemies.Count),
-            ["target.health.pct"] = (_, ctx) => ctx.Player.CurrentTarget?.HealthPercent ?? 100.0,
-            ["target.health"] = (_, ctx) => ctx.Player.CurrentTarget?.CurrentHealth ?? 0.0,
-            ["target.time_to_die"] = (_, _) => 60.0,
-            ["fight_remains"] = (_, _) => 100.0,
-            ["time"] = (_, ctx) => ctx.CurrentTime.TotalSeconds,
-            ["gcd"] = (hero, ctx) => Gcd(hero, ctx.CurrentTime),
-            ["gcd.max"] = (hero, ctx) => Gcd(hero, ctx.CurrentTime),
-            ["raid_event.adds.exists"] = (_, _) => 0.0,
-            ["raid_event.adds.count"] = (_, _) => 0.0,
-            ["raid_event.adds.in"] = (_, _) => NoRaidEventIn,
+            ["active_enemies"] = new(new("Enemies in combat", "The number of enemies in combat. The minimum is 1."),
+                (_, ctx) => Math.Max(1, ctx.ActiveEnemies.Count)),
+            ["target.health.pct"] = new(new("Target health %", "The health of the target, in percent. 100 if there is no target."),
+                (_, ctx) => ctx.Player.CurrentTarget?.HealthPercent ?? 100.0),
+            ["target.health"] = new(new("Target health", "The current health of the target. 0 if there is no target."),
+                (_, ctx) => ctx.Player.CurrentTarget?.CurrentHealth ?? 0.0),
+            ["target.time_to_die"] = new(new("Target time to die", $"Seconds until the target dies. The value is {TargetTimeToDie} in every fight."),
+                (_, _) => TargetTimeToDie),
+            ["fight_remains"] = new(new("Fight time remaining", $"Seconds until the fight ends. The value is {FightRemains} in every fight."),
+                (_, _) => FightRemains),
+            ["time"] = new(new("Fight time", "Seconds since the fight started."),
+                (_, ctx) => ctx.CurrentTime.TotalSeconds),
+            ["gcd"] = new(new("Global cooldown", "The length of the global cooldown, in seconds. The value is the base global cooldown of the hero divided by (1 + haste). Example: a base of 1.5 at 25% haste gives 1.2. The value is the full length. It is not the time that remains on the current global cooldown."),
+                (hero, ctx) => Gcd(hero, ctx.CurrentTime)),
+            ["gcd.max"] = new(new("Global cooldown (max)", "The same value as gcd: the length of the global cooldown, in seconds."),
+                (hero, ctx) => Gcd(hero, ctx.CurrentTime)),
+            ["raid_event.adds.exists"] = new(new("Adds exist", "1 if a wave of adds is active. The value is 0 in every fight."),
+                (_, _) => 0.0),
+            ["raid_event.adds.count"] = new(new("Adds count", "The number of adds in the current wave. The value is 0 in every fight."),
+                (_, _) => 0.0),
+            ["raid_event.adds.in"] = new(new("Adds in", $"Seconds until the next wave of adds. The value is {NoRaidEventIn} in every fight."),
+                (_, _) => NoRaidEventIn),
         };
 
     /// <summary>The hasted global cooldown, as <see cref="SimulationContext.BeginCast"/> sets it.</summary>
     public static double Gcd(Hero hero, SimTime now) => hero.GlobalCooldownSeconds / (1.0 + hero.GetHaste(now));
 
     /// <summary>Properties of an aura on the hero (buff) or an effect on the current target (debuff); null when it is not up.</summary>
-    private static readonly Dictionary<string, Func<TargetEffect?, SimTime, double>> AuraProperties = new()
+    private static readonly Dictionary<string, AplDescribed<Func<TargetEffect?, SimTime, double>>> AuraProperties = new()
     {
-        ["up"] = (aura, _) => aura != null ? 1.0 : 0.0,
+        ["up"] = new(new("Up", "1 if the aura is up. Otherwise 0."), (aura, _) => aura != null ? 1.0 : 0.0),
         // SimulationCraft's word for a damage over time effect that is up.
-        ["ticking"] = (aura, _) => aura != null ? 1.0 : 0.0,
-        ["down"] = (aura, _) => aura == null ? 1.0 : 0.0,
-        ["stack"] = (aura, _) => aura?.Stacks ?? 0,
+        ["ticking"] = new(new("Ticking", "The same value as up: 1 if the aura is up. Otherwise 0."), (aura, _) => aura != null ? 1.0 : 0.0),
+        ["down"] = new(new("Down", "1 if the aura is down. Otherwise 0."), (aura, _) => aura == null ? 1.0 : 0.0),
+        ["stack"] = new(new("Stacks", "The number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
         // SimulationCraft's react is the stacks the player has seen; the sim reacts at once.
-        ["react"] = (aura, _) => aura?.Stacks ?? 0,
-        ["at_max_stacks"] = (aura, _) => aura is { } a && a.Stacks >= a.MaxStacks ? 1.0 : 0.0,
-        ["remains"] = (aura, now) => aura is not { } a ? 0.0 : a.ExpiresAt == SimTime.Infinite ? double.MaxValue : (a.ExpiresAt - now).TotalSeconds,
-        ["refreshable"] = (aura, now) => IsRefreshable(aura, now) ? 1.0 : 0.0,
+        ["react"] = new(new("Stacks (react)", "The same value as stack: the number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
+        ["at_max_stacks"] = new(new("At max stacks", "1 if the aura has its maximum number of stacks. Otherwise 0."),
+            (aura, _) => aura is { } a && a.Stacks >= a.MaxStacks ? 1.0 : 0.0),
+        ["remains"] = new(new("Time remaining", "Seconds until the aura expires. 0 if the aura is down. For an aura that does not expire, the value is a very large number."),
+            (aura, now) => aura is not { } a ? 0.0 : a.ExpiresAt == SimTime.Infinite ? double.MaxValue : (a.ExpiresAt - now).TotalSeconds),
+        ["refreshable"] = new(new("Refreshable", $"1 if the aura is down or in the last {RefreshableFraction * 100}% of its duration. Otherwise 0."),
+            (aura, now) => IsRefreshable(aura, now) ? 1.0 : 0.0),
     };
 
     /// <summary>True when <paramref name="aura"/> is down or in the last <see cref="RefreshableFraction"/> of its duration.</summary>
@@ -86,19 +106,26 @@ public class PropertyExpression : IAplExpression
         aura is not { } a || (a.ExpiresAt != SimTime.Infinite && (a.ExpiresAt - now).TotalSeconds < RefreshableFraction * a.Duration.TotalSeconds);
 
     /// <summary>Properties of an ability's cooldown, by the ability's name.</summary>
-    private static readonly Dictionary<string, Func<Hero, Ability?, string, SimTime, double>> CooldownProperties = new()
+    private static readonly Dictionary<string, AplDescribed<Func<Hero, Ability?, string, SimTime, double>>> CooldownProperties = new()
     {
-        ["ready"] = (hero, _, name, now) => hero.IsCooldownReady(name, now) ? 1.0 : 0.0,
-        ["up"] = (hero, _, name, now) => hero.IsCooldownReady(name, now) ? 1.0 : 0.0,
-        ["remains"] = (hero, _, name, now) => hero.GetCooldownRemains(name, now),
-        ["charges"] = (hero, ability, name, now) =>
-            hero.Cooldowns.TryGetValue(name, out var state) ? state.ChargesAt(now) : ability?.MaxCharges ?? 1,
-        ["duration"] = (_, ability, _, _) => ability?.Cooldown.TotalSeconds ?? 0.0,
-        ["full_recharge_time"] = (hero, ability, name, now) =>
-            hero.Cooldowns.TryGetValue(name, out var state) ? FullRechargeTime(state, ability, now) : 0.0,
-        ["charges_fractional"] = (hero, ability, name, now) =>
+        ["ready"] = new(new("Ready", "1 if the ability has a charge ready. Otherwise 0."),
+            (hero, _, name, now) => hero.IsCooldownReady(name, now) ? 1.0 : 0.0),
+        ["up"] = new(new("Ready (up)", "The same value as ready: 1 if the ability has a charge ready. Otherwise 0."),
+            (hero, _, name, now) => hero.IsCooldownReady(name, now) ? 1.0 : 0.0),
+        ["remains"] = new(new("Time until ready", "Seconds until the ability has a charge ready. 0 if a charge is ready now."),
+            (hero, _, name, now) => hero.GetCooldownRemains(name, now)),
+        ["charges"] = new(new("Charges", "The number of charges that are ready now."),
+            (hero, ability, name, now) => hero.Cooldowns.TryGetValue(name, out var state) ? state.ChargesAt(now) : ability?.MaxCharges ?? 1),
+        ["duration"] = new(new("Cooldown", "The base cooldown of the ability, in seconds."),
+            (_, ability, _, _) => ability?.Cooldown.TotalSeconds ?? 0.0),
+        ["full_recharge_time"] = new(new("Time to full charges",
+                "Seconds until all charges of the ability are ready. The value is the time that remains on the charge that recharges now, plus a full cooldown for each other missing charge. 0 if all charges are ready."),
+            (hero, ability, name, now) => hero.Cooldowns.TryGetValue(name, out var state) ? FullRechargeTime(state, ability, now) : 0.0),
+        ["charges_fractional"] = new(new("Charges (fractional)",
+                "The number of charges that are ready, plus the recharged part of the next charge. Example: 1.25 is a ready charge and a quarter of the next charge. If all charges are ready, the value is equal to charges."),
             // The charges held and the part of the next one recharged so far (2.25: two, and a quarter of the third).
-            hero.Cooldowns.TryGetValue(name, out var state) ? state.ChargesAt(now) + state.RechargedPart(now, now) : ability?.MaxCharges ?? 1,
+            (hero, ability, name, now) =>
+                hero.Cooldowns.TryGetValue(name, out var state) ? state.ChargesAt(now) + state.RechargedPart(now, now) : ability?.MaxCharges ?? 1),
     };
 
     /// <summary>
@@ -112,11 +139,11 @@ public class PropertyExpression : IAplExpression
     }
 
     /// <summary>Properties of an action's ability, by the ability's name.</summary>
-    private static readonly Dictionary<string, Func<Ability?, SimTime, double>> ActionProperties = new()
+    private static readonly Dictionary<string, AplDescribed<Func<Ability?, SimTime, double>>> ActionProperties = new()
     {
         // An instant cast takes the global cooldown.
-        ["execute_time"] = (ability, now) => ability == null ? 0.0
-            : ability.IsInstant ? Gcd(ability.Owner, now) : ability.GetAdjustedCastTime(now).TotalSeconds,
+        ["execute_time"] = new(new("Cast time", "The hasted cast time, in seconds. For an instant ability, the value is the hasted global cooldown."),
+            (ability, now) => ability == null ? 0.0 : ability.IsInstant ? Gcd(ability.Owner, now) : ability.GetAdjustedCastTime(now).TotalSeconds),
     };
 
     /// <summary>The scopes of "&lt;scope&gt;.&lt;name&gt;.&lt;property&gt;" paths and the properties each one has.</summary>
@@ -135,17 +162,63 @@ public class PropertyExpression : IAplExpression
     /// legendary or weapon trait of that name, or a weapon (or weapon ability) whose name starts with it. They do not change
     /// during a fight.
     /// </summary>
-    public static IReadOnlyDictionary<string, Func<Hero, string, bool>> BuildScopes { get; } =
-        new Dictionary<string, Func<Hero, string, bool>>
+    public static IReadOnlyDictionary<string, AplDescribed<Func<Hero, string, bool>>> BuildScopes { get; } =
+        new Dictionary<string, AplDescribed<Func<Hero, string, bool>>>
         {
-            [TalentScope] = (hero, name) => hero.Talents.Any(t => AplNames.Slug(t.Name) == name),
-            [BlessingScope] = (hero, name) => hero.Glyphs.Any(b => AplNames.Slug(b.Name) == name),
-            [LegendaryScope] = (hero, name) => hero.Legendaries.Any(l => AplNames.Slug(l.Name) == name),
-            [WeaponTraitScope] = (hero, name) => hero.Augmentations.Any(t => AplNames.Slug(t.Name) == name),
-            [WeaponScope] = (hero, name) =>
-                (hero.EquippedWeapon != null && AplNames.Slug(hero.EquippedWeapon.Name).StartsWith(name, StringComparison.Ordinal))
-                || (hero.WeaponAbility != null && AplNames.Slug(hero.WeaponAbility.Name).StartsWith(name, StringComparison.Ordinal)),
+            [TalentScope] = new(new("Talent", "1 if the build has the talent. Otherwise 0."),
+                (hero, name) => hero.Talents.Any(t => AplNames.Slug(t.Name) == name)),
+            [BlessingScope] = new(new("Blessing", "1 if the build has the blessing. Otherwise 0."),
+                (hero, name) => hero.Glyphs.Any(b => AplNames.Slug(b.Name) == name)),
+            [LegendaryScope] = new(new("Legendary", "1 if the build has the legendary. Otherwise 0."),
+                (hero, name) => hero.Legendaries.Any(l => AplNames.Slug(l.Name) == name)),
+            [WeaponTraitScope] = new(new("Weapon trait", "1 if the build has the weapon trait. Otherwise 0."),
+                (hero, name) => hero.Augmentations.Any(t => AplNames.Slug(t.Name) == name)),
+            [WeaponScope] = new(new("Weapon", "1 if the name of the equipped weapon, or of its weapon ability, starts with this name. Otherwise 0."),
+                (hero, name) =>
+                    (hero.EquippedWeapon != null && AplNames.Slug(hero.EquippedWeapon.Name).StartsWith(name, StringComparison.Ordinal))
+                    || (hero.WeaponAbility != null && AplNames.Slug(hero.WeaponAbility.Name).StartsWith(name, StringComparison.Ordinal))),
         };
+
+    /// <summary>Each scope of <see cref="Scopes"/>, <see cref="ActiveDotScope"/> and <see cref="VariableScope"/>, with what its paths read.</summary>
+    public static IReadOnlyDictionary<string, AplDoc> ScopeDocs { get; } = new Dictionary<string, AplDoc>
+    {
+        [BuffScope] = new("Buff", "An aura on the hero."),
+        [DebuffScope] = new("Debuff on target", "An aura or effect from the hero on the current target."),
+        [DotScope] = new("Dot on target", "The same as debuff: an aura or effect from the hero on the current target."),
+        [CooldownScope] = new("Cooldown", "The cooldown and charges of an ability."),
+        [ActionScope] = new("Action", "The cast of an ability."),
+        [ActiveDotScope] = new("Enemies with debuff", "The number of enemies in combat that have the debuff."),
+        [VariableScope] = new("Variable", "The value that a variable action set in this fight. Before a variable action sets it, the value is the default of the variable."),
+    };
+
+    /// <summary>A resource's current amount, written as its name alone ("winter_orbs") or after <see cref="ResourcePrefix"/>.</summary>
+    public static AplDoc ResourceCurrent { get; } = new("Current", "The current amount of the resource.");
+
+    /// <summary>The room left in a resource, written with <see cref="DeficitSuffix"/>.</summary>
+    public static AplDoc ResourceDeficit { get; } = new("Deficit", "The maximum amount of the resource minus its current amount.");
+
+    /// <summary>The property's doc in a scope of <see cref="Scopes"/>; null for a scope or property not in it.</summary>
+    public static AplDoc? PropertyDoc(string scope, string property) => scope switch
+    {
+        BuffScope or DebuffScope or DotScope => AuraProperties.GetValueOrDefault(property)?.Doc,
+        CooldownScope => CooldownProperties.GetValueOrDefault(property)?.Doc,
+        ActionScope => ActionProperties.GetValueOrDefault(property)?.Doc,
+        _ => null,
+    };
+
+    /// <summary>
+    /// The doc of an action's own value in <see cref="ActionValues"/>: the label of the property it stands for, and that
+    /// property's meaning on the action's ability. Null for any other path.
+    /// </summary>
+    public static AplDoc? ActionValueDoc(string path)
+    {
+        if (OfAction(path, ActionAbility) is not { } scoped) return null;
+        var parts = new PropertyExpression(scoped);
+        return PropertyDoc(parts.Scope!, parts.Property!) is { } doc ? new AplDoc(doc.Label, $"The same value as {scoped}. {doc.Description}") : null;
+    }
+
+    /// <summary>The ability's name in <see cref="ActionValueDoc"/>: the action's own.</summary>
+    private const string ActionAbility = "<this action>";
 
     public string PropertyPath { get; }
 
@@ -200,7 +273,7 @@ public class PropertyExpression : IAplExpression
     {
         var now = ctx.CurrentTime;
 
-        if (Named.TryGetValue(PropertyPath, out var named)) return named(hero, ctx);
+        if (Named.TryGetValue(PropertyPath, out var named)) return named.Value(hero, ctx);
 
         if (hero.FindResource(ResourceName) is { } resource)
         {
@@ -223,14 +296,14 @@ public class PropertyExpression : IAplExpression
             case CooldownScope:
                 // Cooldowns are kept under the ability's own name ("Cold Snap"), not its action-list name.
                 var ability = AplNames.FindAbility(hero, Name!);
-                var cooldown = CooldownProperties.GetValueOrDefault(Property!) ?? CooldownProperties["ready"];
+                var cooldown = CooldownProperty(Property!);
                 return cooldown(hero, ability, ability?.Name ?? Name!, now);
 
             case ActionScope:
                 return ActionProperty(Property!)(AplNames.FindAbility(hero, Name!), now);
 
             case { } scope when BuildScopes.TryGetValue(scope, out var has):
-                return has(hero, Name!) ? 1.0 : 0.0;
+                return has.Value(hero, Name!) ? 1.0 : 0.0;
         }
 
         return 0.0;
@@ -238,11 +311,11 @@ public class PropertyExpression : IAplExpression
 
     /// <summary>The value of an action property ("execute_time"); a property actions lack reads as 0.</summary>
     public static Func<Ability?, SimTime, double> ActionProperty(string property) =>
-        ActionProperties.GetValueOrDefault(property) ?? ((_, _) => 0.0);
+        ActionProperties.GetValueOrDefault(property)?.Value ?? ((_, _) => 0.0);
 
     /// <summary>The value of a cooldown property; a property cooldowns lack reads as "ready".</summary>
     public static Func<Hero, Ability?, string, SimTime, double> CooldownProperty(string property) =>
-        CooldownProperties.GetValueOrDefault(property) ?? CooldownProperties["ready"];
+        CooldownProperties.GetValueOrDefault(property)?.Value ?? CooldownProperties["ready"].Value;
 
     /// <summary>
     /// Paths an action reads about its own ability, unscoped ("refreshable", "full_recharge_time"), as the scoped path
@@ -255,7 +328,7 @@ public class PropertyExpression : IAplExpression
     public static IReadOnlyDictionary<string, Func<string, string>> ActionValues { get; } = new Dictionary<string, Func<string, string>>
     {
         ["refreshable"] = ability => $"{DebuffScope}.{ability}.refreshable",
-        ["ticking"] = ability => $"{DebuffScope}.{ability}.up",
+        ["ticking"] = ability => $"{DebuffScope}.{ability}.ticking",
         ["full_recharge_time"] = ability => $"{CooldownScope}.{ability}.full_recharge_time",
         ["charges"] = ability => $"{CooldownScope}.{ability}.charges",
         ["charges_fractional"] = ability => $"{CooldownScope}.{ability}.charges_fractional",
@@ -264,7 +337,7 @@ public class PropertyExpression : IAplExpression
     };
 
     private static Func<TargetEffect?, SimTime, double> AuraProperty(string property) =>
-        AuraProperties.GetValueOrDefault(property) ?? AuraProperties["up"];
+        AuraProperties.GetValueOrDefault(property)?.Value ?? AuraProperties["up"].Value;
 
     public override string ToString() => PropertyPath;
 }

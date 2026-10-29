@@ -16,6 +16,11 @@ public static class AplListActions
 
     public static string Name(this AplListAction action) => action == AplListAction.Run ? RunName : CallName;
 
+    /// <summary>The list action's meaning in the condition reference.</summary>
+    public static string Description(this AplListAction action) => action == AplListAction.Run
+        ? "Runs the named list. The actions after this action do not run."
+        : "Runs the named list. If the list casts nothing, the next action runs.";
+
     /// <summary>The list action written <paramref name="name"/>, or null for an ability.</summary>
     public static AplListAction? Parse(string name) => name switch
     {

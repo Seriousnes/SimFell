@@ -33,6 +33,15 @@ public sealed record AplTargetIf(AplTargetSelection Selection, IAplExpression Ex
         _ => throw new ArgumentOutOfRangeException(nameof(selection), selection, null)
     };
 
+    /// <summary>The selection's meaning in the condition reference.</summary>
+    public static string Description(AplTargetSelection selection) => selection switch
+    {
+        AplTargetSelection.First => "Casts the ability at the first enemy in combat for which the expression is true. If no enemy matches, the action does not run. first: is optional.",
+        AplTargetSelection.Min => "Casts the ability at the enemy in combat with the lowest value of the expression. If enemies have the same value, the action uses the first of them.",
+        AplTargetSelection.Max => "Casts the ability at the enemy in combat with the highest value of the expression. If enemies have the same value, the action uses the first of them.",
+        _ => throw new ArgumentOutOfRangeException(nameof(selection), selection, null)
+    } + " In the expression, target.* and debuff.* refer to each enemy in turn. In the if of the action, they refer to the selected enemy.";
+
     /// <summary>
     /// Target among <paramref name="candidates"/>, or null when <see cref="AplTargetSelection.First"/> finds
     /// none. Each candidate is the hero's current target while the expression reads it.
