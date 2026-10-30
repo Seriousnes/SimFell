@@ -160,7 +160,7 @@
             <div class="gem-totals">
                 @foreach (var color in BuildCatalog.GemColors)
                 {
-                    double power = Editor.Gem(color);
+                    double power = Editor.SheetGem(color);
                     <span @key="color" class="gem-total @(power > 0 ? "taken" : "")">
                         <GameIcon Url="@BuildCatalog.GemIconUrl(color)" Size="20" />
                         @color

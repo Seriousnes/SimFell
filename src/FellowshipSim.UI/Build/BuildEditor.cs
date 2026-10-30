@@ -312,6 +312,17 @@ public sealed class BuildEditor(CharacterBuild build)
     /// <summary>A colour's gem power from the gear, before the relics' multiplier.</summary>
     public double Gem(GemColor color) => Build.GemPower.GetValueOrDefault(color);
 
+    /// <summary>
+    /// A colour's gem power on the character sheet: the gear's times the relics' multiplier (Covetous Greed), rounded
+    /// down as the engine does. The build and its profile keep <see cref="Gem"/>.
+    /// </summary>
+    public double SheetGem(GemColor color)
+    {
+        double multiplier = new[] { Build.Relic1ItemId, Build.Relic2ItemId }
+            .Select(CoreCatalog.RelicPassiveOfItem).OfType<RelicPassive>().Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
+        return Math.Floor(Gem(color) * multiplier);
+    }
+
     public void SetGem(GemColor color, double power)
     {
         if (power > 0) Build.GemPower[color] = power;

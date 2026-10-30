@@ -27,6 +27,20 @@ public sealed class BuildEditorTests : IDisposable
     }
 
     [Fact]
+    public void The_Sheets_Gem_Power_Has_Covetous_Greed_And_The_Profile_Keeps_The_Gears()
+    {
+        var editor = new BuildEditor(BuildEditor.NewBuild("Rime"));
+        editor.SetGearBonuses(GemColor.Topaz, 1);
+        double gear = editor.Gem(GemColor.Topaz);
+        Assert.Equal(gear, editor.SheetGem(GemColor.Topaz));
+
+        editor.Relic1 = CovetousGreed.OrbItemId;
+        Assert.Equal(Math.Floor(gear * CovetousGreed.GemPowerBonus), editor.SheetGem(GemColor.Topaz));
+        Assert.Equal(gear, editor.Gem(GemColor.Topaz));
+        Assert.Equal(gear, SimcProfile.Parse(new SimcProfile(editor.Build, "").Format()).Build.GemPower[GemColor.Topaz]);
+    }
+
+    [Fact]
     public void The_Catalog_Has_Rimes_Tree_With_Icons_And_Every_Weapon()
     {
         var catalog = BuildCatalog.For("rime");
