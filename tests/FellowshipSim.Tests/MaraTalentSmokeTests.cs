@@ -148,7 +148,7 @@ public class MaraTalentSmokeTests(ITestOutputHelper output)
         };
     }
 
-    /// <summary>The key under which <see cref="Run"/> counts the Energy gained (not regenerated).</summary>
+    /// <summary>The key under which <see cref="Run"/> counts the Energy gained (not regenerated), past the cap included.</summary>
     private const string EnergyGained = "energy gained";
 
     private static (MonteCarloResult Result, Hero Hero, Dictionary<string, int> Gained) Run(IEnumerable<int> talentIds, int targets,
@@ -163,6 +163,11 @@ public class MaraTalentSmokeTests(ITestOutputHelper output)
         var gained = new Dictionary<string, int>();
         hero.Auras.OnGained += (aura, _, _) => gained[aura.Def.Name] = gained.GetValueOrDefault(aura.Def.Name) + 1;
         hero.OnResourceGained += (resource, amount, _, _) =>
+        {
+            if (resource == Mara.Energy) gained[EnergyGained] = gained.GetValueOrDefault(EnergyGained) + (int)amount;
+        };
+        // Energy past the cap counts too: near the cap, a talent's Energy pushes other gains over it.
+        hero.OnResourceOverflow += (resource, amount, _) =>
         {
             if (resource == Mara.Energy) gained[EnergyGained] = gained.GetValueOrDefault(EnergyGained) + (int)amount;
         };

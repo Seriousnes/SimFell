@@ -73,21 +73,21 @@ public class MonteCarloSeedTests
     }
 
     /// <summary>
-    /// Totals of fights 1-4 of each hero's default action list, captured after Rime replay accuracy v1 (#8); the other
-    /// heroes' again with their lists from FellowSimc's SimC lists.
+    /// Totals of fights 1-4 of each hero's default action list, captured again when sims began rolling crits and damage
+    /// spread (before, each hit dealt its average and counted as a crit only above a 50% chance).
     /// </summary>
     [Theory]
-    [InlineData("Rime", 120, 3, new[] { 3072594.4512320277, 2891268.419831695, 2808136.9763237652, 2959378.6551024965 })]
-    [InlineData("Rime", 300, 1, new[] { 8235288.5393681824, 8212400.8833039831, 7839422.1447150335, 8972097.1966243163 })]
-    [InlineData("Ardeos", 120, 3, new[] { 2664123.4368716525, 3186253.7689828207, 2832069.665811948, 3178390.6998665412 })]
-    [InlineData("Ardeos", 300, 1, new[] { 5270082.6568430839, 5111775.9837692417, 4852006.796720189, 5073453.5734296059 })]
-    [InlineData("Gunde", 120, 3, new[] { 4249690.0869354261, 4420362.5168073159, 4321510.3556000302, 4574701.5092196791 })]
-    [InlineData("Gunde", 300, 1, new[] { 6861027.1777992975, 6757379.5672820788, 7042020.9264418846, 7284342.3034589784 })]
-    [InlineData("Mara", 120, 3, new[] { 2271725.7231351733, 2098336.747418792, 2465790.0111058084, 2635860.3467395119 })]
-    [InlineData("Mara", 300, 1, new[] { 4888488.5381329022, 5070630.7347939191, 5700120.8941466082, 5554122.0079662129 })]
-    [InlineData("Tariq", 120, 3, new[] { 2052950.4947410417, 1734670.2676573573, 1910001.0717739458, 1844814.9616255078 })]
-    [InlineData("Tariq", 300, 1, new[] { 3535217.5392981456, 3340397.0137782535, 3256625.6694165505, 3863316.0118745202 })]
-    public void Each_Seed_Gives_The_Totals_Of_Rime_Accuracy_V1(string hero, int seconds, int targets, double[] totals)
+    [InlineData("Rime", 120, 3, new[] { 2984198.1661979645, 3145794.8408500189, 2661851.3885713113, 2836533.0049490873 })]
+    [InlineData("Rime", 300, 1, new[] { 6705787.2345485082, 7314085.7586352471, 6334941.0215046722, 8102670.2122865114 })]
+    [InlineData("Ardeos", 120, 3, new[] { 3478854.2433863007, 3155617.2952233846, 3072184.8508331678, 3125073.691993387 })]
+    [InlineData("Ardeos", 300, 1, new[] { 5139262.1448447751, 4818493.6003067726, 4959327.9134305436, 4881520.5064405911 })]
+    [InlineData("Gunde", 120, 3, new[] { 5231343.5245357994, 4590847.8540571658, 4223152.3698340533, 4329063.9394007483 })]
+    [InlineData("Gunde", 300, 1, new[] { 7534076.4861704214, 7726959.867296705, 7001681.2487769658, 7386692.3111115517 })]
+    [InlineData("Mara", 120, 3, new[] { 2467303.3938331231, 2427106.282543866, 2020983.4777073066, 2580733.0113486159 })]
+    [InlineData("Mara", 300, 1, new[] { 5869212.4974295124, 5782715.2858590968, 5252603.5871274015, 5469205.2517229859 })]
+    [InlineData("Tariq", 120, 3, new[] { 1680399.6067695082, 1935728.7544160078, 1814822.1365464132, 2076233.9495677575 })]
+    [InlineData("Tariq", 300, 1, new[] { 3970282.6353668072, 3525534.3047797303, 3373171.0288342424, 3631064.6202769317 })]
+    public void Each_Seed_Gives_Its_Pinned_Totals(string hero, int seconds, int targets, double[] totals)
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
             File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", $"{hero.ToLowerInvariant()}_character.json")))!;

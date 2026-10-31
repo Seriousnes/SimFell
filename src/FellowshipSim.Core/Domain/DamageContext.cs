@@ -10,8 +10,8 @@ public readonly record struct DamageContext(
     bool IsCrit,
     SimTime Timestamp,
     SimulationContext? SimContext = null,
-    // The hit's chance to crit (0 when it cannot); a sim that deals each hit's expected damage rolls no crit, so this is
-    // what its crits are counted by. -1 when unknown.
+    // The hit's chance to crit (0 when it cannot): a sim's report counts crits by it, steadier than the crits rolled. -1
+    // when unknown.
     double CritChance = -1
 );
 
