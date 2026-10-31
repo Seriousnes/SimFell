@@ -46,9 +46,9 @@ const UnixFileMode ExecutableMode = (UnixFileMode)0b111_101_101;
 
 const int BytesPerMegabyte = 1024 * 1024;
 
-string rid = DefaultRid;
+var rid = DefaultRid;
 string? version = null;
-for (var i= 0; i < args.Length; i++)
+for (var i = 0; i < args.Length; i++)
 {
     switch (args[i])
     {
@@ -57,13 +57,13 @@ for (var i= 0; i < args.Length; i++)
         default: throw new ArgumentException($"Unknown option {args[i]}. Options: --rid <runtime>, --version <major.minor.patch>.");
     }
 }
-bool windows = rid.StartsWith(WindowsRidPrefix, StringComparison.Ordinal);
+var windows = rid.StartsWith(WindowsRidPrefix, StringComparison.Ordinal);
 
-string root = FindRoot();
-string package = Path.Combine(root, BinFolder, PackageFolder);
-string app = Path.Combine(package, AppFolder);
-string runtime = Path.Combine(app, RuntimeFolder);
-string zip = Path.Combine(package, $"{AppFolder}-{rid}.zip");
+var root = FindRoot();
+var package = Path.Combine(root, BinFolder, PackageFolder);
+var app = Path.Combine(package, AppFolder);
+var runtime = Path.Combine(app, RuntimeFolder);
+var zip = Path.Combine(package, $"{AppFolder}-{rid}.zip");
 
 if (Directory.Exists(app)) Directory.Delete(app, recursive: true);
 Directory.CreateDirectory(app);

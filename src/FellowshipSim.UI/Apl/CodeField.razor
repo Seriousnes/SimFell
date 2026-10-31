@@ -23,7 +23,7 @@
         <ul @ref="_list" class="completions" role="listbox" hidden="@(_completion == null)" style="@ListStyle">
             @if (_completion is { } completion)
             {
-                for (var i= 0; i < completion.Items.Count; i++)
+                for (var i = 0; i < completion.Items.Count; i++)
                 {
                     var item = completion.Items[i];
                     var selected = i == completion.Selected;

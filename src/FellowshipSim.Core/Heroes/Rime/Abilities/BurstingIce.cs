@@ -67,7 +67,7 @@ public class BurstingIce : RimeAbility
     public void DealPulse(SimulationContext ctx, EnemyTarget? target, double fraction = 1.0)
     {
         var hero = Rime;
-        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target != null ? [target] : ctx.ActiveEnemies;
+        var enemies = ctx.ActiveEnemies.Count == 0 && target != null ? [target] : ctx.ActiveEnemies;
 
         var multiplier = fraction;
         foreach (var pulseMultiplier in PulseDamageMultipliers) multiplier *= pulseMultiplier(ctx);

@@ -30,7 +30,7 @@ public sealed record EngineState(double Time, EngineHero Hero, EngineTarget? Tar
             Auras(hero.Auras, now),
             ctx.ActiveEnemies.Count);
 
-        EngineTarget? targetState = target == null ? null : new EngineTarget(
+        var targetState = target == null ? null : new EngineTarget(
             target.Id, target.InstanceId, target.Name, target.HealthFraction, Auras(target.Auras, now),
             target.Auras.Fold(StatType.IncomingDamageMultiplier, 1.0, now));
 

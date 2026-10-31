@@ -77,7 +77,7 @@ public class IciclesOfAnzhyr : Ability
 
     private void Wave(SimulationContext ctx, EnemyTarget target, bool final, double damage, double critChance, double critMultiplier, CurseSnapshot curse)
     {
-        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
+        var enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
         foreach (var enemy in struck)

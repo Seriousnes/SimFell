@@ -422,7 +422,7 @@
         var job = Jobs.Enqueue(SimJobKind.Sim, title, async c =>
         {
             var done = new List<SimRun>();
-            for (var i= 0; i < runs.Count; i++)
+            for (var i = 0; i < runs.Count; i++)
             {
                 var run = runs[i];
                 var progress = new RunProgress(c, i, runs.Count, run.Label);

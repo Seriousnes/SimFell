@@ -122,15 +122,18 @@ and for the web app `visitors/` and `keys/` (the visitor cookie keys).
 ## Conventions
 
 - One class per file, named after the class.
-- A local uses `var` wherever its initializer has the declared type. A numeric literal has the suffix of that type
-  (`0.0`, `0f`, `0L`). `.editorconfig` warns on the rest.
-- A number or string in code is a named constant. The exceptions are `0`, `1`, `-1`, a `2` that halves or doubles,
-  user-visible text, messages, format strings and test data. Engine values sit at the top of the class beside the game
-  values, and floating-point slack is in `Tolerance`. The log strings the replay compares are enums, each member
-  with `[JsonStringEnumMemberName]` naming the log's string.
-- Every name has two or more letters, except a `for` counter, a lambda parameter and a type parameter.
+- A local uses `var` wherever its initializer has the declared type. A numeric literal is written in that type
+  (`0.0`, `0f`, `0L`). The build warns on an explicit type (`.editorconfig`, `EnforceCodeStyleInBuild`).
+- A numeric literal in code is a named constant. The exceptions are `0`, `1`, `-1`, a `2` that halves or doubles,
+  attribute arguments, the initializers of `const` and `static readonly` declarations, and test data. A string is a
+  named constant when code compares it, switches on it, keys a lookup with it, reads or writes it as a JSON property
+  name, uses it as a file, folder, route or variable name, or repeats it. Constants are at the top of the class.
+  Floating-point comparison tolerances are in `Tolerance`. The log strings the replay compares are enums, and an enum
+  in JSON has `[JsonStringEnumMemberName]` with the log's string on each member.
+- Every name has two or more letters and is a word, except a `for` counter, a lambda parameter and a type parameter.
 - A named `readonly record struct` or record replaces each tuple and anonymous type. A type that one class uses is
-  nested in that class.
+  nested in that class; a type several classes use has its own file. `FellowshipSim.Core.Generators` targets
+  netstandard2.0, so its types are `readonly struct` with a constructor.
 - Game values are public constants at the top of the class. Nothing reads game data at runtime. Each value's comment
   names its source (tooltip text, game data record or combat logs); `UNVERIFIED` marks a value no log has confirmed.
 - Combat log IDs are game IDs plus an offset: effects + 1,000,000, talents + 2,000,000, traits + 3,000,000

@@ -36,7 +36,7 @@ public class NaturesFury : Ability
         {
             ctx.Schedule(SimTime.FromSeconds(i * BounceSeconds), c =>
             {
-                IReadOnlyList<EnemyTarget> enemies = c.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : c.ActiveEnemies;
+                var enemies = c.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : c.ActiveEnemies;
                 if (c.Outcomes.ChooseTarget(DamageLogId, enemies, c) is { } next) DealDamage(c, next);
             }, Name);
         }

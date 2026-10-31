@@ -57,7 +57,7 @@ public class Multishot : ElarionAbility
         var multiplier = 1.0;
         foreach (var factor in DamageMultipliers) multiplier *= factor(now, empowered);
         empowering?.Use(now);
-        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
+        var enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
         for (var i = 0; i < struck.Count; i++) DealDamage(ctx, struck[i], damageMultiplier: multiplier * falloff);

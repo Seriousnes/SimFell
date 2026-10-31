@@ -76,7 +76,7 @@ public abstract class GundeAbility : Ability
     /// <summary>The enemies an area pulse around <paramref name="target"/> strikes.</summary>
     protected IReadOnlyList<EnemyTarget> AreaTargets(SimulationContext ctx, EnemyTarget target)
     {
-        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
+        var enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         return ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
     }
 

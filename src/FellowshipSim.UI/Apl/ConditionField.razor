@@ -141,7 +141,7 @@
     /// <summary>The rows of a group, then its empty row. <paramref name="updateRows"/> changes the rows on a copy of the condition.</summary>
     private void RenderItems(RenderTreeBuilder __builder, List<ConditionRow> items, string key, Func<Action<List<ConditionRow>>, Task> updateRows, int depth, bool nested = false)
     {
-        for (var index= 0; index < items.Count; index++)
+        for (var index = 0; index < items.Count; index++)
         {
             var item = items[index];
             var at = index;
@@ -211,7 +211,7 @@
     {
         var lastSide = row.Comparisons.Count == 0;
         RenderTerms(__builder, row.Left ?? [], $"{key}:left", update, r => r.Left!, lastSide, lastSide ? addRow : null);
-        for (var index= 0; index < row.Comparisons.Count; index++)
+        for (var index = 0; index < row.Comparisons.Count; index++)
         {
             var comparison = row.Comparisons[index];
             var at = index;
@@ -236,7 +236,7 @@
     private void RenderTerms(RenderTreeBuilder __builder, List<ConditionTerm> terms, string key, Func<Action<ConditionRow>, Task> update,
         Func<ConditionRow, List<ConditionTerm>> locate, bool lastSide, Func<string, Task>? addRow)
     {
-        for (var index= 0; index < terms.Count; index++)
+        for (var index = 0; index < terms.Count; index++)
         {
             var term = terms[index];
             var at = index;

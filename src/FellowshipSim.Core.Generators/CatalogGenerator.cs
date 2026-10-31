@@ -154,7 +154,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
                        ?? syntax.AccessorList?.Accessors.FirstOrDefault(a => a.IsKind(SyntaxKind.GetAccessorDeclaration))?.ExpressionBody?.Expression;
             if (body == null) return [];
             var model = compilation.GetSemanticModel(syntax.SyntaxTree);
-            IEnumerable<ExpressionSyntax> elements = body switch
+            var elements = body switch
             {
                 CollectionExpressionSyntax collection => collection.Elements.Select(e => e is ExpressionElementSyntax expressionElement ? expressionElement.Expression : null!),
                 ArrayCreationExpressionSyntax { Initializer: { } arrayInitializer } => arrayInitializer.Expressions,

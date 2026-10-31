@@ -44,7 +44,7 @@ public class FireBall : ArdeosAbility
     /// <summary>The ball strikes the enemies present now; its target falloff also scales the Cinders of their burns.</summary>
     private void Strike(SimulationContext ctx, EnemyTarget target, double castCrit, double castDamage)
     {
-        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
+        var enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         if (struck.Count == 0) return;
         var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;

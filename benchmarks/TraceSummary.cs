@@ -21,7 +21,7 @@ if (args.Length < 1)
     Console.WriteLine("usage: dotnet run TraceSummary.cs -- <trace.nettrace> [top]");
     return;
 }
-int top = args.Length > 1 ? int.Parse(args[1]) : DefaultTop;
+var top = args.Length > 1 ? int.Parse(args[1]) : DefaultTop;
 
 // Stage of a method, matched on its full name. Closures carry their method's name ("<ApplyDamage>g__Land"), so a
 // substring match counts them with their method. A sample belongs to the stage of the innermost frame that matches
@@ -42,17 +42,17 @@ StagePatterns[] stages =
     new StagePatterns("Replay driver", ["FellowshipSim.Logs."]),
 ];
 
-string etlx = TraceLog.CreateFromEventPipeDataFile(args[0]);
+var etlx = TraceLog.CreateFromEventPipeDataFile(args[0]);
 using var log = new TraceLog(etlx);
 
 var allocated = new Dictionary<string, long>();
 var allocatedAt = new Dictionary<string, long>();
-long allocatedTotal = 0;
+var allocatedTotal = 0L;
 var inclusive = new long[stages.Length];
 var innermost = new long[stages.Length];
 var leaf = new Dictionary<string, long>();
 var methodInclusive = new Dictionary<string, long>();
-long engineSamples = 0;
+var engineSamples = 0L;
 
 foreach (var traceEvent in log.Events)
 {
@@ -65,7 +65,7 @@ foreach (var traceEvent in log.Events)
         string? site = null;
         for (var frame = traceEvent.CallStack(); frame != null && site == null; frame = frame.Caller)
         {
-            string? method = frame.CodeAddress.FullMethodName;
+            var method = frame.CodeAddress.FullMethodName;
             if (method != null && method.Contains(EngineNamespace)) site = method;
         }
         var key = $"{type}  <-  {site ?? Unknown}";
@@ -89,14 +89,14 @@ foreach (var traceEvent in log.Events)
     var seen = new bool[stages.Length];
     foreach (var frame in frames)
     {
-        for (var s= 0; s < stages.Length; s++)
+        for (var s = 0; s < stages.Length; s++)
         {
             if (!stages[s].Patterns.Any(frame.Contains)) continue;
             if (!attributed) { innermost[s]++; attributed = true; }
             seen[s] = true;
         }
     }
-    for (var s= 0; s < stages.Length; s++) if (seen[s]) inclusive[s]++;
+    for (var s = 0; s < stages.Length; s++) if (seen[s]) inclusive[s]++;
 }
 
 Console.WriteLine($"Allocations: {allocatedTotal / BytesPerMegabyte:N0} MB sampled");
@@ -115,11 +115,11 @@ foreach (var (key, bytes) in allocatedAt.OrderByDescending(kv => kv.Value).Take(
 Console.WriteLine();
 Console.WriteLine($"CPU:{engineSamples} samples on the engine thread");
 Console.WriteLine("  stage                          inclusive  innermost");
-for (var s= 0; s < stages.Length; s++)
+for (var s = 0; s < stages.Length; s++)
 {
     Console.WriteLine($"  {stages[s].Stage,-30} {inclusive[s] * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%  {innermost[s] * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%");
 }
-long none = engineSamples - innermost.Sum();
+var none = engineSamples - innermost.Sum();
 Console.WriteLine($"  {"(no stage)",-30} {"",9}  {none * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%");
 
 Console.WriteLine();

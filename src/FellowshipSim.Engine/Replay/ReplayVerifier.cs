@@ -162,7 +162,7 @@ public sealed class ReplayVerifier
     /// </summary>
     public void CheckInstantOrCast(SimulationContext ctx, Ability ability, double engineSeconds, double? logSeconds, ReplayCommandKind kind)
     {
-        ExpectedRange? range = logSeconds.HasValue ? CastTimeRange(engineSeconds) : null;
+        var range = logSeconds.HasValue ? CastTimeRange(engineSeconds) : null;
         if (logSeconds is { } logged && range!.Contains(logged)) return;
         var message = kind == ReplayCommandKind.Cast
             ? $"Log cast {ability.Name} instantly, but the engine expects a {engineSeconds:F3}s cast"

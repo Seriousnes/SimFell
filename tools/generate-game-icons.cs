@@ -46,9 +46,9 @@ const string WeaponCategory = "Weapon";
 const string RelicSlot = "Relic";
 const string LegendarySuffix = "-legendary";
 
-string root = Path.GetDirectoryName((string)AppContext.GetData(EntryPointDirectoryKey)!)!;
-string output = Path.Combine(root, "src", UiProject, "Build", OutputFile);
-string path = args.Length > 0
+var root = Path.GetDirectoryName((string)AppContext.GetData(EntryPointDirectoryKey)!)!;
+var output = Path.Combine(root, "src", UiProject, "Build", OutputFile);
+var path = args.Length > 0
     ? args[0]
     : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".fellowsim", "cache", "codex", EntitiesFile);
 

@@ -101,7 +101,7 @@ public class ChainLightning : TariqAbility
     {
         var enemies = ctx.ActiveEnemies;
         if (enemies.Count == 0) return null;
-        EnemyTarget? preferred = first && target is { IsSleeping: false } ? target : null;
+        var preferred = first && target is { IsSleeping: false } ? target : null;
         for (var i = 0; preferred == null && i < enemies.Count; i++)
         {
             if (enemies[i] != target && enemies[i] != last && !hitSoFar.Contains(enemies[i])) preferred = enemies[i];

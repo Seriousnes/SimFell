@@ -53,7 +53,7 @@
                     <span>@tick</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Damage done over the fight: the mean of every fight and the 5 to 95 percent band">
-                    @for (var g= 1; g < AxisIntervals; g++)
+                    @for (var g = 1; g < AxisIntervals; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
@@ -79,7 +79,7 @@
                     <span>@tick</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="DPS over the fight, as a rolling average: the mean of every fight and the 5 to 95 percent band">
-                    @for (var g= 1; g < AxisIntervals; g++)
+                    @for (var g = 1; g < AxisIntervals; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
@@ -104,12 +104,12 @@
             </div>
             <div class="chart">
                 @{ var spiritTop = SpiritTop(spirit.Max); }
-                <div class="y">@for (var i= AxisIntervals; i >= 0; i--)
+                <div class="y">@for (var i = AxisIntervals; i >= 0; i--)
                 {
                     <span>@Number(spiritTop * i / AxisIntervals)</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Spirit Points over the fight: one typical fight and the mean of every fight">
-                    @for (var g= 1; g < AxisIntervals; g++)
+                    @for (var g = 1; g < AxisIntervals; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
@@ -359,7 +359,7 @@
             {
                 var spans = aura.Spans ?? [];
                 var kind = aura.OnTarget ? "debuff" : "buff";
-                for (var i= 0; i + 1 < spans.Count; i += SpanFields)
+                for (var i = 0; i + 1 < spans.Count; i += SpanFields)
                 {
                     rows.Add(new SequenceRow(spans[i], aura.Name, aura.LogId, $"{kind} gained"));
                     if (spans[i + 1] < Result.DurationSeconds - FightEndSeconds) rows.Add(new SequenceRow(spans[i + 1], aura.Name, aura.LogId, $"{kind} faded"));
@@ -439,7 +439,7 @@
     {
         if (spans is not { Count: > 1 } || Result.DurationSeconds <= 0) return "";
         var builder = new System.Text.StringBuilder();
-        for (var i= 0; i + 1 < spans.Count; i += SpanFields)
+        for (var i = 0; i + 1 < spans.Count; i += SpanFields)
         {
             var start = spans[i] / Result.DurationSeconds * ChartWidth;
             var end = Math.Max(start + MinSpanWidth, spans[i + 1] / Result.DurationSeconds * ChartWidth);
@@ -464,7 +464,7 @@
     private static IEnumerable<string> Ticks(double max)
     {
         var top = Nice(max);
-        for (var i= 0; i <= AxisIntervals; i++) yield return Short(top * i / AxisIntervals);
+        for (var i = 0; i <= AxisIntervals; i++) yield return Short(top * i / AxisIntervals);
     }
 
     private static string Short(double value) => value switch
@@ -482,7 +482,7 @@
     {
         var top = nice ? Nice(max) : max;
         var builder = new System.Text.StringBuilder();
-        for (var i= 0; i < values.Count; i++) builder.Append(i == 0 ? 'M' : 'L').Append(ChartX(i, values.Count)).Append(' ').Append(ChartY(values[i], top)).Append(' ');
+        for (var i = 0; i < values.Count; i++) builder.Append(i == 0 ? 'M' : 'L').Append(ChartX(i, values.Count)).Append(' ').Append(ChartY(values[i], top)).Append(' ');
         return builder.ToString();
     }
 
@@ -497,7 +497,7 @@
     {
         if (values.Count == 0 || seconds < MinStepSeconds) return "";
         var builder = new System.Text.StringBuilder();
-        for (var i= 0; i < values.Count; i++)
+        for (var i = 0; i < values.Count; i++)
         {
             var positionX = ChartX(i, seconds);
             var positionY = ChartY(Math.Min(values[i], top), top);
@@ -510,7 +510,7 @@
     {
         var top = Nice(max);
         var builder = new System.Text.StringBuilder(Line(high, max));
-        for (var i= low.Count - 1; i >= 0; i--) builder.Append('L').Append(ChartX(i, low.Count)).Append(' ').Append(ChartY(low[i], top)).Append(' ');
+        for (var i = low.Count - 1; i >= 0; i--) builder.Append('L').Append(ChartX(i, low.Count)).Append(' ').Append(ChartY(low[i], top)).Append(' ');
         return builder.Append('Z').ToString();
     }
 
@@ -519,7 +519,7 @@
     {
         var step = TimeLabelSteps.FirstOrDefault(s => seconds / s <= MaxTimeLabels, LongestTimeLabelStep);
         var labels = Math.Max(1, (seconds - 1) / step);
-        for (var i= 0; i <= labels; i++)
+        for (var i = 0; i <= labels; i++)
         {
             var tick = Math.Min(seconds, i * step);
             yield return $"{tick / DisplayScale.SecondsPerMinute}:{tick % DisplayScale.SecondsPerMinute:00}";

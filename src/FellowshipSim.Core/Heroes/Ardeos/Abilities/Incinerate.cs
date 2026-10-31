@@ -64,7 +64,7 @@ public class Incinerate : ArdeosAbility
 
     public override void OnChannelTick(SimulationContext ctx, EnemyTarget target, double fraction)
     {
-        IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target != null ? [target] : ctx.ActiveEnemies;
+        var enemies = ctx.ActiveEnemies.Count == 0 && target != null ? [target] : ctx.ActiveEnemies;
         DealAoeDamage(ctx, enemies, damageMultiplier: fraction);
     }
 }

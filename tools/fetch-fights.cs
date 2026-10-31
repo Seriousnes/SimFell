@@ -20,10 +20,10 @@ using FellowshipSim.Logs;
 using Microsoft.Extensions.Configuration;
 using static Names;
 
-string root = Path.GetDirectoryName((string)AppContext.GetData("EntryPointFileDirectoryPath")!)!;
+var root = Path.GetDirectoryName((string)AppContext.GetData("EntryPointFileDirectoryPath")!)!;
 string? hero = null;
 int count = DefaultCount, maxPerPlayer = DefaultMaxPerPlayer, maxPages = DefaultMaxPages;
-for (var i= 0; i < args.Length; i++)
+for (var i = 0; i < args.Length; i++)
 {
     string Next() => i + 1 < args.Length ? args[++i] : throw new ArgumentException($"{args[i]} needs a value.");
     switch (args[i])
@@ -54,7 +54,7 @@ var client = new FellowshipLogsClient(http, credentials.Value.Id, credentials.Va
 var library = new ReplayLibrary(Path.Combine(root, DataFolder));
 Directory.CreateDirectory(library.FightsDirectory);
 var patch = GamePatch.Current;
-long releasedMs = new DateTimeOffset(patch.Released.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero).ToUnixTimeMilliseconds();
+var releasedMs = new DateTimeOffset(patch.Released.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero).ToUnixTimeMilliseconds();
 
 var world = await client.QueryAsync(WorldQuery);
 var zone = world[WorldDataProperty]![ZonesProperty]!.AsArray().MaxBy(z => (int)z![IdProperty]!)!;
