@@ -128,7 +128,7 @@ public class BurstingIce : RimeAbility
                 DealPulse(c, target, fraction);
                 // The pulse's Anima comes through ability 1033 (BPFL_Rime.Rime_GainResourceAndTriggerAutoSpike), which
                 // ends inside the pulse (GA_Rime_Helper_AutoDamageProjectile K2_EndAbility, offsets 2850 / 2865).
-                if (debuff?.PeriodTimer is { IsActive: true } timer) hero.QueueFlushingTick = (DamageLogId, timer);
+                if (debuff?.PeriodTimer is { IsActive: true } timer) hero.QueueFlushingTick = new FlushingTick(DamageLogId, timer);
             },
             onEnd: (c, _) =>
             {

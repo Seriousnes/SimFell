@@ -21,9 +21,9 @@ internal sealed class FightRecorder
     private string? _lastName;
     private SourceTally? _lastSource;
     private readonly Dictionary<Aura, AuraState> _active = new(ReferenceEqualityComparer.Instance);
-    private readonly Dictionary<(AuraContainer Owner, string Key), SimTime> _lastEnd = new();
+    private readonly Dictionary<OwnedAuraKey, SimTime> _lastEnd = new();
     /// <summary>This fight's aura spans (start and end seconds in turn), by name and side; null for a fight not sampled.</summary>
-    private Dictionary<(string Name, bool OnTarget), List<double>>? _spans;
+    private Dictionary<AuraSide, List<double>>? _spans;
     /// <summary>This fight's casts in the order they started; null for a fight not sampled.</summary>
     private List<CastReport>? _casts;
     /// <summary>When each cast still going started: a cast is listed at its start, once it completes.</summary>
@@ -164,7 +164,7 @@ internal sealed class FightRecorder
             _active.Remove(state.Aura);
             var end = Earlier(aura.ExpiresAt, now);
             Close(state, end);
-            _lastEnd[(auras, aura.Key)] = end;
+            _lastEnd[new OwnedAuraKey(auras, aura.Key)] = end;
         };
     }
 
@@ -196,7 +196,7 @@ internal sealed class FightRecorder
             Restack(state, aura, now);
             return;
         }
-        var key = (owner, aura.Key);
+        var key = new OwnedAuraKey(owner, aura.Key);
         var tally = _tally.Aura(aura.Name, onTarget);
         if (tally.LogId == 0) tally.LogId = aura.LogId;
         tally.MaxStacks = Math.Max(tally.MaxStacks, aura.Stacks);
@@ -221,7 +221,7 @@ internal sealed class FightRecorder
         Advance(state, end);
         state.Tally.UpSeconds += (end - state.Start).TotalSeconds;
         if (_spans == null) return;
-        var key = (state.Aura.Name, state.OnTarget);
+        var key = new AuraSide(state.Aura.Name, state.OnTarget);
         if (!_spans.TryGetValue(key, out var spans)) _spans[key] = spans = [];
         spans.Add(state.Start.TotalSeconds);
         spans.Add(end.TotalSeconds);
@@ -295,9 +295,9 @@ internal sealed class FightRecorder
     {
         public int Fights;
         public double[] DamageSum = [];
-        public readonly List<(int Fight, float[] Damage)> Band = [];
+        public readonly List<BandFightDamage> Band = [];
         /// <summary>The sampled fights' total damage and aura spans.</summary>
-        public readonly List<(int Fight, double Damage, Dictionary<(string Name, bool OnTarget), List<double>> Spans, List<CastReport> Casts, double[] Spirit)> Samples = [];
+        public readonly List<SampledFight> Samples = [];
         /// <summary>Spirit Points at the start of each second, added up over the fights still going then, and their count.</summary>
         public double[] SpiritSum = [];
         public int[] SpiritFights = [];
@@ -330,7 +330,7 @@ internal sealed class FightRecorder
             return new SpiritTimeline(mean, Typical()?.Spirit ?? [], SpiritMax);
         }
         public readonly Dictionary<string, SourceTally> Sources = new(StringComparer.Ordinal);
-        public readonly Dictionary<(string Name, bool OnTarget), AuraTally> Auras = new();
+        public readonly Dictionary<AuraSide, AuraTally> Auras = new();
         /// <summary>The damage to each fight's first target, added up.</summary>
         public double PrimaryDamage;
 
@@ -342,18 +342,18 @@ internal sealed class FightRecorder
 
         public AuraTally Aura(string name, bool onTarget)
         {
-            if (!Auras.TryGetValue((name, onTarget), out var aura)) Auras[(name, onTarget)] = aura = new AuraTally();
+            if (!Auras.TryGetValue(new AuraSide(name, onTarget), out var aura)) Auras[new AuraSide(name, onTarget)] = aura = new AuraTally();
             return aura;
         }
 
-        public void AddFight(int fight, double[] damage, Dictionary<(string Name, bool OnTarget), List<double>>? spans, List<CastReport>? casts,
+        public void AddFight(int fight, double[] damage, Dictionary<AuraSide, List<double>>? spans, List<CastReport>? casts,
             double[]? spirit)
         {
             Fights++;
-            if (spans != null) Samples.Add((fight, damage.Sum(), spans, casts ?? [], spirit ?? []));
+            if (spans != null) Samples.Add(new SampledFight(fight, damage.Sum(), spans, casts ?? [], spirit ?? []));
             if (DamageSum.Length != damage.Length) DamageSum = new double[damage.Length];
             for (int i = 0; i < damage.Length; i++) DamageSum[i] += damage[i];
-            if (fight < BandFights) Band.Add((fight, Array.ConvertAll(damage, d => (float)d)));
+            if (fight < BandFights) Band.Add(new BandFightDamage(fight, Array.ConvertAll(damage, d => (float)d)));
         }
 
         public void Merge(Tally other)
@@ -406,16 +406,16 @@ internal sealed class FightRecorder
                 SpiritMax = totals.SpiritMax,
                 PrimaryDamage = totals.PrimaryDamage,
             };
-            tally.Band.AddRange(totals.Band.Select(b => (b.Fight, b.Damage)));
-            tally.Samples.AddRange(totals.Samples.Select(s => (s.Fight, s.Damage,
-                s.Spans.ToDictionary(a => (a.Name, a.OnTarget), a => a.Spans), s.Casts, s.Spirit)));
+            tally.Band.AddRange(totals.Band.Select(b => new BandFightDamage(b.Fight, b.Damage)));
+            tally.Samples.AddRange(totals.Samples.Select(s => new SampledFight(s.Fight, s.Damage,
+                s.Spans.ToDictionary(a => new AuraSide(a.Name, a.OnTarget), a => a.Spans), s.Casts, s.Spirit)));
             foreach (var source in totals.Sources)
             {
                 tally.Sources[source.Name] = new SourceTally { Damage = source.Damage, Crits = source.Crits, Casts = source.Casts, Hits = source.Hits, Id = source.Id };
             }
             foreach (var aura in totals.Auras)
             {
-                tally.Auras[(aura.Name, aura.OnTarget)] = new AuraTally
+                tally.Auras[new AuraSide(aura.Name, aura.OnTarget)] = new AuraTally
                 {
                     UpSeconds = aura.UpSeconds, StackSeconds = aura.StackSeconds, AtMaxSeconds = aura.AtMaxSeconds, GapSeconds = aura.GapSeconds,
                     Applications = aura.Applications, Refreshes = aura.Refreshes, Gaps = aura.Gaps, MaxStacks = aura.MaxStacks,
@@ -481,7 +481,7 @@ internal sealed class FightRecorder
         public List<CastReport> Casts() => Typical()?.Casts ?? [];
 
         /// <summary>The typical fight: the sampled one whose damage is nearest the mean (the first such by seed).</summary>
-        private (int Fight, double Damage, Dictionary<(string Name, bool OnTarget), List<double>> Spans, List<CastReport> Casts, double[] Spirit)? Typical()
+        private SampledFight? Typical()
         {
             if (Samples.Count == 0) return null;
             double mean = Fights == 0 ? 0 : DamageSum.Sum() / Fights;
@@ -491,7 +491,7 @@ internal sealed class FightRecorder
         /// <summary>Spans (start and end in turn) merged where they overlap or touch, in time order: a debuff on several targets.</summary>
         private static List<double> Union(List<double> spans)
         {
-            var ordered = Enumerable.Range(0, spans.Count / 2).Select(i => (Start: spans[2 * i], End: spans[2 * i + 1])).OrderBy(s => s.Start);
+            var ordered = Enumerable.Range(0, spans.Count / 2).Select(i => new AuraSpan(spans[2 * i], spans[2 * i + 1])).OrderBy(s => s.Start);
             var merged = new List<double>();
             foreach (var (start, end) in ordered)
             {
@@ -542,4 +542,19 @@ internal sealed class FightRecorder
             return result;
         }
     }
+
+    /// <summary>An aura's name and whether it is on a target (a debuff) or on the hero.</summary>
+    internal readonly record struct AuraSide(string Name, bool OnTarget);
+
+    /// <summary>The damage per second of one of the band's fights.</summary>
+    internal readonly record struct BandFightDamage(int Fight, float[] Damage);
+
+    /// <summary>A sampled fight's total damage, aura spans, casts and Spirit Points.</summary>
+    internal readonly record struct SampledFight(int Fight, double Damage, Dictionary<AuraSide, List<double>> Spans, List<CastReport> Casts, double[] Spirit);
+
+    /// <summary>An aura key in one container: the key <c>_lastEnd</c> finds the end of the aura's last span by.</summary>
+    private readonly record struct OwnedAuraKey(AuraContainer Owner, string Key);
+
+    /// <summary>The start and end seconds of one span of an aura.</summary>
+    private readonly record struct AuraSpan(double Start, double End);
 }

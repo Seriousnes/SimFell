@@ -143,7 +143,7 @@ public static class AplParser
          select Enum.Parse<AplTargetSelection>(name.ToStringValue(), ignoreCase: true)).Try();
 
     // Argument: ',' key '=' Expression, or ',' 'target_if' '=' [Selection] Expression. Only 'if' and 'target_if' have an effect.
-    private static readonly TokenListParser<AplToken, (string Key, AplTargetSelection? Selection, IAplExpression Value)> Argument =
+    private static readonly TokenListParser<AplToken, ParsedArgument> Argument =
         from comma in Token.EqualTo(AplToken.Comma)
         from key in Token.EqualTo(AplToken.Identifier)
         from equal in Token.EqualTo(AplToken.Equal)
@@ -151,7 +151,7 @@ public static class AplParser
             ? Selection.Select(s => (AplTargetSelection?)s).OptionalOrDefault()
             : Parse.Return<AplToken, AplTargetSelection?>(null)
         from value in Expression
-        select (key.ToStringValue(), selection, value);
+        select new ParsedArgument(key.ToStringValue(), selection, value);
 
     private static readonly TokenListParser<AplToken, AplActionLine> ActionLine =
         (from list in ListPrefix.OptionalOrDefault(AplActionLine.DefaultList)
@@ -173,7 +173,7 @@ public static class AplParser
     public static AplActionLists ParseScript(string script)
     {
         var lists = new Dictionary<string, List<AplAction>>();
-        var listActions = new List<(int LineNumber, AplAction Action)>();
+        var listActions = new List<NumberedListAction>();
         using var reader = new StringReader(script);
         string? line;
         int lineNumber = 0;
@@ -203,7 +203,7 @@ public static class AplParser
                 lists[syntax.List] = actions = [];
             }
             actions.Add(action);
-            if (action.ListAction != null) listActions.Add((lineNumber, action));
+            if (action.ListAction != null) listActions.Add(new NumberedListAction(lineNumber, action));
         }
 
         foreach (var (number, action) in listActions)
@@ -292,4 +292,10 @@ public static class AplParser
 
     /// <summary>The tokens of <paramref name="text"/>, or the tokenizer's error (the text has a character no token starts with).</summary>
     public static Result<TokenList<AplToken>> Tokenize(string text) => Tokenizer.TryTokenize(text);
+
+    /// <summary>An argument of an action line: its key, the target selection of a <c>target_if</c> and its expression.</summary>
+    private readonly record struct ParsedArgument(string Key, AplTargetSelection? Selection, IAplExpression Value);
+
+    /// <summary>An action that controls a list and the number of the script line it is on.</summary>
+    private readonly record struct NumberedListAction(int LineNumber, AplAction Action);
 }

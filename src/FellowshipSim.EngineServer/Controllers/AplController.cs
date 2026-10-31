@@ -12,12 +12,12 @@ public sealed class AplController(ISimEngine engine) : ControllerBase
     /// <summary>The abilities, resources, auras, values and properties an action list for <paramref name="hero"/> can use.</summary>
     [HttpGet("heroes/{hero}/vocabulary")]
     public async Task<IActionResult> Vocabulary(string hero, CancellationToken ct) =>
-        await engine.GetVocabularyAsync(hero, ct) is { } vocabulary ? Ok(vocabulary) : NotFound(new { error = $"No hero named {hero}." });
+        await engine.GetVocabularyAsync(hero, ct) is { } vocabulary ? Ok(vocabulary) : NotFound(new EngineError($"No hero named {hero}."));
 
     /// <summary>Tokens of an expression with their kinds for <paramref name="hero"/>, and its parse error.</summary>
     [HttpPost("heroes/{hero}/check")]
     public async Task<IActionResult> Check(string hero, [FromBody] AplText request, CancellationToken ct) =>
-        await engine.CheckExpressionAsync(hero, request.Text ?? "", ct) is { } check ? Ok(check) : NotFound(new { error = $"No hero named {hero}." });
+        await engine.CheckExpressionAsync(hero, request.Text ?? "", ct) is { } check ? Ok(check) : NotFound(new EngineError($"No hero named {hero}."));
 
     /// <summary>The actions of an action list's text.</summary>
     [HttpPost("parse")]
@@ -29,7 +29,7 @@ public sealed class AplController(ISimEngine engine) : ControllerBase
         }
         catch (SimEngineException exception)
         {
-            return BadRequest(new { error = exception.Message });
+            return BadRequest(new EngineError(exception.Message));
         }
     }
 

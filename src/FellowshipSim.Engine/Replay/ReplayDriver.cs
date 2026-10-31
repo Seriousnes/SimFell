@@ -21,7 +21,7 @@ public sealed class ReplayDriver
     private readonly ReplayVerifier _verifier;
     private readonly Dictionary<int, string> _externalAurasOnPlayer = new();
     private readonly HashSet<ReplayCommand> _handledCommands = new();
-    private (Ability Ability, double Time)? _lastCompletedCast;
+    private CompletedCast? _lastCompletedCast;
 
     public ReplayDriver(Hero hero, ReplayScript script, ReplayOptions? options = null)
     {
@@ -42,7 +42,7 @@ public sealed class ReplayDriver
         _ctx.Outcomes = _options.FreeDiceSeed is { } seed
             ? new FreeDiceOutcomeSource(script, new SimulationRng(seed))
             : _oracle;
-        _hero.OnCastCompleted += (ability, _, now) => _lastCompletedCast = (ability, now.TotalSeconds);
+        _hero.OnCastCompleted += (ability, _, now) => _lastCompletedCast = new CompletedCast(ability, now.TotalSeconds);
         // Enemy auras from the log (PartyBuffs) change the damage the enemy takes.
         _hero.TargetDamageMultipliers.Add((target, now) => target.Auras.Fold(StatType.IncomingDamageMultiplier, 1.0, now));
     }
@@ -89,7 +89,7 @@ public sealed class ReplayDriver
             CommandKind.StopChannel => command.Time - _options.ChannelStopLeadSeconds,
             _ => command.Time,
         };
-        var order = OrderOf(_script, (_options.EnemyAriseLeadSeconds, _options.ChannelStopLeadSeconds), When);
+        var order = OrderOf(_script, new CommandLeads(_options.EnemyAriseLeadSeconds, _options.ChannelStopLeadSeconds), When);
         var commands = order.Commands;
         var result = new ReplayResult
         {
@@ -164,13 +164,13 @@ public sealed class ReplayDriver
     /// The script's commands in replay order, the command that ends each begin_cast, the number of player actions and the
     /// log's casts by ability. Runs only read it.
     /// </summary>
-    private sealed record CommandOrder((double Arise, double ChannelStop) Leads, List<ReplayCommand> Commands, Dictionary<ReplayCommand, ReplayCommand> CastEnds,
+    private sealed record CommandOrder(CommandLeads Leads, List<ReplayCommand> Commands, Dictionary<ReplayCommand, ReplayCommand> CastEnds,
         int PlayerActions, Dictionary<string, int> LogCasts);
 
     // Built once per script: free dice replays one script many times, on several threads.
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ReplayScript, CommandOrder> _orders = new();
 
-    private static CommandOrder OrderOf(ReplayScript script, (double Arise, double ChannelStop) leads, Func<ReplayCommand, double> when)
+    private static CommandOrder OrderOf(ReplayScript script, CommandLeads leads, Func<ReplayCommand, double> when)
     {
         if (_orders.TryGetValue(script, out var cached) && cached.Leads == leads) return cached;
         var commands = script.Commands.OrderBy(when).ToList();
@@ -500,7 +500,7 @@ public sealed class ReplayDriver
         gem.ChangePower(gem.BasePower + AnomalousResidue.PowerPerStack * count * scale, _ctx.CurrentTime);
     }
 
-    private readonly Dictionary<(int LogId, int Source), AuraDef?> _externalDefs = new();
+    private readonly Dictionary<ExternalAuraKey, AuraDef?> _externalDefs = new();
 
     /// <summary>
     /// The aura another actor applies, from the <see cref="PartyBuffs"/> catalogue: one instance per source (the same buff
@@ -509,7 +509,7 @@ public sealed class ReplayDriver
     /// </summary>
     private AuraDef? ExternalAuraDef(int logId, int sourceId)
     {
-        if (_externalDefs.TryGetValue((logId, sourceId), out var cached)) return cached;
+        if (_externalDefs.TryGetValue(new ExternalAuraKey(logId, sourceId), out var cached)) return cached;
         AuraDef? def = null;
         if (PartyBuffs.Find(logId) is { } buff)
         {
@@ -522,7 +522,7 @@ public sealed class ReplayDriver
                 def = def with { Modifiers = def.Modifiers.Select(m => m with { Value = value }).ToArray() };
             }
         }
-        _externalDefs[(logId, sourceId)] = def;
+        _externalDefs[new ExternalAuraKey(logId, sourceId)] = def;
         return def;
     }
 
@@ -746,6 +746,12 @@ public sealed class ReplayDriver
         }
         return result;
     }
+
+    private readonly record struct CompletedCast(Ability Ability, double Time);
+
+    private readonly record struct CommandLeads(double Arise, double ChannelStop);
+
+    private readonly record struct ExternalAuraKey(int LogId, int Source);
 }
 
 /// <summary>The player's aura state over time according to the log, for the auras the engine models (by log ID).</summary>

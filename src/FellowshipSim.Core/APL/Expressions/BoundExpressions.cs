@@ -216,7 +216,8 @@ internal static class Polynomial
             double fb = Evaluate(polynomial, turn);
             if (fb == 0.0) roots.Add(turn);
             else if (fa != 0.0 && (fa < 0.0) != (fb < 0.0)) roots.Add(Halve(polynomial, previous, fa, turn));
-            (previous, fa) = (turn, fb);
+            previous = turn;
+            fa = fb;
         }
     }
 
@@ -228,7 +229,11 @@ internal static class Polynomial
             double middle = 0.5 * (lower + upper);
             double fm = Evaluate(polynomial, middle);
             if (fm == 0.0) return middle;
-            if ((fm < 0.0) == (fa < 0.0)) (lower, fa) = (middle, fm);
+            if ((fm < 0.0) == (fa < 0.0))
+            {
+                lower = middle;
+                fa = fm;
+            }
             else upper = middle;
         }
         return 0.5 * (lower + upper);
@@ -358,7 +363,11 @@ internal sealed class BoundVariableSlot
 
     public double Read(SimulationContext ctx) => ctx == _fight ? _value : Default;
 
-    public void Write(SimulationContext ctx, double value) => (_fight, _value) = (ctx, value);
+    public void Write(SimulationContext ctx, double value)
+    {
+        _fight = ctx;
+        _value = value;
+    }
 }
 
 /// <summary>A variable, which changes only when a <c>variable</c> action sets it in a decision.</summary>
@@ -486,8 +495,13 @@ internal sealed class BoundCooldown : BoundNumeric
     private CooldownState? _state;
     private int _version = -1;
 
-    private BoundCooldown(Hero hero, Ability? ability, string name, CooldownProperty property) =>
-        (_hero, _ability, _name, _property) = (hero, ability, name, property);
+    private BoundCooldown(Hero hero, Ability? ability, string name, CooldownProperty property)
+    {
+        _hero = hero;
+        _ability = ability;
+        _name = name;
+        _property = property;
+    }
 
     /// <summary>The cooldown of <paramref name="ability"/> (or of <paramref name="slug"/> when the hero has no such ability); a property cooldowns lack reads as "ready".</summary>
     public static BoundCooldown For(Hero hero, Ability? ability, string slug, string property) =>

@@ -51,7 +51,7 @@
                                 <button @key="player.Id" type="button" class="@kind" aria-pressed="@picked"
                                         disabled="@(!player.Supported || Busy)"
                                         data-tooltip="@(player.Supported ? $"Pick {player.Name}'s {player.Hero}" : $"{player.Hero} is not supported yet")"
-                                        @onclick="() => State.Picked = (fight.Id, player.Id)">
+                                        @onclick="() => State.Picked = new PickedIds(fight.Id, player.Id)">
                                     <span class="player-name">@player.Name</span>
                                     <span class="player-hero">@player.Hero</span>
                                 </button>
@@ -85,10 +85,10 @@
     [Parameter] public string PickHint { get; set; } = "Pick a player, then Import to replay their fight.";
 
     // The picked fight and player of the report shown, when both are in it and the player's hero is supported.
-    private (ReportFight Fight, FightPlayer Player)? PickedIn(Report report)
+    private PickedFight? PickedIn(Report report)
     {
         if (State.Picked is not { } picked || report.Fights.FirstOrDefault(f => f.Id == picked.FightId) is not { } fight) return null;
-        return fight.Players.FirstOrDefault(p => p.Id == picked.PlayerId && p.Supported) is { } player ? (fight, player) : null;
+        return fight.Players.FirstOrDefault(p => p.Id == picked.PlayerId && p.Supported) is { } player ? new PickedFight(fight, player) : null;
     }
 
     private Task OnPick(Report report, ReportFight fight, FightPlayer player) =>
@@ -122,11 +122,14 @@
                 : $"{loaded.Title} ({loaded.Code}): {loaded.Fights.Count} fights. {PickHint}");
             State.Report = loaded;
             // The link's fight and player start picked.
-            if (loaded.SelectedFightId is { } linkFight && loaded.SelectedPlayerId is { } linkPlayer) State.Picked = (linkFight, linkPlayer);
+            if (loaded.SelectedFightId is { } linkFight && loaded.SelectedPlayerId is { } linkPlayer) State.Picked = new PickedIds(linkFight, linkPlayer);
         }
         catch (Exception exception)
         {
             State.Status = new MessageState(exception.Message, MessageKind.Error);
         }
     }
+
+    /// <summary>The fight and the player of a report that are picked.</summary>
+    private readonly record struct PickedFight(ReportFight Fight, FightPlayer Player);
 }

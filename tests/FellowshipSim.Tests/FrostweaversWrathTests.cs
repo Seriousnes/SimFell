@@ -11,7 +11,7 @@ namespace FellowshipSim.Tests;
 public class FrostweaversWrathTests
 {
     /// <summary>Each hit's damage (its expected damage, crit included) of one cast of <typeparamref name="T"/> with 5 Winter Orbs, with or without a stack.</summary>
-    private static (List<double> Hits, int StacksLeft) Cast<T>(bool withStack) where T : Ability
+    private static CastDamage Cast<T>(bool withStack) where T : Ability
     {
         var hero = (Rime)HeroImporter.Import(new CharacterBuild
         {
@@ -30,7 +30,7 @@ public class FrostweaversWrathTests
         hero.OnDamageDealt += (in dmg) => { if (dmg.AbilityId == ability.DamageLogId) chances.Add(dmg.Amount); };
         ability.ResolveCast(ctx, target);
         ctx.RunUntil(SimTime.FromSeconds(5));
-        return (chances, hero.Auras.HasAura(FrostweaversWrath.Buff, ctx.CurrentTime) ? 1 : 0);
+        return new CastDamage(chances, hero.Auras.HasAura(FrostweaversWrath.Buff, ctx.CurrentTime) ? 1 : 0);
     }
 
     [Fact]
@@ -55,4 +55,7 @@ public class FrostweaversWrathTests
         Assert.True(with[0] > without[0]);
         Assert.Equal(without.Skip(1), with.Skip(1));
     }
+
+    /// <summary>The damage of each hit of a cast, and the Frostweaver's Wrath stacks left after it.</summary>
+    private readonly record struct CastDamage(List<double> Hits, int StacksLeft);
 }

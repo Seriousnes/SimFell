@@ -125,7 +125,7 @@ public class HeroAccuracyTests(ITestOutputHelper output)
 
     private static List<IssueCount> Issues(List<ReplayResult> results) =>
         results.SelectMany(r => r.Steps.SelectMany(s => s.Issues))
-            .GroupBy(i => (i.Category, i.Subject))
+            .GroupBy(i => new IssueKey(i.Category, i.Subject))
             .OrderByDescending(g => g.Count())
             .Take(40)
             .Select(g => new IssueCount(g.Key.Category.ToString(), g.Key.Subject, g.Count(), g.First().Message))

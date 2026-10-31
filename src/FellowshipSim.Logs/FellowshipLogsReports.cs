@@ -77,24 +77,22 @@ public static class FellowshipLogsReports
     public static async Task<JsonObject?> GetCombatantInfoAsync(this FellowshipLogsClient client, string reportCode, int fightId,
         int playerId, CancellationToken ct = default)
     {
-        var fight = (await client.QueryAsync(FightTimesQuery, new { code = reportCode, fightIDs = new[] { fightId } }, ct))
+        var fight = (await client.QueryAsync(FightTimesQuery, new FightVariables(reportCode, [fightId]), ct))
             ["reportData"]?["report"]?["fights"]?.AsArray().FirstOrDefault()
             ?? throw new FellowshipLogsException($"Fight {fightId} is not in report '{reportCode}'.");
-        var data = (await client.QueryAsync(CombatantInfoQuery, new
-        {
-            code = reportCode,
-            fightIDs = new[] { fightId },
-            sourceID = playerId,
-            startTime = fight["startTime"]!.GetValue<double>(),
-            endTime = fight["endTime"]!.GetValue<double>(),
-        }, ct))["reportData"]?["report"]?["events"]?["data"]?.AsArray();
+        var data = (await client.QueryAsync(CombatantInfoQuery, new CombatantInfoVariables(
+            reportCode,
+            [fightId],
+            playerId,
+            fight["startTime"]!.GetValue<double>(),
+            fight["endTime"]!.GetValue<double>()), ct))["reportData"]?["report"]?["events"]?["data"]?.AsArray();
         return data?.FirstOrDefault(e => e?["type"]?.GetValue<string>() == "combatantinfo" && e["sourceID"]?.GetValue<int>() == playerId)
             ?.DeepClone().AsObject();
     }
 
     public static async Task<ReportSummary> GetSummaryAsync(this FellowshipLogsClient client, string reportCode, CancellationToken ct = default)
     {
-        var data = await client.QueryAsync(SummaryQuery, new { code = reportCode }, ct);
+        var data = await client.QueryAsync(SummaryQuery, new ReportVariables(reportCode), ct);
         var report = data["reportData"]?["report"] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
         var players = (report["masterData"]?["actors"]?.AsArray() ?? [])
             .Where(a => a != null)
@@ -123,7 +121,7 @@ public static class FellowshipLogsReports
     public static async Task<JsonObject> DownloadFightAsync(this FellowshipLogsClient client, string reportCode, int fightId,
         IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        var meta = await client.QueryAsync(FightMetaQuery, new { code = reportCode, fightIDs = new[] { fightId } }, ct);
+        var meta = await client.QueryAsync(FightMetaQuery, new FightVariables(reportCode, [fightId]), ct);
         var report = meta["reportData"]?["report"] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
         var fight = report["fights"]?.AsArray().FirstOrDefault() ?? throw new FellowshipLogsException($"Fight {fightId} is not in report '{reportCode}'.");
         double start = fight["startTime"]!.GetValue<double>(), end = fight["endTime"]!.GetValue<double>();
@@ -132,7 +130,7 @@ public static class FellowshipLogsReports
         double? cursor = start;
         while (cursor is { } from && from < end)
         {
-            var page = (await client.QueryAsync(EventsQuery, new { code = reportCode, fightIDs = new[] { fightId }, startTime = from, endTime = end }, ct))
+            var page = (await client.QueryAsync(EventsQuery, new FightEventsVariables(reportCode, [fightId], from, end), ct))
                 ["reportData"]!["report"]!["events"]!;
             // Moved, not copied: a long fight's events are hundreds of MB as a tree, and the browser app has little room.
             if (page["data"]?.AsArray() is { } data)

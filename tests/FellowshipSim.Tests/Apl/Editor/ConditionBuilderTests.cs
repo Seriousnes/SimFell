@@ -110,9 +110,9 @@ public class ConditionBuilderTests
     private static IEnumerable<string> Paths(AplTerm term) =>
         term.Items is { } items ? Paths(items) : term.Path is { } path ? [path] : [];
 
-    private static IEnumerable<(string Hero, string List, AplDocumentAction Action)> BuiltInActions() =>
+    private static IEnumerable<BuiltInAction> BuiltInActions() =>
         Catalog.Heroes.Keys.SelectMany(hero => DefaultActionLists.Names(hero)
-            .SelectMany(name => AplDocument.Parse(DefaultActionLists.Read(hero, name)!).Select(action => (hero, name, action))));
+            .SelectMany(name => AplDocument.Parse(DefaultActionLists.Read(hero, name)!).Select(action => new BuiltInAction(hero, name, action))));
 
     [Fact]
     public void A_term_without_a_value_and_a_row_or_group_without_such_terms_are_left_out()
@@ -315,4 +315,7 @@ public class ConditionBuilderTests
         Assert.Equal($"buff.chill.{aura[0]}", Assert.Single(name.Left!).Path);
         Assert.Equal($"not buff.chill.{aura[0]}", ConditionBuilder.Text([name]));
     }
+
+    /// <summary>An action of a hero's built-in action list, with the hero and the list.</summary>
+    private readonly record struct BuiltInAction(string Hero, string List, AplDocumentAction Action);
 }

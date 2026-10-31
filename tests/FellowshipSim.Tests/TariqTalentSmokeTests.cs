@@ -116,7 +116,7 @@ public class TariqTalentSmokeTests(ITestOutputHelper output)
         };
     }
 
-    private static (MonteCarloResult Result, Hero Hero, Dictionary<string, int> Gained) Run(IEnumerable<int> talentIds, int targets,
+    private static TalentSmokeRun Run(IEnumerable<int> talentIds, int targets,
         int iterations = 10, int? legendaryItemId = null)
     {
         // The Tariq from fXyzwGcQkTrLD34R fight 4 (Stormwatch), as the replay imported it.
@@ -136,6 +136,6 @@ public class TariqTalentSmokeTests(ITestOutputHelper output)
         // One thread: the simulator builds one hero, the one above.
         var result = new MonteCarloSimulator(() => hero, AplParser.ParseScript(Apl))
             .Run(SimTime.FromSeconds(300), iterations, targets, degreeOfParallelism: 1);
-        return (result, hero, gained);
+        return new TalentSmokeRun(result, hero, gained);
     }
 }

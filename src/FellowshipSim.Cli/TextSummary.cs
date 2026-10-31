@@ -10,17 +10,17 @@ public static class TextSummary
     public static string Format(SimResult result)
     {
         var culture = CultureInfo.InvariantCulture;
-        var rows = new List<(string Label, string Value)>
+        var rows = new List<SummaryRow>
         {
-            ("Mean DPS", result.MeanDps.ToString("N1", culture)),
-            ("Min DPS", result.MinDps.ToString("N1", culture)),
-            ("Max DPS", result.MaxDps.ToString("N1", culture)),
-            ("Std dev", result.StandardDeviation.ToString("N1", culture)),
-            ("Iterations", result.Iterations.ToString("N0", culture)),
-            ("Duration", result.DurationSeconds.ToString("0.###", culture) + " s"),
+            new SummaryRow("Mean DPS", result.MeanDps.ToString("N1", culture)),
+            new SummaryRow("Min DPS", result.MinDps.ToString("N1", culture)),
+            new SummaryRow("Max DPS", result.MaxDps.ToString("N1", culture)),
+            new SummaryRow("Std dev", result.StandardDeviation.ToString("N1", culture)),
+            new SummaryRow("Iterations", result.Iterations.ToString("N0", culture)),
+            new SummaryRow("Duration", result.DurationSeconds.ToString("0.###", culture) + " s"),
         };
         var abilities = result.AbilityDps.OrderByDescending(a => a.Value)
-            .Select(a => (Label: a.Key, Value: a.Value.ToString("N1", culture)))
+            .Select(a => new SummaryRow(a.Key, a.Value.ToString("N1", culture)))
             .ToList();
         var all = rows.Concat(abilities).ToList();
         int labelWidth = all.Max(r => r.Label.Length);
@@ -36,4 +36,6 @@ public static class TextSummary
         }
         return builder.ToString();
     }
+
+    private readonly record struct SummaryRow(string Label, string Value);
 }

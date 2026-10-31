@@ -38,12 +38,12 @@ public static partial class CodeEdits
     /// <paramref name="text"/> with <paramref name="item"/> in place of the part at <paramref name="at"/>, and the caret after
     /// it. A pick with parts after it is written with its '.'.
     /// </summary>
-    public static (string Text, int Caret) Accept(string text, int at, Completion item)
+    public static AcceptedCompletion Accept(string text, int at, Completion item)
     {
         at = Math.Min(at, text.Length);
         string partial = PartBefore().Match(text[..at]).Value;
         string rest = PartAfter().Match(text[at..]).Value;
         string written = item.Text + (item.HasMore ? "." : "");
-        return (text[..(at - partial.Length)] + written + text[(at + rest.Length)..], at - partial.Length + written.Length);
+        return new AcceptedCompletion(text[..(at - partial.Length)] + written + text[(at + rest.Length)..], at - partial.Length + written.Length);
     }
 }

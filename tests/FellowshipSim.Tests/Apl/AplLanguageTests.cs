@@ -42,14 +42,14 @@ public class AplLanguageTests
         var spirit = hero.Resources.Get(hero.FindResource("spirit")!);
         var frostBolt = AplNames.FindAbility(hero, "frost_bolt")!;
 
-        foreach (var (text, expected) in new[]
+        foreach (var (text, expected) in new ExpressionValue[]
                  {
-                     ("gcd.max", gcd),
-                     ("gcd", gcd),
-                     ("spirit.deficit", spirit.Max - spirit.Current),
-                     ("action.frost_bolt.execute_time", frostBolt.GetAdjustedCastTime(ctx.CurrentTime).TotalSeconds),
-                     ("action.cold_snap.execute_time", gcd),
-                     ("buff.no_such_buff.react", 0.0),
+                     new("gcd.max", gcd),
+                     new("gcd", gcd),
+                     new("spirit.deficit", spirit.Max - spirit.Current),
+                     new("action.frost_bolt.execute_time", frostBolt.GetAdjustedCastTime(ctx.CurrentTime).TotalSeconds),
+                     new("action.cold_snap.execute_time", gcd),
+                     new("buff.no_such_buff.react", 0.0),
                  })
         {
             var expression = AplParser.ParseExpression(text);
@@ -165,7 +165,7 @@ public class AplLanguageTests
         Assert.Empty(hero.RuntimeAuras.Select(a => AplNames.Slug(a.Name)).Where(slug => !auras.Contains(slug)).Distinct());
     }
 
-    private static (Hero Hero, SimulationContext Ctx) Fight(IEnumerable<int> talents, string heroName = "Rime")
+    private static HeroInFight Fight(IEnumerable<int> talents, string heroName = "Rime")
     {
         var hero = HeroImporter.Import(new CharacterBuild { Hero = heroName, PrimaryStat = 1000, Talents = talents.ToList() });
         var ctx = new SimulationContext(hero);
@@ -173,6 +173,9 @@ public class AplLanguageTests
         hero.BeginFight(ctx);
         ctx.AddEnemy(100, 1, "Mob", maxHealth: 1000);
         ctx.Player.CurrentTarget = ctx.AllEnemies.First();
-        return (hero, ctx);
+        return new HeroInFight(hero, ctx);
     }
+
+    /// <summary>An expression text and the number it reads.</summary>
+    private readonly record struct ExpressionValue(string Text, double Expected);
 }

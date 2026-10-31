@@ -24,7 +24,7 @@ public sealed class SimController(ISimEngine engine, ILogger<SimController> log)
         if (request.Settings.Iterations <= 0 || request.Settings.DurationSeconds <= 0)
         {
             Response.StatusCode = StatusCodes.Status400BadRequest;
-            await Response.WriteAsJsonAsync(new { error = "A sim needs at least one fight and a duration above 0 seconds." }, ct);
+            await Response.WriteAsJsonAsync(new EngineError("A sim needs at least one fight and a duration above 0 seconds."), ct);
             return;
         }
 

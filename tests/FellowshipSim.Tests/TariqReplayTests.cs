@@ -66,7 +66,7 @@ public class TariqReplayTests(ITestOutputHelper output)
             output.WriteLine($"{id,-9} {name}  {log.Count,8}  {matched.Count,7}  {engine.Count - matched.Count,11}  {log.Sum(h => h.TotalAmount),11:N0}  {engine.Sum(h => h.EngineAmount),11:N0}  " +
                              $"{matched.Count(h => h.WithinRange),9}  {ratio,6:F3}");
         }
-        foreach (var group in result.Steps.SelectMany(s => s.Issues).GroupBy(i => (i.Category, i.Subject)).OrderByDescending(g => g.Count()).Take(30))
+        foreach (var group in result.Steps.SelectMany(s => s.Issues).GroupBy(i => new IssueKey(i.Category, i.Subject)).OrderByDescending(g => g.Count()).Take(30))
         {
             output.WriteLine($"{group.Count(),5} [{group.Key.Category}] {group.Key.Subject}: {group.First().Message}");
         }

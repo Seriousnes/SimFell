@@ -32,8 +32,8 @@ public class RimeGearTests
         var hero = HeroImporter.Import(build);
         Assert.IsType<NaturesFury>(hero.WeaponAbility);
 
-        var hits = new List<(double Time, double Amount, bool Crit)>();
-        hero.OnDamageDealt += (in dmg) => { if (dmg.AbilityId == NaturesFury.AbilityId) hits.Add((dmg.Timestamp.TotalSeconds, dmg.Amount, dmg.IsCrit)); };
+        var hits = new List<DamageHit>();
+        hero.OnDamageDealt += (in dmg) => { if (dmg.AbilityId == NaturesFury.AbilityId) hits.Add(new DamageHit(dmg.Timestamp.TotalSeconds, dmg.Amount, dmg.IsCrit)); };
         new MonteCarloSimulator(() => hero, AplParser.ParseScript("actions=natures_fury\nactions+=/frost_bolt"))
             .Run(SimTime.FromSeconds(30), 1, 3, degreeOfParallelism: 1);
 
@@ -51,10 +51,10 @@ public class RimeGearTests
 
         var hero = HeroImporter.Import(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000, WeaponAbilityId = VoidbringersTouch.AbilityId });
         int frostBolt = hero.GetAbility<FrostBolt>()!.DamageLogId;
-        var bolts = new List<(double Time, int Stacks)>();
+        var bolts = new List<DebuffStacksAtHit>();
         hero.OnDamageDealt += (in dmg) =>
         {
-            if (dmg.AbilityId == frostBolt) bolts.Add((dmg.Timestamp.TotalSeconds, dmg.Target!.Auras.GetStacks(VoidbringersTouch.Debuff, dmg.Timestamp)));
+            if (dmg.AbilityId == frostBolt) bolts.Add(new DebuffStacksAtHit(dmg.Timestamp.TotalSeconds, dmg.Target!.Auras.GetStacks(VoidbringersTouch.Debuff, dmg.Timestamp)));
         };
         new MonteCarloSimulator(() => hero, AplParser.ParseScript("actions=voidbringers_touch,if=!debuff.voidbringers_touch.up\nactions+=/frost_bolt"))
             .Run(SimTime.FromSeconds(40), 1, 1, degreeOfParallelism: 1);
@@ -73,4 +73,10 @@ public class RimeGearTests
         new MonteCarloSimulator(() => hero, AplParser.ParseScript(apl)).Run(SimTime.FromSeconds(120), 1, 1, degreeOfParallelism: 1);
         return hits;
     }
+
+    /// <summary>A hit the hero dealt: its second, amount and whether it crit.</summary>
+    private readonly record struct DamageHit(double Time, double Amount, bool Crit);
+
+    /// <summary>A hit on a target: its second and the stacks of Voidbringer's Touch on the target then.</summary>
+    private readonly record struct DebuffStacksAtHit(double Time, int Stacks);
 }

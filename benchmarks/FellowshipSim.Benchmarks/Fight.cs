@@ -41,12 +41,12 @@ public static class Fight
     /// The Monte Carlo workloads of the command modes: <c>mc</c> (1 target), <c>mc8</c> (8 targets), and <c>mc-idle</c> and
     /// <c>mc8-idle</c> with the action list that idles. Null for another name.
     /// </summary>
-    public static (int Targets, bool Idle)? MonteCarloWorkload(string workload) => workload switch
+    public static MonteCarloWorkloadSetup? MonteCarloWorkload(string workload) => workload switch
     {
-        "mc" => (1, false),
-        "mc8" => (8, false),
-        "mc-idle" => (1, true),
-        "mc8-idle" => (8, true),
+        "mc" => new MonteCarloWorkloadSetup(1, false),
+        "mc8" => new MonteCarloWorkloadSetup(8, false),
+        "mc-idle" => new MonteCarloWorkloadSetup(1, true),
+        "mc8-idle" => new MonteCarloWorkloadSetup(8, true),
         _ => null,
     };
 
@@ -96,13 +96,13 @@ public static class Fight
     }
 
     /// <summary>A hero <see cref="MidFight"/> into a fight against <paramref name="targets"/> training mobs.</summary>
-    public static (Hero Hero, SimulationContext Context, AplActionLists Actions) AtMidFight(int targets)
+    public static MidFightState AtMidFight(int targets)
     {
         var hero = NewHero();
         var ctx = Start(hero, targets);
         var actions = Actions();
         RunTo(hero, ctx, actions, MidFight);
-        return (hero, ctx, actions);
+        return new MidFightState(hero, ctx, actions);
     }
 
     /// <summary>

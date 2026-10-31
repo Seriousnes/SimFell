@@ -83,7 +83,7 @@ public class ArdeosTalentSmokeTests(ITestOutputHelper output)
         Assert.True(gained.GetValueOrDefault("Apocalyptic Surge") > 0);
     }
 
-    private static (MonteCarloResult Result, Hero Hero, Dictionary<string, int> Gained) Run(IEnumerable<int> talentIds, int targets, int iterations = 10)
+    private static TalentSmokeRun Run(IEnumerable<int> talentIds, int targets, int iterations = 10)
     {
         // The Ardeos from yMAZVJL9hTpFjqbC fight 7, as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
@@ -95,6 +95,6 @@ public class ArdeosTalentSmokeTests(ITestOutputHelper output)
         // One thread: the simulator builds one hero, the one above.
         var result = new MonteCarloSimulator(() => hero, AplParser.ParseScript(Apl))
             .Run(SimTime.FromSeconds(300), iterations, targets, degreeOfParallelism: 1);
-        return (result, hero, gained);
+        return new TalentSmokeRun(result, hero, gained);
     }
 }

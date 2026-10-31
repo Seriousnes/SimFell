@@ -47,7 +47,7 @@ public class HeartseekerBarrage : ElarionAbility
 
     private int _arrow;
     private bool _impending;
-    private (double Damage, double Crit) _cast;
+    private CastBonuses _cast;
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {

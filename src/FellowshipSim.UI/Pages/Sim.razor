@@ -412,7 +412,9 @@
         var settings = Settings();
         var first = SimcProfile.Parse(runs[0].ProfileText);
         // The job outlives this page's circuit, so the work captures the engine, the results library and values alone.
-        var (engine, results, visitor) = (Engine, Results, Jobs.Visitor);
+        var engine = Engine;
+        var results = Results;
+        var visitor = Jobs.Visitor;
         var job = Jobs.Enqueue(SimJobKind.Sim, title, async c =>
         {
             var done = new List<SimRun>();
@@ -461,7 +463,9 @@
         string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
             profile.Build.Name, profile.Build.Hero, State.Iterations, State.DurationSeconds, State.Targets, State.Targets == 1 ? "target" : "targets");
         // The job outlives this page's circuit, so the work captures the engine, the results library and values alone.
-        var (engine, results, visitor) = (Engine, Results, Jobs.Visitor);
+        var engine = Engine;
+        var results = Results;
+        var visitor = Jobs.Visitor;
         var job = Jobs.Enqueue(SimJobKind.Sim, title, async c =>
         {
             var result = await engine.SimulateAsync(profile, settings, c, c.CancellationToken);

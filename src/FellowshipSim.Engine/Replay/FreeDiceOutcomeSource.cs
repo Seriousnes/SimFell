@@ -9,10 +9,10 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
 {
     private readonly SimulationRng _rng;
     private readonly double[] _castTimes;
-    private readonly HashSet<(int Id, int Instance)>[] _engaged;
+    private readonly HashSet<UnitKey>[] _engaged;
 
     /// <summary>The script's cast times and the enemies engaged in each window between them. Runs only read it.</summary>
-    private sealed record Engagement(double[] CastTimes, HashSet<(int Id, int Instance)>[] Engaged);
+    private sealed record Engagement(double[] CastTimes, HashSet<UnitKey>[] Engaged);
 
     // Built once per script: free dice runs one script many times, on several threads.
     private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ReplayScript, Engagement> Engagements = new();
@@ -20,18 +20,20 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
     public FreeDiceOutcomeSource(ReplayScript script, SimulationRng rng) : base(rng, OutcomeMode.Discrete)
     {
         _rng = rng;
-        (_castTimes, _engaged) = Engagements.GetValue(script, BuildEngagement);
+        var engagement = Engagements.GetValue(script, BuildEngagement);
+        _castTimes = engagement.CastTimes;
+        _engaged = engagement.Engaged;
     }
 
     private static Engagement BuildEngagement(ReplayScript script)
     {
         var castTimes = script.Commands.Where(c => c.IsPlayerAction).Select(c => c.Time).Distinct().Order().ToArray();
         // Window i runs from cast i to cast i + 1; window 0 also covers anything before the first cast.
-        var engaged = new HashSet<(int Id, int Instance)>[Math.Max(1, castTimes.Length)];
-        for (int i = 0; i < engaged.Length; i++) engaged[i] = new HashSet<(int Id, int Instance)>();
+        var engaged = new HashSet<UnitKey>[Math.Max(1, castTimes.Length)];
+        for (int i = 0; i < engaged.Length; i++) engaged[i] = new HashSet<UnitKey>();
         foreach (var hit in script.Observations.Damage)
         {
-            engaged[Window(castTimes, engaged.Length, hit.Time)].Add((hit.Target.Id, hit.Target.Instance));
+            engaged[Window(castTimes, engaged.Length, hit.Time)].Add(new UnitKey(hit.Target.Id, hit.Target.Instance));
         }
         return new Engagement(castTimes, engaged);
     }
@@ -51,7 +53,7 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
         var list = new List<EnemyTarget>(Math.Min(candidates.Count, engaged.Count));
         for (int i = 0; i < candidates.Count; i++)
         {
-            if (engaged.Contains((candidates[i].Id, candidates[i].InstanceId))) list.Add(candidates[i]);
+            if (engaged.Contains(new UnitKey(candidates[i].Id, candidates[i].InstanceId))) list.Add(candidates[i]);
         }
         return list;
     }

@@ -128,11 +128,11 @@ public sealed class ReplayLibrary
     }
 
     /// <summary>Fights already downloaded (report code, fight ID).</summary>
-    public IReadOnlyList<(string ReportCode, int FightId)> ListDownloadedFights() =>
+    public IReadOnlyList<DownloadedFight> ListDownloadedFights() =>
         Directory.GetFiles(FightsDirectory, "*.raw.json")
             .Select(f => Path.GetFileName(f).Replace(".raw.json", ""))
             .Select(n => n.Split("_fight"))
             .Where(p => p.Length == 2 && int.TryParse(p[1], out _))
-            .Select(p => (p[0], int.Parse(p[1])))
+            .Select(p => new DownloadedFight(p[0], int.Parse(p[1])))
             .ToList();
 }

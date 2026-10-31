@@ -54,11 +54,11 @@
 
     private string _mode = ActionListEditor.BuilderMode;
     /// <summary>The rows the builder last wrote, with their text: they hold rows the text has no part for yet.</summary>
-    private (string Text, List<ConditionRow> Rows)? _built;
+    private BuiltRows? _built;
     /// <summary>The join and 'not' picked on each group's empty row, by the group's key.</summary>
-    private readonly Dictionary<string, (string Join, bool Not)> _placeholders = [];
+    private readonly Dictionary<string, PlaceholderRow> _placeholders = [];
     private DebouncedCheck _read = null!;
-    private (CheckedText Read, List<ConditionRow> Rows)? _readRows;
+    private CheckedRows? _readRows;
     private IReadOnlyList<ConditionKind> _kinds = [];
     /// <summary>Counts picks on the add select, so each pick renders a new select showing no value again.</summary>
     private int _picks;
@@ -76,7 +76,7 @@
     private List<ConditionRow>? ReadRows(CheckedText read)
     {
         if (read.Check?.Condition is not { } condition) return null;
-        if (_readRows is not { } cached || !ReferenceEquals(cached.Read, read)) _readRows = (read, ConditionRow.From(condition));
+        if (_readRows is not { } cached || !ReferenceEquals(cached.Read, read)) _readRows = new CheckedRows(read, ConditionRow.From(condition));
         return _readRows.Value.Rows;
     }
 
@@ -110,7 +110,7 @@
         var next = (Rows ?? []).Select(r => r.Clone()).ToList();
         change(next);
         string written = ConditionBuilder.Text(next);
-        _built = (written, next);
+        _built = new BuiltRows(written, next);
         return OnChange.InvokeAsync(written);
     }
 
@@ -119,7 +119,7 @@
     {
         var next = (Rows ?? []).Select(r => r.Clone()).ToList();
         change(next);
-        _built = (Text, next);
+        _built = new BuiltRows(Text, next);
     }
 
     /// <summary>
@@ -365,7 +365,7 @@
     // Each group ends with an empty row. A pick in its value picker makes it a row (or a group), and a new empty row follows.
     private void RenderPlaceholder(RenderTreeBuilder __builder, List<ConditionRow> items, string key, int depth, bool nested, Func<ConditionRow, Task> add)
     {
-        var state = _placeholders.TryGetValue(key, out var stored) ? stored : (Join: AndJoin, Not: false);
+        var state = _placeholders.TryGetValue(key, out var stored) ? stored : new PlaceholderRow(AndJoin, false);
         <div @key="@($"{key}:placeholder")" class="condition-row placeholder">
             @{ RenderRowStart(__builder, state.Join, state.Not, items.Count, depth, nested,
                    join => SetPlaceholder(key, state with { Join = join }), () => SetPlaceholder(key, state with { Not = !state.Not })); }
@@ -373,13 +373,13 @@
         </div>
     }
 
-    private Task SetPlaceholder(string key, (string Join, bool Not) state)
+    private Task SetPlaceholder(string key, PlaceholderRow state)
     {
         _placeholders[key] = state;
         return Task.CompletedTask;
     }
 
-    private Task PickRow(ValuePick pick, string key, (string Join, bool Not) state, Func<ConditionRow, Task> add)
+    private Task PickRow(ValuePick pick, string key, PlaceholderRow state, Func<ConditionRow, Task> add)
     {
         _placeholders.Remove(key);
         return add(ConditionBuilder.RowFor(pick, state.Join, state.Not, Vocabulary, _kinds));
@@ -428,4 +428,13 @@
     }
 
     public void Dispose() => _read.Dispose();
+
+    /// <summary>The rows the builder wrote, with the text they were written as.</summary>
+    private readonly record struct BuiltRows(string Text, List<ConditionRow> Rows);
+
+    /// <summary>The rows read from a check, with the check.</summary>
+    private readonly record struct CheckedRows(CheckedText Read, List<ConditionRow> Rows);
+
+    /// <summary>The join and the 'not' picked on a group's empty row.</summary>
+    private readonly record struct PlaceholderRow(string Join, bool Not);
 }

@@ -12,7 +12,11 @@ public sealed class AplProgram
     private readonly BoundAplList? _default;
     private readonly BoundAplList[] _lists;
 
-    private AplProgram(BoundAplList? defaultList, BoundAplList[] lists) => (_default, _lists) = (defaultList, lists);
+    private AplProgram(BoundAplList? defaultList, BoundAplList[] lists)
+    {
+        _default = defaultList;
+        _lists = lists;
+    }
 
     /// <summary>The steps of <see cref="AplActionLine.DefaultList"/>.</summary>
     public IReadOnlyList<BoundAplStep> Actions => _default?.Steps ?? [];

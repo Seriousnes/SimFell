@@ -38,11 +38,11 @@ public class ExactReplayTests
         new() { Time = time, AbilityId = id, AbilityName = id.ToString(), Target = Dummy, Amount = amount, Crit = crit };
 
     /// <summary>A begin_cast of Frost Bolt at 1s and its complete_cast after the engine's cast time.</summary>
-    private static (List<ReplayCommand> Commands, int DamageId, double Completed) FrostBoltCast(ReplayScript probe)
+    private static FrostBoltCasting FrostBoltCast(ReplayScript probe)
     {
         var bolt = ReplayDriver.CreateHero(probe).GetAbility(FrostBolt.AbilityName)!;
         double completed = 1.0 + bolt.GetAdjustedCastTime().TotalSeconds;
-        return ([
+        return new FrostBoltCasting([
             new ReplayCommand { Time = 1.0, Kind = CommandKind.BeginCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
             new ReplayCommand { Time = completed, Kind = CommandKind.CompleteCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
         ], bolt.DamageLogId, completed);
@@ -73,8 +73,8 @@ public class ExactReplayTests
         var (commands, boltId, completed) = FrostBoltCast(probe);
         var script = Script(commands, [Hit(completed + 0.3, boltId, 12345, crit: true), Hit(3.0, UnmodeledId, 777)]);
         var hero = ReplayDriver.CreateHero(script);
-        var dealt = new List<(int Id, double Amount, bool Crit)>();
-        hero.OnDamageDealt += (in dmg) => dealt.Add((dmg.AbilityId, dmg.Amount, dmg.IsCrit));
+        var dealt = new List<DamageDealt>();
+        hero.OnDamageDealt += (in dmg) => dealt.Add(new DamageDealt(dmg.AbilityId, dmg.Amount, dmg.IsCrit));
         var driver = new ReplayDriver(hero, script, new ReplayOptions { StopOnFirstFailure = false });
         Assert.IsType<LogOutcomeSource>(driver.Context.Outcomes);
         var recording = new Recording(driver.Context.Outcomes);
@@ -89,8 +89,8 @@ public class ExactReplayTests
         Assert.Equal(2, result.LogHits);
         Assert.Equal(1, result.MatchedLogHits);
         Assert.Equal(1, result.LoggedHitsDealt);
-        Assert.Equal(1, dealt.Count(d => d == (boltId, 12345, true)));
-        Assert.Equal(1, dealt.Count(d => d == (UnmodeledId, 777, false)));
+        Assert.Equal(1, dealt.Count(d => d == new DamageDealt(boltId, 12345, true)));
+        Assert.Equal(1, dealt.Count(d => d == new DamageDealt(UnmodeledId, 777, false)));
         var bolt = Assert.Single(result.AllHits, h => h.AbilityId == boltId);
         Assert.True(bolt.Crit);
         Assert.Same(script.Observations.Damage[0], bolt.Log);
@@ -249,8 +249,8 @@ public class ExactReplayTests
         var fight = new TickFight([On(Dummy, first, 100), On(second, first, 100), On(Dummy, secondPulse, 100), On(second, secondPulse, 100),
             On(Dummy, Math.Round(partialAt, 3), 70)]);
         var other = fight.Ctx.AddEnemy(second.Id, second.Instance, "Second", 1e9);
-        var struck = new List<(double Time, int Enemy)>();
-        fight.Hero.OnDamageDealt += (in dmg) => { if (dmg.AbilityId == TickId) struck.Add((dmg.Timestamp.TotalSeconds, dmg.Target!.Id)); };
+        var struck = new List<EnemyStruck>();
+        fight.Hero.OnDamageDealt += (in dmg) => { if (dmg.AbilityId == TickId) struck.Add(new EnemyStruck(dmg.Timestamp.TotalSeconds, dmg.Target!.Id)); };
         PeriodicEffect.BeginHasted(fight.Ctx, fight.Hero, "Test Pulse", duration, 1.0, tickOnStart: false, partialFinalTick: true,
             onTick: (c, fraction) =>
             {
@@ -264,7 +264,7 @@ public class ExactReplayTests
         fight.Ctx.RunUntil(SimTime.FromSeconds(5));
 
         Assert.Equal([first, secondPulse, Math.Round(partialAt, 3)], fight.Fired);
-        Assert.Equal((Math.Round(partialAt, 3), Dummy.Id), struck[^1]);
+        Assert.Equal(new EnemyStruck(Math.Round(partialAt, 3), Dummy.Id), struck[^1]);
         Assert.Equal(5, struck.Count);
         Assert.Equal(5, fight.Ledger.MatchedHits);
         Assert.Empty(fight.Verifier.Issues);
@@ -334,4 +334,13 @@ public class ExactReplayTests
         Assert.Equal(4, fight.Ledger.MatchedHits);
         Assert.Empty(fight.Verifier.Issues);
     }
+
+    /// <summary>The commands of a Frost Bolt cast, the damage ID of its hit and the second the cast completes at.</summary>
+    private readonly record struct FrostBoltCasting(List<ReplayCommand> Commands, int DamageId, double Completed);
+
+    /// <summary>A hit the hero dealt: its damage ID, amount and whether it crit.</summary>
+    private readonly record struct DamageDealt(int Id, double Amount, bool Crit);
+
+    /// <summary>A hit on an enemy: the second and the enemy ID.</summary>
+    private readonly record struct EnemyStruck(double Time, int Enemy);
 }

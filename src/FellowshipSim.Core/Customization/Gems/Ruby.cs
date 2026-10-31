@@ -5,19 +5,19 @@ public class Ruby : Gem
 {
     public static readonly GemNode[] AllNodes =
     [
-        new(296, 1, "Might of the Minotaur", 80, NodeValues(("PrimaryStatIncrease", 0.02), ("HealthThreshold", 0.8)),
+        new(296, 1, "Might of the Minotaur", 80, NodeValues(new NodeValue("PrimaryStatIncrease", 0.02), new NodeValue("HealthThreshold", 0.8)),
             AuraDef.Effect("Might of the Minotaur", 1921, modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, 1.02))),
-        new(278, 2, "Champion's Heart", 150, NodeValues(("StaminaBonus", 6), ("PrimaryStatBonus", 2))),
-        new(310, 3, "Unyielding Vitality", 220, NodeValues(("HealPercent", 0.007), ("Seconds", 2))),
-        new(300, 4, "Titan's Blood", 300, NodeValues(("StaminaIncrease", 0.03))),
-        new(330, 5, "Blessing of the Conqueror", 450, NodeValues(("DamageIncrease", 0.05)),
+        new(278, 2, "Champion's Heart", 150, NodeValues(new NodeValue("StaminaBonus", 6), new NodeValue("PrimaryStatBonus", 2))),
+        new(310, 3, "Unyielding Vitality", 220, NodeValues(new NodeValue("HealPercent", 0.007), new NodeValue("Seconds", 2))),
+        new(300, 4, "Titan's Blood", 300, NodeValues(new NodeValue("StaminaIncrease", 0.03))),
+        new(330, 5, "Blessing of the Conqueror", 450, NodeValues(new NodeValue("DamageIncrease", 0.05)),
             AuraDef.Effect("Essence of the Conqueror", 1951, modifiers: StatModifier.More(StatType.DamageScale, 1.05))),
-        new(297, 6, "Might of the Minotaur - II", 600, NodeValues(("PrimaryStatIncrease", 0.06), ("HealthThreshold", 0.8)),
+        new(297, 6, "Might of the Minotaur - II", 600, NodeValues(new NodeValue("PrimaryStatIncrease", 0.06), new NodeValue("HealthThreshold", 0.8)),
             AuraDef.Effect("Might of the Minotaur - II", 1922, modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, 1.06))),
-        new(279, 7, "Champion's Heart - II", 800, NodeValues(("StaminaBonus", 18), ("PrimaryStatBonus", 6))),
-        new(311, 8, "Unyielding Vitality - II", 1000, NodeValues(("HealPercent", 0.021), ("Seconds", 2))),
-        new(301, 9, "Titan's Blood - II", 1250, NodeValues(("StaminaIncrease", 0.09))),
-        new(331, 10, "Blessing of the Conqueror - II", 1500, NodeValues(("DamageIncrease", 0.15)),
+        new(279, 7, "Champion's Heart - II", 800, NodeValues(new NodeValue("StaminaBonus", 18), new NodeValue("PrimaryStatBonus", 6))),
+        new(311, 8, "Unyielding Vitality - II", 1000, NodeValues(new NodeValue("HealPercent", 0.021), new NodeValue("Seconds", 2))),
+        new(301, 9, "Titan's Blood - II", 1250, NodeValues(new NodeValue("StaminaIncrease", 0.09))),
+        new(331, 10, "Blessing of the Conqueror - II", 1500, NodeValues(new NodeValue("DamageIncrease", 0.15)),
             AuraDef.Effect("Essence of the Conqueror - II", 1952, modifiers: StatModifier.More(StatType.DamageScale, 1.15))),
     ];
 

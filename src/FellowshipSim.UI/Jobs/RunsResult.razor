@@ -187,7 +187,7 @@ else
     private string Class(SimRun run) => run == Base ? "same" : Verdict(run) switch { > 0 => "gain", < 0 => "loss", _ => "same" };
 
     // The chart's range in percent: every change and its whisker, and zero, with a little room.
-    private (double Low, double High) Range()
+    private ChartRange Range()
     {
         double low = 0, high = 0;
         foreach (var run in Others)
@@ -197,7 +197,7 @@ else
             high = Math.Max(high, change + whisker);
         }
         double pad = Math.Max(0.1, (high - low) * 0.05);
-        return (low - pad, high + pad);
+        return new ChartRange(low - pad, high + pad);
     }
 
     private double Position(double change)
@@ -238,4 +238,7 @@ else
             _loaded = exception.Message;
         }
     }
+
+    /// <summary>The percent range the chart covers.</summary>
+    private readonly record struct ChartRange(double Low, double High);
 }

@@ -102,7 +102,7 @@ public class AplSimcExpressionTests
         Assert.Equal(expected, BoundExpression.Bind(expression, hero).EvaluateNumeric(ctx), 6);
     }
 
-    private static (Hero Hero, SimulationContext Ctx) Fight(string heroName, int enemies)
+    private static HeroInFight Fight(string heroName, int enemies)
     {
         var hero = HeroImporter.Import(new CharacterBuild { Hero = heroName, PrimaryStat = 1000 });
         var ctx = new SimulationContext(hero);
@@ -110,6 +110,6 @@ public class AplSimcExpressionTests
         hero.BeginFight(ctx);
         for (int i = 0; i < enemies; i++) ctx.AddEnemy(100 + i, 1, "Mob", maxHealth: 1000);
         ctx.Player.CurrentTarget = ctx.AllEnemies.First();
-        return (hero, ctx);
+        return new HeroInFight(hero, ctx);
     }
 }

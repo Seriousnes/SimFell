@@ -37,7 +37,8 @@
     // The browser app leaves for FellowshipLogs here; the desktop and local apps wait for the browser to come back.
     private async Task SignInAsync()
     {
-        (_waiting, _error) = (true, null);
+        _waiting = true;
+        _error = null;
         try
         {
             await LogsSignIn.SignInAsync(Navigation.ToBaseRelativePath(Navigation.Uri));

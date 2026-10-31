@@ -61,7 +61,8 @@ public static class Counters
         var simulator = new MonteCarloSimulator(() => hero, actions);
         for (int fight = 1; fight <= 12; fight++)
         {
-            (casts, hits) = (0, 0);
+            casts = 0;
+            hits = 0;
             var clock = System.Diagnostics.Stopwatch.StartNew();
             var result = simulator.Run(Fight.Duration, iterations: 1, targetCount: targets, degreeOfParallelism: 1);
             clock.Stop();

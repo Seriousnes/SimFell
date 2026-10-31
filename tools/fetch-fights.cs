@@ -60,9 +60,9 @@ var world = await client.QueryAsync("""
       gameData { classes { slug specs { name slug } } } }
     """);
 var zone = world["worldData"]!["zones"]!.AsArray().MaxBy(z => (int)z!["id"]!)!;
-var encounters = zone["encounters"]!.AsArray().Select(e => ((int)e!["id"]!, (string)e["name"]!)).ToList();
+var encounters = zone["encounters"]!.AsArray().Select(e => new ZoneEncounter((int)e!["id"]!, (string)e["name"]!)).ToList();
 var spec = world["gameData"]!["classes"]!.AsArray()
-    .SelectMany(c => c!["specs"]!.AsArray().Select(s => (Class: (string)c["slug"]!, Name: (string)s!["name"]!, Slug: (string)s["slug"]!)))
+    .SelectMany(c => c!["specs"]!.AsArray().Select(s => new HeroSpec((string)c["slug"]!, (string)s!["name"]!, (string)s["slug"]!)))
     .FirstOrDefault(s => s.Name.Equals(hero, StringComparison.OrdinalIgnoreCase));
 if (spec.Name == null)
 {
@@ -72,9 +72,9 @@ if (spec.Name == null)
 Console.WriteLine($"Zone {(int)zone["id"]!} \"{(string)zone["name"]!}\", {encounters.Count} encounters; {spec.Name} runs of patch {patch.Name} " +
                   $"(from {patch.Released:yyyy-MM-dd}, log format {patch.LogVersion}).");
 
-var taken = new List<(string Encounter, string Player, string Code, int FightId)>();
+var taken = new List<TakenFight>();
 var skipped = new Dictionary<string, int>();
-var queues = encounters.Select(e => new RankingQueue(e.Item1, e.Item2)).ToList();
+var queues = encounters.Select(e => new RankingQueue(e.Id, e.Name)).ToList();
 var reports = new Dictionary<string, ReportSummary>();
 while (taken.Count < count && queues.Any(q => !q.Exhausted))
 {
@@ -123,7 +123,7 @@ async Task<string?> Reject(JsonNode run)
     try { await library.GetRawFightFileAsync(client, code, fightId.Value); }
     catch (FellowshipLogsException exception) when (!Throttled(exception)) { return "download failed"; }
     string encounter = queues.First(q => q.Holds(run)).Name;
-    taken.Add((encounter, player, code, fightId.Value));
+    taken.Add(new TakenFight(encounter, player, code, fightId.Value));
     Console.WriteLine($"  {encounter}: {player} {code} fight {fightId} ({fight.Name}, {fight.DurationSeconds / 60:F0} min)");
     return null;
 }
@@ -144,7 +144,7 @@ async Task WaitForPointsAsync()
 static bool Throttled(FellowshipLogsException exception) =>
     exception.Message.Contains("returned 429") || System.Text.RegularExpressions.Regex.IsMatch(exception.Message, @"returned 5\d\d");
 
-static (string Id, string Secret)? Credentials()
+static ApiCredentials? Credentials()
 {
     var configuration = new ConfigurationBuilder()
         .AddUserSecrets(Assembly.GetEntryAssembly()!)
@@ -152,7 +152,7 @@ static (string Id, string Secret)? Credentials()
         .Build();
     string? id = configuration["FELLOWSHIPLOGS_CLIENT_ID"];
     string? secret = configuration["FELLOWSHIPLOGS_CLIENT_SECRET"];
-    return !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(secret) ? (id, secret) : null;
+    return !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(secret) ? new ApiCredentials(id, secret) : null;
 }
 /// <summary>One encounter's ranking list of the hero, read a page at a time from rank 1.</summary>
 sealed class RankingQueue(int encounterId, string name)
@@ -186,3 +186,11 @@ sealed class RankingQueue(int encounterId, string name)
         return _runs.TryDequeue(out var next) ? next : null;
     }
 }
+
+readonly record struct ZoneEncounter(int Id, string Name);
+
+readonly record struct HeroSpec(string Class, string Name, string Slug);
+
+readonly record struct TakenFight(string Encounter, string Player, string Code, int FightId);
+
+readonly record struct ApiCredentials(string Id, string Secret);

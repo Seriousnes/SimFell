@@ -47,14 +47,14 @@ public static class ReplayReportWriter
     /// Engine and log damage totals of a replay: <see cref="ReplayResult.EngineTotalDamage"/> and the log hits' damage
     /// before absorbs and blocks (what the replay deals).
     /// </summary>
-    public static (double Engine, double Log) DamageTotals(ReplayResult result) =>
-        (result.EngineTotalDamage, result.LogDamage.Sum(d => d.UnblockedAmount));
+    public static ReplayDamageTotals DamageTotals(ReplayResult result) =>
+        new(result.EngineTotalDamage, result.LogDamage.Sum(d => d.UnblockedAmount));
 
     /// <summary>True for an engine hit; false for a log hit no engine hit matched.</summary>
     private static bool IsEngineHit(HitPair hit) => hit.Log == null || hit.LandedTime.HasValue;
 
     /// <summary>An index page linking the review page of every replayed fight, with headline numbers.</summary>
-    public static string RenderIndex(IReadOnlyList<(ReplayResult Result, string File)> fights)
+    public static string RenderIndex(IReadOnlyList<ReplayedFight> fights)
     {
         var sb = new StringBuilder();
         sb.Append(Head("Replay Reviews"));
@@ -74,7 +74,7 @@ public static class ReplayReportWriter
         return sb.ToString();
     }
 
-    public sealed record CalibrationRow(string Name, int Id, (int N, double Mean) Normal, (int N, double Mean) Crit);
+    public sealed record CalibrationRow(string Name, int Id, RatioSummary Normal, RatioSummary Crit);
 
     /// <summary>Per damage ID: mean log/engine ratio of matched hits, separately for normal hits and crits.</summary>
     public static IEnumerable<CalibrationRow> Calibration(ReplayResult result) =>
@@ -83,13 +83,13 @@ public static class ReplayReportWriter
             .Select(g => new CalibrationRow(g.First().AbilityName, g.Key, Mean(g.Where(h => !h.Crit)), Mean(g.Where(h => h.Crit))))
             .OrderByDescending(row => row.Normal.N + row.Crit.N);
 
-    private static (int, double) Mean(IEnumerable<HitPair> hits)
+    private static RatioSummary Mean(IEnumerable<HitPair> hits)
     {
         var ratios = hits.Select(h => h.Ratio!.Value).ToList();
-        return (ratios.Count, ratios.Count == 0 ? 0 : ratios.Average());
+        return new RatioSummary(ratios.Count, ratios.Count == 0 ? 0 : ratios.Average());
     }
 
-    private static string Fmt((int N, double Mean) value) => value.N == 0 ? "     -      " : $"{value.Mean:F3} (n={value.N,-4})";
+    private static string Fmt(RatioSummary value) => value.N == 0 ? "     -      " : $"{value.Mean:F3} (n={value.N,-4})";
 
     public static string Render(ReplayResult result, string? navigation = null)
     {
@@ -215,14 +215,14 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         if (duration <= 0) return;
         int bins = (int)Math.Ceiling(duration);
 
-        double[] Bin(IEnumerable<(double T, double Amount)> hits)
+        double[] Bin(IEnumerable<TimedAmount> hits)
         {
             var buckets = new double[bins];
             foreach (var (second, amount) in hits) buckets[Math.Clamp((int)second, 0, bins - 1)] += amount;
             return buckets;
         }
-        var logBins = Bin(result.LogDamage.Select(d => (d.Time, d.UnblockedAmount)));
-        var engBins = Bin(engineHits.Select(h => (h.LandedTime ?? h.EngineTime, h.EngineAmount)));
+        var logBins = Bin(result.LogDamage.Select(d => new TimedAmount(d.Time, d.UnblockedAmount)));
+        var engBins = Bin(engineHits.Select(h => new TimedAmount(h.LandedTime ?? h.EngineTime, h.EngineAmount)));
 
         double[] Cumulative(double[] values)
         {
@@ -298,7 +298,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
             var lh = result.LogDamage.Where(d => d.AbilityId == id).ToList();
             var eh = engineHits.Where(h => h.AbilityId == id).ToList();
             string name = lh.FirstOrDefault()?.AbilityName ?? eh.First().AbilityName;
-            return (Id: id, Name: name,
+            return new AbilityRow(Id: id, Name: name,
                 LogDmg: lh.Sum(d => d.UnblockedAmount), EngDmg: eh.Sum(h => h.EngineAmount),
                 LogHits: lh.Count, EngHits: eh.Count,
                 LogCrits: lh.Count(d => d.Crit), EngCrits: eh.Count(h => h.Crit),
@@ -404,4 +404,12 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
     }
 
     private static string EncodeHtml(string text) => WebUtility.HtmlEncode(text);
+
+    public readonly record struct ReplayedFight(ReplayResult Result, string File);
+
+    public readonly record struct RatioSummary(int N, double Mean);
+
+    private readonly record struct TimedAmount(double Time, double Amount);
+
+    private readonly record struct AbilityRow(int Id, string Name, double LogDmg, double EngDmg, int LogHits, int EngHits, int LogCrits, int EngCrits, int LogCasts, int EngCasts);
 }

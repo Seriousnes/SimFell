@@ -79,7 +79,7 @@
         }
     }
 
-    private sealed record Section(string Id, string Title, string? Hint, IReadOnlyList<(string Syntax, AplDoc Doc)> Rows);
+    private sealed record Section(string Id, string Title, string? Hint, IReadOnlyList<AplSyntaxDoc> Rows);
 
     private static readonly IReadOnlyList<Section> Sections = Build();
 
@@ -90,35 +90,35 @@
             new("action-line", "Action lines", null, AplActionOptions.All),
             new("operators", "Operators", "Operators apply in this order: prefixes, then *, % and %%, then + and -, then comparisons, then and, then or. Parentheses change the order.",
             [
-                .. Enum.GetValues<UnaryOperator>().Select(op => (op.Symbol() + "x", op.Doc())),
-                .. Enum.GetValues<BinaryOperator>().Select(op => ($"a {op.Symbol()} b", op.Doc())),
+                .. Enum.GetValues<UnaryOperator>().Select(op => new AplSyntaxDoc(op.Symbol() + "x", op.Doc())),
+                .. Enum.GetValues<BinaryOperator>().Select(op => new AplSyntaxDoc($"a {op.Symbol()} b", op.Doc())),
             ]),
             new("scopes", "Scopes", null,
             [
                 .. PropertyExpression.Scopes.Keys.Select(scope =>
-                    ($"{scope}.<{(scope is PropertyExpression.CooldownScope or PropertyExpression.ActionScope ? "ability" : "aura")}>.<property>",
+                    new AplSyntaxDoc($"{scope}.<{(scope is PropertyExpression.CooldownScope or PropertyExpression.ActionScope ? "ability" : "aura")}>.<property>",
                         PropertyExpression.ScopeDocs[scope])),
-                ($"{PropertyExpression.ActiveDotScope}.<aura>", PropertyExpression.ScopeDocs[PropertyExpression.ActiveDotScope]),
-                ($"{PropertyExpression.VariableScope}.<name>", PropertyExpression.ScopeDocs[PropertyExpression.VariableScope]),
-                .. PropertyExpression.BuildScopes.Select(scope => ($"{scope.Key}.<name>", scope.Value.Doc)),
+                new AplSyntaxDoc($"{PropertyExpression.ActiveDotScope}.<aura>", PropertyExpression.ScopeDocs[PropertyExpression.ActiveDotScope]),
+                new AplSyntaxDoc($"{PropertyExpression.VariableScope}.<name>", PropertyExpression.ScopeDocs[PropertyExpression.VariableScope]),
+                .. PropertyExpression.BuildScopes.Select(scope => new AplSyntaxDoc($"{scope.Key}.<name>", scope.Value.Doc)),
             ]),
             new("aura", "Buff, debuff and dot properties", "buff refers to the hero. debuff and dot refer to the current target.",
                 Properties(PropertyExpression.BuffScope, "aura")),
             new("cooldown", "Cooldown properties", null, Properties(PropertyExpression.CooldownScope, "ability")),
             new("action", "Action properties", null, Properties(PropertyExpression.ActionScope, "ability")),
             new("action-values", ConditionBuilder.ThisAction.Label, ConditionBuilder.ThisAction.Description,
-                [.. PropertyExpression.ActionValues.Keys.Select(path => (path, PropertyExpression.ActionValueDoc(path)!))]),
+                [.. PropertyExpression.ActionValues.Keys.Select(path => new AplSyntaxDoc(path, PropertyExpression.ActionValueDoc(path)!))]),
             new("resources", "Resources", ConditionBuilder.Resource.Description,
             [
-                ("<resource>", PropertyExpression.ResourceCurrent),
-                (PropertyExpression.ResourcePrefix + "<resource>", PropertyExpression.ResourceCurrent),
-                ("<resource>" + PropertyExpression.DeficitSuffix, PropertyExpression.ResourceDeficit),
+                new AplSyntaxDoc("<resource>", PropertyExpression.ResourceCurrent),
+                new AplSyntaxDoc(PropertyExpression.ResourcePrefix + "<resource>", PropertyExpression.ResourceCurrent),
+                new AplSyntaxDoc("<resource>" + PropertyExpression.DeficitSuffix, PropertyExpression.ResourceDeficit),
             ]),
             new("fight-values", "Fight values", ConditionBuilder.FightValue.Description,
-                [.. PropertyExpression.Named.Select(named => (named.Key, named.Value.Doc))]),
+                [.. PropertyExpression.Named.Select(named => new AplSyntaxDoc(named.Key, named.Value.Doc))]),
         ];
     }
 
-    private static IReadOnlyList<(string Syntax, AplDoc Doc)> Properties(string scope, string name) =>
-        [.. PropertyExpression.Scopes[scope].Select(property => ($"{scope}.<{name}>.{property}", PropertyExpression.PropertyDoc(scope, property)!))];
+    private static IReadOnlyList<AplSyntaxDoc> Properties(string scope, string name) =>
+        [.. PropertyExpression.Scopes[scope].Select(property => new AplSyntaxDoc($"{scope}.<{name}>.{property}", PropertyExpression.PropertyDoc(scope, property)!))];
 }

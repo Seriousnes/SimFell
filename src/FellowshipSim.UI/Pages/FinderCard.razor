@@ -44,10 +44,10 @@
     private bool On => State.Extra == SimExtra.Finder;
 
     /// <summary>The finder's choices of how far it goes, with their labels; none for a finder without.</summary>
-    public static IReadOnlyList<(FinderRanks Ranks, string Label)> Choices(FinderKind kind) => kind switch
+    public static IReadOnlyList<RanksChoice> Choices(FinderKind kind) => kind switch
     {
-        FinderKind.Aspects or FinderKind.Sigils or FinderKind.Glyphs => [(FinderRanks.NextRank, "+1 rank"), (FinderRanks.MaxRank, "Max rank")],
-        FinderKind.Gems => [(FinderRanks.NextRank, "Next node"), (FinderRanks.EveryRank, "Every node")],
+        FinderKind.Aspects or FinderKind.Sigils or FinderKind.Glyphs => [new RanksChoice(FinderRanks.NextRank, "+1 rank"), new RanksChoice(FinderRanks.MaxRank, "Max rank")],
+        FinderKind.Gems => [new RanksChoice(FinderRanks.NextRank, "Next node"), new RanksChoice(FinderRanks.EveryRank, "Every node")],
         _ => [],
     };
 
@@ -99,4 +99,7 @@
         State.FinderRanks = ranks;
         return OnChanged.InvokeAsync();
     }
+
+    /// <summary>How far the finder goes, with its label.</summary>
+    public readonly record struct RanksChoice(FinderRanks Ranks, string Label);
 }

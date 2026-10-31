@@ -33,7 +33,7 @@ public class ResourcePool
     private readonly Dictionary<ResourceDef, ResourceState> _resources = new();
     // Speed: a hero has a few resources, and callers pass the declared ResourceDef. It is found by reference before the
     // dictionary, which hashes and compares a record's fields. Rebuilt whenever the dictionary changes.
-    private (ResourceDef Type, ResourceState State)[] _byReference = [];
+    private RegisteredResource[] _byReference = [];
 
     private bool TryGet(ResourceDef type, out ResourceState state)
     {
@@ -49,7 +49,7 @@ public class ResourcePool
     private void Set(ResourceDef type, ResourceState state)
     {
         _resources[type] = state;
-        _byReference = _resources.Select(kv => (kv.Key, kv.Value)).ToArray();
+        _byReference = _resources.Select(kv => new RegisteredResource(kv.Key, kv.Value)).ToArray();
     }
 
     public void Register(ResourceDef type, double max, double initial)
@@ -117,5 +117,7 @@ public class ResourcePool
             }
         }
     }
-}
 
+    /// <summary>A resource and its state, as <c>_byReference</c> looks them up.</summary>
+    private readonly record struct RegisteredResource(ResourceDef Type, ResourceState State);
+}

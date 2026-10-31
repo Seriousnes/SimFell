@@ -44,7 +44,7 @@ public abstract class ElarionAbility : Ability
     /// What talents added to the cast resolving now, for hits dealt after it resolved (a ricochet, a channel tick): its
     /// damage multiplier and crit chance.
     /// </summary>
-    protected (double Damage, double Crit) CastBonuses => (CastDamageMultiplier, CurrentCast?.CritChance ?? 0.0);
+    protected CastBonuses CastBonuses => new(CastDamageMultiplier, CurrentCast?.CritChance ?? 0.0);
 
     /// <summary>Clears what the ability holds between fights.</summary>
     public virtual void ResetState() { }

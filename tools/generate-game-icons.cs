@@ -95,7 +95,7 @@ lines.Add("    /// <summary>Icons of the legendary items, by hero and item ID (\
 lines.Add("    public static IReadOnlyDictionary<string, string> LegendaryItems { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)");
 lines.Add("    {");
 lines.AddRange(rows.Where(r => Text(r, "$type") == "item" && Text(r, "hero") is { Length: > 0 } && (Text(r, "icon") ?? "").EndsWith("-legendary", StringComparison.Ordinal))
-    .Select(r => (Key: $"{Text(r, "hero")}:{Int(r, "id")}", Icon: Text(r, "icon")!))
+    .Select(r => new LegendaryIcon($"{Text(r, "hero")}:{Int(r, "id")}", Text(r, "icon")!))
     .DistinctBy(x => x.Key)
     .OrderBy(x => x.Key, StringComparer.Ordinal)
     .Select(x => $"        [{Cs(x.Key)}] = {Cs(x.Icon)},"));
@@ -143,3 +143,5 @@ static int Int(JsonObject row, string key) =>
     row[key] is JsonValue jsonValue && jsonValue.TryGetValue(out string? text) ? int.Parse(text) : (int)row[key]!.GetValue<double>();
 
 static string Cs(string text) => "\"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+
+readonly record struct LegendaryIcon(string Key, string Icon);

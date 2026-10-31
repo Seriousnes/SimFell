@@ -34,12 +34,14 @@ public static class AplFormatter
     private static int Precedence(IAplExpression expression) =>
         expression is BinaryOpExpression binary ? Precedence(binary.Operator) : PrefixPrecedence;
 
-    private static string Symbol(BinaryOperator op, AplOperatorStyle style) => (op, style) switch
-    {
-        (BinaryOperator.And, AplOperatorStyle.Words) => "and",
-        (BinaryOperator.Or, AplOperatorStyle.Words) => "or",
-        _ => op.Symbol()
-    };
+    private static string Symbol(BinaryOperator op, AplOperatorStyle style) => style == AplOperatorStyle.Words
+        ? op switch
+        {
+            BinaryOperator.And => "and",
+            BinaryOperator.Or => "or",
+            _ => op.Symbol()
+        }
+        : op.Symbol();
 
     /// <summary>A prefix operator as written before its operand: "not " for <c>!</c> in words, else its symbol.</summary>
     public static string Prefix(UnaryOperator op, AplOperatorStyle style) =>

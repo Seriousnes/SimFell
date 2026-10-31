@@ -33,7 +33,7 @@ public class OwedInBlood : GundeAbility
     /// The stacks Owed in Blood had when it was last removed, and when. A replay follows the log's stacks, and the log
     /// removes them in the same moment as the cast that uses them, so the cast may come just after.
     /// </summary>
-    private (int Stacks, SimTime At) _removed;
+    private RemovedBuff _removed;
 
     public OwedInBlood(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Utility)
     {
@@ -41,7 +41,7 @@ public class OwedInBlood : GundeAbility
         IgnoresGcd = true;
         owner.Auras.OnRemoved += (aura, now) =>
         {
-            if (aura.Def == Buff) _removed = (aura.Stacks, now);
+            if (aura.Def == Buff) _removed = new RemovedBuff(aura.Stacks, now);
         };
     }
 
@@ -75,4 +75,7 @@ public class OwedInBlood : GundeAbility
         Gunde.Rend.Apply(ctx, target, rendStacks * Gunde.PrimaryAttribute(now) / Gunde.Rend.TickRate);
         Spent?.Invoke(ctx, target, stacks);
     }
+
+    /// <summary>The stacks the buff had when it was removed and the time it was removed.</summary>
+    private readonly record struct RemovedBuff(int Stacks, SimTime At);
 }

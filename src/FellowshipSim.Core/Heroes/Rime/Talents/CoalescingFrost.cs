@@ -30,7 +30,7 @@ public class CoalescingFrost : Talent
     public override int Id => TalentId;
 
     /// <summary>Stacks on each enemy, and a version that tells a pending expiry whether the stacks were refreshed since.</summary>
-    private readonly Dictionary<EnemyTarget, (int Stacks, int Version)> _stacks = new();
+    private readonly Dictionary<EnemyTarget, StackCount> _stacks = new();
     /// <summary>The fight the stacks belong to (each sim iteration and replay has its own).</summary>
     private SimulationContext? _fight;
     private Eruption? _eruption;
@@ -64,7 +64,7 @@ public class CoalescingFrost : Talent
         int added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx, target) ? 2 : 1;
         var (stacks, version) = _stacks.GetValueOrDefault(target);
         int expected = version + 1;
-        _stacks[target] = (stacks + added, expected);
+        _stacks[target] = new StackCount(stacks + added, expected);
         ctx.Schedule(SimTime.FromSeconds(DurationSeconds), c =>
         {
             if (_stacks.TryGetValue(target, out var current) && current.Version == expected) Erupt(c, target, dying: false);
@@ -106,4 +106,7 @@ public class CoalescingFrost : Talent
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }
     }
+
+    /// <summary>The stacks on an enemy and the version of its last change, which its expiry checks.</summary>
+    private readonly record struct StackCount(int Stacks, int Version);
 }

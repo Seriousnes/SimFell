@@ -68,7 +68,7 @@ static void Profile(string workload, double seconds)
 {
     var clock = Stopwatch.StartNew();
     int fights = 0;
-    if (Fight.MonteCarloWorkload(workload) is (int targets, bool idle))
+    if (Fight.MonteCarloWorkload(workload) is { Targets: var targets, Idle: var idle })
     {
         var simulator = new MonteCarloSimulator(Fight.NewHero, Fight.Actions(idle));
         while (clock.Elapsed.TotalSeconds < seconds)

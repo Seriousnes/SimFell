@@ -30,7 +30,7 @@ public sealed class BrowserDataFolder(IJSRuntime js)
     private static readonly TimeSpan SaveEvery = TimeSpan.FromSeconds(2);
 
     // Each file copied, by its path under Root: its length and when it was written, as copied.
-    private readonly Dictionary<string, (long Length, DateTime Written)> _copied = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, FileStamp> _copied = new(StringComparer.Ordinal);
     private IJSObjectReference? _storage;
 
     private async Task<IJSObjectReference> StorageAsync() =>
@@ -114,10 +114,10 @@ public sealed class BrowserDataFolder(IJSRuntime js)
         }
     }
 
-    private static (long Length, DateTime Written) Stamp(string path)
+    private static FileStamp Stamp(string path)
     {
         var file = new FileInfo(path);
-        return (file.Length, file.LastWriteTimeUtc);
+        return new FileStamp(file.Length, file.LastWriteTimeUtc);
     }
 
     // A storage key as a path under Root; null for one that would leave it.
@@ -126,4 +126,6 @@ public sealed class BrowserDataFolder(IJSRuntime js)
         string path = Path.GetFullPath(Path.Combine(Root, key));
         return path.StartsWith(Root + "/", StringComparison.Ordinal) ? path : null;
     }
+
+    private readonly record struct FileStamp(long Length, DateTime Written);
 }

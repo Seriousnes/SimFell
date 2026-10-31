@@ -192,5 +192,5 @@ public abstract class Gem
 
     public GemNode? NodeInSlot(int slot) => Nodes.FirstOrDefault(n => n.Slot == slot);
 
-    protected static Dictionary<string, double> NodeValues(params (string Key, double Value)[] values) => values.ToDictionary(v => v.Key, v => v.Value);
+    protected static Dictionary<string, double> NodeValues(params NodeValue[] values) => values.ToDictionary(v => v.Key, v => v.Value);
 }

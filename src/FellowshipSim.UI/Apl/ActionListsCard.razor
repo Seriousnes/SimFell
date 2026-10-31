@@ -90,7 +90,7 @@
 
     // The step waiting on the unsaved changes (open another hero, list or a new one), and a key that draws the pickers
     // anew so a cancelled pick shows the list still open.
-    private (string What, Func<Task> Then)? _pending;
+    private PendingStep? _pending;
     private int _pickerKey;
 
     private const string SharedValue = "shared";
@@ -323,7 +323,7 @@
     private Task AskFirst(string what, Func<Task> then)
     {
         if (!State.HasEdits) return then();
-        _pending = (what, then);
+        _pending = new PendingStep(what, then);
         _pickerKey++;
         return Task.CompletedTask;
     }

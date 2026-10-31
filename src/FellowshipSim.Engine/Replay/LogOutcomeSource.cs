@@ -40,16 +40,16 @@ public sealed class LogOutcomeSource : IOutcomeSource
         // The player's debuffs on enemies, with how many stacks each event added (for stack-jump evidence).
         foreach (var group in script.Observations.Auras
                      .Where(a => a.Source.Id == script.Player.Id && a.Target.Id != script.Player.Id)
-                     .GroupBy(a => (a.AbilityId, a.Target)))
+                     .GroupBy(a => new DebuffTarget(a.AbilityId, a.Target)))
         {
             int stacks = 0;
-            var list = new List<(LogAura Event, int Added)>();
+            var list = new List<StackGain>();
             var losses = new List<double>();
             _enemyDebuffApplications[group.Key] = group.Where(a => a.Type is "applydebuff" or "refreshdebuff").OrderBy(a => a.Time).ToList();
             foreach (var aura in group.OrderBy(a => a.Time))
             {
                 int now = aura.Type is "removedebuff" or "removebuff" ? 0 : aura.Stack ?? (aura.IsGain ? Math.Max(stacks, 1) : stacks);
-                if (aura.IsGain && now > stacks) list.Add((aura, now - stacks));
+                if (aura.IsGain && now > stacks) list.Add(new StackGain(aura, now - stacks));
                 if (aura.IsLoss && now < stacks) losses.Add(aura.Time);
                 stacks = now;
             }
@@ -63,15 +63,15 @@ public sealed class LogOutcomeSource : IOutcomeSource
     }
 
     private readonly Dictionary<UnitRef, double> _demise = new();
-    private readonly Dictionary<(int LogId, UnitRef Target), List<(LogAura Event, int Added)>> _enemyStackGains = new();
+    private readonly Dictionary<DebuffTarget, List<StackGain>> _enemyStackGains = new();
     // The player's debuffs on enemies, applied or refreshed (for enemy-debuff evidence).
-    private readonly Dictionary<(int LogId, UnitRef Target), List<LogAura>> _enemyDebuffApplications = new();
+    private readonly Dictionary<DebuffTarget, List<LogAura>> _enemyDebuffApplications = new();
     private readonly HashSet<LogAura> _claimedDebuffApplications = new();
 
     /// <summary>Proof of a proc that applies a debuff: the log applies or refreshes it on the proc's enemy in the window.</summary>
     private bool ClaimEnemyDebuffEvidence(ProcEvidence.Evidence evidence, double now, EnemyTarget? target)
     {
-        if (target == null || !_enemyDebuffApplications.TryGetValue((evidence.LogId, new UnitRef(target.Id, target.InstanceId)), out var applied)) return false;
+        if (target == null || !_enemyDebuffApplications.TryGetValue(new DebuffTarget(evidence.LogId, new UnitRef(target.Id, target.InstanceId)), out var applied)) return false;
         double from = now + evidence.MinDelaySeconds - _options.SameTickSeconds, to = now + evidence.DelaySeconds + _options.SameTickSeconds;
         foreach (var application in applied)
         {
@@ -83,11 +83,11 @@ public sealed class LogOutcomeSource : IOutcomeSource
         return false;
     }
     // When the player's debuffs on enemies lost stacks (for stack-loss evidence).
-    private readonly Dictionary<(int LogId, UnitRef Target), List<double>> _enemyStackLosses = new();
+    private readonly Dictionary<DebuffTarget, List<double>> _enemyStackLosses = new();
 
     /// <summary>True when the player's debuff <paramref name="logId"/> on <paramref name="target"/> lost a stack in the server frame of <paramref name="time"/>.</summary>
     private bool LostStackAt(int logId, UnitRef target, double time) =>
-        _enemyStackLosses.TryGetValue((logId, target), out var losses) && losses.Any(t => Math.Abs(t - time) <= _options.SameTickSeconds);
+        _enemyStackLosses.TryGetValue(new DebuffTarget(logId, target), out var losses) && losses.Any(t => Math.Abs(t - time) <= _options.SameTickSeconds);
     private readonly HashSet<LogAura> _claimedStackEvidence = new();
     private const double StackEvidenceWindowSeconds = 0.1;
 
@@ -346,16 +346,16 @@ public sealed class LogOutcomeSource : IOutcomeSource
             var jump = jumps[i];
             if (jump.To < now - _options.SameTickSeconds) continue;
             if (jump.From > now + PeriodicEffect.ServerFrameSeconds) break;
-            if (jump.To > now + ResourceEvidenceWindowSeconds || _claimedResourceJumps.Contains((evidence, i))) continue;
-            _claimedResourceJumps.Add((evidence, i));
+            if (jump.To > now + ResourceEvidenceWindowSeconds || _claimedResourceJumps.Contains(new ClaimedJump(evidence, i))) continue;
+            _claimedResourceJumps.Add(new ClaimedJump(evidence, i));
             return true;
         }
         return false;
     }
 
-    private List<(double From, double To)> ResourceJumps(ProcEvidence.Evidence evidence)
+    private List<ResourceJump> ResourceJumps(ProcEvidence.Evidence evidence)
     {
-        var jumps = new List<(double From, double To)>();
+        var jumps = new List<ResourceJump>();
         var log = LogResources.All.FirstOrDefault(r => r.Resource == evidence.Resource);
         if (log == null) return jumps;
         string type = log.LogResourceType.ToString();
@@ -370,7 +370,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
                 && amount < max - 0.5 && previousAmount < max - 0.5)
             {
                 double excess = amount - previousAmount - evidence.ResourceRegenPerSecond * (reading.Time - previous.Time);
-                if (Math.Abs(excess - evidence.ResourceGain) <= 0.3 * evidence.ResourceGain) jumps.Add((previous.Time, reading.Time));
+                if (Math.Abs(excess - evidence.ResourceGain) <= 0.3 * evidence.ResourceGain) jumps.Add(new ResourceJump(previous.Time, reading.Time));
             }
             previous = reading;
             previousAmount = amount;
@@ -380,13 +380,13 @@ public sealed class LogOutcomeSource : IOutcomeSource
 
     private const double ResourceEvidenceWindowSeconds = 0.5;
     private readonly List<LogResourceSnapshot> _resourceReadings = [];
-    private readonly Dictionary<ProcEvidence.Evidence, List<(double From, double To)>> _resourceJumps = new();
-    private readonly HashSet<(ProcEvidence.Evidence, int)> _claimedResourceJumps = new();
+    private readonly Dictionary<ProcEvidence.Evidence, List<ResourceJump>> _resourceJumps = new();
+    private readonly HashSet<ClaimedJump> _claimedResourceJumps = new();
 
     /// <summary>Proof of a proc that adds extra stacks: the debuff on <paramref name="target"/> gains <paramref name="jump"/> stacks at once.</summary>
     private bool ClaimStackEvidence(int logId, int jump, double now, EnemyTarget? target)
     {
-        if (target == null || !_enemyStackGains.TryGetValue((logId, new UnitRef(target.Id, target.InstanceId)), out var gains)) return false;
+        if (target == null || !_enemyStackGains.TryGetValue(new DebuffTarget(logId, new UnitRef(target.Id, target.InstanceId)), out var gains)) return false;
         // The gain closest to the roll: the hit's own (engine hits can land a few server frames from the log's, and the
         // hits that add stacks are at least 0.17s apart).
         var gain = gains
@@ -461,6 +461,14 @@ public sealed class LogOutcomeSource : IOutcomeSource
         }
         return true;
     }
+
+    private readonly record struct DebuffTarget(int LogId, UnitRef Target);
+
+    private readonly record struct StackGain(LogAura Event, int Added);
+
+    private readonly record struct ResourceJump(double From, double To);
+
+    private readonly record struct ClaimedJump(ProcEvidence.Evidence Evidence, int Index);
 }
 
 /// <summary>
@@ -470,7 +478,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
 /// </summary>
 public sealed class HitLedger
 {
-    private readonly Dictionary<(int AbilityId, int TargetId, int Instance), List<LogDamage>> _byKey = new();
+    private readonly Dictionary<HitKey, List<LogDamage>> _byKey = new();
     private readonly Dictionary<int, List<LogDamage>> _byAbility = new();
     private readonly List<LogDamage> _all;
     private readonly HashSet<LogDamage> _matched = new();
@@ -481,7 +489,7 @@ public sealed class HitLedger
         _all = hits.OrderBy(h => h.Time).ToList();
         foreach (var damage in _all)
         {
-            var key = (damage.AbilityId, damage.Target.Id, damage.Target.Instance);
+            var key = new HitKey(damage.AbilityId, damage.Target.Id, damage.Target.Instance);
             if (!_byKey.TryGetValue(key, out var list)) _byKey[key] = list = new List<LogDamage>();
             list.Add(damage);
             if (!_byAbility.TryGetValue(damage.AbilityId, out var byAbility)) _byAbility[damage.AbilityId] = byAbility = new List<LogDamage>();
@@ -514,7 +522,7 @@ public sealed class HitLedger
         }
         if (reservedOnly) return null;
         // A hit that chose its target from a log hit takes that hit.
-        if (_reserved.TryGetValue((logId, target), out var queue))
+        if (_reserved.TryGetValue(new LogUnit(logId, target), out var queue))
         {
             while (queue.Count > 0)
             {
@@ -524,7 +532,7 @@ public sealed class HitLedger
                 if (!_dealt.Contains(reserved) && _matched.Add(reserved)) return reserved;
             }
         }
-        if (!_byKey.TryGetValue((logId, target.Id, target.Instance), out var list)) return null;
+        if (!_byKey.TryGetValue(new HitKey(logId, target.Id, target.Instance), out var list)) return null;
         foreach (var damage in list)
         {
             if (damage.Time < engineTime - options.HitEarlySeconds) continue;
@@ -565,7 +573,7 @@ public sealed class HitLedger
     /// </summary>
     public LogDamage? ReserveTick(int logId, UnitRef target, double scheduled, double halfWindow, PeriodicEffect owner)
     {
-        if (!_byKey.TryGetValue((logId, target.Id, target.Instance), out var list)) return null;
+        if (!_byKey.TryGetValue(new HitKey(logId, target.Id, target.Instance), out var list)) return null;
         LogDamage? best = null;
         foreach (var damage in list)
         {
@@ -634,7 +642,7 @@ public sealed class HitLedger
     public void MarkDealt(LogDamage hit) => _dealt.Add(hit);
 
     private readonly HashSet<LogDamage> _targetChoices = new();
-    private readonly Dictionary<(int LogId, UnitRef Unit), Queue<LogDamage>> _reserved = new();
+    private readonly Dictionary<LogUnit, Queue<LogDamage>> _reserved = new();
 
     /// <summary>The next engine hit with the ID of <paramref name="damage"/> on its target matches <paramref name="damage"/>.</summary>
     public void ReserveForMatch(LogDamage damage) => Reserve(damage);
@@ -642,7 +650,7 @@ public sealed class HitLedger
     private void Reserve(LogDamage damage)
     {
         _targetChoices.Add(damage);
-        var key = (damage.AbilityId, damage.Target);
+        var key = new LogUnit(damage.AbilityId, damage.Target);
         if (!_reserved.TryGetValue(key, out var queue)) _reserved[key] = queue = new Queue<LogDamage>();
         queue.Enqueue(damage);
     }
@@ -650,7 +658,7 @@ public sealed class HitLedger
     /// <summary>True when the log has a hit with <paramref name="logId"/> on <paramref name="unit"/> from <paramref name="from"/> to <paramref name="to"/> that is still free.</summary>
     public bool HasUnclaimed(int logId, UnitRef unit, double from, double to)
     {
-        if (!_byKey.TryGetValue((logId, unit.Id, unit.Instance), out var list)) return false;
+        if (!_byKey.TryGetValue(new HitKey(logId, unit.Id, unit.Instance), out var list)) return false;
         foreach (var damage in list)
         {
             if (damage.Time < from) continue;
@@ -825,6 +833,10 @@ public sealed class HitLedger
 
     public int TotalHits => _all.Count;
     public int MatchedHits => _matched.Count;
+
+    private readonly record struct HitKey(int AbilityId, int TargetId, int Instance);
+
+    private readonly record struct LogUnit(int LogId, UnitRef Unit);
 }
 
 /// <summary>

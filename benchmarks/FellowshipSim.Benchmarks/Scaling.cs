@@ -83,7 +83,7 @@ public static class Scaling
         }
 
         int cores = System.Numerics.BitOperations.PopCount(ulong.Parse(args[3]));
-        Action work = Fight.MonteCarloWorkload(workload) is (int targets, bool idle)
+        Action work = Fight.MonteCarloWorkload(workload) is { Targets: var targets, Idle: var idle }
             ? MonteCarlo(iterations, targets, idle, cores)
             : workload == "freedice"
                 ? FreeDice(iterations)
@@ -147,17 +147,17 @@ public static class Scaling
         try
         {
             if (!GetSystemCpuSetInformation(buffer, length, out length, IntPtr.Zero, 0)) throw new InvalidOperationException("GetSystemCpuSetInformation failed");
-            var sets = new List<(int Logical, int Core, int Efficiency)>();
+            var sets = new List<CpuSet>();
             for (int offset = 0; offset < length;)
             {
                 int size = Marshal.ReadInt32(buffer, offset);
                 // SYSTEM_CPU_SET_INFORMATION: LogicalProcessorIndex at 14, CoreIndex at 15, EfficiencyClass at 18.
-                sets.Add((Marshal.ReadByte(buffer, offset + 14), Marshal.ReadByte(buffer, offset + 15), Marshal.ReadByte(buffer, offset + 18)));
+                sets.Add(new CpuSet(Marshal.ReadByte(buffer, offset + 14), Marshal.ReadByte(buffer, offset + 15), Marshal.ReadByte(buffer, offset + 18)));
                 offset += size;
             }
             return sets
                 .GroupBy(s => s.Core)
-                .SelectMany(core => core.OrderBy(s => s.Logical).Select((s, i) => (s.Logical, Thread: i, s.Efficiency, s.Core)))
+                .SelectMany(core => core.OrderBy(s => s.Logical).Select((s, i) => new ThreadedCpuSet(s.Logical, i, s.Efficiency, s.Core)))
                 .OrderBy(s => s.Thread).ThenByDescending(s => s.Efficiency).ThenBy(s => s.Core)
                 .Select(s => s.Logical)
                 .ToList();
@@ -171,10 +171,14 @@ public static class Scaling
         if (processors.Count == Environment.ProcessorCount && processors.Count > 2) return $"all {processors.Count}";
         if (processors.Count <= 2) return string.Join(",", processors);
         int step = processors[1] - processors[0];
-        bool even = step > 0 && processors.Zip(processors.Skip(1)).All(p => p.Second - p.First == step);
+        bool even = step > 0 && processors.Zip(processors.Skip(1), (first, second) => second - first == step).All(gap => gap);
         return even ? $"{processors[0]}-{processors[^1]}" + (step > 1 ? $" step {step}" : "") : string.Join(",", processors);
     }
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool GetSystemCpuSetInformation(IntPtr information, int bufferLength, out int returnedLength, IntPtr process, uint flags);
+
+    private readonly record struct CpuSet(int Logical, int Core, int Efficiency);
+
+    private readonly record struct ThreadedCpuSet(int Logical, int Thread, int Efficiency, int Core);
 }

@@ -7,18 +7,18 @@ public class Sapphire : Gem
 
     public static readonly GemNode[] AllNodes =
     [
-        new(294, 1, "Ancestral Surge", 80, NodeValues(("SpiritPointsBonus", 10), ("PrimaryStatBonus", 0.08)),
+        new(294, 1, "Ancestral Surge", 80, NodeValues(new NodeValue("SpiritPointsBonus", 10), new NodeValue("PrimaryStatBonus", 0.08)),
             AuraDef.Effect("Ancestral Surge", AncestralSurgeEffectId, modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, 1.08))),
-        new(276, 2, "Mystic's Intuition", 150, NodeValues(("StaminaBonus", 4), ("SpiritBonus", 8))),
-        new(304, 3, "Resonating Soul", 220, NodeValues(("HealthInterval", 0.1), ("DamageReduction", 0.01))),
-        new(286, 4, "Oracle's Foresight", 300, NodeValues(("SpiritBonus", 0.02))),
-        new(308, 5, "Blessing of the Prophet", 450, NodeValues(("CostReduction", 0.05), ("DurationBonus", 6))),
-        new(295, 6, "Ancestral Surge - II", 600, NodeValues(("SpiritPointsBonus", 30), ("PrimaryStatBonus", 0.24)),
+        new(276, 2, "Mystic's Intuition", 150, NodeValues(new NodeValue("StaminaBonus", 4), new NodeValue("SpiritBonus", 8))),
+        new(304, 3, "Resonating Soul", 220, NodeValues(new NodeValue("HealthInterval", 0.1), new NodeValue("DamageReduction", 0.01))),
+        new(286, 4, "Oracle's Foresight", 300, NodeValues(new NodeValue("SpiritBonus", 0.02))),
+        new(308, 5, "Blessing of the Prophet", 450, NodeValues(new NodeValue("CostReduction", 0.05), new NodeValue("DurationBonus", 6))),
+        new(295, 6, "Ancestral Surge - II", 600, NodeValues(new NodeValue("SpiritPointsBonus", 30), new NodeValue("PrimaryStatBonus", 0.24)),
             AuraDef.Effect("Ancestral Surge - II", AncestralSurgeIIEffectId, modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, 1.24))),
-        new(277, 7, "Mystic's Intuition - II", 800, NodeValues(("StaminaBonus", 12), ("SpiritBonus", 24))),
-        new(305, 8, "Resonating Soul - II", 1000, NodeValues(("HealthInterval", 0.1), ("DamageReduction", 0.03))),
-        new(287, 9, "Oracle's Foresight - II", 1250, NodeValues(("SpiritBonus", 0.06))),
-        new(309, 10, "Blessing of the Prophet - II", 1500, NodeValues(("CostReduction", 0.15), ("DurationBonus", 18))),
+        new(277, 7, "Mystic's Intuition - II", 800, NodeValues(new NodeValue("StaminaBonus", 12), new NodeValue("SpiritBonus", 24))),
+        new(305, 8, "Resonating Soul - II", 1000, NodeValues(new NodeValue("HealthInterval", 0.1), new NodeValue("DamageReduction", 0.03))),
+        new(287, 9, "Oracle's Foresight - II", 1250, NodeValues(new NodeValue("SpiritBonus", 0.06))),
+        new(309, 10, "Blessing of the Prophet - II", 1500, NodeValues(new NodeValue("CostReduction", 0.15), new NodeValue("DurationBonus", 18))),
     ];
 
     public override GemColor Color => GemColor.Sapphire;

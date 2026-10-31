@@ -50,7 +50,7 @@ public sealed class FellowshipLogsClient
         var token = await GetTokenAsync(ct);
         using var request = new HttpRequestMessage(HttpMethod.Post, _apiUrl)
         {
-            Content = new StringContent(JsonSerializer.Serialize(new { query, variables }), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(new GraphQlRequest(query, variables)), Encoding.UTF8, "application/json")
         };
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
         request.Headers.UserAgent.ParseAdd("FellowshipSim/1.0");

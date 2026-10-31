@@ -171,10 +171,13 @@ public class EnchantSlotsTests
         // of aspects, sigils and glyphs, 3 protective enchants, with a weapon.
         var build = BuildEditor.NewBuild("Rime");
         var editor = new BuildEditor(build) { Weapon = BuildCatalog.For("Rime").Weapons[0].Id };
-        foreach (var (enchant, rating) in new[] { (StatEnchant.All[0], 18.0), (StatEnchant.All[2], 29.0), (StatEnchant.All[3], 25.0), (StatEnchant.All[4], 6.0) })
+        foreach (var (enchant, rating) in new StatEnchantRating[] { new(StatEnchant.All[0], 18.0), new(StatEnchant.All[2], 29.0), new(StatEnchant.All[3], 25.0), new(StatEnchant.All[4], 6.0) })
             editor.SetStatEnchantRating(enchant, rating);
         build.GearGemBonuses[GemColor.Sapphire] = 17;
         Assert.Equal(14, editor.Used(EnchantSlot.StatEnchants));
         Assert.InRange(editor.UsedTotal, 0, editor.TotalLimit);
     }
+
+    /// <summary>A stat enchant, with the rating it is set to.</summary>
+    private readonly record struct StatEnchantRating(StatEnchant Enchant, double Rating);
 }

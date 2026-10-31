@@ -13,12 +13,12 @@ public class DecisionTimingTests
     public void After_An_Instant_Cast_The_Next_Decision_Is_At_The_Hasted_Global_Cooldown()
     {
         var hero = HeroImporter.Import(Fixture());
-        var starts = new List<(SimTime At, Ability Ability, double Haste)>();
-        hero.OnCastStarted += (ability, _, now) => starts.Add((now, ability, hero.GetHaste(now)));
+        var starts = new List<HastedCastStart>();
+        hero.OnCastStarted += (ability, _, now) => starts.Add(new HastedCastStart(now, ability, hero.GetHaste(now)));
         // Frost Bolt is always ready, so every decision casts.
         Fight(hero, "actions+=/cold_snap\nactions+=/frost_bolt", seconds: 60);
 
-        var afterInstants = starts.Zip(starts.Skip(1)).Where(p => p.First.Ability is ColdSnap).ToList();
+        var afterInstants = starts.Zip(starts.Skip(1), (cast, next) => new ConsecutiveCasts(cast, next)).Where(p => p.Cast.Ability is ColdSnap).ToList();
         Assert.NotEmpty(afterInstants);
         foreach (var (cast, next) in afterInstants)
         {
@@ -43,7 +43,7 @@ public class DecisionTimingTests
         var hero = Tester.Create();
         var starts = CastStarts(hero);
         Fight(hero, "actions+=/strike,if=focus>=5\nactions+=/gather", seconds: 5);
-        Assert.Equal([("Gather", 0L), ("Strike", 2345L)], starts.Select(s => (s.Ability.Name, s.At.Milliseconds)));
+        Assert.Equal([new NamedCastTime("Gather", 0L), new NamedCastTime("Strike", 2345L)], starts.Select(s => new NamedCastTime(s.Ability.Name, s.At.Milliseconds)));
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class DecisionTimingTests
         hero.Auras.OnGained += (aura, _, _) => { if (aura.Def == Tester.Mark) markExpires = aura.ExpiresAt; };
         Fight(hero, "actions+=/strike,if=buff.mark.up&buff.mark.remains<2\nactions+=/mark", seconds: 6);
         // The remaining time is below 2 s from the first millisecond after 2 s before the expiry.
-        Assert.Equal([("Mark", 0L), ("Strike", markExpires!.Value.Milliseconds - 1999)], starts.Select(s => (s.Ability.Name, s.At.Milliseconds)));
+        Assert.Equal([new NamedCastTime("Mark", 0L), new NamedCastTime("Strike", markExpires!.Value.Milliseconds - 1999)], starts.Select(s => new NamedCastTime(s.Ability.Name, s.At.Milliseconds)));
     }
 
     [Fact]
@@ -81,18 +81,18 @@ public class DecisionTimingTests
     {
         var hero = Tester.Create();
         SimTime? markExpires = null;
-        var runOut = new List<(SimTime Now, SimTime Clock)>();
+        var runOut = new List<AuraRemoval>();
         hero.Auras.OnGained += (aura, _, _) => { if (aura.Def == Tester.Mark) markExpires = aura.ExpiresAt; };
-        hero.Auras.OnRemoved += (aura, now) => { if (aura.Def == Tester.Mark) runOut.Add((now, hero.SimContext!.CurrentTime)); };
+        hero.Auras.OnRemoved += (aura, now) => { if (aura.Def == Tester.Mark) runOut.Add(new AuraRemoval(now, hero.SimContext!.CurrentTime)); };
         // Hold's 10 s cast covers Mark's expiry, and nothing reads the auras during it.
         Fight(hero, "actions+=/mark\nactions+=/hold", seconds: 12);
-        Assert.Equal([(markExpires!.Value, markExpires.Value)], runOut);
+        Assert.Equal([new AuraRemoval(markExpires!.Value, markExpires.Value)], runOut);
     }
 
-    private static List<(SimTime At, Ability Ability)> CastStarts(Hero hero)
+    private static List<CastStart> CastStarts(Hero hero)
     {
-        var starts = new List<(SimTime, Ability)>();
-        hero.OnCastStarted += (ability, _, now) => starts.Add((now, ability));
+        var starts = new List<CastStart>();
+        hero.OnCastStarted += (ability, _, now) => starts.Add(new CastStart(now, ability));
         return starts;
     }
 
@@ -154,4 +154,19 @@ public class DecisionTimingTests
             _effect(ctx, Owner);
         }
     }
+
+    /// <summary>A cast starting at a time.</summary>
+    private readonly record struct CastStart(SimTime At, Ability Ability);
+
+    /// <summary>A cast starting at a time, with the hero's haste then.</summary>
+    private readonly record struct HastedCastStart(SimTime At, Ability Ability, double Haste);
+
+    /// <summary>A cast and the cast after it.</summary>
+    private readonly record struct ConsecutiveCasts(HastedCastStart Cast, HastedCastStart Next);
+
+    /// <summary>An ability's name and the millisecond its cast starts at.</summary>
+    private readonly record struct NamedCastTime(string Name, long Milliseconds);
+
+    /// <summary>An aura running out at a time, with the simulation clock then.</summary>
+    private readonly record struct AuraRemoval(SimTime Now, SimTime Clock);
 }

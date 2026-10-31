@@ -59,7 +59,7 @@
                 <li @key="@("other")" class="kind" role="presentation">
                     <div class="kind-head" role="presentation">Other</div>
                     <ul role="group" aria-label="Other">
-                        @foreach (var (kindId, label) in new[] { (ConditionBuilder.NumberKind, "Number"), (ConditionBuilder.GroupKind, "Group") })
+                        @foreach (var (kindId, label) in OtherKinds)
                         {
                             var pick = new ValuePick(kindId);
                             <li @key="kindId" id="@($"{_id}-{option++}")" role="option" data-search="@label.ToLowerInvariant()" data-picked="@(pick == Value)"
@@ -219,4 +219,9 @@
         }
         _self?.Dispose();
     }
+
+    private static readonly OtherKind[] OtherKinds = [new OtherKind(ConditionBuilder.NumberKind, "Number"), new OtherKind(ConditionBuilder.GroupKind, "Group")];
+
+    /// <summary>A kind of value the picker lists under Other, with its label.</summary>
+    private readonly record struct OtherKind(string KindId, string Label);
 }

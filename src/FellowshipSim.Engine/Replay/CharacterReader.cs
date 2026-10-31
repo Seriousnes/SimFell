@@ -61,9 +61,9 @@ public static class CharacterReader
 
         // Gear: augmentations (augmentation ID + 3,000,000), glyphs, the relics and legendary items. Glyphs carry per-item
         // IDs in logs, so they are matched to the game's glyphs by name.
-        var augmentations = new List<(int Id, int Rank, string? Name)>();
-        var glyphs = new List<(int Id, int Rank, string? Name)>();
-        var statEnchants = new List<(int Id, int Rank, string? Name)>();
+        var augmentations = new List<RankedEntry>();
+        var glyphs = new List<RankedEntry>();
+        var statEnchants = new List<RankedEntry>();
         // How many slots each stat enchant fills: on an item one per 6 rating, rounded up (6 is one, 10 and 12 are two;
         // combat logs: with it every non-legendary item holds exactly 3 slots, and 40 of 46 players of patch 0.5.0.0 fill
         // the 44), and one per weapon tree point.
@@ -94,8 +94,8 @@ public static class CharacterReader
             {
                 string name = Str(blessing?["name"]) ?? "";
                 int index = glyphs.FindIndex(x => x.Name == name);
-                if (index < 0) glyphs.Add((Catalog.GlyphIdByName(name), (int)Num(blessing?["level"], 1), name));
-                else glyphs[index] = (glyphs[index].Id, glyphs[index].Rank + (int)Num(blessing?["level"], 1), name);
+                if (index < 0) glyphs.Add(new RankedEntry(Catalog.GlyphIdByName(name), (int)Num(blessing?["level"], 1), name));
+                else glyphs[index] = new RankedEntry(glyphs[index].Id, glyphs[index].Rank + (int)Num(blessing?["level"], 1), name);
             }
             // The gem in the item's socket, and the item's gem power bonuses (each names its colour).
             if (GemItem.Find((int)Num(item["gem"]?["id"])) is { } gem) build.SocketedGemIds.Add(gem.Id);
@@ -137,17 +137,17 @@ public static class CharacterReader
     /// <summary>The rating of one stat enchant slot on an item (combat logs: 6 at the current item level).</summary>
     private const double StatEnchantSlotRating = 6.0;
 
-    private static void AddRank(List<(int Id, int Rank, string? Name)> list, int id, int rank, string? name, bool cap = false)
+    private static void AddRank(List<RankedEntry> list, int id, int rank, string? name, bool cap = false)
     {
         if (id <= 0) return;
         int index = list.FindIndex(e => e.Id == id);
         if (index < 0)
         {
-            list.Add((id, cap ? Math.Min(MaxAugmentationRank, rank) : rank, name));
+            list.Add(new RankedEntry(id, cap ? Math.Min(MaxAugmentationRank, rank) : rank, name));
             return;
         }
         int total = list[index].Rank + rank;
-        list[index] = (id, cap ? Math.Min(MaxAugmentationRank, total) : total, list[index].Name ?? name);
+        list[index] = new RankedEntry(id, cap ? Math.Min(MaxAugmentationRank, total) : total, list[index].Name ?? name);
     }
 
     private static string? Str(JsonNode? node) => node is JsonValue jsonValue && jsonValue.TryGetValue<string>(out var text) ? text : null;
@@ -159,4 +159,6 @@ public static class CharacterReader
         if (jsonValue.TryGetValue<long>(out var integer)) return integer;
         return fallback;
     }
+
+    private readonly record struct RankedEntry(int Id, int Rank, string? Name);
 }

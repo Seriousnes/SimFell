@@ -159,37 +159,37 @@ public sealed class AplVocabulary
     }
 
     /// <summary>Token kind of <paramref name="property"/> for this hero, and the problem when the hero has nothing by that name.</summary>
-    public (AplTokenKind Kind, string? Problem) Classify(PropertyExpression property)
+    public AplTokenClassification Classify(PropertyExpression property)
     {
-        if (PropertyExpression.Named.ContainsKey(property.PropertyPath)) return (AplTokenKind.Named, null);
-        if (Resources.Any(r => r.Slug == property.ResourceName)) return (AplTokenKind.Resource, null);
+        if (PropertyExpression.Named.ContainsKey(property.PropertyPath)) return new AplTokenClassification(AplTokenKind.Named, null);
+        if (Resources.Any(r => r.Slug == property.ResourceName)) return new AplTokenClassification(AplTokenKind.Resource, null);
         // Build parts and variables read 0 when the build or the list has none of the name.
         if (property.Scope != null && (PropertyExpression.BuildScopes.ContainsKey(property.Scope) || property.Scope == PropertyExpression.VariableScope))
         {
-            return (AplTokenKind.Named, null);
+            return new AplTokenClassification(AplTokenKind.Named, null);
         }
         if (property.Scope == PropertyExpression.ActiveDotScope)
         {
-            return Auras.Any(a => a.Slug == property.Name) ? (AplTokenKind.Debuff, null) : (AplTokenKind.Unknown, $"{Hero} has no debuff named `{property.Name}`.");
+            return Auras.Any(a => a.Slug == property.Name) ? new AplTokenClassification(AplTokenKind.Debuff, null) : new AplTokenClassification(AplTokenKind.Unknown, $"{Hero} has no debuff named `{property.Name}`.");
         }
         // An action's own values ("full_recharge_time", "refreshable") read its ability (AplParser binds them so).
-        if (property.Scope == null && PropertyExpression.OfAction(property.PropertyPath, "") != null) return (AplTokenKind.Named, null);
-        if (property.Scope == null) return (AplTokenKind.Unknown, $"{Hero} has no value or resource named `{property.PropertyPath}`; it reads as 0.");
+        if (property.Scope == null && PropertyExpression.OfAction(property.PropertyPath, "") != null) return new AplTokenClassification(AplTokenKind.Named, null);
+        if (property.Scope == null) return new AplTokenClassification(AplTokenKind.Unknown, $"{Hero} has no value or resource named `{property.PropertyPath}`; it reads as 0.");
 
         var properties = PropertyExpression.Scopes[property.Scope];
         if (!properties.Contains(property.Property))
         {
-            return (AplTokenKind.Unknown, $"`{property.Scope}` has no property `{property.Property}` (it has {string.Join(", ", properties)}).");
+            return new AplTokenClassification(AplTokenKind.Unknown, $"`{property.Scope}` has no property `{property.Property}` (it has {string.Join(", ", properties)}).");
         }
         if (property.Scope is PropertyExpression.CooldownScope or PropertyExpression.ActionScope)
         {
             var hero = _hero ?? throw new InvalidOperationException($"This vocabulary of {Hero} was read from JSON and has no hero to check against.");
             return AplNames.FindAbility(hero, property.Name!) != null
-                ? (AplTokenKind.Cooldown, null)
-                : (AplTokenKind.Unknown, $"{Hero} has no ability named `{property.Name}`.");
+                ? new AplTokenClassification(AplTokenKind.Cooldown, null)
+                : new AplTokenClassification(AplTokenKind.Unknown, $"{Hero} has no ability named `{property.Name}`.");
         }
-        if (Auras.All(a => a.Slug != property.Name)) return (AplTokenKind.Unknown, $"{Hero} has no aura named `{property.Name}`.");
-        return property.Scope == PropertyExpression.BuffScope ? (AplTokenKind.Buff, null) : (AplTokenKind.Debuff, null);
+        if (Auras.All(a => a.Slug != property.Name)) return new AplTokenClassification(AplTokenKind.Unknown, $"{Hero} has no aura named `{property.Name}`.");
+        return property.Scope == PropertyExpression.BuffScope ? new AplTokenClassification(AplTokenKind.Buff, null) : new AplTokenClassification(AplTokenKind.Debuff, null);
     }
 
     /// <summary>Tokens of <paramref name="text"/> with their kinds, and the parse error of text outside the grammar.</summary>
@@ -205,10 +205,10 @@ public sealed class AplVocabulary
         {
             var (kind, problem) = t.Kind switch
             {
-                AplToken.Number => (AplTokenKind.Number, null),
-                AplToken.LParen or AplToken.RParen => (AplTokenKind.Parenthesis, null),
+                AplToken.Number => new AplTokenClassification(AplTokenKind.Number, null),
+                AplToken.LParen or AplToken.RParen => new AplTokenClassification(AplTokenKind.Parenthesis, null),
                 AplToken.Identifier => Classify(new PropertyExpression(t.ToStringValue())),
-                _ => (AplTokenKind.Operator, (string?)null),
+                _ => new AplTokenClassification(AplTokenKind.Operator, null),
             };
             return new AplTokenSpan(t.Position.Absolute, t.Span.Length, kind, problem);
         }).ToList();

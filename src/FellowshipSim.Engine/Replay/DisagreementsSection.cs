@@ -15,7 +15,7 @@ internal static class DisagreementsSection
     public static void Render(StringBuilder sb, IReadOnlyList<ReplayIssue> issues)
     {
         if (issues.Count == 0) return;
-        var states = new List<(ReplayIssue Issue, EngineState State)>();
+        var states = new List<IssueState>();
         sb.Append($"<h2>Disagreements ({issues.Count:N0})</h2>");
         foreach (var category in Enum.GetValues<IssueCategory>())
         {
@@ -34,7 +34,7 @@ internal static class DisagreementsSection
                 if (issue.State is { } state)
                 {
                     sb.Append($"<td><button class=\"state\" data-s=\"{states.Count}\">Engine state</button></td></tr>");
-                    states.Add((issue, state));
+                    states.Add(new IssueState(issue, state));
                 }
                 else sb.Append("<td></td></tr>");
             }
@@ -51,10 +51,10 @@ internal static class DisagreementsSection
     /// <c>{"a": [[name, logId, [modifier, ...]], ...], "s": [state, ...]}</c>. Each state is
     /// <c>[time, message, hero, target, hit, cast]</c>, and each aura in it <c>[aura index, stacks, seconds left]</c>.
     /// </summary>
-    private static string StatesJson(List<(ReplayIssue Issue, EngineState State)> states)
+    private static string StatesJson(List<IssueState> states)
     {
-        var auraIndex = new Dictionary<(string Name, int LogId, IReadOnlyList<StatModifier> Modifiers), int>();
-        var auraList = new List<(string Name, int LogId, IReadOnlyList<StatModifier> Modifiers)>();
+        var auraIndex = new Dictionary<AuraKey, int>();
+        var auraList = new List<AuraKey>();
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream))
         {
@@ -65,7 +65,7 @@ internal static class DisagreementsSection
                 writer.WriteStartArray();
                 foreach (var aura in auras)
                 {
-                    var key = (aura.Name, aura.LogId, aura.Modifiers);
+                    var key = new AuraKey(aura.Name, aura.LogId, aura.Modifiers);
                     if (!auraIndex.TryGetValue(key, out int index))
                     {
                         auraIndex[key] = index = auraList.Count;
@@ -188,4 +188,8 @@ const r=document.createElement('tr');r.className='state-row';r.innerHTML='<td co
 """;
 
     private static string EncodeHtml(string text) => WebUtility.HtmlEncode(text);
+
+    private readonly record struct IssueState(ReplayIssue Issue, EngineState State);
+
+    private readonly record struct AuraKey(string Name, int LogId, IReadOnlyList<StatModifier> Modifiers);
 }

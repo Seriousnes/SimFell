@@ -14,14 +14,14 @@ public static class DefaultActionLists
     private const string Extension = ".simc";
 
     // (hero, list name) -> resource name, from names such as FellowshipSim.Core.Heroes.Rime.ActionLists.Talons.simc.
-    private static readonly Dictionary<(string Hero, string Name), string> Resources = typeof(DefaultActionLists).Assembly
+    private static readonly Dictionary<ActionListKey, string> Resources = typeof(DefaultActionLists).Assembly
         .GetManifestResourceNames()
         .Where(r => r.StartsWith(Prefix, StringComparison.Ordinal) && r.EndsWith(Extension, StringComparison.Ordinal) && r.Contains(Folder))
         .ToDictionary(r =>
         {
             string rest = r[Prefix.Length..^Extension.Length];
             int folder = rest.IndexOf(Folder, StringComparison.Ordinal);
-            return (rest[..folder], rest[(folder + Folder.Length)..]);
+            return new ActionListKey(rest[..folder], rest[(folder + Folder.Length)..]);
         }, r => r, new KeyComparer());
 
     /// <summary>The names of <paramref name="hero"/>'s lists, <see cref="DefaultName"/> first.</summary>
@@ -34,18 +34,21 @@ public static class DefaultActionLists
     /// <summary>The text of <paramref name="hero"/>'s list <paramref name="name"/>, or null when it has none of that name.</summary>
     public static string? Read(string hero, string name)
     {
-        if (!Resources.TryGetValue((hero, name), out var resource)) return null;
+        if (!Resources.TryGetValue(new ActionListKey(hero, name), out var resource)) return null;
         using var stream = typeof(DefaultActionLists).Assembly.GetManifestResourceStream(resource)!;
         using var reader = new StreamReader(stream);
         return reader.ReadToEnd();
     }
 
-    private sealed class KeyComparer : IEqualityComparer<(string Hero, string Name)>
+    private sealed class KeyComparer : IEqualityComparer<ActionListKey>
     {
-        public bool Equals((string Hero, string Name) left, (string Hero, string Name) right) =>
+        public bool Equals(ActionListKey left, ActionListKey right) =>
             left.Hero.Equals(right.Hero, StringComparison.OrdinalIgnoreCase) && left.Name.Equals(right.Name, StringComparison.OrdinalIgnoreCase);
 
-        public int GetHashCode((string Hero, string Name) key) =>
+        public int GetHashCode(ActionListKey key) =>
             HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(key.Hero), StringComparer.OrdinalIgnoreCase.GetHashCode(key.Name));
     }
+
+    /// <summary>A hero and the name of one of its lists, as <see cref="KeyComparer"/> compares them.</summary>
+    private readonly record struct ActionListKey(string Hero, string Name);
 }

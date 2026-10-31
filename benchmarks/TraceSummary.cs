@@ -20,18 +20,18 @@ int top = args.Length > 1 ? int.Parse(args[1]) : 20;
 // one ("innermost"); "inclusive" counts every sample with a frame of the stage anywhere on its stack.
 // Casting is the action list's cast and the ability's own effects: the work a decision starts, not the decision. It
 // comes first, since AplAction.Execute is also in the action list's namespace.
-(string Stage, string[] Patterns)[] stages =
+StagePatterns[] stages =
 [
-    ("Casting", ["AplAction.Execute", "SimulationContext.BeginCast", "SimulationContext.FinishCast", "Ability.ResolveCast"]),
-    ("A: action list", ["FellowshipSim.Core.APL."]),
-    ("B: auras, stats, cooldowns", ["AuraContainer", "CooldownState", "ModifierFold", "HastedTimer.Update", "Hero.CooldownRate", "Hero.AdvanceCooldowns",
+    new StagePatterns("Casting", ["AplAction.Execute", "SimulationContext.BeginCast", "SimulationContext.FinishCast", "Ability.ResolveCast"]),
+    new StagePatterns("A: action list", ["FellowshipSim.Core.APL."]),
+    new StagePatterns("B: auras, stats, cooldowns", ["AuraContainer", "CooldownState", "ModifierFold", "HastedTimer.Update", "Hero.CooldownRate", "Hero.AdvanceCooldowns",
         "Hero.GetHaste", "Hero.CritChance", "Hero.PrimaryAttribute", "Hero.Expertise", "Hero.DamageScale", "Hero.CritMultiplier", "Hero.SpiritPercent"]),
-    ("C: hit pipeline", ["SimulationContext.ApplyDamage", "<ApplyDamage>", "Ability.DealDamage", "<DealDamage>", "Ability.DealAoeDamage",
+    new StagePatterns("C: hit pipeline", ["SimulationContext.ApplyDamage", "<ApplyDamage>", "Ability.DealDamage", "<DealDamage>", "Ability.DealAoeDamage",
         "Hero.TriggerDamageDealt", "OutcomeSource.ResolveHit", "OutcomeSource.Land", "Ability.BaseDamage",
         "(class FellowshipSim.Core.Domain.DamageContext)"]),
-    ("D: event queue", ["SimulationKernel.", "PriorityQueue", "ScheduledEvent", "HastedTimer.Reschedule", "HastedTimer.Start",
+    new StagePatterns("D: event queue", ["SimulationKernel.", "PriorityQueue", "ScheduledEvent", "HastedTimer.Reschedule", "HastedTimer.Start",
         "PeriodicEffect.Begin(", "PeriodicEffect.BeginHasted("]),
-    ("Replay driver", ["FellowshipSim.Logs."]),
+    new StagePatterns("Replay driver", ["FellowshipSim.Logs."]),
 ];
 
 string etlx = TraceLog.CreateFromEventPipeDataFile(args[0]);
@@ -127,3 +127,5 @@ foreach (var (method, samples) in methodInclusive.Where(kv => kv.Key.Contains("F
 {
     Console.WriteLine($"  {samples * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
 }
+
+readonly record struct StagePatterns(string Stage, string[] Patterns);

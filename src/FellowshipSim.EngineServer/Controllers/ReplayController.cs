@@ -24,12 +24,12 @@ public sealed class ReplayController(ISimEngine engine, ILogger<ReplayController
         }
         catch (SimEngineException ex)
         {
-            return BadRequest(new { error = ex.Message });
+            return BadRequest(new EngineError(ex.Message));
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             log.LogError(ex, "Replay review of player {Player} failed", playerId);
-            return StatusCode(StatusCodes.Status500InternalServerError, new { error = $"{ex.GetType().Name}: {ex.Message}" });
+            return StatusCode(StatusCodes.Status500InternalServerError, new EngineError($"{ex.GetType().Name}: {ex.Message}"));
         }
     }
 }

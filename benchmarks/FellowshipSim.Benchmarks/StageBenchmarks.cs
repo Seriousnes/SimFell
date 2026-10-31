@@ -23,7 +23,9 @@ public class AplDecisionBenchmarks
     public void GlobalSetup()
     {
         var (hero, ctx, actions) = Fight.AtMidFight(Targets);
-        (_hero, _ctx, _actions) = (hero, ctx, actions.Bind(hero).Actions);
+        _hero = hero;
+        _ctx = ctx;
+        _actions = actions.Bind(hero).Actions;
     }
 
     [Benchmark]

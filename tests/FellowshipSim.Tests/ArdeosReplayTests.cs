@@ -55,7 +55,7 @@ public class ArdeosReplayTests(ITestOutputHelper output)
                              $"{matched.Count(h => h.WithinRange),9}  {ratio,6:F3}");
         }
         output.WriteLine("");
-        foreach (var group in result.Steps.SelectMany(s => s.Issues).GroupBy(i => (i.Category, i.Subject)).OrderByDescending(g => g.Count()).Take(40))
+        foreach (var group in result.Steps.SelectMany(s => s.Issues).GroupBy(i => new IssueKey(i.Category, i.Subject)).OrderByDescending(g => g.Count()).Take(40))
         {
             output.WriteLine($"{group.Count(),5} [{group.Key.Category}] {group.Key.Subject}: {group.First().Message} (first @ {group.First().Time:F3})");
         }

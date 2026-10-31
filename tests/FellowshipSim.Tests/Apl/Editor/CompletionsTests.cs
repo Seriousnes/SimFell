@@ -95,13 +95,13 @@ public class CompletionsTests
     public void A_pick_replaces_the_part_at_the_caret_and_a_scope_is_written_with_its_dot()
     {
         var buff = Completions.For(_v, "bu").First();
-        Assert.Equal(("x and buff.", 11), CodeEdits.Accept("x and bu", 8, buff));
-        Assert.Equal(("buff. and y", 5), CodeEdits.Accept("bufxy and y", 2, buff));
+        Assert.Equal(new AcceptedCompletion("x and buff.", 11), CodeEdits.Accept("x and bu", 8, buff));
+        Assert.Equal(new AcceptedCompletion("buff. and y", 5), CodeEdits.Accept("bufxy and y", 2, buff));
 
         var chill = Completions.For(_v, "buff.c").First();
-        Assert.Equal(("buff.chill.", 11), CodeEdits.Accept("buff.c", 6, chill));
+        Assert.Equal(new AcceptedCompletion("buff.chill.", 11), CodeEdits.Accept("buff.c", 6, chill));
 
         var orbs = Completions.For(_v, "winter").First();
-        Assert.Equal(("winter_orbs >= 3", 11), CodeEdits.Accept("wi >= 3", 2, orbs));
+        Assert.Equal(new AcceptedCompletion("winter_orbs >= 3", 11), CodeEdits.Accept("wi >= 3", 2, orbs));
     }
 }

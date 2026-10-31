@@ -9,13 +9,13 @@ namespace FellowshipSim.UI.Apl;
 /// </summary>
 public sealed class ExpressionChecks(ISimEngine engine)
 {
-    private readonly Dictionary<(string Hero, string Text), Task<AplExpressionCheck?>> _checks = [];
+    private readonly Dictionary<CheckKey, Task<AplExpressionCheck?>> _checks = [];
 
     public Task<AplExpressionCheck?> Get(string hero, string text)
     {
         lock (_checks)
         {
-            if (!_checks.TryGetValue((hero, text), out var check)) _checks[(hero, text)] = check = Load(hero, text);
+            if (!_checks.TryGetValue(new CheckKey(hero, text), out var check)) _checks[new CheckKey(hero, text)] = check = Load(hero, text);
             return check;
         }
     }
@@ -31,4 +31,6 @@ public sealed class ExpressionChecks(ISimEngine engine)
             return null;
         }
     }
+
+    private readonly record struct CheckKey(string Hero, string Text);
 }

@@ -408,7 +408,7 @@
 
     // The step waiting on the unsaved changes (open another hero, build or a new one), and a key that draws the picker
     // anew so a cancelled pick shows the build still open.
-    private (string What, Func<Task> Then)? _pending;
+    private PendingStep? _pending;
     private int _pickerKey;
 
     private BuildEditor Editor => State.Editor;
@@ -554,7 +554,7 @@
     private Task AskFirst(string what, Func<Task> then)
     {
         if (!State.HasBuildEdits) return then();
-        _pending = (what, then);
+        _pending = new PendingStep(what, then);
         _pickerKey++;
         return Task.CompletedTask;
     }

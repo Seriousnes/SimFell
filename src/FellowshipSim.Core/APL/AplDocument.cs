@@ -91,7 +91,7 @@ public static class AplDocument
     /// problems that stop it being written. A blank condition or target expression is left out. The lines of each list
     /// are together: <see cref="AplActionLine.DefaultList"/> first, then the other lists in order of their first action.
     /// </summary>
-    public static (string? Text, List<AplDocumentError> Errors) Write(IReadOnlyList<AplDocumentAction> actions)
+    public static AplDocumentText Write(IReadOnlyList<AplDocumentAction> actions)
     {
         var errors = new List<AplDocumentError>();
         var lists = actions.Select(ListOf).Prepend(AplActionLine.DefaultList).Distinct().ToList();
@@ -132,10 +132,10 @@ public static class AplDocument
             var targetIf = targetExpression != null ? new AplTargetIf(action.TargetSelection ?? AplTargetSelection.First, targetExpression) : null;
             lines.Add(new AplActionLine(list, ability, condition, targetIf, arguments).ToString());
         }
-        if (errors.Count > 0) return (null, errors);
+        if (errors.Count > 0) return new AplDocumentText(null, errors);
 
         var blockTexts = lists.Where(l => blocks[l].Count > 0).Select(l => string.Join("\n", blocks[l]) + "\n");
-        return (string.Join("\n", blockTexts), errors);
+        return new AplDocumentText(string.Join("\n", blockTexts), errors);
     }
 
     private static string ListOf(AplDocumentAction action) =>

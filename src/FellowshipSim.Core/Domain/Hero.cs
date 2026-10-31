@@ -45,7 +45,7 @@ public abstract class Hero : Actor
     // Speed: CooldownRate reads only the auras' cooldown recovery and haste, the auras a cooldown acceleration reads (counted
     // as they change), the accelerations and the stat block. A recharge reads its rate again only after one of them changed;
     // the rate it would read is the rate it has.
-    private (int Recovery, int Haste, int HasteRating, int Accelerations, int AccelerationAuras, StatBlock? Stats, int StatsVersion) _rateInputs;
+    private RateInputs _rateInputs;
     private long _rateInputsVersion;
     private int _accelerationAuraChanges;
 
@@ -56,7 +56,7 @@ public abstract class Hero : Actor
     private long CooldownRateInputs(SimTime now)
     {
         Auras.CleanExpired(now);
-        var inputs = (Auras.StatVersion(StatType.CooldownRecovery), Auras.StatVersion(StatType.Haste), Auras.StatVersion(StatType.HasteRating),
+        var inputs = new RateInputs(Auras.StatVersion(StatType.CooldownRecovery), Auras.StatVersion(StatType.Haste), Auras.StatVersion(StatType.HasteRating),
             CooldownAccelerations.Count, _accelerationAuraChanges, Stats, Stats.Version);
         if (inputs != _rateInputs)
         {
@@ -149,7 +149,7 @@ public abstract class Hero : Actor
     /// ability end flushes the server's ability queue (UCRGameplayAbility::EndAbility 0x1450DACD0 calling 0x1452D7370,
     /// build 26162532), so a cast the queue held activates inside that tick.
     /// </summary>
-    public (int DamageLogId, HastedTimer Timer)? QueueFlushingTick { get; set; }
+    public FlushingTick? QueueFlushingTick { get; set; }
 
     /// <summary>Extra crit chance against a specific target (e.g. bonuses vs. healthy enemies).</summary>
     public List<Func<EnemyTarget, SimTime, double>> TargetCritChanceBonuses { get; } = new();
@@ -602,7 +602,10 @@ public abstract class Hero : Actor
         public bool IsCurrent(int first, int second, StatBlock block)
         {
             if (ReferenceEquals(_block, block) && _first == first && _second == second && _blockVersion == block.Version) return true;
-            (_first, _second, _block, _blockVersion) = (first, second, block, block.Version);
+            _first = first;
+            _second = second;
+            _block = block;
+            _blockVersion = block.Version;
             return false;
         }
     }
@@ -632,7 +635,8 @@ public abstract class Hero : Actor
             Cooldowns[ability.Name] = state;
             CooldownsVersion++;
         }
-        (ability.KnownCooldown, ability.KnownCooldownVersion) = (state, CooldownsVersion);
+        ability.KnownCooldown = state;
+        ability.KnownCooldownVersion = CooldownsVersion;
         return state;
     }
 
@@ -711,6 +715,9 @@ public abstract class Hero : Actor
         foreach (var passive in PassiveAuras) Auras.Apply(passive, SimTime.Zero);
         foreach (var situational in SituationalAuras) Auras.Apply(situational, SimTime.Zero);
     }
+
+    /// <summary>The version counts and stat block <see cref="CooldownRate"/> reads, as <see cref="CooldownRateInputs"/> compares them.</summary>
+    private readonly record struct RateInputs(int Recovery, int Haste, int HasteRating, int Accelerations, int AccelerationAuras, StatBlock? Stats, int StatsVersion);
 }
 
 /// <summary>

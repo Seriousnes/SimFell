@@ -84,23 +84,23 @@ public static class ReplayScriptBuilder
         var obsChannels = new JsonArray();
 
         // ---- Enemy lifetimes ---------------------------------------------------------------
-        var order = new List<(int Id, int Instance)>();
-        var firstSeen = new Dictionary<(int, int), double>();
-        var lastSeen = new Dictionary<(int, int), double>();
-        var deathAt = new Dictionary<(int, int), double>();
-        var maxHp = new Dictionary<(int, int), double>();
-        var nameOf = new Dictionary<(int, int), string>();
+        var order = new List<UnitKey>();
+        var firstSeen = new Dictionary<UnitKey, double>();
+        var lastSeen = new Dictionary<UnitKey, double>();
+        var deathAt = new Dictionary<UnitKey, double>();
+        var maxHp = new Dictionary<UnitKey, double>();
+        var nameOf = new Dictionary<UnitKey, string>();
         foreach (var logEvent in events)
         {
             foreach (var prefix in new[] { "source", "target" })
             {
                 int? id = Int(logEvent[$"{prefix}ID"]);
                 if (!IsEnemy(id)) continue;
-                var key = (id!.Value, Instance(logEvent, prefix));
+                var key = new UnitKey(id!.Value, Instance(logEvent, prefix));
                 double ts = Num(logEvent["timestamp"]);
                 if (!firstSeen.ContainsKey(key)) { firstSeen[key] = ts; order.Add(key); }
                 lastSeen[key] = ts;
-                nameOf[key] = actors[key.Item1]["name"]?.GetValue<string>() ?? "";
+                nameOf[key] = actors[key.Id]["name"]?.GetValue<string>() ?? "";
                 if (logEvent[$"{prefix}Resources"]?["maxHitPoints"] is { } mhp && Num(mhp) > 0)
                 {
                     maxHp[key] = Math.Max(maxHp.GetValueOrDefault(key), Num(mhp));
@@ -108,7 +108,7 @@ public static class ReplayScriptBuilder
             }
             if (Str(logEvent["type"]) == "death" && IsEnemy(Int(logEvent["targetID"])))
             {
-                deathAt.TryAdd((Int(logEvent["targetID"])!.Value, Instance(logEvent, "target")), Num(logEvent["timestamp"]));
+                deathAt.TryAdd(new UnitKey(Int(logEvent["targetID"])!.Value, Instance(logEvent, "target")), Num(logEvent["timestamp"]));
             }
         }
 
@@ -119,12 +119,12 @@ public static class ReplayScriptBuilder
             double endT = died ? deathAt[key] : lastSeen[key];
             enemies.Add(new JsonObject
             {
-                ["id"] = key.Item1, ["instance"] = key.Item2, ["name"] = nameOf[key], ["max_hp"] = maxHp.GetValueOrDefault(key),
+                ["id"] = key.Id, ["instance"] = key.Instance, ["name"] = nameOf[key], ["max_hp"] = maxHp.GetValueOrDefault(key),
                 ["arise_t"] = Rel(firstSeen[key]), ["demise_t"] = Rel(endT), ["demise_reason"] = died ? "death" : "last_seen",
             });
             commands.Add(new JsonObject
             {
-                ["t"] = Rel(firstSeen[key]), ["kind"] = "enemy_arise", ["enemy"] = Unit(key.Item1, key.Item2),
+                ["t"] = Rel(firstSeen[key]), ["kind"] = "enemy_arise", ["enemy"] = Unit(key.Id, key.Instance),
                 ["name"] = nameOf[key], ["max_hp"] = maxHp.GetValueOrDefault(key),
             });
             // An enemy still alive at the end of the fight is not demised.
@@ -132,14 +132,14 @@ public static class ReplayScriptBuilder
             {
                 commands.Add(new JsonObject
                 {
-                    ["t"] = Rel(endT), ["kind"] = "enemy_demise", ["enemy"] = Unit(key.Item1, key.Item2),
+                    ["t"] = Rel(endT), ["kind"] = "enemy_demise", ["enemy"] = Unit(key.Id, key.Instance),
                     ["reason"] = died ? "death" : "last_seen",
                 });
             }
         }
 
         // ---- Enemy health (from everyone's damage; health-dependent effects need it) ---------
-        var lastFraction = new Dictionary<(int, int), double>();
+        var lastFraction = new Dictionary<UnitKey, double>();
         foreach (var logEvent in events)
         {
             if (Str(logEvent["type"]) != "damage" || !IsEnemy(Int(logEvent["targetID"]))) continue;
@@ -149,13 +149,13 @@ public static class ReplayScriptBuilder
             // A killing blow logs the health below 0 as an unsigned 32-bit number (1p7AXmHfwV9CYMxR fight 30 @ 157.097:
             // 4294950962 of 726971).
             if (hp > maxNow) hp = 0;
-            var key = (Int(logEvent["targetID"])!.Value, Instance(logEvent, "target"));
+            var key = new UnitKey(Int(logEvent["targetID"])!.Value, Instance(logEvent, "target"));
             double fraction = hp / maxNow;
             if (lastFraction.TryGetValue(key, out var last) && Math.Abs(fraction - last) < HealthSampleStep) continue;
             lastFraction[key] = fraction;
             commands.Add(new JsonObject
             {
-                ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "enemy_health", ["enemy"] = Unit(key.Item1, key.Item2),
+                ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "enemy_health", ["enemy"] = Unit(key.Id, key.Instance),
                 ["hp"] = hp, ["max_hp"] = maxNode.DeepClone(),
             });
         }

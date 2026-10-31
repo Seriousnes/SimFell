@@ -122,7 +122,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 build.SpiritRating = StatDiminishingReturns.ToRating(Percent(value) - StatBlock.BaseSpirit);
                 break;
             case "talents":
-                var tree = hero.TalentTreeSlots.Select(s => Catalog.CreateTalent(s.TalentId)).OfType<Talent>().Select(t => (t.Name, t.Id));
+                var tree = hero.TalentTreeSlots.Select(s => Catalog.CreateTalent(s.TalentId)).OfType<Talent>().Select(t => new NamedId(t.Name, t.Id));
                 foreach (string name in List(value)) build.Talents.Add(IdOf(name, tree, "talent"));
                 break;
             case "aspects": AddAugmentations<Aspect>(build, value, "aspect"); break;
@@ -131,7 +131,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
             case "glyphs":
                 foreach (var (name, rank) in Ranked(value))
                 {
-                    build.Glyphs.Add(new BuildEntry(IdOf(name, Catalog.AllGlyphs.Select(g => (g.Name, g.Id)), "glyph"), rank));
+                    build.Glyphs.Add(new BuildEntry(IdOf(name, Catalog.AllGlyphs.Select(g => new NamedId(g.Name, g.Id)), "glyph"), rank));
                 }
                 break;
             case "gems":
@@ -210,7 +210,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
             builder.AppendLine($"talents={string.Join('/', build.Talents.Select(id => AplNames.Slug(Catalog.CreateTalent(id)?.Name ?? throw new InvalidOperationException($"Talent {id} is not modeled"))))}");
         }
         var augmentations = build.Augmentations
-            .Select(a => (Entry: a, Augmentation: Catalog.CreateAugmentation(a.Id, a.Rank) ?? throw new InvalidOperationException($"Augmentation {a.Id} is not in the catalog")))
+            .Select(a => new EntryAugmentation(a, Catalog.CreateAugmentation(a.Id, a.Rank) ?? throw new InvalidOperationException($"Augmentation {a.Id} is not in the catalog")))
             .ToList();
         void AppendAugmentations<T>(string key) where T : Augmentation
         {
@@ -270,21 +270,21 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     /// <summary>Ranked augmentations of one kind (<typeparamref name="T"/>): "name:rank/...".</summary>
     private static void AddAugmentations<T>(CharacterBuild build, string value, string kind) where T : Augmentation
     {
-        var known = Catalog.AllAugmentations.OfType<T>().Select(a => (a.Name, a.Id)).ToList();
+        var known = Catalog.AllAugmentations.OfType<T>().Select(a => new NamedId(a.Name, a.Id)).ToList();
         foreach (var (name, rank) in Ranked(value)) build.Augmentations.Add(new BuildEntry(IdOf(name, known, kind), rank));
     }
 
     private static IEnumerable<string> List(string value) => value.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-    private static IEnumerable<(string Name, int Rank)> Ranked(string value) =>
-        List(value).Select(Pair).Select(p => (p.Name, (int)p.Value));
+    private static IEnumerable<NamedRank> Ranked(string value) =>
+        List(value).Select(Pair).Select(p => new NamedRank(p.Name, (int)p.Value));
 
     /// <summary>"name:value" or "name=value".</summary>
-    private static (string Name, double Value) Pair(string entry)
+    private static NamedValue Pair(string entry)
     {
         int at = entry.IndexOfAny([':', '=']);
         if (at <= 0) throw new FormatException($"expected name:value in '{entry}'");
-        return (entry[..at].Trim(), Number(entry[(at + 1)..]));
+        return new NamedValue(entry[..at].Trim(), Number(entry[(at + 1)..]));
     }
 
     /// <summary>The item ID of an "item,id=item id" relic slot, checked against the item's name.</summary>
@@ -318,7 +318,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         return options;
     }
 
-    private static int IdOf(string name, IEnumerable<(string Name, int Id)> known, string kind) =>
+    private static int IdOf(string name, IEnumerable<NamedId> known, string kind) =>
         known.FirstOrDefault(k => AplNames.Slug(k.Name) == name) is { Id: > 0 } found
             ? found.Id
             : throw new FormatException($"no {kind} '{name}'");
@@ -336,4 +336,16 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     }
 
     private static string Text(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+
+    /// <summary>A talent, glyph or augmentation by name and ID.</summary>
+    private readonly record struct NamedId(string Name, int Id);
+
+    /// <summary>A name and the rank written after it.</summary>
+    private readonly record struct NamedRank(string Name, int Rank);
+
+    /// <summary>A name and the number written after it.</summary>
+    private readonly record struct NamedValue(string Name, double Value);
+
+    /// <summary>A build entry and the augmentation it names.</summary>
+    private readonly record struct EntryAugmentation(BuildEntry Entry, Augmentation Augmentation);
 }

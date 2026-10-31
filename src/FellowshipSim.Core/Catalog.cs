@@ -65,4 +65,10 @@ public static partial class Catalog
         AugmentationClasses.Concat(GlyphClasses).Concat(WeaponClasses).Concat(RelicPassiveClasses)
             .Concat(LegendaryClasses.Where(l => l.Hero == hero.ToLowerInvariant()).Select(l => l.Type))
             .Distinct();
+
+    /// <summary>A hero class and its name, as the generated <c>HeroClasses</c> lists it.</summary>
+    private readonly record struct HeroClass(string Name, Type Type);
+
+    /// <summary>A legendary class and the lowercase name of the hero that wears it, as the generated <c>LegendaryClasses</c> lists it.</summary>
+    private readonly record struct LegendaryClass(string Hero, Type Type);
 }

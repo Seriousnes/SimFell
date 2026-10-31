@@ -238,15 +238,20 @@ public class PropertyExpression : IAplExpression
         var parts = PropertyPath.Split('.');
         if (parts.Length >= 3 && parts[0] == DotScope)
         {
-            (Scope, Name, Property) = (DebuffScope, parts[1], parts[2]);
+            Scope = DebuffScope;
+            Name = parts[1];
+            Property = parts[2];
         }
         else if (parts.Length >= 3 && Scopes.ContainsKey(parts[0]))
         {
-            (Scope, Name, Property) = (parts[0], parts[1], parts[2]);
+            Scope = parts[0];
+            Name = parts[1];
+            Property = parts[2];
         }
         else if (parts.Length == 2 && (BuildScopes.ContainsKey(parts[0]) || parts[0] is VariableScope or ActiveDotScope))
         {
-            (Scope, Name) = (parts[0], parts[1]);
+            Scope = parts[0];
+            Name = parts[1];
         }
     }
 

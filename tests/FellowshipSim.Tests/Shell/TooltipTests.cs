@@ -17,10 +17,13 @@ public partial class TooltipTests
             .Where(path => Path.GetExtension(path) is ".razor" or ".cs" or ".js")
             .Where(path => !path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")
                            && !path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"))
-            .SelectMany(path => File.ReadLines(path).Select((line, i) => (path, line, i)))
-            .Where(l => TitleAttribute().IsMatch(l.line))
-            .Select(l => $"{Path.GetRelativePath(ui, l.path)}:{l.i + 1}: {l.line.Trim()}")
+            .SelectMany(path => File.ReadLines(path).Select((line, index) => new TitleLine(path, line, index)))
+            .Where(l => TitleAttribute().IsMatch(l.Text))
+            .Select(l => $"{Path.GetRelativePath(ui, l.FilePath)}:{l.Index + 1}: {l.Text.Trim()}")
             .ToList();
         Assert.True(titles.Count == 0, string.Join(Environment.NewLine, titles));
     }
+
+    /// <summary>A line of a file, with its place in the file.</summary>
+    private readonly record struct TitleLine(string FilePath, string Text, int Index);
 }

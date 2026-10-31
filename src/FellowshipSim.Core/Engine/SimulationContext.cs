@@ -4,12 +4,12 @@ namespace FellowshipSim.Core.Engine;
 
 public class SimulationContext
 {
-    private readonly Dictionary<(int Id, int InstanceId), EnemyTarget> _enemyLookup = new();
+    private readonly Dictionary<EnemyKey, EnemyTarget> _enemyLookup = new();
     private readonly List<EnemyTarget> _enemies = new();
 
     // Damage by name, in the order the names first dealt damage; names equal but for case share one total. Speed: a hit
     // finds its total by its name's string instance (hits use a few, mostly constants) without hashing the characters.
-    private readonly List<(string Name, double Damage)> _damageByName = new();
+    private readonly List<DamageTotal> _damageByName = new();
     private readonly Dictionary<string, int> _damageSlotByName = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, int> _damageSlotByInstance = new(ReferenceEqualityComparer.Instance);
 
@@ -48,7 +48,9 @@ public class SimulationContext
             {
                 if (enemy != target) others.Add(enemy);
             }
-            (_others, _othersOf, _othersExcept) = (others, active, target);
+            _others = others;
+            _othersOf = active;
+            _othersExcept = target;
         }
         return _others;
     }
@@ -94,7 +96,7 @@ public class SimulationContext
         if (!_damageSlotByName.TryGetValue(name, out int slot))
         {
             slot = _damageByName.Count;
-            _damageByName.Add((name, 0.0));
+            _damageByName.Add(new DamageTotal(name, 0.0));
             _damageSlotByName[name] = slot;
         }
         _damageSlotByInstance[name] = slot;
@@ -137,7 +139,7 @@ public class SimulationContext
 
     public EnemyTarget GetOrSpawnEnemy(int id, int instanceId, string name = "Target")
     {
-        var key = (id, instanceId);
+        var key = new EnemyKey(id, instanceId);
         if (!_enemyLookup.TryGetValue(key, out var enemy))
         {
             enemy = new EnemyTarget(id, instanceId, name) { SpiritPointValue = Enemies.CreatureSpiritPoints.For(name) };
@@ -150,7 +152,7 @@ public class SimulationContext
     }
 
     public EnemyTarget? FindEnemy(int id, int instanceId) =>
-        _enemyLookup.TryGetValue((id, instanceId), out var enemy) ? enemy : null;
+        _enemyLookup.TryGetValue(new EnemyKey(id, instanceId), out var enemy) ? enemy : null;
 
     /// <summary>An enemy enters combat.</summary>
     public EnemyTarget AddEnemy(int id, int instanceId, string name, double maxHealth = 0)
@@ -541,6 +543,12 @@ public class SimulationContext
             enemy.IsSleeping = false;
         }
     }
+
+    /// <summary>An enemy's ID and instance ID: the key <c>FindEnemy</c> looks it up by.</summary>
+    private readonly record struct EnemyKey(int Id, int InstanceId);
+
+    /// <summary>The damage one name has dealt. Not readonly: a hit adds to <c>Damage</c> in place.</summary>
+    private record struct DamageTotal(string Name, double Damage);
 }
 
 public sealed class ActiveCast

@@ -13,7 +13,7 @@ public sealed class ReplayVerifier
     private readonly Hero _hero;
     private readonly LogAuraTimeline? _logAuras;
     /// <summary>When the engine last removed each aura (by log ID) and its stacks then.</summary>
-    private readonly Dictionary<int, (SimTime Time, int Stacks)> _engineRemoved = new();
+    private readonly Dictionary<int, AuraRemoval> _engineRemoved = new();
 
     public ReplayVerifier(ReplayScript script, ReplayOptions options, Hero hero, LogAuraTimeline? logAuras = null)
     {
@@ -21,7 +21,7 @@ public sealed class ReplayVerifier
         _options = options;
         _hero = hero;
         _logAuras = logAuras;
-        if (logAuras != null) hero.Auras.OnRemoved += (aura, at) => { if (aura.LogId > 0) _engineRemoved[aura.LogId] = (at, aura.Stacks); };
+        if (logAuras != null) hero.Auras.OnRemoved += (aura, at) => { if (aura.LogId > 0) _engineRemoved[aura.LogId] = new AuraRemoval(at, aura.Stacks); };
     }
 
     /// <summary>Set by the driver: issues and hits are attributed to this step.</summary>
@@ -368,4 +368,6 @@ public sealed class ReplayVerifier
         AllHits.Add(pair);
         CurrentStep?.Hits.Add(pair);
     }
+
+    private readonly record struct AuraRemoval(SimTime Time, int Stacks);
 }

@@ -28,15 +28,15 @@ public sealed class CatalogGenerator : IIncrementalGenerator
 
     private enum Kind { Hero, Talent, Augmentation, Glyph, Weapon, RelicPassive, Legendary }
 
-    private static readonly (string Base, Kind Kind)[] Bases =
+    private static readonly BaseClassKind[] Bases =
     [
-        ("FellowshipSim.Core.Domain.Hero", Kind.Hero),
-        ("FellowshipSim.Core.Domain.Talent", Kind.Talent),
-        ("FellowshipSim.Core.Customization.Augmentations.Augmentation", Kind.Augmentation),
-        ("FellowshipSim.Core.Customization.Glyphs.Glyph", Kind.Glyph),
-        ("FellowshipSim.Core.Customization.Weapons.Weapon", Kind.Weapon),
-        ("FellowshipSim.Core.Customization.RelicPassives.RelicPassive", Kind.RelicPassive),
-        ("FellowshipSim.Core.Customization.Legendaries.Legendary", Kind.Legendary),
+        new("FellowshipSim.Core.Domain.Hero", Kind.Hero),
+        new("FellowshipSim.Core.Domain.Talent", Kind.Talent),
+        new("FellowshipSim.Core.Customization.Augmentations.Augmentation", Kind.Augmentation),
+        new("FellowshipSim.Core.Customization.Glyphs.Glyph", Kind.Glyph),
+        new("FellowshipSim.Core.Customization.Weapons.Weapon", Kind.Weapon),
+        new("FellowshipSim.Core.Customization.RelicPassives.RelicPassive", Kind.RelicPassive),
+        new("FellowshipSim.Core.Customization.Legendaries.Legendary", Kind.Legendary),
     ];
 
     /// <summary>One catalog class: its kind, full name, IDs, and a name (a hero's class name, a glyph's or legendary hero's name).</summary>
@@ -82,9 +82,9 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         for (var ancestor = type.BaseType; ancestor != null && kind == null; ancestor = ancestor.BaseType)
         {
             string name = ancestor.ToDisplayString();
-            foreach (var (baseName, baseKind) in Bases)
+            foreach (var baseClass in Bases)
             {
-                if (name == baseName) kind = baseKind;
+                if (name == baseClass.Base) kind = baseClass.Kind;
             }
         }
         if (kind == null) return null;
@@ -181,10 +181,10 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         }
 
         // Classes by ID, in declaration order; an ID of 0 is unknown.
-        var byKind = new Dictionary<Kind, List<(int Id, Entry Entry)>>();
+        var byKind = new Dictionary<Kind, List<IdentifiedEntry>>();
         foreach (var kind in new[] { Kind.Talent, Kind.Augmentation, Kind.Glyph, Kind.Weapon, Kind.RelicPassive })
         {
-            var list = new List<(int, Entry)>();
+            var list = new List<IdentifiedEntry>();
             var owners = new Dictionary<int, Entry>();
             foreach (var entry in entries.Where(e => e.Kind == kind))
             {
@@ -197,24 +197,24 @@ public sealed class CatalogGenerator : IIncrementalGenerator
                         continue;
                     }
                     owners[id] = entry;
-                    list.Add((id, entry));
+                    list.Add(new IdentifiedEntry(id, entry));
                 }
             }
             byKind[kind] = list;
         }
-        var legendaries = new List<(string Hero, int ItemId, Entry Entry)>();
-        var legendaryKeys = new Dictionary<(string, int), Entry>();
+        var legendaries = new List<LegendaryEntry>();
+        var legendaryKeys = new Dictionary<LegendaryKey, Entry>();
         foreach (var entry in entries.Where(e => e.Kind == Kind.Legendary))
         {
             foreach (int id in entry.IdValues)
             {
-                if (legendaryKeys.TryGetValue((entry.Name, id), out var other))
+                if (legendaryKeys.TryGetValue(new LegendaryKey(entry.Name, id), out var other))
                 {
                     spc.ReportDiagnostic(Diagnostic.Create(SharedId, null, entry.ShortName, other.ShortName, "legendary item", id));
                     continue;
                 }
-                legendaryKeys[(entry.Name, id)] = entry;
-                legendaries.Add((entry.Name, id, entry));
+                legendaryKeys[new LegendaryKey(entry.Name, id)] = entry;
+                legendaries.Add(new LegendaryEntry(entry.Name, id, entry));
             }
         }
 
@@ -227,9 +227,9 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         source.AppendLine("{");
 
         var heroes = entries.Where(e => e.Kind == Kind.Hero).ToList();
-        source.AppendLine("    private static (string Name, global::System.Type Type)[] HeroClasses =>");
+        source.AppendLine("    private static HeroClass[] HeroClasses =>");
         source.AppendLine("    [");
-        foreach (var heroEntry in heroes) source.AppendLine($"        ({Literal(heroEntry.Name)}, typeof({heroEntry.TypeName})),");
+        foreach (var heroEntry in heroes) source.AppendLine($"        new({Literal(heroEntry.Name)}, typeof({heroEntry.TypeName})),");
         source.AppendLine("    ];");
         source.AppendLine();
         source.AppendLine("    private static global::FellowshipSim.Core.Domain.Hero? NewHero(string name)");
@@ -248,18 +248,25 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         Switch(source, "global::FellowshipSim.Core.Customization.Weapons.Weapon", "NewWeapon", "int id", byKind[Kind.Weapon], "");
         Switch(source, "global::FellowshipSim.Core.Customization.RelicPassives.RelicPassive", "NewRelicPassive", "int id", byKind[Kind.RelicPassive], "");
 
-        source.AppendLine("    private static global::FellowshipSim.Core.Customization.Legendaries.Legendary? NewLegendary(string hero, int itemId) => (hero, itemId) switch");
+        source.AppendLine("    private static global::FellowshipSim.Core.Customization.Legendaries.Legendary? NewLegendary(string hero, int itemId) => hero switch");
         source.AppendLine("    {");
-        foreach (var (hero, itemId, entry) in legendaries) source.AppendLine($"        ({Literal(hero)}, {itemId}) => new {entry.TypeName}(),");
+        foreach (string hero in legendaries.Select(l => l.Hero).Distinct())
+        {
+            source.AppendLine($"        {Literal(hero)} => itemId switch");
+            source.AppendLine("        {");
+            foreach (var legendary in legendaries.Where(l => l.Hero == hero)) source.AppendLine($"            {legendary.ItemId} => new {legendary.Entry.TypeName}(),");
+            source.AppendLine("            _ => null,");
+            source.AppendLine("        },");
+        }
         source.AppendLine("        _ => null,");
         source.AppendLine("    };");
         source.AppendLine();
 
         source.AppendLine("    private static int GlyphIdOf(string name)");
         source.AppendLine("    {");
-        foreach (var (id, entry) in byKind[Kind.Glyph])
+        foreach (var glyph in byKind[Kind.Glyph])
         {
-            source.AppendLine($"        if (string.Equals(name, {Literal(entry.Name)}, global::System.StringComparison.OrdinalIgnoreCase)) return {id};");
+            source.AppendLine($"        if (string.Equals(name, {Literal(glyph.Entry.Name)}, global::System.StringComparison.OrdinalIgnoreCase)) return {glyph.Id};");
         }
         source.AppendLine("        return 0;");
         source.AppendLine("    }");
@@ -273,20 +280,20 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         Instances(source, "NewGlyphs", "global::FellowshipSim.Core.Customization.Glyphs.Glyph", Distinct(byKind[Kind.Glyph]));
         Instances(source, "NewWeapons", "global::FellowshipSim.Core.Customization.Weapons.Weapon", Distinct(byKind[Kind.Weapon]));
         Instances(source, "NewRelicPassives", "global::FellowshipSim.Core.Customization.RelicPassives.RelicPassive", Distinct(byKind[Kind.RelicPassive]));
-        source.AppendLine("    private static (string Hero, global::System.Type Type)[] LegendaryClasses =>");
+        source.AppendLine("    private static LegendaryClass[] LegendaryClasses =>");
         source.AppendLine("    [");
-        foreach (var (hero, _, entry) in legendaries) source.AppendLine($"        ({Literal(hero)}, typeof({entry.TypeName})),");
+        foreach (var legendary in legendaries) source.AppendLine($"        new({Literal(legendary.Hero)}, typeof({legendary.Entry.TypeName})),");
         source.AppendLine("    ];");
         source.AppendLine("}");
 
         spc.AddSource("Catalog.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
     }
 
-    private static void Switch(StringBuilder source, string returnType, string method, string parameters, List<(int Id, Entry Entry)> classes, string initializer)
+    private static void Switch(StringBuilder source, string returnType, string method, string parameters, List<IdentifiedEntry> classes, string initializer)
     {
         source.AppendLine($"    private static {returnType}? {method}({parameters}) => id switch");
         source.AppendLine("    {");
-        foreach (var (id, entry) in classes) source.AppendLine($"        {id} => new {entry.TypeName}(){initializer},");
+        foreach (var identified in classes) source.AppendLine($"        {identified.Id} => new {identified.Entry.TypeName}(){initializer},");
         source.AppendLine("        _ => null,");
         source.AppendLine("    };");
         source.AppendLine();
@@ -310,11 +317,71 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         source.AppendLine();
     }
 
-    private static List<Entry> Distinct(List<(int Id, Entry Entry)> classes)
+    private static List<Entry> Distinct(List<IdentifiedEntry> classes)
     {
         var seen = new HashSet<string>();
         return classes.Where(c => seen.Add(c.Entry.TypeName)).Select(c => c.Entry).ToList();
     }
 
     private static string Literal(string value) => SymbolDisplay.FormatLiteral(value, quote: true);
+
+    /// <summary>A catalog base class's full name and the kind of class derived from it.</summary>
+    private readonly struct BaseClassKind
+    {
+        public BaseClassKind(string @base, Kind kind)
+        {
+            Base = @base;
+            Kind = kind;
+        }
+
+        public string Base { get; }
+        public Kind Kind { get; }
+    }
+
+    /// <summary>A catalog class and one of its IDs.</summary>
+    private readonly struct IdentifiedEntry
+    {
+        public IdentifiedEntry(int id, Entry entry)
+        {
+            Id = id;
+            Entry = entry;
+        }
+
+        public int Id { get; }
+        public Entry Entry { get; }
+    }
+
+    /// <summary>A legendary class, the hero it belongs to and one of its item IDs.</summary>
+    private readonly struct LegendaryEntry
+    {
+        public LegendaryEntry(string hero, int itemId, Entry entry)
+        {
+            Hero = hero;
+            ItemId = itemId;
+            Entry = entry;
+        }
+
+        public string Hero { get; }
+        public int ItemId { get; }
+        public Entry Entry { get; }
+    }
+
+    /// <summary>A hero and an item ID: the key a legendary class is found by.</summary>
+    private readonly struct LegendaryKey : System.IEquatable<LegendaryKey>
+    {
+        public LegendaryKey(string hero, int itemId)
+        {
+            Hero = hero;
+            ItemId = itemId;
+        }
+
+        public string Hero { get; }
+        public int ItemId { get; }
+
+        public bool Equals(LegendaryKey other) => Hero == other.Hero && ItemId == other.ItemId;
+
+        public override bool Equals(object? obj) => obj is LegendaryKey other && Equals(other);
+
+        public override int GetHashCode() => unchecked(Hero.GetHashCode() * 397 + ItemId);
+    }
 }

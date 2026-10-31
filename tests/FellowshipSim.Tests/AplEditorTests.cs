@@ -216,7 +216,7 @@ public class AplEditorTests
             new AplDocumentAction("run_action_list"),
         ]);
         Assert.Null(text);
-        Assert.Equal([(0, "actionList"), (1, "actionList")], errors.Select(e => (e.Action, e.Field)));
+        Assert.Equal([new ErrorField(0, "actionList"), new ErrorField(1, "actionList")], errors.Select(e => new ErrorField(e.Action, e.Field)));
     }
 
     [Theory]
@@ -274,8 +274,8 @@ public class AplEditorTests
         ]);
         Assert.Null(text);
         Assert.Equal(
-            [(0, "condition"), (1, "ability"), (1, "targetExpression"), (2, "ability"), (2, "targetExpression"), (3, "arguments"), (4, "arguments")],
-            errors.Select(e => (e.Action, e.Field)));
+            [new ErrorField(0, "condition"), new ErrorField(1, "ability"), new ErrorField(1, "targetExpression"), new ErrorField(2, "ability"), new ErrorField(2, "targetExpression"), new ErrorField(3, "arguments"), new ErrorField(4, "arguments")],
+            errors.Select(e => new ErrorField(e.Action, e.Field)));
     }
 
     [Fact]
@@ -403,11 +403,11 @@ public class AplEditorTests
         Assert.Null(check.Error);
         Assert.Equal(
             [
-                (0, 11, AplTokenKind.Resource), (11, 2, AplTokenKind.Operator), (13, 1, AplTokenKind.Number),
-                (14, 1, AplTokenKind.Operator), (15, 1, AplTokenKind.Parenthesis), (16, 9, AplTokenKind.Unknown),
-                (25, 1, AplTokenKind.Parenthesis),
+                new TokenSpan(0, 11, AplTokenKind.Resource), new TokenSpan(11, 2, AplTokenKind.Operator), new TokenSpan(13, 1, AplTokenKind.Number),
+                new TokenSpan(14, 1, AplTokenKind.Operator), new TokenSpan(15, 1, AplTokenKind.Parenthesis), new TokenSpan(16, 9, AplTokenKind.Unknown),
+                new TokenSpan(25, 1, AplTokenKind.Parenthesis),
             ],
-            check.Tokens.Select(t => (t.Start, t.Length, t.Kind)));
+            check.Tokens.Select(t => new TokenSpan(t.Start, t.Length, t.Kind)));
 
         var unfinished = vocabulary.Check("winter_orbs>=");
         Assert.NotNull(unfinished.Error);
@@ -419,10 +419,10 @@ public class AplEditorTests
         Assert.Equal(2, badCharacter.ErrorStart);
     }
 
-    private static (Hero Hero, SimulationContext Ctx) Fight(params double[] healthPercents) =>
+    private static HeroInFight Fight(params double[] healthPercents) =>
         Fight(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000 }, healthPercents);
 
-    private static (Hero Hero, SimulationContext Ctx) Fight(CharacterBuild build, params double[] healthPercents)
+    private static HeroInFight Fight(CharacterBuild build, params double[] healthPercents)
     {
         var hero = HeroImporter.Import(build);
         var ctx = new SimulationContext(hero);
@@ -434,6 +434,12 @@ public class AplEditorTests
             enemy.CurrentHealth = 10 * healthPercents[i];
         }
         ctx.Player.CurrentTarget = ctx.AllEnemies.First();
-        return (hero, ctx);
+        return new HeroInFight(hero, ctx);
     }
+
+    /// <summary>The field of an action that a write reports as bad.</summary>
+    private readonly record struct ErrorField(int Action, string Field);
+
+    /// <summary>A token of a checked expression: where it starts, how long it is and its kind.</summary>
+    private readonly record struct TokenSpan(int Start, int Length, AplTokenKind Kind);
 }

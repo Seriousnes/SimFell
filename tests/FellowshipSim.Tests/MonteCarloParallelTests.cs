@@ -70,7 +70,7 @@ public class MonteCarloParallelTests
         Assert.Equal(mean, result.AbilityDpsBreakdown.Values.Sum(), mean * 1e-12);
     }
 
-    private static (MonteCarloResult Result, int Heroes) Run(int fights, int degreeOfParallelism, int firstSeed = 1)
+    private static ParallelRun Run(int fights, int degreeOfParallelism, int firstSeed = 1)
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
             File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
@@ -81,6 +81,9 @@ public class MonteCarloParallelTests
             return HeroImporter.Import(build);
         }, AplParser.ParseScript(Apl));
         var result = simulator.Run(SimTime.FromSeconds(Seconds), fights, Targets, firstSeed, degreeOfParallelism, keepFightDamage: true);
-        return (result, heroes);
+        return new ParallelRun(result, heroes);
     }
+
+    /// <summary>The result of a run, with the count of heroes it built.</summary>
+    private readonly record struct ParallelRun(MonteCarloResult Result, int Heroes);
 }
