@@ -1,3 +1,4 @@
+using System.Reflection;
 using FellowshipSim.Engine;
 using FellowshipSim.UI.Services;
 using Microsoft.JSInterop;
@@ -14,8 +15,15 @@ public sealed class SimWorkerPool(IJSRuntime js)
     private IJSObjectReference? _pool;
     private int _nextRun;
 
+    /// <summary>
+    /// The build's stamp (the project's BuildStamp). The sim scripts' addresses carry it, so a browser never runs a
+    /// script it kept from an older build (GitHub Pages lets it keep one for 10 minutes) with this build's app.
+    /// </summary>
+    private static readonly string BuildStamp = typeof(SimWorkerPool).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+        .FirstOrDefault(a => a.Key == "BuildStamp")?.Value ?? "0";
+
     private async Task<IJSObjectReference> PoolAsync() =>
-        _pool ??= await js.InvokeAsync<IJSObjectReference>("import", "./sim/simPool.js");
+        _pool ??= await js.InvokeAsync<IJSObjectReference>("import", $"./sim/simPool.js?v={BuildStamp}");
 
     /// <summary>The workers a sim can use: the cores but the page's, up to the pool's most.</summary>
     public async Task<int> SizeAsync() => await (await PoolAsync()).InvokeAsync<int>("size");

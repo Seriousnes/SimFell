@@ -19,6 +19,15 @@
     <ProjectReference Include="..\FellowshipSim.UI\FellowshipSim.UI.csproj" />
   </ItemGroup>
 
+  <!-- Each build's stamp, on the sim scripts' addresses (SimWorkerPool): a browser that kept an older build's scripts
+       loads this build's instead. -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+      <_Parameter1>BuildStamp</_Parameter1>
+      <_Parameter2>$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
   <!-- The catalog finds heroes, talents, traits and gear by reflection: trimming keeps every type of the app's own assemblies. -->
   <ItemGroup>
     <TrimmerRootAssembly Include="FellowshipSim.Core" />
