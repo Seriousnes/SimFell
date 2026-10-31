@@ -85,9 +85,11 @@ public class EnchantSlotsTests
         editor.Weapon = editor.Catalog.Weapons[0].Id;
         var aspect = editor.Catalog.Aspects[0];
         editor.SetAugmentationRank(aspect, 1);
-        Assert.Equal((1, 0), (editor.WeaponUsed(EnchantSlot.Aspects), editor.GearUsed(EnchantSlot.Aspects)));
+        Assert.Equal(1, editor.WeaponUsed(EnchantSlot.Aspects));
+        Assert.Equal(0, editor.GearUsed(EnchantSlot.Aspects));
         editor.SetAugmentationRank(aspect, 3);
-        Assert.Equal((1, 2), (editor.WeaponUsed(EnchantSlot.Aspects), editor.GearUsed(EnchantSlot.Aspects)));
+        Assert.Equal(1, editor.WeaponUsed(EnchantSlot.Aspects));
+        Assert.Equal(2, editor.GearUsed(EnchantSlot.Aspects));
         Assert.Equal(13 - 3, editor.Room(EnchantSlot.Aspects));
     }
 
@@ -95,9 +97,15 @@ public class EnchantSlotsTests
     public void A_Weapon_Adds_Two_Sigils_Two_Stat_Enchants_And_An_Aspect()
     {
         var editor = NewEditor();
-        Assert.Equal((26, 12, 12, 39), (editor.Limit(EnchantSlot.StatEnchants), editor.Limit(EnchantSlot.Aspects), editor.Limit(EnchantSlot.Sigils), editor.TotalLimit));
+        Assert.Equal(26, editor.Limit(EnchantSlot.StatEnchants));
+        Assert.Equal(12, editor.Limit(EnchantSlot.Aspects));
+        Assert.Equal(12, editor.Limit(EnchantSlot.Sigils));
+        Assert.Equal(39, editor.TotalLimit);
         editor.Weapon = editor.Catalog.Weapons[0].Id;
-        Assert.Equal((28, 13, 14, 44), (editor.Limit(EnchantSlot.StatEnchants), editor.Limit(EnchantSlot.Aspects), editor.Limit(EnchantSlot.Sigils), editor.TotalLimit));
+        Assert.Equal(28, editor.Limit(EnchantSlot.StatEnchants));
+        Assert.Equal(13, editor.Limit(EnchantSlot.Aspects));
+        Assert.Equal(14, editor.Limit(EnchantSlot.Sigils));
+        Assert.Equal(44, editor.TotalLimit);
         Assert.Equal(12, editor.Limit(EnchantSlot.Glyphs));
         Assert.Equal(26, editor.Limit(EnchantSlot.Gems));
     }
@@ -159,7 +167,8 @@ public class EnchantSlotsTests
 
         // A count set in the editor is kept with its rating; a rating set by hand counts as its rating over 6.
         editor.SetStatEnchantCount(banshee, 2);
-        Assert.Equal((12, 2), (editor.StatEnchantRating(banshee.Id), editor.StatEnchantCount(banshee.Id)));
+        Assert.Equal(12, editor.StatEnchantRating(banshee.Id));
+        Assert.Equal(2, editor.StatEnchantCount(banshee.Id));
         editor.SetStatEnchantRating(sphinx, 13);
         Assert.Equal(3, editor.StatEnchantCount(sphinx.Id));
     }

@@ -86,7 +86,7 @@ public static class ReplayReportWriter
     private static bool IsEngineHit(HitPair hit) => hit.Log == null || hit.LandedTime.HasValue;
 
     /// <summary>An index page linking the review page of every replayed fight, with headline numbers.</summary>
-    public static string RenderIndex(IReadOnlyList<ReplayedFight> fights)
+    private static string RenderIndex(IReadOnlyList<ReplayedFight> fights)
     {
         var builder = new StringBuilder();
         builder.Append(Head("Replay Reviews"));
@@ -106,10 +106,10 @@ public static class ReplayReportWriter
         return builder.ToString();
     }
 
-    public sealed record CalibrationRow(string Name, int Id, RatioSummary Normal, RatioSummary Crit);
+    private sealed record CalibrationRow(string Name, int Id, RatioSummary Normal, RatioSummary Crit);
 
     /// <summary>Per damage ID: mean log/engine ratio of matched hits, separately for normal hits and crits.</summary>
-    public static IEnumerable<CalibrationRow> Calibration(ReplayResult result) =>
+    private static IEnumerable<CalibrationRow> Calibration(ReplayResult result) =>
         result.AllHits.Where(h => h.Ratio.HasValue)
             .GroupBy(h => h.AbilityId)
             .Select(g => new CalibrationRow(g.First().AbilityName, g.Key, Mean(g.Where(h => !h.Crit)), Mean(g.Where(h => h.Crit))))
@@ -440,9 +440,9 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
 
     private static string EncodeHtml(string text) => WebUtility.HtmlEncode(text);
 
-    public readonly record struct ReplayedFight(ReplayResult Result, string File);
+    private readonly record struct ReplayedFight(ReplayResult Result, string File);
 
-    public readonly record struct RatioSummary(int Count, double Mean);
+    private readonly record struct RatioSummary(int Count, double Mean);
 
     private readonly record struct TimedAmount(double Time, double Amount);
 

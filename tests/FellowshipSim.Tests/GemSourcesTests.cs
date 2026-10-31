@@ -100,7 +100,8 @@ public class GemSourcesTests
         Assert.True(editor.ToggleRelic(relics[0].ItemId));
         Assert.True(editor.ToggleRelic(relics[1].ItemId));
         Assert.False(editor.ToggleRelic(relics[2].ItemId));
-        Assert.Equal((relics[0].ItemId, relics[1].ItemId), (editor.Relic1, editor.Relic2));
+        Assert.Equal(relics[0].ItemId, editor.Relic1);
+        Assert.Equal(relics[1].ItemId, editor.Relic2);
 
         Assert.True(editor.ToggleRelic(relics[0].ItemId));
         Assert.Null(editor.Relic1);

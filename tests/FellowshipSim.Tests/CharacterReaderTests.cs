@@ -41,6 +41,7 @@ public class CharacterReaderTests
         Assert.Contains("relic1=orb_of_inner_seas,id=5926", text);
         Assert.Contains("relic2=orb_of_gathering_storms,id=5924", text);
         var read = SimcProfile.Parse(text).Build;
-        Assert.Equal((build.Relic1ItemId, build.Relic2ItemId), (read.Relic1ItemId, read.Relic2ItemId));
+        Assert.Equal(build.Relic1ItemId, read.Relic1ItemId);
+        Assert.Equal(build.Relic2ItemId, read.Relic2ItemId);
     }
 }

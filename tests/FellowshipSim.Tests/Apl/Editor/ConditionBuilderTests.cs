@@ -292,13 +292,22 @@ public class ConditionBuilderTests
         Assert.Equal("!-", term.Prefix);
 
         ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.GroupKind), _vocabulary, kinds);
-        Assert.Equal(("*", "!-", null, null), (term.Operator, term.Prefix, term.Path, term.Number));
+        Assert.Equal("*", term.Operator);
+        Assert.Equal("!-", term.Prefix);
+        Assert.Null(term.Path);
+        Assert.Null(term.Number);
         var held = Assert.Single(Assert.Single(term.Items!).Left!);
-        Assert.Equal((null, null, "worb"), (held.Operator, held.Prefix, held.Path));
+        Assert.Null(held.Operator);
+        Assert.Null(held.Prefix);
+        Assert.Equal("worb", held.Path);
         Assert.Equal("a * not -(worb)", ConditionBuilder.Text([new ConditionTerm { Path = "a" }, term]));
 
         ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.NumberKind), _vocabulary, kinds);
-        Assert.Equal(("*", "!-", null, 0d, null), (term.Operator, term.Prefix, term.Path, term.Number, term.Items));
+        Assert.Equal("*", term.Operator);
+        Assert.Equal("!-", term.Prefix);
+        Assert.Null(term.Path);
+        Assert.Equal(0d, term.Number);
+        Assert.Null(term.Items);
     }
 
     [Fact]
@@ -308,7 +317,9 @@ public class ConditionBuilderTests
         var aura = kinds.Single(k => k.Id == PropertyExpression.BuffScope).Properties!;
 
         var group = ConditionBuilder.RowFor(new ValuePick(ConditionBuilder.GroupKind), "or", true, _vocabulary, kinds);
-        Assert.Equal(("or", true, 0), (group.Join, group.Not, group.Items!.Count));
+        Assert.Equal("or", group.Join);
+        Assert.True(group.Not);
+        Assert.Empty(group.Items!);
         Assert.Null(group.Left);
 
         var number = ConditionBuilder.RowFor(new ValuePick(ConditionBuilder.NumberKind), "and", false, _vocabulary, kinds);

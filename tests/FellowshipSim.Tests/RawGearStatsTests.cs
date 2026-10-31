@@ -35,10 +35,14 @@ public class RawGearStatsTests
         var logMain = new[] { "strength", "agility", "intellect" }.Max(k => combatant[k] is { } statValue ? (double)statValue : 0.0);
         Assert.True(Math.Abs(logMain - hero.PrimaryAttribute(now)) < 1.0, $"{fight}: Main Stat {hero.PrimaryAttribute(now):F1}, log {logMain}");
         Assert.True(Math.Abs(Log("stamina") - hero.Stats.TotalStamina) < 1.0, $"{fight}: Stamina {hero.Stats.TotalStamina:F1}, log {Log("stamina")}");
-        Assert.Equal((fight, Log("crit")), (fight, Rating(StatType.CritRating, hero.Stats.CritRating)));
-        Assert.Equal((fight, Log("haste")), (fight, Rating(StatType.HasteRating, hero.Stats.HasteRating)));
-        Assert.Equal((fight, Log("expertise")), (fight, Rating(StatType.ExpertiseRating, hero.Stats.ExpertiseRating)));
-        Assert.Equal((fight, Log("spirit")), (fight, Rating(StatType.SpiritRating, hero.Stats.SpiritRating)));
+        Assert.Equal(fight, fight);
+        Assert.Equal(Log("crit"), Rating(StatType.CritRating, hero.Stats.CritRating));
+        Assert.Equal(fight, fight);
+        Assert.Equal(Log("haste"), Rating(StatType.HasteRating, hero.Stats.HasteRating));
+        Assert.Equal(fight, fight);
+        Assert.Equal(Log("expertise"), Rating(StatType.ExpertiseRating, hero.Stats.ExpertiseRating));
+        Assert.Equal(fight, fight);
+        Assert.Equal(Log("spirit"), Rating(StatType.SpiritRating, hero.Stats.SpiritRating));
     }
 
     [Fact]
