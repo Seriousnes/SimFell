@@ -9,8 +9,11 @@ else
 }
 
 @code {
+    /// <summary>The width and height in pixels when <see cref="Size"/> is not set.</summary>
+    private const int DefaultSize = 32;
+
     [Parameter] public string? Url { get; set; }
 
     /// <summary>Width and height in pixels.</summary>
-    [Parameter] public int Size { get; set; } = 32;
+    [Parameter] public int Size { get; set; } = DefaultSize;
 }

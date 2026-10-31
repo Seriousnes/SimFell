@@ -26,6 +26,15 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         "SIMFELL002", "Two classes share a catalog ID",
         "{0} and {1} share the {2} ID {3}", "Catalog", DiagnosticSeverity.Error, true);
 
+    private const string HintName = "Catalog.g.cs";
+    private const char IdSeparator = ',';
+    private const int HashMultiplier = 397;
+    private const string IdProperty = "Id";
+    private const string WeaponAbilityIdProperty = "WeaponAbilityId";
+    private const string ItemIdsProperty = "ItemIds";
+    private const string NameProperty = "Name";
+    private const string HeroNameProperty = "HeroName";
+
     private enum Kind { Hero, Talent, Augmentation, Glyph, Weapon, RelicPassive, Legendary }
 
     private static readonly BaseClassKind[] Bases =
@@ -52,7 +61,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         public string? Error { get; } = error;
         public Location? ErrorLocation { get; } = errorLocation;
 
-        public int[] IdValues => Ids.Length == 0 ? [] : Ids.Split(',').Select(int.Parse).ToArray();
+        public int[] IdValues => Ids.Length == 0 ? [] : Ids.Split(IdSeparator).Select(int.Parse).ToArray();
 
         public bool Equals(Entry? other) =>
             other != null && Kind == other.Kind && TypeName == other.TypeName && ShortName == other.ShortName && Ids == other.Ids
@@ -115,13 +124,13 @@ public sealed class CatalogGenerator : IIncrementalGenerator
             case Kind.Legendary:
                 string idProperty = kind switch
                 {
-                    Kind.Weapon => "WeaponAbilityId",
-                    Kind.Legendary => "ItemIds",
-                    _ => "Id",
+                    Kind.Weapon => WeaponAbilityIdProperty,
+                    Kind.Legendary => ItemIdsProperty,
+                    _ => IdProperty,
                 };
-                if (Read(idProperty, out var idValues)) ids = string.Join(",", idValues.Select(v => (int)v));
-                if (kind == Kind.Glyph && error == null && Read("Name", out var names)) name2 = (string)names[0];
-                if (kind == Kind.Legendary && error == null && Read("HeroName", out var heroes)) name2 = ((string)heroes[0]).ToLowerInvariant();
+                if (Read(idProperty, out var idValues)) ids = string.Join(IdSeparator.ToString(), idValues.Select(v => (int)v));
+                if (kind == Kind.Glyph && error == null && Read(NameProperty, out var names)) name2 = (string)names[0];
+                if (kind == Kind.Legendary && error == null && Read(HeroNameProperty, out var heroes)) name2 = ((string)heroes[0]).ToLowerInvariant();
                 break;
         }
         return new Entry(kind.Value, typeName, type.Name, ids, name2, error, location);
@@ -286,7 +295,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         source.AppendLine("    ];");
         source.AppendLine("}");
 
-        spc.AddSource("Catalog.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
+        spc.AddSource(HintName, SourceText.From(source.ToString(), Encoding.UTF8));
     }
 
     private static void Switch(StringBuilder source, string returnType, string method, string parameters, List<IdentifiedEntry> classes, string initializer)
@@ -382,6 +391,6 @@ public sealed class CatalogGenerator : IIncrementalGenerator
 
         public override bool Equals(object? obj) => obj is LegendaryKey other && Equals(other);
 
-        public override int GetHashCode() => unchecked(Hero.GetHashCode() * 397 + ItemId);
+        public override int GetHashCode() => unchecked(Hero.GetHashCode() * HashMultiplier + ItemId);
     }
 }

@@ -28,7 +28,7 @@ public class RagingTempest : TariqAbility
     /// Combat logs (fXyzwGcQkTrLD34R fight 4 @ 263.6): the buff comes with the cast at 1 stack, each Raging Currents hit
     /// adds one, and it lasts 20s from the cast whatever the stacks.
     /// </summary>
-    public static readonly AuraDef Buff = AuraDef.Effect("Raging Tempest", BuffEffectId, BuffSeconds, MaxStacks,
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds, MaxStacks,
         StatModifier.Add(StatType.Expertise, ExpertisePerStack)) with { ReapplyKeepsExpiry = true };
 
     private readonly RagingCurrents _currents;

@@ -14,7 +14,9 @@ namespace FellowshipSim.Core.APL;
 public static class AplParser
 {
     // Actions that control the list rather than cast an ability.
-    private static readonly HashSet<string> SkippedActions = ["snapshot_stats"];
+    private const string SnapshotStatsAction = "snapshot_stats";
+
+    private static readonly HashSet<string> SkippedActions = [SnapshotStatsAction];
 
     private static readonly TextParser<TextSpan> Word = Span.WithAll(c => char.IsLetterOrDigit(c) || c is '_' or '.');
 
@@ -30,27 +32,27 @@ public static class AplParser
         .Match(Character.EqualTo(')'), AplToken.RParen)
         .Match(Character.EqualTo('&'), AplToken.And)
         .Match(Character.EqualTo('|'), AplToken.Or)
-        .Match(Span.EqualTo("!="), AplToken.NotEqual)
+        .Match(Span.EqualTo(AplOperatorSymbols.NotEqualSymbol), AplToken.NotEqual)
         .Match(Character.EqualTo('!'), AplToken.Not)
         .Match(Character.EqualTo('-'), AplToken.Minus)
         .Match(Character.EqualTo('*'), AplToken.Star)
-        .Match(Span.EqualTo("%%"), AplToken.DoublePercent)
+        .Match(Span.EqualTo(AplOperatorSymbols.ModuloSymbol), AplToken.DoublePercent)
         .Match(Character.EqualTo('%'), AplToken.Percent)
-        .Match(Span.EqualTo("=="), AplToken.Equal)
+        .Match(Span.EqualTo(AplOperatorSymbols.DoubleEqualSymbol), AplToken.Equal)
         .Match(Character.EqualTo('='), AplToken.Equal)
-        .Match(Span.EqualTo("<="), AplToken.LessEqual)
+        .Match(Span.EqualTo(AplOperatorSymbols.LessEqualSymbol), AplToken.LessEqual)
         .Match(Character.EqualTo('<'), AplToken.Less)
-        .Match(Span.EqualTo(">="), AplToken.GreaterEqual)
+        .Match(Span.EqualTo(AplOperatorSymbols.GreaterEqualSymbol), AplToken.GreaterEqual)
         .Match(Character.EqualTo('>'), AplToken.Greater)
-        .Match(Span.EqualTo("+="), AplToken.PlusEqual)
+        .Match(Span.EqualTo(AplOperatorSymbols.PlusEqualSymbol), AplToken.PlusEqual)
         .Match(Character.EqualTo('+'), AplToken.Plus)
         .Match(Character.EqualTo('/'), AplToken.Slash)
         .Match(Character.EqualTo(','), AplToken.Comma)
         .Match(Character.EqualTo(':'), AplToken.Colon)
         .Match(Word.Where(w => IsNumber(w.ToStringValue()), "number"), AplToken.Number)
-        .Match(Keyword("and"), AplToken.And)
-        .Match(Keyword("or"), AplToken.Or)
-        .Match(Keyword("not"), AplToken.Not)
+        .Match(Keyword(AplOperatorSymbols.AndWord), AplToken.And)
+        .Match(Keyword(AplOperatorSymbols.OrWord), AplToken.Or)
+        .Match(Keyword(AplOperatorSymbols.NotWord), AplToken.Not)
         .Match(Word, AplToken.Identifier)
         .Build();
 

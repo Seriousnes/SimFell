@@ -18,7 +18,7 @@ public class CascadingInferno : Talent
     public const double CritChance = 1.0;
     public const double CinderMultiplier = 2.0;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Cascading Inferno", EffectId, maxStacks: MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, maxStacks: MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

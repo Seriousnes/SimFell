@@ -20,7 +20,7 @@ public class TheMystic : Glyph
         double perStep = ForRank(PowerPerStepByRank);
         hero.AbilityDamageMultipliers.Add((ability, now) =>
             ability.Category == AbilityCategory.Power
-                ? 1.0 + perStep * (Math.Min(hero.SpiritPercent(now), SpiritCap) * 100.0 / SpiritPercentPerStep)
+                ? 1.0 + perStep * (Math.Min(hero.SpiritPercent(now), SpiritCap) * Percentage.PerFraction / SpiritPercentPerStep)
                 : 1.0);
     }
 }

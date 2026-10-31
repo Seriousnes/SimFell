@@ -12,13 +12,14 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class StarstrikersAscent : Legendary
 {
     public const int PowerId = 430;
+    public const string PowerName = "Starstriker's Ascent";
     public const int HauberkItemId = 5898;
     public const double ProcChance = 0.5;
     public const string ProcKey = "starstrikers_ascent";
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Starstriker's Ascent";
-    public override string HeroName => "Elarion";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Elarion);
     public override IReadOnlyList<int> ItemIds => [HauberkItemId];
 
     public override void Bind(Hero hero)

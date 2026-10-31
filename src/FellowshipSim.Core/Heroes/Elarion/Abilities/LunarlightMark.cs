@@ -27,7 +27,7 @@ public class LunarlightMark : ElarionAbility
     /// Combat logs (fXyzwGcQkTrLD34R fight 4, pWmcV42K39GHTLQX fight 23): every application adds its stacks to the ones
     /// held and restarts the 15 seconds (a Spirit Refund takes 1 stack to 6, 3 to 5).
     /// </summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect("Lunarlight Mark", DebuffEffectId, DebuffSeconds, DebuffMaxStacks);
+    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, DebuffSeconds, DebuffMaxStacks);
 
     /// <summary>The cast resolved (Resurgent Winds).</summary>
     public event Action<SimulationContext>? Cast;

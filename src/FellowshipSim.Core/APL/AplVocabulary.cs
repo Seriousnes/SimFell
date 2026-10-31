@@ -235,9 +235,9 @@ public sealed class AplVocabulary
         {
             string? word = token.Kind switch
             {
-                AplToken.And => "and",
-                AplToken.Or => "or",
-                AplToken.Not => "not",
+                AplToken.And => AplOperatorSymbols.AndWord,
+                AplToken.Or => AplOperatorSymbols.OrWord,
+                AplToken.Not => AplOperatorSymbols.NotWord,
                 _ => null
             };
             if (word == null || char.IsLetter(text[token.Position.Absolute])) continue;

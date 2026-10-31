@@ -105,8 +105,8 @@ public sealed class AplProgram
     {
         if (!Catalog.HasHero(hero.GetType().Name)) return false;
         var abilities = BuildAbilities.GetOrAdd(hero.GetType(), type => AplVocabulary.For(type.Name).Abilities);
-        string key = AplNames.Slug(aplName).Replace("_", "");
-        return abilities.Any(a => a.Slug.Replace("_", "") == key);
+        string key = AplNames.Slug(aplName).Replace(AplNames.WordSeparator, "");
+        return abilities.Any(a => a.Slug.Replace(AplNames.WordSeparator, "") == key);
     }
 
     /// <summary>Casts the first ready action, starting at <see cref="AplActionLine.DefaultList"/>. False when nothing was cast.</summary>
@@ -239,7 +239,7 @@ public sealed class BoundAplAction : BoundAplStep
         if (!TrySelectTarget(ctx, out var target)) return false;
         if (target == null)
         {
-            target = ctx.AddEnemy(1, 1, "Target Dummy");
+            target = ctx.AddEnemy(1, 1, AplAction.TargetDummyName);
             ctx.Player.CurrentTarget = target;
         }
 
@@ -314,8 +314,8 @@ public sealed class BoundAplAction : BoundAplStep
             for (int j = i + 1; j < curves.Length; j++)
             {
                 var difference = curves[i] - curves[j];
-                Polynomial.Roots(difference.Numerator, -3.0, next.Milliseconds - (double)now.Milliseconds, roots);
-                Polynomial.Roots(difference.Denominator, -3.0, next.Milliseconds - (double)now.Milliseconds, roots);
+                Polynomial.Roots(difference.Numerator, Polynomial.EarliestRoot, next.Milliseconds - (double)now.Milliseconds, roots);
+                Polynomial.Roots(difference.Denominator, Polynomial.EarliestRoot, next.Milliseconds - (double)now.Milliseconds, roots);
             }
         }
         roots.Sort();

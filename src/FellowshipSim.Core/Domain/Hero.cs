@@ -91,7 +91,9 @@ public abstract class Hero : Actor
     public SimTime GlobalCooldownEndTime { get; set; } = SimTime.Zero;
 
     /// <summary>The global cooldown before haste (per the user: 1.5s, hasted).</summary>
-    public double GlobalCooldownSeconds { get; set; } = 1.5;
+    public const double BaseGlobalCooldownSeconds = 1.5;
+
+    public double GlobalCooldownSeconds { get; set; } = BaseGlobalCooldownSeconds;
 
     /// <summary>Haste shortens the global cooldown (Mara's 1s global cooldown is not hasted).</summary>
     public bool GlobalCooldownScalesWithHaste { get; protected set; } = true;
@@ -769,7 +771,7 @@ public sealed class CooldownState
     private bool Recharging => _charges < MaxCharges;
 
     /// <summary>When the charge recharging now returns at the current rate (meaningful only while recharging).</summary>
-    public SimTime NextChargeAt => _last + SimTime.FromSeconds(_remaining / Math.Max(1e-9, _rate));
+    public SimTime NextChargeAt => _last + SimTime.FromSeconds(_remaining / Math.Max(Tolerance.Comparison, _rate));
 
     public int ChargesAt(SimTime now)
     {
@@ -860,7 +862,7 @@ public sealed class CooldownState
             while (time < now && Recharging)
             {
                 double span = (now - time).TotalSeconds;
-                double rate = Math.Max(1e-9, _rate);
+                double rate = Math.Max(Tolerance.Comparison, _rate);
                 if (_remaining > span * rate)
                 {
                     _remaining -= span * rate;

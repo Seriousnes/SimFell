@@ -13,7 +13,7 @@ public class Wildfire : ArdeosAbility
     public const double BuffSeconds = 9.0;
     public const double TickRateMultiplier = 1.3;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Wildfire", BuffEffectId, BuffSeconds);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds);
 
     public Wildfire(Ardeos owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)
     {

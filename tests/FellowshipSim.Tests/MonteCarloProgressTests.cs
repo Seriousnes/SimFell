@@ -65,7 +65,7 @@ public class MonteCarloProgressTests
     private static MonteCarloSimulator Simulator()
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         return new MonteCarloSimulator(build, AplParser.ParseScript(Apl));
     }
 }

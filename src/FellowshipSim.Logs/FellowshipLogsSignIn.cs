@@ -28,11 +28,31 @@ public static class FellowshipLogsSignIn
     /// <summary>Where a local build of the browser app's sign-in comes back.</summary>
     public const string LocalSiteRedirect = "http://127.0.0.1:5000/signin";
 
+    /// <summary>Grant of a token request that exchanges an authorization code.</summary>
+    private const string AuthorizationCodeGrant = "authorization_code";
+
+    /// <summary>Grant of a token request that renews an expired token.</summary>
+    private const string RefreshTokenGrant = "refresh_token";
+
+    private const string ClientIdField = "client_id";
+    private const string CodeField = "code";
+    private const string CodeVerifierField = "code_verifier";
+    private const string RedirectUriField = "redirect_uri";
+
+    /// <summary>Form field of a refresh request that holds the refresh token, and property of a token response that holds it.</summary>
+    private const string RefreshTokenProperty = "refresh_token";
+
+    /// <summary>Random bytes of a PKCE code verifier.</summary>
+    private const int VerifierByteCount = 32;
+
+    /// <summary>Random bytes of a state value.</summary>
+    private const int StateByteCount = 16;
+
     /// <summary>A new PKCE code verifier: 32 random bytes, base64url.</summary>
-    public static string NewVerifier() => Base64Url(RandomNumberGenerator.GetBytes(32));
+    public static string NewVerifier() => Base64Url(RandomNumberGenerator.GetBytes(VerifierByteCount));
 
     /// <summary>A new state value, matched on the way back so a sign-in only completes the one this app started.</summary>
-    public static string NewState() => Base64Url(RandomNumberGenerator.GetBytes(16));
+    public static string NewState() => Base64Url(RandomNumberGenerator.GetBytes(StateByteCount));
 
     /// <summary>The S256 challenge of <paramref name="verifier"/>.</summary>
     public static string Challenge(string verifier) => Base64Url(SHA256.HashData(Encoding.ASCII.GetBytes(verifier)));
@@ -45,13 +65,13 @@ public static class FellowshipLogsSignIn
     /// <summary>The user's token for the code FellowshipLogs sent back to <paramref name="redirect"/>.</summary>
     public static Task<LogsUserToken> ExchangeAsync(HttpClient http, string code, string verifier, string redirect, CancellationToken ct = default) =>
         TokenAsync(http, [
-            new("grant_type", "authorization_code"), new("client_id", ClientId), new("code", code),
-            new("code_verifier", verifier), new("redirect_uri", redirect),
+            new(FellowshipLogsClient.GrantTypeField, AuthorizationCodeGrant), new(ClientIdField, ClientId), new(CodeField, code),
+            new(CodeVerifierField, verifier), new(RedirectUriField, redirect),
         ], ct);
 
     /// <summary>A new token for an expired one, from its refresh token.</summary>
     public static Task<LogsUserToken> RefreshAsync(HttpClient http, string refreshToken, CancellationToken ct = default) =>
-        TokenAsync(http, [new("grant_type", "refresh_token"), new("client_id", ClientId), new("refresh_token", refreshToken)], ct);
+        TokenAsync(http, [new(FellowshipLogsClient.GrantTypeField, RefreshTokenGrant), new(ClientIdField, ClientId), new(RefreshTokenProperty, refreshToken)], ct);
 
     private static async Task<LogsUserToken> TokenAsync(HttpClient http, KeyValuePair<string, string>[] form, CancellationToken ct)
     {
@@ -62,9 +82,9 @@ public static class FellowshipLogsSignIn
             throw new FellowshipLogsException($"FellowshipLogs did not sign you in ({(int)response.StatusCode}). Try signing in again.");
         }
         var json = JsonNode.Parse(body);
-        string token = json?["access_token"]?.GetValue<string>() ?? throw new FellowshipLogsException("FellowshipLogs returned no access token.");
-        double lifetime = json["expires_in"]?.GetValue<double>() ?? 3600;
-        return new LogsUserToken(token, json["refresh_token"]?.GetValue<string>(), DateTime.UtcNow.AddSeconds(lifetime));
+        string token = json?[FellowshipLogsClient.AccessTokenProperty]?.GetValue<string>() ?? throw new FellowshipLogsException("FellowshipLogs returned no access token.");
+        double lifetime = json[FellowshipLogsClient.ExpiresInProperty]?.GetValue<double>() ?? FellowshipLogsClient.DefaultTokenLifetimeSeconds;
+        return new LogsUserToken(token, json[RefreshTokenProperty]?.GetValue<string>(), DateTime.UtcNow.AddSeconds(lifetime));
     }
 
     private static string Base64Url(byte[] bytes) => Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');

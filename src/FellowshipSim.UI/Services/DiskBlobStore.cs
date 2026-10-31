@@ -5,11 +5,16 @@ namespace FellowshipSim.UI.Services;
 /// <summary>An <see cref="IBlobStore"/> in the folder <paramref name="root"/>: each key is a file path under it.</summary>
 public sealed partial class DiskBlobStore(string root) : IBlobStore
 {
+    private const string AnyFile = "*";
+
+    /// <summary>A segment with this in it could leave the root folder.</summary>
+    private const string ParentSegment = "..";
+
     [GeneratedRegex(@"^[A-Za-z0-9][A-Za-z0-9 ._-]{0,127}$")]
     private static partial Regex SegmentPattern();
 
     /// <summary>True when <paramref name="segment"/> can be one segment of a key.</summary>
-    public static bool IsSegment(string segment) => SegmentPattern().IsMatch(segment) && !segment.Contains("..");
+    public static bool IsSegment(string segment) => SegmentPattern().IsMatch(segment) && !segment.Contains(ParentSegment);
 
     public async Task<string?> ReadAsync(string key, CancellationToken ct = default)
     {
@@ -34,7 +39,7 @@ public sealed partial class DiskBlobStore(string root) : IBlobStore
     {
         string folder = PathOf(prefix);
         IReadOnlyList<string> keys = Directory.Exists(folder)
-            ? Directory.GetFiles(folder, "*", SearchOption.AllDirectories)
+            ? Directory.GetFiles(folder, AnyFile, SearchOption.AllDirectories)
                 .Select(file => $"{prefix}/{Path.GetRelativePath(folder, file).Replace('\\', '/')}")
                 .ToList()
             : [];

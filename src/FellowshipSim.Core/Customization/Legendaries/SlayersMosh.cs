@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Heroes.Tariq;
 using FellowshipSim.Core.Heroes.Tariq.Abilities;
 
 namespace FellowshipSim.Core.Customization.Legendaries;
@@ -9,17 +10,18 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class SlayersMosh : Legendary
 {
     public const int PowerId = 424;
+    public const string PowerName = "Slayer's Mosh";
     public const int HelmItemId = 5899;
     public const int CloakItemId = 5218;
     public const int DebuffEffectId = 2250;
     public const double DebuffSeconds = 6.0;
     public const double DamageTaken = 1.2;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect("Slayer's Mosh", DebuffEffectId, DebuffSeconds);
+    public static readonly AuraDef Debuff = AuraDef.Effect(PowerName, DebuffEffectId, DebuffSeconds);
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Slayer's Mosh";
-    public override string HeroName => "Tariq";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Tariq);
     public override IReadOnlyList<int> ItemIds => [HelmItemId, CloakItemId];
 
     public override void Bind(Hero hero)

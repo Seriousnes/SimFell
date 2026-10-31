@@ -14,7 +14,7 @@ public class ThunderCall : TariqAbility
     public const int BuffEffectId = 1772;
     public const double BuffSeconds = 21.0;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Thunder Call", BuffEffectId, BuffSeconds);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds);
 
     public ThunderCall(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)
     {

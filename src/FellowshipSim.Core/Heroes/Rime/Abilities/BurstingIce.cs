@@ -24,7 +24,7 @@ public class BurstingIce : RimeAbility
     public const double TargetThreshold = 5;
 
     /// <summary>The debuff on the enemy. Action lists read it; the pulses run on their own timer.</summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect("Bursting Ice", DebuffEffectId, DurationSeconds);
+    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, DurationSeconds);
 
     /// <summary>"While Bursting Ice is active on an enemy you gain Winter's Embrace, causing you to deal 20% more damage."</summary>
     public static readonly AuraDef WintersEmbrace = AuraDef.Effect("Winter's Embrace", WintersEmbraceEffectId,

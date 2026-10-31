@@ -30,6 +30,9 @@ public class ResourceState
 
 public class ResourcePool
 {
+    /// <summary>Maximum of a resource used without being registered.</summary>
+    private const double UnregisteredMax = 100;
+
     private readonly Dictionary<ResourceDef, ResourceState> _resources = new();
     // Speed: a hero has a few resources, and callers pass the declared ResourceDef. It is found by reference before the
     // dictionary, which hashes and compares a record's fields. Rebuilt whenever the dictionary changes.
@@ -79,7 +82,7 @@ public class ResourcePool
     {
         if (!TryGet(type, out var res))
         {
-            res = new ResourceState(100, 0);
+            res = new ResourceState(UnregisteredMax, 0);
             Set(type, res);
         }
         return res;
@@ -113,7 +116,7 @@ public class ResourcePool
             }
             else
             {
-                Set(resource, new ResourceState(100, amount));
+                Set(resource, new ResourceState(UnregisteredMax, amount));
             }
         }
     }

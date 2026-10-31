@@ -168,7 +168,7 @@ public abstract class MaraDot : MaraAbility
             if (_active.GetValueOrDefault(dot.Target) != dot) return;
             // The hasted progress toward the next tick is a partial tick, when enough time passed since the last one.
             double fraction = dot.Timer is { IsActive: true } timer ? timer.ElapsedBaseSeconds / HastedPeriod(c.CurrentTime) : 0.0;
-            if (fraction > 0 && (c.CurrentTime - dot.LastTick).TotalSeconds >= PeriodicEffect.MinHastedPartialTickSeconds - 1e-9)
+            if (fraction > 0 && (c.CurrentTime - dot.LastTick).TotalSeconds >= PeriodicEffect.MinHastedPartialTickSeconds - Tolerance.Comparison)
             {
                 Tick(c, dot, Math.Min(fraction, 1.0));
             }

@@ -99,7 +99,7 @@
 
     private static string BuildValue(ProfileEntry saved) => $"{saved.Hero}/{saved.Name}";
 
-    private static string DefaultList(string hero) => $"builtin/{hero}/{DefaultActionLists.DefaultName}";
+    private static string DefaultList(string hero) => $"{ActionListStore.BuiltInValue}/{hero}/{DefaultActionLists.DefaultName}";
 
     private async Task Toggle(ChangeEventArgs args)
     {

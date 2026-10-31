@@ -3,6 +3,9 @@ namespace FellowshipSim.Core.APL;
 /// <summary>Action-list names of abilities and auras: lower case, words joined by '_' ("winters_blessing").</summary>
 public static class AplNames
 {
+    /// <summary>Joins the words of an action-list name.</summary>
+    public const string WordSeparator = "_";
+
     /// <summary>The action-list name for <paramref name="name"/>: "Winter's Blessing" is "winters_blessing".</summary>
     public static string Slug(string name) => Slugs.GetOrAdd(name, n =>
         new string(n.ToLowerInvariant().Replace(' ', '_').Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray()));
@@ -35,5 +38,5 @@ public static class AplNames
         return ability;
     }
 
-    private static string Key(string name) => Keys.GetOrAdd(name, n => Slug(n).Replace("_", ""));
+    private static string Key(string name) => Keys.GetOrAdd(name, n => Slug(n).Replace(WordSeparator, ""));
 }

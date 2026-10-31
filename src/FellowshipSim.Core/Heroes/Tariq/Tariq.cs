@@ -26,12 +26,12 @@ public sealed class Tariq : Hero
     /// <summary>Tariq's talent tree, as in game (game data talent-slot records, hero Tariq).</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                          b                          c
-        TalentSlot.InRow(1, 2,    LeftHandPath.TalentId,     RideTheLightning.TalentId, SquareHammer.TalentId),
-        TalentSlot.InRow(2, 1,    HighRoad.TalentId,         BloodAndThunder.TalentId,  Bloodline.TalentId),
-        TalentSlot.InRow(3, 2,    TheMotherload.TalentId,    MouthForWar.TalentId,      Thunderstruck.TalentId),
-        TalentSlot.InRow(4, 1,    Pneuma.TalentId,           Sledgehammer.TalentId,     FarBeyondDriven.TalentId),
-        TalentSlot.InRow(5, 3,    KillEmAll.TalentId,        AceOfSpades.TalentId,      Schism.TalentId),
-        TalentSlot.InRow(6, 1,    ThemBones.TalentId,        CrackTheSky.TalentId,      KillingInTheName.TalentId));
+        TalentSlot.InRow(row: 1, cost: 2,    LeftHandPath.TalentId,     RideTheLightning.TalentId, SquareHammer.TalentId),
+        TalentSlot.InRow(row: 2, cost: 1,    HighRoad.TalentId,         BloodAndThunder.TalentId,  Bloodline.TalentId),
+        TalentSlot.InRow(row: 3, cost: 2,    TheMotherload.TalentId,    MouthForWar.TalentId,      Thunderstruck.TalentId),
+        TalentSlot.InRow(row: 4, cost: 1,    Pneuma.TalentId,           Sledgehammer.TalentId,     FarBeyondDriven.TalentId),
+        TalentSlot.InRow(row: 5, cost: 3,    KillEmAll.TalentId,        AceOfSpades.TalentId,      Schism.TalentId),
+        TalentSlot.InRow(row: 6, cost: 1,    ThemBones.TalentId,        CrackTheSky.TalentId,      KillingInTheName.TalentId));
 
     public override IReadOnlyList<TalentSlot> TalentTreeSlots => TalentTree;
 

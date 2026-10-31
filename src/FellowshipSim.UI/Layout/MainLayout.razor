@@ -30,6 +30,10 @@
 </main>
 
 @code {
+    private const string ModulePath = JsInterop.ContentRoot + "shell/headerHeight.js";
+
+    private const string ObserveFunction = "observe";
+
     /// <summary>Name of the section each page fills with its line under the heading. The frame shows none.</summary>
     public const string SubtitleSection = "subtitle";
 
@@ -44,8 +48,8 @@
         if (!firstRender) return;
         try
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/shell/headerHeight.js");
-            _height = await _module.InvokeAsync<IJSObjectReference>("observe", _header);
+            _module = await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
+            _height = await _module.InvokeAsync<IJSObjectReference>(ObserveFunction, _header);
         }
         catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
@@ -67,7 +71,7 @@
         {
             if (_height != null)
             {
-                await _height.InvokeVoidAsync("dispose");
+                await _height.InvokeVoidAsync(JsInterop.DisposeFunction);
                 await _height.DisposeAsync();
             }
             if (_module != null) await _module.DisposeAsync();

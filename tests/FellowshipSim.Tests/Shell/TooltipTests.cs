@@ -12,7 +12,7 @@ public partial class TooltipTests
     [Fact]
     public void No_component_or_script_has_a_title_attribute()
     {
-        string ui = Path.Combine(TestPaths.RepositoryRoot, "src", "FellowshipSim.UI");
+        string ui = Path.Combine(TestPaths.RepositoryRoot, TestPaths.SourceFolder, TestPaths.UiProjectFolder);
         var titles = Directory.EnumerateFiles(ui, "*", SearchOption.AllDirectories)
             .Where(path => Path.GetExtension(path) is ".razor" or ".cs" or ".js")
             .Where(path => !path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")

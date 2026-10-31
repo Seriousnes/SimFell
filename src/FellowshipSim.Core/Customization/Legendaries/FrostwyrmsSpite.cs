@@ -15,6 +15,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class FrostwyrmsSpite : Legendary
 {
     public const int PowerId = 397;
+    public const string PowerName = "Frostwyrm's Spite";
     public const int HelmItemId = 5899;
     public const int BuffEffectId = 2264;
     public const int DamageEffectId = 2265;
@@ -24,11 +25,11 @@ public class FrostwyrmsSpite : Legendary
     public const double DamagePerStack = 0.30;
     public const double ExtraHitTargetThreshold = 3;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Frostwyrm's Spite", BuffEffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(PowerName, BuffEffectId, BuffSeconds, MaxStacks);
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Frostwyrm's Spite";
-    public override string HeroName => "Rime";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Rime);
     public override IReadOnlyList<int> ItemIds => [HelmItemId];
 
     public override void Bind(Hero hero)

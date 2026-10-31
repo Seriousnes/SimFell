@@ -64,25 +64,10 @@ public record UnitRef(
     public override string ToString() => $"{Id}.{Instance}";
 }
 
-public static class CommandKind
-{
-    public const string EnemyArise = "enemy_arise";
-    public const string EnemyDemise = "enemy_demise";
-    public const string EnemyHealth = "enemy_health";
-    public const string ExternalAura = "external_aura";
-    public const string Cast = "cast";
-    public const string BeginCast = "begin_cast";
-    public const string CompleteCast = "complete_cast";
-    public const string CancelCast = "cancel_cast";
-    public const string StopChannel = "stop_channel";
-    public const string PlayerDeath = "player_death";
-    public const string PlayerRevive = "player_revive";
-}
-
 public class ReplayCommand
 {
     [JsonPropertyName("t")] public double Time { get; set; }
-    [JsonPropertyName("kind")] public string Kind { get; set; } = string.Empty;
+    [JsonPropertyName("kind"), JsonConverter(typeof(JsonStringEnumConverter<ReplayCommandKind>))] public ReplayCommandKind Kind { get; set; }
 
     // casts
     [JsonPropertyName("ability_id")] public int AbilityId { get; set; }
@@ -95,21 +80,21 @@ public class ReplayCommand
     [JsonPropertyName("name")] public string? Name { get; set; }
     [JsonPropertyName("max_hp")] public double MaxHp { get; set; }
     [JsonPropertyName("hp")] public double Hp { get; set; }
-    [JsonPropertyName("reason")] public string? Reason { get; set; }
+    [JsonPropertyName("reason"), JsonConverter(typeof(JsonStringEnumConverter<EnemyRemovalReason>))] public EnemyRemovalReason? Reason { get; set; }
 
     // external auras
-    [JsonPropertyName("type")] public string? AuraEventType { get; set; }
+    [JsonPropertyName("type"), JsonConverter(typeof(JsonStringEnumConverter<LogAuraType>))] public LogAuraType? AuraEventType { get; set; }
     [JsonPropertyName("source")] public UnitRef? Source { get; set; }
     [JsonPropertyName("stack")] public int? Stack { get; set; }
     [JsonPropertyName("duration_ms")] public double? DurationMs { get; set; }
 
-    public bool IsPlayerAction => Kind is CommandKind.Cast or CommandKind.BeginCast;
+    public bool IsPlayerAction => Kind is ReplayCommandKind.Cast or ReplayCommandKind.BeginCast;
 
     public override string ToString() => Kind switch
     {
-        CommandKind.EnemyArise or CommandKind.EnemyDemise => $"{Time:F3} {Kind} {Name} {Enemy}",
-        CommandKind.ExternalAura => $"{Time:F3} {AuraEventType} {AbilityName} ({Source} -> {Target})",
-        _ => $"{Time:F3} {Kind} {AbilityName}{(Target is { Id: > 0 } ? $" -> {Target}" : "")}"
+        ReplayCommandKind.EnemyArise or ReplayCommandKind.EnemyDemise => $"{Time:F3} {Kind.LogText()} {Name} {Enemy}",
+        ReplayCommandKind.ExternalAura => $"{Time:F3} {AuraEventType?.LogText()} {AbilityName} ({Source} -> {Target})",
+        _ => $"{Time:F3} {Kind.LogText()} {AbilityName}{(Target is { Id: > 0 } ? $" -> {Target}" : "")}"
     };
 }
 
@@ -154,7 +139,7 @@ public class LogDamage
 public class LogAura
 {
     [JsonPropertyName("t")] public double Time { get; set; }
-    [JsonPropertyName("type")] public string Type { get; set; } = string.Empty;
+    [JsonPropertyName("type"), JsonConverter(typeof(JsonStringEnumConverter<LogAuraType>))] public LogAuraType Type { get; set; }
     [JsonPropertyName("ability_id")] public int AbilityId { get; set; }
     [JsonPropertyName("ability_name")] public string AbilityName { get; set; } = string.Empty;
     [JsonPropertyName("source")] public UnitRef Source { get; set; } = new(0, 1);
@@ -164,14 +149,15 @@ public class LogAura
     /// <summary>The ability the log names as the aura's cause (its extraAbilityGameID), if any.</summary>
     [JsonPropertyName("extra_ability_id")] public int? ExtraAbilityId { get; set; }
 
-    public bool IsGain => Type is "applybuff" or "applybuffstack" or "applydebuff" or "applydebuffstack" or "refreshbuff" or "refreshdebuff";
-    public bool IsLoss => Type is "removebuff" or "removebuffstack" or "removedebuff" or "removedebuffstack";
+    public bool IsGain => Type is LogAuraType.ApplyBuff or LogAuraType.ApplyBuffStack or LogAuraType.ApplyDebuff or LogAuraType.ApplyDebuffStack
+        or LogAuraType.RefreshBuff or LogAuraType.RefreshDebuff;
+    public bool IsLoss => Type is LogAuraType.RemoveBuff or LogAuraType.RemoveBuffStack or LogAuraType.RemoveDebuff or LogAuraType.RemoveDebuffStack;
 }
 
 public class LogResourceSnapshot
 {
     [JsonPropertyName("t")] public double Time { get; set; }
-    [JsonPropertyName("event")] public string Event { get; set; } = string.Empty;
+    [JsonPropertyName("event")] public LogResourceEvent Event { get; set; }
     [JsonPropertyName("ability_id")] public int? AbilityId { get; set; }
     /// <summary>
     /// The event is the activation of an ability (a cast event the log marks activation: an instant cast, or the cast

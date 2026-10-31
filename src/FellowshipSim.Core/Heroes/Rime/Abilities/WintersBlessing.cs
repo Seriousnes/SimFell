@@ -13,7 +13,7 @@ public class WintersBlessing : RimeAbility
     /// <summary>+20% Spirit (game data effect 2299; logs only show effect 1389).</summary>
     public const double SpiritBonus = 0.2;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Winter's Blessing", BuffEffectId, BuffSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds,
         modifiers: StatModifier.Add(StatType.Spirit, SpiritBonus));
 
     public WintersBlessing(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)

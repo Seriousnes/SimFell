@@ -18,6 +18,8 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class TariqTalentSmokeTests(ITestOutputHelper output)
 {
+    private const string CharacterFile = "tariq_character.json";
+
     private const string Apl = """
         actions+=/thunder_call
         actions+=/raging_tempest
@@ -121,7 +123,7 @@ public class TariqTalentSmokeTests(ITestOutputHelper output)
     {
         // The Tariq from fXyzwGcQkTrLD34R fight 4 (Stormwatch), as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "tariq_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, CharacterFile)))!;
         build.Talents = talentIds.ToList();
         build.LegendaryItemIds = legendaryItemId is { } id ? [id] : [];
         var hero = HeroImporter.Import(build);

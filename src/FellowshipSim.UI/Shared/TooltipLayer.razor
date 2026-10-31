@@ -8,6 +8,10 @@
 <div class="tooltip" id="app-tooltip" role="tooltip" hidden @ref="_bubble"></div>
 
 @code {
+    private const string ModulePath = JsInterop.ContentRoot + "tooltip/tooltip.js";
+
+    private const string StartFunction = "start";
+
     private ElementReference _bubble;
     private IJSObjectReference? _module;
     private IJSObjectReference? _handle;
@@ -17,8 +21,8 @@
         if (!firstRender) return;
         try
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/tooltip/tooltip.js");
-            _handle = await _module.InvokeAsync<IJSObjectReference>("start", _bubble);
+            _module = await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
+            _handle = await _module.InvokeAsync<IJSObjectReference>(StartFunction, _bubble);
         }
         catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
@@ -32,7 +36,7 @@
         {
             if (_handle != null)
             {
-                await _handle.InvokeVoidAsync("dispose");
+                await _handle.InvokeVoidAsync(JsInterop.DisposeFunction);
                 await _handle.DisposeAsync();
             }
             if (_module != null) await _module.DisposeAsync();

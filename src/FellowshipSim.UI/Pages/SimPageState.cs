@@ -31,13 +31,28 @@ public sealed class SimPageState
     /// <summary>The targets of an AoE sim at first.</summary>
     public const int DefaultAoeTargets = 8;
 
+    /// <summary>The label of the sim run of the current build.</summary>
+    public const string CurrentBuildLabel = "Current build";
+
+    /// <summary>The hero of the build at first.</summary>
+    public const string DefaultHero = "Rime";
+
     /// <summary>How far each fight's length varies at first: ±20%.</summary>
     public const double DefaultLengthVariancePercent = 20;
+
+    /// <summary>The iterations of a sim at first.</summary>
+    public const int DefaultIterations = 1000;
+
+    /// <summary>The length of a fight in seconds at first.</summary>
+    public const double DefaultDurationSeconds = 300;
+
+    /// <summary>The Spirit Points the hero starts with at first when <see cref="StartWithSpirit"/>.</summary>
+    public const double DefaultStartingSpirit = 100;
 
     public SimTab Tab { get; set; } = SimTab.Hero;
 
     /// <summary>The build being edited.</summary>
-    public BuildEditor Editor { get; set; } = new(BuildEditor.NewBuild("Rime"));
+    public BuildEditor Editor { get; set; } = new(BuildEditor.NewBuild(DefaultHero));
 
     public CharacterBuild Build => Editor.Build;
 
@@ -82,9 +97,9 @@ public sealed class SimPageState
 
     public SimMode Mode { get; set; } = SimMode.SingleTarget;
 
-    public int Iterations { get; set; } = 1000;
+    public int Iterations { get; set; } = DefaultIterations;
 
-    public double DurationSeconds { get; set; } = 300;
+    public double DurationSeconds { get; set; } = DefaultDurationSeconds;
 
     public int AoeTargets { get; set; } = DefaultAoeTargets;
 
@@ -101,7 +116,7 @@ public sealed class SimPageState
     /// <summary>True when the hero starts each fight with <see cref="StartingSpirit"/> Spirit Points.</summary>
     public bool StartWithSpirit { get; set; }
 
-    public double StartingSpirit { get; set; } = 100;
+    public double StartingSpirit { get; set; } = DefaultStartingSpirit;
 
     public SimExtra Extra { get; set; } = SimExtra.None;
 
@@ -118,7 +133,7 @@ public sealed class SimPageState
     public bool ThreadsRestored { get; set; }
 
     /// <summary>The action list picked, as kept/hero/name; empty for one that came with an imported profile.</summary>
-    public string ActionListValue { get; set; } = $"builtin/Rime/{Core.APL.DefaultActionLists.DefaultName}";
+    public string ActionListValue { get; set; } = $"{ActionListStore.BuiltInValue}/{DefaultHero}/{Core.APL.DefaultActionLists.DefaultName}";
 
     public string ActionListName { get; set; } = Core.APL.DefaultActionLists.DefaultName;
 

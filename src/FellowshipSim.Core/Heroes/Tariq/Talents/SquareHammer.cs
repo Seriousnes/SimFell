@@ -20,7 +20,7 @@ public class SquareHammer : Talent
     public const double ActiveSeconds = 4.0;
     public const double Expertise = 0.08;
 
-    public static readonly AuraDef Stacks = AuraDef.Effect("Square Hammer", StackEffectId, StackSeconds, MaxStacks);
+    public static readonly AuraDef Stacks = AuraDef.Effect(TalentName, StackEffectId, StackSeconds, MaxStacks);
 
     public static readonly AuraDef Active = AuraDef.Effect("Square Hammer: Active", ActiveEffectId, ActiveSeconds,
         modifiers: StatModifier.Add(StatType.Expertise, Expertise));

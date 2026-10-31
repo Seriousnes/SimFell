@@ -16,8 +16,22 @@ public sealed record ActionListEntry(string Hero, string Name, bool Shared = fal
 /// </summary>
 public sealed partial class ActionListStore(ReplayLibrary library, IBlobStore store)
 {
+    /// <summary>The name of the folder (and key prefix) of saved action lists.</summary>
+    /// <summary>The first part of a picked list's value for a list built into the engine.</summary>
+    public const string BuiltInValue = "builtin";
+
+    /// <summary>The first part of a picked list's value for a shared list.</summary>
+    public const string SharedValue = "shared";
+
+    /// <summary>The first part of a picked list's value for one of the visitor's own lists.</summary>
+    public const string OwnValue = "own";
+
+    private const string Folder = "apls";
+
+    private const string SearchPattern = "*" + ProfileStore.Extension;
+
     /// <summary>The data folder's <c>apls</c> folder: the shared lists on the web, and the desktop user's own lists.</summary>
-    public string SharedDirectory => Path.Combine(library.DataDirectory, "apls");
+    public string SharedDirectory => Path.Combine(library.DataDirectory, Folder);
 
     [GeneratedRegex(@"^[A-Za-z0-9][A-Za-z0-9 _-]{0,63}$")]
     private static partial Regex NamePattern();
@@ -31,14 +45,14 @@ public sealed partial class ActionListStore(ReplayLibrary library, IBlobStore st
         var entries = new List<ActionListEntry>();
         foreach (string hero in heroes)
         {
-            string prefix = visitor.Key($"apls/{hero}");
+            string prefix = visitor.Key($"{Folder}/{hero}");
             entries.AddRange((await store.ListAsync(prefix, ct))
-                .Where(key => key.EndsWith(".simc", StringComparison.Ordinal) && key.LastIndexOf('/') == prefix.Length)
-                .Select(key => new ActionListEntry(hero, key[(prefix.Length + 1)..^".simc".Length])));
+                .Where(key => key.EndsWith(ProfileStore.Extension, StringComparison.Ordinal) && key.LastIndexOf('/') == prefix.Length)
+                .Select(key => new ActionListEntry(hero, key[(prefix.Length + 1)..^ProfileStore.Extension.Length])));
             string shared = Path.Combine(SharedDirectory, hero);
             if (!visitor.OwnsDataFolder && Directory.Exists(shared))
             {
-                entries.AddRange(Directory.GetFiles(shared, "*.simc").Select(path => new ActionListEntry(hero, Path.GetFileNameWithoutExtension(path), Shared: true)));
+                entries.AddRange(Directory.GetFiles(shared, SearchPattern).Select(path => new ActionListEntry(hero, Path.GetFileNameWithoutExtension(path), Shared: true)));
             }
         }
         return entries.OrderBy(e => e.Hero).ThenBy(e => e.Shared).ThenBy(e => e.Name, StringComparer.OrdinalIgnoreCase).ToList();
@@ -62,7 +76,7 @@ public sealed partial class ActionListStore(ReplayLibrary library, IBlobStore st
         IsValidName(name) ? store.DeleteAsync(KeyOf(visitor, hero, name), ct) : Task.CompletedTask;
 
     /// <summary>Path of the list in <see cref="SharedDirectory"/>.</summary>
-    public string PathOf(string hero, string name) => Path.Combine(SharedDirectory, hero, $"{name}.simc");
+    public string PathOf(string hero, string name) => Path.Combine(SharedDirectory, hero, $"{name}{ProfileStore.Extension}");
 
-    private static string KeyOf(Visitor visitor, string hero, string name) => visitor.Key($"apls/{hero}/{name}.simc");
+    private static string KeyOf(Visitor visitor, string hero, string name) => visitor.Key($"{Folder}/{hero}/{name}{ProfileStore.Extension}");
 }

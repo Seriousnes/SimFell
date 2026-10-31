@@ -11,13 +11,14 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class SkandisDecree : Legendary
 {
     public const int PowerId = 396;
+    public const string PowerName = "Skandi's Decree";
     /// <summary>Harbinger of Winter Leggings.</summary>
     public const int LegsItemId = 5900;
     public const double BurstingIceBonusSeconds = 2.0;
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Skandi's Decree";
-    public override string HeroName => "Rime";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Rime);
     public override IReadOnlyList<int> ItemIds => [LegsItemId];
 
     public override void Bind(Hero hero)

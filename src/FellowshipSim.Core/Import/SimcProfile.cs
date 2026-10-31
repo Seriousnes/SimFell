@@ -42,6 +42,38 @@ namespace FellowshipSim.Core.Import;
 /// </summary>
 public sealed record SimcProfile(CharacterBuild Build, string ActionList)
 {
+    private const char CommentMarker = '#';
+    private const string NameOption = "";
+    private const string NumberFormat = "0.##";
+    private const string ActionsKey = "actions";
+    private const string TrueText = "true";
+    private const string IdOption = "id";
+    private const string PrimaryStatKey = "primary_stat";
+    private const string StaminaKey = "stamina";
+    private const string ArmorKey = "armor";
+    private const string CritRatingKey = "crit_rating";
+    private const string HasteRatingKey = "haste_rating";
+    private const string ExpertiseRatingKey = "expertise_rating";
+    private const string SpiritRatingKey = "spirit_rating";
+    private const string StatsFromOldProfileKey = "stats_from_old_profile";
+    private const string CritKey = "crit";
+    private const string HasteKey = "haste";
+    private const string ExpertiseKey = "expertise";
+    private const string SpiritKey = "spirit";
+    private const string TalentsKey = "talents";
+    private const string AspectsKey = "aspects";
+    private const string SigilsKey = "sigils";
+    private const string ProtectiveEnchantKey = "protective_enchant";
+    private const string GlyphsKey = "glyphs";
+    private const string GemsKey = "gems";
+    private const string GemSocketsKey = "gem_sockets";
+    private const string GearGemBonusesKey = "gear_gem_bonuses";
+    private const string StatEnchantsKey = "stat_enchants";
+    private const string StatEnchantCountsKey = "stat_enchant_counts";
+    private const string Relic1Key = "relic1";
+    private const string Relic2Key = "relic2";
+    private const string LegendaryKey = "legendary";
+    private const string WeaponKey = "weapon";
     public static SimcProfile Load(string path) => Parse(File.ReadAllText(path));
 
     public static SimcProfile Parse(string text)
@@ -55,8 +87,8 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         {
             lineNumber++;
             string line = raw.Trim();
-            if (line.Length == 0 || line.StartsWith('#')) continue;
-            if (line.StartsWith("actions", StringComparison.Ordinal))
+            if (line.Length == 0 || line.StartsWith(CommentMarker)) continue;
+            if (line.StartsWith(ActionsKey, StringComparison.Ordinal))
             {
                 actions.AppendLine(line);
                 continue;
@@ -85,10 +117,10 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         }
         if (hero == null) throw new FormatException("The profile has no hero line.");
         // The ratings read from percentages count the stat enchants; a build's ratings are without them.
-        if (percents.Contains("crit")) build.CritRating = Math.Max(0, build.CritRating - build.EnchantRating(StatType.CritRating));
-        if (percents.Contains("haste")) build.HasteRating = Math.Max(0, build.HasteRating - build.EnchantRating(StatType.HasteRating));
-        if (percents.Contains("expertise")) build.ExpertiseRating = Math.Max(0, build.ExpertiseRating - build.EnchantRating(StatType.ExpertiseRating));
-        if (percents.Contains("spirit")) build.SpiritRating = Math.Max(0, build.SpiritRating - build.EnchantRating(StatType.SpiritRating));
+        if (percents.Contains(CritKey)) build.CritRating = Math.Max(0, build.CritRating - build.EnchantRating(StatType.CritRating));
+        if (percents.Contains(HasteKey)) build.HasteRating = Math.Max(0, build.HasteRating - build.EnchantRating(StatType.HasteRating));
+        if (percents.Contains(ExpertiseKey)) build.ExpertiseRating = Math.Max(0, build.ExpertiseRating - build.EnchantRating(StatType.ExpertiseRating));
+        if (percents.Contains(SpiritKey)) build.SpiritRating = Math.Max(0, build.SpiritRating - build.EnchantRating(StatType.SpiritRating));
         if (percents.Count > 0) build.StatsFromOldProfile = true;
         return new SimcProfile(build, actions.ToString());
     }
@@ -97,44 +129,44 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     {
         switch (key)
         {
-            case "primary_stat": build.PrimaryStat = Number(value); break;
-            case "stamina": build.Stamina = Number(value); break;
-            case "armor": build.Armor = Number(value); break;
-            case "crit_rating": build.CritRating = Number(value); break;
-            case "haste_rating": build.HasteRating = Number(value); break;
-            case "expertise_rating": build.ExpertiseRating = Number(value); break;
-            case "spirit_rating": build.SpiritRating = Number(value); break;
-            case "stats_from_old_profile": build.StatsFromOldProfile = value == "true"; break;
-            case "crit":
-                percents.Add("crit");
+            case PrimaryStatKey: build.PrimaryStat = Number(value); break;
+            case StaminaKey: build.Stamina = Number(value); break;
+            case ArmorKey: build.Armor = Number(value); break;
+            case CritRatingKey: build.CritRating = Number(value); break;
+            case HasteRatingKey: build.HasteRating = Number(value); break;
+            case ExpertiseRatingKey: build.ExpertiseRating = Number(value); break;
+            case SpiritRatingKey: build.SpiritRating = Number(value); break;
+            case StatsFromOldProfileKey: build.StatsFromOldProfile = value == TrueText; break;
+            case CritKey:
+                percents.Add(CritKey);
                 build.CritRating = StatDiminishingReturns.ToRating(Percent(value) - StatBlock.BaseCritChance);
                 break;
-            case "haste":
-                percents.Add("haste");
+            case HasteKey:
+                percents.Add(HasteKey);
                 build.HasteRating = StatDiminishingReturns.ToRating(Percent(value));
                 break;
-            case "expertise":
-                percents.Add("expertise");
+            case ExpertiseKey:
+                percents.Add(ExpertiseKey);
                 build.ExpertiseRating = StatDiminishingReturns.ToRating(Percent(value));
                 break;
-            case "spirit":
-                percents.Add("spirit");
+            case SpiritKey:
+                percents.Add(SpiritKey);
                 build.SpiritRating = StatDiminishingReturns.ToRating(Percent(value) - StatBlock.BaseSpirit);
                 break;
-            case "talents":
+            case TalentsKey:
                 var tree = hero.TalentTreeSlots.Select(s => Catalog.CreateTalent(s.TalentId)).OfType<Talent>().Select(t => new NamedId(t.Name, t.Id));
                 foreach (string name in List(value)) build.Talents.Add(IdOf(name, tree, "talent"));
                 break;
-            case "aspects": AddAugmentations<Aspect>(build, value, "aspect"); break;
-            case "sigils": AddAugmentations<Sigil>(build, value, "sigil"); break;
-            case "protective_enchant": AddAugmentations<ProtectiveEnchant>(build, value, "protective enchant"); break;
-            case "glyphs":
+            case AspectsKey: AddAugmentations<Aspect>(build, value, "aspect"); break;
+            case SigilsKey: AddAugmentations<Sigil>(build, value, "sigil"); break;
+            case ProtectiveEnchantKey: AddAugmentations<ProtectiveEnchant>(build, value, "protective enchant"); break;
+            case GlyphsKey:
                 foreach (var (name, rank) in Ranked(value))
                 {
                     build.Glyphs.Add(new BuildEntry(IdOf(name, Catalog.AllGlyphs.Select(g => new NamedId(g.Name, g.Id)), "glyph"), rank));
                 }
                 break;
-            case "gems":
+            case GemsKey:
                 foreach (string entry in List(value))
                 {
                     var (name, power) = Pair(entry);
@@ -143,13 +175,13 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                     build.GemPower[colors[0]] = power;
                 }
                 break;
-            case "gem_sockets":
+            case GemSocketsKey:
                 foreach (string name in List(value))
                 {
                     build.SocketedGemIds.Add((GemItem.All.FirstOrDefault(g => AplNames.Slug(g.Name) == name) ?? throw new FormatException($"no gem '{name}'")).Id);
                 }
                 break;
-            case "gear_gem_bonuses":
+            case GearGemBonusesKey:
                 foreach (var (name, count) in Ranked(value))
                 {
                     var colors = Enum.GetValues<GemColor>().Where(c => AplNames.Slug(c.ToString()) == name).ToList();
@@ -157,32 +189,32 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                     build.GearGemBonuses[colors[0]] = count;
                 }
                 break;
-            case "stat_enchants":
+            case StatEnchantsKey:
                 foreach (var (name, rating) in Ranked(value))
                 {
                     var enchant = StatEnchant.All.FirstOrDefault(e => e.Key == name) ?? throw new FormatException($"no stat enchant '{name}'");
                     build.StatEnchants.Add(new BuildEntry(enchant.Id, rating));
                 }
                 break;
-            case "stat_enchant_counts":
+            case StatEnchantCountsKey:
                 foreach (var (name, count) in Ranked(value))
                 {
                     var enchant = StatEnchant.All.FirstOrDefault(e => e.Key == name) ?? throw new FormatException($"no stat enchant '{name}'");
                     build.StatEnchantCounts[enchant.Id] = count;
                 }
                 break;
-            case "relic1": build.Relic1ItemId = RelicItemId(value); break;
-            case "relic2": build.Relic2ItemId = RelicItemId(value); break;
-            case "legendary":
+            case Relic1Key: build.Relic1ItemId = RelicItemId(value); break;
+            case Relic2Key: build.Relic2ItemId = RelicItemId(value); break;
+            case LegendaryKey:
             {
                 var options = Options(value);
-                int itemId = (int)Number(options.GetValueOrDefault("id") ?? throw new FormatException("a legendary is <power>,id=<item id>"));
+                int itemId = (int)Number(options.GetValueOrDefault(IdOption) ?? throw new FormatException("a legendary is <power>,id=<item id>"));
                 var legendary = Catalog.CreateLegendary(build.Hero, itemId) ?? throw new FormatException($"no legendary item {itemId} for {build.Hero}");
-                if (AplNames.Slug(legendary.Name) != options[""]) throw new FormatException($"item {itemId} grants {AplNames.Slug(legendary.Name)}");
+                if (AplNames.Slug(legendary.Name) != options[NameOption]) throw new FormatException($"item {itemId} grants {AplNames.Slug(legendary.Name)}");
                 build.LegendaryItemIds.Add(itemId);
                 break;
             }
-            case "weapon":
+            case WeaponKey:
                 build.WeaponAbilityId = Catalog.AllWeapons.FirstOrDefault(w => AplNames.Slug(w.Name) == value)?.WeaponAbilityId
                                         ?? throw new FormatException($"no weapon '{value}'");
                 break;
@@ -197,17 +229,17 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         var build = Build;
         var builder = new StringBuilder();
         builder.AppendLine($"{AplNames.Slug(build.Hero)}=\"{build.Name}\"");
-        builder.AppendLine($"primary_stat={Text(build.PrimaryStat)}");
-        if (build.Stamina > 0) builder.AppendLine($"stamina={Text(build.Stamina)}");
-        if (build.Armor > 0) builder.AppendLine($"armor={Text(build.Armor)}");
-        builder.AppendLine($"crit_rating={Text(build.CritRating)}");
-        builder.AppendLine($"haste_rating={Text(build.HasteRating)}");
-        builder.AppendLine($"expertise_rating={Text(build.ExpertiseRating)}");
-        builder.AppendLine($"spirit_rating={Text(build.SpiritRating)}");
-        if (build.StatsFromOldProfile) builder.AppendLine("stats_from_old_profile=true");
+        builder.AppendLine($"{PrimaryStatKey}={Text(build.PrimaryStat)}");
+        if (build.Stamina > 0) builder.AppendLine($"{StaminaKey}={Text(build.Stamina)}");
+        if (build.Armor > 0) builder.AppendLine($"{ArmorKey}={Text(build.Armor)}");
+        builder.AppendLine($"{CritRatingKey}={Text(build.CritRating)}");
+        builder.AppendLine($"{HasteRatingKey}={Text(build.HasteRating)}");
+        builder.AppendLine($"{ExpertiseRatingKey}={Text(build.ExpertiseRating)}");
+        builder.AppendLine($"{SpiritRatingKey}={Text(build.SpiritRating)}");
+        if (build.StatsFromOldProfile) builder.AppendLine($"{StatsFromOldProfileKey}={TrueText}");
         if (build.Talents.Count > 0)
         {
-            builder.AppendLine($"talents={string.Join('/', build.Talents.Select(id => AplNames.Slug(Catalog.CreateTalent(id)?.Name ?? throw new InvalidOperationException($"Talent {id} is not modeled"))))}");
+            builder.AppendLine($"{TalentsKey}={string.Join('/', build.Talents.Select(id => AplNames.Slug(Catalog.CreateTalent(id)?.Name ?? throw new InvalidOperationException($"Talent {id} is not modeled"))))}");
         }
         var augmentations = build.Augmentations
             .Select(a => new EntryAugmentation(a, Catalog.CreateAugmentation(a.Id, a.Rank) ?? throw new InvalidOperationException($"Augmentation {a.Id} is not in the catalog")))
@@ -217,44 +249,44 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
             var ofKind = augmentations.Where(a => a.Augmentation is T).ToList();
             if (ofKind.Count > 0) builder.AppendLine($"{key}={string.Join('/', ofKind.Select(a => $"{AplNames.Slug(a.Augmentation.Name)}:{a.Entry.Rank}"))}");
         }
-        AppendAugmentations<Aspect>("aspects");
-        AppendAugmentations<Sigil>("sigils");
-        AppendAugmentations<ProtectiveEnchant>("protective_enchant");
+        AppendAugmentations<Aspect>(AspectsKey);
+        AppendAugmentations<Sigil>(SigilsKey);
+        AppendAugmentations<ProtectiveEnchant>(ProtectiveEnchantKey);
         if (build.Glyphs.Count > 0)
         {
-            builder.AppendLine($"glyphs={string.Join('/', build.Glyphs.Select(g => $"{AplNames.Slug(Catalog.CreateGlyph(g.Id, g.Rank)?.Name ?? throw new InvalidOperationException($"Glyph {g.Id} is not in the catalog"))}:{g.Rank}"))}");
+            builder.AppendLine($"{GlyphsKey}={string.Join('/', build.Glyphs.Select(g => $"{AplNames.Slug(Catalog.CreateGlyph(g.Id, g.Rank)?.Name ?? throw new InvalidOperationException($"Glyph {g.Id} is not in the catalog"))}:{g.Rank}"))}");
         }
         if (build.GemPower.Count > 0)
         {
-            builder.AppendLine($"gems={string.Join('/', build.GemPower.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{Text(g.Value)}"))}");
+            builder.AppendLine($"{GemsKey}={string.Join('/', build.GemPower.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{Text(g.Value)}"))}");
         }
         if (build.SocketedGemIds.Count > 0)
         {
-            builder.AppendLine($"gem_sockets={string.Join('/', build.SocketedGemIds.Select(id => AplNames.Slug((GemItem.Find(id) ?? throw new InvalidOperationException($"Gem {id} is not known")).Name)))}");
+            builder.AppendLine($"{GemSocketsKey}={string.Join('/', build.SocketedGemIds.Select(id => AplNames.Slug((GemItem.Find(id) ?? throw new InvalidOperationException($"Gem {id} is not known")).Name)))}");
         }
         if (build.GearGemBonuses.Count > 0)
         {
-            builder.AppendLine($"gear_gem_bonuses={string.Join('/', build.GearGemBonuses.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{g.Value}"))}");
+            builder.AppendLine($"{GearGemBonusesKey}={string.Join('/', build.GearGemBonuses.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{g.Value}"))}");
         }
         if (build.StatEnchants.Count > 0)
         {
-            builder.AppendLine($"stat_enchants={string.Join('/', build.StatEnchants.Select(e => $"{(StatEnchant.Find(e.Id) ?? throw new InvalidOperationException($"Stat enchant {e.Id} is not known")).Key}:{Text(e.Rank)}"))}");
+            builder.AppendLine($"{StatEnchantsKey}={string.Join('/', build.StatEnchants.Select(e => $"{(StatEnchant.Find(e.Id) ?? throw new InvalidOperationException($"Stat enchant {e.Id} is not known")).Key}:{Text(e.Rank)}"))}");
         }
         if (build.StatEnchantCounts.Count > 0)
         {
-            builder.AppendLine($"stat_enchant_counts={string.Join('/', build.StatEnchantCounts.Select(e => $"{(StatEnchant.Find(e.Key) ?? throw new InvalidOperationException($"Stat enchant {e.Key} is not known")).Key}:{e.Value}"))}");
+            builder.AppendLine($"{StatEnchantCountsKey}={string.Join('/', build.StatEnchantCounts.Select(e => $"{(StatEnchant.Find(e.Key) ?? throw new InvalidOperationException($"Stat enchant {e.Key} is not known")).Key}:{e.Value}"))}");
         }
-        RelicLine(builder, "relic1", build.Relic1ItemId);
-        RelicLine(builder, "relic2", build.Relic2ItemId);
+        RelicLine(builder, Relic1Key, build.Relic1ItemId);
+        RelicLine(builder, Relic2Key, build.Relic2ItemId);
         foreach (int itemId in build.LegendaryItemIds)
         {
             var legendary = Catalog.CreateLegendary(build.Hero, itemId) ?? throw new InvalidOperationException($"Legendary item {itemId} is not in the catalog");
-            builder.AppendLine($"legendary={AplNames.Slug(legendary.Name)},id={itemId}");
+            builder.AppendLine($"{LegendaryKey}={AplNames.Slug(legendary.Name)},{IdOption}={itemId}");
         }
         if (build.WeaponAbilityId != 0)
         {
             var weapon = Catalog.CreateWeapon(build.WeaponAbilityId) ?? throw new InvalidOperationException($"Weapon ability {build.WeaponAbilityId} is not in the catalog");
-            builder.AppendLine($"weapon={AplNames.Slug(weapon.Name)}");
+            builder.AppendLine($"{WeaponKey}={AplNames.Slug(weapon.Name)}");
         }
         if (ActionList.Length > 0)
         {
@@ -291,9 +323,9 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     private static int RelicItemId(string value)
     {
         var options = Options(value);
-        int itemId = (int)Number(options.GetValueOrDefault("id") ?? throw new FormatException("a relic is <item>,id=<item id>"));
+        int itemId = (int)Number(options.GetValueOrDefault(IdOption) ?? throw new FormatException("a relic is <item>,id=<item id>"));
         var relic = Catalog.RelicItemOf(itemId) ?? throw new FormatException($"no relic item {itemId}");
-        if (AplNames.Slug(relic.Name) != options[""]) throw new FormatException($"item {itemId} is {AplNames.Slug(relic.Name)}");
+        if (AplNames.Slug(relic.Name) != options[NameOption]) throw new FormatException($"item {itemId} is {AplNames.Slug(relic.Name)}");
         return itemId;
     }
 
@@ -301,14 +333,14 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     {
         if (itemId == 0) return;
         var relic = Catalog.RelicItemOf(itemId) ?? throw new InvalidOperationException($"Relic item {itemId} is not in the catalog");
-        builder.AppendLine($"{key}={AplNames.Slug(relic.Name)},id={itemId}");
+        builder.AppendLine($"{key}={AplNames.Slug(relic.Name)},{IdOption}={itemId}");
     }
 
     /// <summary>"name,key=value,...": the name under the empty key.</summary>
     private static Dictionary<string, string> Options(string value)
     {
         var parts = value.Split(',', StringSplitOptions.TrimEntries);
-        var options = new Dictionary<string, string> { [""] = parts[0] };
+        var options = new Dictionary<string, string> { [NameOption] = parts[0] };
         foreach (string part in parts.Skip(1))
         {
             int eq = part.IndexOf('=');
@@ -332,10 +364,10 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     {
         string trimmed = text.Trim();
         if (!trimmed.EndsWith('%')) throw new FormatException($"'{text}' is not a percentage such as 24%");
-        return Number(trimmed[..^1]) / 100.0;
+        return Number(trimmed[..^1]) / Percentage.PerFraction;
     }
 
-    private static string Text(double value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+    private static string Text(double value) => value.ToString(NumberFormat, CultureInfo.InvariantCulture);
 
     /// <summary>A talent, glyph or augmentation by name and ID.</summary>
     private readonly record struct NamedId(string Name, int Id);

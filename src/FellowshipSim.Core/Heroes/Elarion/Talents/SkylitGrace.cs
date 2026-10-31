@@ -13,7 +13,7 @@ public class SkylitGrace : Talent
     public const double Acceleration = 1.2;
 
     /// <summary>Up while a Starfall Volley falls; Skystrider's Grace's cooldown reads it.</summary>
-    public static readonly AuraDef Buff = AuraDef.Internal("Skylit Grace", 0);
+    public static readonly AuraDef Buff = AuraDef.Internal(TalentName, 0);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

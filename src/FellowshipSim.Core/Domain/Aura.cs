@@ -117,6 +117,9 @@ public class Aura
 
 public class AuraContainer
 {
+    /// <summary>Finished timers kept before they are cleared out.</summary>
+    private const int FinishedTimerBatch = 32;
+
     private readonly Dictionary<string, Aura> _auras = new(StringComparer.Ordinal);
     private readonly Dictionary<string, long> _uptimeMs = new(StringComparer.Ordinal);
     private readonly Dictionary<string, SimTime> _activeSince = new(StringComparer.Ordinal);
@@ -185,7 +188,7 @@ public class AuraContainer
     /// <summary>A timer finished: finished timers are cleared out in batches (they ignore updates meanwhile).</summary>
     internal void RemoveTimer(HastedTimer timer)
     {
-        if (++_finishedTimers < 32 || _finishedTimers * 2 < _timers.Count || _notifying > 0) return;
+        if (++_finishedTimers < FinishedTimerBatch || _finishedTimers * 2 < _timers.Count || _notifying > 0) return;
         _timers.RemoveAll(t => !t.IsActive);
         _finishedTimers = 0;
     }
@@ -534,6 +537,6 @@ public class AuraContainer
     public double GetUptimePercent(string key, SimTime totalCombatDuration)
     {
         if (totalCombatDuration.Milliseconds <= 0) return 0.0;
-        return (double)_uptimeMs.GetValueOrDefault(key, 0L) / totalCombatDuration.Milliseconds * 100.0;
+        return (double)_uptimeMs.GetValueOrDefault(key, 0L) / totalCombatDuration.Milliseconds * Percentage.PerFraction;
     }
 }

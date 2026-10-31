@@ -35,7 +35,7 @@ public class MonteCarloChunkTests
     public void Chunks_Run_Apart_Combine_To_The_Runs_Result(int iterations, int targets, bool keepFightDamage)
     {
         var build = JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         var duration = SimTime.FromSeconds(60);
         var whole = new MonteCarloSimulator(build, AplParser.ParseScript(Apl))
             .Run(duration, iterations, targets, firstSeed: 5, degreeOfParallelism: 4, keepFightDamage: keepFightDamage);
@@ -55,7 +55,7 @@ public class MonteCarloChunkTests
     public void Combine_Wants_Every_Chunk_In_Order()
     {
         var build = JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         var simulator = new MonteCarloSimulator(build, AplParser.ParseScript(Apl));
         var duration = SimTime.FromSeconds(30);
         var first = simulator.RunChunk(0, duration, 3);

@@ -12,13 +12,27 @@ namespace FellowshipSim.UI.Services;
 /// </summary>
 public sealed class LogsSignIn(ReplayLibrary library, IHttpClientFactory httpClients, IServiceProvider services)
 {
+    /// <summary>The query parameter FellowshipLogs sends back with an error.</summary>
+    public const string ErrorParameter = "error";
+
+    /// <summary>The query parameter that echoes the state of the sign-in.</summary>
+    public const string StateParameter = "state";
+
+    /// <summary>The query parameter that has the authorization code.</summary>
+    public const string CodeParameter = "code";
+
+    /// <summary>The <see cref="ErrorParameter"/> value of a user who declined.</summary>
+    public const string AccessDenied = "access_denied";
+
+    private const string TokenFile = "signin.json";
+
     private static readonly JsonSerializerOptions Json = new(JsonSerializerOptions.Web) { WriteIndented = true };
 
     private ISignInLauncher? Launcher => services.GetService<ISignInLauncher>();
 
     private HttpClient Http => httpClients.CreateClient(LogsSettingsStore.HttpClientName);
 
-    private string TokenPath => Path.Combine(library.DataDirectory, "signin.json");
+    private string TokenPath => Path.Combine(library.DataDirectory, TokenFile);
 
     /// <summary>True when the host can sign a user in.</summary>
     public bool CanSignIn => Launcher != null;
@@ -47,8 +61,8 @@ public sealed class LogsSignIn(ReplayLibrary library, IHttpClientFactory httpCli
     {
         var query = Query(uri.Query);
         var pending = Launcher is { } launcher ? await launcher.TakePendingAsync() : null;
-        if (query.TryGetValue("error", out var error)) throw new FellowshipLogsException(error == "access_denied" ? "Signing in was cancelled." : $"FellowshipLogs did not sign you in ({error}).");
-        if (pending == null || !query.TryGetValue("state", out var state) || state != pending.State || !query.TryGetValue("code", out var code))
+        if (query.TryGetValue(ErrorParameter, out var error)) throw new FellowshipLogsException(error == AccessDenied ? "Signing in was cancelled." : $"FellowshipLogs did not sign you in ({error}).");
+        if (pending == null || !query.TryGetValue(StateParameter, out var state) || state != pending.State || !query.TryGetValue(CodeParameter, out var code))
         {
             throw new FellowshipLogsException("This sign-in did not start here. Sign in again.");
         }
@@ -105,7 +119,7 @@ public sealed class LogsSignIn(ReplayLibrary library, IHttpClientFactory httpCli
     /// <summary>A query string's values by name ("?code=a&amp;state=b").</summary>
     internal static Dictionary<string, string> Query(string query) =>
         query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries)
-            .Select(pair => pair.Split('=', 2))
+            .Select(pair => pair.Split('=', count: 2))
             .GroupBy(p => Uri.UnescapeDataString(p[0]))
             .ToDictionary(g => g.Key, g => g.First().Length > 1 ? Uri.UnescapeDataString(g.First()[1].Replace('+', ' ')) : "");
 }

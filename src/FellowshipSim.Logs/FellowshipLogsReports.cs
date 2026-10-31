@@ -13,6 +13,38 @@ public sealed record ReportPlayer(int Id, string Name, string Hero);
 /// <summary>Report queries: the fight list of a report, and every event of one fight.</summary>
 public static class FellowshipLogsReports
 {
+    /// <summary>Property names of the raw fight (<see cref="DownloadFightAsync"/>) and of the API response it is built from.</summary>
+    private const string ReportDataProperty = "reportData";
+    private const string ReportProperty = "report";
+    private const string FightsProperty = "fights";
+    public const string StartTimeProperty = "startTime";
+    public const string EndTimeProperty = "endTime";
+    public const string EventsProperty = "events";
+    private const string DataProperty = "data";
+    public const string TypeProperty = "type";
+    public const string SourceIdProperty = "sourceID";
+    private const string ApiMasterDataProperty = "masterData";
+    public const string ActorsProperty = "actors";
+    private const string IdProperty = "id";
+    private const string NameProperty = "name";
+    public const string SubTypeProperty = "subType";
+    public const string FriendlyPlayersProperty = "friendlyPlayers";
+    private const string KillProperty = "kill";
+    private const string TitleProperty = "title";
+    private const string LogVersionProperty = "logVersion";
+    private const string NextPageTimestampProperty = "nextPageTimestamp";
+    public const string ReportCodeProperty = "report_code";
+    public const string ReportStartTimeProperty = "report_start_time";
+    public const string FightProperty = "fight";
+    public const string MasterDataProperty = "master_data";
+    public const string CharacterProperty = "character";
+
+    /// <summary>Type of the event that holds a player's build.</summary>
+    public const string CombatantInfoEventType = "combatantinfo";
+
+    /// <summary>Milliseconds in a second: the API times are milliseconds.</summary>
+    private const double MillisecondsPerSecond = 1000.0;
+
     private const string SummaryQuery = """
         query($code: String!) {
           reportData {
@@ -78,40 +110,40 @@ public static class FellowshipLogsReports
         int playerId, CancellationToken ct = default)
     {
         var fight = (await client.QueryAsync(FightTimesQuery, new FightVariables(reportCode, [fightId]), ct))
-            ["reportData"]?["report"]?["fights"]?.AsArray().FirstOrDefault()
+            [ReportDataProperty]?[ReportProperty]?[FightsProperty]?.AsArray().FirstOrDefault()
             ?? throw new FellowshipLogsException($"Fight {fightId} is not in report '{reportCode}'.");
         var data = (await client.QueryAsync(CombatantInfoQuery, new CombatantInfoVariables(
             reportCode,
             [fightId],
             playerId,
-            fight["startTime"]!.GetValue<double>(),
-            fight["endTime"]!.GetValue<double>()), ct))["reportData"]?["report"]?["events"]?["data"]?.AsArray();
-        return data?.FirstOrDefault(e => e?["type"]?.GetValue<string>() == "combatantinfo" && e["sourceID"]?.GetValue<int>() == playerId)
+            fight[StartTimeProperty]!.GetValue<double>(),
+            fight[EndTimeProperty]!.GetValue<double>()), ct))[ReportDataProperty]?[ReportProperty]?[EventsProperty]?[DataProperty]?.AsArray();
+        return data?.FirstOrDefault(e => e?[TypeProperty]?.GetValue<string>() == CombatantInfoEventType && e[SourceIdProperty]?.GetValue<int>() == playerId)
             ?.DeepClone().AsObject();
     }
 
     public static async Task<ReportSummary> GetSummaryAsync(this FellowshipLogsClient client, string reportCode, CancellationToken ct = default)
     {
         var data = await client.QueryAsync(SummaryQuery, new ReportVariables(reportCode), ct);
-        var report = data["reportData"]?["report"] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
-        var players = (report["masterData"]?["actors"]?.AsArray() ?? [])
+        var report = data[ReportDataProperty]?[ReportProperty] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
+        var players = (report[ApiMasterDataProperty]?[ActorsProperty]?.AsArray() ?? [])
             .Where(a => a != null)
-            .ToDictionary(a => a!["id"]!.GetValue<int>(), a => new ReportPlayer(
-                a!["id"]!.GetValue<int>(), a["name"]?.GetValue<string>() ?? "?", a["subType"]?.GetValue<string>() ?? ""));
+            .ToDictionary(a => a![IdProperty]!.GetValue<int>(), a => new ReportPlayer(
+                a![IdProperty]!.GetValue<int>(), a[NameProperty]?.GetValue<string>() ?? "?", a[SubTypeProperty]?.GetValue<string>() ?? ""));
         var fights = new List<FightSummary>();
-        foreach (var fight in report["fights"]?.AsArray() ?? [])
+        foreach (var fight in report[FightsProperty]?.AsArray() ?? [])
         {
             if (fight == null) continue;
-            var ids = fight["friendlyPlayers"]?.AsArray().Select(x => x!.GetValue<int>()) ?? [];
+            var ids = fight[FriendlyPlayersProperty]?.AsArray().Select(x => x!.GetValue<int>()) ?? [];
             fights.Add(new FightSummary(
-                fight["id"]!.GetValue<int>(),
-                fight["name"]?.GetValue<string>() ?? "",
-                fight["kill"]?.GetValue<bool?>() ?? false,
-                (fight["endTime"]!.GetValue<double>() - fight["startTime"]!.GetValue<double>()) / 1000.0,
+                fight[IdProperty]!.GetValue<int>(),
+                fight[NameProperty]?.GetValue<string>() ?? "",
+                fight[KillProperty]?.GetValue<bool?>() ?? false,
+                (fight[EndTimeProperty]!.GetValue<double>() - fight[StartTimeProperty]!.GetValue<double>()) / MillisecondsPerSecond,
                 ids.Where(players.ContainsKey).Select(id => players[id]).ToList()));
         }
-        return new ReportSummary(reportCode, report["title"]?.GetValue<string>() ?? reportCode,
-            report["startTime"]?.GetValue<long>() ?? 0, fights, report["masterData"]?["logVersion"]?.GetValue<int?>());
+        return new ReportSummary(reportCode, report[TitleProperty]?.GetValue<string>() ?? reportCode,
+            report[StartTimeProperty]?.GetValue<long>() ?? 0, fights, report[ApiMasterDataProperty]?[LogVersionProperty]?.GetValue<int?>());
     }
 
     /// <summary>
@@ -122,37 +154,37 @@ public static class FellowshipLogsReports
         IProgress<string>? progress = null, CancellationToken ct = default)
     {
         var meta = await client.QueryAsync(FightMetaQuery, new FightVariables(reportCode, [fightId]), ct);
-        var report = meta["reportData"]?["report"] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
-        var fight = report["fights"]?.AsArray().FirstOrDefault() ?? throw new FellowshipLogsException($"Fight {fightId} is not in report '{reportCode}'.");
-        double start = fight["startTime"]!.GetValue<double>(), end = fight["endTime"]!.GetValue<double>();
+        var report = meta[ReportDataProperty]?[ReportProperty] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
+        var fight = report[FightsProperty]?.AsArray().FirstOrDefault() ?? throw new FellowshipLogsException($"Fight {fightId} is not in report '{reportCode}'.");
+        double start = fight[StartTimeProperty]!.GetValue<double>(), end = fight[EndTimeProperty]!.GetValue<double>();
 
         var events = new JsonArray();
         double? cursor = start;
         while (cursor is { } from && from < end)
         {
             var page = (await client.QueryAsync(EventsQuery, new FightEventsVariables(reportCode, [fightId], from, end), ct))
-                ["reportData"]!["report"]!["events"]!;
+                [ReportDataProperty]![ReportProperty]![EventsProperty]!;
             // Moved, not copied: a long fight's events are hundreds of MB as a tree, and the browser app has little room.
-            if (page["data"]?.AsArray() is { } data)
+            if (page[DataProperty]?.AsArray() is { } data)
             {
                 var moved = data.ToArray();
                 data.Clear();
                 foreach (var logEvent in moved) events.Add(logEvent);
             }
             progress?.Report($"Downloaded {events.Count:N0} events");
-            double? next = page["nextPageTimestamp"]?.GetValue<double?>();
+            double? next = page[NextPageTimestampProperty]?.GetValue<double?>();
             if (next == null || next <= from) break;
             cursor = next;
         }
 
         return new JsonObject
         {
-            ["report_code"] = reportCode,
-            ["report_start_time"] = report["startTime"]?.DeepClone(),
-            ["fight"] = fight.DeepClone(),
-            ["master_data"] = report["masterData"]?.DeepClone(),
-            ["character"] = null,
-            ["events"] = events,
+            [ReportCodeProperty] = reportCode,
+            [ReportStartTimeProperty] = report[StartTimeProperty]?.DeepClone(),
+            [FightProperty] = fight.DeepClone(),
+            [MasterDataProperty] = report[ApiMasterDataProperty]?.DeepClone(),
+            [CharacterProperty] = null,
+            [EventsProperty] = events,
         };
     }
 }

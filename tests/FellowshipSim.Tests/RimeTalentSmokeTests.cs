@@ -74,7 +74,7 @@ public class RimeTalentSmokeTests(ITestOutputHelper output)
     {
         // The Rime from yMAZVJL9hTpFjqbC fight 7 (sww), as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         build.Talents = talentIds.ToList();
         var hero = HeroImporter.Import(build);
         var gained = new Dictionary<string, int>();

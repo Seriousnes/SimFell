@@ -12,6 +12,18 @@ namespace FellowshipSim.Engine.Replay;
 /// </summary>
 public sealed class ReplayDriver
 {
+    /// <summary>Stack cap of an aura another actor applies (the log decides when its stacks end).</summary>
+    private const int ExternalAuraMaxStacks = 99;
+
+    /// <summary>The engine's cast completion this long (s) or less before the log's complete_cast is the cast it logs.</summary>
+    private const double CompletedCastMatchSeconds = 3.0;
+
+    /// <summary>Time (s) before a log resource reading at which the resource takes its value.</summary>
+    private const double ReadingLeadSeconds = 0.001;
+
+    /// <summary>Text of the engine's refusal reason when the ability is on cooldown.</summary>
+    private const string CooldownRefusalText = "cooldown";
+
     private readonly Hero _hero;
     private readonly ReplayScript _script;
     private readonly ReplayOptions _options;
@@ -85,8 +97,8 @@ public sealed class ReplayDriver
         // A channel's stop is logged up to a few milliseconds into its server frame, so it comes before the frame's tick.
         double When(ReplayCommand command) => command.Kind switch
         {
-            CommandKind.EnemyArise => command.Time - _options.EnemyAriseLeadSeconds,
-            CommandKind.StopChannel => command.Time - _options.ChannelStopLeadSeconds,
+            ReplayCommandKind.EnemyArise => command.Time - _options.EnemyAriseLeadSeconds,
+            ReplayCommandKind.StopChannel => command.Time - _options.ChannelStopLeadSeconds,
             _ => command.Time,
         };
         var order = OrderOf(_script, new CommandLeads(_options.EnemyAriseLeadSeconds, _options.ChannelStopLeadSeconds), When);
@@ -175,7 +187,7 @@ public sealed class ReplayDriver
         if (_orders.TryGetValue(script, out var cached) && cached.Leads == leads) return cached;
         var commands = script.Commands.OrderBy(when).ToList();
         var logCasts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        foreach (var command in commands.Where(c => c.Kind is CommandKind.Cast or CommandKind.CompleteCast))
+        foreach (var command in commands.Where(c => c.Kind is ReplayCommandKind.Cast or ReplayCommandKind.CompleteCast))
         {
             logCasts[command.AbilityName] = logCasts.GetValueOrDefault(command.AbilityName) + 1;
         }
@@ -190,11 +202,11 @@ public sealed class ReplayDriver
     {
         switch (cmd.Kind)
         {
-            case CommandKind.EnemyArise:
+            case ReplayCommandKind.EnemyArise:
                 _ctx.AddEnemy(cmd.Enemy!.Id, cmd.Enemy.Instance, cmd.Name ?? "Enemy", cmd.MaxHp);
                 break;
 
-            case CommandKind.EnemyHealth:
+            case ReplayCommandKind.EnemyHealth:
                 var hurt = _ctx.FindEnemy(cmd.Enemy!.Id, cmd.Enemy.Instance);
                 if (hurt != null && cmd.MaxHp > 0)
                 {
@@ -203,38 +215,38 @@ public sealed class ReplayDriver
                 }
                 break;
 
-            case CommandKind.EnemyDemise:
+            case ReplayCommandKind.EnemyDemise:
                 var enemy = _ctx.FindEnemy(cmd.Enemy!.Id, cmd.Enemy.Instance);
-                if (enemy != null) _ctx.RemoveEnemy(enemy, defeated: cmd.Reason == "death");
+                if (enemy != null) _ctx.RemoveEnemy(enemy, defeated: cmd.Reason == EnemyRemovalReason.Death);
                 break;
 
-            case CommandKind.ExternalAura:
+            case ReplayCommandKind.ExternalAura:
                 ApplyExternalAura(cmd, result);
                 break;
 
-            case CommandKind.PlayerDeath:
+            case ReplayCommandKind.PlayerDeath:
                 Die();
                 break;
 
-            case CommandKind.PlayerRevive:
+            case ReplayCommandKind.PlayerRevive:
                 Revive(cmd.Time);
                 break;
 
-            case CommandKind.Cast:
-            case CommandKind.BeginCast:
+            case ReplayCommandKind.Cast:
+            case ReplayCommandKind.BeginCast:
                 if (QueueFlushingTimer(cmd) is { } timer) timer.RunInLastTick(() => StartCast(cmd, step!, cancelFor, result));
                 else StartCast(cmd, step!, cancelFor, result);
                 break;
 
-            case CommandKind.CompleteCast:
+            case ReplayCommandKind.CompleteCast:
                 CompleteCast(cmd);
                 break;
 
-            case CommandKind.CancelCast:
+            case ReplayCommandKind.CancelCast:
                 if (_hero.CurrentCast?.Ability.IsAbility(cmd.AbilityId) == true) _ctx.CancelCast(_hero);
                 break;
 
-            case CommandKind.StopChannel:
+            case ReplayCommandKind.StopChannel:
                 if (FindAbility(cmd) == null) break;
                 if (_hero.CurrentChannel?.Ability.IsAbility(cmd.AbilityId) == true)
                 {
@@ -313,11 +325,11 @@ public sealed class ReplayDriver
         double engineCast = attempt.CastTime.TotalSeconds;
         // The logged duration: to the complete_cast, or to the cancel_cast of a cast the log never completed.
         double? logCast = end == null ? null : end.Time - cmd.Time;
-        if (cmd.Kind == CommandKind.BeginCast && attempt.Status == CastStatus.Resolved)
+        if (cmd.Kind == ReplayCommandKind.BeginCast && attempt.Status == CastStatus.Resolved)
         {
             if (KeepsIssues) _verifier.CheckInstantOrCast(_ctx, ability, 0.0, logCast, cmd.Kind);
         }
-        else if (cmd.Kind == CommandKind.Cast && attempt.Status == CastStatus.Casting)
+        else if (cmd.Kind == ReplayCommandKind.Cast && attempt.Status == CastStatus.Casting)
         {
             if (KeepsIssues) _verifier.CheckInstantOrCast(_ctx, ability, engineCast, 0.0, cmd.Kind);
             _ctx.CompleteCast(_hero);
@@ -325,7 +337,7 @@ public sealed class ReplayDriver
 
         if (attempt.Status != CastStatus.Casting || end == null) return;
         var cast = _hero.CurrentCast!;
-        if (end.Kind == CommandKind.CancelCast)
+        if (end.Kind == ReplayCommandKind.CancelCast)
         {
             // The cast is cancelled at the log's cancel_cast time, and never completes on its own.
             _handledCommands.Add(end);
@@ -359,7 +371,7 @@ public sealed class ReplayDriver
         var refusals = _verifier.CastRefusals(_ctx, ability);
         // A begin_cast the log never completes, refused because the ability is not ready, is a press that did nothing
         // (e.g. pressing Chronoshift again as its channel ends).
-        if (refusals.Count > 0 && cmd.Kind == CommandKind.BeginCast && end?.Kind == CommandKind.CancelCast
+        if (refusals.Count > 0 && cmd.Kind == ReplayCommandKind.BeginCast && end?.Kind == ReplayCommandKind.CancelCast
             && refusals.All(r => r.Category is IssueCategory.GlobalCooldown or IssueCategory.Cooldown))
         {
             _handledCommands.Add(end);
@@ -378,7 +390,7 @@ public sealed class ReplayDriver
     {
         var attempt = _ctx.BeginCast(_hero, ability, target);
         if (attempt.Succeeded) return attempt;
-        if (cmd.Kind == CommandKind.BeginCast && end?.Kind == CommandKind.CancelCast && attempt.Reason?.Contains("cooldown") == true)
+        if (cmd.Kind == ReplayCommandKind.BeginCast && end?.Kind == ReplayCommandKind.CancelCast && attempt.Reason?.Contains(CooldownRefusalText) == true)
         {
             _handledCommands.Add(end);
             step.Note = $"Press while not ready ({attempt.Reason}); the log never completed it";
@@ -419,7 +431,7 @@ public sealed class ReplayDriver
 
     /// <summary>True when the log has the player applying or refreshing debuff <paramref name="logId"/> within a server frame of <paramref name="time"/>.</summary>
     private bool AppliedDebuff(int logId, double time) => _script.Observations.Auras.Any(a => a.AbilityId == logId
-        && a.Source.Id == _script.Player.Id && a.Type is "applydebuff" or "refreshdebuff"
+        && a.Source.Id == _script.Player.Id && a.Type is LogAuraType.ApplyDebuff or LogAuraType.RefreshDebuff
         && a.Time >= time - _options.SameTickSeconds && a.Time <= time + PeriodicEffect.ServerFrameSeconds);
 
     /// <summary>Records a cast the engine would not have allowed but makes anyway to follow the log.</summary>
@@ -440,7 +452,7 @@ public sealed class ReplayDriver
             return;
         }
 
-        if (_lastCompletedCast is { } done && done.Ability.IsAbility(cmd.AbilityId) && cmd.Time - done.Time < 3.0)
+        if (_lastCompletedCast is { } done && done.Ability.IsAbility(cmd.AbilityId) && cmd.Time - done.Time < CompletedCastMatchSeconds)
         {
             return; // completed by the engine at the log's completion time
         }
@@ -458,10 +470,10 @@ public sealed class ReplayDriver
         Actor? actor = onPlayer ? _hero : cmd.Target == null ? null : _ctx.FindEnemy(cmd.Target.Id, cmd.Target.Instance);
         if (actor == null) return;
 
-        bool removed = cmd.AuraEventType is "removebuff" or "removedebuff";
+        bool removed = cmd.AuraEventType is LogAuraType.RemoveBuff or LogAuraType.RemoveDebuff;
         if (onPlayer && AnomalousResidue.ColourByLogId.TryGetValue(cmd.AbilityId, out var colour))
         {
-            ChangeResidue(colour, removed ? 0 : cmd.Stack ?? (cmd.AuraEventType is "refreshbuff" ? null : 1));
+            ChangeResidue(colour, removed ? 0 : cmd.Stack ?? (cmd.AuraEventType is LogAuraType.RefreshBuff ? null : 1));
             return;
         }
 
@@ -513,7 +525,7 @@ public sealed class ReplayDriver
         AuraDef? def = null;
         if (PartyBuffs.Find(logId) is { } buff)
         {
-            def = buff.Aura with { Duration = SimTime.Infinite, MaxStacks = 99, SourceId = sourceId };
+            def = buff.Aura with { Duration = SimTime.Infinite, MaxStacks = ExternalAuraMaxStacks, SourceId = sourceId };
             if (buff.ValueByGiverRank is { } byRank && _script.Players.TryGetValue(sourceId.ToString(), out var source))
             {
                 int rank = source.GearTraits.GetValueOrDefault(buff.SigilName!)
@@ -549,7 +561,7 @@ public sealed class ReplayDriver
         if (first == null) return;
         double value = logged.EngineAmount(first.Resources[logged.LogResourceType.ToString()]);
         var resource = logged.Resource;
-        _ctx.ScheduleAt(SimTime.FromSeconds(Math.Max(from, first.Time - 0.001)), c =>
+        _ctx.ScheduleAt(SimTime.FromSeconds(Math.Max(from, first.Time - ReadingLeadSeconds)), c =>
         {
             var state = _hero.Resources.Get(resource);
             state.Current = Math.Min(state.Max, value);
@@ -612,12 +624,12 @@ public sealed class ReplayDriver
             {
                 _ctx.Schedule(SimTime.FromSeconds(Math.Max(0.0, logEvent.Time)), c =>
                 {
-                    if (logEvent.Type is "removebuff" or "removedebuff") c.Player.Auras.Remove(aura, c.CurrentTime);
+                    if (logEvent.Type is LogAuraType.RemoveBuff or LogAuraType.RemoveDebuff) c.Player.Auras.Remove(aura, c.CurrentTime);
                     else if (logEvent.IsGain || logEvent.Stack != null)
                     {
                         // A refresh logs no stacks: it keeps the ones it has (Gunde's Owed in Blood refreshes at 150).
                         int held = c.Player.Auras.GetStacks(aura, c.CurrentTime);
-                        bool refresh = logEvent.Type is "refreshbuff" or "refreshdebuff";
+                        bool refresh = logEvent.Type is LogAuraType.RefreshBuff or LogAuraType.RefreshDebuff;
                         c.Player.Auras.Apply(aura, c.CurrentTime, setStacks: logEvent.Stack ?? (refresh && held > 0 ? held : 1));
                     }
                 }, $"{aura.Name} (log)");
@@ -638,7 +650,7 @@ public sealed class ReplayDriver
         foreach (var events in _script.Observations.Auras.Where(a => a.Target.Id == _script.Player.Id).GroupBy(a => a.AbilityId))
         {
             var first = events.OrderBy(a => a.Time).First();
-            if (first.Type != "removebuff" || !defs.TryGetValue(first.AbilityId, out var def)) continue;
+            if (first.Type != LogAuraType.RemoveBuff || !defs.TryGetValue(first.AbilityId, out var def)) continue;
             if (_hero.SituationalAuras.Contains(def) || _hero.Auras.HasAura(def, SimTime.Zero)) continue;
             var carried = def with { Duration = SimTime.Infinite };
             _hero.Auras.Apply(carried, SimTime.Zero);
@@ -737,8 +749,8 @@ public sealed class ReplayDriver
         ReplayCommand? open = null;
         foreach (var cmd in commands)
         {
-            if (cmd.Kind == CommandKind.BeginCast) open = cmd;
-            else if (cmd.Kind is CommandKind.CompleteCast or CommandKind.CancelCast && open?.AbilityId == cmd.AbilityId)
+            if (cmd.Kind == ReplayCommandKind.BeginCast) open = cmd;
+            else if (cmd.Kind is ReplayCommandKind.CompleteCast or ReplayCommandKind.CancelCast && open?.AbilityId == cmd.AbilityId)
             {
                 result[open] = cmd;
                 open = null;
@@ -768,7 +780,7 @@ public sealed class LogAuraTimeline
         foreach (var logEvent in _events)
         {
             // An aura whose first event is its removal was up as the fight began (carried over from an earlier pull).
-            if (_names.TryAdd(logEvent.AbilityId, logEvent.AbilityName) && logEvent.Type is "removebuff" or "removedebuff") _initial[logEvent.AbilityId] = 1;
+            if (_names.TryAdd(logEvent.AbilityId, logEvent.AbilityName) && logEvent.Type is LogAuraType.RemoveBuff or LogAuraType.RemoveDebuff) _initial[logEvent.AbilityId] = 1;
         }
     }
 
@@ -797,13 +809,13 @@ public sealed class LogAuraTimeline
             if (logEvent.Time > time) break;
             switch (logEvent.Type)
             {
-                case "applybuff" or "applydebuff" or "applybuffstack" or "applydebuffstack" or "removebuffstack" or "removedebuffstack":
+                case LogAuraType.ApplyBuff or LogAuraType.ApplyDebuff or LogAuraType.ApplyBuffStack or LogAuraType.ApplyDebuffStack or LogAuraType.RemoveBuffStack or LogAuraType.RemoveDebuffStack:
                     stacks[logEvent.AbilityId] = logEvent.Stack ?? 1;
                     break;
-                case "refreshbuff" or "refreshdebuff":
+                case LogAuraType.RefreshBuff or LogAuraType.RefreshDebuff:
                     if (stacks.GetValueOrDefault(logEvent.AbilityId) == 0) stacks[logEvent.AbilityId] = logEvent.Stack ?? 1;
                     break;
-                case "removebuff" or "removedebuff":
+                case LogAuraType.RemoveBuff or LogAuraType.RemoveDebuff:
                     stacks[logEvent.AbilityId] = 0;
                     break;
             }

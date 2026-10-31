@@ -36,8 +36,8 @@
             change();
             StateHasChanged();
         });
-        _condition = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(300), dispatch);
-        _target = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(300), dispatch);
+        _condition = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(DebouncedCheck.SummaryDelayMilliseconds), dispatch);
+        _target = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(DebouncedCheck.SummaryDelayMilliseconds), dispatch);
     }
 
     protected override void OnParametersSet()

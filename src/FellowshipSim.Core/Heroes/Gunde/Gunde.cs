@@ -42,12 +42,12 @@ public sealed class Gunde : Hero
     /// <summary>Gunde's talent tree, as in game (game data talent-slot records, hero Gunde).</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                           b                            c
-        TalentSlot.InRow(1, 2,    DeathsArc.TalentId,         RavensPrecision.TalentId,    GrimHarvest.TalentId),
-        TalentSlot.InRow(2, 1,    SunderedFlesh.TalentId,     CrimsonStrikes.TalentId,     DeepRend.TalentId),
-        TalentSlot.InRow(3, 2,    DarkeningHearts.TalentId,   MurderOfCrows.TalentId,      Massacre.TalentId),
-        TalentSlot.InRow(4, 1,    SlayersGrin.TalentId,       FrenziedReign.TalentId,      Bloodbath.TalentId),
-        TalentSlot.InRow(5, 3,    Bloodcraze.TalentId,        Oathshatter.TalentId,        Carnage.TalentId),
-        TalentSlot.InRow(6, 1,    SuperiorSerration.TalentId, AncestralInstinct.TalentId,  HarvestersToll.TalentId));
+        TalentSlot.InRow(row: 1, cost: 2,    DeathsArc.TalentId,         RavensPrecision.TalentId,    GrimHarvest.TalentId),
+        TalentSlot.InRow(row: 2, cost: 1,    SunderedFlesh.TalentId,     CrimsonStrikes.TalentId,     DeepRend.TalentId),
+        TalentSlot.InRow(row: 3, cost: 2,    DarkeningHearts.TalentId,   MurderOfCrows.TalentId,      Massacre.TalentId),
+        TalentSlot.InRow(row: 4, cost: 1,    SlayersGrin.TalentId,       FrenziedReign.TalentId,      Bloodbath.TalentId),
+        TalentSlot.InRow(row: 5, cost: 3,    Bloodcraze.TalentId,        Oathshatter.TalentId,        Carnage.TalentId),
+        TalentSlot.InRow(row: 6, cost: 1,    SuperiorSerration.TalentId, AncestralInstinct.TalentId,  HarvestersToll.TalentId));
 
     public override IReadOnlyList<TalentSlot> TalentTreeSlots => TalentTree;
 

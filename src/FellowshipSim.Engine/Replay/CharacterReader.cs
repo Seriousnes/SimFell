@@ -4,6 +4,7 @@ using FellowshipSim.Core;
 using FellowshipSim.Core.Customization.Gems;
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Import;
+using static FellowshipSim.Engine.Replay.ReplayScriptBuilder;
 
 namespace FellowshipSim.Engine.Replay;
 
@@ -20,6 +21,21 @@ public static class CharacterReader
 {
     public const int MaxAugmentationRank = 4;
 
+    /// <summary>Item quality from which an item is legendary.</summary>
+    public const int LegendaryItemQuality = 6; // UNVERIFIED
+
+    private const string AttributesProperty = "attributes";
+    private const string ValueProperty = "value";
+    private const string HealthProperty = "health";
+    private const string ArmorProperty = "armor";
+    private const string TalentsProperty = "talents";
+    private const string BlessingsProperty = "blessings";
+    private const string LevelProperty = "level";
+    private const string GemProperty = "gem";
+    private const string GemPowersProperty = "gemPowers";
+    private const string QualityProperty = "quality";
+    private const string NeckTraitsProperty = "neckTraits";
+
     /// <summary>The names logs give the gear's stat attributes.</summary>
     private const string CritAttribute = "Critical Strike", HasteAttribute = "Haste", ExpertiseAttribute = "Expertise",
         SpiritAttribute = "Spirit", StaminaAttribute = "Stamina";
@@ -29,11 +45,11 @@ public static class CharacterReader
     {
         // The gear's own stats: every attribute each item lists.
         var gear = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
-        foreach (var item in combatant["gear"]?.AsArray() ?? [])
+        foreach (var item in combatant[GearProperty]?.AsArray() ?? [])
         {
-            foreach (var attribute in item?["attributes"]?.AsArray() ?? [])
+            foreach (var attribute in item?[AttributesProperty]?.AsArray() ?? [])
             {
-                if (Str(attribute?["name"]) is { } name) gear[name] = gear.GetValueOrDefault(name) + Num(attribute?["value"]);
+                if (Str(attribute?[NameProperty]) is { } name) gear[name] = gear.GetValueOrDefault(name) + Num(attribute?[ValueProperty]);
             }
         }
 
@@ -44,8 +60,8 @@ public static class CharacterReader
             // Only the hero's own primary stat is on their gear.
             PrimaryStat = PrimaryAttributes.Max(gear.GetValueOrDefault),
             Stamina = gear.GetValueOrDefault(StaminaAttribute),
-            MaxHealth = Num(combatant["health"]),
-            Armor = Num(combatant["armor"]),
+            MaxHealth = Num(combatant[HealthProperty]),
+            Armor = Num(combatant[ArmorProperty]),
             CritRating = gear.GetValueOrDefault(CritAttribute),
             HasteRating = gear.GetValueOrDefault(HasteAttribute),
             ExpertiseRating = gear.GetValueOrDefault(ExpertiseAttribute),
@@ -53,9 +69,9 @@ public static class CharacterReader
         };
 
         // Talents: talent ID + 2,000,000.
-        foreach (var talent in combatant["talents"]?.AsArray() ?? [])
+        foreach (var talent in combatant[TalentsProperty]?.AsArray() ?? [])
         {
-            int id = (int)Num(talent?["id"]) - LogIds.TalentOffset;
+            int id = (int)Num(talent?[IdProperty]) - LogIds.TalentOffset;
             if (id > 0) build.Talents.Add(id);
         }
 
@@ -68,49 +84,49 @@ public static class CharacterReader
         // combat logs: with it every non-legendary item holds exactly 3 slots, and 40 of 46 players of patch 0.5.0.0 fill
         // the 44), and one per weapon tree point.
         var statEnchantCounts = new Dictionary<int, int>();
-        foreach (var item in combatant["gear"]?.AsArray() ?? [])
+        foreach (var item in combatant[GearProperty]?.AsArray() ?? [])
         {
             if (item == null) continue;
-            int itemId = (int)Num(item["id"]);
+            int itemId = (int)Num(item[IdProperty]);
             if (Catalog.RelicItemOf(itemId) != null)
             {
                 // Relic slots fill in gear order.
                 if (build.Relic1ItemId == 0) build.Relic1ItemId = itemId;
                 else build.Relic2ItemId = itemId;
             }
-            foreach (var trait in item["traits"]?.AsArray() ?? [])
+            foreach (var trait in item[TraitsProperty]?.AsArray() ?? [])
             {
-                int id = (int)Num(trait?["id"]) - LogIds.AugmentationOffset;
-                int rank = (int)Num(trait?["rank"], 1);
+                int id = (int)Num(trait?[IdProperty]) - LogIds.AugmentationOffset;
+                int rank = (int)Num(trait?[RankProperty], 1);
                 // A stat enchant's rank is its rating, added to the item's other enchants of the same ID.
                 if (StatEnchant.Find(id) != null)
                 {
-                    AddRank(statEnchants, id, rank, Str(trait?["name"]));
+                    AddRank(statEnchants, id, rank, Str(trait?[NameProperty]));
                     statEnchantCounts[id] = statEnchantCounts.GetValueOrDefault(id) + (int)Math.Ceiling(rank / StatEnchantSlotRating);
                 }
-                else AddRank(augmentations, id, rank, Str(trait?["name"]));
+                else AddRank(augmentations, id, rank, Str(trait?[NameProperty]));
             }
-            foreach (var blessing in item["blessings"]?.AsArray() ?? [])
+            foreach (var blessing in item[BlessingsProperty]?.AsArray() ?? [])
             {
-                string name = Str(blessing?["name"]) ?? "";
+                string name = Str(blessing?[NameProperty]) ?? "";
                 int index = glyphs.FindIndex(x => x.Name == name);
-                if (index < 0) glyphs.Add(new RankedEntry(Catalog.GlyphIdByName(name), (int)Num(blessing?["level"], 1), name));
-                else glyphs[index] = new RankedEntry(glyphs[index].Id, glyphs[index].Rank + (int)Num(blessing?["level"], 1), name);
+                if (index < 0) glyphs.Add(new RankedEntry(Catalog.GlyphIdByName(name), (int)Num(blessing?[LevelProperty], 1), name));
+                else glyphs[index] = new RankedEntry(glyphs[index].Id, glyphs[index].Rank + (int)Num(blessing?[LevelProperty], 1), name);
             }
             // The gem in the item's socket, and the item's gem power bonuses (each names its colour).
-            if (GemItem.Find((int)Num(item["gem"]?["id"])) is { } gem) build.SocketedGemIds.Add(gem.Id);
-            foreach (var bonus in item["gemPowers"]?.AsArray() ?? [])
+            if (GemItem.Find((int)Num(item[GemProperty]?[IdProperty])) is { } gem) build.SocketedGemIds.Add(gem.Id);
+            foreach (var bonus in item[GemPowersProperty]?.AsArray() ?? [])
             {
-                if (Enum.TryParse(Str(bonus?["name"]), out GemColor color)) build.GearGemBonuses[color] = build.GearGemBonuses.GetValueOrDefault(color) + 1;
+                if (Enum.TryParse(Str(bonus?[NameProperty]), out GemColor color)) build.GearGemBonuses[color] = build.GearGemBonuses.GetValueOrDefault(color) + 1;
             }
-            if (Num(item["quality"]) >= 6) build.LegendaryItemIds.Add(itemId);
+            if (Num(item[QualityProperty]) >= LegendaryItemQuality) build.LegendaryItemIds.Add(itemId);
         }
 
         // Weapon and neck trees: augmentation IDs + 3,000,000 with the points spent; the weapon ability is listed by its own ID.
-        foreach (var trait in (combatant["weaponTraits"]?.AsArray() ?? []).Concat(combatant["neckTraits"]?.AsArray() ?? []))
+        foreach (var trait in (combatant[WeaponTraitsProperty]?.AsArray() ?? []).Concat(combatant[NeckTraitsProperty]?.AsArray() ?? []))
         {
-            int id = (int)Num(trait?["id"]);
-            int points = (int)Num(trait?["points"]);
+            int id = (int)Num(trait?[IdProperty]);
+            int points = (int)Num(trait?[PointsProperty]);
             if (points <= 0) continue;
             // The weapon tree has a node per stat enchant (65 to 70); each point is one more slot of that enchant, 6 rating
             // to each of its stats (combat logs: the combatantinfo ratings are the gear's, the enchants' and the gem nodes'

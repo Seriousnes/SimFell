@@ -13,13 +13,19 @@ namespace FellowshipSim.Desktop;
 /// </summary>
 public sealed class MainPage : ContentPage
 {
+    /// <summary>Host page of the web view.</summary>
+    private const string HostPagePath = "wwwroot/index.html";
+
+    /// <summary>Element of the host page that holds the app.</summary>
+    private const string AppSelector = "#app";
+
     private readonly ReviewPages _reviews;
 
     public MainPage(ReviewPages reviews)
     {
         _reviews = reviews;
-        var view = new BlazorWebView { HostPage = "wwwroot/index.html" };
-        view.RootComponents.Add(new RootComponent { Selector = "#app", ComponentType = typeof(DesktopShell) });
+        var view = new BlazorWebView { HostPage = HostPagePath };
+        view.RootComponents.Add(new RootComponent { Selector = AppSelector, ComponentType = typeof(DesktopShell) });
 #if MACCATALYST
         view.BlazorWebViewInitializing += (_, e) =>
             e.Configuration.SetUrlSchemeHandler(new ReviewSchemeHandler(reviews), ReviewPages.Scheme);

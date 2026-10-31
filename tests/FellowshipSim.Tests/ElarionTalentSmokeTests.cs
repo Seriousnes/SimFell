@@ -17,6 +17,8 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class ElarionTalentSmokeTests(ITestOutputHelper output)
 {
+    private const string CharacterFile = "elarion_character.json";
+
     private const string Apl = """
         actions+=/shoot
         actions+=/event_horizon
@@ -142,7 +144,7 @@ public class ElarionTalentSmokeTests(ITestOutputHelper output)
     {
         // The Elarion from pWmcV42K39GHTLQX fight 23 (Wraithtide Vault), as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "elarion_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, CharacterFile)))!;
         build.Talents = talentIds.ToList();
         build.LegendaryItemIds = legendaryItemId is { } id ? [id] : [];
         var hero = HeroImporter.Import(build);

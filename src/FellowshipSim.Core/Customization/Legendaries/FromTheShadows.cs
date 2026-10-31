@@ -13,6 +13,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class FromTheShadows : Legendary
 {
     public const int PowerId = 585;
+    public const string PowerName = "From the Shadows";
     public const int CapeItemId = 5218;
     public const int HelmItemId = 5899;
     public const double TickRateBonus = 0.15;
@@ -22,8 +23,8 @@ public class FromTheShadows : Legendary
     public const string ProcKey = "from_the_shadows";
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "From the Shadows";
-    public override string HeroName => "Mara";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Mara);
     public override IReadOnlyList<int> ItemIds => [CapeItemId, HelmItemId];
 
     public override void Bind(Hero hero)

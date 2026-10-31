@@ -125,10 +125,10 @@ public sealed class PeriodicEffect
         var end = start + SimTime.FromSeconds(durationSeconds);
         var effect = new PeriodicEffect(name, start, end, periodSeconds, onTick, onEnd, ctx.Player, damageLogId, target, hastedBy: null);
 
-        int fullTicks = (int)Math.Floor((durationSeconds + 1e-6) / periodSeconds);
+        int fullTicks = (int)Math.Floor((durationSeconds + Tolerance.Rounding) / periodSeconds);
         int firstTick = tickOnStart && tickDelaySeconds > 0 ? 0 : 1;
         double remainder = durationSeconds - fullTicks * periodSeconds;
-        bool partial = partialFinalTick && remainder >= Math.Max(minPartialSeconds, 1e-6);
+        bool partial = partialFinalTick && remainder >= Math.Max(minPartialSeconds, Tolerance.Rounding);
         bool tickNow = tickOnStart && tickDelaySeconds <= 0;
         if (damageLogId != 0)
         {
@@ -382,7 +382,7 @@ public sealed class PeriodicEffect
                 ? timer.ElapsedBaseSeconds / (1.0 + hero.GetHaste(c.CurrentTime))
                 : (c.CurrentTime - lastTick).TotalSeconds;
             timer?.Cancel();
-            if (partialFinalTick && fraction > 0 && elapsed >= MinHastedPartialTickSeconds - 1e-9)
+            if (partialFinalTick && fraction > 0 && elapsed >= MinHastedPartialTickSeconds - Tolerance.Comparison)
             {
                 partial = Math.Min(fraction, 1.0);
             }

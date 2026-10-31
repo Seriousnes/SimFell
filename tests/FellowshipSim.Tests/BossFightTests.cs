@@ -13,7 +13,7 @@ public class BossFightTests
     public void Without_A_Boss_The_Conqueror_Does_Not_Count()
     {
         var build = JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         build.GemPower[GemColor.Ruby] = 450;
         var simulator = new MonteCarloSimulator(build, AplParser.ParseScript("actions+=/frost_bolt"));
         double Mean(FightOptions? fight) => simulator.Run(SimTime.FromSeconds(60), iterations: 20, degreeOfParallelism: 1, fight: fight).MeanDps;

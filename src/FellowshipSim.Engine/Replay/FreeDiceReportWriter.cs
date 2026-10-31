@@ -12,6 +12,48 @@ public static class FreeDiceReportWriter
 {
     private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
 
+    /// <summary>The log's place (fraction of runs dealing less) from which the page marks it typical.</summary>
+    public const double PlaceOkLow = 0.1;
+
+    /// <summary>The log's place up to which the page marks it typical.</summary>
+    public const double PlaceOkHigh = 0.9;
+
+    /// <summary>The log's place from which the page marks it unusual instead of far off.</summary>
+    public const double PlaceWarnLow = 0.03;
+
+    /// <summary>The log's place up to which the page marks it unusual instead of far off.</summary>
+    public const double PlaceWarnHigh = 0.97;
+
+    /// <summary>Deviation of the engine's average from the log (fraction) up to which the page marks it matching.</summary>
+    public const double MeanGoodDeviation = 0.02;
+
+    /// <summary>Deviation of the engine's average from the log (fraction) up to which the page warns.</summary>
+    public const double MeanWarnDeviation = 0.05;
+
+    /// <summary>Deviation of an ability's engine average from the log (fraction) up to which the page marks it matching.</summary>
+    private const double AbilityGoodDeviation = 0.03;
+
+    /// <summary>Deviation of an ability's engine average from the log (fraction) up to which the page warns.</summary>
+    private const double AbilityWarnDeviation = 0.10;
+
+    /// <summary>Share of the histogram's span added on each side of its range.</summary>
+    private const double HistogramMarginFraction = 0.02;
+
+    /// <summary>Height kept free above the tallest histogram bar (SVG units).</summary>
+    private const int BarTopInset = 10;
+
+    /// <summary>Distance between a histogram bar's slot start and the bar (SVG units).</summary>
+    private const int BarOffset = 1;
+
+    /// <summary>Width a histogram bar is narrower than its slot (SVG units).</summary>
+    private const int BarWidthTrim = 2;
+
+    /// <summary>Nearest the log label's centre comes to either histogram edge (SVG units).</summary>
+    private const int LogLabelMargin = 40;
+
+    /// <summary>Distance between the histogram's baseline and its labels (SVG units).</summary>
+    private const int AxisLabelDrop = 16;
+
     public static void Write(FreeDiceReplay.Result result, string path, string? navigation = null) =>
         File.WriteAllText(path, Render(result, navigation));
 
@@ -26,11 +68,11 @@ public static class FreeDiceReportWriter
                   "If the engine is right, the log should look like a typical run (somewhere near the middle).</div>");
 
         double place = result.LogPercentile;
-        string placeClass = place is >= 0.1 and <= 0.9 ? "ok" : place is >= 0.03 and <= 0.97 ? "warn" : "bad";
+        string placeClass = place is >= PlaceOkLow and <= PlaceOkHigh ? "ok" : place is >= PlaceWarnLow and <= PlaceWarnHigh ? "warn" : "bad";
         sb.Append("<div class=\"panel grid\">");
         Stat(sb, "Log damage", FormatNumber(result.LogDamage), "");
-        Stat(sb, "Engine average", $"{FormatNumber(result.Mean)} <span class=\"{RatioClass(result.Mean / result.LogDamage, 0.02, 0.05)}\">({FormatPercent(result.Mean / result.LogDamage)} of log)</span>", "");
-        Stat(sb, "Engine 5-95%", $"{FormatNumber(result.Percentile(0.05))} - {FormatNumber(result.Percentile(0.95))}", $"spread {FormatPercent(result.StdDev / result.Mean)} (1 std dev)");
+        Stat(sb, "Engine average", $"{FormatNumber(result.Mean)} <span class=\"{RatioClass(result.Mean / result.LogDamage, MeanGoodDeviation, MeanWarnDeviation)}\">({FormatPercent(result.Mean / result.LogDamage)} of log)</span>", "");
+        Stat(sb, "Engine 5-95%", $"{FormatNumber(result.Percentile(FreeDiceReplay.LowPercentile))} - {FormatNumber(result.Percentile(FreeDiceReplay.HighPercentile))}", $"spread {FormatPercent(result.StdDev / result.Mean)} (1 std dev)");
         Stat(sb, "Log's place", $"<span class=\"{placeClass}\">{place.ToString("P0", Inv)}</span>", "of the engine's runs dealt less than the log");
         Stat(sb, "Runs", result.EngineTotals.Count.ToString(Inv), $"{result.Elapsed.TotalSeconds.ToString("F1", Inv)}s; casts forced (engine short of resources): {result.MeanForcedCasts.ToString("F1", Inv)} per run");
         sb.Append("</div>");
@@ -49,7 +91,7 @@ public static class FreeDiceReportWriter
         foreach (var ability in result.Abilities)
         {
             bool outside = ability.LogDamage < ability.Engine5 || ability.LogDamage > ability.Engine95;
-            string ratio = ability.LogDamage > 0 ? $"<span class=\"{RatioClass(ability.EngineMean / ability.LogDamage, 0.03, 0.10)}\">{FormatPercent(ability.EngineMean / ability.LogDamage)}</span>" : "<span class=\"muted\">engine only</span>";
+            string ratio = ability.LogDamage > 0 ? $"<span class=\"{RatioClass(ability.EngineMean / ability.LogDamage, AbilityGoodDeviation, AbilityWarnDeviation)}\">{FormatPercent(ability.EngineMean / ability.LogDamage)}</span>" : "<span class=\"muted\">engine only</span>";
             sb.Append($"<tr><td>{EncodeHtml(ability.Name)}{(outside ? " <span class=\"tag\" title=\"The log's damage is outside the engine's 5-95% range\">outside range</span>" : "")}</td>" +
                       $"<td class=\"num muted\">{ability.Id}</td><td class=\"num\">{FormatNumber(ability.LogDamage)}</td><td class=\"num\">{FormatNumber(ability.EngineMean)}</td>" +
                       $"<td class=\"num\">{ratio}</td><td class=\"num muted\">{FormatNumber(ability.Engine5)} - {FormatNumber(ability.Engine95)}</td>" +
@@ -57,8 +99,8 @@ public static class FreeDiceReportWriter
                       $"<td class=\"num\">{Rate(ability.LogCrits, ability.LogHits)}</td><td class=\"num\">{Rate(ability.EngineCrits, ability.EngineHits)}</td></tr>");
         }
         sb.Append($"<tr class=\"total\"><td>Total</td><td></td><td class=\"num\">{FormatNumber(result.LogDamage)}</td><td class=\"num\">{FormatNumber(result.Mean)}</td>" +
-                  $"<td class=\"num\"><span class=\"{RatioClass(result.Mean / result.LogDamage, 0.02, 0.05)}\">{FormatPercent(result.Mean / result.LogDamage)}</span></td>" +
-                  $"<td class=\"num muted\">{FormatNumber(result.Percentile(0.05))} - {FormatNumber(result.Percentile(0.95))}</td><td></td><td></td><td></td><td></td></tr>");
+                  $"<td class=\"num\"><span class=\"{RatioClass(result.Mean / result.LogDamage, MeanGoodDeviation, MeanWarnDeviation)}\">{FormatPercent(result.Mean / result.LogDamage)}</span></td>" +
+                  $"<td class=\"num muted\">{FormatNumber(result.Percentile(FreeDiceReplay.LowPercentile))} - {FormatNumber(result.Percentile(FreeDiceReplay.HighPercentile))}</td><td></td><td></td><td></td><td></td></tr>");
         sb.Append("</tbody></table></div></main></body></html>");
         return sb.ToString();
     }
@@ -73,8 +115,8 @@ public static class FreeDiceReportWriter
         const int bins = 40, width = 1000, height = 180, pad = 24;
         double lo = Math.Min(totals.Min(), log), hi = Math.Max(totals.Max(), log);
         double span = Math.Max(hi - lo, 1.0);
-        lo -= span * 0.02;
-        hi += span * 0.02;
+        lo -= span * HistogramMarginFraction;
+        hi += span * HistogramMarginFraction;
         var counts = new int[bins];
         foreach (double total in totals) counts[Math.Clamp((int)((total - lo) / (hi - lo) * bins), 0, bins - 1)]++;
         int max = counts.Max();
@@ -84,14 +126,14 @@ public static class FreeDiceReportWriter
         for (int i = 0; i < bins; i++)
         {
             if (counts[i] == 0) continue;
-            double barHeight = (double)counts[i] / max * (height - 10);
+            double barHeight = (double)counts[i] / max * (height - BarTopInset);
             sb.Append(string.Format(Inv, "<rect x=\"{0:F1}\" y=\"{1:F1}\" width=\"{2:F1}\" height=\"{3:F1}\" fill=\"var(--engine)\" opacity=\"0.75\"/>",
-                i * barW + 1, height - barHeight, barW - 2, barHeight));
+                i * barW + BarOffset, height - barHeight, barW - BarWidthTrim, barHeight));
         }
         sb.Append($"<line class=\"axis\" x1=\"0\" y1=\"{height}\" x2=\"{width}\" y2=\"{height}\"/>");
         sb.Append(string.Format(Inv, "<line x1=\"{0:F1}\" y1=\"0\" x2=\"{0:F1}\" y2=\"{1}\" stroke=\"var(--log)\" stroke-width=\"3\"/>", ScaleX(log), height));
-        sb.Append(string.Format(Inv, "<text x=\"{0:F1}\" y=\"{1}\" text-anchor=\"middle\">log {2}</text>", Math.Clamp(ScaleX(log), 40, width - 40), height + 16, FormatNumber(log)));
-        sb.Append($"<text x=\"0\" y=\"{height + 16}\">{FormatNumber(lo)}</text><text x=\"{width}\" y=\"{height + 16}\" text-anchor=\"end\">{FormatNumber(hi)}</text>");
+        sb.Append(string.Format(Inv, "<text x=\"{0:F1}\" y=\"{1}\" text-anchor=\"middle\">log {2}</text>", Math.Clamp(ScaleX(log), LogLabelMargin, width - LogLabelMargin), height + AxisLabelDrop, FormatNumber(log)));
+        sb.Append($"<text x=\"0\" y=\"{height + AxisLabelDrop}\">{FormatNumber(lo)}</text><text x=\"{width}\" y=\"{height + AxisLabelDrop}\" text-anchor=\"end\">{FormatNumber(hi)}</text>");
         sb.Append("</svg>");
         return sb.ToString();
     }

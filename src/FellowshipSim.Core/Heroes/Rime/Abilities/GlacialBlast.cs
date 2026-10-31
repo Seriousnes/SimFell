@@ -39,7 +39,7 @@ public class GlacialBlast : RimeAbility
     /// <summary>For abilities built on Glacial Blast (Talon Strike), which set their own values.</summary>
     protected GlacialBlast(Rime owner, int id, string name) : base(owner, id, name, AbilityCategory.Power) { }
 
-    protected bool GlacialAssaultReady => Rime.GlacialAssaultStacks >= 4;
+    protected bool GlacialAssaultReady => Rime.GlacialAssaultStacks >= GlacialAssault.MaxStacks;
 
     public override SimTime GetAdjustedCastTime(SimTime now = default)
     {
@@ -99,7 +99,7 @@ public class GlacialBlast : RimeAbility
         double damage = initialDamage * GlacialAssaultExplosionFraction * falloff;
         foreach (var enemy in nearby)
         {
-            ctx.ApplyDamage(Owner, enemy, damage, GlacialAssaultExplosionId, "Glacial Assault", canCrit: false, 0.0, 1.0);
+            ctx.ApplyDamage(Owner, enemy, damage, GlacialAssaultExplosionId, GlacialAssault.TalentName, canCrit: false, 0.0, 1.0);
         }
     }
 }

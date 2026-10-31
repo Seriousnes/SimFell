@@ -19,7 +19,7 @@ public class HarrowingIce : Talent
     public const double DamagePerStack = 0.03;
     public const double FlightOfTheNavirReductionSeconds = 5.0;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Harrowing Ice", EffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, BuffSeconds, MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

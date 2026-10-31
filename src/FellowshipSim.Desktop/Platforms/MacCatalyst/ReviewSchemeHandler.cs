@@ -9,6 +9,15 @@ namespace FellowshipSim.Desktop;
 /// </summary>
 internal sealed class ReviewSchemeHandler(ReviewPages reviews) : NSObject, IWKUrlSchemeHandler
 {
+    /// <summary>Content type of a review page.</summary>
+    private const string HtmlContentType = "text/html; charset=utf-8";
+
+    private const string ContentTypeHeader = "Content-Type";
+    private const string HttpVersion = "HTTP/1.1";
+
+    /// <summary>HTTP status of a review page.</summary>
+    private const int StatusOk = 200;
+
     [Export("webView:startURLSchemeTask:")]
     public void StartUrlSchemeTask(WKWebView webView, IWKUrlSchemeTask urlSchemeTask)
     {
@@ -19,8 +28,8 @@ internal sealed class ReviewSchemeHandler(ReviewPages reviews) : NSObject, IWKUr
             return;
         }
         using var data = NSData.FromFile(path);
-        using var headers = NSDictionary.FromObjectAndKey(new NSString("text/html; charset=utf-8"), new NSString("Content-Type"));
-        using var response = new NSHttpUrlResponse(url, 200, "HTTP/1.1", headers);
+        using var headers = NSDictionary.FromObjectAndKey(new NSString(HtmlContentType), new NSString(ContentTypeHeader));
+        using var response = new NSHttpUrlResponse(url, StatusOk, HttpVersion, headers);
         urlSchemeTask.DidReceiveResponse(response);
         urlSchemeTask.DidReceiveData(data);
         urlSchemeTask.DidFinish();

@@ -11,17 +11,20 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class ArdeosReplayTests(ITestOutputHelper output)
 {
+    private const string CharacterJsonVariable = "ARDEOS_CHARACTER_JSON";
+    private const string HitsFolderVariable = "ARDEOS_HITS_FOLDER";
+
     [Fact]
     public async Task Ardeos_Fights_Replay()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
         foreach (var (reportCode, fightId) in library.ListDownloadedFights())
         {
             var raw = await library.GetRawFightAsync(null, reportCode, fightId);
             foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Hero == "Ardeos"))
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id).ToJsonString());
-                if (Environment.GetEnvironmentVariable("ARDEOS_CHARACTER_JSON") is { } characterFile)
+                if (Environment.GetEnvironmentVariable(CharacterJsonVariable) is { } characterFile)
                 {
                     File.WriteAllText(characterFile, System.Text.Json.JsonSerializer.Serialize(script.Character, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
                 }
@@ -68,7 +71,7 @@ public class ArdeosReplayTests(ITestOutputHelper output)
         {
             output.WriteLine($"forced {forced.Count()}: {forced.First()}");
         }
-        string? folder = Environment.GetEnvironmentVariable("ARDEOS_HITS_FOLDER");
+        string? folder = Environment.GetEnvironmentVariable(HitsFolderVariable);
         if (folder == null) return;
         string dump = Path.Combine(folder, $"hits_{result.ReportCode}_{result.FightId}.csv");
         var inv = System.Globalization.CultureInfo.InvariantCulture;

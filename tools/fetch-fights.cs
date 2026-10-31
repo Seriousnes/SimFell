@@ -18,19 +18,20 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using FellowshipSim.Logs;
 using Microsoft.Extensions.Configuration;
+using static Names;
 
 string root = Path.GetDirectoryName((string)AppContext.GetData("EntryPointFileDirectoryPath")!)!;
 string? hero = null;
-int count = 12, maxPerPlayer = 2, maxPages = 10;
+int count = DefaultCount, maxPerPlayer = DefaultMaxPerPlayer, maxPages = DefaultMaxPages;
 for (int i = 0; i < args.Length; i++)
 {
     string Next() => i + 1 < args.Length ? args[++i] : throw new ArgumentException($"{args[i]} needs a value.");
     switch (args[i])
     {
-        case "--hero": hero = Next(); break;
-        case "--count": count = int.Parse(Next()); break;
-        case "--max-per-player": maxPerPlayer = int.Parse(Next()); break;
-        case "--pages": maxPages = int.Parse(Next()); break;
+        case HeroOption: hero = Next(); break;
+        case CountOption: count = int.Parse(Next()); break;
+        case MaxPerPlayerOption: maxPerPlayer = int.Parse(Next()); break;
+        case PagesOption: maxPages = int.Parse(Next()); break;
         default: Console.Error.WriteLine($"Unknown option {args[i]}."); return 1;
     }
 }
@@ -48,28 +49,25 @@ if (credentials == null)
     return 1;
 }
 
-using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(HttpTimeoutMinutes) };
 var client = new FellowshipLogsClient(http, credentials.Value.Id, credentials.Value.Secret);
-var library = new ReplayLibrary(Path.Combine(root, "data"));
+var library = new ReplayLibrary(Path.Combine(root, DataFolder));
 Directory.CreateDirectory(library.FightsDirectory);
 var patch = GamePatch.Current;
 long releasedMs = new DateTimeOffset(patch.Released.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero).ToUnixTimeMilliseconds();
 
-var world = await client.QueryAsync("""
-    { worldData { zones { id name encounters { id name } } }
-      gameData { classes { slug specs { name slug } } } }
-    """);
-var zone = world["worldData"]!["zones"]!.AsArray().MaxBy(z => (int)z!["id"]!)!;
-var encounters = zone["encounters"]!.AsArray().Select(e => new ZoneEncounter((int)e!["id"]!, (string)e["name"]!)).ToList();
-var spec = world["gameData"]!["classes"]!.AsArray()
-    .SelectMany(c => c!["specs"]!.AsArray().Select(s => new HeroSpec((string)c["slug"]!, (string)s!["name"]!, (string)s["slug"]!)))
+var world = await client.QueryAsync(WorldQuery);
+var zone = world[WorldDataProperty]![ZonesProperty]!.AsArray().MaxBy(z => (int)z![IdProperty]!)!;
+var encounters = zone[EncountersProperty]!.AsArray().Select(e => new ZoneEncounter((int)e![IdProperty]!, (string)e[NameProperty]!)).ToList();
+var spec = world[GameDataProperty]![ClassesProperty]!.AsArray()
+    .SelectMany(c => c![SpecsProperty]!.AsArray().Select(s => new HeroSpec((string)c[SlugProperty]!, (string)s![NameProperty]!, (string)s[SlugProperty]!)))
     .FirstOrDefault(s => s.Name.Equals(hero, StringComparison.OrdinalIgnoreCase));
 if (spec.Name == null)
 {
     Console.Error.WriteLine($"FellowshipLogs has no hero named {hero}.");
     return 1;
 }
-Console.WriteLine($"Zone {(int)zone["id"]!} \"{(string)zone["name"]!}\", {encounters.Count} encounters; {spec.Name} runs of patch {patch.Name} " +
+Console.WriteLine($"Zone {(int)zone[IdProperty]!} \"{(string)zone[NameProperty]!}\", {encounters.Count} encounters; {spec.Name} runs of patch {patch.Name} " +
                   $"(from {patch.Released:yyyy-MM-dd}, log format {patch.LogVersion}).");
 
 var taken = new List<TakenFight>();
@@ -102,11 +100,11 @@ return 0;
 
 async Task<string?> Reject(JsonNode run)
 {
-    string? code = (string?)run["report"]?["code"];
-    int? fightId = (int?)run["report"]?["fightID"];
-    string player = ((string?)run["name"] ?? "").Trim();
+    string? code = (string?)run[ReportProperty]?[CodeProperty];
+    int? fightId = (int?)run[ReportProperty]?[FightIdProperty];
+    string player = ((string?)run[NameProperty] ?? "").Trim();
     if (code == null || fightId == null) return "no report";
-    if ((long?)run["startTime"] is not { } startMs || startMs < releasedMs) return "before the patch";
+    if ((long?)run[StartTimeProperty] is not { } startMs || startMs < releasedMs) return "before the patch";
     if (taken.Any(t => t.Code == code && t.FightId == fightId)) return "fight already taken";
     if (taken.Count(t => t.Player.Equals(player, StringComparison.OrdinalIgnoreCase)) >= maxPerPlayer) return "player cap";
 
@@ -124,7 +122,7 @@ async Task<string?> Reject(JsonNode run)
     catch (FellowshipLogsException exception) when (!Throttled(exception)) { return "download failed"; }
     string encounter = queues.First(q => q.Holds(run)).Name;
     taken.Add(new TakenFight(encounter, player, code, fightId.Value));
-    Console.WriteLine($"  {encounter}: {player} {code} fight {fightId} ({fight.Name}, {fight.DurationSeconds / 60:F0} min)");
+    Console.WriteLine($"  {encounter}: {player} {code} fight {fightId} ({fight.Name}, {fight.DurationSeconds / SecondsPerMinute:F0} min)");
     return null;
 }
 
@@ -132,17 +130,17 @@ async Task<string?> Reject(JsonNode run)
 async Task WaitForPointsAsync()
 {
     const int Reserve = 600;
-    var rate = (await client.QueryAsync("{ rateLimitData { limitPerHour pointsSpentThisHour pointsResetIn } }"))["rateLimitData"]!;
-    double left = (double)rate["limitPerHour"]! - (double)rate["pointsSpentThisHour"]!;
+    var rate = (await client.QueryAsync(RateLimitQuery))[RateLimitDataProperty]!;
+    double left = (double)rate[LimitPerHourProperty]! - (double)rate[PointsSpentThisHourProperty]!;
     if (left >= Reserve) return;
-    int wait = (int)rate["pointsResetIn"]! + 5;
+    int wait = (int)rate[PointsResetInProperty]! + ResetMarginSeconds;
     Console.WriteLine($"  {left:F0} FellowshipLogs points left this hour; waiting {wait}s for the reset.");
     await Task.Delay(TimeSpan.FromSeconds(wait));
 }
 
 // A refusal for the rate limit or a server error stops the run; it says nothing about the report.
 static bool Throttled(FellowshipLogsException exception) =>
-    exception.Message.Contains("returned 429") || System.Text.RegularExpressions.Regex.IsMatch(exception.Message, @"returned 5\d\d");
+    exception.Message.Contains(RateLimitedText) || System.Text.RegularExpressions.Regex.IsMatch(exception.Message, ServerErrorPattern);
 
 static ApiCredentials? Credentials()
 {
@@ -150,8 +148,8 @@ static ApiCredentials? Credentials()
         .AddUserSecrets(Assembly.GetEntryAssembly()!)
         .AddEnvironmentVariables()
         .Build();
-    string? id = configuration["FELLOWSHIPLOGS_CLIENT_ID"];
-    string? secret = configuration["FELLOWSHIPLOGS_CLIENT_SECRET"];
+    string? id = configuration[ClientIdVariable];
+    string? secret = configuration[ClientSecretVariable];
     return !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(secret) ? new ApiCredentials(id, secret) : null;
 }
 /// <summary>One encounter's ranking list of the hero, read a page at a time from rank 1.</summary>
@@ -174,14 +172,14 @@ sealed class RankingQueue(int encounterId, string name)
             _page++;
             var data = await client.QueryAsync(
                 $"{{ worldData {{ encounter(id: {encounterId}) {{ characterRankings(className: \"{classSlug}\", specName: \"{specSlug}\", page: {_page}) }} }} }}");
-            var page = data["worldData"]!["encounter"]!["characterRankings"]!;
-            foreach (var run in page["rankings"]?.AsArray() ?? [])
+            var page = data[WorldDataProperty]![EncounterProperty]![CharacterRankingsProperty]!;
+            foreach (var run in page[RankingsProperty]?.AsArray() ?? [])
             {
                 if (run == null) continue;
                 _runs.Enqueue(run);
                 _read.Add(run);
             }
-            _lastPage = (bool?)page["hasMorePages"] != true || _page >= maxPages;
+            _lastPage = (bool?)page[HasMorePagesProperty] != true || _page >= maxPages;
         }
         return _runs.TryDequeue(out var next) ? next : null;
     }
@@ -194,3 +192,65 @@ readonly record struct HeroSpec(string Class, string Name, string Slug);
 readonly record struct TakenFight(string Encounter, string Player, string Code, int FightId);
 
 readonly record struct ApiCredentials(string Id, string Secret);
+
+/// <summary>The names, queries and numbers this script uses.</summary>
+static class Names
+{
+    public const string HeroOption = "--hero";
+    public const string CountOption = "--count";
+    public const string MaxPerPlayerOption = "--max-per-player";
+    public const string PagesOption = "--pages";
+
+    public const int DefaultCount = 12;
+    public const int DefaultMaxPerPlayer = 2;
+    public const int DefaultMaxPages = 10;
+
+    public const string ClientIdVariable = "FELLOWSHIPLOGS_CLIENT_ID";
+    public const string ClientSecretVariable = "FELLOWSHIPLOGS_CLIENT_SECRET";
+
+    /// <summary>Folder of the data, beside the solution file.</summary>
+    public const string DataFolder = "data";
+
+    /// <summary>Longest wait (minutes) for one FellowshipLogs reply.</summary>
+    public const int HttpTimeoutMinutes = 5;
+
+    /// <summary>Seconds added to the wait for the points reset.</summary>
+    public const int ResetMarginSeconds = 5;
+
+    public const double SecondsPerMinute = 60;
+
+    /// <summary>Text of the error for a reply that refuses the request for the rate limit.</summary>
+    public const string RateLimitedText = "returned 429";
+
+    /// <summary>Matches the text of the error for a server error reply.</summary>
+    public const string ServerErrorPattern = @"returned 5\d\d";
+
+    public const string WorldQuery = """
+        { worldData { zones { id name encounters { id name } } }
+          gameData { classes { slug specs { name slug } } } }
+        """;
+
+    public const string RateLimitQuery = "{ rateLimitData { limitPerHour pointsSpentThisHour pointsResetIn } }";
+
+    public const string WorldDataProperty = "worldData";
+    public const string ZonesProperty = "zones";
+    public const string IdProperty = "id";
+    public const string NameProperty = "name";
+    public const string EncountersProperty = "encounters";
+    public const string GameDataProperty = "gameData";
+    public const string ClassesProperty = "classes";
+    public const string SpecsProperty = "specs";
+    public const string SlugProperty = "slug";
+    public const string ReportProperty = "report";
+    public const string CodeProperty = "code";
+    public const string FightIdProperty = "fightID";
+    public const string StartTimeProperty = "startTime";
+    public const string RateLimitDataProperty = "rateLimitData";
+    public const string LimitPerHourProperty = "limitPerHour";
+    public const string PointsSpentThisHourProperty = "pointsSpentThisHour";
+    public const string PointsResetInProperty = "pointsResetIn";
+    public const string EncounterProperty = "encounter";
+    public const string CharacterRankingsProperty = "characterRankings";
+    public const string RankingsProperty = "rankings";
+    public const string HasMorePagesProperty = "hasMorePages";
+}

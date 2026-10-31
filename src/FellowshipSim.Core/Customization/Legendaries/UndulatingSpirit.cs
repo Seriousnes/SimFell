@@ -12,16 +12,17 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class UndulatingSpirit : Legendary
 {
     public const int PowerId = 398;
+    public const string PowerName = "Undulating Spirit";
     public const int BuffEffectId = 2171;
     public const int StacksGranted = 2;
     /// <summary>Harbinger of Winter Furs.</summary>
     public const int ChestItemId = 5898;
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Undulating Spirit";
-    public override string HeroName => "Rime";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Rime);
     public override IReadOnlyList<int> ItemIds => [ChestItemId];
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Undulating Spirit", BuffEffectId, maxStacks: StacksGranted);
+    public static readonly AuraDef Buff = AuraDef.Effect(PowerName, BuffEffectId, maxStacks: StacksGranted);
 
     public override void Bind(Hero hero)
     {

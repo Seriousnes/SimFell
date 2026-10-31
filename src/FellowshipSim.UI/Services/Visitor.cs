@@ -7,9 +7,15 @@ namespace FellowshipSim.UI.Services;
 /// </summary>
 public sealed record Visitor(string Id, bool OwnsDataFolder)
 {
+    /// <summary>The ID of <see cref="DataFolderOwner"/>.</summary>
+    public const string DataFolderOwnerId = "local";
+
+    /// <summary>The key prefix of a web visitor's files.</summary>
+    private const string Folder = "visitors";
+
     /// <summary>The desktop app's user, whose files are directly in the data folder.</summary>
-    public static Visitor DataFolderOwner { get; } = new("local", OwnsDataFolder: true);
+    public static Visitor DataFolderOwner { get; } = new(DataFolderOwnerId, OwnsDataFolder: true);
 
     /// <summary>The <see cref="IBlobStore"/> key of <paramref name="path"/> among this visitor's files.</summary>
-    public string Key(string path) => OwnsDataFolder ? path : $"visitors/{Id}/{path}";
+    public string Key(string path) => OwnsDataFolder ? path : $"{Folder}/{Id}/{path}";
 }

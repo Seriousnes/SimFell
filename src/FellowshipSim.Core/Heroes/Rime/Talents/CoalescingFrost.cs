@@ -18,6 +18,8 @@ public class CoalescingFrost : Talent
     public const double DurationSeconds = 3.0;
     public const double CoefficientPerStack = 0.56;
     public const double CritDoubleStackChance = 0.5;
+    /// <summary>"Freezing Torrent critical strikes have a 50% chance to apply 2 stacks." (talent text)</summary>
+    public const int CritStackCount = 2;
     /// <summary>
     /// Damage falls off as sqrt(T/N) beyond T enemies: game data 5 (hero_data "DelayedAoe" TargetCountThreshold; the
     /// datamine's targetCountFalloff on effect 2300). One log fit 6 better (PCaMVTFbZzNLrfx3 fight 5: 1.10 with 5, 1.02
@@ -61,7 +63,7 @@ public class CoalescingFrost : Talent
         }
 
         // "Freezing Torrent critical strikes have a 50% chance to apply 2 stacks."
-        int added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx, target) ? 2 : 1;
+        int added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx, target) ? CritStackCount : 1;
         var (stacks, version) = _stacks.GetValueOrDefault(target);
         int expected = version + 1;
         _stacks[target] = new StackCount(stacks + added, expected);

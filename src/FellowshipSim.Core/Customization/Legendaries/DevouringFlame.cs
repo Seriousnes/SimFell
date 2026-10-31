@@ -12,13 +12,14 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class DevouringFlame : Legendary
 {
     public const int PowerId = 616;
+    public const string PowerName = "Devouring Flame";
     public const int BracersItemId = 5225;
     public const int HelmItemId = 5900;
     public const double DamagePerInstance = 0.07;
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Devouring Flame";
-    public override string HeroName => "Ardeos";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Ardeos);
     public override IReadOnlyList<int> ItemIds => [BracersItemId, HelmItemId];
 
     public override void Bind(Hero hero)

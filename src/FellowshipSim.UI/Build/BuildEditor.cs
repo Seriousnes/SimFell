@@ -250,7 +250,7 @@ public sealed class BuildEditor(CharacterBuild build)
     public int GearUsed(EnchantSlot slot) => Used(slot) - WeaponUsed(slot);
 
     /// <summary>Stat enchants that give <paramref name="rating"/> (<see cref="EnchantSlots.RatingPerStatEnchant"/> each, rounded up).</summary>
-    public static int StatEnchantsFor(double rating) => (int)Math.Ceiling(rating / EnchantSlots.RatingPerStatEnchant - 1e-9);
+    public static int StatEnchantsFor(double rating) => (int)Math.Ceiling(rating / EnchantSlots.RatingPerStatEnchant - Tolerance.Comparison);
 
     /// <summary>
     /// How many of stat enchant <paramref name="id"/> the build wears: as a log counted them, otherwise its rating over 6.

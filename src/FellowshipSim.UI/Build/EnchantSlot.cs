@@ -37,14 +37,29 @@ public static class EnchantSlots
     /// <summary>Rating one stat enchant adds to each of its stats (combat logs: 775 of 842 at the current item level).</summary>
     public const double RatingPerStatEnchant = 6;
 
+    /// <summary>The stat enchants a build wears without a weapon's (per the user).</summary>
+    public const int StatEnchantLimit = 26;
+
+    /// <summary>The gem power bonuses a build wears (per the user).</summary>
+    public const int GemLimit = 26;
+
+    /// <summary>The aspect ranks a build wears without a weapon's (per the user).</summary>
+    public const int AspectLimit = 12;
+
+    /// <summary>The sigil ranks a build wears without a weapon's (per the user).</summary>
+    public const int SigilLimit = 12;
+
+    /// <summary>The glyph ranks a build wears (per the user).</summary>
+    public const int GlyphLimit = 12;
+
     /// <summary>The limit of <paramref name="slot"/>, with a weapon's slots when <paramref name="weapon"/>.</summary>
     public static int Limit(EnchantSlot slot, bool weapon) => slot switch
     {
-        EnchantSlot.StatEnchants => 26 + (weapon ? WeaponStatEnchants : 0),
-        EnchantSlot.Gems => 26,
-        EnchantSlot.Aspects => 12 + (weapon ? WeaponAspects : 0),
-        EnchantSlot.Sigils => 12 + (weapon ? WeaponSigils : 0),
-        EnchantSlot.Glyphs => 12,
+        EnchantSlot.StatEnchants => StatEnchantLimit + (weapon ? WeaponStatEnchants : 0),
+        EnchantSlot.Gems => GemLimit,
+        EnchantSlot.Aspects => AspectLimit + (weapon ? WeaponAspects : 0),
+        EnchantSlot.Sigils => SigilLimit + (weapon ? WeaponSigils : 0),
+        EnchantSlot.Glyphs => GlyphLimit,
         _ => ProtectiveEnchant.MaxPerBuild,
     };
 

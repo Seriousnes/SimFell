@@ -6,6 +6,18 @@ using FellowshipSim.Benchmarks;
 using FellowshipSim.Core.Engine;
 using FellowshipSim.Engine.Replay;
 
+const string CountersMode = "counters";
+const string SequenceMode = "sequence";
+const string ScaleMode = "scale";
+const string ProfileMode = "profile";
+const string HeroMode = "hero";
+const string DefaultSequenceTargets = "1";
+const string DefaultProfileSeconds = "30";
+const string JobOption = "--job";
+const string JobShortOption = "-j";
+const int ProfileBatchFights = 10;
+const double MicrosecondsPerMillisecond = 1000;
+
 // counters: the work done in one fight. sequence <targets>: fights one after another on one hero, with each one's time
 // and work. profile <mc|mc8|mc-idle|mc8-idle|freedice> <seconds>: fights back to back on one thread, for a trace.
 // scale <mc|mc8|mc-idle|mc8-idle|freedice> [iterations] [core counts]: many iterations at fixed core counts. hero: the
@@ -13,22 +25,22 @@ using FellowshipSim.Engine.Replay;
 // Anything else goes to BenchmarkDotNet (e.g. --filter *MonteCarlo*).
 switch (args.FirstOrDefault())
 {
-    case "counters":
+    case CountersMode:
         Counters.Run();
         return;
-    case "sequence":
-        Counters.FightSequence(int.Parse(args.ElementAtOrDefault(1) ?? "1"));
+    case SequenceMode:
+        Counters.FightSequence(int.Parse(args.ElementAtOrDefault(1) ?? DefaultSequenceTargets));
         return;
-    case "scale":
+    case ScaleMode:
         Scaling.Run(args);
         return;
-    case "scale-run":
+    case Scaling.RunMode:
         Scaling.RunChild(args);
         return;
-    case "profile":
-        Profile(args.ElementAtOrDefault(1) ?? "mc", double.Parse(args.ElementAtOrDefault(2) ?? "30", System.Globalization.CultureInfo.InvariantCulture));
+    case ProfileMode:
+        Profile(args.ElementAtOrDefault(1) ?? Fight.DefaultWorkload, double.Parse(args.ElementAtOrDefault(2) ?? DefaultProfileSeconds, System.Globalization.CultureInfo.InvariantCulture));
         return;
-    case "hero":
+    case HeroMode:
         FirstHero();
         return;
 }
@@ -46,7 +58,7 @@ if (FreeDiceBenchmarks.ScriptPath == null)
 
 // The same garbage collector as the tests and the server: server GC, not concurrent. A job given on the command line
 // (--job dry) replaces it.
-IConfig config = args.Any(a => a is "--job" or "-j")
+IConfig config = args.Any(a => a is JobOption or JobShortOption)
     ? DefaultConfig.Instance
     : DefaultConfig.Instance.AddJob(Job.Default.WithGcServer(true).WithGcConcurrent(false));
 BenchmarkSwitcher.FromTypes(types.ToArray()).Run(args, config);
@@ -61,7 +73,7 @@ static void FirstHero()
     const int heroes = 1000;
     clock.Restart();
     for (int i = 0; i < heroes; i++) Fight.NewHero();
-    Console.WriteLine($"first hero {first:F2} ms; next {heroes} heroes {clock.Elapsed.TotalMilliseconds / heroes * 1000:F1} µs each");
+    Console.WriteLine($"first hero {first:F2} ms; next {heroes} heroes {clock.Elapsed.TotalMilliseconds / heroes * MicrosecondsPerMillisecond:F1} µs each");
 }
 
 static void Profile(string workload, double seconds)
@@ -73,11 +85,11 @@ static void Profile(string workload, double seconds)
         var simulator = new MonteCarloSimulator(Fight.NewHero, Fight.Actions(idle));
         while (clock.Elapsed.TotalSeconds < seconds)
         {
-            simulator.Run(Fight.Duration, iterations: 10, targetCount: targets, degreeOfParallelism: 1);
-            fights += 10;
+            simulator.Run(Fight.Duration, iterations: ProfileBatchFights, targetCount: targets, degreeOfParallelism: 1);
+            fights += ProfileBatchFights;
         }
     }
-    else if (workload == "freedice")
+    else if (workload == Fight.FreeDiceWorkload)
     {
         var script = ReplayScript.Load(FreeDiceBenchmarks.ScriptPath
             ?? throw new InvalidOperationException($"{FreeDiceBenchmarks.ScriptVariable} names no replay script"));

@@ -8,12 +8,20 @@ using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Etlx;
 using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 
+const string EngineNamespace = "FellowshipSim.";
+const string SampleProfilerProvider = "Microsoft-DotNETCore-SampleProfiler";
+const string SampleEventName = "Thread/Sample";
+const string Unknown = "?";
+const int DefaultTop = 20;
+const double BytesPerMegabyte = 1048576.0;
+const double PercentPerFraction = 100.0;
+
 if (args.Length < 1)
 {
     Console.WriteLine("usage: dotnet run TraceSummary.cs -- <trace.nettrace> [top]");
     return;
 }
-int top = args.Length > 1 ? int.Parse(args[1]) : 20;
+int top = args.Length > 1 ? int.Parse(args[1]) : DefaultTop;
 
 // Stage of a method, matched on its full name. Closures carry their method's name ("<ApplyDamage>g__Land"), so a
 // substring match counts them with their method. A sample belongs to the stage of the innermost frame that matches
@@ -50,7 +58,7 @@ foreach (TraceEvent ev in log.Events)
 {
     if (ev is GCAllocationTickTraceData tick)
     {
-        string type = tick.TypeName ?? "?";
+        string type = tick.TypeName ?? Unknown;
         allocated[type] = allocated.GetValueOrDefault(type) + tick.AllocationAmount64;
         allocatedTotal += tick.AllocationAmount64;
         // A closure's type name ("<>c__DisplayClass62_0") does not name its class, so the allocating engine method does.
@@ -58,21 +66,21 @@ foreach (TraceEvent ev in log.Events)
         for (var frame = ev.CallStack(); frame != null && site == null; frame = frame.Caller)
         {
             string? method = frame.CodeAddress.FullMethodName;
-            if (method != null && method.Contains("FellowshipSim.")) site = method;
+            if (method != null && method.Contains(EngineNamespace)) site = method;
         }
-        string key = $"{type}  <-  {site ?? "?"}";
+        string key = $"{type}  <-  {site ?? Unknown}";
         allocatedAt[key] = allocatedAt.GetValueOrDefault(key) + tick.AllocationAmount64;
         continue;
     }
-    if (ev.ProviderName != "Microsoft-DotNETCore-SampleProfiler" || ev.EventName != "Thread/Sample") continue;
+    if (ev.ProviderName != SampleProfilerProvider || ev.EventName != SampleEventName) continue;
 
     var frames = new List<string>();
     for (var frame = ev.CallStack(); frame != null; frame = frame.Caller)
     {
-        frames.Add(frame.CodeAddress.FullMethodName ?? frame.CodeAddress.ModuleName ?? "?");
+        frames.Add(frame.CodeAddress.FullMethodName ?? frame.CodeAddress.ModuleName ?? Unknown);
     }
     // Only samples of the engine's own thread: a stack with an engine method on it.
-    if (!frames.Any(f => f.Contains("FellowshipSim."))) continue;
+    if (!frames.Any(f => f.Contains(EngineNamespace))) continue;
     engineSamples++;
     leaf[frames[0]] = leaf.GetValueOrDefault(frames[0]) + 1;
     foreach (string method in frames.Distinct()) methodInclusive[method] = methodInclusive.GetValueOrDefault(method) + 1;
@@ -91,17 +99,17 @@ foreach (TraceEvent ev in log.Events)
     for (int s = 0; s < stages.Length; s++) if (seen[s]) inclusive[s]++;
 }
 
-Console.WriteLine($"Allocations: {allocatedTotal / 1048576.0:N0} MB sampled");
+Console.WriteLine($"Allocations: {allocatedTotal / BytesPerMegabyte:N0} MB sampled");
 foreach (var (type, bytes) in allocated.OrderByDescending(kv => kv.Value).Take(top))
 {
-    Console.WriteLine($"  {bytes * 100.0 / Math.Max(1, allocatedTotal),5:F1}%  {bytes / 1048576.0,8:N1} MB  {type}");
+    Console.WriteLine($"  {bytes * PercentPerFraction / Math.Max(1, allocatedTotal),5:F1}%  {bytes / BytesPerMegabyte,8:N1} MB  {type}");
 }
 
 Console.WriteLine();
 Console.WriteLine("Allocations by type and the engine method allocating it:");
 foreach (var (key, bytes) in allocatedAt.OrderByDescending(kv => kv.Value).Take(top))
 {
-    Console.WriteLine($"  {bytes * 100.0 / Math.Max(1, allocatedTotal),5:F1}%  {key}");
+    Console.WriteLine($"  {bytes * PercentPerFraction / Math.Max(1, allocatedTotal),5:F1}%  {key}");
 }
 
 Console.WriteLine();
@@ -109,23 +117,23 @@ Console.WriteLine($"CPU:{engineSamples} samples on the engine thread");
 Console.WriteLine("  stage                          inclusive  innermost");
 for (int s = 0; s < stages.Length; s++)
 {
-    Console.WriteLine($"  {stages[s].Stage,-30} {inclusive[s] * 100.0 / Math.Max(1, engineSamples),8:F1}%  {innermost[s] * 100.0 / Math.Max(1, engineSamples),8:F1}%");
+    Console.WriteLine($"  {stages[s].Stage,-30} {inclusive[s] * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%  {innermost[s] * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%");
 }
 long none = engineSamples - innermost.Sum();
-Console.WriteLine($"  {"(no stage)",-30} {"",9}  {none * 100.0 / Math.Max(1, engineSamples),8:F1}%");
+Console.WriteLine($"  {"(no stage)",-30} {"",9}  {none * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%");
 
 Console.WriteLine();
 Console.WriteLine("Top methods by own samples:");
 foreach (var (method, samples) in leaf.OrderByDescending(kv => kv.Value).Take(top))
 {
-    Console.WriteLine($"  {samples * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
+    Console.WriteLine($"  {samples * PercentPerFraction / Math.Max(1, engineSamples),5:F1}%  {method}");
 }
 
 Console.WriteLine();
 Console.WriteLine("Top engine methods by inclusive samples:");
-foreach (var (method, samples) in methodInclusive.Where(kv => kv.Key.Contains("FellowshipSim.")).OrderByDescending(kv => kv.Value).Take(top * 2))
+foreach (var (method, samples) in methodInclusive.Where(kv => kv.Key.Contains(EngineNamespace)).OrderByDescending(kv => kv.Value).Take(top * 2))
 {
-    Console.WriteLine($"  {samples * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
+    Console.WriteLine($"  {samples * PercentPerFraction / Math.Max(1, engineSamples),5:F1}%  {method}");
 }
 
 readonly record struct StagePatterns(string Stage, string[] Patterns);

@@ -11,7 +11,7 @@ public class GlacialAssault : Talent
     public const int MaxStacks = 4;
 
     /// <summary>Stacks from Cold Snap; at 4 the next Glacial Blast or Talon Strike is empowered.</summary>
-    public static readonly AuraDef Buff = AuraDef.Effect("Glacial Assault", BuffEffectId, maxStacks: MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, maxStacks: MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

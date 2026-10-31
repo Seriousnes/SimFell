@@ -30,17 +30,17 @@ public class Topaz : Gem
     {
         switch (node.Slot)
         {
-            case 1: // Adrenaline Rush: Haste for 10s each time you deal damage to an enemy at 30% health or less.
+            case HeadlineSlot: // Adrenaline Rush: Haste for 10s each time you deal damage to an enemy at 30% health or less.
                 BindAdrenalineRush(hero, node);
                 return true;
-            case 4: // Feline Grace: Haste.
-                hero.Stats.BonusHaste += node.Value("HasteBonus");
+            case PercentStatSlot: // Feline Grace: Haste.
+                hero.Stats.BonusHaste += node.Value(HasteBonusKey);
                 return true;
-            case 2: // Thief's Alacrity: flat Stamina and Haste rating.
-                hero.Stats.HasteRating += node.Value("HasteBonus");
-                hero.Stats.Stamina += node.Value("StaminaBonus");
+            case FlatStatSlot: // Thief's Alacrity: flat Stamina and Haste rating.
+                hero.Stats.HasteRating += node.Value(HasteBonusKey);
+                hero.Stats.Stamina += node.Value(StaminaBonusKey);
                 return true;
-            case 5: // Blessing of the Virtuoso: "You retain X Haste from Spirit of Heroism while it is not active."
+            case BlessingSlot: // Blessing of the Virtuoso: "You retain X Haste from Spirit of Heroism while it is not active."
                 hero.PassiveAuras.Add(node.Grants!);
                 BindVirtuoso(hero, node);
                 return true;
@@ -77,15 +77,15 @@ public class Topaz : Gem
 
     private void SetRanks()
     {
-        _rush = NodeInSlot(1)?.Grants;
-        _rushThreshold = NodeInSlot(1)?.Value("HealthThreshold") ?? 0.0;
-        _essence = NodeInSlot(5)?.Grants;
+        _rush = NodeInSlot(HeadlineSlot)?.Grants;
+        _rushThreshold = NodeInSlot(HeadlineSlot)?.Value(HealthThresholdKey) ?? 0.0;
+        _essence = NodeInSlot(BlessingSlot)?.Grants;
     }
 
     protected override void BindLater(Hero hero, GemNode node, SimTime now)
     {
-        if (node.Slot == 1) BindAdrenalineRush(hero, node);
-        if (node.Slot != 5) return;
+        if (node.Slot == HeadlineSlot) BindAdrenalineRush(hero, node);
+        if (node.Slot != BlessingSlot) return;
         BindVirtuoso(hero, node);
         if (!hero.Auras.HasAura(Hero.SpiritOfHeroism, now)) hero.Auras.Apply(node.Grants!, now);
     }
@@ -94,8 +94,8 @@ public class Topaz : Gem
 
     protected override IEnumerable<StatModifier> StatEffects(GemNode node) => node.Slot switch
     {
-        2 => [StatModifier.Add(StatType.HasteRating, node.Value("HasteBonus"))],
-        4 => [StatModifier.Add(StatType.Haste, node.Value("HasteBonus"))],
+        FlatStatSlot => [StatModifier.Add(StatType.HasteRating, node.Value(HasteBonusKey))],
+        PercentStatSlot => [StatModifier.Add(StatType.Haste, node.Value(HasteBonusKey))],
         _ => [],
     };
 }

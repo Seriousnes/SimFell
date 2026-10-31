@@ -22,7 +22,9 @@ public sealed record ReviewSummary(
     int ForcedCasts,
     DateTime CreatedAt)
 {
-    public string HtmlFile => $"{Id}.html";
+    private const string HtmlExtension = ".html";
+
+    public string HtmlFile => $"{Id}{HtmlExtension}";
 
     /// <summary>The latest free-dice run of the same fight, if any.</summary>
     public FreeDiceSummary? FreeDice { get; init; }
@@ -46,6 +48,28 @@ public sealed record ReviewArtifacts(ReviewSummary Summary, string ScriptJson, s
 /// </summary>
 public sealed class ReplayLibrary
 {
+    public const string FightsFolder = "fights";
+    public const string ScriptsFolder = "scripts";
+    public const string ReviewsFolder = "reviews";
+
+    /// <summary>Between the report code and the fight ID in a file name.</summary>
+    private const string FightSeparator = "_fight";
+
+    /// <summary>Parts of a raw fight's file name around the fight separator: the report code and the fight ID.</summary>
+    private const int FightNamePartCount = 2;
+
+    /// <summary>Between the fight ID and the player ID in a review ID.</summary>
+    private const string PlayerSeparator = "_p";
+
+    private const string RawFightExtension = ".raw.json";
+    private const string RawFightPattern = "*" + RawFightExtension;
+    private const string ReplayScriptExtension = ".replay.json";
+    public const string SummaryExtension = ".summary.json";
+    public const string SummaryPattern = "*" + SummaryExtension;
+    private const string SummaryTextExtension = ".summary.txt";
+    private const string HitsExtension = ".hits.csv";
+    private const string FreeDiceExtension = ".freedice.json";
+
     private static readonly JsonSerializerOptions Indented = new() { WriteIndented = true };
 
     public ReplayLibrary(string dataDirectory)
@@ -57,13 +81,13 @@ public sealed class ReplayLibrary
     }
 
     public string DataDirectory { get; }
-    public string FightsDirectory => Path.Combine(DataDirectory, "fights");
-    public string ScriptsDirectory => Path.Combine(DataDirectory, "scripts");
-    public string ReviewsDirectory => Path.Combine(DataDirectory, "reviews");
+    public string FightsDirectory => Path.Combine(DataDirectory, FightsFolder);
+    public string ScriptsDirectory => Path.Combine(DataDirectory, ScriptsFolder);
+    public string ReviewsDirectory => Path.Combine(DataDirectory, ReviewsFolder);
 
-    public static string ReviewId(string reportCode, int fightId, int playerId) => $"{reportCode}_fight{fightId}_p{playerId}";
+    public static string ReviewId(string reportCode, int fightId, int playerId) => $"{reportCode}{FightSeparator}{fightId}{PlayerSeparator}{playerId}";
 
-    private string RawFightPath(string reportCode, int fightId) => Path.Combine(FightsDirectory, $"{reportCode}_fight{fightId}.raw.json");
+    private string RawFightPath(string reportCode, int fightId) => Path.Combine(FightsDirectory, $"{reportCode}{FightSeparator}{fightId}{RawFightExtension}");
 
     /// <summary>True when the fight's raw events are already downloaded.</summary>
     public bool HasRawFight(string reportCode, int fightId) => File.Exists(RawFightPath(reportCode, fightId));
@@ -97,16 +121,16 @@ public sealed class ReplayLibrary
     public void Save(ReviewArtifacts review)
     {
         string id = review.Summary.Id;
-        File.WriteAllText(Path.Combine(ScriptsDirectory, $"{id}.replay.json"), review.ScriptJson);
+        File.WriteAllText(Path.Combine(ScriptsDirectory, $"{id}{ReplayScriptExtension}"), review.ScriptJson);
         File.WriteAllText(Path.Combine(ReviewsDirectory, review.Summary.HtmlFile), review.Html);
-        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.json"), JsonSerializer.Serialize(review.Summary, Indented));
-        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.txt"), review.SummaryText);
-        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.hits.csv"), review.HitsCsv);
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}{SummaryExtension}"), JsonSerializer.Serialize(review.Summary, Indented));
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}{SummaryTextExtension}"), review.SummaryText);
+        File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}{HitsExtension}"), review.HitsCsv);
     }
 
     /// <summary>Every review run so far, newest first.</summary>
     public IReadOnlyList<ReviewSummary> ListReviews() =>
-        Directory.GetFiles(ReviewsDirectory, "*.summary.json")
+        Directory.GetFiles(ReviewsDirectory, SummaryPattern)
             .Select(f => JsonSerializer.Deserialize<ReviewSummary>(File.ReadAllText(f)))
             .Where(s => s != null && File.Exists(Path.Combine(ReviewsDirectory, s.HtmlFile)))
             .Select(s => s! with { FreeDice = LoadFreeDice(s.Id) })
@@ -116,23 +140,23 @@ public sealed class ReplayLibrary
     /// <summary>The review <paramref name="id"/>, or null when its summary or page is not in the reviews folder.</summary>
     public ReviewSummary? GetReview(string id)
     {
-        string path = Path.Combine(ReviewsDirectory, $"{Path.GetFileName(id)}.summary.json");
+        string path = Path.Combine(ReviewsDirectory, $"{Path.GetFileName(id)}{SummaryExtension}");
         if (!File.Exists(path) || JsonSerializer.Deserialize<ReviewSummary>(File.ReadAllText(path)) is not { } summary) return null;
         return File.Exists(Path.Combine(ReviewsDirectory, summary.HtmlFile)) ? summary with { FreeDice = LoadFreeDice(summary.Id) } : null;
     }
 
     private FreeDiceSummary? LoadFreeDice(string id)
     {
-        string path = Path.Combine(ReviewsDirectory, $"{id}.freedice.json");
+        string path = Path.Combine(ReviewsDirectory, $"{id}{FreeDiceExtension}");
         return File.Exists(path) ? JsonSerializer.Deserialize<FreeDiceSummary>(File.ReadAllText(path)) : null;
     }
 
     /// <summary>Fights already downloaded (report code, fight ID).</summary>
     public IReadOnlyList<DownloadedFight> ListDownloadedFights() =>
-        Directory.GetFiles(FightsDirectory, "*.raw.json")
-            .Select(f => Path.GetFileName(f).Replace(".raw.json", ""))
-            .Select(n => n.Split("_fight"))
-            .Where(p => p.Length == 2 && int.TryParse(p[1], out _))
+        Directory.GetFiles(FightsDirectory, RawFightPattern)
+            .Select(f => Path.GetFileName(f).Replace(RawFightExtension, ""))
+            .Select(n => n.Split(FightSeparator))
+            .Where(p => p.Length == FightNamePartCount && int.TryParse(p[1], out _))
             .Select(p => new DownloadedFight(p[0], int.Parse(p[1])))
             .ToList();
 }

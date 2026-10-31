@@ -13,6 +13,8 @@ public sealed class Elarion : Hero
     /// <summary>Hero 2 attributes MaxResources 100 and Resources 100: Elarion starts every fight with full Focus.</summary>
     public const double MaxFocus = 100;
 
+    private const string FocusRegenerationEventName = "Focus regeneration";
+
     /// <summary>
     /// Focus regenerated per second before haste. The game data has the runtime formula Bowguy.ResourceGainPerInterval and
     /// no value. Combat logs (pWmcV42K39GHTLQX fight 23): with 5 per second raised by Haste the engine is within 1 Focus
@@ -51,12 +53,12 @@ public sealed class Elarion : Hero
     /// <summary>Elarion's talent tree, as in game (game data talent-slot records, hero Elarion).</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                            b                              c
-        TalentSlot.InRow(1, 2,    FocusedExpanse.TalentId,     PiercingSeekers.TalentId,      ResurgentWinds.TalentId),
-        TalentSlot.InRow(2, 1,    DeadlyFocus.TalentId,        Fusillade.TalentId,            SkywardMunitions.TalentId),
-        TalentSlot.InRow(3, 2,    RepeatingStars.TalentId,     LunarFury.TalentId,            LethalShots.TalentId),
-        TalentSlot.InRow(4, 1,    RisingMoon.TalentId,         LunarlightAffinity.TalentId,   StrikersAim.TalentId),
-        TalentSlot.InRow(5, 3,    FerventSupremacy.TalentId,   ImpendingHeartseeker.TalentId, FinalCrescendo.TalentId),
-        TalentSlot.InRow(6, 1,    LastLights.TalentId,         SwiftReload.TalentId,          SkylitGrace.TalentId));
+        TalentSlot.InRow(row: 1, cost: 2,    FocusedExpanse.TalentId,     PiercingSeekers.TalentId,      ResurgentWinds.TalentId),
+        TalentSlot.InRow(row: 2, cost: 1,    DeadlyFocus.TalentId,        Fusillade.TalentId,            SkywardMunitions.TalentId),
+        TalentSlot.InRow(row: 3, cost: 2,    RepeatingStars.TalentId,     LunarFury.TalentId,            LethalShots.TalentId),
+        TalentSlot.InRow(row: 4, cost: 1,    RisingMoon.TalentId,         LunarlightAffinity.TalentId,   StrikersAim.TalentId),
+        TalentSlot.InRow(row: 5, cost: 3,    FerventSupremacy.TalentId,   ImpendingHeartseeker.TalentId, FinalCrescendo.TalentId),
+        TalentSlot.InRow(row: 6, cost: 1,    LastLights.TalentId,         SwiftReload.TalentId,          SkylitGrace.TalentId));
 
     public override IReadOnlyList<TalentSlot> TalentTreeSlots => TalentTree;
 
@@ -170,9 +172,9 @@ public sealed class Elarion : Hero
         void Tick(SimulationContext tickContext)
         {
             RegenerateFocus(tickContext.CurrentTime);
-            tickContext.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, "Focus regeneration");
+            tickContext.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, FocusRegenerationEventName);
         }
-        ctx.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, "Focus regeneration");
+        ctx.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, FocusRegenerationEventName);
     }
 
     public override void ResetForIteration()

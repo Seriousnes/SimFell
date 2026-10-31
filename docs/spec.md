@@ -137,7 +137,7 @@ default `PeriodicEffect.ServerFrameSeconds`.
 ### Disagreement record
 
 ```csharp
-public sealed record ExpectedRange(double Low, double High, string Unit);
+public sealed record ExpectedRange(double Low, double High, RangeUnit Unit, string? ResourceName = null);
 ```
 
 `ReplayIssue` gains:

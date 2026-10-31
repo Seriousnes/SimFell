@@ -20,6 +20,8 @@ public class Avalanche : Talent
     public const double AnyExtraChance = OneExtraChance + TwoExtraChance;
     public const double SecondExtraChance = TwoExtraChance / AnyExtraChance;
     public const double CometSpacingSeconds = 5.0 / 30.0;
+    /// <summary>"a 9% chance to cause 2" additional Ice Comets (talent 48 text; hero_data Ice Comet MultiStrike 0.09).</summary>
+    public const int MaxExtraComets = 2;
     public const string ProcKey = "avalanche";
     public const string SecondProcKey = "avalanche_second";
 
@@ -34,7 +36,7 @@ public class Avalanche : Talent
         foreach (var source in hero.Abilities.OfType<IceComet>()) source.Struck += (ctx, target) =>
         {
             if (!ctx.Outcomes.RollProc(ProcKey, AnyExtraChance, ctx)) return;
-            int extra = ctx.Outcomes.RollProc(SecondProcKey, SecondExtraChance, ctx) ? 2 : 1;
+            int extra = ctx.Outcomes.RollProc(SecondProcKey, SecondExtraChance, ctx) ? MaxExtraComets : 1;
             for (int i = 1; i <= extra; i++)
             {
                 comet.FreeCast(ctx, target, source: this, countsAsCast: false, impactDelaySeconds: CometSpacingSeconds * i);

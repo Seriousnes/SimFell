@@ -162,7 +162,7 @@ public sealed class DotTracker
         foreach (var dot in _active)
         {
             double rate = Rate(dot.Effect, now);
-            if (Math.Abs(dot.Rate - rate) < 1e-12) continue;
+            if (Math.Abs(dot.Rate - rate) < Tolerance.Change) continue;
             Advance(dot, now);
             dot.Rate = rate;
             Schedule(_fight, dot);
@@ -205,7 +205,7 @@ public sealed class DotTracker
         Advance(dot, now);
         double fraction = Math.Min(1.0, dot.Progress / dot.Effect.BasePeriod);
         // As every hasted effect: no partial tick within a few server frames of the last one (PeriodicEffect).
-        if (dot.Effect.PartialFinalTick && fraction > 0 && (now - dot.LastTickAt).TotalSeconds >= PeriodicEffect.MinHastedPartialTickSeconds - 1e-9)
+        if (dot.Effect.PartialFinalTick && fraction > 0 && (now - dot.LastTickAt).TotalSeconds >= PeriodicEffect.MinHastedPartialTickSeconds - Tolerance.Comparison)
         {
             dot.Effect.Tick(ctx, dot, fraction);
         }

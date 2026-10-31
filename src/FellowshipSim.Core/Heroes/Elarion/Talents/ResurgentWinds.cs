@@ -19,7 +19,7 @@ public class ResurgentWinds : Talent
     public const int MaxStacks = 2;
     public const string ProcKey = "resurgent_winds";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Resurgent Winds", BuffEffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, BuffSeconds, MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

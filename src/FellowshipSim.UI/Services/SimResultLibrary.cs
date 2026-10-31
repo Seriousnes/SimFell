@@ -8,6 +8,10 @@ namespace FellowshipSim.UI.Services;
 /// </summary>
 public sealed class SimResultLibrary(IBlobStore store)
 {
+    private const string Folder = "results";
+
+    private const string Extension = ".json";
+
     /// <summary>The most sims a visitor keeps (the browser app's storage); null keeps every one.</summary>
     public int? Keep { get; init; }
 
@@ -26,9 +30,9 @@ public sealed class SimResultLibrary(IBlobStore store)
     public async Task<IReadOnlyList<SavedSim>> ListAsync(Visitor visitor, CancellationToken ct = default)
     {
         var sims = new List<SavedSim>();
-        foreach (string key in await store.ListAsync(visitor.Key("results"), ct))
+        foreach (string key in await store.ListAsync(visitor.Key(Folder), ct))
         {
-            if (key.EndsWith(".json", StringComparison.Ordinal) && await store.ReadAsync(key, ct) is { } json && Parse(json) is { } sim)
+            if (key.EndsWith(Extension, StringComparison.Ordinal) && await store.ReadAsync(key, ct) is { } json && Parse(json) is { } sim)
             {
                 sims.Add(sim);
             }
@@ -36,7 +40,7 @@ public sealed class SimResultLibrary(IBlobStore store)
         return sims.OrderByDescending(s => s.CreatedAt).ToList();
     }
 
-    private static string KeyOf(Visitor visitor, string id) => visitor.Key($"results/{id}.json");
+    private static string KeyOf(Visitor visitor, string id) => visitor.Key($"{Folder}/{id}{Extension}");
 
     private static SavedSim? Parse(string json)
     {

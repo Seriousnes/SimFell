@@ -25,10 +25,10 @@ public class ExactReplayTests
         DurationSeconds = 10,
         Player = new ReplayPlayer { Id = 1, Name = "Tester", Hero = "Rime" },
         Character = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json"))),
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile))),
         Commands =
         [
-            new ReplayCommand { Time = 0.5, Kind = CommandKind.EnemyArise, Enemy = Dummy, Name = "Dummy", MaxHp = 1e9, Hp = 1e9 },
+            new ReplayCommand { Time = 0.5, Kind = ReplayCommandKind.EnemyArise, Enemy = Dummy, Name = "Dummy", MaxHp = 1e9, Hp = 1e9 },
             .. commands,
         ],
         Observations = new ReplayObservations { Damage = damage.ToList() },
@@ -43,8 +43,8 @@ public class ExactReplayTests
         var bolt = ReplayDriver.CreateHero(probe).GetAbility(FrostBolt.AbilityName)!;
         double completed = 1.0 + bolt.GetAdjustedCastTime().TotalSeconds;
         return new FrostBoltCasting([
-            new ReplayCommand { Time = 1.0, Kind = CommandKind.BeginCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
-            new ReplayCommand { Time = completed, Kind = CommandKind.CompleteCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
+            new ReplayCommand { Time = 1.0, Kind = ReplayCommandKind.BeginCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
+            new ReplayCommand { Time = completed, Kind = ReplayCommandKind.CompleteCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
         ], bolt.DamageLogId, completed);
     }
 

@@ -37,7 +37,7 @@ public class Detonate : ArdeosAbility
 
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
-        if (FreeCastBuff(ctx.CurrentTime) == null && Owner.ResourceAmount(Ardeos.Cinders) < CinderCost - 1e-9)
+        if (FreeCastBuff(ctx.CurrentTime) == null && Owner.ResourceAmount(Ardeos.Cinders) < CinderCost - Tolerance.Comparison)
         {
             reason = explain ? $"{Name} needs a Burning Ember ({Owner.ResourceAmount(Ardeos.Cinders):0.#} Cinders)" : null;
             return false;

@@ -12,6 +12,15 @@ namespace FellowshipSim.Engine.Replay;
 /// </summary>
 internal static class DisagreementsSection
 {
+    /// <summary>Decimal places of a number in the states block.</summary>
+    private const int StateDecimals = 4;
+
+    /// <summary>Property of the states block that holds the issues' states (<c>d.s</c> in <see cref="Script"/>).</summary>
+    private const string StatesProperty = "s";
+
+    /// <summary>Property of the states block that holds the shared aura table (<c>d.a</c> in <see cref="Script"/>).</summary>
+    private const string AurasProperty = "a";
+
     public static void Render(StringBuilder sb, IReadOnlyList<ReplayIssue> issues)
     {
         if (issues.Count == 0) return;
@@ -25,11 +34,11 @@ internal static class DisagreementsSection
             sb.Append("<th class=num>Time</th><th class=num>Step</th><th>Subject</th><th class=num>Expected</th><th class=num>Observed</th><th class=num>Deviation</th><th class=num>Relative</th><th></th></tr></thead><tbody>");
             foreach (var issue in rows)
             {
-                string unit = issue.Expected?.Unit ?? "";
+                var range = issue.Expected;
                 sb.Append($"<tr><td class=num>{issue.Time:F3}</td><td class=num><a href=\"#step-{issue.Step}\">{issue.Step}</a></td><td title=\"{EncodeHtml(issue.Message)}\">{EncodeHtml(issue.Subject ?? issue.Message)}</td>");
                 sb.Append($"<td class=num>{(issue.Expected is { } expected ? EncodeHtml(expected.ToString()) : "—")}</td>");
-                sb.Append($"<td class=num>{(issue.Observed is { } observed ? EncodeHtml(ExpectedRange.Format(observed, unit)) : "—")}</td>");
-                sb.Append($"<td class=num>{(issue.Deviation is { } deviation ? EncodeHtml((deviation > 0 ? "+" : "") + ExpectedRange.Format(deviation, unit)) : "—")}</td>");
+                sb.Append($"<td class=num>{(issue.Observed is { } observed ? EncodeHtml(ExpectedRange.Format(observed, range)) : "—")}</td>");
+                sb.Append($"<td class=num>{(issue.Deviation is { } deviation ? EncodeHtml((deviation > 0 ? "+" : "") + ExpectedRange.Format(deviation, range)) : "—")}</td>");
                 sb.Append($"<td class=num>{(issue.RelativeDeviation is { } rel ? rel.ToString("+0.0%;-0.0%;0.0%", CultureInfo.InvariantCulture) : "—")}</td>");
                 if (issue.State is { } state)
                 {
@@ -58,7 +67,7 @@ internal static class DisagreementsSection
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream))
         {
-            void Number(double value) => writer.WriteNumberValue(Math.Round(value, 4));
+            void Number(double value) => writer.WriteNumberValue(Math.Round(value, StateDecimals));
             void NullableNumber(double? value) { if (value is { } present) Number(present); else writer.WriteNullValue(); }
             void Auras(IReadOnlyList<EngineAura> auras)
             {
@@ -81,7 +90,7 @@ internal static class DisagreementsSection
             }
 
             writer.WriteStartObject();
-            writer.WritePropertyName("s");
+            writer.WritePropertyName(StatesProperty);
             writer.WriteStartArray();
             foreach (var (issue, state) in states)
             {
@@ -148,7 +157,7 @@ internal static class DisagreementsSection
             }
             writer.WriteEndArray();
 
-            writer.WritePropertyName("a");
+            writer.WritePropertyName(AurasProperty);
             writer.WriteStartArray();
             foreach (var (name, logId, modifiers) in auraList)
             {

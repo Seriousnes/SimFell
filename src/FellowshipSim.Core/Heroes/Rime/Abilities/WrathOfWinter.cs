@@ -16,7 +16,7 @@ public class WrathOfWinter : RimeAbility
     public const double BuffDamage = 1.2;
     public const double OrbIntervalSeconds = 4.0;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Wrath of Winter", BuffEffectId, BuffSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds,
         modifiers: StatModifier.More(StatType.DamageScale, BuffDamage));
 
     public WrathOfWinter(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Spirit)

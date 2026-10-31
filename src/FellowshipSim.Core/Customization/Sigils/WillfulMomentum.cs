@@ -13,7 +13,7 @@ public class WillfulMomentum : Sigil
     public static readonly double[] SpiritRatingByRank = [7, 11, 17, 23];
     public static readonly double[] MainStatByRank = [0.015, 0.026, 0.037, 0.048];
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Willful Momentum", BuffEffectId, BuffSeconds);
+    public static readonly AuraDef Buff = AuraDef.Effect(SigilName, BuffEffectId, BuffSeconds);
 
     public override int Id => SigilId;
     public override string Name => SigilName;

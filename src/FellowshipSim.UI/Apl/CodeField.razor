@@ -29,7 +29,7 @@
                     bool selected = i == completion.Selected;
                     <li @key="item.Text" role="option" aria-selected="@(selected ? "true" : "false")" class="@(selected ? "selected" : null)"
                         @onmousedown="() => Accept(item, _caretAt)" @onmousedown:preventDefault>
-                        <TokenText Text="@(item.Text + (item.HasMore ? "." : ""))" Kind="item.Node.Kind" />
+                        <TokenText Text="@(item.Text + (item.HasMore ? Completions.PathSeparator : ""))" Kind="item.Node.Kind" />
                         @if (item.Node.Detail.Length > 0)
                         {
                             <span class="completion-detail">@item.Node.Detail</span>
@@ -55,6 +55,17 @@
 </div>
 
 @code {
+    private const int CheckDelayMilliseconds = 150;
+
+    private const string ModulePath = JsInterop.ContentRoot + "apl/codeField.js";
+
+    private const string AttachFunction = "attach";
+
+    private const string SetValueFunction = "setValue";
+
+    /// <summary>The key codeField.js sends for Ctrl+Space.</summary>
+    private const string OpenKey = "Open";
+
     [CascadingParameter] public ActionListEditor Editor { get; set; } = null!;
 
     [Parameter, EditorRequired] public AplVocabulary Vocabulary { get; set; } = null!;
@@ -89,7 +100,7 @@
 
     protected override void OnInitialized()
     {
-        _checked = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(150), change => InvokeAsync(() =>
+        _checked = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(CheckDelayMilliseconds), change => InvokeAsync(() =>
         {
             change();
             StateHasChanged();
@@ -112,13 +123,13 @@
         if (firstRender)
         {
             _self = DotNetObjectReference.Create(this);
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/apl/codeField.js");
-            _handle = await _module.InvokeAsync<IJSObjectReference>("attach", _field, _input, _list, _measure, _highlight, _self, _domText);
+            _module = await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
+            _handle = await _module.InvokeAsync<IJSObjectReference>(AttachFunction, _field, _input, _list, _measure, _highlight, _self, _domText);
         }
         else if (_push && _handle != null)
         {
             _push = false;
-            await _handle.InvokeAsync<CaretPlace>("setValue", _domText, null);
+            await _handle.InvokeAsync<CaretPlace>(SetValueFunction, _domText, null);
         }
     }
 
@@ -136,7 +147,7 @@
     [JSInvokable]
     public async Task Key(string key, CaretPlace caret)
     {
-        if (key == "Open")
+        if (key == OpenKey)
         {
             _completion = CodeEdits.Open(Vocabulary, _domText, caret, true);
             if (_completion != null) _caretAt = caret.At;
@@ -145,13 +156,13 @@
         {
             switch (key)
             {
-                case "ArrowDown":
-                case "ArrowUp":
+                case JsInterop.ArrowDownKey:
+                case JsInterop.ArrowUpKey:
                     int count = completion.Items.Count;
-                    _completion = completion with { Selected = (completion.Selected + (key == "ArrowDown" ? 1 : count - 1)) % count };
+                    _completion = completion with { Selected = (completion.Selected + (key == JsInterop.ArrowDownKey ? 1 : count - 1)) % count };
                     break;
-                case "Enter":
-                case "Tab":
+                case JsInterop.EnterKey:
+                case JsInterop.TabKey:
                     await Accept(completion.Items[completion.Selected], caret.At);
                     return;
                 default:
@@ -170,7 +181,7 @@
         await OnChange.InvokeAsync(text);
         if (_handle != null)
         {
-            var place = await _handle.InvokeAsync<CaretPlace>("setValue", text, caret);
+            var place = await _handle.InvokeAsync<CaretPlace>(SetValueFunction, text, caret);
             if (item.HasMore)
             {
                 _completion = CodeEdits.Open(Vocabulary, text, place, false);
@@ -191,7 +202,7 @@
         if (_domText != text || check?.InWords is not { } inWords || inWords == text) return;
         _domText = inWords;
         await OnChange.InvokeAsync(inWords);
-        if (_handle != null) await _handle.InvokeAsync<CaretPlace>("setValue", inWords, null);
+        if (_handle != null) await _handle.InvokeAsync<CaretPlace>(SetValueFunction, inWords, null);
         StateHasChanged();
     }
 
@@ -209,7 +220,7 @@
         {
             if (_handle != null)
             {
-                await _handle.InvokeVoidAsync("dispose");
+                await _handle.InvokeVoidAsync(JsInterop.DisposeFunction);
                 await _handle.DisposeAsync();
             }
             if (_module != null) await _module.DisposeAsync();

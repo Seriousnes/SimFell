@@ -17,7 +17,7 @@ public class StrikersAim : Talent
     public const double DecaySeconds = 2.0;
     public const int MaxStacks = 3;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Striker's Aim", BuffEffectId, DecaySeconds, MaxStacks,
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DecaySeconds, MaxStacks,
         StatModifier.Add(StatType.Expertise, ExpertisePerStack));
 
     public override string Name => TalentName;

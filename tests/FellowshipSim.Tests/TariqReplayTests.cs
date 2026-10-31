@@ -12,11 +12,18 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class TariqReplayTests(ITestOutputHelper output)
 {
+    private const string FightVariable = "TARIQ_FIGHT";
+    private const string CharacterJsonVariable = "TARIQ_CHARACTER_JSON";
+    private const string ProfileVariable = "TARIQ_PROFILE";
+    private const string IssueVariable = "TARIQ_ISSUE";
+    private const string StepsVariable = "TARIQ_STEPS";
+    private const string HitsCsvVariable = "TARIQ_HITS_CSV";
+
     [Fact]
     public async Task Tariq_Fights_Replay()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
-        string? only = Environment.GetEnvironmentVariable("TARIQ_FIGHT");
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
+        string? only = Environment.GetEnvironmentVariable(FightVariable);
         foreach (var (reportCode, fightId) in library.ListDownloadedFights())
         {
             if (only != null && only != reportCode && only != $"{reportCode}_{fightId}") continue;
@@ -25,14 +32,14 @@ public class TariqReplayTests(ITestOutputHelper output)
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id).ToJsonString());
                 // TARIQ_CHARACTER_JSON writes the imported character (the smoke tests' fixture comes from fight 4's).
-                if (Environment.GetEnvironmentVariable("TARIQ_CHARACTER_JSON") is { } characterFile)
+                if (Environment.GetEnvironmentVariable(CharacterJsonVariable) is { } characterFile)
                 {
                     File.WriteAllText(characterFile, System.Text.Json.JsonSerializer.Serialize(script.Character,
                         new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
                 }
                 // TARIQ_PROFILE writes it as a .simc profile, less the augmentations and glyphs the catalog does not have
                 // (data/profiles/Tariq comes from fight 4's).
-                if (Environment.GetEnvironmentVariable("TARIQ_PROFILE") is { } profileFile)
+                if (Environment.GetEnvironmentVariable(ProfileVariable) is { } profileFile)
                 {
                     var build = script.Character!;
                     build.Augmentations = build.Augmentations.Where(t => FellowshipSim.Core.Catalog.CreateAugmentation(t.Id, t.Rank) != null).ToList();
@@ -71,7 +78,7 @@ public class TariqReplayTests(ITestOutputHelper output)
             output.WriteLine($"{group.Count(),5} [{group.Key.Category}] {group.Key.Subject}: {group.First().Message}");
         }
         // TARIQ_ISSUE prints the first issues whose subject contains it, with their times.
-        if (Environment.GetEnvironmentVariable("TARIQ_ISSUE") is { } subject)
+        if (Environment.GetEnvironmentVariable(IssueVariable) is { } subject)
         {
             foreach (var issue in result.Steps.SelectMany(s => s.Issues).Where(i => i.Subject?.Contains(subject) == true).Take(15))
             {
@@ -87,7 +94,7 @@ public class TariqReplayTests(ITestOutputHelper output)
         }
         output.WriteLine("");
         // TARIQ_STEPS writes each step's time, ability, Fury (engine and log), the engine's haste and Spirit (engine and log).
-        if (Environment.GetEnvironmentVariable("TARIQ_STEPS") is { } steps)
+        if (Environment.GetEnvironmentVariable(StepsVariable) is { } steps)
         {
             File.WriteAllLines(steps, result.Steps.Select(s =>
             {
@@ -96,7 +103,7 @@ public class TariqReplayTests(ITestOutputHelper output)
                 return FormattableString.Invariant($"{s.Time:F3},{s.AbilityName},{fury?.Engine:F1},{fury?.Log:F1},{s.EngineHaste:F3},{spirit?.Engine:F1},{spirit?.Log:F1}");
             }));
         }
-        if (Environment.GetEnvironmentVariable("TARIQ_HITS_CSV") is not { } dump) return;
+        if (Environment.GetEnvironmentVariable(HitsCsvVariable) is not { } dump) return;
         var inv = System.Globalization.CultureInfo.InvariantCulture;
         File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(inv, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3},{8},{9:F3}",
             h.EngineTime, h.AbilityId, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}", h.EngineAmount, h.Crit ? 1 : 0,

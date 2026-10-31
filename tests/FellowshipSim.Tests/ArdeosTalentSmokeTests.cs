@@ -15,6 +15,8 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class ArdeosTalentSmokeTests(ITestOutputHelper output)
 {
+    private const string CharacterFile = "ardeos_character.json";
+
     private const string Apl = """
         actions+=/incinerate
         actions+=/wildfire
@@ -87,7 +89,7 @@ public class ArdeosTalentSmokeTests(ITestOutputHelper output)
     {
         // The Ardeos from yMAZVJL9hTpFjqbC fight 7, as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "ardeos_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, CharacterFile)))!;
         build.Talents = talentIds.ToList();
         var hero = HeroImporter.Import(build);
         var gained = new Dictionary<string, int>();

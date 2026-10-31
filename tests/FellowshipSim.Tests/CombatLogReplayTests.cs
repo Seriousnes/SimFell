@@ -14,7 +14,7 @@ public class CombatLogReplayTests(ITestOutputHelper output)
     [Fact]
     public async Task AllDownloadedFights_Replay_And_Write_Reviews()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
         var fights = library.ListDownloadedFights();
         if (fights.Count == 0)
         {
@@ -46,7 +46,7 @@ public class CombatLogReplayTests(ITestOutputHelper output)
     [Fact]
     public async Task A_Cancelled_Replay_Stops_At_Its_First_Step()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
         if (library.ListDownloadedFights() is not [var (reportCode, fightId), ..]) return;
 
         var raw = await library.GetRawFightAsync(null, reportCode, fightId);
@@ -55,20 +55,5 @@ public class CombatLogReplayTests(ITestOutputHelper output)
         var driver = new ReplayDriver(ReplayDriver.CreateHero(script), script, new ReplayOptions { StopOnFirstFailure = false });
 
         Assert.Throws<OperationCanceledException>(() => driver.Run(new CancellationToken(canceled: true)));
-    }
-}
-
-internal static class TestPaths
-{
-    /// <summary>The folder holding FellowshipSim.slnx.</summary>
-    public static string RepositoryRoot { get; } = Find();
-
-    private static string Find()
-    {
-        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
-        {
-            if (dir.GetFiles("FellowshipSim.slnx").Length > 0) return dir.FullName;
-        }
-        throw new DirectoryNotFoundException("Could not find the repository root (FellowshipSim.slnx).");
     }
 }

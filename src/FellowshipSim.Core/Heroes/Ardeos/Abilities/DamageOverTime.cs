@@ -6,6 +6,9 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// </summary>
 public abstract class DamageOverTime : Ability
 {
+    /// <summary>Stacks the enemy's debuff can show: its instances or stacks (UNVERIFIED).</summary>
+    private const int DebuffMaxStacks = 99;
+
     protected DamageOverTime(Ardeos owner, int effectId, string name, double periodSeconds, double durationSeconds, DotStacking stacking)
         : base(owner, LogIds.Effect(effectId), name)
     {
@@ -15,7 +18,7 @@ public abstract class DamageOverTime : Ability
         // Combat logs (yMAZVJL9hTpFjqbC fight 7): Fire Ball's and Fire Frogs' effects tick every 2s and 3s whatever the
         // haste (only Wildfire speeds them up); the others tick faster with haste.
         TicksScaleWithHaste = stacking != DotStacking.Accumulate;
-        Debuff = AuraDef.Effect(name, effectId, maxStacks: 99);
+        Debuff = AuraDef.Effect(name, effectId, maxStacks: DebuffMaxStacks);
         owner.AddDot(this);
     }
 

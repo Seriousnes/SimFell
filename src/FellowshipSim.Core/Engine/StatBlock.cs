@@ -159,13 +159,17 @@ public class StatBlock
     /// (PcaMVTFbZzNLrfx3: 32,563 health with 581 Stamina).
     /// </summary>
     public const double HealthPerStamina = 56.0;
+    // UNVERIFIED
+    public const double DefaultStamina = 635;
+    // UNVERIFIED
+    public const double DefaultArmor = 539;
 
     /// <summary>The primary stat (Intellect, Strength or Agility): the gear's and the base, with the flat bonuses.</summary>
     public double PrimaryStat { get; set { field = value; Version++; } }
-    public double Stamina { get; set; } = 635;
+    public double Stamina { get; set; } = DefaultStamina;
     /// <summary>Multiplier on <see cref="Stamina"/> (Titan's Blood, the gem power overcap).</summary>
     public double StaminaMultiplier { get; set; } = 1.0;
-    public double Armor { get; set; } = 539;
+    public double Armor { get; set; } = DefaultArmor;
 
     /// <summary>Stamina with its multipliers.</summary>
     public double TotalStamina => Stamina * StaminaMultiplier;

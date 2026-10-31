@@ -13,7 +13,7 @@ public static class ReplayReview
         CancellationToken cancellationToken = default)
     {
         var player = ReplayScriptBuilder.Players(raw).FirstOrDefault(p => p.Id == playerId)
-            ?? throw new ArgumentException($"Player {playerId} did not take part in fight {raw["fight"]?["id"]}.");
+            ?? throw new ArgumentException($"Player {playerId} did not take part in fight {raw[ReplayScriptBuilder.FightProperty]?[ReplayScriptBuilder.IdProperty]}.");
         if (!ReplayDriver.SupportsHero(player.Hero))
         {
             throw new NotSupportedException($"{player.Name} plays {player.Hero}, which is not supported yet (supported: {string.Join(", ", ReplayDriver.SupportedHeroes)}).");

@@ -15,6 +15,8 @@ public sealed class LoopbackSignInLauncher(Func<string, Task> openBrowser) : ISi
     /// <summary>How long a sign-in waits for the browser to come back.</summary>
     public static readonly TimeSpan Wait = TimeSpan.FromMinutes(5);
 
+    private const string SignInPath = "/signin";
+
     public async Task<LogsUserToken?> SignInAsync(HttpClient http, string returnTo, CancellationToken ct)
     {
         string verifier = FellowshipLogsSignIn.NewVerifier(), state = FellowshipLogsSignIn.NewState();
@@ -37,20 +39,20 @@ public sealed class LoopbackSignInLauncher(Func<string, Task> openBrowser) : ISi
                 using var connection = await listener.AcceptTcpClientAsync(timeout.Token);
                 var stream = connection.GetStream();
                 string? target = (await new StreamReader(stream).ReadLineAsync(timeout.Token))?.Split(' ').ElementAtOrDefault(1);
-                if (target == null || !target.StartsWith("/signin", StringComparison.Ordinal))
+                if (target == null || !target.StartsWith(SignInPath, StringComparison.Ordinal))
                 {
                     await RespondAsync(stream, "404 Not Found", "Not here.", timeout.Token);
                     continue;
                 }
                 var query = LogsSignIn.Query(target.Contains('?') ? target[target.IndexOf('?')..] : "");
-                bool ours = query.GetValueOrDefault("state") == state;
-                bool done = ours && query.ContainsKey("code");
+                bool ours = query.GetValueOrDefault(LogsSignIn.StateParameter) == state;
+                bool done = ours && query.ContainsKey(LogsSignIn.CodeParameter);
                 await RespondAsync(stream, "200 OK", done
                     ? "You are signed in to SimFell. You can close this tab."
                     : "SimFell did not sign you in. You can close this tab and try again.", timeout.Token);
                 if (!ours) continue;
-                if (!done) throw new FellowshipLogsException(query.GetValueOrDefault("error") == "access_denied" ? "Signing in was cancelled." : "FellowshipLogs did not sign you in.");
-                return await FellowshipLogsSignIn.ExchangeAsync(http, query["code"], verifier, FellowshipLogsSignIn.LoopbackRedirect, ct);
+                if (!done) throw new FellowshipLogsException(query.GetValueOrDefault(LogsSignIn.ErrorParameter) == LogsSignIn.AccessDenied ? "Signing in was cancelled." : "FellowshipLogs did not sign you in.");
+                return await FellowshipLogsSignIn.ExchangeAsync(http, query[LogsSignIn.CodeParameter], verifier, FellowshipLogsSignIn.LoopbackRedirect, ct);
             }
         }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)

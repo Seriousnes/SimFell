@@ -7,6 +7,19 @@ namespace FellowshipSim.Cli;
 /// <summary>The <c>simfell</c> command line: the profile file, the sim's fights and the output format.</summary>
 public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOutputFormat Format)
 {
+    private const string OptionPrefix = "--";
+    private const string ShortHelpOption = "-h";
+    private const string HelpOption = "--help";
+    private const string ProfileOption = "--profile";
+    private const string IterationsOption = "--iterations";
+    private const string DurationOption = "--duration";
+    private const string TargetsOption = "--targets";
+    private const string SeedOption = "--seed";
+    private const string ThreadsOption = "--threads";
+    private const string FormatOption = "--format";
+    private const string TextFormat = "text";
+    private const string JsonFormat = "json";
+
     /// <summary>
     /// Settings of a command line naming none. Iterations are <see cref="MonteCarloSimulator.Run"/>'s default and the
     /// duration is the benchmarks' Monte Carlo fight; targets, seed and threads are <see cref="SimSettings"/>'s defaults.
@@ -41,27 +54,27 @@ public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOut
         for (int i = 0; i < args.Count; i++)
         {
             string arg = args[i];
-            if (arg is "-h" or "--help") return null;
-            if (!arg.StartsWith("--", StringComparison.Ordinal)) throw new CliUsageException($"Unexpected argument '{arg}'.");
+            if (arg is ShortHelpOption or HelpOption) return null;
+            if (!arg.StartsWith(OptionPrefix, StringComparison.Ordinal)) throw new CliUsageException($"Unexpected argument '{arg}'.");
 
             int eq = arg.IndexOf('=');
             string name = eq < 0 ? arg : arg[..eq];
             string value = eq >= 0 ? arg[(eq + 1)..]
-                : i + 1 < args.Count && !args[i + 1].StartsWith("--", StringComparison.Ordinal) ? args[++i]
+                : i + 1 < args.Count && !args[i + 1].StartsWith(OptionPrefix, StringComparison.Ordinal) ? args[++i]
                 : throw new CliUsageException($"{name} needs a value.");
             switch (name)
             {
-                case "--profile": profile = value; break;
-                case "--iterations": settings = settings with { Iterations = Integer(name, value, min: 1) }; break;
-                case "--duration": settings = settings with { DurationSeconds = Seconds(name, value) }; break;
-                case "--targets": settings = settings with { TargetCount = Integer(name, value, min: 1) }; break;
-                case "--seed": settings = settings with { FirstSeed = Integer(name, value, min: int.MinValue) }; break;
-                case "--threads": settings = settings with { DegreeOfParallelism = Integer(name, value, min: 1) }; break;
-                case "--format":
+                case ProfileOption: profile = value; break;
+                case IterationsOption: settings = settings with { Iterations = Integer(name, value, min: 1) }; break;
+                case DurationOption: settings = settings with { DurationSeconds = Seconds(name, value) }; break;
+                case TargetsOption: settings = settings with { TargetCount = Integer(name, value, min: 1) }; break;
+                case SeedOption: settings = settings with { FirstSeed = Integer(name, value, min: int.MinValue) }; break;
+                case ThreadsOption: settings = settings with { DegreeOfParallelism = Integer(name, value, min: 1) }; break;
+                case FormatOption:
                     format = value switch
                     {
-                        "text" => CliOutputFormat.Text,
-                        "json" => CliOutputFormat.Json,
+                        TextFormat => CliOutputFormat.Text,
+                        JsonFormat => CliOutputFormat.Json,
                         _ => throw new CliUsageException($"--format is text or json, not '{value}'."),
                     };
                     break;

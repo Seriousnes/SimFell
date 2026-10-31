@@ -7,11 +7,17 @@ namespace FellowshipSim.Logs;
 /// </summary>
 public sealed record GamePatch(string Name, DateOnly Released, int LogVersion)
 {
+    /// <summary>Name of the current patch (datamine export 26136736).</summary>
+    public const string CurrentName = "0.5.0.0";
+
+    /// <summary>The <see cref="LogVersion"/> of the current patch's logs; every log before it is 8.</summary>
+    public const int CurrentLogVersion = 9;
+
     /// <summary>
     /// The patch the engine models: 0.5.0.0 (datamine export 26136736), live on 2026-10-22 (per the user). Its logs are
     /// logVersion 9; every log before it is 8.
     /// </summary>
-    public static GamePatch Current { get; } = new("0.5.0.0", new DateOnly(2026, 10, 22), 9);
+    public static GamePatch Current { get; } = new(CurrentName, new DateOnly(year: 2026, month: 10, day: 22), CurrentLogVersion);
 
     /// <summary>
     /// True when a log that started at <paramref name="startUtc"/> is from this patch or later: started on or after the

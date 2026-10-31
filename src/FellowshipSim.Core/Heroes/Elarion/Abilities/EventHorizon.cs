@@ -18,7 +18,7 @@ public class EventHorizon : ElarionAbility
     public const double HeartseekerReductionSeconds = 0.5;
     public const double StarfallReductionSeconds = 1.5;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Event Horizon", BuffEffectId, BuffSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds,
         modifiers: StatModifier.More(StatType.DamageScale, BuffDamage));
 
     public EventHorizon(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Spirit)

@@ -25,12 +25,12 @@ public sealed class Ardeos : Hero, ITargetEffects
     /// <summary>Ardeos's talent tree, as in game (talent-slot records in entities.jsonl v26136736).</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                            b                              c
-        TalentSlot.InRow(1, 2,    SlowBurn.TalentId,           FrogSquad.TalentId,            GreatBallsOfFire.TalentId),
-        TalentSlot.InRow(2, 1,    Backdraft.TalentId,          FlareUp.TalentId,              ApocalypticSurge.TalentId),
-        TalentSlot.InRow(3, 2,    AgonizingBlaze.TalentId,     Firestarter.TalentId,          UndyingFlame.TalentId),
-        TalentSlot.InRow(4, 1,    CascadingInferno.TalentId,   CrashAndBurn.TalentId,         CracklingInferno.TalentId),
-        TalentSlot.InRow(5, 3,    RollingFlames.TalentId,      PyrophibianFrenzy.TalentId,    ReignOfFire.TalentId),
-        TalentSlot.InRow(6, 1,    BurningInitiative.TalentId,  IntensifyingInferno.TalentId,  SpontaneousCombustion.TalentId));
+        TalentSlot.InRow(row: 1, cost: 2,    SlowBurn.TalentId,           FrogSquad.TalentId,            GreatBallsOfFire.TalentId),
+        TalentSlot.InRow(row: 2, cost: 1,    Backdraft.TalentId,          FlareUp.TalentId,              ApocalypticSurge.TalentId),
+        TalentSlot.InRow(row: 3, cost: 2,    AgonizingBlaze.TalentId,     Firestarter.TalentId,          UndyingFlame.TalentId),
+        TalentSlot.InRow(row: 4, cost: 1,    CascadingInferno.TalentId,   CrashAndBurn.TalentId,         CracklingInferno.TalentId),
+        TalentSlot.InRow(row: 5, cost: 3,    RollingFlames.TalentId,      PyrophibianFrenzy.TalentId,    ReignOfFire.TalentId),
+        TalentSlot.InRow(row: 6, cost: 1,    BurningInitiative.TalentId,  IntensifyingInferno.TalentId,  SpontaneousCombustion.TalentId));
 
     public override IReadOnlyList<TalentSlot> TalentTreeSlots => TalentTree;
 
@@ -95,7 +95,7 @@ public sealed class Ardeos : Hero, ITargetEffects
     }
 
     /// <summary>Whole Burning Embers held.</summary>
-    public int BurningEmbers => (int)Math.Floor(ResourceAmount(Cinders) / CindersPerBurningEmber + 1e-9);
+    public int BurningEmbers => (int)Math.Floor(ResourceAmount(Cinders) / CindersPerBurningEmber + Tolerance.Comparison);
 
     public override void Initialize()
     {

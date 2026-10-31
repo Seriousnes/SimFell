@@ -11,23 +11,27 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class ElarionReplayTests(ITestOutputHelper output)
 {
+    private const string CharacterJsonVariable = "ELARION_CHARACTER_JSON";
+    private const string TraceVariable = "ELARION_TRACE";
+    private const string HitsFolderVariable = "ELARION_HITS_FOLDER";
+
     [Fact]
     public async Task Elarion_Fights_Replay()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
         foreach (var (reportCode, fightId) in library.ListDownloadedFights())
         {
             var raw = await library.GetRawFightAsync(null, reportCode, fightId);
             foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Hero == "Elarion"))
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id).ToJsonString());
-                if (Environment.GetEnvironmentVariable("ELARION_CHARACTER_JSON") is { } characterFile)
+                if (Environment.GetEnvironmentVariable(CharacterJsonVariable) is { } characterFile)
                 {
                     File.WriteAllText(characterFile, System.Text.Json.JsonSerializer.Serialize(script.Character, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
                 }
                 var hero = ReplayDriver.CreateHero(script);
                 var trace = new List<string>();
-                if (Environment.GetEnvironmentVariable("ELARION_TRACE") != null)
+                if (Environment.GetEnvironmentVariable(TraceVariable) != null)
                 {
                     // Each hit with the Lunarlight Mark stacks its enemy holds once the hit's salvo (if any) took its stack.
                     hero.OnDamageDealt += (in Core.Domain.DamageContext hit) => trace.Add(string.Format(System.Globalization.CultureInfo.InvariantCulture,
@@ -41,7 +45,7 @@ public class ElarionReplayTests(ITestOutputHelper output)
                                  $"damage {engineDamage / logDamage:P1} of log, {result.PassedSteps}/{result.Steps.Count} clean steps, " +
                                  $"{result.ForcedCasts.Count} forced casts");
                 Report(result, options);
-                if (trace.Count > 0 && Environment.GetEnvironmentVariable("ELARION_HITS_FOLDER") is { } traceFolder)
+                if (trace.Count > 0 && Environment.GetEnvironmentVariable(HitsFolderVariable) is { } traceFolder)
                 {
                     File.WriteAllLines(Path.Combine(traceFolder, $"trace_{reportCode}_{fightId}.csv"), trace);
                 }
@@ -80,7 +84,7 @@ public class ElarionReplayTests(ITestOutputHelper output)
         {
             output.WriteLine($"forced {forced.Count()}: {forced.First()}");
         }
-        string? folder = Environment.GetEnvironmentVariable("ELARION_HITS_FOLDER");
+        string? folder = Environment.GetEnvironmentVariable(HitsFolderVariable);
         if (folder == null) return;
         string dump = Path.Combine(folder, $"hits_{result.ReportCode}_{result.FightId}.csv");
         var inv = System.Globalization.CultureInfo.InvariantCulture;

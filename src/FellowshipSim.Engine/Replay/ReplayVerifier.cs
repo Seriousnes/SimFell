@@ -8,6 +8,9 @@ namespace FellowshipSim.Engine.Replay;
 /// </summary>
 public sealed class ReplayVerifier
 {
+    /// <summary>The log's aura state is read this long (s) before a cast, so the cast's own effects are not in it.</summary>
+    private const double LogStateLeadSeconds = 0.001;
+
     private readonly ReplayOptions _options;
     private readonly ReplayScript _script;
     private readonly Hero _hero;
@@ -53,7 +56,7 @@ public sealed class ReplayVerifier
             low -= fullTick * _options.PartialTickFractionTolerance;
             high += fullTick * _options.PartialTickFractionTolerance;
         }
-        return new ExpectedRange(overkill ? 0.0 : low, high, "damage");
+        return new ExpectedRange(overkill ? 0.0 : low, high, RangeUnit.Damage);
     }
 
     /// <summary>
@@ -77,7 +80,7 @@ public sealed class ReplayVerifier
         };
         Record(pair);
 
-        var crit = new ExpectedRange(0, 0, "crit");
+        var crit = new ExpectedRange(0, 0, RangeUnit.Crit);
         if (log.Crit && !landed.CanCrit)
         {
             Report(ctx, IssueCategory.Hits,
@@ -88,7 +91,7 @@ public sealed class ReplayVerifier
         {
             Report(ctx, IssueCategory.Hits,
                 $"{landed.AbilityName} at {log.Time:F3}: the engine forces {(forced ? "a crit" : "no crit")}, the log hit {(log.Crit ? "crit" : "did not crit")}",
-                $"forced crit: {landed.AbilityName}", new ExpectedRange(forced ? 1 : 0, forced ? 1 : 0, "crit"), log.Crit ? 1 : 0, state);
+                $"forced crit: {landed.AbilityName}", new ExpectedRange(forced ? 1 : 0, forced ? 1 : 0, RangeUnit.Crit), log.Crit ? 1 : 0, state);
         }
         if (!range.Contains(log.UnblockedAmount))
         {
@@ -138,7 +141,7 @@ public sealed class ReplayVerifier
         Record(pair);
         Report(ctx, IssueCategory.Hits,
             $"Log hit {log.AbilityName} ({log.AbilityId}) on {log.Target} at {log.Time:F3} for {log.ComparedAmountText()}{(log.Crit ? " (crit)" : "")} was never produced by the engine",
-            $"missing engine hit: {log.AbilityName} ({log.AbilityId})", new ExpectedRange(0, 0, "damage"), log.UnblockedAmount, state);
+            $"missing engine hit: {log.AbilityName} ({log.AbilityId})", new ExpectedRange(0, 0, RangeUnit.Damage), log.UnblockedAmount, state);
         return pair;
     }
 
@@ -157,26 +160,26 @@ public sealed class ReplayVerifier
     /// A logged <c>cast</c> (no cast time) or <c>begin_cast</c> (<paramref name="logSeconds"/>; null when the log never
     /// ends it, which leaves no numeric range) against the engine's cast time.
     /// </summary>
-    public void CheckInstantOrCast(SimulationContext ctx, Ability ability, double engineSeconds, double? logSeconds, string kind)
+    public void CheckInstantOrCast(SimulationContext ctx, Ability ability, double engineSeconds, double? logSeconds, ReplayCommandKind kind)
     {
         ExpectedRange? range = logSeconds.HasValue ? CastTimeRange(engineSeconds) : null;
         if (logSeconds is { } logged && range!.Contains(logged)) return;
-        string message = kind == CommandKind.Cast
+        string message = kind == ReplayCommandKind.Cast
             ? $"Log cast {ability.Name} instantly, but the engine expects a {engineSeconds:F3}s cast"
             : $"Log shows a cast time for {ability.Name}, but the engine resolves it in {engineSeconds:F3}s";
         Report(ctx, IssueCategory.Casts, message,
-            kind == CommandKind.Cast ? $"engine has cast time: {ability.Name}" : $"engine instant: {ability.Name}",
+            kind == ReplayCommandKind.Cast ? $"engine has cast time: {ability.Name}" : $"engine instant: {ability.Name}",
             range, logSeconds, EngineState.Capture(ctx, _hero.CurrentTarget, cast: ability));
     }
 
     private ExpectedRange CastTimeRange(double engineSeconds) =>
-        new(Math.Max(0.0, engineSeconds - _options.CastTimeToleranceSeconds), engineSeconds + _options.CastTimeToleranceSeconds, "s");
+        new(Math.Max(0.0, engineSeconds - _options.CastTimeToleranceSeconds), engineSeconds + _options.CastTimeToleranceSeconds, RangeUnit.Seconds);
 
     /// <summary>The engine is still casting when the log casts again: the next cast comes no sooner than the engine cast's end.</summary>
     public ReplayIssue? StillCasting(SimulationContext ctx, Ability next)
     {
         if (_hero.CurrentCast is not { } cast || next.IgnoresGcd) return null;
-        var range = new ExpectedRange(cast.EndTime.TotalSeconds, double.PositiveInfinity, "s");
+        var range = new ExpectedRange(cast.EndTime.TotalSeconds, double.PositiveInfinity, RangeUnit.Seconds);
         double now = ctx.CurrentTime.TotalSeconds;
         if (range.Contains(now)) return null;
         return Issue(ctx, IssueCategory.Casts,
@@ -199,7 +202,7 @@ public sealed class ReplayVerifier
 
         if (!ability.IgnoresGcd)
         {
-            var gcd = new ExpectedRange(_hero.GlobalCooldownEndTime.TotalSeconds - _options.GlobalCooldownToleranceSeconds, double.PositiveInfinity, "s");
+            var gcd = new ExpectedRange(_hero.GlobalCooldownEndTime.TotalSeconds - _options.GlobalCooldownToleranceSeconds, double.PositiveInfinity, RangeUnit.Seconds);
             if (!gcd.Contains(time))
             {
                 refusals.Add(Issue(ctx, IssueCategory.GlobalCooldown,
@@ -212,7 +215,7 @@ public sealed class ReplayVerifier
         if (ability.Cooldown > SimTime.Zero && _hero.Cooldowns.TryGetValue(ability.Name, out var cooldown) && cooldown.ChargesAt(now) == 0)
         {
             onCooldown = true;
-            var range = new ExpectedRange(time + _hero.GetCooldownRemains(ability.Name, now), double.PositiveInfinity, "s");
+            var range = new ExpectedRange(time + _hero.GetCooldownRemains(ability.Name, now), double.PositiveInfinity, RangeUnit.Seconds);
             refusals.Add(Issue(ctx, IssueCategory.Cooldown,
                 $"Log casts {ability.Name} on the engine's cooldown ({range.Low - time:F2}s remaining)",
                 $"on cooldown: {ability.Name}", range, time, state));
@@ -231,7 +234,7 @@ public sealed class ReplayVerifier
     public void CheckTickTime(SimulationContext ctx, PeriodicEffect effect, SimTime predicted, double logTime)
     {
         double tolerance = _options.TickTimeToleranceSeconds;
-        var range = new ExpectedRange(predicted.TotalSeconds - tolerance, predicted.TotalSeconds + tolerance, "s");
+        var range = new ExpectedRange(predicted.TotalSeconds - tolerance, predicted.TotalSeconds + tolerance, RangeUnit.Seconds);
         if (range.Contains(logTime)) return;
         Report(ctx, IssueCategory.Ticks, $"{effect.Name} ticks at {logTime:F3} in the log; the engine predicts {predicted}",
             $"tick time: {effect.Name}", range, logTime, EngineState.Capture(ctx, effect.Target));
@@ -240,7 +243,7 @@ public sealed class ReplayVerifier
     /// <summary>The ticks an ended effect fired (full and partial) against the log ticks it reserved.</summary>
     public void CheckTickCount(SimulationContext ctx, PeriodicEffect effect, int reserved)
     {
-        var range = new ExpectedRange(effect.TicksFired, effect.TicksFired, "ticks");
+        var range = new ExpectedRange(effect.TicksFired, effect.TicksFired, RangeUnit.Ticks);
         if (range.Contains(reserved)) return;
         Report(ctx, IssueCategory.Ticks, $"{effect.Name} (from {effect.Start}) fired {effect.TicksFired} ticks; the log has {reserved} of them",
             $"tick count: {effect.Name}", range, reserved, EngineState.Capture(ctx, effect.Target));
@@ -253,7 +256,7 @@ public sealed class ReplayVerifier
     {
         if (!procced || chance > 0.0) return;
         Report(ctx, IssueCategory.Procs, $"Log shows '{procKey}' procced at {ctx.CurrentTime.TotalSeconds:F3} but the engine's chance was {chance:P1}",
-            $"proc with zero chance: {procKey}", new ExpectedRange(0, 0, "procs"), 1, EngineState.Capture(ctx, target));
+            $"proc with zero chance: {procKey}", new ExpectedRange(0, 0, RangeUnit.Procs), 1, EngineState.Capture(ctx, target));
     }
 
     // ------------------------------------------------------------------ state before a cast
@@ -292,7 +295,7 @@ public sealed class ReplayVerifier
 
         // Each aura matches if the log shows the engine's stacks at some moment within the tolerance (server-frame timing).
         double tol = _options.AuraToleranceSeconds;
-        var shown = _logAuras.TrackedStateAt(cmd.Time - 0.001);
+        var shown = _logAuras.TrackedStateAt(cmd.Time - LogStateLeadSeconds);
         var window = _logAuras.ChangeTimesBetween(cmd.Time - tol, cmd.Time + tol)
             .Prepend(cmd.Time - tol)
             .Select(t => _logAuras.TrackedStateAt(t)).ToList();
@@ -309,7 +312,7 @@ public sealed class ReplayVerifier
             CheckAura(ctx, step, _logAuras.NameOf(id), engine, log, id);
         }
 
-        step.UntrackedLogAuras = _logAuras.UntrackedActiveAt(cmd.Time - 0.001);
+        step.UntrackedLogAuras = _logAuras.UntrackedActiveAt(cmd.Time - LogStateLeadSeconds);
         step.EngineHaste = _hero.GetHaste(ctx.CurrentTime);
         step.HasteSources = _hero.Auras.Active(ctx.CurrentTime)
             .SelectMany(a => a.Modifiers.Where(m => m.Type is StatType.Haste or StatType.HasteRating)
@@ -322,7 +325,7 @@ public sealed class ReplayVerifier
     {
         var check = new ResourceCheck(resource, engine, log, tolerance);
         step.Resources.Add(check);
-        var range = new ExpectedRange(engine - tolerance - 1e-9, engine + tolerance + 1e-9, resource);
+        var range = new ExpectedRange(engine - tolerance - Core.Engine.Tolerance.Comparison, engine + tolerance + Core.Engine.Tolerance.Comparison, RangeUnit.Resource, resource);
         if (range.Contains(log)) return;
         Report(ctx, IssueCategory.Resources, $"Pre-cast {resource}: engine {engine:0.##} vs log {log:0.##}",
             $"{resource} {(engine > log ? "too high" : "too low")}", range, log, EngineState.Capture(ctx, _hero.CurrentTarget));
@@ -336,7 +339,7 @@ public sealed class ReplayVerifier
         if (check.Matches) return;
         string how = engine == 0 ? "missing in engine" : log == 0 ? "extra in engine" : "wrong stacks";
         Report(ctx, IssueCategory.Auras, $"Pre-cast {aura}: engine {engine} stacks vs log {log}", $"{aura} {how}",
-            new ExpectedRange(engine, engine, "stacks"), log, EngineState.Capture(ctx, _hero.CurrentTarget));
+            new ExpectedRange(engine, engine, RangeUnit.Stacks), log, EngineState.Capture(ctx, _hero.CurrentTarget));
     }
 
     // ------------------------------------------------------------------ issues

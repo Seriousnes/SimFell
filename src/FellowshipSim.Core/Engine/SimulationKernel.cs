@@ -34,8 +34,10 @@ public sealed class ScheduledEvent
 /// </summary>
 public class SimulationKernel
 {
+    private const int InitialHeapCapacity = 64;
+
     // Speed: a binary heap of the events with their keys (time, then sequence) beside them, compared as two longs.
-    private Entry[] _heap = new Entry[64];
+    private Entry[] _heap = new Entry[InitialHeapCapacity];
     private int _count;
     private long _sequence;
 

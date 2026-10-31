@@ -22,9 +22,10 @@ public sealed class Rend
     public const int DebuffEffectId = 3231;
     public const double TickSeconds = 3.0;
     public const int TicksPerApplication = 10;
+    private const int DebuffMaxStacks = 9999; // UNVERIFIED
 
     /// <summary>"Each stack of Rend corresponds to 100% Strength damage over its full duration."</summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect(DamageName, DebuffEffectId, maxStacks: 9999) with { Duration = SimTime.Infinite };
+    public static readonly AuraDef Debuff = AuraDef.Effect(DamageName, DebuffEffectId, maxStacks: DebuffMaxStacks) with { Duration = SimTime.Infinite };
 
     private readonly Gunde _gunde;
     private readonly Dictionary<EnemyTarget, Bleed> _bleeds = new();
@@ -38,7 +39,7 @@ public sealed class Rend
     private int Ticks => (int)Math.Round(TicksPerApplication * TickRate);
 
     /// <summary>Seconds between ticks: the game ticks on whole server frames, so a shortened period rounds up to one.</summary>
-    private double TickPeriodSeconds => Math.Ceiling(TickSeconds / TickRate / PeriodicEffect.ServerFrameSeconds - 1e-6) * PeriodicEffect.ServerFrameSeconds;
+    private double TickPeriodSeconds => Math.Ceiling(TickSeconds / TickRate / PeriodicEffect.ServerFrameSeconds - Tolerance.Rounding) * PeriodicEffect.ServerFrameSeconds;
 
     /// <summary>A Rend tick dealt its damage to an enemy (Blood Feathers).</summary>
     public event Action<SimulationContext, EnemyTarget>? Ticked;
@@ -133,7 +134,7 @@ public sealed class Rend
     {
         if (!_bleeds.ContainsKey(target)) return;
         double strength = Math.Max(1.0, _gunde.PrimaryAttribute(now));
-        int stacks = Math.Max(1, (int)Math.Ceiling(Remaining(target) / strength - 1e-9));
+        int stacks = Math.Max(1, (int)Math.Ceiling(Remaining(target) / strength - Tolerance.Comparison));
         target.Auras.Apply(Debuff, now, setStacks: Math.Min(stacks, Debuff.MaxStacks));
     }
 

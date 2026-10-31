@@ -13,7 +13,7 @@ public class ReignInBlood : GundeAbility
     public const double BuffSeconds = 12.0;
     public const double RendShareBonus = 0.3;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Reign in Blood", BuffEffectId, BuffSeconds);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds);
 
     /// <summary>Share added to Rend while Reign in Blood holds (Frenzied Reign adds to it).</summary>
     public double ShareBonus { get; set; } = RendShareBonus;

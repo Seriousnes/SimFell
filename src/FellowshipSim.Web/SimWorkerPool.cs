@@ -12,6 +12,28 @@ namespace FellowshipSim.Web;
 /// </summary>
 public sealed class SimWorkerPool(IJSRuntime js)
 {
+    /// <summary>Key of the assembly metadata that holds the build's stamp.</summary>
+    private const string BuildStampKey = "BuildStamp";
+
+    /// <summary>Stamp of a build made without one.</summary>
+    private const string DefaultBuildStamp = "0";
+
+    /// <summary>Function of the page that loads a module.</summary>
+    private const string ImportFunction = "import";
+
+    /// <summary>Module of the page's side of the sim workers.</summary>
+    private const string SimPoolModule = "./sim/simPool.js";
+
+    private const string SizeFunction = "size";
+    private const string CoresFunction = "cores";
+    private const string CancelFunction = "cancel";
+    private const string SimulateFunction = "simulate";
+    private const string ReviewFunction = "review";
+    private const string ReviewFightFunction = "reviewFight";
+
+    /// <summary>The prefix a JS error's message has.</summary>
+    private const string ErrorPrefix = "Error: ";
+
     private IJSObjectReference? _pool;
     private int _nextRun;
 
@@ -20,16 +42,16 @@ public sealed class SimWorkerPool(IJSRuntime js)
     /// script it kept from an older build (GitHub Pages lets it keep one for 10 minutes) with this build's app.
     /// </summary>
     private static readonly string BuildStamp = typeof(SimWorkerPool).Assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
-        .FirstOrDefault(a => a.Key == "BuildStamp")?.Value ?? "0";
+        .FirstOrDefault(a => a.Key == BuildStampKey)?.Value ?? DefaultBuildStamp;
 
     private async Task<IJSObjectReference> PoolAsync() =>
-        _pool ??= await js.InvokeAsync<IJSObjectReference>("import", $"./sim/simPool.js?v={BuildStamp}");
+        _pool ??= await js.InvokeAsync<IJSObjectReference>(ImportFunction, $"{SimPoolModule}?v={BuildStamp}");
 
     /// <summary>The workers a sim can use: the cores but the page's, up to the pool's most.</summary>
-    public async Task<int> SizeAsync() => await (await PoolAsync()).InvokeAsync<int>("size");
+    public async Task<int> SizeAsync() => await (await PoolAsync()).InvokeAsync<int>(SizeFunction);
 
     /// <summary>The browser's logical processors.</summary>
-    public async Task<int> CoresAsync() => await (await PoolAsync()).InvokeAsync<int>("cores");
+    public async Task<int> CoresAsync() => await (await PoolAsync()).InvokeAsync<int>(CoresFunction);
 
     /// <summary>
     /// Runs a sim's <paramref name="chunkCount"/> chunks on up to <paramref name="workers"/> workers (all when null) and
@@ -41,10 +63,10 @@ public sealed class SimWorkerPool(IJSRuntime js)
         var pool = await PoolAsync();
         int run = Interlocked.Increment(ref _nextRun);
         using var sink = DotNetObjectReference.Create(new Sink(chunkDone, null));
-        await using var stop = ct.Register(() => _ = pool.InvokeVoidAsync("cancel", run).AsTask());
+        await using var stop = ct.Register(() => _ = pool.InvokeVoidAsync(CancelFunction, run).AsTask());
         try
         {
-            return await pool.InvokeAsync<string>("simulate", CancellationToken.None, run, profileJson, settingsJson, chunkCount, workers, sink);
+            return await pool.InvokeAsync<string>(SimulateFunction, CancellationToken.None, run, profileJson, settingsJson, chunkCount, workers, sink);
         }
         catch (JSException) when (ct.IsCancellationRequested)
         {
@@ -63,7 +85,7 @@ public sealed class SimWorkerPool(IJSRuntime js)
         using var sink = DotNetObjectReference.Create(new Sink(null, progress));
         try
         {
-            return await pool.InvokeAsync<string>("review", CancellationToken.None, rawFight, playerId, sink);
+            return await pool.InvokeAsync<string>(ReviewFunction, CancellationToken.None, rawFight, playerId, sink);
         }
         catch (JSException exception)
         {
@@ -83,7 +105,7 @@ public sealed class SimWorkerPool(IJSRuntime js)
         using var sink = DotNetObjectReference.Create(new Sink(null, progress));
         try
         {
-            return await pool.InvokeAsync<string>("reviewFight", CancellationToken.None, reportCode, fightId, playerId,
+            return await pool.InvokeAsync<string>(ReviewFightFunction, CancellationToken.None, reportCode, fightId, playerId,
                 accessToken ?? "", credentials?.ClientId ?? "", credentials?.ClientSecret ?? "", sink);
         }
         catch (JSException exception)
@@ -96,7 +118,7 @@ public sealed class SimWorkerPool(IJSRuntime js)
     private static string Reason(JSException exception)
     {
         string line = exception.Message.Split('\n')[0].Trim();
-        return line.StartsWith("Error: ", StringComparison.Ordinal) ? line["Error: ".Length..] : line;
+        return line.StartsWith(ErrorPrefix, StringComparison.Ordinal) ? line[ErrorPrefix.Length..] : line;
     }
 
     /// <summary>What simPool.js tells the page as a run goes: chunks done, or a replay's progress lines.</summary>

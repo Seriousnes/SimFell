@@ -35,18 +35,18 @@ public class Emerald : Gem
     {
         switch (node.Slot)
         {
-            case 1: // First Strike: Expertise for 15s when dealing damage to an enemy for the first time.
+            case HeadlineSlot: // First Strike: Expertise for 15s when dealing damage to an enemy for the first time.
                 BindFirstStrike(hero, node);
                 return true;
-            case 2: // Vanguard's Resolve: flat Stamina and Expertise rating.
-                hero.Stats.ExpertiseRating += node.Value("ExpertiseBonus");
-                hero.Stats.Stamina += node.Value("StaminaBonus");
+            case FlatStatSlot: // Vanguard's Resolve: flat Stamina and Expertise rating.
+                hero.Stats.ExpertiseRating += node.Value(ExpertiseBonusKey);
+                hero.Stats.Stamina += node.Value(StaminaBonusKey);
                 return true;
-            case 4: // Tactician's Accumen: Expertise.
-                hero.Stats.BonusExpertise += node.Value("ExpertiseBonus");
+            case PercentStatSlot: // Tactician's Accumen: Expertise.
+                hero.Stats.BonusExpertise += node.Value(ExpertiseBonusKey);
                 return true;
-            case 5: // Blessing of the Commander: ability cooldown reduction.
-                hero.Stats.CooldownReductionPct += node.Value("CooldownReduction");
+            case BlessingSlot: // Blessing of the Commander: ability cooldown reduction.
+                hero.Stats.CooldownReductionPct += node.Value(CooldownReductionKey);
                 return true;
             default: // Sentinel's Bastion (shield) does not affect damage.
                 return true;
@@ -66,16 +66,16 @@ public class Emerald : Gem
 
     protected override void BindLater(Hero hero, GemNode node, SimTime now)
     {
-        if (node.Slot == 1) BindFirstStrike(hero, node);
+        if (node.Slot == HeadlineSlot) BindFirstStrike(hero, node);
     }
 
     protected override void NodesChanged(Hero hero, IReadOnlyList<GemNode> before, SimTime? now) =>
-        FirstStrike = NodeInSlot(1)?.Grants is { } strike ? hero.Register(strike) : null;
+        FirstStrike = NodeInSlot(HeadlineSlot)?.Grants is { } strike ? hero.Register(strike) : null;
 
     protected override IEnumerable<StatModifier> StatEffects(GemNode node) => node.Slot switch
     {
-        2 => [StatModifier.Add(StatType.ExpertiseRating, node.Value("ExpertiseBonus"))],
-        4 => [StatModifier.Add(StatType.Expertise, node.Value("ExpertiseBonus"))],
+        FlatStatSlot => [StatModifier.Add(StatType.ExpertiseRating, node.Value(ExpertiseBonusKey))],
+        PercentStatSlot => [StatModifier.Add(StatType.Expertise, node.Value(ExpertiseBonusKey))],
         _ => [],
     };
 }

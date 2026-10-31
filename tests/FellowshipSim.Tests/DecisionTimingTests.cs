@@ -102,7 +102,7 @@ public class DecisionTimingTests
             .Run(SimTime.FromSeconds(seconds), iterations: 1, targets, degreeOfParallelism: 1);
 
     private static CharacterBuild Fixture() => System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+        File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
 
     /// <summary>A hero with no stats, talents or gear, and four abilities that deal no damage.</summary>
     private sealed class Tester : Hero

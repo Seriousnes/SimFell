@@ -12,6 +12,9 @@ public static partial class CodeEdits
     /// <summary>The completion list's width the field keeps room for right of its left edge.</summary>
     public const double ListWidth = 260;
 
+    /// <summary>The distance in pixels from the caret's top to the completion list's top.</summary>
+    private const double ListOffsetBelowCaret = 4;
+
     [GeneratedRegex(@"[A-Za-z0-9_.]*\z")]
     private static partial Regex PathBefore();
 
@@ -31,7 +34,7 @@ public static partial class CodeEdits
         if (!caret.Focused || (word.Length > 0 && char.IsAsciiDigit(word[0])) || (word.Length == 0 && !always)) return null;
         var items = Completions.For(vocabulary, word).Take(MaxItems).ToList();
         if (items.Count == 0) return null;
-        return new CompletionList(items, 0, Math.Max(0, Math.Min(caret.Left, caret.Width - ListWidth)), caret.Top + 4);
+        return new CompletionList(items, 0, Math.Max(0, Math.Min(caret.Left, caret.Width - ListWidth)), caret.Top + ListOffsetBelowCaret);
     }
 
     /// <summary>
@@ -43,7 +46,7 @@ public static partial class CodeEdits
         at = Math.Min(at, text.Length);
         string partial = PartBefore().Match(text[..at]).Value;
         string rest = PartAfter().Match(text[at..]).Value;
-        string written = item.Text + (item.HasMore ? "." : "");
+        string written = item.Text + (item.HasMore ? Completions.PathSeparator : "");
         return new AcceptedCompletion(text[..(at - partial.Length)] + written + text[(at + rest.Length)..], at - partial.Length + written.Length);
     }
 }

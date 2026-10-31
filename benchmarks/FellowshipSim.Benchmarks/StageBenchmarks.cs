@@ -2,6 +2,7 @@ using BenchmarkDotNet.Attributes;
 using FellowshipSim.Core.APL;
 using FellowshipSim.Core.Domain;
 using FellowshipSim.Core.Engine;
+using FellowshipSim.Core.Heroes.Rime.Abilities;
 
 namespace FellowshipSim.Benchmarks;
 
@@ -116,6 +117,8 @@ public class HasteAuraBenchmarks
 public class HitBenchmarks
 {
     private const int HitsPerIteration = 2048;
+    private const double FixedDamage = 1000.0;
+    private const double FixedCritChance = 0.3;
 
     private Hero _hero = null!;
     private SimulationContext _ctx = null!;
@@ -129,7 +132,7 @@ public class HitBenchmarks
     public void IterationSetup()
     {
         (_hero, _ctx, _) = Fight.AtMidFight(Targets);
-        _frostBolt = _hero.GetAbility("Frost Bolt")!;
+        _frostBolt = _hero.GetAbility(FrostBolt.AbilityName)!;
         _target = _ctx.AllEnemies[0];
     }
 
@@ -140,12 +143,12 @@ public class HitBenchmarks
     [Benchmark]
     [InvocationCount(HitsPerIteration)]
     public double ApplyDamageFixedNumbers() =>
-        _ctx.ApplyDamage(_hero, _target, 1000.0, _frostBolt.DamageLogId, _frostBolt.Name, canCrit: true, critChance: 0.3, critMultiplier: 2.0);
+        _ctx.ApplyDamage(_hero, _target, FixedDamage, _frostBolt.DamageLogId, _frostBolt.Name, canCrit: true, critChance: FixedCritChance, critMultiplier: StatBlock.BaseCritMultiplier);
 
     [Benchmark]
     [InvocationCount(HitsPerIteration)]
     public void DamageDealtFanOut() =>
-        _hero.TriggerDamageDealt(new DamageContext(_hero, _target, _frostBolt.DamageLogId, _frostBolt.Name, 1000.0, false, _ctx.CurrentTime, _ctx));
+        _hero.TriggerDamageDealt(new DamageContext(_hero, _target, _frostBolt.DamageLogId, _frostBolt.Name, FixedDamage, false, _ctx.CurrentTime, _ctx));
 
     /// <summary>The fan-out of a hit with no target and no damage: most subscribers return at their first check.</summary>
     [Benchmark]
@@ -163,6 +166,9 @@ public class HitBenchmarks
 public class EventQueueBenchmarks
 {
     private const int Events = 128;
+    private const int EventSeed = 7;
+    private const double EventSpreadSeconds = 30.0;
+    private const int CancelMask = 3;
     private static readonly Action<SimulationContext> NoOp = static _ => { };
 
     private SimulationKernel _kernel = null!;
@@ -176,8 +182,8 @@ public class EventQueueBenchmarks
         _kernel = new SimulationKernel();
         // A context with no fight running: only the benchmark's events are queued.
         _ctx = new SimulationContext(Fight.NewHero());
-        var rng = new Random(7);
-        for (int i = 0; i < Events; i++) _times[i] = SimTime.FromSeconds(rng.NextDouble() * 30.0);
+        var rng = new Random(EventSeed);
+        for (int i = 0; i < Events; i++) _times[i] = SimTime.FromSeconds(rng.NextDouble() * EventSpreadSeconds);
     }
 
     [Benchmark(OperationsPerInvoke = Events)]
@@ -186,7 +192,7 @@ public class EventQueueBenchmarks
         for (int i = 0; i < Events; i++)
         {
             var ev = _kernel.ScheduleAt(_times[i], NoOp, "Benchmark");
-            if ((i & 3) == 0) ev.Cancel();
+            if ((i & CancelMask) == 0) ev.Cancel();
         }
         int fired = 0;
         while (_kernel.TryDequeueDue(SimTime.Infinite, out _)) fired++;
@@ -209,7 +215,7 @@ public class EventQueueBenchmarks
     [Benchmark]
     public SimTime? PeriodicEffectBeginStop()
     {
-        var effect = PeriodicEffect.Begin(_ctx, "Benchmark", 10.0, 1.0, tickOnStart: false, partialFinalTick: true,
+        var effect = PeriodicEffect.Begin(_ctx, "Benchmark", durationSeconds: 10.0, periodSeconds: 1.0, tickOnStart: false, partialFinalTick: true,
             onTick: static (_, _) => { });
         effect.Stop(_ctx);
         // The cancelled ticks leave the queue as they reach its front.

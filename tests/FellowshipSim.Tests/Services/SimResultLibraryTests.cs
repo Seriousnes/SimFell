@@ -6,6 +6,11 @@ namespace FellowshipSim.Tests.Services;
 /// <summary>Finished sims in the blob store: read back by ID, listed newest first, and each visitor's apart from the others'.</summary>
 public sealed class SimResultLibraryTests : IDisposable
 {
+    private const string VisitorsFolder = "visitors";
+    private const string ResultsFolder = "results";
+    private const string VisitorSimFile = "a-sim.json";
+    private const string LocalSimFile = "local.json";
+
     private readonly string _data = Path.Combine(Path.GetTempPath(), $"simfell-results-{Guid.NewGuid():N}");
     private readonly DiskBlobStore _store;
     private readonly SimResultLibrary _results;
@@ -64,7 +69,7 @@ public sealed class SimResultLibraryTests : IDisposable
 
         Assert.Empty(await _results.ListAsync(SecondVisitor));
         Assert.Null(await _results.GetAsync(SecondVisitor, "a-sim"));
-        Assert.True(File.Exists(Path.Combine(_data, "visitors", FirstVisitor.Id, "results", "a-sim.json")));
+        Assert.True(File.Exists(Path.Combine(_data, VisitorsFolder, FirstVisitor.Id, ResultsFolder, VisitorSimFile)));
     }
 
     [Fact]
@@ -72,7 +77,7 @@ public sealed class SimResultLibraryTests : IDisposable
     {
         await _results.SaveAsync(Visitor.DataFolderOwner, Sim("local", DateTime.UtcNow));
 
-        Assert.True(File.Exists(Path.Combine(_data, "results", "local.json")));
+        Assert.True(File.Exists(Path.Combine(_data, ResultsFolder, LocalSimFile)));
         Assert.Equal(["local"], (await _results.ListAsync(Visitor.DataFolderOwner)).Select(s => s.Id));
     }
 

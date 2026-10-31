@@ -9,6 +9,9 @@ namespace FellowshipSim.Tests.Services;
 /// </summary>
 public sealed class ActionListStoreTests : IDisposable
 {
+    private const string ListsFolder = "apls";
+    private const string DefaultListFile = "default.simc";
+
     private readonly string _data = Path.Combine(Path.GetTempPath(), $"simfell-apls-{Guid.NewGuid():N}");
     private readonly ActionListStore _lists;
     private static readonly Visitor FirstVisitor = new("a1b2", OwnsDataFolder: false);
@@ -17,8 +20,8 @@ public sealed class ActionListStoreTests : IDisposable
     public ActionListStoreTests()
     {
         _lists = new ActionListStore(new ReplayLibrary(_data), new DiskBlobStore(_data));
-        Directory.CreateDirectory(Path.Combine(_data, "apls", "Rime"));
-        File.WriteAllText(Path.Combine(_data, "apls", "Rime", "default.simc"), "actions+=/frost_bolt");
+        Directory.CreateDirectory(Path.Combine(_data, ListsFolder, "Rime"));
+        File.WriteAllText(Path.Combine(_data, ListsFolder, "Rime", DefaultListFile), "actions+=/frost_bolt");
     }
 
     [Fact]
@@ -37,7 +40,7 @@ public sealed class ActionListStoreTests : IDisposable
     {
         await _lists.SaveAsync(FirstVisitor, "Rime", "default", "actions+=/cold_snap");
 
-        Assert.Equal("actions+=/frost_bolt", File.ReadAllText(Path.Combine(_data, "apls", "Rime", "default.simc")));
+        Assert.Equal("actions+=/frost_bolt", File.ReadAllText(Path.Combine(_data, ListsFolder, "Rime", DefaultListFile)));
         Assert.Equal([new ActionListEntry("Rime", "default", Shared: true)], await _lists.ListAsync(SecondVisitor, ["Rime"]));
         Assert.Null(await _lists.ReadAsync(SecondVisitor, new ActionListEntry("Rime", "default")));
     }

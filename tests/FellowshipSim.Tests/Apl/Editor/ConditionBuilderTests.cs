@@ -8,6 +8,10 @@ namespace FellowshipSim.Tests.Apl.Editor;
 /// <summary>The condition builder's rows: read from text, written back as text, and their paths in parts.</summary>
 public class ConditionBuilderTests
 {
+    private const string WwwrootFolder = "wwwroot";
+    private const string CssFolder = "css";
+    private const string StylesheetFile = "app.css";
+
     private readonly AplVocabulary _v = EditorVocabulary.Create();
 
     [Theory]
@@ -189,7 +193,7 @@ public class ConditionBuilderTests
     [Fact]
     public void Every_kind_has_its_own_colour()
     {
-        string css = File.ReadAllText(Path.Combine(TestPaths.RepositoryRoot, "src", "FellowshipSim.UI", "wwwroot", "css", "app.css"));
+        string css = File.ReadAllText(Path.Combine(TestPaths.RepositoryRoot, TestPaths.SourceFolder, TestPaths.UiProjectFolder, WwwrootFolder, CssFolder, StylesheetFile));
         var colours = ConditionBuilder.Kinds(_v, []).ToDictionary(k => k.Id, k =>
         {
             var match = System.Text.RegularExpressions.Regex.Match(css, $@"--kind-{k.Id}:\s*([^;]+);");

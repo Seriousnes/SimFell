@@ -29,28 +29,49 @@ public enum UnaryOperator
 
 public static class AplOperatorSymbols
 {
+    public const string AndSymbol = "&";
+    public const string OrSymbol = "|";
+    public const string AddSymbol = "+";
+    public const string SubtractSymbol = "-";
+    public const string MultiplySymbol = "*";
+    public const string DivideSymbol = "%";
+    public const string ModuloSymbol = "%%";
+    public const string EqualSymbol = "=";
+    public const string DoubleEqualSymbol = "==";
+    public const string NotEqualSymbol = "!=";
+    public const string LessSymbol = "<";
+    public const string LessEqualSymbol = "<=";
+    public const string GreaterSymbol = ">";
+    public const string GreaterEqualSymbol = ">=";
+    public const string PlusEqualSymbol = "+=";
+    public const string NotSymbol = "!";
+    public const string MinusSymbol = "-";
+    public const string AndWord = "and";
+    public const string OrWord = "or";
+    public const string NotWord = "not";
+
     public static string Symbol(this BinaryOperator op) => op switch
     {
-        BinaryOperator.And => "&",
-        BinaryOperator.Or => "|",
-        BinaryOperator.Add => "+",
-        BinaryOperator.Subtract => "-",
-        BinaryOperator.Multiply => "*",
-        BinaryOperator.Divide => "%",
-        BinaryOperator.Modulo => "%%",
-        BinaryOperator.Equal => "=",
-        BinaryOperator.NotEqual => "!=",
-        BinaryOperator.Less => "<",
-        BinaryOperator.LessEqual => "<=",
-        BinaryOperator.Greater => ">",
-        BinaryOperator.GreaterEqual => ">=",
+        BinaryOperator.And => AndSymbol,
+        BinaryOperator.Or => OrSymbol,
+        BinaryOperator.Add => AddSymbol,
+        BinaryOperator.Subtract => SubtractSymbol,
+        BinaryOperator.Multiply => MultiplySymbol,
+        BinaryOperator.Divide => DivideSymbol,
+        BinaryOperator.Modulo => ModuloSymbol,
+        BinaryOperator.Equal => EqualSymbol,
+        BinaryOperator.NotEqual => NotEqualSymbol,
+        BinaryOperator.Less => LessSymbol,
+        BinaryOperator.LessEqual => LessEqualSymbol,
+        BinaryOperator.Greater => GreaterSymbol,
+        BinaryOperator.GreaterEqual => GreaterEqualSymbol,
         _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
     };
 
     public static string Symbol(this UnaryOperator op) => op switch
     {
-        UnaryOperator.Not => "!",
-        UnaryOperator.Minus => "-",
+        UnaryOperator.Not => NotSymbol,
+        UnaryOperator.Minus => MinusSymbol,
         _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
     };
 

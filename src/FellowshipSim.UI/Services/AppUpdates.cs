@@ -22,6 +22,10 @@ public sealed class AppUpdates(HttpClient http, Version? version, AppRelease? pr
 
     private const string TagPrefix = "v";
 
+    private const string UserAgent = "SimFell";
+
+    private const string GitHubMediaType = "application/vnd.github+json";
+
     private Task<AppRelease?>? _latest;
 
     /// <summary>This app's version, or null for a build made outside the release workflow.</summary>
@@ -43,15 +47,15 @@ public sealed class AppUpdates(HttpClient http, Version? version, AppRelease? pr
         tag != null && tag.StartsWith(TagPrefix, StringComparison.Ordinal) ? Parse(tag[TagPrefix.Length..]) : null;
 
     /// <summary>The tag of version <paramref name="version"/>.</summary>
-    public static string TagOf(Version version) => TagPrefix + version.ToString(3);
+    public static string TagOf(Version version) => TagPrefix + version.ToString(fieldCount: 3);
 
     private async Task<AppRelease?> ReadLatestAsync()
     {
         try
         {
             using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/{ReleasesRepository}/releases/latest");
-            request.Headers.UserAgent.ParseAdd("SimFell");
-            request.Headers.Accept.ParseAdd("application/vnd.github+json");
+            request.Headers.UserAgent.ParseAdd(UserAgent);
+            request.Headers.Accept.ParseAdd(GitHubMediaType);
             using var response = await http.SendAsync(request);
             if (!response.IsSuccessStatusCode) return null;
             var release = await response.Content.ReadFromJsonAsync<GitHubRelease>();

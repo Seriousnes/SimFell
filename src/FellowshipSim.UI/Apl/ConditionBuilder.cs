@@ -7,6 +7,16 @@ namespace FellowshipSim.UI.Apl;
 /// <summary>Kinds, paths and text of the condition builder's rows.</summary>
 public static class ConditionBuilder
 {
+    /// <summary>The join of two rows that is written when a row has none.</summary>
+    public const string AndJoin = "and";
+
+    /// <summary>The join that makes either row enough.</summary>
+    public const string OrJoin = "or";
+
+    private const string DefaultOperator = "+";
+
+    private const string RoundTripFormat = "R";
+
     public static readonly IReadOnlyList<string> Comparisons = [">=", ">", "=", "!=", "<=", "<"];
 
     /// <summary>Arithmetic as action lists write it: '%' divides and '%%' is the remainder.</summary>
@@ -29,6 +39,9 @@ public static class ConditionBuilder
     public const string CurrentProperty = "current";
     /// <summary>A resource's property for the room left in it ("spirit.deficit").</summary>
     public const string DeficitProperty = "deficit";
+
+    /// <summary>The parts of a path that starts with a scope: scope, name and the property after them.</summary>
+    private const int ScopedPathParts = 3;
 
     /// <summary>
     /// The kinds of value a term reads: each scope of the vocabulary, a resource, a named fight value, the action's own
@@ -88,7 +101,7 @@ public static class ConditionBuilder
     public static IReadOnlyList<string> Variables(IEnumerable<ActionList> lists) =>
         lists.SelectMany(l => l.Actions)
             .Where(a => a.Ability == AplVariable.ActionName && a.Arguments != null)
-            .Select(a => a.Arguments!.Split(',').Select(p => p.Split('=', 2))
+            .Select(a => a.Arguments!.Split(',').Select(p => p.Split('=', count: 2))
                 .FirstOrDefault(p => p.Length == 2 && p[0].Trim().Equals(AplVariable.NameKey, StringComparison.OrdinalIgnoreCase))?[1].Trim())
             .OfType<string>()
             .Where(n => n.Length > 0)
@@ -101,8 +114,8 @@ public static class ConditionBuilder
     /// </summary>
     public static PathParts SplitPath(AplVocabulary vocabulary, string path)
     {
-        string[] parts = path.Split('.');
-        if (parts.Length >= 3 && vocabulary.Scopes.ContainsKey(parts[0])) return new PathParts(parts[0], parts[1], string.Join(".", parts[2..]));
+        string[] parts = path.Split(Completions.PathSeparator);
+        if (parts.Length >= ScopedPathParts && vocabulary.Scopes.ContainsKey(parts[0])) return new PathParts(parts[0], parts[1], string.Join(Completions.PathSeparator, parts[2..]));
         if (parts.Length == 2 && IsNameScope(vocabulary, parts[0])) return new PathParts(parts[0], parts[1]);
         string resource = path.StartsWith(vocabulary.ResourcePrefix, StringComparison.Ordinal) ? path[vocabulary.ResourcePrefix.Length..] : path;
         bool deficit = resource.EndsWith(vocabulary.DeficitSuffix, StringComparison.Ordinal);
@@ -202,7 +215,7 @@ public static class ConditionBuilder
                 : Text(row.Left!) + string.Concat(row.Comparisons.Select(c =>
                     $" {c.Comparison} {(c.Terms.Any(IsComplete) ? Text(c.Terms) : Number(0))}"));
             string negated = !row.Not ? value : compared || row.Left?.Count(IsComplete) > 1 ? $"not ({value})" : $"not {value}";
-            return i == 0 ? negated : $" {(string.IsNullOrEmpty(row.Join) ? "and" : row.Join)} {negated}";
+            return i == 0 ? negated : $" {(string.IsNullOrEmpty(row.Join) ? AndJoin : row.Join)} {negated}";
         }));
 
     /// <summary>
@@ -214,7 +227,7 @@ public static class ConditionBuilder
         {
             string value = term.Items is { } items ? $"({Text(items)})" : !string.IsNullOrEmpty(term.Path) ? term.Path : Number(term.Number!.Value);
             string prefixed = string.Concat(PrefixOperators(term.Prefix).Select(op => AplFormatter.Prefix(op, AplOperatorStyle.Words))) + value;
-            return i == 0 ? prefixed : $" {(string.IsNullOrEmpty(term.Operator) ? "+" : term.Operator)} {prefixed}";
+            return i == 0 ? prefixed : $" {(string.IsNullOrEmpty(term.Operator) ? DefaultOperator : term.Operator)} {prefixed}";
         }));
 
     /// <summary>The prefix operators of a term's prefix, outermost first.</summary>
@@ -226,7 +239,7 @@ public static class ConditionBuilder
         string.Join(" ", PrefixOperators(prefix).Select(op => AplFormatter.Prefix(op, AplOperatorStyle.Words).Trim()));
 
     /// <summary>A number as the page writes it.</summary>
-    public static string Number(double value) => value.ToString("R", CultureInfo.InvariantCulture);
+    public static string Number(double value) => value.ToString(RoundTripFormat, CultureInfo.InvariantCulture);
 
     /// <summary>True when <paramref name="kind"/> lists <paramref name="name"/>, or a name it starts where the kind matches starts.</summary>
     public static bool Knows(ConditionKind kind, string name) =>

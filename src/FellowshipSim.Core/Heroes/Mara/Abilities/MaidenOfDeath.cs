@@ -18,7 +18,7 @@ public class MaidenOfDeath : MaraAbility
     public const double ComboPointsPerGenerator = 6;
 
     /// <summary>The buff's damage is read per hit (Maiden's Doom raises it against low enemies).</summary>
-    public static readonly AuraDef Buff = AuraDef.Effect("Maiden of Death", BuffEffectId, BuffSeconds);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds);
 
     /// <summary>The damage bonus against an enemy (1.2; Maiden's Doom: 1.4 at 30% health or less).</summary>
     public Func<EnemyTarget, double> DamageAgainst { get; set; } = _ => BuffDamage;

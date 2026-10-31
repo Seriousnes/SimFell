@@ -91,6 +91,9 @@ public class RandomOutcomeSource : IOutcomeSource
     // Game damage variance is +/- 10% (uniform random in [0.90, 1.10]).
     public const double DamageSpread = 0.10;
 
+    /// <summary>In expected mode a hit crits when its crit chance is above this.</summary>
+    private const double ExpectedCritThreshold = 0.5;
+
     private readonly SimulationRng _rng;
 
     public RandomOutcomeSource(SimulationRng rng, OutcomeMode mode = OutcomeMode.Expected)
@@ -118,7 +121,7 @@ public class RandomOutcomeSource : IOutcomeSource
             double spread = (1.0 - DamageSpread) + (_rng.NextDouble() * 2.0 * DamageSpread);
             return new HitOutcome(isCrit, SimTime.Zero, spread);
         }
-        return new HitOutcome(hit.CritChance > 0.5);
+        return new HitOutcome(hit.CritChance > ExpectedCritThreshold);
     }
 
     public double Land(in HitRequest landed, HitOutcome outcome, SimulationContext ctx)
@@ -136,9 +139,46 @@ public class RandomOutcomeSource : IOutcomeSource
 /// <summary>The simulation's random numbers: xoshiro256** (Blackman and Vigna, 2018), seeded through SplitMix64.</summary>
 public sealed class SimulationRng
 {
+    /// <summary>Seed of a generator made without one.</summary>
+    public const int DefaultSeed = 42;
+
+    /// <summary>SplitMix64 step added to the state.</summary>
+    public const ulong SplitMixIncrement = 0x9E3779B97F4A7C15UL;
+
+    /// <summary>SplitMix64 multiplier after the first shift.</summary>
+    public const ulong SplitMixFirstMultiplier = 0xBF58476D1CE4E5B9UL;
+
+    /// <summary>SplitMix64 multiplier after the second shift.</summary>
+    public const ulong SplitMixSecondMultiplier = 0x94D049BB133111EBUL;
+
+    /// <summary>SplitMix64 first shift.</summary>
+    public const int SplitMixFirstShift = 30;
+
+    /// <summary>SplitMix64 second shift.</summary>
+    public const int SplitMixSecondShift = 27;
+
+    /// <summary>SplitMix64 final shift.</summary>
+    public const int SplitMixFinalShift = 31;
+
+    /// <summary>Bits of a number that make a uniform double in [0, 1).</summary>
+    public const int UniformBits = 53;
+
+    /// <summary>Bits of a number dropped for a uniform double in [0, 1).</summary>
+    public const int DiscardedBits = 11;
+
+    /// <summary>Size of one step of a uniform double in [0, 1).</summary>
+    public const double UniformStep = 1.0 / (1UL << UniformBits);
+
+    // xoshiro256** parameters.
+    private const int ScrambleMultiplier = 5;
+    private const int ScrambleRotation = 7;
+    private const int ScrambleFinalMultiplier = 9;
+    private const int StateShift = 17;
+    private const int StateRotation = 45;
+
     private ulong _s0, _s1, _s2, _s3;
 
-    public SimulationRng(int seed = 42)
+    public SimulationRng(int seed = DefaultSeed)
     {
         Seed(seed);
     }
@@ -156,26 +196,26 @@ public sealed class SimulationRng
     public bool Roll(double chance) => NextDouble() < chance;
 
     /// <summary>Uniform in [0, 1): the top 53 bits of the next number.</summary>
-    public double NextDouble() => (NextUInt64() >> 11) * (1.0 / (1UL << 53));
+    public double NextDouble() => (NextUInt64() >> DiscardedBits) * UniformStep;
 
     private ulong NextUInt64()
     {
-        ulong result = BitOperations.RotateLeft(_s1 * 5, 7) * 9;
-        ulong shifted = _s1 << 17;
+        ulong result = BitOperations.RotateLeft(_s1 * ScrambleMultiplier, ScrambleRotation) * ScrambleFinalMultiplier;
+        ulong shifted = _s1 << StateShift;
         _s2 ^= _s0;
         _s3 ^= _s1;
         _s1 ^= _s2;
         _s0 ^= _s3;
         _s2 ^= shifted;
-        _s3 = BitOperations.RotateLeft(_s3, 45);
+        _s3 = BitOperations.RotateLeft(_s3, StateRotation);
         return result;
     }
 
     private static ulong SplitMix64(ref ulong state)
     {
-        ulong mixed = state += 0x9E3779B97F4A7C15UL;
-        mixed = (mixed ^ (mixed >> 30)) * 0xBF58476D1CE4E5B9UL;
-        mixed = (mixed ^ (mixed >> 27)) * 0x94D049BB133111EBUL;
-        return mixed ^ (mixed >> 31);
+        ulong mixed = state += SplitMixIncrement;
+        mixed = (mixed ^ (mixed >> SplitMixFirstShift)) * SplitMixFirstMultiplier;
+        mixed = (mixed ^ (mixed >> SplitMixSecondShift)) * SplitMixSecondMultiplier;
+        return mixed ^ (mixed >> SplitMixFinalShift);
     }
 }

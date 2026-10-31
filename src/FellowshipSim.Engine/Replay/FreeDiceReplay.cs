@@ -18,6 +18,12 @@ public sealed record FreeDiceAbility(
 /// </summary>
 public static class FreeDiceReplay
 {
+    /// <summary>Lower percentile of the engine's runs a free-dice result reports.</summary>
+    public const double LowPercentile = 0.05;
+
+    /// <summary>Upper percentile of the engine's runs a free-dice result reports.</summary>
+    public const double HighPercentile = 0.95;
+
     public sealed record Result(
         string PlayerName, string FightName, double LogDamage, IReadOnlyList<double> EngineTotals,
         double MeanForcedCasts, TimeSpan Elapsed, IReadOnlyList<FreeDiceAbility> Abilities)
@@ -30,7 +36,7 @@ public static class FreeDiceReplay
         public double LogPercentile => EngineTotals.Count(t => t < LogDamage) / (double)EngineTotals.Count;
 
         public FreeDiceSummary ToSummary() =>
-            new(EngineTotals.Count, LogDamage, Mean, Percentile(0.05), Percentile(0.95), LogPercentile, DateTime.UtcNow);
+            new(EngineTotals.Count, LogDamage, Mean, Percentile(LowPercentile), Percentile(HighPercentile), LogPercentile, DateTime.UtcNow);
 
         public override string ToString() =>
             $"{PlayerName} - {FightName}: {EngineTotals.Count} runs in {Elapsed.TotalSeconds:F1}s " +
@@ -38,7 +44,7 @@ public static class FreeDiceReplay
             $"  log damage    {LogDamage,12:N0}\n" +
             $"  engine mean   {Mean,12:N0}  ({Mean / LogDamage:P1} of log)\n" +
             $"  engine stddev {StdDev,12:N0}  ({StdDev / Mean:P1})\n" +
-            $"  engine 5-95%  {Percentile(0.05),12:N0} - {Percentile(0.95):N0}\n" +
+            $"  engine 5-95%  {Percentile(LowPercentile),12:N0} - {Percentile(HighPercentile):N0}\n" +
             $"  log sits at the {LogPercentile:P0} point of the engine's runs\n" +
             $"  casts forced to follow the log (engine short of resources): {MeanForcedCasts:F1} per run";
     }
@@ -102,7 +108,7 @@ public static class FreeDiceReplay
             string name = hits.FirstOrDefault()?.AbilityName ?? engine.FirstOrDefault(t => t != null)?.Name ?? id.ToString();
             rows.Add(new FreeDiceAbility(id, name,
                 hits.Sum(h => h.TotalAmount), hits.Count, hits.Count(h => h.Crit),
-                damage.Average(), Percentile(damage, 0.05), Percentile(damage, 0.95),
+                damage.Average(), Percentile(damage, LowPercentile), Percentile(damage, HighPercentile),
                 engine.Sum(t => t?.Hits ?? 0) / (double)runs, engine.Sum(t => t?.Crits ?? 0) / (double)runs));
         }
         return rows.OrderByDescending(r => Math.Max(r.LogDamage, r.EngineMean)).ToList();

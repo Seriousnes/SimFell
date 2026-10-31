@@ -19,7 +19,7 @@ public class RideTheLightning : Talent
     public const double Haste = 0.05;
 
     /// <summary>Effect 2753, while Thunder Call or Raging Tempest is active.</summary>
-    public static readonly AuraDef HasteBuff = AuraDef.Internal("Ride the Lightning", ThunderCall.BuffSeconds,
+    public static readonly AuraDef HasteBuff = AuraDef.Internal(TalentName, ThunderCall.BuffSeconds,
         modifiers: StatModifier.Add(StatType.Haste, Haste));
 
     public override string Name => TalentName;

@@ -30,11 +30,13 @@ else
 }
 
 @code {
+    private const string Route = "replay";
+
     /// <summary>File name of the review page shown in the Reviews tab, or null for the tab's list.</summary>
     [SupplyParameterFromQuery(Name = "review")] public string? Review { get; set; }
 
     /// <summary>Address of this page showing the review page <paramref name="htmlFile"/>.</summary>
-    public static string Href(string htmlFile) => $"replay?review={Uri.EscapeDataString(htmlFile)}";
+    public static string Href(string htmlFile) => $"{Route}?review={Uri.EscapeDataString(htmlFile)}";
 
     private LogReplayTab Shown => string.IsNullOrEmpty(Review) ? State.Tab : LogReplayTab.Reviews;
 
@@ -47,6 +49,6 @@ else
     private void ShowTab(LogReplayTab tab)
     {
         State.Tab = tab;
-        if (!string.IsNullOrEmpty(Review)) Navigation.NavigateTo("replay");
+        if (!string.IsNullOrEmpty(Review)) Navigation.NavigateTo(Route);
     }
 }

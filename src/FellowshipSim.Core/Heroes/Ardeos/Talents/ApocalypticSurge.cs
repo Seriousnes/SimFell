@@ -17,7 +17,7 @@ public class ApocalypticSurge : Talent
     public const int StacksGranted = 2;
     public const double CastTimeReductionSeconds = 1.5;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Apocalyptic Surge", EffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, BuffSeconds, MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

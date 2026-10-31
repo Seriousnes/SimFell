@@ -83,6 +83,12 @@
 <TooltipLayer />
 
 @code {
+    private const string ModulePath = JsInterop.ContentRoot + "shell/resultTabs.js";
+
+    private const string AttachFunction = "attach";
+
+    private const string RevealFunction = "reveal";
+
     private ElementReference _resultTabs;
     private IJSObjectReference? _module, _scrolling;
     private bool _listOpen;
@@ -117,14 +123,14 @@
         {
             if (firstRender)
             {
-                _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/shell/resultTabs.js");
-                _scrolling = await _module.InvokeAsync<IJSObjectReference>("attach", _resultTabs);
+                _module = await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
+                _scrolling = await _module.InvokeAsync<IJSObjectReference>(AttachFunction, _resultTabs);
             }
             // A result tab opened or picked from the list comes into view.
             if (_module != null && Tabs.Selected != _revealed)
             {
                 _revealed = Tabs.Selected;
-                if (Tabs.Selected.Closable) await _module.InvokeVoidAsync("reveal", _resultTabs);
+                if (Tabs.Selected.Closable) await _module.InvokeVoidAsync(RevealFunction, _resultTabs);
             }
         }
         catch (JSDisconnectedException)
@@ -156,7 +162,7 @@
 
     private void OnListKeyDown(KeyboardEventArgs keyboard)
     {
-        if (keyboard.Key == "Escape") _listOpen = false;
+        if (keyboard.Key == JsInterop.EscapeKey) _listOpen = false;
     }
 
     public async ValueTask DisposeAsync()
@@ -167,7 +173,7 @@
         {
             if (_scrolling != null)
             {
-                await _scrolling.InvokeVoidAsync("dispose");
+                await _scrolling.InvokeVoidAsync(JsInterop.DisposeFunction);
                 await _scrolling.DisposeAsync();
             }
             if (_module != null) await _module.DisposeAsync();

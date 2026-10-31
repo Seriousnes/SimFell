@@ -13,6 +13,12 @@ internal sealed class FightRecorder
     public const double RollingSeconds = 10.0;
     /// <summary>The fights (the run's first, by seed) whose aura spans are kept, for one typical fight's timeline.</summary>
     public const int SpanFights = 100;
+    /// <summary>The lower edge of the band, as a fraction of the fights.</summary>
+    public const double BandLowFraction = 0.05;
+    /// <summary>The upper edge of the band, as a fraction of the fights.</summary>
+    public const double BandHighFraction = 0.95;
+    /// <summary>A buff with at least this uptime and at most one application in a fight is left out of the buff report.</summary>
+    private const double AlwaysUpUptime = 0.999;
 
     private Tally? _tally;
     private int _fight;
@@ -434,8 +440,8 @@ internal sealed class FightRecorder
             var rolling = Rolling(mean);
             var bandCumulative = Band.Select(b => Cumulative(Array.ConvertAll(b.Damage, d => (double)d))).ToList();
             var bandRolling = Band.Select(b => Rolling(Array.ConvertAll(b.Damage, d => (double)d))).ToList();
-            return new SimTimeline(cumulative, Percentile(bandCumulative, seconds, 0.05), Percentile(bandCumulative, seconds, 0.95),
-                rolling, Percentile(bandRolling, seconds, 0.05), Percentile(bandRolling, seconds, 0.95), RollingSeconds);
+            return new SimTimeline(cumulative, Percentile(bandCumulative, seconds, BandLowFraction), Percentile(bandCumulative, seconds, BandHighFraction),
+                rolling, Percentile(bandRolling, seconds, BandLowFraction), Percentile(bandRolling, seconds, BandHighFraction), RollingSeconds);
         }
 
         /// <summary>Each damage source, most damage first; values are means per fight.</summary>
@@ -471,7 +477,7 @@ internal sealed class FightRecorder
                     tally.MaxStacks, tally.StackCap > 1 ? tally.AtMaxSeconds / span : 0, tally.Gaps > 0 ? tally.GapSeconds / tally.Gaps : 0, tally.LogId,
                     typical != null && typical.TryGetValue(a.Key, out var spans) ? Union(spans) : []);
             })
-            .Where(b => !(b.Uptime >= 0.999 && b.Applications <= 1.0 && b.Refreshes == 0))
+            .Where(b => !(b.Uptime >= AlwaysUpUptime && b.Applications <= 1.0 && b.Refreshes == 0))
             .OrderBy(b => b.OnTarget)
             .ThenByDescending(b => b.Uptime)
             .ToList();

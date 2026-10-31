@@ -1,3 +1,4 @@
+using FellowshipSim.Logs;
 using Microsoft.JSInterop;
 
 namespace FellowshipSim.Web;
@@ -20,12 +21,23 @@ public sealed class BrowserDataFolder(IJSRuntime js)
 
     /// <summary>Reviews kept: each page is several MB, all of it in the page's memory.</summary>
     public const int KeptReviews = 10;
+    /// <summary>Function of the page that loads a module.</summary>
+    private const string ImportFunction = "import";
+
+    /// <summary>Module that copies the files to the browser's IndexedDB.</summary>
+    private const string StorageModule = "./storage.js";
+
+    private const string ListFunction = "list";
+    private const string ReadFunction = "read";
+    private const string WriteFunction = "write";
+    private const string RemoveFunction = "remove";
+
 
     /// <summary>
     /// What the browser keeps nothing of: raw fights, replay scripts, and an API client a visitor saved before the app
     /// stopped taking one.
     /// </summary>
-    private static readonly string[] NotKept = ["fights/", "scripts/", "settings.json"];
+    private static readonly string[] NotKept = [$"{ReplayLibrary.FightsFolder}/", $"{ReplayLibrary.ScriptsFolder}/", "settings.json"];
 
     private static readonly TimeSpan SaveEvery = TimeSpan.FromSeconds(2);
 
@@ -34,22 +46,22 @@ public sealed class BrowserDataFolder(IJSRuntime js)
     private IJSObjectReference? _storage;
 
     private async Task<IJSObjectReference> StorageAsync() =>
-        _storage ??= await js.InvokeAsync<IJSObjectReference>("import", "./storage.js");
+        _storage ??= await js.InvokeAsync<IJSObjectReference>(ImportFunction, StorageModule);
 
     /// <summary>Writes every file the browser keeps into the data folder.</summary>
     public async Task RestoreAsync()
     {
         Directory.CreateDirectory(Root);
         var storage = await StorageAsync();
-        foreach (string key in await storage.InvokeAsync<string[]>("list"))
+        foreach (string key in await storage.InvokeAsync<string[]>(ListFunction))
         {
             // An earlier version kept fights: they go without being read.
             if (NotKept.Any(key.StartsWith))
             {
-                await storage.InvokeVoidAsync("remove", key);
+                await storage.InvokeVoidAsync(RemoveFunction, key);
                 continue;
             }
-            if (await storage.InvokeAsync<string?>("read", key) is not { } text || PathOf(key) is not { } path) continue;
+            if (await storage.InvokeAsync<string?>(ReadFunction, key) is not { } text || PathOf(key) is not { } path) continue;
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             await File.WriteAllTextAsync(path, text);
             _copied[key] = Stamp(path);
@@ -87,12 +99,12 @@ public sealed class BrowserDataFolder(IJSRuntime js)
             present.Add(key);
             var stamp = Stamp(path);
             if (_copied.TryGetValue(key, out var copied) && copied == stamp) continue;
-            await storage.InvokeVoidAsync("write", key, await File.ReadAllTextAsync(path));
+            await storage.InvokeVoidAsync(WriteFunction, key, await File.ReadAllTextAsync(path));
             _copied[key] = stamp;
         }
         foreach (string key in _copied.Keys.Where(k => !present.Contains(k)).ToList())
         {
-            await storage.InvokeVoidAsync("remove", key);
+            await storage.InvokeVoidAsync(RemoveFunction, key);
             _copied.Remove(key);
         }
     }
@@ -105,11 +117,11 @@ public sealed class BrowserDataFolder(IJSRuntime js)
             if (File.Exists(path)) File.Delete(path);
             else if (Directory.Exists(path)) foreach (var file in new DirectoryInfo(path).GetFiles()) file.Delete();
         }
-        var reviews = new DirectoryInfo(Path.Combine(Root, "reviews"));
+        var reviews = new DirectoryInfo(Path.Combine(Root, ReplayLibrary.ReviewsFolder));
         if (!reviews.Exists) return;
-        foreach (var old in reviews.GetFiles("*.summary.json").OrderByDescending(f => f.LastWriteTimeUtc).Skip(KeptReviews))
+        foreach (var old in reviews.GetFiles(ReplayLibrary.SummaryPattern).OrderByDescending(f => f.LastWriteTimeUtc).Skip(KeptReviews))
         {
-            string id = old.Name[..^".summary.json".Length];
+            string id = old.Name[..^ReplayLibrary.SummaryExtension.Length];
             foreach (var file in reviews.GetFiles($"{id}.*")) file.Delete();
         }
     }

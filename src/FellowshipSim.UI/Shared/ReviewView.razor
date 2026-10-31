@@ -17,6 +17,15 @@
 <div @ref="_host" class="review-host"></div>
 
 @code {
+    private const string ModulePath = JsInterop.ContentRoot + "review/reviewView.js";
+
+    private const string ShowFunction = "show";
+
+    private const string SaveFunction = "save";
+
+    /// <summary>What separates a review's ID from the rest of its file name.</summary>
+    private const char FileNameSeparator = '.';
+
     private ElementReference _host;
     private IJSObjectReference? _module;
     private DotNetObjectReference<ReviewView>? _self;
@@ -34,10 +43,10 @@
         _shown = HtmlFile;
         try
         {
-            _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/review/reviewView.js");
+            _module ??= await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
             _self ??= DotNetObjectReference.Create(this);
             _loaded = false;
-            _loaded = await _module.InvokeAsync<bool>("show", _host, ReviewPages.Url(HtmlFile), _self);
+            _loaded = await _module.InvokeAsync<bool>(ShowFunction, _host, ReviewPages.Url(HtmlFile), _self);
             StateHasChanged();
         }
         catch (JSDisconnectedException)
@@ -52,7 +61,7 @@
     {
         string name = Path.GetFileName(HtmlFile);
         string path = Path.Combine(Library.ReviewsDirectory, name);
-        if (!await VisitorReviews.HasAsync(Visitor, name.Split('.')[0]) || !File.Exists(path)) return null;
+        if (!await VisitorReviews.HasAsync(Visitor, name.Split(FileNameSeparator)[0]) || !File.Exists(path)) return null;
         return await File.ReadAllTextAsync(path);
     }
 
@@ -62,7 +71,7 @@
 
     private async Task SaveAsync()
     {
-        if (_module != null) await _module.InvokeVoidAsync("save", _host, Path.GetFileName(HtmlFile));
+        if (_module != null) await _module.InvokeVoidAsync(SaveFunction, _host, Path.GetFileName(HtmlFile));
     }
 
     public async ValueTask DisposeAsync()
@@ -71,7 +80,7 @@
         {
             if (_module != null)
             {
-                await _module.InvokeVoidAsync("dispose", _host);
+                await _module.InvokeVoidAsync(JsInterop.DisposeFunction, _host);
                 await _module.DisposeAsync();
             }
         }

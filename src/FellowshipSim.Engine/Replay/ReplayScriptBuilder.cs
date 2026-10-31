@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Engine;
 using System.Text.Json.Nodes;
 using System.Text.Json;
 
@@ -28,11 +29,122 @@ public static class ReplayScriptBuilder
 
     public const string Schema = FellowshipSim.Engine.Replay.ReplayScript.SchemaVersion;
 
-    private static readonly HashSet<string> AuraTypes =
-    [
-        "applybuff", "applybuffstack", "removebuff", "removebuffstack", "refreshbuff",
-        "applydebuff", "applydebuffstack", "removedebuff", "removedebuffstack", "refreshdebuff"
-    ];
+    /// <summary>The log actor type of a player.</summary>
+    private const string PlayerActorType = "Player";
+
+    /// <summary>The log actor type of a non-player character.</summary>
+    private const string NpcActorType = "NPC";
+
+    /// <summary>The name of the log actor for the environment, which is not an enemy.</summary>
+    private const string EnvironmentActorName = "Environment";
+
+    /// <summary>Property names of the combat log and of the replay script.</summary>
+    private const string TimestampProperty = "timestamp";
+    internal const string NameProperty = "name";
+    private const string TimeProperty = "t";
+    internal const string IdProperty = "id";
+    private const string TypeProperty = "type";
+    private const string TargetIdProperty = "targetID";
+    private const string KindProperty = "kind";
+    private const string SourceIdProperty = FellowshipSim.Logs.FellowshipLogsReports.SourceIdProperty;
+    private const string AbilityGameIdProperty = "abilityGameID";
+    private const string AbilityIdProperty = "ability_id";
+    private const string AmountProperty = "amount";
+    private const string TargetProperty = "target";
+    private const string ResourcesProperty = "resources";
+    private const string MaxHitPointsProperty = "maxHitPoints";
+    private const string MaxHpProperty = "max_hp";
+    private const string MasterDataProperty = FellowshipSim.Logs.FellowshipLogsReports.MasterDataProperty;
+    internal const string FightProperty = FellowshipSim.Logs.FellowshipLogsReports.FightProperty;
+    private const string EnemyProperty = "enemy";
+    private const string AbilityNameProperty = "ability_name";
+    private const string TickProperty = "tick";
+    private const string SubTypeProperty = FellowshipSim.Logs.FellowshipLogsReports.SubTypeProperty;
+    private const string StartTimeProperty = FellowshipSim.Logs.FellowshipLogsReports.StartTimeProperty;
+    private const string StackProperty = "stack";
+    private const string ReportCodeProperty = FellowshipSim.Logs.FellowshipLogsReports.ReportCodeProperty;
+    private const string OverkillProperty = "overkill";
+    private const string MaxProperty = "max";
+    private const string InstanceProperty = "instance";
+    private const string HitTypeProperty = "hitType";
+    private const string HitPointsProperty = "hitPoints";
+    private const string BlockedProperty = "blocked";
+    private const string ActorsProperty = FellowshipSim.Logs.FellowshipLogsReports.ActorsProperty;
+    private const string ActivationProperty = "activation";
+    private const string AbsorbedProperty = "absorbed";
+    internal const string WeaponTraitsProperty = "weaponTraits";
+    private const string ScriptWeaponTraitsProperty = "weapon_traits";
+    private const string UnmitigatedAmountProperty = "unmitigatedAmount";
+    private const string UnmitigatedProperty = "unmitigated";
+    internal const string TraitsProperty = "traits";
+    private const string TargetResourcesProperty = "targetResources";
+    private const string SourceResourcesProperty = "sourceResources";
+    private const string SourceProperty = "source";
+    private const string SchemaProperty = "schema";
+    private const string ReportStartTimeProperty = FellowshipSim.Logs.FellowshipLogsReports.ReportStartTimeProperty;
+    private const string ReasonProperty = "reason";
+    internal const string RankProperty = "rank";
+    internal const string PointsProperty = "points";
+    private const string PlayersProperty = "players";
+    private const string PlayerProperty = "player";
+    private const string ObservationsProperty = "observations";
+    private const string InferredTimeProperty = "inferred_time";
+    private const string IgnoredCastsProperty = "ignored_casts";
+    private const string HpProperty = "hp";
+    private const string ScriptHitTypeProperty = "hit_type";
+    private const string HeroProperty = "hero";
+    private const string GearTraitsProperty = "gear_traits";
+    internal const string GearProperty = "gear";
+    private const string GameIdProperty = "gameID";
+    private const string FriendlyPlayersProperty = FellowshipSim.Logs.FellowshipLogsReports.FriendlyPlayersProperty;
+    private const string FakeProperty = "fake";
+    private const string ExtraAbilityGameIdProperty = "extraAbilityGameID";
+    private const string ExtraAbilityIdProperty = "extra_ability_id";
+    private const string EventsProperty = FellowshipSim.Logs.FellowshipLogsReports.EventsProperty;
+    private const string EventProperty = "event";
+    private const string EnemiesProperty = "enemies";
+    private const string EndTimeProperty = FellowshipSim.Logs.FellowshipLogsReports.EndTimeProperty;
+    private const string DurationSProperty = "duration_s";
+    private const string DurationMsProperty = "duration_ms";
+    private const string DurationProperty = "duration";
+    private const string DungeonModifiersProperty = "dungeon_modifiers";
+    private const string DemiseTProperty = "demise_t";
+    private const string DemiseReasonProperty = "demise_reason";
+    private const string DamageProperty = "damage";
+    private const string CritProperty = "crit";
+    private const string CommandsProperty = "commands";
+    private const string CombatantInfoProperty = "combatant_info";
+    private const string CharacterProperty = FellowshipSim.Logs.FellowshipLogsReports.CharacterProperty;
+    private const string ChannelsProperty = "channels";
+    private const string AurasProperty = "auras";
+    private const string AriseTProperty = "arise_t";
+    private const string AffixesProperty = "affixes";
+    private const string AbilitiesProperty = "abilities";
+    private const string FightIdProperty = "fight_id";
+    private const string FightNameProperty = "fight_name";
+    private const string FightDateProperty = "fight_date";
+
+    /// <summary>Decimal places of a replay script time in seconds.</summary>
+    private const int ScriptTimeDecimals = 3;
+
+    /// <summary>An enemy last seen this long before the fight's end (ms) is demised at that moment; a later one is still alive.</summary>
+    private const double EnemyAliveMarginMs = 2000;
+
+    /// <summary>Events after a cast event searched for a begincast of the same ability.</summary>
+    private const int LoneCastLookaheadEvents = 5;
+
+    /// <summary>Order of a command kind that <see cref="KindOrder"/> does not list.</summary>
+    private const int UnlistedKindOrder = 5;
+
+    /// <summary>One combat log event with its <c>type</c> parsed once.</summary>
+    private sealed record LogEvent(JsonObject Json, LogEventType Type)
+    {
+        public JsonNode? this[string key] => Json[key];
+    }
+
+    private static bool IsAura(LogEventType type) => type is LogEventType.ApplyBuff or LogEventType.ApplyBuffStack or LogEventType.RemoveBuff
+        or LogEventType.RemoveBuffStack or LogEventType.RefreshBuff or LogEventType.ApplyDebuff or LogEventType.ApplyDebuffStack
+        or LogEventType.RemoveDebuff or LogEventType.RemoveDebuffStack or LogEventType.RefreshDebuff;
 
     /// <summary>Smallest change in an enemy's health fraction between two health samples.</summary>
     private const double HealthSampleStep = 0.01;
@@ -46,36 +158,38 @@ public static class ReplayScriptBuilder
     /// <summary>Order of commands at the same moment.</summary>
     private static readonly Dictionary<string, int> KindOrder = new()
     {
-        ["enemy_arise"] = 0, ["enemy_health"] = 1, ["external_aura"] = 1, ["cancel_cast"] = 2, ["stop_channel"] = 3,
-        ["begin_cast"] = 4, ["complete_cast"] = 4, ["cast"] = 4, ["player_revive"] = 1, ["player_death"] = 8, ["enemy_demise"] = 9,
+        [ReplayCommandKind.EnemyArise.LogText()] = 0, [ReplayCommandKind.EnemyHealth.LogText()] = 1, [ReplayCommandKind.ExternalAura.LogText()] = 1,
+        [ReplayCommandKind.CancelCast.LogText()] = 2, [ReplayCommandKind.StopChannel.LogText()] = 3, [ReplayCommandKind.BeginCast.LogText()] = 4,
+        [ReplayCommandKind.CompleteCast.LogText()] = 4, [ReplayCommandKind.Cast.LogText()] = 4, [ReplayCommandKind.PlayerRevive.LogText()] = 1,
+        [ReplayCommandKind.PlayerDeath.LogText()] = 8, [ReplayCommandKind.EnemyDemise.LogText()] = 9,
     };
 
     /// <summary>The players of a raw fight (actor ID, name, hero).</summary>
     public static IReadOnlyList<ReportPlayer> Players(JsonObject raw)
     {
-        var friendly = raw["fight"]?["friendlyPlayers"]?.AsArray().Select(x => x!.GetValue<int>()).ToHashSet() ?? [];
-        return (raw["master_data"]?["actors"]?.AsArray() ?? [])
-            .Where(a => a?["type"]?.GetValue<string>() == "Player" && friendly.Contains(a["id"]!.GetValue<int>()))
-            .Select(a => new ReportPlayer(a!["id"]!.GetValue<int>(), a["name"]?.GetValue<string>() ?? "?", a["subType"]?.GetValue<string>() ?? ""))
+        var friendly = raw[FightProperty]?[FriendlyPlayersProperty]?.AsArray().Select(x => x!.GetValue<int>()).ToHashSet() ?? [];
+        return (raw[MasterDataProperty]?[ActorsProperty]?.AsArray() ?? [])
+            .Where(a => a?[TypeProperty]?.GetValue<string>() == PlayerActorType && friendly.Contains(a[IdProperty]!.GetValue<int>()))
+            .Select(a => new ReportPlayer(a![IdProperty]!.GetValue<int>(), a[NameProperty]?.GetValue<string>() ?? "?", a[SubTypeProperty]?.GetValue<string>() ?? ""))
             .ToList();
     }
 
     public static JsonObject Build(JsonObject raw, int playerId)
     {
-        var fight = raw["fight"]!.AsObject();
-        double f0 = Num(fight["startTime"]);
-        double fightEnd = Num(fight["endTime"]);
+        var fight = raw[FightProperty]!.AsObject();
+        double f0 = Num(fight[StartTimeProperty]);
+        double fightEnd = Num(fight[EndTimeProperty]);
         var actors = new Dictionary<int, JsonNode>();
-        foreach (var actor in raw["master_data"]!["actors"]!.AsArray()) actors[actor!["id"]!.GetValue<int>()] = actor;
+        foreach (var actor in raw[MasterDataProperty]![ActorsProperty]!.AsArray()) actors[actor![IdProperty]!.GetValue<int>()] = actor;
         var abilityNames = new Dictionary<long, string>();
-        foreach (var ability in raw["master_data"]!["abilities"]!.AsArray()) abilityNames[(long)Num(ability!["gameID"])] = ability["name"]?.GetValue<string>() ?? "";
-        var events = Dedupe(raw["events"]!.AsArray());
+        foreach (var ability in raw[MasterDataProperty]![AbilitiesProperty]!.AsArray()) abilityNames[(long)Num(ability![GameIdProperty])] = ability[NameProperty]?.GetValue<string>() ?? "";
+        var events = Dedupe(raw[EventsProperty]!.AsArray()).Select(e => new LogEvent(e, LogEventTypes.Parse(Str(e[TypeProperty])))).ToList();
 
-        double Rel(double ts) => Math.Round((ts - f0) / 1000.0, 3);
+        double Rel(double ts) => Math.Round((ts - f0) / SimTime.MillisecondsPerSecond, ScriptTimeDecimals);
         bool IsEnemy(int? id) => id is { } actorId && actorId != -1 && actors.TryGetValue(actorId, out var actor)
-            && actor["type"]?.GetValue<string>() == "NPC" && actor["name"]?.GetValue<string>() != "Environment";
+            && actor[TypeProperty]?.GetValue<string>() == NpcActorType && actor[NameProperty]?.GetValue<string>() != EnvironmentActorName;
         string AbilityName(long id) => abilityNames.TryGetValue(id, out var knownName) ? knownName : $"ability_{id}";
-        JsonObject Unit(int? id, int instance) => new() { ["id"] = id, ["instance"] = instance };
+        JsonObject Unit(int? id, int instance) => new() { [IdProperty] = id, [InstanceProperty] = instance };
 
         var commands = new List<JsonObject>();
         var obsDamage = new JsonArray();
@@ -92,23 +206,23 @@ public static class ReplayScriptBuilder
         var nameOf = new Dictionary<UnitKey, string>();
         foreach (var logEvent in events)
         {
-            foreach (var prefix in new[] { "source", "target" })
+            foreach (var prefix in new[] { SourceProperty, TargetProperty })
             {
                 int? id = Int(logEvent[$"{prefix}ID"]);
                 if (!IsEnemy(id)) continue;
                 var key = new UnitKey(id!.Value, Instance(logEvent, prefix));
-                double ts = Num(logEvent["timestamp"]);
+                double ts = Num(logEvent[TimestampProperty]);
                 if (!firstSeen.ContainsKey(key)) { firstSeen[key] = ts; order.Add(key); }
                 lastSeen[key] = ts;
-                nameOf[key] = actors[key.Id]["name"]?.GetValue<string>() ?? "";
-                if (logEvent[$"{prefix}Resources"]?["maxHitPoints"] is { } mhp && Num(mhp) > 0)
+                nameOf[key] = actors[key.Id][NameProperty]?.GetValue<string>() ?? "";
+                if (logEvent[$"{prefix}Resources"]?[MaxHitPointsProperty] is { } mhp && Num(mhp) > 0)
                 {
                     maxHp[key] = Math.Max(maxHp.GetValueOrDefault(key), Num(mhp));
                 }
             }
-            if (Str(logEvent["type"]) == "death" && IsEnemy(Int(logEvent["targetID"])))
+            if (logEvent.Type == LogEventType.Death && IsEnemy(Int(logEvent[TargetIdProperty])))
             {
-                deathAt.TryAdd(new UnitKey(Int(logEvent["targetID"])!.Value, Instance(logEvent, "target")), Num(logEvent["timestamp"]));
+                deathAt.TryAdd(new UnitKey(Int(logEvent[TargetIdProperty])!.Value, Instance(logEvent, TargetProperty)), Num(logEvent[TimestampProperty]));
             }
         }
 
@@ -116,24 +230,25 @@ public static class ReplayScriptBuilder
         foreach (var key in order)
         {
             bool died = deathAt.ContainsKey(key);
+            string removalReason = (died ? EnemyRemovalReason.Death : EnemyRemovalReason.LastSeen).LogText();
             double endT = died ? deathAt[key] : lastSeen[key];
             enemies.Add(new JsonObject
             {
-                ["id"] = key.Id, ["instance"] = key.Instance, ["name"] = nameOf[key], ["max_hp"] = maxHp.GetValueOrDefault(key),
-                ["arise_t"] = Rel(firstSeen[key]), ["demise_t"] = Rel(endT), ["demise_reason"] = died ? "death" : "last_seen",
+                [IdProperty] = key.Id, [InstanceProperty] = key.Instance, [NameProperty] = nameOf[key], [MaxHpProperty] = maxHp.GetValueOrDefault(key),
+                [AriseTProperty] = Rel(firstSeen[key]), [DemiseTProperty] = Rel(endT), [DemiseReasonProperty] = removalReason,
             });
             commands.Add(new JsonObject
             {
-                ["t"] = Rel(firstSeen[key]), ["kind"] = "enemy_arise", ["enemy"] = Unit(key.Id, key.Instance),
-                ["name"] = nameOf[key], ["max_hp"] = maxHp.GetValueOrDefault(key),
+                [TimeProperty] = Rel(firstSeen[key]), [KindProperty] = ReplayCommandKind.EnemyArise.LogText(), [EnemyProperty] = Unit(key.Id, key.Instance),
+                [NameProperty] = nameOf[key], [MaxHpProperty] = maxHp.GetValueOrDefault(key),
             });
             // An enemy still alive at the end of the fight is not demised.
-            if (died || endT < fightEnd - 2000)
+            if (died || endT < fightEnd - EnemyAliveMarginMs)
             {
                 commands.Add(new JsonObject
                 {
-                    ["t"] = Rel(endT), ["kind"] = "enemy_demise", ["enemy"] = Unit(key.Id, key.Instance),
-                    ["reason"] = died ? "death" : "last_seen",
+                    [TimeProperty] = Rel(endT), [KindProperty] = ReplayCommandKind.EnemyDemise.LogText(), [EnemyProperty] = Unit(key.Id, key.Instance),
+                    [ReasonProperty] = removalReason,
                 });
             }
         }
@@ -142,51 +257,51 @@ public static class ReplayScriptBuilder
         var lastFraction = new Dictionary<UnitKey, double>();
         foreach (var logEvent in events)
         {
-            if (Str(logEvent["type"]) != "damage" || !IsEnemy(Int(logEvent["targetID"]))) continue;
-            var res = logEvent["targetResources"];
-            if (res?["hitPoints"] is not { } hpNode || res["maxHitPoints"] is not { } maxNode || Num(maxNode) == 0) continue;
+            if (logEvent.Type != LogEventType.Damage || !IsEnemy(Int(logEvent[TargetIdProperty]))) continue;
+            var res = logEvent[TargetResourcesProperty];
+            if (res?[HitPointsProperty] is not { } hpNode || res[MaxHitPointsProperty] is not { } maxNode || Num(maxNode) == 0) continue;
             double hp = Num(hpNode), maxNow = Num(maxNode);
             // A killing blow logs the health below 0 as an unsigned 32-bit number (1p7AXmHfwV9CYMxR fight 30 @ 157.097:
             // 4294950962 of 726971).
             if (hp > maxNow) hp = 0;
-            var key = new UnitKey(Int(logEvent["targetID"])!.Value, Instance(logEvent, "target"));
+            var key = new UnitKey(Int(logEvent[TargetIdProperty])!.Value, Instance(logEvent, TargetProperty));
             double fraction = hp / maxNow;
             if (lastFraction.TryGetValue(key, out var last) && Math.Abs(fraction - last) < HealthSampleStep) continue;
             lastFraction[key] = fraction;
             commands.Add(new JsonObject
             {
-                ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "enemy_health", ["enemy"] = Unit(key.Id, key.Instance),
-                ["hp"] = hp, ["max_hp"] = maxNode.DeepClone(),
+                [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [KindProperty] = ReplayCommandKind.EnemyHealth.LogText(), [EnemyProperty] = Unit(key.Id, key.Instance),
+                [HpProperty] = hp, [MaxHpProperty] = maxNode.DeepClone(),
             });
         }
 
         // ---- Player deaths -------------------------------------------------------------------
         // A dead player's events log their health below 0 as an unsigned 32-bit number (above their maximum). Many returns
         // log no resurrect event (a release, or a wipe): the player is back at their first event with health in range.
-        bool Alive(JsonNode logEvent, string prefix) => logEvent[$"{prefix}Resources"] is { } unitResources && unitResources["hitPoints"] is { } hpNode
-            && unitResources["maxHitPoints"] is { } maxNode && Num(hpNode) > 0 && Num(hpNode) <= Num(maxNode);
+        bool Alive(LogEvent logEvent, string prefix) => logEvent[$"{prefix}Resources"] is { } unitResources && unitResources[HitPointsProperty] is { } hpNode
+            && unitResources[MaxHitPointsProperty] is { } maxNode && Num(hpNode) > 0 && Num(hpNode) <= Num(maxNode);
         bool dead = false;
         foreach (var logEvent in events)
         {
-            string type = Str(logEvent["type"]);
-            bool onPlayer = Int(logEvent["targetID"]) == playerId, byPlayer = Int(logEvent["sourceID"]) == playerId;
+            var type = logEvent.Type;
+            bool onPlayer = Int(logEvent[TargetIdProperty]) == playerId, byPlayer = Int(logEvent[SourceIdProperty]) == playerId;
             if (!dead)
             {
-                if (type != "death" || !onPlayer) continue;
+                if (type != LogEventType.Death || !onPlayer) continue;
                 dead = true;
-                commands.Add(new JsonObject { ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "player_death" });
+                commands.Add(new JsonObject { [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [KindProperty] = ReplayCommandKind.PlayerDeath.LogText() });
                 continue;
             }
-            if ((type == "resurrect" && onPlayer) || (byPlayer && Alive(logEvent, "source")) || (onPlayer && Alive(logEvent, "target")))
+            if ((type == LogEventType.Resurrect && onPlayer) || (byPlayer && Alive(logEvent, SourceProperty)) || (onPlayer && Alive(logEvent, TargetProperty)))
             {
                 dead = false;
-                commands.Add(new JsonObject { ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "player_revive" });
+                commands.Add(new JsonObject { [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [KindProperty] = ReplayCommandKind.PlayerRevive.LogText() });
             }
         }
 
         // ---- Player actions ------------------------------------------------------------------
-        var playerEvents = events.Where(e => Int(e["sourceID"]) == playerId
-            && Str(e["type"]) is "begincast" or "cast" or "beginchannel" or "endchannel").ToList();
+        var playerEvents = events.Where(e => Int(e[SourceIdProperty]) == playerId
+            && e.Type is LogEventType.BeginCast or LogEventType.Cast or LogEventType.BeginChannel or LogEventType.EndChannel).ToList();
 
         // The log has no cancel event: a begincast that never completes was cancelled. The exact moment is unknown, so it
         // is placed at the player's first action after the cast began (actions used while casting without breaking it,
@@ -197,9 +312,9 @@ public static class ReplayScriptBuilder
         void CancelOpen(double fallbackT)
         {
             var cancel = (JsonObject)openCast!.DeepClone();
-            cancel["t"] = actionsSinceOpen.Count > 0 ? actionsSinceOpen[0] : fallbackT;
-            cancel["kind"] = "cancel_cast";
-            cancel["inferred_time"] = true;
+            cancel[TimeProperty] = actionsSinceOpen.Count > 0 ? actionsSinceOpen[0] : fallbackT;
+            cancel[KindProperty] = ReplayCommandKind.CancelCast.LogText();
+            cancel[InferredTimeProperty] = true;
             commands.Add(cancel);
         }
 
@@ -207,32 +322,32 @@ public static class ReplayScriptBuilder
         for (int i = 0; i < playerEvents.Count; i++)
         {
             var logEvent = playerEvents[i];
-            long gid = (long)Num(logEvent["abilityGameID"]);
+            long gid = (long)Num(logEvent[AbilityGameIdProperty]);
             JsonObject Base() => new()
             {
-                ["t"] = Rel(Num(logEvent["timestamp"])), ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
-                ["target"] = Unit(Int(logEvent["targetID"]) ?? -1, Instance(logEvent, "target")),
+                [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [AbilityIdProperty] = gid, [AbilityNameProperty] = AbilityName(gid),
+                [TargetProperty] = Unit(Int(logEvent[TargetIdProperty]) ?? -1, Instance(logEvent, TargetProperty)),
             };
-            double eventTime = Rel(Num(logEvent["timestamp"]));
-            switch (Str(logEvent["type"]))
+            double eventTime = Rel(Num(logEvent[TimestampProperty]));
+            switch (logEvent.Type)
             {
-                case "begincast":
+                case LogEventType.BeginCast:
                     if (openCast != null) CancelOpen(eventTime);
                     openCast = Base();
-                    openTs = Num(logEvent["timestamp"]);
+                    openTs = Num(logEvent[TimestampProperty]);
                     actionsSinceOpen.Clear();
-                    commands.Add(With(Base(), "kind", "begin_cast"));
+                    commands.Add(With(Base(), KindProperty, ReplayCommandKind.BeginCast.LogText()));
                     break;
 
-                case "cast":
-                    if (logEvent["fake"]?.GetValue<bool>() == true) break; // duplicate activation marker emitted alongside begincast
-                    if (openCast != null && (long)Num(openCast["ability_id"]) == gid)
+                case LogEventType.Cast:
+                    if (logEvent[FakeProperty]?.GetValue<bool>() == true) break; // duplicate activation marker emitted alongside begincast
+                    if (openCast != null && (long)Num(openCast[AbilityIdProperty]) == gid)
                     {
-                        commands.Add(With(Base(), "kind", "complete_cast"));
+                        commands.Add(With(Base(), KindProperty, ReplayCommandKind.CompleteCast.LogText()));
                         openCast = null;
                         break;
                     }
-                    if (openCast != null && Num(logEvent["timestamp"]) - openTs > MaxCastWindowMs)
+                    if (openCast != null && Num(logEvent[TimestampProperty]) - openTs > MaxCastWindowMs)
                     {
                         CancelOpen(eventTime);
                         openCast = null;
@@ -240,24 +355,24 @@ public static class ReplayScriptBuilder
                     if (openCast != null) actionsSinceOpen.Add(eventTime);
                     // A lone cast event right before the same ability's begincast is not a real activation (the game logs
                     // it when a press does not go through; e.g. Chronoshift @ 124.882 then begincast @ 125.047).
-                    bool lone = playerEvents.Skip(i + 1).Take(5).Any(n => Str(n["type"]) == "begincast"
-                        && (long)Num(n["abilityGameID"]) == gid && Num(n["timestamp"]) - Num(logEvent["timestamp"]) <= LoneCastBeforeBeginCastMs);
+                    bool lone = playerEvents.Skip(i + 1).Take(LoneCastLookaheadEvents).Any(n => n.Type == LogEventType.BeginCast
+                        && (long)Num(n[AbilityGameIdProperty]) == gid && Num(n[TimestampProperty]) - Num(logEvent[TimestampProperty]) <= LoneCastBeforeBeginCastMs);
                     if (lone)
                     {
-                        ignoredCasts.Add(With(Base(), "reason", "cast event right before its own begincast"));
+                        ignoredCasts.Add(With(Base(), ReasonProperty, "cast event right before its own begincast"));
                         break;
                     }
                     // Instant cast. If a cast is open, the engine decides whether this ability may be used while casting.
-                    commands.Add(With(Base(), "kind", "cast"));
+                    commands.Add(With(Base(), KindProperty, ReplayCommandKind.Cast.LogText()));
                     break;
 
-                case "beginchannel":
-                    obsChannels.Add(With(Base(), "kind", "begin_channel"));
+                case LogEventType.BeginChannel:
+                    obsChannels.Add(With(Base(), KindProperty, ReplayCommandKind.BeginChannel.LogText()));
                     break;
 
-                case "endchannel":
-                    obsChannels.Add(With(Base(), "kind", "end_channel"));
-                    commands.Add(With(Base(), "kind", "stop_channel"));
+                case LogEventType.EndChannel:
+                    obsChannels.Add(With(Base(), KindProperty, ReplayCommandKind.EndChannel.LogText()));
+                    commands.Add(With(Base(), KindProperty, ReplayCommandKind.StopChannel.LogText()));
                     break;
             }
         }
@@ -266,111 +381,111 @@ public static class ReplayScriptBuilder
         // ---- Auras, damage, resources --------------------------------------------------------
         foreach (var logEvent in events)
         {
-            string type = Str(logEvent["type"]);
-            int? src = Int(logEvent["sourceID"]), tgt = Int(logEvent["targetID"]);
-            if (AuraTypes.Contains(type))
+            var type = logEvent.Type;
+            int? src = Int(logEvent[SourceIdProperty]), tgt = Int(logEvent[TargetIdProperty]);
+            if (IsAura(type))
             {
-                long gid = (long)Num(logEvent["abilityGameID"]);
+                long gid = (long)Num(logEvent[AbilityGameIdProperty]);
                 var rec = new JsonObject
                 {
-                    ["t"] = Rel(Num(logEvent["timestamp"])), ["type"] = type, ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
-                    ["source"] = Unit(src, Instance(logEvent, "source")), ["target"] = Unit(tgt, Instance(logEvent, "target")),
-                    ["stack"] = logEvent["stack"]?.DeepClone(), ["duration_ms"] = logEvent["duration"]?.DeepClone(),
-                    ["extra_ability_id"] = logEvent["extraAbilityGameID"]?.DeepClone(),
+                    [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [TypeProperty] = Str(logEvent[TypeProperty]), [AbilityIdProperty] = gid, [AbilityNameProperty] = AbilityName(gid),
+                    [SourceProperty] = Unit(src, Instance(logEvent, SourceProperty)), [TargetProperty] = Unit(tgt, Instance(logEvent, TargetProperty)),
+                    [StackProperty] = logEvent[StackProperty]?.DeepClone(), [DurationMsProperty] = logEvent[DurationProperty]?.DeepClone(),
+                    [ExtraAbilityIdProperty] = logEvent[ExtraAbilityGameIdProperty]?.DeepClone(),
                 };
                 if (tgt == playerId && src == playerId) obsAuras.Add(rec);
                 // Buffs from others on the player, and debuffs from others on enemies: engine inputs.
-                else if (tgt == playerId || (IsEnemy(tgt) && src != playerId)) commands.Add(With(rec, "kind", "external_aura"));
+                else if (tgt == playerId || (IsEnemy(tgt) && src != playerId)) commands.Add(With(rec, KindProperty, ReplayCommandKind.ExternalAura.LogText()));
                 else if (IsEnemy(tgt) && src == playerId) obsAuras.Add(rec);
             }
-            else if (type == "damage" && src == playerId && IsEnemy(tgt))
+            else if (type == LogEventType.Damage && src == playerId && IsEnemy(tgt))
             {
                 // Only damage to enemies: party mechanics logged as the player hurting themselves (Xavian's Stagger) are not ours.
-                long gid = (long)Num(logEvent["abilityGameID"]);
+                long gid = (long)Num(logEvent[AbilityGameIdProperty]);
                 obsDamage.Add(new JsonObject
                 {
-                    ["t"] = Rel(Num(logEvent["timestamp"])), ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
-                    ["target"] = Unit(tgt, Instance(logEvent, "target")),
-                    ["amount"] = logEvent["amount"]?.DeepClone() ?? 0, ["unmitigated"] = logEvent["unmitigatedAmount"]?.DeepClone(),
-                    ["absorbed"] = logEvent["absorbed"]?.DeepClone() ?? 0, ["blocked"] = logEvent["blocked"]?.DeepClone() ?? 0, ["overkill"] = logEvent["overkill"]?.DeepClone() ?? 0,
-                    ["crit"] = Int(logEvent["hitType"]) is HitTypeCrit or HitTypeGrievousCrit, ["hit_type"] = logEvent["hitType"]?.DeepClone(), ["tick"] = logEvent["tick"]?.GetValue<bool>() ?? false,
+                    [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [AbilityIdProperty] = gid, [AbilityNameProperty] = AbilityName(gid),
+                    [TargetProperty] = Unit(tgt, Instance(logEvent, TargetProperty)),
+                    [AmountProperty] = logEvent[AmountProperty]?.DeepClone() ?? 0, [UnmitigatedProperty] = logEvent[UnmitigatedAmountProperty]?.DeepClone(),
+                    [AbsorbedProperty] = logEvent[AbsorbedProperty]?.DeepClone() ?? 0, [BlockedProperty] = logEvent[BlockedProperty]?.DeepClone() ?? 0, [OverkillProperty] = logEvent[OverkillProperty]?.DeepClone() ?? 0,
+                    [CritProperty] = Int(logEvent[HitTypeProperty]) is HitTypeCrit or HitTypeGrievousCrit, [ScriptHitTypeProperty] = logEvent[HitTypeProperty]?.DeepClone(), [TickProperty] = logEvent[TickProperty]?.GetValue<bool>() ?? false,
                 });
             }
 
-            if (src == playerId && logEvent["sourceResources"]?["resources"] is JsonArray { Count: > 0 } resources)
+            if (src == playerId && logEvent[SourceResourcesProperty]?[ResourcesProperty] is JsonArray { Count: > 0 } resources)
             {
                 var byType = new JsonObject();
                 foreach (var resource in resources)
                 {
-                    byType[Int(resource!["type"])!.Value.ToString()] = new JsonObject { ["amount"] = resource["amount"]?.DeepClone(), ["max"] = resource["max"]?.DeepClone() };
+                    byType[Int(resource![TypeProperty])!.Value.ToString()] = new JsonObject { [AmountProperty] = resource[AmountProperty]?.DeepClone(), [MaxProperty] = resource[MaxProperty]?.DeepClone() };
                 }
                 obsResources.Add(new JsonObject
                 {
-                    ["t"] = Rel(Num(logEvent["timestamp"])), ["event"] = type, ["ability_id"] = logEvent["abilityGameID"]?.DeepClone(),
-                    ["activation"] = logEvent["activation"]?.GetValue<bool>() == true, ["resources"] = byType,
+                    [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [EventProperty] = Str(logEvent[TypeProperty]), [AbilityIdProperty] = logEvent[AbilityGameIdProperty]?.DeepClone(),
+                    [ActivationProperty] = logEvent[ActivationProperty]?.GetValue<bool>() == true, [ResourcesProperty] = byType,
                 });
             }
         }
 
         var sortedCommands = commands
-            .OrderBy(c => Num(c["t"]))
-            .ThenBy(c => KindOrder.GetValueOrDefault(Str(c["kind"]), 5))
+            .OrderBy(c => Num(c[TimeProperty]))
+            .ThenBy(c => KindOrder.GetValueOrDefault(Str(c[KindProperty]), UnlistedKindOrder))
             .ToList();
 
         // Every player's augmentation ranks (buffs other players give scale with the giver's rank).
         var players = new JsonObject();
-        foreach (var logEvent in events.Where(e => Str(e["type"]) == "combatantinfo"))
+        foreach (var logEvent in events.Where(e => e.Type == LogEventType.CombatantInfo))
         {
             var gearTraits = new Dictionary<string, int>();
-            foreach (var item in logEvent["gear"]?.AsArray() ?? [])
+            foreach (var item in logEvent[GearProperty]?.AsArray() ?? [])
             {
-                foreach (var tr in item?["traits"]?.AsArray() ?? [])
+                foreach (var tr in item?[TraitsProperty]?.AsArray() ?? [])
                 {
-                    string name = Str(tr!["name"]);
-                    gearTraits[name] = gearTraits.GetValueOrDefault(name) + (Int(tr["rank"]) ?? 1);
+                    string name = Str(tr![NameProperty]);
+                    gearTraits[name] = gearTraits.GetValueOrDefault(name) + (Int(tr[RankProperty]) ?? 1);
                 }
             }
             var weaponTraits = new JsonObject();
-            foreach (var weaponTrait in logEvent["weaponTraits"]?.AsArray() ?? []) weaponTraits[Int(weaponTrait!["id"])!.Value.ToString()] = Int(weaponTrait["points"]) ?? 0;
-            int sid = Int(logEvent["sourceID"])!.Value;
+            foreach (var weaponTrait in logEvent[WeaponTraitsProperty]?.AsArray() ?? []) weaponTraits[Int(weaponTrait![IdProperty])!.Value.ToString()] = Int(weaponTrait[PointsProperty]) ?? 0;
+            int sid = Int(logEvent[SourceIdProperty])!.Value;
             players[sid.ToString()] = new JsonObject
             {
-                ["name"] = actors.TryGetValue(sid, out var who) ? who["name"]?.DeepClone() : null,
-                ["gear_traits"] = new JsonObject(gearTraits.Select(kv => KeyValuePair.Create(kv.Key, (JsonNode?)kv.Value))),
+                [NameProperty] = actors.TryGetValue(sid, out var who) ? who[NameProperty]?.DeepClone() : null,
+                [GearTraitsProperty] = new JsonObject(gearTraits.Select(kv => KeyValuePair.Create(kv.Key, (JsonNode?)kv.Value))),
                 // weapon-tree augmentation IDs are 3,000,000 + datamine augmentation ID
-                ["weapon_traits"] = weaponTraits,
+                [ScriptWeaponTraitsProperty] = weaponTraits,
             };
         }
 
         actors.TryGetValue(playerId, out var player);
-        string? playerName = player?["name"]?.GetValue<string>();
-        string? hero = player?["subType"]?.GetValue<string>();
-        var combatant = events.FirstOrDefault(e => Str(e["type"]) == "combatantinfo" && Int(e["sourceID"]) == playerId);
+        string? playerName = player?[NameProperty]?.GetValue<string>();
+        string? hero = player?[SubTypeProperty]?.GetValue<string>();
+        var combatant = events.FirstOrDefault(e => e.Type == LogEventType.CombatantInfo && Int(e[SourceIdProperty]) == playerId);
 
         return new JsonObject
         {
-            ["schema"] = Schema,
-            ["report_code"] = raw["report_code"]?.DeepClone(),
-            ["fight_id"] = fight["id"]?.DeepClone(),
-            ["fight_name"] = fight["name"]?.DeepClone(),
-            ["fight_date"] = FightDate(raw),
-            ["duration_s"] = Rel(fightEnd),
-            ["dungeon_modifiers"] = events.FirstOrDefault(e => Str(e["type"]) == "dungeonstart")?["affixes"]?.DeepClone() ?? new JsonArray(),
-            ["player"] = new JsonObject { ["id"] = playerId, ["name"] = playerName, ["hero"] = hero },
-            ["combatant_info"] = combatant?.DeepClone(),
-            ["players"] = players,
+            [SchemaProperty] = Schema,
+            [ReportCodeProperty] = raw[ReportCodeProperty]?.DeepClone(),
+            [FightIdProperty] = fight[IdProperty]?.DeepClone(),
+            [FightNameProperty] = fight[NameProperty]?.DeepClone(),
+            [FightDateProperty] = FightDate(raw),
+            [DurationSProperty] = Rel(fightEnd),
+            [DungeonModifiersProperty] = events.FirstOrDefault(e => e.Type == LogEventType.DungeonStart)?[AffixesProperty]?.DeepClone() ?? new JsonArray(),
+            [PlayerProperty] = new JsonObject { [IdProperty] = playerId, [NameProperty] = playerName, [HeroProperty] = hero },
+            [CombatantInfoProperty] = combatant?.Json.DeepClone(),
+            [PlayersProperty] = players,
             // The character as it was in this fight (its combatantinfo event).
-            ["character"] = combatant == null ? null
-                : JsonSerializer.SerializeToNode(CharacterReader.FromCombatantInfo(combatant.AsObject(), playerName ?? "player", hero ?? "")),
-            ["enemies"] = enemies,
-            ["commands"] = new JsonArray(sortedCommands.Select(c => (JsonNode?)c).ToArray()),
-            ["ignored_casts"] = ignoredCasts,
-            ["observations"] = new JsonObject
+            [CharacterProperty] = combatant == null ? null
+                : JsonSerializer.SerializeToNode(CharacterReader.FromCombatantInfo(combatant.Json, playerName ?? "player", hero ?? "")),
+            [EnemiesProperty] = enemies,
+            [CommandsProperty] = new JsonArray(sortedCommands.Select(c => (JsonNode?)c).ToArray()),
+            [IgnoredCastsProperty] = ignoredCasts,
+            [ObservationsProperty] = new JsonObject
             {
-                ["damage"] = obsDamage,
-                ["auras"] = obsAuras,
-                ["resources"] = obsResources,
-                ["channels"] = obsChannels,
+                [DamageProperty] = obsDamage,
+                [AurasProperty] = obsAuras,
+                [ResourcesProperty] = obsResources,
+                [ChannelsProperty] = obsChannels,
             },
         };
     }
@@ -378,8 +493,8 @@ public static class ReplayScriptBuilder
     /// <summary>When the fight was logged (UTC, ISO 8601), or null if the raw fight has no report start time.</summary>
     private static string? FightDate(JsonObject raw)
     {
-        if (raw["report_start_time"] is not { } start) return null;
-        double ms = Num(start) + Num(raw["fight"]?["startTime"]);
+        if (raw[ReportStartTimeProperty] is not { } start) return null;
+        double ms = Num(start) + Num(raw[FightProperty]?[StartTimeProperty]);
         return DateTimeOffset.FromUnixTimeMilliseconds((long)ms).UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
     }
 
@@ -393,7 +508,7 @@ public static class ReplayScriptBuilder
             if (node is not JsonObject logEvent) continue;
             if (seen.Add(Canonical(logEvent))) list.Add(logEvent);
         }
-        return list.OrderBy(e => Num(e["timestamp"])).ToList();
+        return list.OrderBy(e => Num(e[TimestampProperty])).ToList();
     }
 
     private static string Canonical(JsonNode? node) => node switch
@@ -410,7 +525,7 @@ public static class ReplayScriptBuilder
         return jsonObject;
     }
 
-    private static int Instance(JsonNode logEvent, string prefix) => Int(logEvent[$"{prefix}Instance"]) ?? 1;
+    private static int Instance(LogEvent logEvent, string prefix) => Int(logEvent[$"{prefix}Instance"]) ?? 1;
     private static string Str(JsonNode? node) => node?.GetValue<string>() ?? "";
     private static int? Int(JsonNode? node) => node == null ? null : (int)Num(node);
     private static double Num(JsonNode? node)

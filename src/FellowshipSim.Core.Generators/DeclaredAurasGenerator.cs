@@ -16,6 +16,9 @@ namespace FellowshipSim.Core.Generators;
 public sealed class DeclaredAurasGenerator : IIncrementalGenerator
 {
     private const string AuraDefName = "FellowshipSim.Core.Domain.AuraDef";
+    private const string HintName = "AuraDef.Declared.g.cs";
+    private const char EntrySeparator = '|';
+    private const string FieldSeparator = ",";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -47,7 +50,7 @@ public sealed class DeclaredAurasGenerator : IIncrementalGenerator
                 }
             }
         }
-        return fields.Count == 0 ? null : type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + "|" + string.Join(",", fields);
+        return fields.Count == 0 ? null : type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + EntrySeparator + string.Join(FieldSeparator, fields);
     }
 
     private static void Emit(SourceProductionContext spc, ImmutableArray<string> classes)
@@ -65,11 +68,11 @@ public sealed class DeclaredAurasGenerator : IIncrementalGenerator
         source.AppendLine("    {");
         foreach (string entry in classes.Distinct())
         {
-            int bar = entry.IndexOf('|');
-            source.AppendLine($"        [typeof({entry.Substring(0, bar)})] = [{entry.Substring(bar + 1).Replace(",", ", ")}],");
+            int bar = entry.IndexOf(EntrySeparator);
+            source.AppendLine($"        [typeof({entry.Substring(0, bar)})] = [{entry.Substring(bar + 1).Replace(FieldSeparator, ", ")}],");
         }
         source.AppendLine("    };");
         source.AppendLine("}");
-        spc.AddSource("AuraDef.Declared.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
+        spc.AddSource(HintName, SourceText.From(source.ToString(), Encoding.UTF8));
     }
 }

@@ -19,7 +19,7 @@ public class MatriarchMacabre : MaraAbility
     public const double ClonePower = 0.5;
     public const double CloneDelaySeconds = 0.335;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Matriarch Macabre", BuffEffectId, BuffSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds,
         modifiers: StatModifier.More(StatType.DamageScale, BuffDamage));
 
     /// <summary>

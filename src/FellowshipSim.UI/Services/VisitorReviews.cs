@@ -9,6 +9,8 @@ namespace FellowshipSim.UI.Services;
 /// </summary>
 public sealed class VisitorReviews(ReplayLibrary library, IBlobStore store)
 {
+    private const string Folder = ReplayLibrary.ReviewsFolder;
+
     public Task AddAsync(Visitor visitor, ReviewSummary review, CancellationToken ct = default) =>
         visitor.OwnsDataFolder ? Task.CompletedTask : store.WriteAsync(KeyOf(visitor, review.Id), review.Id, ct);
 
@@ -16,7 +18,7 @@ public sealed class VisitorReviews(ReplayLibrary library, IBlobStore store)
     public async Task<IReadOnlyList<ReviewSummary>> ListAsync(Visitor visitor, CancellationToken ct = default)
     {
         if (visitor.OwnsDataFolder) return library.ListReviews();
-        return (await store.ListAsync(visitor.Key("reviews"), ct))
+        return (await store.ListAsync(visitor.Key(Folder), ct))
             .Select(key => library.GetReview(key[(key.LastIndexOf('/') + 1)..]))
             .OfType<ReviewSummary>()
             .OrderByDescending(r => r.CreatedAt)
@@ -27,5 +29,5 @@ public sealed class VisitorReviews(ReplayLibrary library, IBlobStore store)
     public async Task<bool> HasAsync(Visitor visitor, string reviewId, CancellationToken ct = default) =>
         visitor.OwnsDataFolder || DiskBlobStore.IsSegment(reviewId) && await store.ReadAsync(KeyOf(visitor, reviewId), ct) != null;
 
-    private static string KeyOf(Visitor visitor, string reviewId) => visitor.Key($"reviews/{reviewId}");
+    private static string KeyOf(Visitor visitor, string reviewId) => visitor.Key($"{Folder}/{reviewId}");
 }

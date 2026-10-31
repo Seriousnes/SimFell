@@ -1,3 +1,5 @@
+using FellowshipSim.Core.Heroes.Mara;
+
 namespace FellowshipSim.Core.Customization.Legendaries;
 
 /// <summary>
@@ -8,18 +10,19 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class DrenchedInBlood : Legendary
 {
     public const int PowerId = 421;
+    public const string PowerName = "Drenched in Blood";
     public const int RingItemId = 5223;
     public const int ChestItemId = 5898;
     public const int BuffEffectId = 2262;
     public const double BuffSeconds = 8.0;
     public const double ExpertiseBonus = 0.24;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Drenched in Blood", BuffEffectId, BuffSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect(PowerName, BuffEffectId, BuffSeconds,
         modifiers: StatModifier.Add(StatType.Expertise, ExpertiseBonus));
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Drenched in Blood";
-    public override string HeroName => "Mara";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Mara);
     public override IReadOnlyList<int> ItemIds => [RingItemId, ChestItemId];
 
     public override void Bind(Hero hero) => hero.OnSpiritRefund += (_, _, ctx) => hero.Auras.Apply(Buff, ctx.CurrentTime);

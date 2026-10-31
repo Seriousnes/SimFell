@@ -14,7 +14,7 @@ public class MartialInitiative : Aspect
     /// <summary>The buff lasts this fraction of the weapon ability's default cooldown.</summary>
     public static readonly double[] WeaponCooldownFractionByRank = [0.1, 0.18, 0.25, 0.32];
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Martial Initiative", BuffEffectId,
+    public static readonly AuraDef Buff = AuraDef.Effect(AspectName, BuffEffectId,
         modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, BuffDamageTaken), StatModifier.Increased(StatType.PrimaryAttributeMultiplier, BuffPrimaryStat)]);
 
     public override int Id => AspectId;

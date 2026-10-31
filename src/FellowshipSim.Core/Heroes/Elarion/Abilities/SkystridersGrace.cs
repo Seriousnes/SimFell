@@ -13,7 +13,7 @@ public class SkystridersGrace : ElarionAbility
     public const double BuffSeconds = 20.0;
     public const double BuffHaste = 0.3;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Skystrider's Grace", BuffEffectId, BuffSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds,
         modifiers: StatModifier.Add(StatType.Haste, BuffHaste));
 
     public SkystridersGrace(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)

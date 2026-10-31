@@ -12,6 +12,8 @@ namespace FellowshipSim.UI;
 
 public static class SimFellUIServiceCollectionExtensions
 {
+    private static readonly TimeSpan LogsClientTimeout = TimeSpan.FromMinutes(2);
+
     /// <summary>
     /// The app services the pages inject: the data folder at <paramref name="dataDirectory"/> (<see cref="ReplayLibrary"/>),
     /// <see cref="LogsSettingsStore"/>, <see cref="ActionListStore"/>, the <see cref="SimJobQueue"/> with
@@ -24,7 +26,7 @@ public static class SimFellUIServiceCollectionExtensions
     public static IServiceCollection AddSimFellUI(this IServiceCollection services, string dataDirectory, SimJobQueueOptions? jobs = null)
     {
         var library = new ReplayLibrary(dataDirectory);
-        services.AddHttpClient(LogsSettingsStore.HttpClientName, c => c.Timeout = TimeSpan.FromMinutes(2));
+        services.AddHttpClient(LogsSettingsStore.HttpClientName, c => c.Timeout = LogsClientTimeout);
         services.AddSingleton(library);
         services.TryAddSingleton<IBlobStore>(new DiskBlobStore(library.DataDirectory));
         services.AddSingleton<LogsSignIn>();

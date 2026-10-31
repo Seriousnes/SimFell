@@ -15,7 +15,7 @@ public class FarBeyondDriven : Talent
     public const int MaxStacks = 5;
     public const double SpiritPerStack = 0.015;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Far Beyond Driven", EffectId, BuffSeconds, MaxStacks,
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, BuffSeconds, MaxStacks,
         StatModifier.Add(StatType.Spirit, SpiritPerStack));
 
     public override string Name => TalentName;

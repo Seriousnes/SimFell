@@ -12,16 +12,39 @@ namespace FellowshipSim.Benchmarks;
 /// </summary>
 public static class Fight
 {
+    public const string DefaultWorkload = McWorkload;
+    public const string McWorkload = "mc";
+    public const string Mc8Workload = "mc8";
+    public const string McIdleWorkload = "mc-idle";
+    public const string Mc8IdleWorkload = "mc8-idle";
+    public const string FreeDiceWorkload = "freedice";
+
+    private const string FrostBoltAction = "frost_bolt";
+    private const char CommentMarker = '#';
+    private const string FixturesFolder = "Fixtures";
+    private const string SolutionFile = "FellowshipSim.slnx";
+    private const string FixtureCharacterFile = "rime_character.json";
+    private const string FixtureActionListFile = "rime.simc";
+
+    /// <summary>Length of a Monte Carlo fight, in seconds.</summary>
+    private const int DurationSeconds = 300;
+
+    /// <summary>Fight time of the hero the micro-benchmarks start from, in seconds.</summary>
+    private const int MidFightSeconds = 60;
+
+    /// <summary>Targets of the multi-target workloads.</summary>
+    private const int MultiTargets = 8;
+
     /// <summary>Length of a Monte Carlo fight.</summary>
-    public static readonly SimTime Duration = SimTime.FromSeconds(300);
+    public static readonly SimTime Duration = SimTime.FromSeconds(DurationSeconds);
 
     /// <summary>Fight time of the hero the micro-benchmarks start from.</summary>
-    public static readonly SimTime MidFight = SimTime.FromSeconds(60);
+    public static readonly SimTime MidFight = SimTime.FromSeconds(MidFightSeconds);
 
     public static CharacterBuild Build { get; } =
-        JsonSerializer.Deserialize<CharacterBuild>(File.ReadAllText(FixturePath("rime_character.json")))!;
+        JsonSerializer.Deserialize<CharacterBuild>(File.ReadAllText(FixturePath(FixtureCharacterFile)))!;
 
-    public static string AplText { get; } = File.ReadAllText(FixturePath("rime.simc"));
+    public static string AplText { get; } = File.ReadAllText(FixturePath(FixtureActionListFile));
 
     public static AplActionLists Actions() => AplParser.ParseScript(AplText);
 
@@ -30,7 +53,7 @@ public static class Fight
     /// whenever every other action waits for a cooldown, a resource or a condition.
     /// </summary>
     public static string IdleAplText { get; } = string.Join('\n', AplText.Split('\n').Where(line =>
-        line.Trim() is not { Length: > 0 } action || action.StartsWith('#') || AplParser.ParseActionLine(action) is not { AbilityName: "frost_bolt" }));
+        line.Trim() is not { Length: > 0 } action || action.StartsWith(CommentMarker) || AplParser.ParseActionLine(action) is not { AbilityName: FrostBoltAction }));
 
     public static AplActionLists IdleActions() => AplParser.ParseScript(IdleAplText);
 
@@ -43,10 +66,10 @@ public static class Fight
     /// </summary>
     public static MonteCarloWorkloadSetup? MonteCarloWorkload(string workload) => workload switch
     {
-        "mc" => new MonteCarloWorkloadSetup(1, false),
-        "mc8" => new MonteCarloWorkloadSetup(8, false),
-        "mc-idle" => new MonteCarloWorkloadSetup(1, true),
-        "mc8-idle" => new MonteCarloWorkloadSetup(8, true),
+        McWorkload => new MonteCarloWorkloadSetup(Targets: 1, Idle: false),
+        Mc8Workload => new MonteCarloWorkloadSetup(Targets: MultiTargets, Idle: false),
+        McIdleWorkload => new MonteCarloWorkloadSetup(Targets: 1, Idle: true),
+        Mc8IdleWorkload => new MonteCarloWorkloadSetup(Targets: MultiTargets, Idle: true),
         _ => null,
     };
 
@@ -60,7 +83,7 @@ public static class Fight
         hero.BeginFight(ctx);
         for (int i = 1; i <= targets; i++)
         {
-            ctx.AddEnemy(100 + i, i, $"Training Mob {i}", maxHealth: 100_000_000);
+            ctx.AddEnemy(MonteCarloSimulator.TrainingMobIdBase + i, i, $"Training Mob {i}", maxHealth: MonteCarloSimulator.TrainingMobMaxHealth);
         }
         ctx.Player.CurrentTarget = ctx.AllEnemies.First();
         return ctx;
@@ -113,14 +136,14 @@ public static class Fight
     {
         for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
         {
-            string local = Path.Combine(dir.FullName, "Fixtures", name);
+            string local = Path.Combine(dir.FullName, FixturesFolder, name);
             if (File.Exists(local)) return local;
-            if (File.Exists(Path.Combine(dir.FullName, "FellowshipSim.slnx")))
+            if (File.Exists(Path.Combine(dir.FullName, SolutionFile)))
             {
                 foreach (string path in new[]
                          {
-                             Path.Combine(dir.FullName, "benchmarks", "FellowshipSim.Benchmarks", "Fixtures", name),
-                             Path.Combine(dir.FullName, "tests", "FellowshipSim.Tests", "Fixtures", name),
+                             Path.Combine(dir.FullName, "benchmarks", "FellowshipSim.Benchmarks", FixturesFolder, name),
+                             Path.Combine(dir.FullName, "tests", "FellowshipSim.Tests", FixturesFolder, name),
                          })
                 {
                     if (File.Exists(path)) return path;

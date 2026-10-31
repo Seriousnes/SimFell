@@ -34,7 +34,7 @@ public static class AplCondition
         if (expression is BinaryOpExpression { Operator: BinaryOperator.And or BinaryOperator.Or } logical)
         {
             AddRows(logical.Left, join, rows);
-            AddRows(logical.Right, logical.Operator == BinaryOperator.And ? "and" : "or", rows);
+            AddRows(logical.Right, logical.Operator == BinaryOperator.And ? AplOperatorSymbols.AndWord : AplOperatorSymbols.OrWord, rows);
             return;
         }
         rows.Add(Row(expression, join));

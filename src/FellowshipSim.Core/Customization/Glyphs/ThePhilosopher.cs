@@ -33,7 +33,7 @@ public class ThePhilosopher : Glyph
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability.Category != AbilityCategory.Major) return;
-            double spiritPercent = Math.Min(hero.SpiritPercent(now), SpiritCap) * 100.0;
+            double spiritPercent = Math.Min(hero.SpiritPercent(now), SpiritCap) * Percentage.PerFraction;
             double bonus = IncreasePerStep * spiritPercent / spiritPerStep;
             hero.Auras.Apply(Buff.WithModifiers(
                 StatModifier.Add(StatType.Haste, bonus),

@@ -23,19 +23,19 @@ public class Amethyst : Gem
     {
         switch (node.Slot)
         {
-            case 1: // Sealed Fate: extra crit chance against characters above a health threshold.
+            case HeadlineSlot: // Sealed Fate: extra crit chance against characters above a health threshold.
                 BindSealedFate(hero, node);
                 return true;
-            case 2: // Berserker's Zeal: flat Stamina and Crit rating.
-                hero.Stats.CritRating += node.Value("CritBonus");
-                hero.Stats.Stamina += node.Value("StaminaBonus");
+            case FlatStatSlot: // Berserker's Zeal: flat Stamina and Crit rating.
+                hero.Stats.CritRating += node.Value(CritBonusKey);
+                hero.Stats.Stamina += node.Value(StaminaBonusKey);
                 return true;
-            case 4: // Killer Instinct: crit chance.
-                hero.Stats.BonusCritChance += node.Value("CritChanceBonus");
+            case PercentStatSlot: // Killer Instinct: crit chance.
+                hero.Stats.BonusCritChance += node.Value(CritChanceBonusKey);
                 return true;
-            case 5: // Blessing of the Deathdealer: critical strikes do more damage.
+            case BlessingSlot: // Blessing of the Deathdealer: critical strikes do more damage.
                 hero.PassiveAuras.Add(AuraDef.Internal(node.Name, 0, 1,
-                    StatModifier.More(StatType.CritMultiplier, 1.0 + node.Value("CritPowerBonus"))));
+                    StatModifier.More(StatType.CritMultiplier, 1.0 + node.Value(CritPowerBonusKey))));
                 return true;
             default: // Reaper's Reprieve (healing) does not affect damage.
                 return true;
@@ -53,22 +53,22 @@ public class Amethyst : Gem
 
     private void SetSealedFate(GemNode? node)
     {
-        _sealedFateThreshold = node?.Value("HealthThreshold") ?? 1.0;
-        _sealedFateBonus = node?.Value("CritChanceBonus") ?? 0.0;
+        _sealedFateThreshold = node?.Value(HealthThresholdKey) ?? 1.0;
+        _sealedFateBonus = node?.Value(CritChanceBonusKey) ?? 0.0;
     }
 
     protected override void BindLater(Hero hero, GemNode node, SimTime now)
     {
-        if (node.Slot == 1) BindSealedFate(hero, node);
+        if (node.Slot == HeadlineSlot) BindSealedFate(hero, node);
     }
 
-    protected override void NodesChanged(Hero hero, IReadOnlyList<GemNode> before, SimTime? now) => SetSealedFate(NodeInSlot(1));
+    protected override void NodesChanged(Hero hero, IReadOnlyList<GemNode> before, SimTime? now) => SetSealedFate(NodeInSlot(HeadlineSlot));
 
     protected override IEnumerable<StatModifier> StatEffects(GemNode node) => node.Slot switch
     {
-        2 => [StatModifier.Add(StatType.CritRating, node.Value("CritBonus"))],
-        4 => [StatModifier.Add(StatType.CritChance, node.Value("CritChanceBonus"))],
-        5 => [StatModifier.More(StatType.CritMultiplier, 1.0 + node.Value("CritPowerBonus"))],
+        FlatStatSlot => [StatModifier.Add(StatType.CritRating, node.Value(CritBonusKey))],
+        PercentStatSlot => [StatModifier.Add(StatType.CritChance, node.Value(CritChanceBonusKey))],
+        BlessingSlot => [StatModifier.More(StatType.CritMultiplier, 1.0 + node.Value(CritPowerBonusKey))],
         _ => [],
     };
 }

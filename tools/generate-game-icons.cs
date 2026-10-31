@@ -9,11 +9,48 @@
 // The default path is the Codex cache, ~/.fellowsim/cache/codex/entities.jsonl.
 using System.Text.Json.Nodes;
 
-string root = Path.GetDirectoryName((string)AppContext.GetData("EntryPointFileDirectoryPath")!)!;
-string output = Path.Combine(root, "src", "FellowshipSim.UI", "Build", "GameIcons.cs");
+const string EntryPointDirectoryKey = "EntryPointFileDirectoryPath";
+const string UiProject = "FellowshipSim.UI";
+const string OutputFile = "GameIcons.cs";
+const string EntitiesFile = "entities.jsonl";
+
+// Properties of an entity record.
+const string IdProperty = "id";
+const string NameProperty = "name";
+const string IconProperty = "icon";
+const string CategoryProperty = "category";
+const string HeroesProperty = "heroes";
+const string HeroProperty = "hero";
+const string SlotProperty = "slot";
+const string MaxRankProperty = "maxRank";
+const string PortraitProperty = "portrait";
+const string TypeProperty = "$type";
+
+// Values of an entity record's $type.
+const string TalentKind = "talent";
+const string AspectKind = "aspect";
+const string SigilKind = "sigil";
+const string ProtectiveEnchantKind = "protective-enchant";
+const string GlyphKind = "glyph";
+const string LegendaryPowerKind = "legendary-power";
+const string WeaponPowerKind = "weapon-power";
+const string AbilityKind = "ability";
+const string EnchantKind = "enchant";
+const string EffectKind = "effect";
+const string GemKind = "gem";
+const string ItemKind = "item";
+const string HeroType = "hero";
+
+// Other values of an entity record.
+const string WeaponCategory = "Weapon";
+const string RelicSlot = "Relic";
+const string LegendarySuffix = "-legendary";
+
+string root = Path.GetDirectoryName((string)AppContext.GetData(EntryPointDirectoryKey)!)!;
+string output = Path.Combine(root, "src", UiProject, "Build", OutputFile);
 string path = args.Length > 0
     ? args[0]
-    : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".fellowsim", "cache", "codex", "entities.jsonl");
+    : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".fellowsim", "cache", "codex", EntitiesFile);
 
 var rows = File.ReadLines(path).Where(line => line.Trim().Length > 0).Select(line => JsonNode.Parse(line)!.AsObject()).ToList();
 
@@ -34,46 +71,46 @@ var lines = new List<string>
     "",
 };
 // Aspect, sigil and protective-enchant IDs do not overlap, so one table holds every augmentation.
-string[] augmentations = ["aspect", "sigil", "protective-enchant"];
-lines.AddRange(ById("Talents", ["talent"]));
+string[] augmentations = [AspectKind, SigilKind, ProtectiveEnchantKind];
+lines.AddRange(ById("Talents", [TalentKind]));
 lines.AddRange(ById("Augmentations", augmentations));
-lines.AddRange(ById("Glyphs", ["glyph"]));
-lines.AddRange(ById("LegendaryPowers", ["legendary-power"]));
-lines.AddRange(ById("WeaponAbilities", ["ability"], r => Text(r, "category") == "Weapon"));
+lines.AddRange(ById("Glyphs", [GlyphKind]));
+lines.AddRange(ById("LegendaryPowers", [LegendaryPowerKind]));
+lines.AddRange(ById("WeaponAbilities", [AbilityKind], r => Text(r, CategoryProperty) == WeaponCategory));
 // Each weapon has a version per hero, and each hero four weapons: the heroes a weapon ability is for.
 lines.Add("    /// <summary>The heroes each weapon ability's weapon is for, by ability ID.</summary>");
 lines.Add("    public static IReadOnlyDictionary<int, string[]> WeaponHeroes { get; } = new Dictionary<int, string[]>");
 lines.Add("    {");
-lines.AddRange(OfKinds(["ability"]).Where(r => Text(r, "category") == "Weapon").DistinctBy(r => Int(r, "id"))
-    .Select(r => $"        [{Int(r, "id")}] = [{string.Join(", ", (r["heroes"]?.AsArray() ?? []).Select(h => Cs(h!.GetValue<string>())))}],"));
+lines.AddRange(OfKinds([AbilityKind]).Where(r => Text(r, CategoryProperty) == WeaponCategory).DistinctBy(r => Int(r, IdProperty))
+    .Select(r => $"        [{Int(r, IdProperty)}] = [{string.Join(", ", (r[HeroesProperty]?.AsArray() ?? []).Select(h => Cs(h!.GetValue<string>())))}],"));
 lines.Add("    };");
 lines.Add("");
-lines.AddRange(ById("StatEnchants", ["enchant"]));
+lines.AddRange(ById("StatEnchants", [EnchantKind]));
 // Every ability and effect, for a sim report's damage sources and auras (found by the ID a hit or aura carries).
-lines.AddRange(ById("Abilities", ["ability"]));
-lines.AddRange(ById("Effects", ["effect"]));
+lines.AddRange(ById("Abilities", [AbilityKind]));
+lines.AddRange(ById("Effects", [EffectKind]));
 // By name, for a damage source or aura whose own record has no icon: the first record of that name with one, abilities
 // first, then effects, talents and gear.
-string[] byNameKinds = ["ability", "effect", "talent", "aspect", "sigil", "protective-enchant", "glyph", "weapon-power", "legendary-power"];
+string[] byNameKinds = [AbilityKind, EffectKind, TalentKind, AspectKind, SigilKind, ProtectiveEnchantKind, GlyphKind, WeaponPowerKind, LegendaryPowerKind];
 lines.Add("    /// <summary>Icons by name, from the first ability, effect, talent or gear record of that name with one.</summary>");
 lines.Add("    public static IReadOnlyDictionary<string, string> Names { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)");
 lines.Add("    {");
 lines.AddRange(byNameKinds.SelectMany(kind => Of([kind]))
-    .Where(r => !string.IsNullOrWhiteSpace(Text(r, "name")))
-    .DistinctBy(r => Text(r, "name")!.ToLowerInvariant())
-    .OrderBy(r => Text(r, "name"), StringComparer.Ordinal)
-    .Select(r => $"        [{Cs(Text(r, "name")!)}] = {Cs(Text(r, "icon")!)},"));
+    .Where(r => !string.IsNullOrWhiteSpace(Text(r, NameProperty)))
+    .DistinctBy(r => Text(r, NameProperty)!.ToLowerInvariant())
+    .OrderBy(r => Text(r, NameProperty), StringComparer.Ordinal)
+    .Select(r => $"        [{Cs(Text(r, NameProperty)!)}] = {Cs(Text(r, IconProperty)!)},"));
 lines.Add("    };");
 lines.Add("");
 // Each gem of each size ("Splendid Amethyst"), and the relic items (an item record per hero, one icon per item).
-lines.AddRange(ById("GemItems", ["gem"]));
-lines.AddRange(ById("RelicItems", ["item"], r => Text(r, "slot") == "Relic"));
+lines.AddRange(ById("GemItems", [GemKind]));
+lines.AddRange(ById("RelicItems", [ItemKind], r => Text(r, SlotProperty) == RelicSlot));
 lines.AddRange(MaxRanks("AugmentationMaxRanks", augmentations));
-lines.AddRange(MaxRanks("GlyphMaxRanks", ["glyph"]));
+lines.AddRange(MaxRanks("GlyphMaxRanks", [GlyphKind]));
 
 // The first gem item of each colour ("Small Amethyst"); the gem-type records all have the same icon.
 var colours = new Dictionary<string, string>();
-foreach (var gemRecord in Of(["gem"])) colours.TryAdd(Text(gemRecord, "name")!.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Last(), Text(gemRecord, "icon")!);
+foreach (var gemRecord in Of([GemKind])) colours.TryAdd(Text(gemRecord, NameProperty)!.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Last(), Text(gemRecord, IconProperty)!);
 lines.Add("    /// <summary>Icons of the gem colours, by name (\"Sapphire\").</summary>");
 lines.Add("    public static IReadOnlyDictionary<string, string> Gems { get; } = new Dictionary<string, string>");
 lines.Add("    {");
@@ -84,9 +121,9 @@ lines.Add("");
 lines.Add("    /// <summary>Hero portraits, by hero name.</summary>");
 lines.Add("    public static IReadOnlyDictionary<string, string> Heroes { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)");
 lines.Add("    {");
-lines.AddRange(rows.Where(r => Text(r, "$type") == "hero" && !string.IsNullOrEmpty(Text(r, "portrait")))
-    .OrderBy(r => Text(r, "name"), StringComparer.Ordinal)
-    .Select(r => $"        [{Cs(Text(r, "name")!)}] = {Cs(Text(r, "portrait")!)},"));
+lines.AddRange(rows.Where(r => Text(r, TypeProperty) == HeroType && !string.IsNullOrEmpty(Text(r, PortraitProperty)))
+    .OrderBy(r => Text(r, NameProperty), StringComparer.Ordinal)
+    .Select(r => $"        [{Cs(Text(r, NameProperty)!)}] = {Cs(Text(r, PortraitProperty)!)},"));
 lines.Add("    };");
 lines.Add("");
 
@@ -94,8 +131,8 @@ lines.Add("");
 lines.Add("    /// <summary>Icons of the legendary items, by hero and item ID (\"Rime:5899\").</summary>");
 lines.Add("    public static IReadOnlyDictionary<string, string> LegendaryItems { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)");
 lines.Add("    {");
-lines.AddRange(rows.Where(r => Text(r, "$type") == "item" && Text(r, "hero") is { Length: > 0 } && (Text(r, "icon") ?? "").EndsWith("-legendary", StringComparison.Ordinal))
-    .Select(r => new LegendaryIcon($"{Text(r, "hero")}:{Int(r, "id")}", Text(r, "icon")!))
+lines.AddRange(rows.Where(r => Text(r, TypeProperty) == ItemKind && Text(r, HeroProperty) is { Length: > 0 } && (Text(r, IconProperty) ?? "").EndsWith(LegendarySuffix, StringComparison.Ordinal))
+    .Select(r => new LegendaryIcon($"{Text(r, HeroProperty)}:{Int(r, IdProperty)}", Text(r, IconProperty)!))
     .DistinctBy(x => x.Key)
     .OrderBy(x => x.Key, StringComparer.Ordinal)
     .Select(x => $"        [{Cs(x.Key)}] = {Cs(x.Icon)},"));
@@ -108,9 +145,9 @@ File.WriteAllText(output, string.Join("\n", lines));
 Console.WriteLine($"Wrote {output}");
 
 IEnumerable<JsonObject> OfKinds(string[] kinds) =>
-    rows.Where(r => kinds.Contains(Text(r, "$type"))).OrderBy(r => Int(r, "id"));
+    rows.Where(r => kinds.Contains(Text(r, TypeProperty))).OrderBy(r => Int(r, IdProperty));
 
-IEnumerable<JsonObject> Of(string[] kinds) => OfKinds(kinds).Where(r => !string.IsNullOrEmpty(Text(r, "icon")));
+IEnumerable<JsonObject> Of(string[] kinds) => OfKinds(kinds).Where(r => !string.IsNullOrEmpty(Text(r, IconProperty)));
 
 IEnumerable<string> ById(string name, string[] kinds, Func<JsonObject, bool>? where = null) =>
 [
@@ -118,7 +155,7 @@ IEnumerable<string> ById(string name, string[] kinds, Func<JsonObject, bool>? wh
     $"    public static IReadOnlyDictionary<int, string> {name} {{ get; }} = new Dictionary<int, string>",
     "    {",
     // A stat enchant has a record per main stat under one ID, with one icon.
-    .. Of(kinds).Where(where ?? (_ => true)).DistinctBy(r => Int(r, "id")).Select(r => $"        [{Int(r, "id")}] = {Cs(Text(r, "icon")!)},"),
+    .. Of(kinds).Where(where ?? (_ => true)).DistinctBy(r => Int(r, IdProperty)).Select(r => $"        [{Int(r, IdProperty)}] = {Cs(Text(r, IconProperty)!)},"),
     "    };",
     "",
 ];
@@ -128,8 +165,8 @@ IEnumerable<string> MaxRanks(string name, string[] kinds) =>
     $"    /// <summary>The highest rank of each {Kinds(kinds)}, by ID.</summary>",
     $"    public static IReadOnlyDictionary<int, int> {name} {{ get; }} = new Dictionary<int, int>",
     "    {",
-    .. OfKinds(kinds).Where(r => r["maxRank"] is not null && Int(r, "maxRank") != 0)
-        .Select(r => $"        [{Int(r, "id")}] = {Int(r, "maxRank")},"),
+    .. OfKinds(kinds).Where(r => r[MaxRankProperty] is not null && Int(r, MaxRankProperty) != 0)
+        .Select(r => $"        [{Int(r, IdProperty)}] = {Int(r, MaxRankProperty)},"),
     "    };",
     "",
 ];

@@ -31,6 +31,8 @@ public sealed class Mara : Hero
     /// </summary>
     public const double EnergyTickSeconds = 0.1;
 
+    private const string EnergyRegenerationEvent = "Energy regeneration";
+
     public static readonly ResourceDef Energy = new("Energy", Max: MaxEnergy, Initial: MaxEnergy);
 
     public static readonly ResourceDef ComboPoints = new("Combo Points", Max: MaxComboPoints)
@@ -56,12 +58,12 @@ public sealed class Mara : Hero
     /// <summary>Mara's talent tree, as in game (game data talent-slot records, hero Mara).</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                            b                           c
-        TalentSlot.InRow(1, 2,    RedLedger.TalentId,          CorrosiveSpill.TalentId,    AssassinsGuile.TalentId),
-        TalentSlot.InRow(2, 1,    Bloodrush.TalentId,          VenomousDelight.TalentId,   EfficientKiller.TalentId),
-        TalentSlot.InRow(3, 2,    GushingBlood.TalentId,       FeedTheQueen.TalentId,      DeadlyScheme.TalentId),
-        TalentSlot.InRow(4, 1,    MacabreStratagemTalent.TalentId, MaidensDoom.TalentId,   SeethingBurst.TalentId),
-        TalentSlot.InRow(5, 3,    Hemotoxin.TalentId,          SinnersPride.TalentId,      Malevolence.TalentId),
-        TalentSlot.InRow(6, 1,    ArachnidOnslaught.TalentId,  CausticWounds.TalentId,     Puncture.TalentId));
+        TalentSlot.InRow(row: 1, cost: 2,    RedLedger.TalentId,          CorrosiveSpill.TalentId,    AssassinsGuile.TalentId),
+        TalentSlot.InRow(row: 2, cost: 1,    Bloodrush.TalentId,          VenomousDelight.TalentId,   EfficientKiller.TalentId),
+        TalentSlot.InRow(row: 3, cost: 2,    GushingBlood.TalentId,       FeedTheQueen.TalentId,      DeadlyScheme.TalentId),
+        TalentSlot.InRow(row: 4, cost: 1,    MacabreStratagemTalent.TalentId, MaidensDoom.TalentId,   SeethingBurst.TalentId),
+        TalentSlot.InRow(row: 5, cost: 3,    Hemotoxin.TalentId,          SinnersPride.TalentId,      Malevolence.TalentId),
+        TalentSlot.InRow(row: 6, cost: 1,    ArachnidOnslaught.TalentId,  CausticWounds.TalentId,     Puncture.TalentId));
 
     public override IReadOnlyList<TalentSlot> TalentTreeSlots => TalentTree;
 
@@ -199,9 +201,9 @@ public sealed class Mara : Hero
         void Tick(SimulationContext tickContext)
         {
             RegenerateEnergy(tickContext.CurrentTime);
-            tickContext.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, "Energy regeneration");
+            tickContext.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, EnergyRegenerationEvent);
         }
-        ctx.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, "Energy regeneration");
+        ctx.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, EnergyRegenerationEvent);
     }
 
     // ------------------------------------------------------------------ Combo Points

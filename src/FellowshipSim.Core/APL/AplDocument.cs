@@ -19,7 +19,15 @@ public sealed record AplDocumentAction(
     string? ActionList = null);
 
 /// <summary>A problem with one field of one action: its index in the list, the field ("condition"), and the parse error.</summary>
-public sealed record AplDocumentError(int Action, string Field, string Message);
+public sealed record AplDocumentError(int Action, string Field, string Message)
+{
+    public const string AbilityField = "ability";
+    public const string ConditionField = "condition";
+    public const string TargetExpressionField = "targetExpression";
+    public const string ListField = "list";
+    public const string ActionListField = "actionList";
+    public const string ArgumentsField = "arguments";
+}
 
 /// <summary>Text of an action list, or of one expression.</summary>
 public sealed record AplText(string Text);
@@ -33,6 +41,9 @@ public sealed record AplDocumentText(string? Text, IReadOnlyList<AplDocumentErro
 /// <summary>Converts between action-list text and the actions the visual editor holds.</summary>
 public static class AplDocument
 {
+    private const char LineBreak = '\n';
+    private const string LineBreakText = "\n";
+
     /// <summary>
     /// The actions of <paramref name="script"/>, in order, with expressions in <see cref="AplFormatter"/> form with
     /// <see cref="AplOperatorStyle.Words"/> (the editor writes <c>and</c>, <c>or</c> and <c>not</c>). '#' lines
@@ -42,7 +53,7 @@ public static class AplDocument
     {
         var actions = new List<AplDocumentAction>();
         var comment = new List<string>();
-        var lines = script.Split('\n').Select(l => l.Trim()).ToArray();
+        var lines = script.Split(LineBreak).Select(l => l.Trim()).ToArray();
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
@@ -71,7 +82,7 @@ public static class AplDocument
                 syntax.Condition is { } condition ? AplFormatter.Format(condition, AplOperatorStyle.Words) : null,
                 syntax.TargetIf?.Selection,
                 syntax.TargetIf is { } targetIf ? AplFormatter.Format(targetIf.Expression, AplOperatorStyle.Words) : null,
-                comment.Count > 0 ? string.Join("\n", comment) : null,
+                comment.Count > 0 ? string.Join(LineBreakText, comment) : null,
                 syntax.List,
                 arguments.Count > 0 ? string.Join(",", arguments) : null,
                 listAction ? syntax.ListName : null));
@@ -81,7 +92,7 @@ public static class AplDocument
         if (comment.Count > 0 && actions.Count > 0)
         {
             var last = actions[^1];
-            actions[^1] = last with { Comment = string.Join("\n", (last.Comment ?? "").Split('\n').Concat(comment).Where(c => c.Length > 0)) };
+            actions[^1] = last with { Comment = string.Join(LineBreakText, (last.Comment ?? "").Split(LineBreak).Concat(comment).Where(c => c.Length > 0)) };
         }
         return actions;
     }
@@ -100,15 +111,15 @@ public static class AplDocument
         {
             var action = actions[i];
             string ability = action.Ability.Trim();
-            if (!IsName(ability)) errors.Add(new AplDocumentError(i, "ability", "Pick an ability."));
-            var condition = ParseField(i, "condition", action.Condition, errors);
-            var targetExpression = ParseField(i, "targetExpression", action.TargetExpression, errors);
+            if (!IsName(ability)) errors.Add(new AplDocumentError(i, AplDocumentError.AbilityField, "Pick an ability."));
+            var condition = ParseField(i, AplDocumentError.ConditionField, action.Condition, errors);
+            var targetExpression = ParseField(i, AplDocumentError.TargetExpressionField, action.TargetExpression, errors);
             if (action.TargetSelection != null && targetExpression == null && string.IsNullOrWhiteSpace(action.TargetExpression))
             {
-                errors.Add(new AplDocumentError(i, "targetExpression", "Enter an expression for target selection."));
+                errors.Add(new AplDocumentError(i, AplDocumentError.TargetExpressionField, "Enter an expression for target selection."));
             }
             string list = ListOf(action);
-            if (!IsName(list)) errors.Add(new AplDocumentError(i, "list", $"`{list}` is not a list name."));
+            if (!IsName(list)) errors.Add(new AplDocumentError(i, AplDocumentError.ListField, $"`{list}` is not a list name."));
 
             var arguments = ParseArguments(i, action.Arguments, errors).ToList();
             if (AplListActions.Parse(ability) != null)
@@ -120,12 +131,12 @@ public static class AplDocument
                 }
                 else
                 {
-                    errors.Add(new AplDocumentError(i, "actionList", "Pick an action list with at least one action."));
+                    errors.Add(new AplDocumentError(i, AplDocumentError.ActionListField, "Pick an action list with at least one action."));
                 }
             }
 
             var lines = blocks[list];
-            foreach (string comment in (action.Comment ?? "").Split('\n').Select(c => c.TrimEnd()).Where(c => c.Length > 0))
+            foreach (string comment in (action.Comment ?? "").Split(LineBreak).Select(c => c.TrimEnd()).Where(c => c.Length > 0))
             {
                 lines.Add($"# {comment}");
             }
@@ -134,8 +145,8 @@ public static class AplDocument
         }
         if (errors.Count > 0) return new AplDocumentText(null, errors);
 
-        var blockTexts = lists.Where(l => blocks[l].Count > 0).Select(l => string.Join("\n", blocks[l]) + "\n");
-        return new AplDocumentText(string.Join("\n", blockTexts), errors);
+        var blockTexts = lists.Where(l => blocks[l].Count > 0).Select(l => string.Join(LineBreakText, blocks[l]) + LineBreakText);
+        return new AplDocumentText(string.Join(LineBreakText, blockTexts), errors);
     }
 
     private static string ListOf(AplDocumentAction action) =>
@@ -146,13 +157,13 @@ public static class AplDocument
         if (string.IsNullOrWhiteSpace(text)) return [];
         try
         {
-            var syntax = AplParser.ParseActionSyntax($"arguments,{text.Trim().TrimStart(',')}");
+            var syntax = AplParser.ParseActionSyntax($"{AplDocumentError.ArgumentsField},{text.Trim().TrimStart(',')}");
             if (syntax.Condition == null && syntax.TargetIf == null) return syntax.Arguments;
-            errors.Add(new AplDocumentError(action, "arguments", $"Write `{AplActionLine.ConditionKey}` in Condition and `{AplActionLine.TargetIfKey}` in Target."));
+            errors.Add(new AplDocumentError(action, AplDocumentError.ArgumentsField, $"Write `{AplActionLine.ConditionKey}` in Condition and `{AplActionLine.TargetIfKey}` in Target."));
         }
         catch (ParseException exception)
         {
-            errors.Add(new AplDocumentError(action, "arguments", exception.Message));
+            errors.Add(new AplDocumentError(action, AplDocumentError.ArgumentsField, exception.Message));
         }
         return [];
     }

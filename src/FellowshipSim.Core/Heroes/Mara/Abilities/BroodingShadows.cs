@@ -14,7 +14,7 @@ public class BroodingShadows : MaraAbility
     public const int Charges = 2;
     public const int StealthEffectId = 1591;
 
-    public static readonly AuraDef Stealth = AuraDef.Effect("Brooding Shadows", StealthEffectId);
+    public static readonly AuraDef Stealth = AuraDef.Effect(AbilityName, StealthEffectId);
 
     public BroodingShadows(Mara owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Utility)
     {

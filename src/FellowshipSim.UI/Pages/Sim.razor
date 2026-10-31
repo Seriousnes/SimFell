@@ -108,6 +108,13 @@
 
 
 @code {
+    private const string StorageGetFunction = "localStorage.getItem";
+
+    private const string StorageSetFunction = "localStorage.setItem";
+
+    /// <summary>The percent of a whole.</summary>
+    private const int PercentScale = 100;
+
     /// <summary>Largest profile file the page reads.</summary>
     private const long MaxProfileBytes = 1024 * 1024;
 
@@ -144,7 +151,7 @@
         State.ThreadsRestored = true;
         try
         {
-            if (int.TryParse(await JS.InvokeAsync<string?>("localStorage.getItem", ThreadsKey), out int threads))
+            if (int.TryParse(await JS.InvokeAsync<string?>(StorageGetFunction, ThreadsKey), out int threads))
             {
                 State.Threads = Math.Clamp(threads, 1, MaxThreads);
                 StateHasChanged();
@@ -161,7 +168,7 @@
         State.Threads = Math.Clamp(threads, 1, MaxThreads);
         try
         {
-            await JS.InvokeVoidAsync("localStorage.setItem", ThreadsKey, State.Threads.ToString(CultureInfo.InvariantCulture));
+            await JS.InvokeVoidAsync(StorageSetFunction, ThreadsKey, State.Threads.ToString(CultureInfo.InvariantCulture));
         }
         catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
@@ -175,7 +182,7 @@
     public void Dispose() => State.Changed -= OnStateChanged;
 
     /// <summary>A list in a picker: where it is kept, its hero and its name.</summary>
-    internal static string ListValue(ActionListEntry list) => $"{(list.BuiltIn ? "builtin" : list.Shared ? "shared" : "own")}/{list.Hero}/{list.Name}";
+    internal static string ListValue(ActionListEntry list) => $"{(list.BuiltIn ? ActionListStore.BuiltInValue : list.Shared ? ActionListStore.SharedValue : ActionListStore.OwnValue)}/{list.Hero}/{list.Name}";
 
     private async Task PickActionListAsync(string value)
     {
@@ -315,7 +322,7 @@
     // The fights every run of a sim has.
     private SimSettings Settings() => new(State.Iterations, State.DurationSeconds, State.Targets,
         DegreeOfParallelism: Math.Clamp(State.Threads, 1, MaxThreads),
-        LengthVariance: State.VaryLength ? State.LengthVariancePercent / 100 : 0,
+        LengthVariance: State.VaryLength ? State.LengthVariancePercent / PercentScale : 0,
         HealthFollowsTime: true,
         StartingSpirit: State.StartWithSpirit ? State.StartingSpirit : 0,
         Boss: State.Boss);
@@ -401,7 +408,7 @@
             return;
         }
         string listText = ActionListText();
-        var runs = new List<PlannedRun> { Plan("Current build", State.Build.Name, State.Build, ActionListName(), State.ActionListValue, listText) };
+        var runs = new List<PlannedRun> { Plan(SimPageState.CurrentBuildLabel, State.Build.Name, State.Build, ActionListName(), State.ActionListValue, listText) };
         runs.AddRange(variants.Select(v => Plan(v.Label, v.Detail, v.Build, ActionListName(), State.ActionListValue, listText)));
         Enqueue($"{FinderCard.Title(State.Finder)} finder: {State.Build.Name} ({State.Build.Hero}), {CompareCard.Runs(runs.Count)}, {TargetsText()}", runs);
     }

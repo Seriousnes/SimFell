@@ -16,6 +16,8 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class GundeTalentSmokeTests(ITestOutputHelper output)
 {
+    private const string CharacterFile = "gunde_character.json";
+
     private const string Apl = """
         actions+=/attack
         actions+=/bloodbound_spirit
@@ -87,7 +89,7 @@ public class GundeTalentSmokeTests(ITestOutputHelper output)
     {
         // The Gunde from Y4wpb2f3gc8LqJDX fight 25 (Culex), as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "gunde_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, CharacterFile)))!;
         build.Talents = talentIds.ToList();
         return HeroImporter.Import(build);
     }

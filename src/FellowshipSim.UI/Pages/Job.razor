@@ -22,6 +22,8 @@ else if (_loaded)
 }
 
 @code {
+    private const string Route = "jobs";
+
     [Parameter] public string Id { get; set; } = "";
 
     private SimJob? _job;
@@ -29,7 +31,7 @@ else if (_loaded)
     private bool _loaded;
 
     /// <summary>Address of the page of the job or saved sim <paramref name="id"/>.</summary>
-    public static string Href(string id) => $"jobs/{Uri.EscapeDataString(id)}";
+    public static string Href(string id) => $"{Route}/{Uri.EscapeDataString(id)}";
 
     protected override async Task OnParametersSetAsync()
     {

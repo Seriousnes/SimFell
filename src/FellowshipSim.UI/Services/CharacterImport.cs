@@ -30,8 +30,8 @@ public sealed class CharacterImport(ReplayLibrary library, LogsSettingsStore set
         if (library.HasRawFight(reportCode, fightId))
         {
             var raw = await library.GetRawFightAsync(null, reportCode, fightId, progress, ct);
-            return raw["events"]?.AsArray()
-                .FirstOrDefault(e => e?["type"]?.GetValue<string>() == "combatantinfo" && e["sourceID"]?.GetValue<int>() == playerId)
+            return raw[FellowshipLogsReports.EventsProperty]?.AsArray()
+                .FirstOrDefault(e => e?[FellowshipLogsReports.TypeProperty]?.GetValue<string>() == FellowshipLogsReports.CombatantInfoEventType && e[FellowshipLogsReports.SourceIdProperty]?.GetValue<int>() == playerId)
                 ?.AsObject();
         }
         var client = await settings.CreateClientAsync(ct)

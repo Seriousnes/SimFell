@@ -9,7 +9,10 @@ public sealed record ProfileEntry(string Hero, string Name);
 /// </summary>
 public sealed class ProfileStore(IBlobStore store)
 {
-    private const string Extension = ".simc";
+    /// <summary>The extension of a saved build or action list file.</summary>
+    public const string Extension = Core.APL.DefaultActionLists.Extension;
+
+    private const string Folder = "profiles";
 
     /// <summary>The visitor's saved builds of <paramref name="heroes"/>, by hero and name.</summary>
     public async Task<IReadOnlyList<ProfileEntry>> ListAsync(Visitor visitor, IEnumerable<string> heroes, CancellationToken ct = default)
@@ -17,7 +20,7 @@ public sealed class ProfileStore(IBlobStore store)
         var entries = new List<ProfileEntry>();
         foreach (string hero in heroes)
         {
-            string prefix = visitor.Key($"profiles/{hero}");
+            string prefix = visitor.Key($"{Folder}/{hero}");
             entries.AddRange((await store.ListAsync(prefix, ct))
                 .Where(key => key.EndsWith(Extension, StringComparison.Ordinal) && key.LastIndexOf('/') == prefix.Length)
                 .Select(key => new ProfileEntry(hero, key[(prefix.Length + 1)..^Extension.Length])));
@@ -42,5 +45,5 @@ public sealed class ProfileStore(IBlobStore store)
     public Task DeleteAsync(Visitor visitor, ProfileEntry entry, CancellationToken ct = default) =>
         ActionListStore.IsValidName(entry.Name) ? store.DeleteAsync(KeyOf(visitor, entry), ct) : Task.CompletedTask;
 
-    private static string KeyOf(Visitor visitor, ProfileEntry entry) => visitor.Key($"profiles/{entry.Hero}/{entry.Name}{Extension}");
+    private static string KeyOf(Visitor visitor, ProfileEntry entry) => visitor.Key($"{Folder}/{entry.Hero}/{entry.Name}{Extension}");
 }

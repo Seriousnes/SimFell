@@ -8,9 +8,12 @@ using Microsoft.JSInterop;
 
 // The browser app: FellowshipSim.UI in the page, with every sim and replay on the visitor's own computer (the sim workers)
 // and their files in the browser's storage (BrowserDataFolder). Its one visitor owns the data folder.
+const string AppSelector = "#app";
+const string HeadSelector = "head::after";
+
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<Routes>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.RootComponents.Add<Routes>(AppSelector);
+builder.RootComponents.Add<HeadOutlet>(HeadSelector);
 
 builder.Services.AddSingleton<BrowserDataFolder>();
 builder.Services.AddSingleton<SimWorkerPool>();

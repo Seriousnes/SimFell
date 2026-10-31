@@ -11,7 +11,7 @@ public sealed record TalentSlot(int Row, int Column, int Cost, int TalentId)
 
     /// <summary>One row of the tree as it looks in game: the talents in columns a, b and c, all costing <paramref name="cost"/>.</summary>
     public static TalentSlot[] InRow(int row, int cost, int first, int second, int third) =>
-        [new(row, 1, cost, first), new(row, 2, cost, second), new(row, 3, cost, third)];
+        [new(Row: row, Column: 1, Cost: cost, TalentId: first), new(Row: row, Column: 2, Cost: cost, TalentId: second), new(Row: row, Column: 3, Cost: cost, TalentId: third)];
 
     /// <summary>A whole tree from its rows, top to bottom.</summary>
     public static TalentSlot[] Tree(params TalentSlot[][] rows) => rows.SelectMany(r => r).ToArray();

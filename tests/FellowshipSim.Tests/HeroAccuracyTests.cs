@@ -18,6 +18,15 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class HeroAccuracyTests(ITestOutputHelper output)
 {
+    private const string HeroVariable = "ACCURACY_HERO";
+    private const string LabelVariable = "ACCURACY_LABEL";
+    private const string FreeDiceIterationsVariable = "ACCURACY_FREEDICE_ITERATIONS";
+    private const string ThreadsVariable = "ACCURACY_THREADS";
+    private const int DefaultFreeDiceIterations = 100;
+    private const int DefaultThreads = 8;
+    private const string AccuracyFolder = "accuracy";
+    private const string BaselineFile = "baseline.json";
+
     public sealed record FightAccuracy(
         string ReportCode, int FightId, string FightName, DateTime? FightDate, string PlayerName,
         int LogHits, int MatchedHits, double LogDamage, double ExactDamage, int PassedSteps, int TotalSteps, int ForcedCasts,
@@ -40,15 +49,15 @@ public class HeroAccuracyTests(ITestOutputHelper output)
     [Fact]
     public async Task Hero_Accuracy_Over_Current_Patch_Fights()
     {
-        if (Environment.GetEnvironmentVariable("ACCURACY_HERO") is not { Length: > 0 } hero)
+        if (Environment.GetEnvironmentVariable(HeroVariable) is not { Length: > 0 } hero)
         {
             output.WriteLine("ACCURACY_HERO is not set; nothing to measure.");
             return;
         }
-        string label = Environment.GetEnvironmentVariable("ACCURACY_LABEL") ?? DateTime.Now.ToString("yyyyMMdd-HHmmss");
-        int iterations = int.TryParse(Environment.GetEnvironmentVariable("ACCURACY_FREEDICE_ITERATIONS"), out int parsedIterations) ? parsedIterations : 100;
-        int threads = int.TryParse(Environment.GetEnvironmentVariable("ACCURACY_THREADS"), out int parsedThreads) ? parsedThreads : 8;
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        string label = Environment.GetEnvironmentVariable(LabelVariable) ?? DateTime.Now.ToString("yyyyMMdd-HHmmss");
+        int iterations = int.TryParse(Environment.GetEnvironmentVariable(FreeDiceIterationsVariable), out int parsedIterations) ? parsedIterations : DefaultFreeDiceIterations;
+        int threads = int.TryParse(Environment.GetEnvironmentVariable(ThreadsVariable), out int parsedThreads) ? parsedThreads : DefaultThreads;
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
 
         var fights = new List<FightAccuracy>();
         var results = new List<ReplayResult>();
@@ -86,9 +95,9 @@ public class HeroAccuracyTests(ITestOutputHelper output)
                 .ToDictionary(g => g.Key, g => g.Sum(a => a.Value), StringComparer.OrdinalIgnoreCase),
             results.SelectMany(r => r.UnmodeledCustomizations).Distinct().Order().ToList());
 
-        string folder = Path.Combine(library.DataDirectory, "accuracy", hero);
+        string folder = Path.Combine(library.DataDirectory, AccuracyFolder, hero);
         Directory.CreateDirectory(folder);
-        string baselinePath = Path.Combine(folder, "baseline.json");
+        string baselinePath = Path.Combine(folder, BaselineFile);
         var baseline = label != "baseline" && File.Exists(baselinePath)
             ? JsonSerializer.Deserialize<HeroAccuracy>(File.ReadAllText(baselinePath))
             : null;

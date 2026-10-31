@@ -18,7 +18,7 @@ public class FocusedWrath : TariqAbility
     /// <summary>Culling Strike placeholder constant Tariq.CostReductionBuff.DamageIncrease 1.1.</summary>
     public const double BuffDamageMultiplier = 1.1;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Focused Wrath", BuffEffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds, MaxStacks);
 
     public FocusedWrath(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory.Major)
     {

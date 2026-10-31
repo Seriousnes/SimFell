@@ -27,7 +27,7 @@ public class VexirasVenom : Legendary
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => EffectName;
-    public override string HeroName => "Mara";
+    public override string HeroName => nameof(Mara);
     public override IReadOnlyList<int> ItemIds => [WristItemId, LegsItemId];
 
     public override void Bind(Hero hero)

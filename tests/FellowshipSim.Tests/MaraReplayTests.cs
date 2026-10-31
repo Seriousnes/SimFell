@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Engine;
 using FellowshipSim.Engine.Replay;
 using FellowshipSim.Logs;
 using Xunit.Abstractions;
@@ -11,17 +12,22 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class MaraReplayTests(ITestOutputHelper output)
 {
+    private const string CharacterFolderVariable = "MARA_CHARACTER_FOLDER";
+    private const string StepsVariable = "MARA_STEPS";
+    private const string BreakdownVariable = "MARA_BREAKDOWN";
+    private const string HitsFolderVariable = "MARA_HITS_FOLDER";
+
     [Fact]
     public async Task Mara_Fights_Replay()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
         foreach (var (reportCode, fightId) in library.ListDownloadedFights())
         {
             var raw = await library.GetRawFightAsync(null, reportCode, fightId);
             foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Hero == "Mara"))
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id).ToJsonString());
-                if (Environment.GetEnvironmentVariable("MARA_CHARACTER_FOLDER") is { } characterFolder)
+                if (Environment.GetEnvironmentVariable(CharacterFolderVariable) is { } characterFolder)
                 {
                     File.WriteAllText(Path.Combine(characterFolder, $"character_{reportCode}_{fightId}.json"), System.Text.Json.JsonSerializer.Serialize(script.Character, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
                     // A profile names the augmentations the engine has: the others are left out.
@@ -68,7 +74,7 @@ public class MaraReplayTests(ITestOutputHelper output)
         foreach (var untracked in result.UntrackedLogAuras.OrderByDescending(kv => kv.Value).Take(25)) output.WriteLine($"untracked log aura {untracked.Key}: {untracked.Value} steps");
         foreach (var unmodeled in result.UnmodeledCustomizations) output.WriteLine($"unmodeled {unmodeled}");
         foreach (var proc in result.ProcStats) output.WriteLine($"proc {proc.Key}: {proc.Procs}/{proc.Rolls} (expected {proc.ExpectedProcs:F1})");
-        if (Environment.GetEnvironmentVariable("MARA_STEPS") is { } range)
+        if (Environment.GetEnvironmentVariable(StepsVariable) is { } range)
         {
             // Every step between two times, with its resources, auras that disagree and issues.
             var bounds = range.Split(',').Select(s => double.Parse(s, System.Globalization.CultureInfo.InvariantCulture)).ToArray();
@@ -86,7 +92,7 @@ public class MaraReplayTests(ITestOutputHelper output)
             output.WriteLine($"{resourceGroup.Key}: {diffs.Count} readings, engine - log median {diffs[diffs.Count / 2]:F2}, p10 {diffs[diffs.Count / 10]:F2}, " +
                              $"p90 {diffs[diffs.Count * 9 / 10]:F2}, within tolerance {resourceGroup.Count(r => r.Matches) * 100.0 / diffs.Count:F1}%");
         }
-        if (Environment.GetEnvironmentVariable("MARA_BREAKDOWN") is { } ids)
+        if (Environment.GetEnvironmentVariable(BreakdownVariable) is { } ids)
         {
             // The log/engine ratio of every matched hit, per minute of the fight.
             var all = result.AllHits.Where(h => h.Log != null && h.EngineAmount > 0 && h.Log.Overkill <= 0).ToList();
@@ -99,7 +105,7 @@ public class MaraReplayTests(ITestOutputHelper output)
             foreach (int id in ids.Split(',').Select(int.Parse))
             {
                 var matched = result.AllHits.Where(h => h.AbilityId == id && h.Log != null && h.EngineAmount > 0 && h.Log.Overkill <= 0).ToList();
-                double Ratio(IEnumerable<HitPair> hits) => hits.Sum(h => h.Log!.UnblockedAmount) / Math.Max(1e-9, hits.Sum(h => h.EngineAmount));
+                double Ratio(IEnumerable<HitPair> hits) => hits.Sum(h => h.Log!.UnblockedAmount) / Math.Max(Tolerance.Comparison, hits.Sum(h => h.EngineAmount));
                 output.WriteLine($"breakdown {id}: {matched.Count} hits, ratio {Ratio(matched):F3} (crit {Ratio(matched.Where(h => h.Crit)):F3}, normal {Ratio(matched.Where(h => !h.Crit)):F3})");
                 foreach (var critGroup in matched.Where(h => h.Crit).GroupBy(h => h.CritChance >= 1.0))
                 {
@@ -125,7 +131,7 @@ public class MaraReplayTests(ITestOutputHelper output)
         {
             output.WriteLine($"forced {forced.Count()}: {forced.First()}");
         }
-        string? folder = Environment.GetEnvironmentVariable("MARA_HITS_FOLDER");
+        string? folder = Environment.GetEnvironmentVariable(HitsFolderVariable);
         if (folder == null) return;
         string dump = Path.Combine(folder, $"hits_{result.ReportCode}_{result.FightId}.csv");
         var inv = System.Globalization.CultureInfo.InvariantCulture;

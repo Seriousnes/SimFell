@@ -3,6 +3,9 @@ using FellowshipSim.Service;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 
+// Fields of the version the console shows: major, minor and patch.
+const int VersionFieldCount = 3;
+
 var app = ServiceApp.Build(args);
 if (!ServiceApp.IsLocal(app.Configuration))
 {
@@ -13,10 +16,10 @@ if (!ServiceApp.IsLocal(app.Configuration))
 // The one-person app: open the browser on it, and run until this console window closes (or Ctrl+C).
 await app.StartAsync();
 string url = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.First();
-Console.WriteLine($"SimFell {(ServiceApp.AppVersion is { } version ? $"{version.ToString(3)} " : "")}is running at {url}");
+Console.WriteLine($"SimFell {(ServiceApp.AppVersion is { } version ? $"{version.ToString(VersionFieldCount)} " : "")}is running at {url}");
 Console.WriteLine("Close this window to stop it.");
 // "--NoBrowser=true" leaves the browser closed.
-if (!app.Configuration.GetValue<bool>("NoBrowser"))
+if (!app.Configuration.GetValue<bool>(ServiceApp.NoBrowserKey))
 {
     try
     {

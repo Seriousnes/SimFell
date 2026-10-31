@@ -44,16 +44,16 @@
                                         <span class="old-patch" data-tooltip="@($"Logged before patch {GamePatch.Current.Name}, which the engine models: this review is no guide to the engine's accuracy now.")">old patch</span>
                                     }
                                 </td>
-                                <td class="num @RatioClass(hits, 0.02, 0.05)">@Percent(hits)</td>
-                                <td class="num @RatioClass(damage, 0.03, 0.08)">@Percent(damage)</td>
+                                <td class="num @RatioClass(hits, HitsGood, HitsWarn)">@Percent(hits)</td>
+                                <td class="num @RatioClass(damage, DamageGood, DamageWarn)">@Percent(damage)</td>
                                 @if (fd != null)
                                 {
                                     double fdDamage = fd.EngineMean / fd.LogDamage;
-                                    <td class="num @RatioClass(fdDamage, 0.02, 0.05)"
+                                    <td class="num @RatioClass(fdDamage, FreeDiceDamageGood, FreeDiceDamageWarn)"
                                         data-tooltip="@($"{fd.Runs} runs, engine 5-95%: {Math.Round(fd.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(fd.Engine95, MidpointRounding.AwayFromZero):N0}")">
                                         <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(review), ReviewTitle.FreeDice(review))">@Percent(fdDamage)</button>
                                     </td>
-                                    <td class="num @PlaceClass(fd.LogPercentile)">@(Math.Round(fd.LogPercentile * 100, MidpointRounding.AwayFromZero))%</td>
+                                    <td class="num @PlaceClass(fd.LogPercentile)">@(Math.Round(fd.LogPercentile * PercentScale, MidpointRounding.AwayFromZero))%</td>
                                 }
                                 else
                                 {
@@ -72,13 +72,48 @@
 </Card>
 
 @code {
+    private const string FreeDiceSuffix = ".freedice.html";
+
+    /// <summary>The percent of a whole.</summary>
+    private const int PercentScale = 100;
+
+    /// <summary>The largest share a hit count may be off the log's and show as good.</summary>
+    private const double HitsGood = 0.02;
+
+    /// <summary>The largest share a hit count may be off the log's and show as a warning.</summary>
+    private const double HitsWarn = 0.05;
+
+    /// <summary>The largest share the damage may be off the log's and show as good.</summary>
+    private const double DamageGood = 0.03;
+
+    /// <summary>The largest share the damage may be off the log's and show as a warning.</summary>
+    private const double DamageWarn = 0.08;
+
+    /// <summary>The largest share the free-dice damage may be off the log's and show as good.</summary>
+    private const double FreeDiceDamageGood = FellowshipSim.Engine.Replay.FreeDiceReportWriter.MeanGoodDeviation;
+
+    /// <summary>The largest share the free-dice damage may be off the log's and show as a warning.</summary>
+    private const double FreeDiceDamageWarn = FellowshipSim.Engine.Replay.FreeDiceReportWriter.MeanWarnDeviation;
+
+    /// <summary>The log's place among the free-dice runs from which it shows as good.</summary>
+    private const double GoodPlaceLow = FellowshipSim.Engine.Replay.FreeDiceReportWriter.PlaceOkLow;
+
+    /// <summary>The log's place among the free-dice runs up to which it shows as good.</summary>
+    private const double GoodPlaceHigh = FellowshipSim.Engine.Replay.FreeDiceReportWriter.PlaceOkHigh;
+
+    /// <summary>The log's place among the free-dice runs from which it shows as a warning.</summary>
+    private const double WarnPlaceLow = FellowshipSim.Engine.Replay.FreeDiceReportWriter.PlaceWarnLow;
+
+    /// <summary>The log's place among the free-dice runs up to which it shows as a warning.</summary>
+    private const double WarnPlaceHigh = FellowshipSim.Engine.Replay.FreeDiceReportWriter.PlaceWarnHigh;
+
     /// <summary>File name of the free-dice page of <paramref name="review"/>.</summary>
-    private static string FreeDiceFile(ReviewSummary review) => $"{review.Id}.freedice.html";
+    private static string FreeDiceFile(ReviewSummary review) => $"{review.Id}{FreeDiceSuffix}";
 
     /// <summary>Reviews run so far, newest first.</summary>
     [Parameter] public IReadOnlyList<ReviewSummary> Reviews { get; set; } = [];
 
-    private static string Percent(double ratio) => (ratio * 100).ToString("F1", CultureInfo.InvariantCulture) + "%";
+    private static string Percent(double ratio) => (ratio * PercentScale).ToString("F1", CultureInfo.InvariantCulture) + "%";
 
     private static string RatioClass(double ratio, double good, double warn)
     {
@@ -88,5 +123,5 @@
 
     // Place of the log among the free-dice runs: near 50% is a typical run, near 0% or 100% means the engine is off.
     private static string PlaceClass(double place) =>
-        place is >= 0.1 and <= 0.9 ? "good" : place is >= 0.03 and <= 0.97 ? "warn" : "bad";
+        place is >= GoodPlaceLow and <= GoodPlaceHigh ? "good" : place is >= WarnPlaceLow and <= WarnPlaceHigh ? "warn" : "bad";
 }

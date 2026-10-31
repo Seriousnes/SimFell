@@ -11,13 +11,23 @@ namespace FellowshipSim.Benchmarks;
 /// </summary>
 public static class Counters
 {
-    private static readonly FieldInfo Sequence = typeof(SimulationKernel).GetField("_sequence", BindingFlags.NonPublic | BindingFlags.Instance)!;
-    private static readonly FieldInfo DamageDealt = typeof(Hero).GetField("_damageDealt", BindingFlags.NonPublic | BindingFlags.Instance)!;
+    private const string SequenceFieldName = "_sequence";
+    private const string DamageDealtFieldName = "_damageDealt";
+    private const string TimersFieldName = "_timers";
+
+    /// <summary>Fights run one after another by <see cref="FightSequence"/>.</summary>
+    private const int SequenceFights = 12;
+
+    /// <summary>Target counts the counters are printed for.</summary>
+    private static readonly int[] TargetCounts = [1, 8];
+
+    private static readonly FieldInfo Sequence = typeof(SimulationKernel).GetField(SequenceFieldName, BindingFlags.NonPublic | BindingFlags.Instance)!;
+    private static readonly FieldInfo DamageDealt = typeof(Hero).GetField(DamageDealtFieldName, BindingFlags.NonPublic | BindingFlags.Instance)!;
 
     public static void Run()
     {
         foreach (bool idle in new[] { false, true })
-        foreach (int targets in new[] { 1, 8 })
+        foreach (int targets in TargetCounts)
         {
             var hero = Fight.NewHero();
             var ctx = Fight.Start(hero, targets);
@@ -42,7 +52,7 @@ public static class Counters
         }
     }
 
-    private static readonly FieldInfo Timers = typeof(AuraContainer).GetField("_timers", BindingFlags.NonPublic | BindingFlags.Instance)!;
+    private static readonly FieldInfo Timers = typeof(AuraContainer).GetField(TimersFieldName, BindingFlags.NonPublic | BindingFlags.Instance)!;
 
     /// <summary>
     /// Fights one after another on one hero, as a Monte Carlo run has them, each with its time and work: a fight that
@@ -59,7 +69,7 @@ public static class Counters
         Console.WriteLine("  fight      ms        damage  casts   hits  events  hasted timers");
         // One thread: the simulator builds one hero, the one above.
         var simulator = new MonteCarloSimulator(() => hero, actions);
-        for (int fight = 1; fight <= 12; fight++)
+        for (int fight = 1; fight <= SequenceFights; fight++)
         {
             casts = 0;
             hits = 0;

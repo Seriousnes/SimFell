@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Heroes.Tariq;
 using FellowshipSim.Core.Heroes.Tariq.Abilities;
 
 namespace FellowshipSim.Core.Customization.Legendaries;
@@ -11,6 +12,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class ThunderingVortex : Legendary
 {
     public const int PowerId = 86;
+    public const string PowerName = "Thundering Vortex";
     public const int HarnessItemId = 5898;
     public const int LoopItemId = 5221;
     public const int VortexLoopItemId = 5222;
@@ -20,11 +22,11 @@ public class ThunderingVortex : Legendary
     public const double FuryMultiplier = 1.5;
     public const double DamageMultiplier = 2.0;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Thundering Vortex", BuffEffectId, maxStacks: MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(PowerName, BuffEffectId, maxStacks: MaxStacks);
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Thundering Vortex";
-    public override string HeroName => "Tariq";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Tariq);
     public override IReadOnlyList<int> ItemIds => [HarnessItemId, LoopItemId, VortexLoopItemId];
 
     public override void Bind(Hero hero)

@@ -162,7 +162,7 @@
                     <label @key="stat">
                         @StatName(stat)
                         <span class="rating">
-                            <input type="number" min="0" step="1" @bind:get="Math.Round(Editor.Rating(stat), 2)" @bind:set="v => Set(() => Editor.SetRating(stat, v))" />
+                            <input type="number" min="0" step="1" @bind:get="Math.Round(Editor.Rating(stat), RatingDigits)" @bind:set="v => Set(() => Editor.SetRating(stat, v))" />
                             <span class="total" data-tooltip="Total rating: the gear's, the stat enchants', the gem nodes' and the sigils'">@Editor.TotalRating(stat).ToString("N0", CultureInfo.CurrentCulture)</span>
                         </span>
                     </label>
@@ -398,6 +398,18 @@
 }
 
 @code {
+    private const string ClipboardWriteFunction = "navigator.clipboard.writeText";
+
+    private const string HttpScheme = "http";
+
+    private const string HttpsScheme = "https";
+
+    /// <summary>The host of a server that listens on every address.</summary>
+    private const string UnspecifiedHost = "0.0.0.0";
+
+    /// <summary>The decimal places of a rating in its field.</summary>
+    private const int RatingDigits = 2;
+
     /// <summary>Called after every change to the build.</summary>
     [Parameter] public EventCallback OnChanged { get; set; }
 
@@ -518,7 +530,7 @@
 
     private void OnHeroKeyDown(KeyboardEventArgs keyboard)
     {
-        if (keyboard.Key == "Escape") _heroMenuOpen = false;
+        if (keyboard.Key == JsInterop.EscapeKey) _heroMenuOpen = false;
     }
 
     private Task PickHeroFromMenu(string hero)
@@ -536,7 +548,7 @@
         State.MarkBuildClean();
         State.BuildStatus = MessageState.None;
         // Another hero runs its own default list.
-        State.ActionListValue = $"builtin/{hero}/{FellowshipSim.Core.APL.DefaultActionLists.DefaultName}";
+        State.ActionListValue = $"{ActionListStore.BuiltInValue}/{hero}/{FellowshipSim.Core.APL.DefaultActionLists.DefaultName}";
         State.ActionListName = FellowshipSim.Core.APL.DefaultActionLists.DefaultName;
         State.ActionListText = null;
         try
@@ -605,7 +617,7 @@
     private string ShareSite()
     {
         var site = new Uri(Navigation.BaseUri);
-        bool shareable = site.Scheme is "http" or "https" && !site.IsLoopback && site.Host != "0.0.0.0";
+        bool shareable = site.Scheme is HttpScheme or HttpsScheme && !site.IsLoopback && site.Host != UnspecifiedHost;
         return shareable ? Navigation.BaseUri : PublicSite;
     }
 
@@ -623,7 +635,7 @@
     {
         try
         {
-            await JS.InvokeVoidAsync("navigator.clipboard.writeText", ShareLink);
+            await JS.InvokeVoidAsync(ClipboardWriteFunction, ShareLink);
             State.BuildStatus = MessageState.Ok("Copied the build's share link. Opening it, or pasting it into Import, loads the build.");
         }
         catch (Exception exception) when (exception is JSException or TaskCanceledException or InvalidOperationException)
@@ -632,13 +644,13 @@
         }
     }
 
-    private Task DownloadExportAsync() => FileDownloads.SaveAsync(JS, Build.Name, ".simc", ExportText);
+    private Task DownloadExportAsync() => FileDownloads.SaveAsync(JS, Build.Name, ProfileStore.Extension, ExportText);
 
     private async Task CopyExportAsync()
     {
         try
         {
-            await JS.InvokeVoidAsync("navigator.clipboard.writeText", ExportText);
+            await JS.InvokeVoidAsync(ClipboardWriteFunction, ExportText);
             State.BuildStatus = MessageState.Ok("Copied the build to the clipboard. Import takes it as a profile.");
         }
         catch (Exception exception) when (exception is JSException or TaskCanceledException or InvalidOperationException)

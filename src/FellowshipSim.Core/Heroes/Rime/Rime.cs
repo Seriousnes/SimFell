@@ -35,12 +35,12 @@ public sealed class Rime : Hero
     /// <summary>Rime's talent tree, as in game (players write picks as row + column: "1b + 2a + 2c ...").</summary>
     public static readonly TalentSlot[] TalentTree = TalentSlot.Tree(
         //              row cost  a                            b                              c
-        TalentSlot.InRow(1, 2,    Avalanche.TalentId,          CoalescingFrost.TalentId,      GlacialAssault.TalentId),
-        TalentSlot.InRow(2, 1,    ColdShower.TalentId,         ChillingFinesse.TalentId,      Burstbolter.TalentId),
-        TalentSlot.InRow(3, 2,    CascadingBlitz.TalentId,     HarrowingIce.TalentId,         IcyFlow.TalentId),
-        TalentSlot.InRow(4, 1,    BurstingSwallows.TalentId,   GreaterGlacialBlast.TalentId,  NavirsKeeper.TalentId),
-        TalentSlot.InRow(5, 3,    IcyTalons.TalentId,          FrostweaversWrath.TalentId,    SoulfrostTorrent.TalentId),
-        TalentSlot.InRow(6, 1,    BitingCold.TalentId,         SupremeTorrent.TalentId,       WisdomOfTheNorth.TalentId));
+        TalentSlot.InRow(row: 1, cost: 2,    Avalanche.TalentId,          CoalescingFrost.TalentId,      GlacialAssault.TalentId),
+        TalentSlot.InRow(row: 2, cost: 1,    ColdShower.TalentId,         ChillingFinesse.TalentId,      Burstbolter.TalentId),
+        TalentSlot.InRow(row: 3, cost: 2,    CascadingBlitz.TalentId,     HarrowingIce.TalentId,         IcyFlow.TalentId),
+        TalentSlot.InRow(row: 4, cost: 1,    BurstingSwallows.TalentId,   GreaterGlacialBlast.TalentId,  NavirsKeeper.TalentId),
+        TalentSlot.InRow(row: 5, cost: 3,    IcyTalons.TalentId,          FrostweaversWrath.TalentId,    SoulfrostTorrent.TalentId),
+        TalentSlot.InRow(row: 6, cost: 1,    BitingCold.TalentId,         SupremeTorrent.TalentId,       WisdomOfTheNorth.TalentId));
 
     /// <summary>Icy Talons: Glacial Blast and Ice Comet are replaced by Talon Strike and Rising Talons.</summary>
     public bool HasIcyTalons { get; internal set; }

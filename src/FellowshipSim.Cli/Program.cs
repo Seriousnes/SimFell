@@ -6,6 +6,9 @@ using FellowshipSim.Engine;
 // simfell --profile <file.simc> [options]: one Monte Carlo sim in this process. The result is the only stdout output;
 // progress and errors are on stderr. Exit codes: 0 done, 1 refused profile or sim, 2 usage error, 130 cancelled.
 
+const int UsageErrorExitCode = 2;
+const int CancelledExitCode = 130;
+
 CliOptions? options;
 try
 {
@@ -15,7 +18,7 @@ catch (CliUsageException exception)
 {
     Console.Error.WriteLine($"simfell: {exception.Message}");
     Console.Error.WriteLine("Run simfell --help for the options.");
-    return 2;
+    return UsageErrorExitCode;
 }
 if (options == null)
 {
@@ -64,7 +67,7 @@ catch (OperationCanceledException) when (cancel.IsCancellationRequested)
 {
     progress.Clear();
     Console.Error.WriteLine("simfell: the sim was cancelled.");
-    return 130;
+    return CancelledExitCode;
 }
 catch (SimEngineException exception)
 {

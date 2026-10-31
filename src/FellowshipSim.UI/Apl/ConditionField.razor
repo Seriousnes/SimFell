@@ -35,6 +35,8 @@
 </div>
 
 @code {
+    private const int CheckDelayMilliseconds = 200;
+
     [CascadingParameter] public ActionListEditor Editor { get; set; } = null!;
 
     [Parameter, EditorRequired] public AplVocabulary Vocabulary { get; set; } = null!;
@@ -45,7 +47,6 @@
 
     [Parameter] public EventCallback<string> OnChange { get; set; }
 
-    private const string AndJoin = "and";
     // The values of the empty select after a side's last term: an operator adds a term, a comparison adds a side, and a
     // join adds a row to the condition in parentheses the side is in.
     private const string OperatorPick = "operator:";
@@ -85,7 +86,7 @@
     protected override void OnInitialized()
     {
         _mode = Editor.ConditionMode;
-        _read = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(200), change => InvokeAsync(() =>
+        _read = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(CheckDelayMilliseconds), change => InvokeAsync(() =>
         {
             change();
             StateHasChanged();
@@ -274,8 +275,8 @@
             @if (addRow != null)
             {
                 <optgroup label="Join">
-                    <option value="@(JoinPick + "and")">and</option>
-                    <option value="@(JoinPick + "or")">or</option>
+                    <option value="@(JoinPick + ConditionBuilder.AndJoin)">and</option>
+                    <option value="@(JoinPick + ConditionBuilder.OrJoin)">or</option>
                 </optgroup>
             }
         </select>
@@ -365,7 +366,7 @@
     // Each group ends with an empty row. A pick in its value picker makes it a row (or a group), and a new empty row follows.
     private void RenderPlaceholder(RenderTreeBuilder __builder, List<ConditionRow> items, string key, int depth, bool nested, Func<ConditionRow, Task> add)
     {
-        var state = _placeholders.TryGetValue(key, out var stored) ? stored : new PlaceholderRow(AndJoin, false);
+        var state = _placeholders.TryGetValue(key, out var stored) ? stored : new PlaceholderRow(ConditionBuilder.AndJoin, false);
         <div @key="@($"{key}:placeholder")" class="condition-row placeholder">
             @{ RenderRowStart(__builder, state.Join, state.Not, items.Count, depth, nested,
                    join => SetPlaceholder(key, state with { Join = join }), () => SetPlaceholder(key, state with { Not = !state.Not })); }
@@ -401,7 +402,7 @@
 
     private void RenderJoin(RenderTreeBuilder __builder, string? join, Func<string, Task> setJoin)
     {
-        <select aria-label="Join" class="join" value="@(join ?? AndJoin)" @onchange="e => setJoin(e.Value as string ?? AndJoin)">
+        <select aria-label="Join" class="join" value="@(join ?? ConditionBuilder.AndJoin)" @onchange="e => setJoin(e.Value as string ?? ConditionBuilder.AndJoin)">
             <option value="and">and</option>
             <option value="or">or</option>
         </select>

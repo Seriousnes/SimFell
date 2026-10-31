@@ -10,6 +10,11 @@ namespace FellowshipSim.EngineServer;
 /// </summary>
 public static class EngineApp
 {
+    /// <summary>The configuration key of the shared key.</summary>
+    public const string EngineKeyName = "EngineKey";
+
+    private const string BearerScheme = "Bearer";
+
     /// <summary>The engine app, with <paramref name="configure"/> applied to its builder before it is built.</summary>
     public static WebApplication Build(string[] args, Action<WebApplicationBuilder>? configure = null)
     {
@@ -21,7 +26,7 @@ public static class EngineApp
         });
         configure?.Invoke(builder);
 
-        string key = builder.Configuration["EngineKey"]
+        string key = builder.Configuration[EngineKeyName]
             ?? throw new InvalidOperationException("Set EngineKey: the key FellowshipSim.Service sends with each request.");
 
         builder.AddServiceDefaults();
@@ -46,5 +51,5 @@ public static class EngineApp
     }
 
     private static bool KeyMatches(string? sent, string key) =>
-        sent != null && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(sent), Encoding.UTF8.GetBytes($"Bearer {key}"));
+        sent != null && CryptographicOperations.FixedTimeEquals(Encoding.UTF8.GetBytes(sent), Encoding.UTF8.GetBytes($"{BearerScheme} {key}"));
 }

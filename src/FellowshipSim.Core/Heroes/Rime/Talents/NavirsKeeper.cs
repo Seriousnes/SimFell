@@ -11,7 +11,7 @@ public class NavirsKeeper : Talent
     public const int StacksGranted = 2;
 
     /// <summary>"causes your next Cold Snap to not require nor cost any charge"</summary>
-    public static readonly AuraDef Buff = AuraDef.Effect("Navir's Keeper", BuffEffectId, maxStacks: StacksGranted);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, maxStacks: StacksGranted);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

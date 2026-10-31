@@ -17,8 +17,8 @@ public enum GemColor
 public sealed record GemNode(int Id, int Node, string Name, double RequiredPower, IReadOnlyDictionary<string, double> Values, AuraDef? Grants = null)
 {
     /// <summary>The node's slot in its row (1-5), shared by its rank I and rank II versions.</summary>
-    public int Slot => (Node - 1) % 5 + 1;
-    public bool IsRankTwo => Node > 5;
+    public int Slot => (Node - 1) % Gem.SlotsPerRank + 1;
+    public bool IsRankTwo => Node > Gem.SlotsPerRank;
     public double Value(string key) => Values.TryGetValue(key, out var value) ? value : throw new KeyNotFoundException($"Gem node {Name} has no value {key}");
 }
 
@@ -41,6 +41,37 @@ public abstract class Gem
     /// </summary>
     public const double OvercapPower = 1500;
     public const double OvercapBonusPerPower = 0.00005;
+
+    /// <summary>Slots in one rank of a colour's tree: nodes 1-5 are rank I and nodes 6-10 rank II (see <see cref="GemNode"/>).</summary>
+    public const int SlotsPerRank = 5;
+
+    /// <summary>Slot of a colour's headline node (Sealed Fate, Harmonious Soul, First Strike and the like).</summary>
+    public const int HeadlineSlot = 1;
+
+    /// <summary>Slot of a colour's node with flat Stamina and a flat stat (Berserker's Zeal, Stoic's Teachings and the like).</summary>
+    public const int FlatStatSlot = 2;
+
+    /// <summary>Slot of a colour's node with a percent stat (Killer Instinct, Ancient's Wisdom and the like).</summary>
+    public const int PercentStatSlot = 4;
+
+    /// <summary>Slot of a colour's blessing node (Blessing of the Deathdealer and the like).</summary>
+    public const int BlessingSlot = 5;
+
+    // Keys of the node values the colours read. Each is written beside its value in the colours' node tables.
+    protected const string CooldownReductionKey = "CooldownReduction";
+    protected const string CostReductionKey = "CostReduction";
+    protected const string CritBonusKey = "CritBonus";
+    protected const string CritChanceBonusKey = "CritChanceBonus";
+    protected const string CritPowerBonusKey = "CritPowerBonus";
+    protected const string DurationBonusKey = "DurationBonus";
+    protected const string ExpertiseBonusKey = "ExpertiseBonus";
+    protected const string HasteBonusKey = "HasteBonus";
+    protected const string HealthThresholdKey = "HealthThreshold";
+    protected const string PrimaryStatBonusKey = "PrimaryStatBonus";
+    protected const string SpiritBonusKey = "SpiritBonus";
+    protected const string SpiritPointsBonusKey = "SpiritPointsBonus";
+    protected const string StaminaBonusKey = "StaminaBonus";
+    protected const string StaminaIncreaseKey = "StaminaIncrease";
 
     public abstract GemColor Color { get; }
     public double Power { get; set; }
@@ -120,7 +151,7 @@ public abstract class Gem
                 if (node.Grants != null) hero.Register(node.Grants);
                 if (_boundSlots.Add(node.Slot)) BindLater(hero, node, now);
             }
-            for (int slot = 1; slot <= 5; slot++)
+            for (int slot = 1; slot <= SlotsPerRank; slot++)
             {
                 var old = before.FirstOrDefault(n => n.Slot == slot);
                 var next = after.FirstOrDefault(n => n.Slot == slot);

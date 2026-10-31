@@ -45,10 +45,10 @@ public sealed class LogOutcomeSource : IOutcomeSource
             int stacks = 0;
             var list = new List<StackGain>();
             var losses = new List<double>();
-            _enemyDebuffApplications[group.Key] = group.Where(a => a.Type is "applydebuff" or "refreshdebuff").OrderBy(a => a.Time).ToList();
+            _enemyDebuffApplications[group.Key] = group.Where(a => a.Type is LogAuraType.ApplyDebuff or LogAuraType.RefreshDebuff).OrderBy(a => a.Time).ToList();
             foreach (var aura in group.OrderBy(a => a.Time))
             {
-                int now = aura.Type is "removedebuff" or "removebuff" ? 0 : aura.Stack ?? (aura.IsGain ? Math.Max(stacks, 1) : stacks);
+                int now = aura.Type is LogAuraType.RemoveDebuff or LogAuraType.RemoveBuff ? 0 : aura.Stack ?? (aura.IsGain ? Math.Max(stacks, 1) : stacks);
                 if (aura.IsGain && now > stacks) list.Add(new StackGain(aura, now - stacks));
                 if (aura.IsLoss && now < stacks) losses.Add(aura.Time);
                 stacks = now;
@@ -56,7 +56,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
             _enemyStackGains[group.Key] = list;
             _enemyStackLosses[group.Key] = losses;
         }
-        foreach (var command in script.Commands.Where(c => c.Kind == CommandKind.EnemyDemise && c.Enemy != null))
+        foreach (var command in script.Commands.Where(c => c.Kind == ReplayCommandKind.EnemyDemise && c.Enemy != null))
         {
             _demise[new UnitRef(command.Enemy!.Id, command.Enemy.Instance)] = command.Time;
         }
@@ -366,17 +366,29 @@ public sealed class LogOutcomeSource : IOutcomeSource
         {
             if (!reading.Resources.TryGetValue(type, out var value)) continue;
             double amount = log.EngineAmount(value);
-            if (previous != null && previous.Event != "cast" && reading.Time - previous.Time <= ResourceEvidenceWindowSeconds
-                && amount < max - 0.5 && previousAmount < max - 0.5)
+            if (previous != null && previous.Event != LogResourceEvent.Cast && reading.Time - previous.Time <= ResourceEvidenceWindowSeconds
+                && amount < max - ResourceNearMaxMargin && previousAmount < max - ResourceNearMaxMargin)
             {
                 double excess = amount - previousAmount - evidence.ResourceRegenPerSecond * (reading.Time - previous.Time);
-                if (Math.Abs(excess - evidence.ResourceGain) <= 0.3 * evidence.ResourceGain) jumps.Add(new ResourceJump(previous.Time, reading.Time));
+                if (Math.Abs(excess - evidence.ResourceGain) <= ResourceGainTolerance * evidence.ResourceGain) jumps.Add(new ResourceJump(previous.Time, reading.Time));
             }
             previous = reading;
             previousAmount = amount;
         }
         return jumps;
     }
+
+    /// <summary>Distance below a resource's maximum from which a reading can show a proc's gain (the resource has room to rise).</summary>
+    private const double ResourceNearMaxMargin = 0.5;
+
+    /// <summary>Largest difference between a reading's rise and the proc's gain, as a fraction of the gain, that counts as that gain.</summary>
+    private const double ResourceGainTolerance = 0.3;
+
+    /// <summary>A following hit of a proc lands from this fraction of the proc's hit spacing after the hit before it.</summary>
+    private const double FollowingWindowStartFactor = 0.75;
+
+    /// <summary>A following hit of a proc lands up to this fraction of the proc's hit spacing after the hit before it.</summary>
+    private const double FollowingWindowEndFactor = 1.5;
 
     private const double ResourceEvidenceWindowSeconds = 0.5;
     private readonly List<LogResourceSnapshot> _resourceReadings = [];
@@ -453,8 +465,8 @@ public sealed class LogOutcomeSource : IOutcomeSource
         double previous = hit.Time;
         for (int k = 1; k <= evidence.FollowingHits; k++)
         {
-            var following = _hits.Peek(logId, previous + 0.75 * evidence.FollowingSpacingSeconds - evidence.FollowingSlackSeconds,
-                previous + 1.5 * evidence.FollowingSpacingSeconds + evidence.FollowingSlackSeconds, Free);
+            var following = _hits.Peek(logId, previous + FollowingWindowStartFactor * evidence.FollowingSpacingSeconds - evidence.FollowingSlackSeconds,
+                previous + FollowingWindowEndFactor * evidence.FollowingSpacingSeconds + evidence.FollowingSlackSeconds, Free);
             if (following == null) break;
             _claimedDamageEvidence.Add(following);
             previous = following.Time;
@@ -478,6 +490,12 @@ public sealed class LogOutcomeSource : IOutcomeSource
 /// </summary>
 public sealed class HitLedger
 {
+    /// <summary>Most recent travel times of a damage ID that its typical and longest travel are taken from.</summary>
+    private const int RecentTravelCount = 50;
+
+    /// <summary>Seconds before a hit within which the previous hit with the same ID, target and crit status is looked for when comparing damage.</summary>
+    private const double RatioLookbackSeconds = 3.0;
+
     private readonly Dictionary<HitKey, List<LogDamage>> _byKey = new();
     private readonly Dictionary<int, List<LogDamage>> _byAbility = new();
     private readonly List<LogDamage> _all;
@@ -681,12 +699,12 @@ public sealed class HitLedger
 
     /// <summary>The longest travel seen for this damage ID (recent hits), or the default before any.</summary>
     public double LongestTravelSeconds(int logId, ReplayOptions options) =>
-        _travel.TryGetValue(logId, out var list) && list.Count > 0 ? Math.Max(options.DefaultTravelSeconds, list.Skip(Math.Max(0, list.Count - 50)).Max()) : options.DefaultTravelSeconds;
+        _travel.TryGetValue(logId, out var list) && list.Count > 0 ? Math.Max(options.DefaultTravelSeconds, list.Skip(Math.Max(0, list.Count - RecentTravelCount)).Max()) : options.DefaultTravelSeconds;
 
     private double TypicalTravel(int logId, ReplayOptions options)
     {
         if (!_travel.TryGetValue(logId, out var list) || list.Count == 0) return options.DefaultTravelSeconds;
-        var recent = list.Skip(Math.Max(0, list.Count - 50)).OrderBy(x => x).ToList();
+        var recent = list.Skip(Math.Max(0, list.Count - RecentTravelCount)).OrderBy(x => x).ToList();
         return recent[recent.Count / 2];
     }
 
@@ -803,7 +821,7 @@ public sealed class HitLedger
         var ratios = new List<double>();
         foreach (var damage in group)
         {
-            var prev = list.LastOrDefault(p => p.Time < group[0].Time - options.GroupSecondsOf(group[0].AbilityId) && p.Time > damage.Time - 3.0
+            var prev = list.LastOrDefault(p => p.Time < group[0].Time - options.GroupSecondsOf(group[0].AbilityId) && p.Time > damage.Time - RatioLookbackSeconds
                                                && p.Target == damage.Target && p.Crit == damage.Crit && p.TotalAmount > 0);
             if (prev != null) ratios.Add(damage.TotalAmount / prev.TotalAmount);
         }

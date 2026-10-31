@@ -6,6 +6,38 @@ namespace FellowshipSim.Engine.Replay;
 /// <summary>Renders a <see cref="ReplayResult"/> as a self-contained HTML review page and a short text summary.</summary>
 public static class ReplayReportWriter
 {
+    /// <summary>Subjects listed per issue category in the text summary.</summary>
+    private const int SummarySubjectCount = 6;
+
+    /// <summary>Largest deviation of the engine's damage from the log's (fraction) that the index page marks as matching.</summary>
+    private const double IndexDeviationTolerance = 0.03;
+
+    /// <summary>Largest deviation of an ability's engine damage from the log's (fraction) that the ability table marks as matching.</summary>
+    private const double AbilityDiffTolerance = 0.05;
+
+    /// <summary>Deviation (fraction) below which the ability table shows no deviation.</summary>
+    private const double ZeroDiffThreshold = 0.0005;
+
+    /// <summary>Horizontal lines of a damage chart above the baseline.</summary>
+    private const int ChartGridLineCount = 4;
+
+    /// <summary>Distance between a damage chart's vertical axis and its value labels (SVG units).</summary>
+    private const double ChartAxisLabelGap = 6;
+
+    /// <summary>Distance a value label of a damage chart sits below its grid line (SVG units).</summary>
+    private const double ChartAxisLabelDrop = 4;
+
+    /// <summary>Distance between a damage chart's bottom edge and its time labels (SVG units).</summary>
+    private const double ChartTimeLabelRise = 6;
+
+    /// <summary>Seconds between the time labels of a damage chart.</summary>
+    private const int ChartTimeStepSeconds = 60;
+
+    /// <summary>Damage from which a chart label is shown in millions.</summary>
+    public const double Million = 1e6;
+
+    /// <summary>Damage from which a chart label is shown in thousands.</summary>
+    public const double Thousand = 1e3;
 
     public static string Summary(ReplayResult result)
     {
@@ -22,7 +54,7 @@ public static class ReplayReportWriter
             foreach (var group in result.Steps.SelectMany(s => s.Issues).GroupBy(i => i.Category).OrderByDescending(g => g.Count()))
             {
                 sb.AppendLine($"  {group.Key}: {group.Count()} issues in {group.Select(i => i.Step).Distinct().Count()} steps");
-                foreach (var sub in group.GroupBy(i => i.Subject ?? "other").OrderByDescending(x => x.Count()).Take(6))
+                foreach (var sub in group.GroupBy(i => i.Subject ?? "other").OrderByDescending(x => x.Count()).Take(SummarySubjectCount))
                 {
                     sb.AppendLine($"      {sub.Count(),6} x {sub.Key} (first at step {sub.Min(i => i.Step)})");
                 }
@@ -65,7 +97,7 @@ public static class ReplayReportWriter
             var (eng, log) = DamageTotals(result);
             double deviation = log > 0 ? eng / log - 1 : 0;
             double dur = Math.Max(1, result.DurationSeconds);
-            string cls = Math.Abs(deviation) <= 0.03 ? "diff-ok" : "diff-bad";
+            string cls = Math.Abs(deviation) <= IndexDeviationTolerance ? "diff-ok" : "diff-bad";
             sb.Append($"<tr><td><a href=\"{EncodeHtml(file)}\">{EncodeHtml(result.FightName)}</a></td><td>{EncodeHtml(result.PlayerName)}</td><td>{EncodeHtml(result.ReportCode)} #{result.FightId}</td>");
             sb.Append($"<td class=\"num\">{result.PassedSteps} / {result.Steps.Count}</td><td class=\"num\">{(result.LogHits > 0 ? (double)result.MatchedLogHits / result.LogHits : 0):P1}</td>");
             sb.Append($"<td class=\"num\">{log / dur:N0}</td><td class=\"num\">{eng / dur:N0}</td><td class=\"num {cls}\">{deviation:+0.0%;-0.0%;0.0%}</td><td class=\"num\">{result.ForcedCasts.Count}</td></tr>");
@@ -180,7 +212,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
             bool stateOk = step.Resources.All(c => c.Matches) && step.Auras.All(a => a.Matches);
             string cls = !step.Passed ? "fail" : !step.Modeled ? "skip" : "";
             string index = step.Passed ? step.Index.ToString() : $"<a href=\"#step-{step.Index}\">{step.Index}</a>";
-            sb.Append($"<tr class=\"{cls}\"><td class=\"num\">{index}</td><td class=\"num\">{step.Time:F3}</td><td>{EncodeHtml(step.Kind)}</td><td>{EncodeHtml(step.AbilityName)}</td><td class=\"num\">{step.ActiveEnemies}</td>");
+            sb.Append($"<tr class=\"{cls}\"><td class=\"num\">{index}</td><td class=\"num\">{step.Time:F3}</td><td>{EncodeHtml(step.Kind.LogText())}</td><td>{EncodeHtml(step.AbilityName)}</td><td class=\"num\">{step.ActiveEnemies}</td>");
             sb.Append($"<td class=\"num\">{matched.Count}/{step.Hits.Count}</td><td class=\"num\">{(engineSum > 0 ? (logSum / engineSum).ToString("F3") : "—")}</td>");
             sb.Append($"<td>{(stateOk ? "<span class=ok>match</span>" : "<span class=bad>differs</span>")}</td>");
             sb.Append($"<td>{(!step.Modeled ? "skipped (no model)" : step.Passed ? "<span class=ok>pass</span>" : $"<span class=bad>{step.Issues.Count} issue(s)</span>")}</td></tr>");
@@ -273,22 +305,22 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         string Points(double[] values) => string.Join(" ", values.Select((y, i) => $"{FormatNumber(ScaleX(i))},{FormatNumber(ScaleY(y))}"));
 
         sb.Append($"<svg class=\"chart\" viewBox=\"0 0 {Width} {Height}\" role=\"img\">");
-        for (int g = 0; g <= 4; g++)
+        for (int g = 0; g <= ChartGridLineCount; g++)
         {
-            double value = max * g / 4;
+            double value = max * g / ChartGridLineCount;
             sb.Append($"<line class=\"axis\" x1=\"{Left}\" x2=\"{Width - Right}\" y1=\"{FormatNumber(ScaleY(value))}\" y2=\"{FormatNumber(ScaleY(value))}\"/>");
-            sb.Append($"<text x=\"{Left - 6}\" y=\"{FormatNumber(ScaleY(value) + 4)}\" text-anchor=\"end\">{Short(value)}</text>");
+            sb.Append($"<text x=\"{Left - ChartAxisLabelGap}\" y=\"{FormatNumber(ScaleY(value) + ChartAxisLabelDrop)}\" text-anchor=\"end\">{Short(value)}</text>");
         }
-        for (int t = 0; t <= duration; t += 60)
+        for (int t = 0; t <= duration; t += ChartTimeStepSeconds)
         {
-            sb.Append($"<text x=\"{FormatNumber(ScaleX(t))}\" y=\"{Height - 6}\" text-anchor=\"middle\">{t / 60}:00</text>");
+            sb.Append($"<text x=\"{FormatNumber(ScaleX(t))}\" y=\"{Height - ChartTimeLabelRise}\" text-anchor=\"middle\">{t / ChartTimeStepSeconds}:00</text>");
         }
         sb.Append($"<polyline fill=\"none\" stroke=\"var(--log)\" stroke-width=\"1.6\" points=\"{Points(log)}\"/>");
         sb.Append($"<polyline fill=\"none\" stroke=\"var(--engine)\" stroke-width=\"1.6\" points=\"{Points(engine)}\"/>");
         sb.Append("</svg>");
     }
 
-    private static string Short(double value) => value >= 1e6 ? $"{value / 1e6:0.#}M" : value >= 1e3 ? $"{value / 1e3:0.#}k" : $"{value:0}";
+    private static string Short(double value) => value >= Million ? $"{value / Million:0.#}M" : value >= Thousand ? $"{value / Thousand:0.#}k" : $"{value:0}";
 
     private static void RenderAbilityBreakdown(StringBuilder sb, ReplayResult result, List<HitPair> engineHits, double duration)
     {
@@ -310,7 +342,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         {
             if (log <= 0) return "<td class=\"num\">-</td>";
             double difference = eng / log - 1;
-            return $"<td class=\"num {(Math.Abs(difference) <= 0.05 ? "diff-ok" : "diff-bad")}\">{(Math.Abs(difference) < 0.0005 ? 0 : difference):+0.0%;-0.0%;0.0%}</td>";
+            return $"<td class=\"num {(Math.Abs(difference) <= AbilityDiffTolerance ? "diff-ok" : "diff-bad")}\">{(Math.Abs(difference) < ZeroDiffThreshold ? 0 : difference):+0.0%;-0.0%;0.0%}</td>";
         }
         string Pct(int count, int of) => of == 0 ? "-" : $"{(double)count / of:P1}";
         string Avg(double dmg, int count) => count == 0 ? "-" : $"{dmg / count:N0}";
@@ -338,7 +370,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
     private static void RenderStepDetail(StringBuilder sb, ReplayStep step, bool open)
     {
         string status = !step.Modeled ? "skipped" : step.Passed ? "<span class=ok>pass</span>" : $"<span class=bad>{step.Issues.Count} issue(s)</span>";
-        sb.Append($"<details class=\"panel\" id=\"step-{step.Index}\"{(open ? " open" : "")}><summary>Step {step.Index} · {step.Time:F3}s · {EncodeHtml(step.Kind)} {EncodeHtml(step.AbilityName)}{(step.Target != null ? $" → {EncodeHtml(step.Target)}" : "")} · {status}</summary>");
+        sb.Append($"<details class=\"panel\" id=\"step-{step.Index}\"{(open ? " open" : "")}><summary>Step {step.Index} · {step.Time:F3}s · {EncodeHtml(step.Kind.LogText())} {EncodeHtml(step.AbilityName)}{(step.Target != null ? $" → {EncodeHtml(step.Target)}" : "")} · {status}</summary>");
         if (step.Note != null) sb.Append($"<p class=\"muted\">{EncodeHtml(step.Note)}</p>");
         if (step.Issues.Count > 0)
         {
@@ -385,10 +417,10 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
     /// <summary>The expected range, observed value and deviation of an issue with a numeric check, for a line of text.</summary>
     private static string RangeText(ReplayIssue issue) =>
         issue.Expected is { } expected
-            ? $" (expected {expected}, observed {(issue.Observed is { } observed ? ExpectedRange.Format(observed, expected.Unit) : "none")}{(issue.Deviation is { } deviation ? $", deviation {DeviationText(deviation, expected.Unit)}" : "")})"
+            ? $" (expected {expected}, observed {(issue.Observed is { } observed ? expected.Format(observed) : "none")}{(issue.Deviation is { } deviation ? $", deviation {DeviationText(deviation, expected)}" : "")})"
             : "";
 
-    private static string DeviationText(double deviation, string unit) => (deviation > 0 ? "+" : "") + ExpectedRange.Format(deviation, unit);
+    private static string DeviationText(double deviation, ExpectedRange expected) => (deviation > 0 ? "+" : "") + expected.Format(deviation);
 
     private static void RenderCounts(StringBuilder sb, string title, Dictionary<string, int> counts, string unit)
     {

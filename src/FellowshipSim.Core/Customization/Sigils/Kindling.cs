@@ -1,3 +1,5 @@
+using FellowshipSim.Core.Engine;
+
 namespace FellowshipSim.Core.Customization.Sigils;
 
 /// <summary>
@@ -74,7 +76,7 @@ public class Kindling : Sigil
             double elapsed = fraction * TickSeconds / (1.0 + hero.GetHaste(ctx.CurrentTime));
             burn.NextTick?.Cancel();
             burn.NextTick = null;
-            if (fraction <= 0 || elapsed < PeriodicEffect.MinHastedPartialTickSeconds - 1e-9) return;
+            if (fraction <= 0 || elapsed < PeriodicEffect.MinHastedPartialTickSeconds - Tolerance.Comparison) return;
             fraction = Math.Min(fraction, 1.0);
             ctx.Schedule(SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds), cc =>
             {

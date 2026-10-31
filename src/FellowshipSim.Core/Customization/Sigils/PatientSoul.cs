@@ -13,7 +13,7 @@ public class PatientSoul : Sigil
     public const int BuffEffectId = 2149;
     public static readonly double[] ExpertiseRatingByRank = [12, 22, 32, 42];
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Patient Soul", BuffEffectId);
+    public static readonly AuraDef Buff = AuraDef.Effect(SigilName, BuffEffectId);
 
     public override int Id => SigilId;
     public override string Name => SigilName;

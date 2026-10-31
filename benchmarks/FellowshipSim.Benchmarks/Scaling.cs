@@ -13,7 +13,28 @@ namespace FellowshipSim.Benchmarks;
 /// </summary>
 public static class Scaling
 {
-    private const string RunMode = "scale-run";
+    public const string RunMode = "scale-run";
+    public const string DefaultIterationsText = "100000";
+    private const string ProcessorCountVariable = "DOTNET_PROCESSOR_COUNT";
+    private const string GcHeapCountVariable = "DOTNET_GCHeapCount";
+    private const string GcHeapAffinitizeMaskVariable = "DOTNET_GCHeapAffinitizeMask";
+    private const string HexFormat = "x";
+
+    /// <summary>Core counts run when none are given.</summary>
+    private static readonly int[] DefaultCoreCounts = [1, 2, 4, 8];
+
+    /// <summary>Milliseconds between checks that a child process has exited.</summary>
+    private const int ExitPollMilliseconds = 1000;
+
+    private const double BytesPerGigabyte = 1e9;
+
+    /// <summary>Most processors a range is written out in full for.</summary>
+    private const int MaxListedProcessors = 2;
+
+    // SYSTEM_CPU_SET_INFORMATION byte offsets.
+    private const int LogicalProcessorIndexOffset = 14;
+    private const int CoreIndexOffset = 15;
+    private const int EfficiencyClassOffset = 18;
 
     /// <summary>
     /// <c>scale &lt;mc|mc8|mc-idle|mc8-idle|freedice&gt; [iterations] [core counts]</c>: one process per core count (default 1, 2, 4 and 8),
@@ -21,12 +42,12 @@ public static class Scaling
     /// </summary>
     public static void Run(string[] args)
     {
-        string workload = args.ElementAtOrDefault(1) ?? "mc";
-        int iterations = int.Parse(args.ElementAtOrDefault(2) ?? "100000");
+        string workload = args.ElementAtOrDefault(1) ?? Fight.DefaultWorkload;
+        int iterations = int.Parse(args.ElementAtOrDefault(2) ?? DefaultIterationsText);
         var order = ProcessorOrder();
         var counts = args.ElementAtOrDefault(3) is { } list
             ? list.Split(',').Select(int.Parse).ToList()
-            : new[] { 1, 2, 4, 8 }.Where(n => n <= order.Count).ToList();
+            : DefaultCoreCounts.Where(n => n <= order.Count).ToList();
 
         Console.WriteLine($"{workload}, {iterations:N0} iterations. Logical processors, first chosen first: {string.Join(",", order)}");
         Console.WriteLine("cores  logical processors        wall s    CPU s   iter/s  efficiency  allocated GB   gen0  gen1  gen2  GC pause  peak GB");
@@ -41,14 +62,14 @@ public static class Scaling
                 UseShellExecute = false,
             };
             foreach (string a in new[] { RunMode, workload, iterations.ToString(), mask.ToString() }) start.ArgumentList.Add(a);
-            start.Environment["DOTNET_PROCESSOR_COUNT"] = cores.ToString();
-            start.Environment["DOTNET_GCHeapCount"] = cores.ToString("x");
-            start.Environment["DOTNET_GCHeapAffinitizeMask"] = mask.ToString("x");
+            start.Environment[ProcessorCountVariable] = cores.ToString();
+            start.Environment[GcHeapCountVariable] = cores.ToString(HexFormat);
+            start.Environment[GcHeapAffinitizeMaskVariable] = mask.ToString(HexFormat);
             using var child = Process.Start(start)!;
             var output = child.StandardOutput.ReadToEndAsync();
             var clock = Stopwatch.StartNew();
             long peak = 0;
-            while (!child.WaitForExit(1000))
+            while (!child.WaitForExit(ExitPollMilliseconds))
             {
                 child.Refresh();
                 // The child can exit between the wait and the read.
@@ -57,7 +78,7 @@ public static class Scaling
                 if (peak <= WorkingSetLimitBytes) continue;
                 child.Kill(entireProcessTree: true);
                 child.WaitForExit();
-                Console.WriteLine($"{cores,5}  {Ranges(chosen),-22} aborted: working set passed {WorkingSetLimitBytes / 1e9:F0} GB after {clock.Elapsed.TotalSeconds:F0} s");
+                Console.WriteLine($"{cores,5}  {Ranges(chosen),-22} aborted: working set passed {WorkingSetLimitBytes / BytesPerGigabyte:F0} GB after {clock.Elapsed.TotalSeconds:F0} s");
                 break;
             }
             if (peak > WorkingSetLimitBytes) continue;
@@ -65,7 +86,7 @@ public static class Scaling
             double rate = iterations / m.WallSeconds;
             single ??= cores == 1 ? rate : null;
             string efficiency = single is { } one ? $"{rate / (one * cores),9:P0}" : "        -";
-            Console.WriteLine($"{cores,5}  {Ranges(chosen),-22} {m.WallSeconds,9:F1} {m.CpuSeconds,8:F1} {rate,8:N0}  {efficiency}  {m.AllocatedBytes / 1e9,12:F1} {m.Gen0,6} {m.Gen1,5} {m.Gen2,5} {m.PausePercent,8:P1} {m.PeakWorkingSetBytes / 1e9,8:F2}");
+            Console.WriteLine($"{cores,5}  {Ranges(chosen),-22} {m.WallSeconds,9:F1} {m.CpuSeconds,8:F1} {rate,8:N0}  {efficiency}  {m.AllocatedBytes / BytesPerGigabyte,12:F1} {m.Gen0,6} {m.Gen1,5} {m.Gen2,5} {m.PausePercent,8:P1} {m.PeakWorkingSetBytes / BytesPerGigabyte,8:F2}");
         }
     }
 
@@ -85,7 +106,7 @@ public static class Scaling
         int cores = System.Numerics.BitOperations.PopCount(ulong.Parse(args[3]));
         Action work = Fight.MonteCarloWorkload(workload) is { Targets: var targets, Idle: var idle }
             ? MonteCarlo(iterations, targets, idle, cores)
-            : workload == "freedice"
+            : workload == Fight.FreeDiceWorkload
                 ? FreeDice(iterations)
                 : throw new ArgumentException($"Unknown workload '{workload}' (mc, mc8, mc-idle, mc8-idle or freedice)");
 
@@ -93,7 +114,7 @@ public static class Scaling
         var cpu = process.TotalProcessorTime;
         long allocated = GC.GetTotalAllocatedBytes(precise: true);
         var pause = GC.GetTotalPauseDuration();
-        int gen0 = GC.CollectionCount(0), gen1 = GC.CollectionCount(1), gen2 = GC.CollectionCount(2);
+        int gen0 = GC.CollectionCount(0), gen1 = GC.CollectionCount(1), gen2 = GC.CollectionCount(generation: 2);
         var clock = Stopwatch.StartNew();
         work();
         clock.Stop();
@@ -102,7 +123,7 @@ public static class Scaling
             clock.Elapsed.TotalSeconds,
             (process.TotalProcessorTime - cpu).TotalSeconds,
             GC.GetTotalAllocatedBytes(precise: true) - allocated,
-            GC.CollectionCount(0) - gen0, GC.CollectionCount(1) - gen1, GC.CollectionCount(2) - gen2,
+            GC.CollectionCount(0) - gen0, GC.CollectionCount(1) - gen1, GC.CollectionCount(generation: 2) - gen2,
             (GC.GetTotalPauseDuration() - pause).TotalSeconds / clock.Elapsed.TotalSeconds,
             process.PeakWorkingSet64);
         Console.WriteLine(m.ToString());
@@ -152,7 +173,7 @@ public static class Scaling
             {
                 int size = Marshal.ReadInt32(buffer, offset);
                 // SYSTEM_CPU_SET_INFORMATION: LogicalProcessorIndex at 14, CoreIndex at 15, EfficiencyClass at 18.
-                sets.Add(new CpuSet(Marshal.ReadByte(buffer, offset + 14), Marshal.ReadByte(buffer, offset + 15), Marshal.ReadByte(buffer, offset + 18)));
+                sets.Add(new CpuSet(Marshal.ReadByte(buffer, offset + LogicalProcessorIndexOffset), Marshal.ReadByte(buffer, offset + CoreIndexOffset), Marshal.ReadByte(buffer, offset + EfficiencyClassOffset)));
                 offset += size;
             }
             return sets
@@ -168,8 +189,8 @@ public static class Scaling
     /// <summary>"0,2,4,6" as "0-6 step 2"; every logical processor as "all"; any other set as its list.</summary>
     private static string Ranges(List<int> processors)
     {
-        if (processors.Count == Environment.ProcessorCount && processors.Count > 2) return $"all {processors.Count}";
-        if (processors.Count <= 2) return string.Join(",", processors);
+        if (processors.Count == Environment.ProcessorCount && processors.Count > MaxListedProcessors) return $"all {processors.Count}";
+        if (processors.Count <= MaxListedProcessors) return string.Join(",", processors);
         int step = processors[1] - processors[0];
         bool even = step > 0 && processors.Zip(processors.Skip(1), (first, second) => second - first == step).All(gap => gap);
         return even ? $"{processors[0]}-{processors[^1]}" + (step > 1 ? $" step {step}" : "") : string.Join(",", processors);

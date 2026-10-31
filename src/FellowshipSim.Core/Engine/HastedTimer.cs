@@ -196,13 +196,13 @@ public sealed class HastedTimer
             if (_executing)
             {
                 // The tick's own execution: the re-arm reads a remaining of 0, and the timer goes on from the tick.
-                if (Math.Abs(haste - _haste) >= 1e-12) _rearmedInTick = true;
+                if (Math.Abs(haste - _haste) >= Tolerance.Change) _rearmedInTick = true;
                 _haste = haste;
                 return;
             }
             _remainingBase -= (now - _lastUpdate).TotalSeconds * (1.0 + _haste);
             _lastUpdate = now;
-            if (Math.Abs(haste - _haste) < 1e-12 && _event is { HasFired: false, IsCancelled: false }) return;
+            if (Math.Abs(haste - _haste) < Tolerance.Change && _event is { HasFired: false, IsCancelled: false }) return;
             if (_period && _ctx.AbilityActivation != 0 && _ctx.AbilityActivation != _shiftedActivation)
             {
                 // Before the frame's timers, GetTimerRemaining reads the timer against the last frame's time, and the

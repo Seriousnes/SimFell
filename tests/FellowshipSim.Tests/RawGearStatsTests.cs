@@ -14,6 +14,8 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class RawGearStatsTests
 {
+    private const string RawGearFile = "raw_gear_combatants.json";
+
     public static TheoryData<int> Players() => new(Enumerable.Range(0, Fixture().Count));
 
     [Theory]
@@ -62,5 +64,5 @@ public class RawGearStatsTests
     }
 
     private static JsonArray Fixture() =>
-        JsonNode.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "raw_gear_combatants.json")))!.AsArray();
+        JsonNode.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, RawGearFile)))!.AsArray();
 }

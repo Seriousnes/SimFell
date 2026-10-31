@@ -26,7 +26,7 @@ public class IcyFlow : Talent
     /// <summary>"causing your next Ice Comet to have 0.5 seconds reduced impact delay" (hero_data InitialDelayReductionInSeconds).</summary>
     public const double ImpactDelayReductionSeconds = 0.5;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Icy Flow", EffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, BuffSeconds, MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

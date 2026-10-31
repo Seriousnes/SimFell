@@ -11,6 +11,7 @@ public class VisionsOfGrandeur : Aspect
     public const string AspectName = "Visions of Grandeur";
     public static readonly double[] WeaponCooldownFractionByRank = [0.25, 0.5, 0.75, 1.0];
     public const double SpiritPointsPer30sOfCooldown = 2.5;
+    public const double CooldownSecondsPerBatch = 30.0; // tooltip text: "divided by 30"
 
     public override int Id => AspectId;
     public override string Name => AspectName;
@@ -22,7 +23,7 @@ public class VisionsOfGrandeur : Aspect
         {
             if (ability == hero.WeaponAbility && hero.SimContext is { } ctx)
             {
-                hero.GainResource(Hero.SpiritPoints, SpiritPointsPer30sOfCooldown * ability.Cooldown.TotalSeconds / 30.0, ctx);
+                hero.GainResource(Hero.SpiritPoints, SpiritPointsPer30sOfCooldown * ability.Cooldown.TotalSeconds / CooldownSecondsPerBatch, ctx);
             }
         };
         hero.OnCastCompleted += (ability, _, now) =>

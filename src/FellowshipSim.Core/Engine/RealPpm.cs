@@ -28,7 +28,7 @@ public class RealPpm
 
         // Haste scales RPPM proc frequency
         double hastedPpm = BasePpm * (1.0 + hero.GetHaste(ctx.CurrentTime));
-        double procChance = Math.Clamp((hastedPpm * timeSinceLastSeconds) / 60.0, 0.0, 1.0);
+        double procChance = Math.Clamp((hastedPpm * timeSinceLastSeconds) / SimTime.SecondsPerMinute, 0.0, 1.0);
 
         return ctx.Outcomes.RollProc(ProcKey, procChance, ctx, target);
     }

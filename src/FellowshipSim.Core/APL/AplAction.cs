@@ -4,6 +4,9 @@ namespace FellowshipSim.Core.APL;
 
 public class AplAction
 {
+    /// <summary>Name of the enemy added when an action has no target.</summary>
+    public const string TargetDummyName = "Target Dummy";
+
     public string AbilityName { get; init; } = string.Empty;
     public IAplExpression? Condition { get; init; }
     /// <summary>Target selection of the cast; null keeps the hero's current target.</summary>
@@ -48,7 +51,7 @@ public class AplAction
         }
         if (target == null)
         {
-            target = ctx.AddEnemy(1, 1, "Target Dummy");
+            target = ctx.AddEnemy(1, 1, TargetDummyName);
             ctx.Player.CurrentTarget = target;
         }
 
@@ -84,8 +87,8 @@ public class AplAction
         }
     }
 
-    public override string ToString() => Variable != null ? $"{AplVariable.ActionName},{Variable}" + (Condition != null ? $",if={Condition}" : "") :
-        AbilityName + (ListName != null ? $",{AplActionLine.ListNameKey}={ListName}" : "") + (TargetIf != null ? $",target_if={TargetIf}" : "") + (Condition != null ? $",if={Condition}" : "");
+    public override string ToString() => Variable != null ? $"{AplVariable.ActionName},{Variable}" + (Condition != null ? $",{AplActionLine.ConditionKey}={Condition}" : "") :
+        AbilityName + (ListName != null ? $",{AplActionLine.ListNameKey}={ListName}" : "") + (TargetIf != null ? $",{AplActionLine.TargetIfKey}={TargetIf}" : "") + (Condition != null ? $",{AplActionLine.ConditionKey}={Condition}" : "");
 }
 
 /// <summary>How a <c>variable</c> action changes its variable (<c>op=</c>).</summary>

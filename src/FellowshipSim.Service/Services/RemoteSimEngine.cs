@@ -18,6 +18,23 @@ namespace FellowshipSim.Service.Services;
 /// </summary>
 public sealed class RemoteSimEngine : ISimEngine
 {
+    /// <summary>Address of the engine server when service discovery gives none.</summary>
+    private const string DefaultBaseAddress = "http://engine";
+
+    /// <summary>The configuration key of the shared key.</summary>
+    private const string EngineKeyName = "EngineKey";
+
+    private const string BearerScheme = "Bearer";
+    private const string JsonMediaType = "application/json";
+
+    private const string HeroesPath = "heroes";
+    private const string ParsePath = "apl/parse";
+    private const string WritePath = "apl/write";
+    private const string SimsPath = "sims";
+
+    /// <summary>Member of a failed reply's JSON body that holds the message.</summary>
+    private const string ErrorProperty = "error";
+
     /// <summary>
     /// Longest wait for a reply to any request but a sim. A review of a long fight takes minutes. A sim has no limit: it
     /// runs until its result or until its caller cancels it.
@@ -31,13 +48,13 @@ public sealed class RemoteSimEngine : ISimEngine
     public RemoteSimEngine(HttpClient http, IConfiguration configuration)
     {
         _http = http;
-        _http.BaseAddress ??= new Uri("http://engine");
-        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
-            configuration["EngineKey"] ?? throw new InvalidOperationException("Set EngineKey: the key the engine expects with each request."));
+        _http.BaseAddress ??= new Uri(DefaultBaseAddress);
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(BearerScheme,
+            configuration[EngineKeyName] ?? throw new InvalidOperationException("Set EngineKey: the key the engine expects with each request."));
     }
 
     public async Task<IReadOnlyList<string>> GetHeroesAsync(CancellationToken ct = default) =>
-        (await SendAsync<List<string>>(HttpMethod.Get, "heroes", null, ct))!;
+        (await SendAsync<List<string>>(HttpMethod.Get, HeroesPath, null, ct))!;
 
     public Task<AplVocabulary?> GetVocabularyAsync(string hero, CancellationToken ct = default) =>
         SendAsync<AplVocabulary>(HttpMethod.Get, $"apl/heroes/{Uri.EscapeDataString(hero)}/vocabulary", null, ct, notFoundIsNull: true);
@@ -47,10 +64,10 @@ public sealed class RemoteSimEngine : ISimEngine
             JsonContent.Create(new AplText(text), options: Json), ct, notFoundIsNull: true);
 
     public async Task<AplDocumentActions> ParseActionListAsync(string text, CancellationToken ct = default) =>
-        (await SendAsync<AplDocumentActions>(HttpMethod.Post, "apl/parse", JsonContent.Create(new AplText(text), options: Json), ct))!;
+        (await SendAsync<AplDocumentActions>(HttpMethod.Post, ParsePath, JsonContent.Create(new AplText(text), options: Json), ct))!;
 
     public async Task<AplDocumentText> WriteActionListAsync(IReadOnlyList<AplDocumentAction> actions, CancellationToken ct = default) =>
-        (await SendAsync<AplDocumentText>(HttpMethod.Post, "apl/write",
+        (await SendAsync<AplDocumentText>(HttpMethod.Post, WritePath,
             JsonContent.Create(new AplDocumentActions(actions), options: Json), ct))!;
 
     /// <summary>
@@ -61,7 +78,7 @@ public sealed class RemoteSimEngine : ISimEngine
         CancellationToken ct = default)
     {
         var content = new StreamContent(rawFight);
-        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        content.Headers.ContentType = new MediaTypeHeaderValue(JsonMediaType);
         return (await SendAsync<ReviewArtifacts>(HttpMethod.Post, $"reviews?playerId={playerId}", content, ct))!;
     }
 
@@ -74,7 +91,7 @@ public sealed class RemoteSimEngine : ISimEngine
     {
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, "sims")
+            using var request = new HttpRequestMessage(HttpMethod.Post, SimsPath)
             {
                 Content = JsonContent.Create(new SimRequest(profile, settings), options: Json),
             };
@@ -140,7 +157,7 @@ public sealed class RemoteSimEngine : ISimEngine
         string text = await response.Content.ReadAsStringAsync(ct);
         try
         {
-            return JsonNode.Parse(text)?["error"]?.GetValue<string>();
+            return JsonNode.Parse(text)?[ErrorProperty]?.GetValue<string>();
         }
         catch (Exception exception) when (exception is JsonException or InvalidOperationException)
         {

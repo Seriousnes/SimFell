@@ -73,7 +73,7 @@ public class MonteCarloParallelTests
     private static ParallelRun Run(int fights, int degreeOfParallelism, int firstSeed = 1)
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         int heroes = 0;
         var simulator = new MonteCarloSimulator(() =>
         {

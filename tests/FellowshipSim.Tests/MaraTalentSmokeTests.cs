@@ -17,6 +17,8 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class MaraTalentSmokeTests(ITestOutputHelper output)
 {
+    private const string CharacterFile = "mara_character.json";
+
     private const string Apl = """
         actions+=/attack
         actions+=/matriarch_macabre
@@ -156,7 +158,7 @@ public class MaraTalentSmokeTests(ITestOutputHelper output)
     {
         // The Mara from Fc8v6yWxD14GQMnV fight 19 (Culex), as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "mara_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, CharacterFile)))!;
         build.Talents = talentIds.ToList();
         build.LegendaryItemIds = legendaryItemId is { } id ? [id] : [];
         var hero = HeroImporter.Import(build);

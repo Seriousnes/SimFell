@@ -7,6 +7,9 @@ namespace FellowshipSim.UI.Apl;
 /// </summary>
 public sealed class DebouncedCheck(ExpressionChecks checks, TimeSpan delay, Func<Action, Task> dispatch) : IDisposable
 {
+    /// <summary>The delay in milliseconds of the checks of a collapsed or summarised action's clauses and groups.</summary>
+    public const int SummaryDelayMilliseconds = 300;
+
     private string? _hero;
     private string? _latest;
     private CheckedText? _result;

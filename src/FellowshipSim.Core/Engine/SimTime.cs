@@ -5,10 +5,13 @@ public readonly record struct SimTime(long Milliseconds) : IComparable<SimTime>
     public static SimTime Zero => new(0);
     public static SimTime Infinite => new(long.MaxValue);
 
-    public static SimTime FromSeconds(double sec) => new((long)Math.Round(sec * 1000.0));
+    public const double MillisecondsPerSecond = 1000.0;
+    public const double SecondsPerMinute = 60.0;
+
+    public static SimTime FromSeconds(double sec) => new((long)Math.Round(sec * MillisecondsPerSecond));
     public static SimTime FromMilliseconds(long ms) => new(ms);
 
-    public double TotalSeconds => Milliseconds / 1000.0;
+    public double TotalSeconds => Milliseconds / MillisecondsPerSecond;
     public double TotalMilliseconds => Milliseconds;
 
     public int CompareTo(SimTime other) => Milliseconds.CompareTo(other.Milliseconds);

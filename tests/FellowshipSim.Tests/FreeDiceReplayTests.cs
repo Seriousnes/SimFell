@@ -14,35 +14,44 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class FreeDiceReplayTests(ITestOutputHelper output)
 {
+    private const string ReviewVariable = "FREEDICE_REVIEW";
+    private const string IterationsVariable = "FREEDICE_ITERATIONS";
+    private const string SeedVariable = "FREEDICE_SEED";
+    private const int DefaultIterations = 10;
+    private const int DefaultSeed = 1;
+    private const string ScriptsFolder = FellowshipSim.Logs.ReplayLibrary.ScriptsFolder;
+    private const string ReviewsFolder = FellowshipSim.Logs.ReplayLibrary.ReviewsFolder;
+    private const string ReplayScriptExtension = ".replay.json";
+
     [Fact]
     public void FreeDice_Replay_Of_One_Fight()
     {
-        string data = Path.Combine(TestPaths.RepositoryRoot, "data");
-        string scripts = Path.Combine(data, "scripts");
-        if (!Directory.Exists(scripts) || Directory.GetFiles(scripts, "*.replay.json").Length == 0)
+        string data = Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder);
+        string scripts = Path.Combine(data, ScriptsFolder);
+        if (!Directory.Exists(scripts) || Directory.GetFiles(scripts, "*" + ReplayScriptExtension).Length == 0)
         {
             output.WriteLine("No replay scripts downloaded; nothing to run.");
             return;
         }
 
-        var all = Directory.GetFiles(scripts, "*.replay.json").OrderBy(f => f)
-            .Select(f => Path.GetFileName(f).Replace(".replay.json", "")).ToList();
-        string setting = Environment.GetEnvironmentVariable("FREEDICE_REVIEW") ?? all[0];
+        var all = Directory.GetFiles(scripts, "*" + ReplayScriptExtension).OrderBy(f => f)
+            .Select(f => Path.GetFileName(f).Replace(ReplayScriptExtension, "")).ToList();
+        string setting = Environment.GetEnvironmentVariable(ReviewVariable) ?? all[0];
         var reviews = setting == "all" ? all : [setting];
-        int iterations = int.TryParse(Environment.GetEnvironmentVariable("FREEDICE_ITERATIONS"), out int parsedIterations) ? parsedIterations : 10;
-        string? seedSetting = Environment.GetEnvironmentVariable("FREEDICE_SEED");
-        int seed = seedSetting == "random" ? Random.Shared.Next(1, int.MaxValue / 2) : int.TryParse(seedSetting, out int parsedSeed) ? parsedSeed : 1;
+        int iterations = int.TryParse(Environment.GetEnvironmentVariable(IterationsVariable), out int parsedIterations) ? parsedIterations : DefaultIterations;
+        string? seedSetting = Environment.GetEnvironmentVariable(SeedVariable);
+        int seed = seedSetting == "random" ? Random.Shared.Next(1, int.MaxValue / 2) : int.TryParse(seedSetting, out int parsedSeed) ? parsedSeed : DefaultSeed;
 
         var clock = System.Diagnostics.Stopwatch.StartNew();
         foreach (string review in reviews)
         {
-            var script = ReplayScript.Load(Path.Combine(scripts, $"{review}.replay.json"));
+            var script = ReplayScript.Load(Path.Combine(scripts, $"{review}{ReplayScriptExtension}"));
             var result = FreeDiceReplay.Run(script, iterations, seed);
             string text = $"seeds {seed}-{seed + iterations - 1}\n" + result;
             output.WriteLine($"{review}: {result.Mean / result.LogDamage:P1} of log, log at the {result.LogPercentile:P0} point ({result.Elapsed.TotalSeconds:F1}s)");
-            File.WriteAllText(Path.Combine(data, "reviews", $"{review}.freedice.txt"), text);
-            File.WriteAllText(Path.Combine(data, "reviews", $"{review}.freedice.json"), System.Text.Json.JsonSerializer.Serialize(result.ToSummary()));
-            FreeDiceReportWriter.Write(result, Path.Combine(data, "reviews", $"{review}.freedice.html"),
+            File.WriteAllText(Path.Combine(data, ReviewsFolder, $"{review}.freedice.txt"), text);
+            File.WriteAllText(Path.Combine(data, ReviewsFolder, $"{review}.freedice.json"), System.Text.Json.JsonSerializer.Serialize(result.ToSummary()));
+            FreeDiceReportWriter.Write(result, Path.Combine(data, ReviewsFolder, $"{review}.freedice.html"),
                 $"<nav class=\"fightnav\"><a href=\"{review}.html\">Exact replay</a></nav>");
 
             Assert.Equal(iterations, result.EngineTotals.Count);

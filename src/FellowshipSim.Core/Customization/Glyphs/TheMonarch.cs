@@ -20,7 +20,7 @@ public class TheMonarch : Glyph
         double acceleration = ForRank(AccelerationByRank);
         hero.CooldownAccelerations.Add((ability, now) =>
             ability.Category == AbilityCategory.Major
-                ? acceleration + Math.Min(MaxHasteBonus, HasteBonusPerPercent * hero.GetHaste(now) * 100.0)
+                ? acceleration + Math.Min(MaxHasteBonus, HasteBonusPerPercent * hero.GetHaste(now) * Percentage.PerFraction)
                 : 0.0);
     }
 }

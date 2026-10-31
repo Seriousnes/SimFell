@@ -16,7 +16,7 @@
     private DebouncedCheck _text = null!;
 
     protected override void OnInitialized() =>
-        _text = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(300), change => InvokeAsync(() =>
+        _text = new DebouncedCheck(Editor.Checks, TimeSpan.FromMilliseconds(DebouncedCheck.SummaryDelayMilliseconds), change => InvokeAsync(() =>
         {
             change();
             StateHasChanged();

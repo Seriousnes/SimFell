@@ -13,14 +13,15 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class AstronomersHail : Legendary
 {
     public const int PowerId = 516;
+    public const string PowerName = "Astronomer's Hail";
     public const int LeggingsItemId = 5900;
     public const double MainTargetMultiplier = 2.0;
     public const double ExtraSeconds = 3.0;
     public const double ExtensionPerMultishotSeconds = 0.25;
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Astronomer's Hail";
-    public override string HeroName => "Elarion";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Elarion);
     public override IReadOnlyList<int> ItemIds => [LeggingsItemId];
 
     public override void Bind(Hero hero)

@@ -12,6 +12,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class BleedingHearts : Legendary
 {
     public const int PowerId = 698;
+    public const string PowerName = "Bleeding Hearts";
     public const int RingItemId = 5220;
     public const int Charges = 2;
     public const double ExtraStrikeChance = 0.25;
@@ -21,8 +22,8 @@ public class BleedingHearts : Legendary
     public const string ProcKey = "bleeding_hearts";
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Bleeding Hearts";
-    public override string HeroName => "Gunde";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Gunde);
     public override IReadOnlyList<int> ItemIds => [RingItemId];
 
     public override void Bind(Hero hero)

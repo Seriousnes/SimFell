@@ -27,6 +27,8 @@
 </span>
 
 @code {
+    private const string OpenFunction = "open";
+
     private static int s_count;
 
     [Parameter, EditorRequired] public IReadOnlyList<string> Properties { get; set; } = [];
@@ -85,9 +87,9 @@
             if (_attach && _open)
             {
                 _attach = false;
-                _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/apl/valuePicker.js");
+                _module ??= await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, JsInterop.ValuePickerModule);
                 _self ??= DotNetObjectReference.Create(this);
-                _handle = await _module.InvokeAsync<IJSObjectReference>("open", _button, _popup, null, _list, _self);
+                _handle = await _module.InvokeAsync<IJSObjectReference>(OpenFunction, _button, _popup, null, _list, _self);
             }
             if (_focus)
             {
@@ -107,7 +109,7 @@
         _handle = null;
         try
         {
-            await handle.InvokeVoidAsync("dispose");
+            await handle.InvokeVoidAsync(JsInterop.DisposeFunction);
             await handle.DisposeAsync();
         }
         catch (JSDisconnectedException)

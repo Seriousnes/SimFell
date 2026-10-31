@@ -23,7 +23,7 @@ public class ReplayVerifierTests
     public ReplayVerifierTests()
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
-            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", "rime_character.json")))!;
+            File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
         _hero = HeroImporter.Import(build);
         _ctx = new SimulationContext(_hero);
         _hero.ResetForIteration();
@@ -185,7 +185,7 @@ public class ReplayVerifierTests
     {
         // A logged cast (0) against a 2s engine cast is below 1.9; a logged 1.2s begin_cast against an engine instant is
         // above 0.1.
-        _verifier.CheckInstantOrCast(_ctx, Bolt, engine, logged, logged == 0 ? CommandKind.Cast : CommandKind.BeginCast);
+        _verifier.CheckInstantOrCast(_ctx, Bolt, engine, logged, logged == 0 ? ReplayCommandKind.Cast : ReplayCommandKind.BeginCast);
         var issue = Only(IssueCategory.Casts);
         if (!flagged) { Assert.Null(issue); return; }
         double low = Math.Max(0, engine - 0.1), high = engine + 0.1;
@@ -299,8 +299,8 @@ public class ReplayVerifierTests
         _verifier.CheckResource(_ctx, new ReplayStep(), "Anima", 5.0, logged, 1.0);
         var issue = Only(IssueCategory.Resources);
         if (!flagged) { Assert.Null(issue); return; }
-        double bound = logged < 5 ? 4 - 1e-9 : 6 + 1e-9;
-        AssertIssue(issue, 4 - 1e-9, 6 + 1e-9, logged, logged - bound, (logged - bound) / bound);
+        double bound = logged < 5 ? 4 - Tolerance.Comparison : 6 + Tolerance.Comparison;
+        AssertIssue(issue, 4 - Tolerance.Comparison, 6 + Tolerance.Comparison, logged, logged - bound, (logged - bound) / bound);
     }
 
     [Theory]

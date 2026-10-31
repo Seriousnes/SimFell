@@ -11,7 +11,8 @@ public static class DefaultActionLists
 
     private const string Prefix = "FellowshipSim.Core.Heroes.";
     private const string Folder = ".ActionLists.";
-    private const string Extension = ".simc";
+    /// <summary>File extension of an action list or profile.</summary>
+    public const string Extension = ".simc";
 
     // (hero, list name) -> resource name, from names such as FellowshipSim.Core.Heroes.Rime.ActionLists.Talons.simc.
     private static readonly Dictionary<ActionListKey, string> Resources = typeof(DefaultActionLists).Assembly

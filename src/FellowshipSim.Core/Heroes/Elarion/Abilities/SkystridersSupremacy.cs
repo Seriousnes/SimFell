@@ -14,7 +14,7 @@ public class SkystridersSupremacy : ElarionAbility
     public const double BuffSeconds = 4.0;
     public const int MaxBuffStacks = 4;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Skystrider's Supremacy", BuffEffectId, BuffSeconds, MaxBuffStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds, MaxBuffStacks);
 
     /// <summary>The buff the cast gives (Fervent Supremacy: 4 charges for 15 seconds).</summary>
     public AuraDef CastBuff { get; set; } = Buff;

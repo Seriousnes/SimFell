@@ -2,6 +2,66 @@ namespace FellowshipSim.Engine.Replay;
 
 public class ReplayOptions
 {
+    /// <summary>Default of <see cref="PartialTickFractionTolerance"/>.</summary>
+    public const double DefaultPartialTickFractionTolerance = 0.1;
+
+    /// <summary>Default of <see cref="DefaultTravelSeconds"/>.</summary>
+    public const double FallbackTravelSeconds = 0.5;
+
+    /// <summary>Default of <see cref="PartialTickRatio"/>.</summary>
+    public const double DefaultPartialTickRatio = 0.6;
+
+    /// <summary>Default of <see cref="PartialMismatchPenaltySeconds"/>.</summary>
+    public const double DefaultPartialMismatchPenaltySeconds = 0.05;
+
+    /// <summary>Default of <see cref="GlobalCooldownToleranceSeconds"/>.</summary>
+    public const double DefaultGlobalCooldownToleranceSeconds = 0.1;
+
+    /// <summary>Default of <see cref="EnemyAriseLeadSeconds"/>.</summary>
+    public const double DefaultEnemyAriseLeadSeconds = 0.1;
+
+    /// <summary>Default of <see cref="ChannelStopLeadSeconds"/>.</summary>
+    public const double DefaultChannelStopLeadSeconds = 0.010;
+
+    /// <summary>Default of <see cref="AvoidedTargetPenaltySeconds"/>.</summary>
+    public const double DefaultAvoidedTargetPenaltySeconds = 0.2;
+
+    /// <summary>Default of <see cref="HitEarlySeconds"/>.</summary>
+    public const double DefaultHitEarlySeconds = 0.15;
+
+    /// <summary>Default of <see cref="HitLateSeconds"/>.</summary>
+    public const double DefaultHitLateSeconds = 2.0;
+
+    /// <summary>Default of <see cref="HitGroupSeconds"/>.</summary>
+    public const double DefaultHitGroupSeconds = 0.010;
+
+    /// <summary>Default of <see cref="SettleSeconds"/>.</summary>
+    public const double DefaultSettleSeconds = 2.1;
+
+    /// <summary>Default of <see cref="ProcEarlySeconds"/>.</summary>
+    public const double DefaultProcEarlySeconds = 0.05;
+
+    /// <summary>Default of <see cref="ProcAuraWindowSeconds"/>.</summary>
+    public const double DefaultProcAuraWindowSeconds = 0.1;
+
+    /// <summary>Default of <see cref="SameTickSeconds"/>.</summary>
+    public const double DefaultSameTickSeconds = 0.005;
+
+    /// <summary>Default of <see cref="CastTimeToleranceSeconds"/>.</summary>
+    public const double DefaultCastTimeToleranceSeconds = 0.1;
+
+    /// <summary>Default of <see cref="AuraToleranceSeconds"/>.</summary>
+    public const double DefaultAuraToleranceSeconds = 0.1;
+
+    /// <summary>Default of <see cref="ResourceSnapshotWindowSeconds"/>.</summary>
+    public const double DefaultResourceSnapshotWindowSeconds = 0.002;
+
+    /// <summary>Window (s) in which a Chain Lightning log hit may land after the engine hit (<see cref="HitLateSecondsById"/>).</summary>
+    public const double ChainLightningHitLateSeconds = 0.25;
+
+    /// <summary>Window (s) of a Multishot multi-target hit (<see cref="HitGroupSecondsById"/>).</summary>
+    public const double MultishotHitGroupSeconds = 0.2;
+
     /// <summary>
     /// Free dice: the engine rolls its own crits, procs and damage spread with this seed; the log only supplies the
     /// casts, enemies and situational auras, and nothing is compared step by step (see <see cref="FreeDiceReplay"/>).
@@ -13,7 +73,7 @@ public class ReplayOptions
     public int? MaxSteps { get; set; }
 
     /// <summary>Uniform damage spread of the game (+/- fraction of the average roll).</summary>
-    public double DamageSpread { get; set; } = 0.10;
+    public double DamageSpread { get; set; } = FellowshipSim.Core.Engine.RandomOutcomeSource.DamageSpread;
     /// <summary>
     /// Extra room on the high side of the damage band for an unexplained offset (0 = none). The former ~3.4% offset is
     /// explained by Rime's class tuning aura.
@@ -50,44 +110,44 @@ public class ReplayOptions
     /// A partial final tick's fraction depends on where the game's 33ms server frames fall, about +/-0.1 of a full tick;
     /// its damage may differ from the engine's by that much of a full tick on top of the spread.
     /// </summary>
-    public double PartialTickFractionTolerance { get; set; } = 0.1;
+    public double PartialTickFractionTolerance { get; set; } = DefaultPartialTickFractionTolerance;
     /// <summary>
     /// A hit that picks its own target takes the free log hit landing closest to its release plus the ID's typical
     /// travel time (learned from matched hits; this until there are any). A log hit on the hero's current target counts
     /// this much further away, leaving it for hits that can only go there (e.g. Cascading Blitz swallows share the
     /// Frost Swallows ID).
     /// </summary>
-    public double DefaultTravelSeconds { get; set; } = 0.5;
+    public double DefaultTravelSeconds { get; set; } = FallbackTravelSeconds;
     /// <summary>
     /// A group dealing under this fraction of the previous hits (median) looks like a partial tick; a partial tick
     /// matching a full-looking group (or the reverse) counts this many seconds further away.
     /// </summary>
-    public double PartialTickRatio { get; set; } = 0.6;
-    public double PartialMismatchPenaltySeconds { get; set; } = 0.05;
+    public double PartialTickRatio { get; set; } = DefaultPartialTickRatio;
+    public double PartialMismatchPenaltySeconds { get; set; } = DefaultPartialMismatchPenaltySeconds;
     /// <summary>
     /// Cast everything the log casts, 1:1: when the engine would refuse (cooldown, resources, global cooldown, still
     /// casting) the cast is made anyway and listed as forced, without failing the step.
     /// </summary>
     public bool ForceCasts { get; set; } = true;
     /// <summary>A cast may come this much before the engine's global cooldown ends (server frames and latency).</summary>
-    public double GlobalCooldownToleranceSeconds { get; set; } = 0.1;
+    public double GlobalCooldownToleranceSeconds { get; set; } = DefaultGlobalCooldownToleranceSeconds;
     /// <summary>Enemies join this long before their first event in the log (their arrival is only known from it).</summary>
-    public double EnemyAriseLeadSeconds { get; set; } = 0.1;
+    public double EnemyAriseLeadSeconds { get; set; } = DefaultEnemyAriseLeadSeconds;
     /// <summary>
     /// A channel stops this long before its endchannel event: the stop is logged a few milliseconds into its server frame
     /// and the frame's tick does not happen. Combat logs (15 Rime fights of patch 0.5.0.0, 93 Freezing Torrent ticks the
     /// engine had within a frame before a logged stop): 62 of 64 ticks 0-8ms before it have no log tick, 28 of 29 ticks
     /// 12-32ms before it do.
     /// </summary>
-    public double ChannelStopLeadSeconds { get; set; } = 0.010;
-    public double AvoidedTargetPenaltySeconds { get; set; } = 0.2;
+    public double ChannelStopLeadSeconds { get; set; } = DefaultChannelStopLeadSeconds;
+    public double AvoidedTargetPenaltySeconds { get; set; } = DefaultAvoidedTargetPenaltySeconds;
     /// <summary>Absolute slack for integer rounding of small hits.</summary>
     public double DamageAbsoluteTolerance { get; set; } = 1.0;
 
     /// <summary>A log hit may land this long before the engine hit (server tick quantization).</summary>
-    public double HitEarlySeconds { get; set; } = 0.15;
+    public double HitEarlySeconds { get; set; } = DefaultHitEarlySeconds;
     /// <summary>A log hit may land this long after the engine hit (projectile travel).</summary>
-    public double HitLateSeconds { get; set; } = 2.0;
+    public double HitLateSeconds { get; set; } = DefaultHitLateSeconds;
     /// <summary>
     /// Damage IDs that do not travel, with how late their log hits may land instead of <see cref="HitLateSeconds"/>: a
     /// longer window lets an engine hit with no log hit of its own take a later cast's. Combat logs (q3y7pWgXrjN2dftw fight
@@ -95,7 +155,7 @@ public class ReplayOptions
     /// </summary>
     public Dictionary<int, double> HitLateSecondsById { get; set; } = new()
     {
-        [Core.Domain.LogIds.Effect(Core.Heroes.Tariq.Abilities.ChainLightning.DamageEffectId)] = 0.25,
+        [Core.Domain.LogIds.Effect(Core.Heroes.Tariq.Abilities.ChainLightning.DamageEffectId)] = ChainLightningHitLateSeconds,
     };
     /// <summary>How late a log hit with damage ID <paramref name="logId"/> may land after the engine hit.</summary>
     public double LateSecondsOf(int logId) => HitLateSecondsById.TryGetValue(logId, out double seconds) ? seconds : HitLateSeconds;
@@ -104,29 +164,29 @@ public class ReplayOptions
     /// Combat logs (Y4wpb2f3gc8LqJDX fight 25, Gunde): a pulse on 20-27 enemies is logged over up to 9ms; separate pulses
     /// land at least a server frame (33ms) apart.
     /// </remarks>
-    public double HitGroupSeconds { get; set; } = 0.010;
+    public double HitGroupSeconds { get; set; } = DefaultHitGroupSeconds;
 
     /// <summary>
     /// Damage IDs whose multi-target hits land over a longer window than <see cref="HitGroupSeconds"/>, with that window.
     /// Combat logs (fXyzwGcQkTrLD34R fight 4, pWmcV42K39GHTLQX fight 23): a Multishot's arrows land over up to 0.1s, and
     /// casts come a global cooldown apart.
     /// </summary>
-    public Dictionary<int, double> HitGroupSecondsById { get; set; } = new() { [Core.Heroes.Elarion.Abilities.Multishot.AbilityId] = 0.2 };
+    public Dictionary<int, double> HitGroupSecondsById { get; set; } = new() { [Core.Heroes.Elarion.Abilities.Multishot.AbilityId] = MultishotHitGroupSeconds };
 
     /// <summary>The window of one multi-target hit with damage ID <paramref name="logId"/>.</summary>
     public double GroupSecondsOf(int logId) => HitGroupSecondsById.TryGetValue(logId, out double seconds) ? seconds : HitGroupSeconds;
     /// <summary>A log hit still unmatched this long after it landed is reported as missing from the engine.</summary>
-    public double SettleSeconds { get; set; } = 2.1;
+    public double SettleSeconds { get; set; } = DefaultSettleSeconds;
 
-    public double ProcEarlySeconds { get; set; } = 0.05;
+    public double ProcEarlySeconds { get; set; } = DefaultProcEarlySeconds;
     /// <summary>An aura a proc applies may appear in the log this long after the roll.</summary>
-    public double ProcAuraWindowSeconds { get; set; } = 0.1;
+    public double ProcAuraWindowSeconds { get; set; } = DefaultProcAuraWindowSeconds;
     /// <summary>Events in the same server tick can be logged this far apart.</summary>
-    public double SameTickSeconds { get; set; } = 0.005;
-    public double CastTimeToleranceSeconds { get; set; } = 0.1;
+    public double SameTickSeconds { get; set; } = DefaultSameTickSeconds;
+    public double CastTimeToleranceSeconds { get; set; } = DefaultCastTimeToleranceSeconds;
     /// <summary>Aura state may differ from the log by event ordering within this window.</summary>
-    public double AuraToleranceSeconds { get; set; } = 0.1;
-    public double ResourceSnapshotWindowSeconds { get; set; } = 0.002;
+    public double AuraToleranceSeconds { get; set; } = DefaultAuraToleranceSeconds;
+    public double ResourceSnapshotWindowSeconds { get; set; } = DefaultResourceSnapshotWindowSeconds;
     /// <summary>A periodic tick may fire this far from the engine's predicted tick time.</summary>
     public double TickTimeToleranceSeconds { get; set; } = PeriodicEffect.ServerFrameSeconds;
 }
@@ -145,8 +205,9 @@ public enum IssueCategory
 }
 
 /// <summary>The range the engine computes for a logged value. <see cref="Low"/> or <see cref="High"/> is infinite for a one-sided range.</summary>
-/// <param name="Unit">The values' unit: "s", "damage", "crit", "stacks", "ticks", "procs" or a resource's name.</param>
-public sealed record ExpectedRange(double Low, double High, string Unit)
+/// <param name="Unit">The values' unit.</param>
+/// <param name="ResourceName">The resource's name when <paramref name="Unit"/> is <see cref="RangeUnit.Resource"/>.</param>
+public sealed record ExpectedRange(double Low, double High, RangeUnit Unit, string? ResourceName = null)
 {
     public bool Contains(double value) => value >= Low && value <= High;
 
@@ -156,16 +217,20 @@ public sealed record ExpectedRange(double Low, double High, string Unit)
 
     public override string ToString() =>
         double.IsNegativeInfinity(Low) && double.IsPositiveInfinity(High) ? "any"
-        : double.IsPositiveInfinity(High) ? $"{Format(Low, Unit)} or more"
-        : double.IsNegativeInfinity(Low) ? $"{Format(High, Unit)} or less"
-        : Low == High ? Format(Low, Unit)
-        : $"{Format(Low, Unit)} to {Format(High, Unit)}";
+        : double.IsPositiveInfinity(High) ? $"{Format(Low)} or more"
+        : double.IsNegativeInfinity(Low) ? $"{Format(High)} or less"
+        : Low == High ? Format(Low)
+        : $"{Format(Low)} to {Format(High)}";
 
-    /// <summary>A value in <paramref name="unit"/>: seconds to the millisecond, everything else to two decimals.</summary>
-    public static string Format(double value, string unit) =>
-        unit == "s"
+    /// <summary>A value in <see cref="Unit"/>: seconds to the millisecond, everything else to two decimals.</summary>
+    public string Format(double value) =>
+        Unit == RangeUnit.Seconds
             ? value.ToString("F3", System.Globalization.CultureInfo.InvariantCulture) + "s"
-            : value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + (unit is "damage" ? "" : " " + unit);
+            : value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + (Unit == RangeUnit.Damage ? "" : " " + Unit.DisplayText(ResourceName));
+
+    /// <summary>A value in the unit of <paramref name="range"/>; a value with no range has no unit.</summary>
+    public static string Format(double value, ExpectedRange? range) =>
+        range?.Format(value) ?? value.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + " ";
 }
 
 /// <param name="Subject">What the issue is about (ability or aura name), for grouping.</param>
@@ -199,8 +264,8 @@ public sealed record ReplayIssue(double Time, int Step, IssueCategory Category, 
         string text = $"[{Category}] step {Step} @ {Time:F3}s: {Message}";
         if (Expected is { } expected)
         {
-            text += $" (expected {expected}, observed {(Observed is { } observed ? ExpectedRange.Format(observed, expected.Unit) : "none")}";
-            if (Deviation is { } deviation) text += $", deviation {(deviation > 0 ? "+" : "")}{ExpectedRange.Format(deviation, expected.Unit)}";
+            text += $" (expected {expected}, observed {(Observed is { } observed ? expected.Format(observed) : "none")}";
+            if (Deviation is { } deviation) text += $", deviation {(deviation > 0 ? "+" : "")}{expected.Format(deviation)}";
             if (RelativeDeviation is { } relativeDeviation) text += $" ({relativeDeviation:+0.0%;-0.0%;0.0%})";
             text += ")";
         }
@@ -212,7 +277,7 @@ public sealed class ReplayStep
 {
     public int Index { get; init; }
     public double Time { get; init; }
-    public string Kind { get; init; } = string.Empty;
+    public ReplayCommandKind Kind { get; init; }
     public int AbilityId { get; init; }
     public string AbilityName { get; init; } = string.Empty;
     public string? Target { get; init; }
@@ -236,7 +301,7 @@ public sealed class ReplayStep
 
 public sealed record ResourceCheck(string Resource, double Engine, double Log, double Tolerance)
 {
-    public bool Matches => Math.Abs(Engine - Log) <= Tolerance + 1e-9;
+    public bool Matches => Math.Abs(Engine - Log) <= Tolerance + FellowshipSim.Core.Engine.Tolerance.Comparison;
 }
 
 /// <param name="LogId">The aura's log ID (0 when unknown).</param>

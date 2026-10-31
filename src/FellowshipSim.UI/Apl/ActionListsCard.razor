@@ -79,6 +79,26 @@
 </Card>
 
 @code {
+    private const string ModulePath = JsInterop.ContentRoot + "apl/actionListsCard.js";
+
+    private const string ReadConditionModeFunction = "readConditionMode";
+
+    private const string WriteConditionModeFunction = "writeConditionMode";
+
+    private const string AttachDragFunction = "attachDrag";
+
+    /// <summary>The milliseconds after the last change to the actions before their text is written.</summary>
+    private const int WriteDelayMilliseconds = 250;
+
+    /// <summary>The file name of a download when the list has no name and no hero is loaded.</summary>
+    private const string DefaultDownloadName = "action list";
+
+    /// <summary>The place of the hero in a picked list's value (kind/hero/name).</summary>
+    private const int HeroPart = 1;
+
+    /// <summary>The place of the list name in a picked list's value (kind/hero/name).</summary>
+    private const int NamePart = 2;
+
     private SavedActionLists _savedLists = null!;
     private ElementReference _root, _nameInput, _newListInput;
     private ConditionReference _reference = null!;
@@ -93,10 +113,8 @@
     private PendingStep? _pending;
     private int _pickerKey;
 
-    private const string SharedValue = "shared";
-    private const string BuiltInValue = "builtin";
 
-    private static string SavedValue(ActionListEntry saved) => $"{(saved.BuiltIn ? BuiltInValue : saved.Shared ? SharedValue : "own")}/{saved.Hero}/{saved.Name}";
+    private static string SavedValue(ActionListEntry saved) => $"{(saved.BuiltIn ? ActionListStore.BuiltInValue : saved.Shared ? ActionListStore.SharedValue : ActionListStore.OwnValue)}/{saved.Hero}/{saved.Name}";
 
     protected override void OnInitialized()
     {
@@ -134,9 +152,9 @@
         if (!firstRender) return;
         try
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/apl/actionListsCard.js");
-            State.Editor.ConditionMode = await _module.InvokeAsync<string>("readConditionMode");
-            _drag = await _module.InvokeAsync<IJSObjectReference>("attachDrag", _root);
+            _module = await JS.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
+            State.Editor.ConditionMode = await _module.InvokeAsync<string>(ReadConditionModeFunction);
+            _drag = await _module.InvokeAsync<IJSObjectReference>(AttachDragFunction, _root);
         }
         catch (JSDisconnectedException)
         {
@@ -154,7 +172,7 @@
     {
         try
         {
-            if (_module != null) await _module.InvokeVoidAsync("writeConditionMode", mode);
+            if (_module != null) await _module.InvokeVoidAsync(WriteConditionModeFunction, mode);
         }
         catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
@@ -186,7 +204,7 @@
         string? text = null;
         try
         {
-            await Task.Delay(250, ct);
+            await Task.Delay(WriteDelayMilliseconds, ct);
             var result = await Engine.WriteActionListAsync(ActionListModel.DocumentActions(lists), ct);
             if (result.Text != null) text = result.Text;
             else status = MessageState.Error(ActionListModel.ErrorText(vocabulary, lists, result.Errors));
@@ -252,7 +270,7 @@
     }
 
     private Task Download() =>
-        FileDownloads.SaveAsync(JS, State.Name.Trim().Length > 0 ? State.Name : State.Editor.Vocabulary?.Hero ?? "action list", ".simc", State.Text);
+        FileDownloads.SaveAsync(JS, State.Name.Trim().Length > 0 ? State.Name : State.Editor.Vocabulary?.Hero ?? DefaultDownloadName, ProfileStore.Extension, State.Text);
 
     private async Task LoadText()
     {
@@ -280,10 +298,10 @@
             return;
         }
         string[] parts = value.Split('/');
-        string hero = parts.Length > 1 ? parts[1] : "", savedName = parts.Length > 2 ? parts[2] : "";
+        string hero = parts.Length > HeroPart ? parts[HeroPart] : "", savedName = parts.Length > NamePart ? parts[NamePart] : "";
         try
         {
-            var list = await _savedLists.ReadAsync(new ActionListEntry(hero, savedName, Shared: parts[0] == SharedValue, BuiltIn: parts[0] == BuiltInValue));
+            var list = await _savedLists.ReadAsync(new ActionListEntry(hero, savedName, Shared: parts[0] == ActionListStore.SharedValue, BuiltIn: parts[0] == ActionListStore.BuiltInValue));
             var heroVocabulary = await VocabularyOf(hero);
             State.Editor.SetVocabulary(heroVocabulary);
             State.Name = savedName;
@@ -408,7 +426,7 @@
         {
             if (_drag != null)
             {
-                await _drag.InvokeVoidAsync("dispose");
+                await _drag.InvokeVoidAsync(JsInterop.DisposeFunction);
                 await _drag.DisposeAsync();
             }
             if (_module != null) await _module.DisposeAsync();

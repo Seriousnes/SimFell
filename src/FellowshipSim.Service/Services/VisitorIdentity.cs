@@ -16,6 +16,9 @@ public static class VisitorIdentity
     public const string ClaimType = "simfell:visitor";
     public const string CookieName = "simfell_visitor";
 
+    /// <summary>Days the visitor cookie is kept after the last visit.</summary>
+    private const int CookieLifetimeDays = 400;
+
     /// <summary>The visitor cookie, kept for 400 days after the last visit.</summary>
     public static void ConfigureCookie(CookieAuthenticationOptions options)
     {
@@ -23,7 +26,7 @@ public static class VisitorIdentity
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-        options.ExpireTimeSpan = TimeSpan.FromDays(400);
+        options.ExpireTimeSpan = TimeSpan.FromDays(CookieLifetimeDays);
         options.SlidingExpiration = true;
     }
 

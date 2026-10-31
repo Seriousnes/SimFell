@@ -52,15 +52,15 @@ public class Diamond : Gem
     {
         switch (node.Slot)
         {
-            case 1: // Harmonious Soul: "Each time an enemy you are in combat with is defeated, you gain +0.6% Critical Strike,
+            case HeadlineSlot: // Harmonious Soul: "Each time an enemy you are in combat with is defeated, you gain +0.6% Critical Strike,
                     // Haste, Expertise and Spirit for 5 seconds, stacking up to 4 (II: 12) times. When the duration of
                     // Harmonious Soul expires, you lose 1 stack."
                 BindHarmoniousSoul(hero, node);
                 return true;
-            case 2: // Stoic's Teachings: flat Main Stat and Armor.
-                hero.Stats.PrimaryStat += node.Value("PrimaryStatBonus");
+            case FlatStatSlot: // Stoic's Teachings: flat Main Stat and Armor.
+                hero.Stats.PrimaryStat += node.Value(PrimaryStatBonusKey);
                 return true;
-            case 4: // Ancient's Wisdom: Main Stat.
+            case PercentStatSlot: // Ancient's Wisdom: Main Stat.
                 hero.PassiveAuras.Add(node.Grants!);
                 return true;
             default: // Tranquil Resolve (defensive) and Blessing of the Artisan (Relic cooldowns) do not affect damage.
@@ -81,14 +81,14 @@ public class Diamond : Gem
 
     protected override void BindLater(Hero hero, GemNode node, SimTime now)
     {
-        if (node.Slot == 1) BindHarmoniousSoul(hero, node);
+        if (node.Slot == HeadlineSlot) BindHarmoniousSoul(hero, node);
     }
 
     /// <summary>The rank II Harmonious Soul takes over the stacks of the rank I one (the log's 1960 gains its stacks at once).</summary>
     protected override void NodesChanged(Hero hero, IReadOnlyList<GemNode> before, SimTime? now)
     {
         var old = HarmoniousSoul;
-        HarmoniousSoul = NodeInSlot(1) is { } node ? hero.Register(SoulOf(node)) : null;
+        HarmoniousSoul = NodeInSlot(HeadlineSlot) is { } node ? hero.Register(SoulOf(node)) : null;
         if (now is not { } time || old == null || old == HarmoniousSoul || hero.Auras.Get(old, time) is not { } active) return;
         int stacks = active.Stacks;
         hero.Auras.Remove(old, time);
@@ -97,8 +97,8 @@ public class Diamond : Gem
 
     protected override IEnumerable<StatModifier> StatEffects(GemNode node) => node.Slot switch
     {
-        2 => [StatModifier.Add(StatType.PrimaryAttribute, node.Value("PrimaryStatBonus"))],
-        4 => [StatModifier.More(StatType.PrimaryAttributeMultiplier, node.Value("PrimaryStatBonus"))],
+        FlatStatSlot => [StatModifier.Add(StatType.PrimaryAttribute, node.Value(PrimaryStatBonusKey))],
+        PercentStatSlot => [StatModifier.More(StatType.PrimaryAttributeMultiplier, node.Value(PrimaryStatBonusKey))],
         _ => [],
     };
 }

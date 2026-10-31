@@ -67,7 +67,7 @@ public abstract class BoundExpression
     // The same order as PropertyExpression.EvaluateNumeric: a named value, then a resource, then a scoped path; else 0.
     private static BoundExpression BindProperty(PropertyExpression property, Hero hero, BoundVariables? variables)
     {
-        if (property.PropertyPath == "time") return new BoundTime();
+        if (property.PropertyPath == PropertyExpression.TimePath) return new BoundTime();
         if (PropertyExpression.Named.TryGetValue(property.PropertyPath, out var named)) return new BoundNamed(hero, named.Value);
         if (hero.FindResource(property.ResourceName) is { } resource)
         {
@@ -106,6 +106,9 @@ public abstract class BoundExpression
 /// </summary>
 internal readonly struct TimeCurve(double[] numerator, double[] denominator)
 {
+    /// <summary>Slope per millisecond of a value in seconds that rises or falls a second per second.</summary>
+    public const double SecondsPerMillisecond = 1.0 / SimTime.MillisecondsPerSecond;
+
     public double[] Numerator { get; } = numerator;
     public double[] Denominator { get; } = denominator;
 
@@ -137,6 +140,11 @@ internal readonly struct TimeCurve(double[] numerator, double[] denominator)
 /// <summary>Polynomials as their coefficients from x⁰ up.</summary>
 internal static class Polynomial
 {
+    /// <summary>Halvings of a stretch before the root search stops.</summary>
+    private const int MaxHalvings = 200;
+
+    /// <summary>The earliest root, in milliseconds from now, that a search reports.</summary>
+    public const double EarliestRoot = -3.0;
     /// <summary>The highest power with a coefficient that is not 0; -1 for the zero polynomial.</summary>
     public static int Degree(double[] polynomial)
     {
@@ -224,7 +232,7 @@ internal static class Polynomial
     // The root of the polynomial between lower and upper, where its values there have opposite signs.
     private static double Halve(double[] polynomial, double lower, double fa, double upper)
     {
-        for (int i = 0; i < 200 && upper - lower > 1e-6; i++)
+        for (int i = 0; i < MaxHalvings && upper - lower > Tolerance.Rounding; i++)
         {
             double middle = 0.5 * (lower + upper);
             double fm = Evaluate(polynomial, middle);
@@ -243,6 +251,9 @@ internal static class Polynomial
 /// <summary>The first time a truth on a curve of values changes.</summary>
 internal static class Crossing
 {
+    /// <summary>Milliseconds either side of a root searched for the change in truth.</summary>
+    private const int RootMarginMilliseconds = 2;
+
     /// <summary>
     /// The first whole millisecond after the current time and before <paramref name="until"/> at which
     /// <paramref name="expression"/>'s truth differs from now, where the truth can change only at a root of one of
@@ -253,7 +264,7 @@ internal static class Crossing
         var now = ctx.CurrentTime;
         var limit = Later(now, until);
         var roots = new List<double>();
-        foreach (var polynomial in polynomials) Polynomial.Roots(polynomial, -3.0, limit.Milliseconds - (double)now.Milliseconds, roots);
+        foreach (var polynomial in polynomials) Polynomial.Roots(polynomial, Polynomial.EarliestRoot, limit.Milliseconds - (double)now.Milliseconds, roots);
         if (roots.Count == 0) return limit;
         roots.Sort();
         bool current = expression.Evaluate(ctx);
@@ -272,8 +283,8 @@ internal static class Crossing
     public static SimTime? FirstAround(SimTime now, SimTime limit, double root, Func<SimTime, bool> changed)
     {
         double at = now.Milliseconds + root;
-        if (at - 2 >= limit.Milliseconds) return null;
-        for (long ms = Math.Max(now.Milliseconds + 1, (long)Math.Floor(at) - 2); ms < limit.Milliseconds && ms <= (long)Math.Ceiling(at) + 2; ms++)
+        if (at - RootMarginMilliseconds >= limit.Milliseconds) return null;
+        for (long ms = Math.Max(now.Milliseconds + 1, (long)Math.Floor(at) - RootMarginMilliseconds); ms < limit.Milliseconds && ms <= (long)Math.Ceiling(at) + RootMarginMilliseconds; ms++)
         {
             var time = SimTime.FromMilliseconds(ms);
             if (changed(time)) return time;
@@ -306,7 +317,7 @@ internal abstract class BoundEventValue : BoundNumeric
 
 internal sealed class BoundConstant(double value) : BoundExpression
 {
-    public override bool Evaluate(SimulationContext ctx) => Math.Abs(value) > 0.00001;
+    public override bool Evaluate(SimulationContext ctx) => Math.Abs(value) > AplTolerance.Truth;
     public override double EvaluateNumeric(SimulationContext ctx) => value;
     internal override SimTime Until(SimulationContext ctx) => SimTime.Infinite;
     internal override double NumericAt(SimulationContext ctx, SimTime time) => value;
@@ -337,7 +348,7 @@ internal sealed class BoundTime : BoundNumeric
     public override double EvaluateNumeric(SimulationContext ctx) => ctx.CurrentTime.TotalSeconds;
     internal override SimTime Until(SimulationContext ctx) => SimTime.Infinite;
     internal override bool IsLevel(SimulationContext ctx) => false;
-    internal override TimeCurve Curve(SimulationContext ctx) => TimeCurve.Line(EvaluateNumeric(ctx), 0.001);
+    internal override TimeCurve Curve(SimulationContext ctx) => TimeCurve.Line(EvaluateNumeric(ctx), TimeCurve.SecondsPerMillisecond);
     internal override double NumericAt(SimulationContext ctx, SimTime time) => time.TotalSeconds;
 }
 
@@ -439,7 +450,7 @@ internal sealed class BoundAura(Hero hero, bool debuff, string slug, BoundAura.A
 
     internal override TimeCurve Curve(SimulationContext ctx) =>
         property == AuraProperty.Remains && Find(ctx, ctx.CurrentTime) is { } aura && aura.ExpiresAt != SimTime.Infinite
-            ? TimeCurve.Line(EvaluateNumeric(ctx), -0.001)
+            ? TimeCurve.Line(EvaluateNumeric(ctx), -TimeCurve.SecondsPerMillisecond)
             : TimeCurve.Constant(EvaluateNumeric(ctx));
 
     internal override double NumericAt(SimulationContext ctx, SimTime time)
@@ -546,8 +557,8 @@ internal sealed class BoundCooldown : BoundNumeric
     internal override bool IsLevel(SimulationContext ctx) => !Falls(ctx) && !Rises(ctx);
 
     internal override TimeCurve Curve(SimulationContext ctx) =>
-        Falls(ctx) ? TimeCurve.Line(EvaluateNumeric(ctx), -0.001)
-        : Rises(ctx) ? TimeCurve.Line(EvaluateNumeric(ctx), 0.001 * State()!.RechargePerSecond(ctx.CurrentTime))
+        Falls(ctx) ? TimeCurve.Line(EvaluateNumeric(ctx), -TimeCurve.SecondsPerMillisecond)
+        : Rises(ctx) ? TimeCurve.Line(EvaluateNumeric(ctx), TimeCurve.SecondsPerMillisecond * State()!.RechargePerSecond(ctx.CurrentTime))
         : TimeCurve.Constant(EvaluateNumeric(ctx));
 
     internal override double NumericAt(SimulationContext ctx, SimTime time)
@@ -599,8 +610,8 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         BinaryOperator.LessEqual => left.EvaluateNumeric(ctx) <= right.EvaluateNumeric(ctx),
         BinaryOperator.Greater => left.EvaluateNumeric(ctx) > right.EvaluateNumeric(ctx),
         BinaryOperator.GreaterEqual => left.EvaluateNumeric(ctx) >= right.EvaluateNumeric(ctx),
-        BinaryOperator.Equal => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) < 0.0001,
-        BinaryOperator.NotEqual => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) >= 0.0001,
+        BinaryOperator.Equal => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) < AplTolerance.Equality,
+        BinaryOperator.NotEqual => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) >= AplTolerance.Equality,
         _ => EvaluateNumeric(ctx) != 0.0,
     };
 
@@ -685,8 +696,8 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         BinaryOperator.LessEqual => left.NumericAt(ctx, time) <= right.NumericAt(ctx, time),
         BinaryOperator.Greater => left.NumericAt(ctx, time) > right.NumericAt(ctx, time),
         BinaryOperator.GreaterEqual => left.NumericAt(ctx, time) >= right.NumericAt(ctx, time),
-        BinaryOperator.Equal => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) < 0.0001,
-        BinaryOperator.NotEqual => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) >= 0.0001,
+        BinaryOperator.Equal => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) < AplTolerance.Equality,
+        BinaryOperator.NotEqual => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) >= AplTolerance.Equality,
         _ => NumericAt(ctx, time) != 0.0,
     };
 
@@ -700,7 +711,7 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         if (left.IsLevel(ctx) && right.IsLevel(ctx)) return Crossing.Later(ctx.CurrentTime, until);
         var difference = left.Curve(ctx) - right.Curve(ctx);
         return op is BinaryOperator.Equal or BinaryOperator.NotEqual
-            ? Crossing.First(ctx, this, until, difference.NumeratorLess(-0.0001), difference.NumeratorLess(0.0001), difference.Denominator)
+            ? Crossing.First(ctx, this, until, difference.NumeratorLess(-AplTolerance.Equality), difference.NumeratorLess(AplTolerance.Equality), difference.Denominator)
             : Crossing.First(ctx, this, until, difference.Numerator, difference.Denominator);
     }
 }

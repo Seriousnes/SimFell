@@ -37,6 +37,24 @@ public class MonteCarloResult
 /// </summary>
 public class MonteCarloSimulator
 {
+    /// <summary>Numerator of the share of the processors a run uses when given no degree of parallelism.</summary>
+    private const int DefaultProcessorShareNumerator = 4;
+
+    /// <summary>Denominator of the share of the processors a run uses when given no degree of parallelism.</summary>
+    private const int DefaultProcessorShareDenominator = 5;
+
+    /// <summary>Fights in a run given no count.</summary>
+    public const int DefaultIterations = 100;
+
+    /// <summary>Chunks a run is split into, before the cap of <see cref="MaxProgressBatch"/> fights per chunk.</summary>
+    private const int ChunksPerRun = 100;
+
+    /// <summary>First ID of the training mobs.</summary>
+    public const int TrainingMobIdBase = 100;
+
+    /// <summary>Health of a training mob.</summary>
+    public const double TrainingMobMaxHealth = 100_000_000;
+
     private readonly Func<Hero> _newHero;
     private readonly AplActionLists _actions;
     // Speed: heroes are built once and kept between runs. A Parallel.For worker can start more than once per run.
@@ -61,7 +79,7 @@ public class MonteCarloSimulator
     /// Threads of a run given no degree of parallelism: 80% of <see cref="Environment.ProcessorCount"/>, rounded down, and
     /// at least 1. The other processors stay free for the rest of the machine.
     /// </summary>
-    public static int DefaultDegreeOfParallelism => Math.Max(1, Environment.ProcessorCount * 4 / 5);
+    public static int DefaultDegreeOfParallelism => Math.Max(1, Environment.ProcessorCount * DefaultProcessorShareNumerator / DefaultProcessorShareDenominator);
 
     /// <summary>
     /// Runs <paramref name="iterations"/> fights on up to <paramref name="degreeOfParallelism"/> threads
@@ -77,7 +95,7 @@ public class MonteCarloSimulator
     /// <paramref name="fight"/> sets each fight's length, the targets' health and the starting Spirit
     /// (<see cref="FightOptions.Default"/> when null). A fight's DPS is its damage over its own length.
     /// </summary>
-    public MonteCarloResult Run(SimTime duration, int iterations = 100, int targetCount = 1, int firstSeed = 1,
+    public MonteCarloResult Run(SimTime duration, int iterations = DefaultIterations, int targetCount = 1, int firstSeed = 1,
         int? degreeOfParallelism = null, bool keepFightDamage = false, Action<int>? progress = null,
         CancellationToken cancellationToken = default, FightOptions? fight = null)
     {
@@ -125,7 +143,7 @@ public class MonteCarloSimulator
     /// </summary>
     public static int ChunkCount(int iterations) => (iterations + ChunkSize(iterations) - 1) / ChunkSize(iterations);
 
-    private static int ChunkSize(int iterations) => Math.Clamp(iterations / 100, 1, MaxProgressBatch);
+    private static int ChunkSize(int iterations) => Math.Clamp(iterations / ChunksPerRun, 1, MaxProgressBatch);
 
     /// <summary>
     /// Fights chunk <paramref name="chunk"/> (of <see cref="ChunkCount"/>) of a run, as <see cref="Run"/> would with the same
@@ -243,7 +261,7 @@ public class MonteCarloSimulator
         // Populate enemies
         for (int i = 1; i <= targetCount; i++)
         {
-            var enemy = ctx.AddEnemy(100 + i, i, $"Training Mob {i}", maxHealth: 100_000_000);
+            var enemy = ctx.AddEnemy(TrainingMobIdBase + i, i, $"Training Mob {i}", maxHealth: TrainingMobMaxHealth);
             if (options.HealthFollowsTime) enemy.FollowTime(ctx, duration);
         }
         ctx.Player.CurrentTarget = ctx.AllEnemies.First();

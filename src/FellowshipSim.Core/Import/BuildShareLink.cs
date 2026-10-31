@@ -48,6 +48,27 @@ public static class BuildShareLink
     /// <summary>Most items a list in a code can have (a longer one is not a build).</summary>
     private const int MaxListItems = 64;
 
+    /// <summary>Separates the hero, the code and the name in a link.</summary>
+    private const char PartSeparator = '.';
+
+    /// <summary>Parts of a link without a name: the hero and the code.</summary>
+    private const int HeroAndCodeParts = 2;
+
+    /// <summary>Parts of a link with a name: the hero, the code and the name.</summary>
+    private const int HeroCodeAndNameParts = 3;
+
+    /// <summary>Thousandths in a unit, for values written in thousandths.</summary>
+    private const double ThousandthsPerUnit = 1000.0;
+
+    /// <summary>Bits of the number type the Exp-Golomb length is counted in.</summary>
+    private const int NumberBits = 64;
+
+    /// <summary>Bits one character of the URL-safe base 64 alphabet holds.</summary>
+    private const int BitsPerCharacter = 6;
+
+    /// <summary>Most 0 bits an Exp-Golomb number starts with (a longer run is not a build).</summary>
+    private const int MaxLeadingZeros = 40;
+
     private const string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
     /// <summary>The share link of <paramref name="build"/> on the site at <paramref name="siteAddress"/> (ending in '/').</summary>
@@ -58,7 +79,7 @@ public static class BuildShareLink
         if (name.Length == 0 || name.Equals(build.Hero, StringComparison.OrdinalIgnoreCase)) return link;
         string escaped = Uri.EscapeDataString(name);
         // Chat apps leave a final dot out of a link: escape it.
-        if (escaped.EndsWith('.')) escaped = escaped[..^1] + "%2E";
+        if (escaped.EndsWith(PartSeparator)) escaped = escaped[..^1] + "%2E";
         return $"{link}.{escaped}";
     }
 
@@ -73,13 +94,13 @@ public static class BuildShareLink
         string rest = text[(at + Marker.Length)..].Trim();
         int end = rest.IndexOfAny([' ', '\r', '\n', '\t']);
         if (end >= 0) rest = rest[..end];
-        var parts = rest.Split('.', 3);
-        if (parts.Length < 2) throw new FormatException("The share link has no build after its hero.");
+        var parts = rest.Split(PartSeparator, count: HeroCodeAndNameParts);
+        if (parts.Length < HeroAndCodeParts) throw new FormatException("The share link has no build after its hero.");
         string hero = Catalog.Heroes.Keys.FirstOrDefault(h => h.Equals(parts[0], StringComparison.OrdinalIgnoreCase))
                       ?? throw new FormatException($"The share link's hero \"{parts[0]}\" is not one the engine has.");
         var build = FromCode(parts[1]);
         build.Hero = hero;
-        build.Name = parts.Length == 3 && parts[2].Length > 0 ? Uri.UnescapeDataString(parts[2]) : hero;
+        build.Name = parts.Length == HeroCodeAndNameParts && parts[2].Length > 0 ? Uri.UnescapeDataString(parts[2]) : hero;
         return build;
     }
 
@@ -127,7 +148,7 @@ public static class BuildShareLink
         if (version != Version) throw new FormatException($"The share link is of version {version}; this SimFell reads version {Version}.");
         bool thousandths = reader.Bit(), old = reader.Bit(), health = reader.Bit();
         int extra = thousandths ? ThousandthsExtraOrder : 0;
-        double ReadNumber(int order) => thousandths ? reader.EG(order + extra) / 1000.0 : reader.EG(order);
+        double ReadNumber(int order) => thousandths ? reader.EG(order + extra) / ThousandthsPerUnit : reader.EG(order);
         var build = new CharacterBuild
         {
             StatsFromOldProfile = old,
@@ -203,7 +224,7 @@ public static class BuildShareLink
     private static int Whole(int value) => value >= 0 ? value : throw Negative(value);
 
     private static long Number(double value, bool thousandths) =>
-        value >= 0 && !double.IsNaN(value) ? (long)Math.Round(thousandths ? value * 1000 : value) : throw Negative(value);
+        value >= 0 && !double.IsNaN(value) ? (long)Math.Round(thousandths ? value * ThousandthsPerUnit : value) : throw Negative(value);
 
     private static ArgumentOutOfRangeException Negative(object value) => new(nameof(value), value, "A share link holds no negative values or ranks below 1.");
 
@@ -225,18 +246,18 @@ public static class BuildShareLink
         public void EG(long value, int order)
         {
             ulong number = (ulong)value + (1UL << order);
-            int length = 64 - System.Numerics.BitOperations.LeadingZeroCount(number);
+            int length = NumberBits - System.Numerics.BitOperations.LeadingZeroCount(number);
             for (int i = 0; i < length - 1 - order; i++) _bits.Add(false);
             for (int i = length - 1; i >= 0; i--) _bits.Add(((number >> i) & 1) == 1);
         }
 
         public string Text()
         {
-            var builder = new System.Text.StringBuilder((_bits.Count + 5) / 6);
-            for (int i = 0; i < _bits.Count; i += 6)
+            var builder = new System.Text.StringBuilder((_bits.Count + BitsPerCharacter - 1) / BitsPerCharacter);
+            for (int i = 0; i < _bits.Count; i += BitsPerCharacter)
             {
                 int value = 0;
-                for (int k = 0; k < 6; k++) value = (value << 1) | (i + k < _bits.Count && _bits[i + k] ? 1 : 0);
+                for (int k = 0; k < BitsPerCharacter; k++) value = (value << 1) | (i + k < _bits.Count && _bits[i + k] ? 1 : 0);
                 builder.Append(Alphabet[value]);
             }
             return builder.ToString();
@@ -254,7 +275,7 @@ public static class BuildShareLink
             {
                 int value = Alphabet.IndexOf(character);
                 if (value < 0) throw new FormatException($"The share link's code has a character it cannot have ('{character}').");
-                for (int k = 5; k >= 0; k--) _bits.Add(((value >> k) & 1) == 1);
+                for (int k = BitsPerCharacter - 1; k >= 0; k--) _bits.Add(((value >> k) & 1) == 1);
             }
         }
 
@@ -265,7 +286,7 @@ public static class BuildShareLink
             int zeros = 0;
             while (!Bit())
             {
-                if (++zeros > 40) throw Broken();
+                if (++zeros > MaxLeadingZeros) throw Broken();
             }
             ulong number = 1;
             for (int i = 0; i < zeros + order; i++) number = (number << 1) | (Bit() ? 1UL : 0);
@@ -281,7 +302,7 @@ public static class BuildShareLink
         /// <summary>Only the 0 bits that fill the last character are left.</summary>
         public void End()
         {
-            if (_bits.Count - _at >= 6 || _bits.Skip(_at).Any(b => b)) throw Broken();
+            if (_bits.Count - _at >= BitsPerCharacter || _bits.Skip(_at).Any(b => b)) throw Broken();
         }
 
         public FormatException Broken() => new("The share link's code is cut short or is not a build.");

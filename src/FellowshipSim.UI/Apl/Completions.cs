@@ -7,6 +7,9 @@ namespace FellowshipSim.UI.Apl;
 /// <summary>The completion list of the code fields: the parts a condition can read after the word at the caret.</summary>
 public static class Completions
 {
+    /// <summary>What separates the parts of a path (scope, name, property).</summary>
+    public const string PathSeparator = ".";
+
     private static readonly ConditionalWeakTable<AplVocabulary, CompletionNode> Trees = new();
 
     private static readonly string[] Operators = ["and", "or", "not"];
@@ -55,13 +58,13 @@ public static class Completions
                 }
             }
         }
-        string[] prefix = vocabulary.ResourcePrefix.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        string[] prefix = vocabulary.ResourcePrefix.Split(PathSeparator, StringSplitOptions.RemoveEmptyEntries);
         foreach (var resource in vocabulary.Resources)
         {
             Add([resource.Slug], AplTokenKind.Resource, resource.Name);
             Add([.. prefix, resource.Slug], AplTokenKind.Resource, resource.Name);
         }
-        foreach (string named in vocabulary.Named) Add(named.Split('.'), AplTokenKind.Named);
+        foreach (string named in vocabulary.Named) Add(named.Split(PathSeparator), AplTokenKind.Named);
         foreach (string word in Operators) Add([word], AplTokenKind.Operator);
         return root;
     }
@@ -72,7 +75,7 @@ public static class Completions
     /// </summary>
     public static IReadOnlyList<Completion> For(AplVocabulary vocabulary, string word)
     {
-        string[] parts = word.ToLowerInvariant().Split('.');
+        string[] parts = word.ToLowerInvariant().Split(PathSeparator);
         string partial = parts[^1];
         var node = TreeOf(vocabulary);
         foreach (string part in parts[..^1])

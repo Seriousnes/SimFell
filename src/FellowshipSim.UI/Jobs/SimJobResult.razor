@@ -1,5 +1,6 @@
 @using System.Globalization
 @using FellowshipSim.Core.Engine
+@using FellowshipSim.Engine.Replay
 @using FellowshipSim.UI.Build
 @* A done sim's report: its DPS, damage over time, each damage source, and each buff and debuff. *@
 <div class="report">
@@ -9,7 +10,7 @@
             <strong>@Number(Result.MeanDps)</strong>
             <em>±@MarginText at 95% confidence</em>
         </div>
-        @if (Result.PrimaryTargetDps is { } primary && primary < Result.MeanDps * 0.999)
+        @if (Result.PrimaryTargetDps is { } primary && primary < Result.MeanDps * PrimaryTargetThreshold)
         {
             <div class="tile">
                 <span>Main target DPS</span>
@@ -52,9 +53,9 @@
                     <span>@tick</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Damage done over the fight: the mean of every fight and the 5 to 95 percent band">
-                    @for (int g = 1; g < 4; g++)
+                    @for (int g = 1; g < AxisIntervals; g++)
                     {
-                        <line x1="0" x2="1000" y1="@(g * 60)" y2="@(g * 60)" class="grid" />
+                        <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
                     <path d="@Band(timeline.DamageLow, timeline.DamageHigh, Max(timeline.DamageHigh, timeline.Damage))" class="band" />
                     <path d="@Line(timeline.Damage, Max(timeline.DamageHigh, timeline.Damage))" class="mean" />
@@ -78,9 +79,9 @@
                     <span>@tick</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="DPS over the fight, as a rolling average: the mean of every fight and the 5 to 95 percent band">
-                    @for (int g = 1; g < 4; g++)
+                    @for (int g = 1; g < AxisIntervals; g++)
                     {
-                        <line x1="0" x2="1000" y1="@(g * 60)" y2="@(g * 60)" class="grid" />
+                        <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
                     <path d="@Band(timeline.DpsLow, timeline.DpsHigh, dpsMax)" class="band" />
                     <line x1="0" x2="1000" y1="@ChartY(Result.MeanDps, Nice(dpsMax))" y2="@ChartY(Result.MeanDps, Nice(dpsMax))" class="average" />
@@ -103,14 +104,14 @@
             </div>
             <div class="chart">
                 @{ double spiritTop = SpiritTop(spirit.Max); }
-                <div class="y">@for (int i = 4; i >= 0; i--)
+                <div class="y">@for (int i = AxisIntervals; i >= 0; i--)
                 {
-                    <span>@Number(spiritTop * i / 4)</span>
+                    <span>@Number(spiritTop * i / AxisIntervals)</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Spirit Points over the fight: one typical fight and the mean of every fight">
-                    @for (int g = 1; g < 4; g++)
+                    @for (int g = 1; g < AxisIntervals; g++)
                     {
-                        <line x1="0" x2="1000" y1="@(g * 60)" y2="@(g * 60)" class="grid" />
+                        <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
                     <line x1="0" x2="1000" y1="@ChartY(spirit.Max, spiritTop)" y2="@ChartY(spirit.Max, spiritTop)" class="average" />
                     <path d="@Line(spirit.Mean, spiritTop, nice: false)" class="spirit-mean" />
@@ -287,6 +288,54 @@
 </div>
 
 @code {
+    /// <summary>The share of the mean DPS below which the first target's DPS is shown on its own.</summary>
+    public const double PrimaryTargetThreshold = 0.999;
+
+    /// <summary>The standard score of a 95% confidence interval.</summary>
+    public const double ConfidenceZ95 = 1.96;
+
+    /// <summary>The percent of a whole.</summary>
+    private const int PercentScale = 100;
+
+    /// <summary>The seconds in a minute.</summary>
+    private const int SecondsPerMinute = 60;
+
+    /// <summary>The intervals between the ticks of a chart axis, and between its grid lines.</summary>
+    private const int AxisIntervals = 4;
+
+    /// <summary>The distance in chart units between two grid lines.</summary>
+    private const int GridSpacing = 60;
+
+    /// <summary>The width in chart units of a chart.</summary>
+    private const double ChartWidth = 1000.0;
+
+    /// <summary>The narrowest span bar in chart units.</summary>
+    private const int MinSpanWidth = 2;
+
+    /// <summary>The values a span has in turn: its start and its end.</summary>
+    private const int SpanFields = 2;
+
+    /// <summary>The base of the axis tops' powers.</summary>
+    private const int DecimalBase = 10;
+
+    /// <summary>The multipliers of a power of ten that an axis top takes.</summary>
+    private static readonly double[] NiceMultipliers = [1, 2, 2.5, 5, 10];
+
+    /// <summary>The Spirit axis top is a multiple of this.</summary>
+    private const int SpiritAxisStep = 40;
+
+    /// <summary>The fewest seconds a stepped line spans.</summary>
+    private const int MinStepSeconds = 2;
+
+    /// <summary>The most time labels a chart has.</summary>
+    private const int MaxTimeLabels = 10;
+
+    /// <summary>The seconds between time labels, from the shortest.</summary>
+    private static readonly int[] TimeLabelSteps = [15, 30, 60, 120, 300, LongestTimeLabelStep];
+
+    /// <summary>The seconds between time labels on the longest fights.</summary>
+    private const int LongestTimeLabelStep = 600;
+
     [Parameter, EditorRequired] public SimResult Result { get; set; } = null!;
 
     /// <summary>The cast sequence's rows: the casts of each 30 seconds.</summary>
@@ -316,7 +365,7 @@
             {
                 var spans = aura.Spans ?? [];
                 string kind = aura.OnTarget ? "debuff" : "buff";
-                for (int i = 0; i + 1 < spans.Count; i += 2)
+                for (int i = 0; i + 1 < spans.Count; i += SpanFields)
                 {
                     rows.Add(new SequenceRow(spans[i], aura.Name, aura.LogId, $"{kind} gained"));
                     if (spans[i + 1] < Result.DurationSeconds - FightEndSeconds) rows.Add(new SequenceRow(spans[i + 1], aura.Name, aura.LogId, $"{kind} faded"));
@@ -331,7 +380,7 @@
     private const double FightEndSeconds = 0.05;
 
     private static string Clock(double seconds, bool tenths = false) =>
-        $"{(int)seconds / 60}:{(tenths ? (seconds % 60).ToString("00.0", CultureInfo.CurrentCulture) : ((int)seconds % 60).ToString("00", CultureInfo.CurrentCulture))}";
+        $"{(int)seconds / SecondsPerMinute}:{(tenths ? (seconds % SecondsPerMinute).ToString("00.0", CultureInfo.CurrentCulture) : ((int)seconds % SecondsPerMinute).ToString("00", CultureInfo.CurrentCulture))}";
 
     /// <summary>The table of buffs or debuffs: uptime, applications, refreshes, duration, stacks and gaps.</summary>
     private RenderFragment AuraTable(IReadOnlyList<BuffReport> auras, string kind) =>
@@ -380,15 +429,15 @@
 
     private static string Number(double value) => Math.Round(value, MidpointRounding.AwayFromZero).ToString("N0", CultureInfo.CurrentCulture);
 
-    private static string Percent(double fraction) => (fraction * 100).ToString("0.0", CultureInfo.CurrentCulture) + "%";
+    private static string Percent(double fraction) => (fraction * PercentScale).ToString("0.0", CultureInfo.CurrentCulture) + "%";
 
     private static string Seconds(double seconds) => seconds.ToString("0.0", CultureInfo.CurrentCulture) + " s";
 
-    private static string Width(double fraction) => Math.Clamp(fraction * 100, 0, 100).ToString("0.#", CultureInfo.InvariantCulture) + "%";
+    private static string Width(double fraction) => Math.Clamp(fraction * PercentScale, 0, PercentScale).ToString("0.#", CultureInfo.InvariantCulture) + "%";
 
     /// <summary>The 95% confidence margin of the mean DPS, as a share of it.</summary>
     private string MarginText => Result.MeanDps > 0 && Result.Iterations > 0
-        ? (1.96 * Result.StandardDeviation / Math.Sqrt(Result.Iterations) / Result.MeanDps * 100).ToString("0.00", CultureInfo.CurrentCulture) + "%"
+        ? (ConfidenceZ95 * Result.StandardDeviation / Math.Sqrt(Result.Iterations) / Result.MeanDps * PercentScale).ToString("0.00", CultureInfo.CurrentCulture) + "%"
         : "–";
 
     /// <summary>A thin bar for each span (start and end seconds in turn) along the fight, 1000 units wide.</summary>
@@ -396,9 +445,9 @@
     {
         if (spans is not { Count: > 1 } || Result.DurationSeconds <= 0) return "";
         var builder = new System.Text.StringBuilder();
-        for (int i = 0; i + 1 < spans.Count; i += 2)
+        for (int i = 0; i + 1 < spans.Count; i += SpanFields)
         {
-            double start = spans[i] / Result.DurationSeconds * 1000, end = Math.Max(start + 2, spans[i + 1] / Result.DurationSeconds * 1000);
+            double start = spans[i] / Result.DurationSeconds * ChartWidth, end = Math.Max(start + MinSpanWidth, spans[i + 1] / Result.DurationSeconds * ChartWidth);
             builder.Append('M').Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append(" 2.5H").Append(end.ToString("0.#", CultureInfo.InvariantCulture))
                 .Append("V5.5H").Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append("Z ");
         }
@@ -411,28 +460,28 @@
     private static double Nice(double max)
     {
         if (max <= 0) return 1;
-        double step = max / 4;
-        double power = Math.Pow(10, Math.Floor(Math.Log10(step)));
-        double unit = new[] { 1, 2, 2.5, 5, 10 }.Select(m => m * power).First(s => s >= step);
-        return unit * 4;
+        double step = max / AxisIntervals;
+        double power = Math.Pow(DecimalBase, Math.Floor(Math.Log10(step)));
+        double unit = NiceMultipliers.Select(m => m * power).First(s => s >= step);
+        return unit * AxisIntervals;
     }
 
     private static IEnumerable<string> Ticks(double max)
     {
         double top = Nice(max);
-        for (int i = 0; i <= 4; i++) yield return Short(top * i / 4);
+        for (int i = 0; i <= AxisIntervals; i++) yield return Short(top * i / AxisIntervals);
     }
 
     private static string Short(double value) => value switch
     {
-        >= 1e6 => (value / 1e6).ToString("0.#", CultureInfo.CurrentCulture) + "M",
-        >= 1e3 => (value / 1e3).ToString("0.#", CultureInfo.CurrentCulture) + "k",
+        >= ReplayReportWriter.Million => (value / ReplayReportWriter.Million).ToString("0.#", CultureInfo.CurrentCulture) + "M",
+        >= ReplayReportWriter.Thousand => (value / ReplayReportWriter.Thousand).ToString("0.#", CultureInfo.CurrentCulture) + "k",
         _ => value.ToString("0", CultureInfo.CurrentCulture),
     };
 
     private static string ChartY(double value, double top) => (Height - value / top * Height).ToString("0.#", CultureInfo.InvariantCulture);
 
-    private static string ChartX(int index, int count) => (count <= 1 ? 0 : index * 1000.0 / (count - 1)).ToString("0.#", CultureInfo.InvariantCulture);
+    private static string ChartX(int index, int count) => (count <= 1 ? 0 : index * ChartWidth / (count - 1)).ToString("0.#", CultureInfo.InvariantCulture);
 
     private static string Line(IReadOnlyList<double> values, double max, bool nice = true)
     {
@@ -443,7 +492,7 @@
     }
 
     /// <summary>The Spirit chart's top: the most Spirit Points rounded up to 40, so its quarters fall on round numbers.</summary>
-    private static double SpiritTop(double max) => Math.Max(40, Math.Ceiling(max / 40) * 40);
+    private static double SpiritTop(double max) => Math.Max(SpiritAxisStep, Math.Ceiling(max / SpiritAxisStep) * SpiritAxisStep);
 
     /// <summary>
     /// A line that holds each second's value until the next (a resource's level), along a chart of
@@ -451,7 +500,7 @@
     /// </summary>
     private static string Steps(IReadOnlyList<double> values, int seconds, double top)
     {
-        if (values.Count == 0 || seconds < 2) return "";
+        if (values.Count == 0 || seconds < MinStepSeconds) return "";
         var builder = new System.Text.StringBuilder();
         for (int i = 0; i < values.Count; i++)
         {
@@ -472,12 +521,12 @@
     /// <summary>Time labels along the fight: at most about ten, on round minutes or half minutes.</summary>
     private static IEnumerable<string> TimeLabels(int seconds)
     {
-        int step = new[] { 15, 30, 60, 120, 300, 600 }.FirstOrDefault(s => seconds / s <= 10, 600);
+        int step = TimeLabelSteps.FirstOrDefault(s => seconds / s <= MaxTimeLabels, LongestTimeLabelStep);
         int labels = Math.Max(1, (seconds - 1) / step);
         for (int i = 0; i <= labels; i++)
         {
             int tick = Math.Min(seconds, i * step);
-            yield return $"{tick / 60}:{tick % 60:00}";
+            yield return $"{tick / SecondsPerMinute}:{tick % SecondsPerMinute:00}";
         }
     }
 }

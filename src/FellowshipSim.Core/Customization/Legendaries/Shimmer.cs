@@ -12,17 +12,18 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class Shimmer : Legendary
 {
     public const int PowerId = 429;
+    public const string PowerName = "Shimmer";
     public const int HelmItemId = 5899;
     public const int DebuffEffectId = 2362;
     public const double DebuffSeconds = 9.0;
     public const int MaxStacks = 3;
     public const double DamagePerStack = 0.08;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect("Shimmer", DebuffEffectId, DebuffSeconds, MaxStacks);
+    public static readonly AuraDef Debuff = AuraDef.Effect(PowerName, DebuffEffectId, DebuffSeconds, MaxStacks);
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Shimmer";
-    public override string HeroName => "Elarion";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Elarion);
     public override IReadOnlyList<int> ItemIds => [HelmItemId];
 
     public override void Bind(Hero hero)

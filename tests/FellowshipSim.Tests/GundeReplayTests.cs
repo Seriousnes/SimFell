@@ -14,11 +14,17 @@ namespace FellowshipSim.Tests;
 /// </summary>
 public class GundeReplayTests(ITestOutputHelper output)
 {
+    private const string FightVariable = "GUNDE_FIGHT";
+    private const string CharacterJsonVariable = "GUNDE_CHARACTER_JSON";
+    private const string FreeDiceVariable = "GUNDE_FREEDICE";
+    private const string HitsCsvVariable = "GUNDE_HITS_CSV";
+    private const int FirstSeed = 1;
+
     [Fact]
     public async Task Gunde_Fights_Replay()
     {
-        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
-        string? only = Environment.GetEnvironmentVariable("GUNDE_FIGHT");
+        var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
+        string? only = Environment.GetEnvironmentVariable(FightVariable);
         foreach (var (reportCode, fightId) in library.ListDownloadedFights())
         {
             if (only != null && only != reportCode && only != $"{reportCode}_{fightId}") continue;
@@ -26,7 +32,7 @@ public class GundeReplayTests(ITestOutputHelper output)
             foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Hero == "Gunde"))
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id).ToJsonString());
-                if (Environment.GetEnvironmentVariable("GUNDE_CHARACTER_JSON") is { } characterFile)
+                if (Environment.GetEnvironmentVariable(CharacterJsonVariable) is { } characterFile)
                 {
                     File.WriteAllText(characterFile, System.Text.Json.JsonSerializer.Serialize(script.Character, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
                 }
@@ -38,9 +44,9 @@ public class GundeReplayTests(ITestOutputHelper output)
                                  $"{result.ForcedCasts.Count} forced casts");
                 Report(result, options);
                 ExactReplayAssertions.Hold(result);
-                if (int.TryParse(Environment.GetEnvironmentVariable("GUNDE_FREEDICE"), out int runs) && runs > 0)
+                if (int.TryParse(Environment.GetEnvironmentVariable(FreeDiceVariable), out int runs) && runs > 0)
                 {
-                    var dice = FreeDiceReplay.Run(script, runs, firstSeed: 1);
+                    var dice = FreeDiceReplay.Run(script, runs, firstSeed: FirstSeed);
                     output.WriteLine($"free dice, {runs} runs: {dice.Mean / dice.LogDamage:P1} of log, log at the {dice.LogPercentile:P0} point");
                     output.WriteLine(dice.ToString());
                 }
@@ -75,7 +81,7 @@ public class GundeReplayTests(ITestOutputHelper output)
             output.WriteLine($"forced {forced.Count()}: {forced.First()}");
         }
         output.WriteLine("");
-        if (Environment.GetEnvironmentVariable("GUNDE_HITS_CSV") is not { } dump) return;
+        if (Environment.GetEnvironmentVariable(HitsCsvVariable) is not { } dump) return;
         var inv = System.Globalization.CultureInfo.InvariantCulture;
         File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(inv, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3},{8},{9:F3}",
             h.EngineTime, h.AbilityId, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}", h.EngineAmount, h.Crit ? 1 : 0,

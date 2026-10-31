@@ -1,3 +1,4 @@
+using FellowshipSim.Core.Heroes.Tariq;
 using FellowshipSim.Core.Heroes.Tariq.Abilities;
 
 namespace FellowshipSim.Core.Customization.Legendaries;
@@ -12,6 +13,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class ExecutionersGrin : Legendary
 {
     public const int PowerId = 423;
+    public const string PowerName = "Executioner's Grin";
     public const int WrapsItemId = 5900;
     public const int BandsItemId = 5225;
     public const int BuffEffectId = 2267;
@@ -25,11 +27,11 @@ public class ExecutionersGrin : Legendary
     public const double FurySpent = 30.0;
     public const string ProcKey = "executioners_grin";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Executioner's Grin", BuffEffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(PowerName, BuffEffectId, BuffSeconds, MaxStacks);
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Executioner's Grin";
-    public override string HeroName => "Tariq";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Tariq);
     public override IReadOnlyList<int> ItemIds => [WrapsItemId, BandsItemId];
 
     public override void Bind(Hero hero)

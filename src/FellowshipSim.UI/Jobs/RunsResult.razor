@@ -135,6 +135,15 @@ else
 }
 
 @code {
+    /// <summary>The percent of a whole.</summary>
+    private const int PercentScale = 100;
+
+    /// <summary>The least room in percent the chart keeps beyond its lowest and highest values.</summary>
+    private const double MinRangePadding = 0.1;
+
+    /// <summary>The room the chart keeps beyond its lowest and highest values, as a share of its range.</summary>
+    private const double RangePaddingShare = 0.05;
+
     /// <summary>The runs, the first the baseline.</summary>
     [Parameter, EditorRequired] public IReadOnlyList<SimRun> Runs { get; set; } = [];
 
@@ -148,24 +157,24 @@ else
     private SimRun Base => Runs[0];
 
     // A finder's baseline is the current build; a compare's is its first row.
-    private string BaseName => Base.Label == "Current build" ? "Current build" : "Baseline";
+    private string BaseName => Base.Label == SimPageState.CurrentBuildLabel ? SimPageState.CurrentBuildLabel : "Baseline";
 
     private IReadOnlyList<SimRun> Others => Runs.Skip(1).ToList();
 
     private SimRun Best => Others.Where(r => Change(r) > 0).MaxBy(r => r.Result.MeanDps) ?? Base;
 
     // A column for the first target's DPS when the runs had more than one target.
-    private bool Primary => Runs.Any(r => r.Result.PrimaryTargetDps is { } primaryDps && primaryDps < r.Result.MeanDps * 0.999);
+    private bool Primary => Runs.Any(r => r.Result.PrimaryTargetDps is { } primaryDps && primaryDps < r.Result.MeanDps * SimJobResult.PrimaryTargetThreshold);
 
     // The hero on each row when the runs have more than one.
     private bool Heroes => Runs.Select(r => r.Hero).Distinct(StringComparer.OrdinalIgnoreCase).Count() > 1;
 
     /// <summary>The run's DPS change against the baseline, in percent.</summary>
-    private double Change(SimRun run) => Base.Result.MeanDps > 0 ? (run.Result.MeanDps / Base.Result.MeanDps - 1) * 100 : 0;
+    private double Change(SimRun run) => Base.Result.MeanDps > 0 ? (run.Result.MeanDps / Base.Result.MeanDps - 1) * PercentScale : 0;
 
     /// <summary>The 95% margin of a run's mean DPS.</summary>
     private static double Margin(SimRun run) =>
-        run.Result.Iterations > 0 ? 1.96 * run.Result.StandardDeviation / Math.Sqrt(run.Result.Iterations) : 0;
+        run.Result.Iterations > 0 ? SimJobResult.ConfidenceZ95 * run.Result.StandardDeviation / Math.Sqrt(run.Result.Iterations) : 0;
 
     /// <summary>The 95% margin of the difference between a run's mean DPS and the baseline's.</summary>
     private double DifferenceMargin(SimRun run) => Math.Sqrt(Margin(run) * Margin(run) + Margin(Base) * Margin(Base));
@@ -192,18 +201,18 @@ else
         double low = 0, high = 0;
         foreach (var run in Others)
         {
-            double change = Change(run), whisker = DifferenceMargin(run) / Math.Max(1, Base.Result.MeanDps) * 100;
+            double change = Change(run), whisker = DifferenceMargin(run) / Math.Max(1, Base.Result.MeanDps) * PercentScale;
             low = Math.Min(low, change - whisker);
             high = Math.Max(high, change + whisker);
         }
-        double pad = Math.Max(0.1, (high - low) * 0.05);
+        double pad = Math.Max(MinRangePadding, (high - low) * RangePaddingShare);
         return new ChartRange(low - pad, high + pad);
     }
 
     private double Position(double change)
     {
         var (low, high) = Range();
-        return Math.Clamp((change - low) / (high - low) * 100, 0, 100);
+        return Math.Clamp((change - low) / (high - low) * PercentScale, 0, PercentScale);
     }
 
     private string Span(double from, double to) => $"left: {CssNumber(Position(from))}%; width: {CssNumber(Math.Max(0, Position(to) - Position(from)))}%";

@@ -13,6 +13,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 public class Explosivo : Legendary
 {
     public const int PowerId = 615;
+    public const string PowerName = "Explosivo";
     public const int HelmItemId = 5898;
     public const int DamageEffectId = 3175;
     public const string DamageName = "Apocalypse: Explosivo";
@@ -23,8 +24,8 @@ public class Explosivo : Legendary
     public const double ReductionPerFireBallSeconds = 8.0;
 
     public override int LegendaryPowerId => PowerId;
-    public override string Name => "Explosivo";
-    public override string HeroName => "Ardeos";
+    public override string Name => PowerName;
+    public override string HeroName => nameof(Ardeos);
     public override IReadOnlyList<int> ItemIds => [HelmItemId];
 
     public override void Bind(Hero hero)

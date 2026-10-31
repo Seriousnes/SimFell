@@ -31,20 +31,20 @@ public class Sapphire : Gem
     {
         switch (node.Slot)
         {
-            case 1: // Ancestral Surge: more maximum Spirit Points, and Main Stat while Spirit of Heroism is active.
-                hero.AddMaxSpiritPoints(node.Value("SpiritPointsBonus"));
+            case HeadlineSlot: // Ancestral Surge: more maximum Spirit Points, and Main Stat while Spirit of Heroism is active.
+                hero.AddMaxSpiritPoints(node.Value(SpiritPointsBonusKey));
                 hero.SpiritOfHeroismAuras.Add(hero.Register(node.Grants!));
                 return true;
-            case 2: // Mystic's Intuition: flat Stamina and Spirit rating.
-                hero.Stats.SpiritRating += node.Value("SpiritBonus");
-                hero.Stats.Stamina += node.Value("StaminaBonus");
+            case FlatStatSlot: // Mystic's Intuition: flat Stamina and Spirit rating.
+                hero.Stats.SpiritRating += node.Value(SpiritBonusKey);
+                hero.Stats.Stamina += node.Value(StaminaBonusKey);
                 return true;
-            case 4: // Oracle's Foresight: Spirit.
-                hero.Stats.BonusSpirit += node.Value("SpiritBonus");
+            case PercentStatSlot: // Oracle's Foresight: Spirit.
+                hero.Stats.BonusSpirit += node.Value(SpiritBonusKey);
                 return true;
-            case 5: // Blessing of the Prophet: a cheaper Spirit ability and a longer Spirit of Heroism.
-                hero.SpiritAbilityCostReduction += node.Value("CostReduction");
-                HeroismDurationBonus = node.Value("DurationBonus");
+            case BlessingSlot: // Blessing of the Prophet: a cheaper Spirit ability and a longer Spirit of Heroism.
+                hero.SpiritAbilityCostReduction += node.Value(CostReductionKey);
+                HeroismDurationBonus = node.Value(DurationBonusKey);
                 hero.SpiritOfHeroismDurationBonus += HeroismDurationBonus;
                 return true;
             default: // Resonating Soul (damage reduction) does not affect damage.
@@ -54,26 +54,26 @@ public class Sapphire : Gem
 
     protected override void BindLater(Hero hero, GemNode node, SimTime now)
     {
-        if (node.Slot != 1) return;
-        hero.AddMaxSpiritPoints(node.Value("SpiritPointsBonus"));
+        if (node.Slot != HeadlineSlot) return;
+        hero.AddMaxSpiritPoints(node.Value(SpiritPointsBonusKey));
         hero.SpiritOfHeroismAuras.Add(hero.Register(node.Grants!));
     }
 
     /// <summary>Spirit of Heroism gives the active rank's Ancestral Surge, and the maximum Spirit Points follow the rank.</summary>
     protected override void NodesChanged(Hero hero, IReadOnlyList<GemNode> before, SimTime? now)
     {
-        var old = before.FirstOrDefault(n => n.Slot == 1);
-        var next = NodeInSlot(1);
+        var old = before.FirstOrDefault(n => n.Slot == HeadlineSlot);
+        var next = NodeInSlot(HeadlineSlot);
         if (old == null || next == null || old == next) return;
         int index = hero.SpiritOfHeroismAuras.IndexOf(old.Grants!);
         if (index >= 0) hero.SpiritOfHeroismAuras[index] = hero.Register(next.Grants!);
-        hero.AddMaxSpiritPoints(next.Value("SpiritPointsBonus") - old.Value("SpiritPointsBonus"));
+        hero.AddMaxSpiritPoints(next.Value(SpiritPointsBonusKey) - old.Value(SpiritPointsBonusKey));
     }
 
     protected override IEnumerable<StatModifier> StatEffects(GemNode node) => node.Slot switch
     {
-        2 => [StatModifier.Add(StatType.SpiritRating, node.Value("SpiritBonus"))],
-        4 => [StatModifier.Add(StatType.Spirit, node.Value("SpiritBonus"))],
+        FlatStatSlot => [StatModifier.Add(StatType.SpiritRating, node.Value(SpiritBonusKey))],
+        PercentStatSlot => [StatModifier.Add(StatType.Spirit, node.Value(SpiritBonusKey))],
         _ => [],
     };
 }
