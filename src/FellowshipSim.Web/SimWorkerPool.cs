@@ -10,7 +10,7 @@ namespace FellowshipSim.Web;
 /// worker's error comes back as a <see cref="SimEngineException"/>; a cancelled sim as an
 /// <see cref="OperationCanceledException"/>.
 /// </summary>
-public sealed class SimWorkerPool(IJSRuntime js)
+public sealed class SimWorkerPool(IJSRuntime jsRuntime)
 {
     /// <summary>Key of the assembly metadata that holds the build's stamp.</summary>
     private const string BuildStampKey = "BuildStamp";
@@ -45,7 +45,7 @@ public sealed class SimWorkerPool(IJSRuntime js)
         .FirstOrDefault(a => a.Key == BuildStampKey)?.Value ?? DefaultBuildStamp;
 
     private async Task<IJSObjectReference> PoolAsync() =>
-        _pool ??= await js.InvokeAsync<IJSObjectReference>(ImportFunction, $"{SimPoolModule}?v={BuildStamp}");
+        _pool ??= await jsRuntime.InvokeAsync<IJSObjectReference>(ImportFunction, $"{SimPoolModule}?v={BuildStamp}");
 
     /// <summary>The workers a sim can use: the cores but the page's, up to the pool's most.</summary>
     public async Task<int> SizeAsync() => await (await PoolAsync()).InvokeAsync<int>(SizeFunction);

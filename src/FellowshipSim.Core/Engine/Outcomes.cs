@@ -176,7 +176,7 @@ public sealed class SimulationRng
     private const int StateShift = 17;
     private const int StateRotation = 45;
 
-    private ulong _s0, _s1, _s2, _s3;
+    private ulong _state0, _state1, _state2, _state3;
 
     public SimulationRng(int seed = DefaultSeed)
     {
@@ -187,10 +187,10 @@ public sealed class SimulationRng
     {
         // SplitMix64 spreads the seed over the four state words, so the state is never all zero.
         var state = (ulong)seed;
-        _s0 = SplitMix64(ref state);
-        _s1 = SplitMix64(ref state);
-        _s2 = SplitMix64(ref state);
-        _s3 = SplitMix64(ref state);
+        _state0 = SplitMix64(ref state);
+        _state1 = SplitMix64(ref state);
+        _state2 = SplitMix64(ref state);
+        _state3 = SplitMix64(ref state);
     }
 
     public bool Roll(double chance) => NextDouble() < chance;
@@ -200,14 +200,14 @@ public sealed class SimulationRng
 
     private ulong NextUInt64()
     {
-        var result = BitOperations.RotateLeft(_s1 * ScrambleMultiplier, ScrambleRotation) * ScrambleFinalMultiplier;
-        var shifted = _s1 << StateShift;
-        _s2 ^= _s0;
-        _s3 ^= _s1;
-        _s1 ^= _s2;
-        _s0 ^= _s3;
-        _s2 ^= shifted;
-        _s3 = BitOperations.RotateLeft(_s3, StateRotation);
+        var result = BitOperations.RotateLeft(_state1 * ScrambleMultiplier, ScrambleRotation) * ScrambleFinalMultiplier;
+        var shifted = _state1 << StateShift;
+        _state2 ^= _state0;
+        _state3 ^= _state1;
+        _state1 ^= _state2;
+        _state0 ^= _state3;
+        _state2 ^= shifted;
+        _state3 = BitOperations.RotateLeft(_state3, StateRotation);
         return result;
     }
 

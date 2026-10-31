@@ -87,12 +87,12 @@ public class ElarionReplayTests(ITestOutputHelper output)
         var folder = Environment.GetEnvironmentVariable(HitsFolderVariable);
         if (folder == null) return;
         var dump = Path.Combine(folder, $"hits_{result.ReportCode}_{result.FightId}.csv");
-        var inv = System.Globalization.CultureInfo.InvariantCulture;
-        File.WriteAllLines(Path.Combine(folder, $"steps_{result.ReportCode}_{result.FightId}.csv"), result.Steps.Select(s => string.Format(inv,
+        var invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
+        File.WriteAllLines(Path.Combine(folder, $"steps_{result.ReportCode}_{result.FightId}.csv"), result.Steps.Select(s => string.Format(invariantCulture,
             "{0:F3},{1},{2:F3},{3}", s.Time, s.AbilityName, s.EngineHaste,
-            string.Join(";", s.Resources.Select(r => string.Format(inv, "{0}={1:F1}/{2:F1}", r.Resource, r.Engine, r.Log))))));
-        File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(inv, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3}",
+            string.Join(";", s.Resources.Select(r => string.Format(invariantCulture, "{0}={1:F1}/{2:F1}", r.Resource, r.Engine, r.Log))))));
+        File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(invariantCulture, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3}",
             h.EngineTime, h.AbilityId, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}", h.EngineAmount, h.Crit ? 1 : 0,
-            h.Log == null ? "" : h.Log.UnblockedAmount.ToString("F0", inv), h.Log == null ? "" : h.Log.Time.ToString("F3", inv), h.TickFraction)));
+            h.Log == null ? "" : h.Log.UnblockedAmount.ToString("F0", invariantCulture), h.Log == null ? "" : h.Log.Time.ToString("F3", invariantCulture), h.TickFraction)));
     }
 }

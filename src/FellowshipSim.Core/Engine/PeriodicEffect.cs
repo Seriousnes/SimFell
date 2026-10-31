@@ -282,37 +282,37 @@ public sealed class PeriodicEffect
         Action<SimulationContext>? fireMoved = null;
         Action<SimulationContext>? predict = null;
 
-        void Fire(SimulationContext cc)
+        void Fire(SimulationContext context)
         {
-            if (cc.CurrentTime > nominalEnd || !effect.IsActive) return;
-            effect.TickPredicted?.Invoke(cc, effect, cc.CurrentTime);
-            FireTick(cc);
+            if (context.CurrentTime > nominalEnd || !effect.IsActive) return;
+            effect.TickPredicted?.Invoke(context, effect, context.CurrentTime);
+            FireTick(context);
         }
 
-        void FireTick(SimulationContext cc)
+        void FireTick(SimulationContext context)
         {
-            if (cc.CurrentTime > nominalEnd || !effect.IsActive) return;
-            lastTick = cc.CurrentTime;
+            if (context.CurrentTime > nominalEnd || !effect.IsActive) return;
+            lastTick = context.CurrentTime;
             effect.LastTickTime = lastTick;
-            effect.Tick(cc, 1.0);
-            if (effect.IsActive) ScheduleNext(cc);
+            effect.Tick(context, 1.0);
+            if (effect.IsActive) ScheduleNext(context);
         }
 
-        void Predict(SimulationContext cc)
+        void Predict(SimulationContext context)
         {
-            if (effect.IsActive) effect.TickPredicted?.Invoke(cc, effect, cc.CurrentTime);
+            if (effect.IsActive) effect.TickPredicted?.Invoke(context, effect, context.CurrentTime);
         }
 
         // A damage over time ticks on its period timer, a repeated tick included.
         var tickMoved = false;
-        void PeriodTick(SimulationContext cc)
+        void PeriodTick(SimulationContext context)
         {
-            if (cc.CurrentTime > nominalEnd || !effect.IsActive) return;
-            if (!tickMoved) effect.TickPredicted?.Invoke(cc, effect, cc.CurrentTime);
+            if (context.CurrentTime > nominalEnd || !effect.IsActive) return;
+            if (!tickMoved) effect.TickPredicted?.Invoke(context, effect, context.CurrentTime);
             tickMoved = false;
-            lastTick = cc.CurrentTime;
+            lastTick = context.CurrentTime;
             effect.LastTickTime = lastTick;
-            effect.Tick(cc, 1.0);
+            effect.Tick(context, 1.0);
         }
 
         // Once the period timer has its next tick, asks its firing time and moves the tick there.
@@ -474,9 +474,9 @@ public sealed class PeriodicEffect
         if (!IsActive) return;
         IsActive = false;
         _nextHastedTick?.Cancel();
-        foreach (var ev in _events)
+        foreach (var scheduledEvent in _events)
         {
-            if (!ev.HasFired) ev.Cancel();
+            if (!scheduledEvent.HasFired) scheduledEvent.Cancel();
         }
         _onEnd?.Invoke(ctx, clipped);
         Ended?.Invoke(ctx, this);

@@ -51,19 +51,19 @@ public static class ReplayReview
 
     private static string HitsCsv(ReplayResult result)
     {
-        var sb = new System.Text.StringBuilder("time,ability_id,ability,target,engine_amount,expected_low,expected_high,engine_crit,crit_chance,log_amount,log_crit,log_time,deviation,tick_fraction,player_auras,target_auras\n");
-        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        var csv = new System.Text.StringBuilder("time,ability_id,ability,target,engine_amount,expected_low,expected_high,engine_crit,crit_chance,log_amount,log_crit,log_time,deviation,tick_fraction,player_auras,target_auras\n");
+        var invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
         foreach (var hit in result.AllHits)
         {
             var name = hit.AbilityName.Replace(',', ' ');
-            sb.Append(string.Format(inv, "{0:F3},{1},{2},{3},{4:F1},{5:F1},{6:F1},{7},{8:F4},{9},{10},{11},{12:F1},{13:F3},{14},{15}\n",
+            csv.Append(string.Format(invariantCulture, "{0:F3},{1},{2},{3},{4:F1},{5:F1},{6:F1},{7},{8:F4},{9},{10},{11},{12:F1},{13:F3},{14},{15}\n",
                 hit.EngineTime, hit.AbilityId, name, hit.Target == null ? "" : $"{hit.Target.Id}.{hit.Target.Instance}",
                 hit.EngineAmount, hit.ExpectedLow, hit.ExpectedHigh, hit.Crit ? 1 : 0, hit.CritChance,
-                hit.Log == null ? "" : hit.Log.UnblockedAmount.ToString("F0", inv), hit.Log == null ? "" : (hit.Log.Crit ? "1" : "0"),
-                hit.Log == null ? "" : hit.Log.Time.ToString("F3", inv), hit.Deviation, hit.TickFraction,
+                hit.Log == null ? "" : hit.Log.UnblockedAmount.ToString("F0", invariantCulture), hit.Log == null ? "" : (hit.Log.Crit ? "1" : "0"),
+                hit.Log == null ? "" : hit.Log.Time.ToString("F3", invariantCulture), hit.Deviation, hit.TickFraction,
                 AuraColumn(hit.State?.Hero.Auras), AuraColumn(hit.State?.Target?.Auras)));
         }
-        return sb.ToString();
+        return csv.ToString();
     }
 
     /// <summary>The engine's auras at the hit: log IDs, then engine-only auras by name.</summary>

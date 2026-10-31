@@ -21,39 +21,39 @@ internal static class DisagreementsSection
     /// <summary>Property of the states block that holds the shared aura table (<c>d.a</c> in <see cref="Script"/>).</summary>
     private const string AurasProperty = "a";
 
-    public static void Render(StringBuilder sb, IReadOnlyList<ReplayIssue> issues)
+    public static void Render(StringBuilder builder, IReadOnlyList<ReplayIssue> issues)
     {
         if (issues.Count == 0) return;
         var states = new List<IssueState>();
-        sb.Append($"<h2>Disagreements ({issues.Count:N0})</h2>");
+        builder.Append($"<h2>Disagreements ({issues.Count:N0})</h2>");
         foreach (var category in Enum.GetValues<IssueCategory>())
         {
             var rows = issues.Where(i => i.Category == category).ToList();
             if (rows.Count == 0) continue;
-            sb.Append($"<details class=\"panel\"><summary>{category} ({rows.Count:N0})</summary><div class=\"scroll\"><table class=\"issues\"><thead><tr>");
-            sb.Append("<th class=num>Time</th><th class=num>Step</th><th>Subject</th><th class=num>Expected</th><th class=num>Observed</th><th class=num>Deviation</th><th class=num>Relative</th><th></th></tr></thead><tbody>");
+            builder.Append($"<details class=\"panel\"><summary>{category} ({rows.Count:N0})</summary><div class=\"scroll\"><table class=\"issues\"><thead><tr>");
+            builder.Append("<th class=num>Time</th><th class=num>Step</th><th>Subject</th><th class=num>Expected</th><th class=num>Observed</th><th class=num>Deviation</th><th class=num>Relative</th><th></th></tr></thead><tbody>");
             foreach (var issue in rows)
             {
                 var range = issue.Expected;
-                sb.Append($"<tr><td class=num>{issue.Time:F3}</td><td class=num><a href=\"#step-{issue.Step}\">{issue.Step}</a></td><td title=\"{EncodeHtml(issue.Message)}\">{EncodeHtml(issue.Subject ?? issue.Message)}</td>");
-                sb.Append($"<td class=num>{(issue.Expected is { } expected ? EncodeHtml(expected.ToString()) : "—")}</td>");
-                sb.Append($"<td class=num>{(issue.Observed is { } observed ? EncodeHtml(ExpectedRange.Format(observed, range)) : "—")}</td>");
-                sb.Append($"<td class=num>{(issue.Deviation is { } deviation ? EncodeHtml((deviation > 0 ? "+" : "") + ExpectedRange.Format(deviation, range)) : "—")}</td>");
-                sb.Append($"<td class=num>{(issue.RelativeDeviation is { } rel ? rel.ToString("+0.0%;-0.0%;0.0%", CultureInfo.InvariantCulture) : "—")}</td>");
+                builder.Append($"<tr><td class=num>{issue.Time:F3}</td><td class=num><a href=\"#step-{issue.Step}\">{issue.Step}</a></td><td title=\"{EncodeHtml(issue.Message)}\">{EncodeHtml(issue.Subject ?? issue.Message)}</td>");
+                builder.Append($"<td class=num>{(issue.Expected is { } expected ? EncodeHtml(expected.ToString()) : "—")}</td>");
+                builder.Append($"<td class=num>{(issue.Observed is { } observed ? EncodeHtml(ExpectedRange.Format(observed, range)) : "—")}</td>");
+                builder.Append($"<td class=num>{(issue.Deviation is { } deviation ? EncodeHtml((deviation > 0 ? "+" : "") + ExpectedRange.Format(deviation, range)) : "—")}</td>");
+                builder.Append($"<td class=num>{(issue.RelativeDeviation is { } rel ? rel.ToString("+0.0%;-0.0%;0.0%", CultureInfo.InvariantCulture) : "—")}</td>");
                 if (issue.State is { } state)
                 {
-                    sb.Append($"<td><button class=\"state\" data-s=\"{states.Count}\">Engine state</button></td></tr>");
+                    builder.Append($"<td><button class=\"state\" data-s=\"{states.Count}\">Engine state</button></td></tr>");
                     states.Add(new IssueState(issue, state));
                 }
-                else sb.Append("<td></td></tr>");
+                else builder.Append("<td></td></tr>");
             }
-            sb.Append("</tbody></table></div></details>");
+            builder.Append("</tbody></table></div></details>");
         }
-        sb.Append("<script type=\"application/json\" id=\"engine-states\">");
-        sb.Append(StatesJson(states));
-        sb.Append("</script><script>");
-        sb.Append(Script);
-        sb.Append("</script>");
+        builder.Append("<script type=\"application/json\" id=\"engine-states\">");
+        builder.Append(StatesJson(states));
+        builder.Append("</script><script>");
+        builder.Append(Script);
+        builder.Append("</script>");
     }
 
     /// <summary>

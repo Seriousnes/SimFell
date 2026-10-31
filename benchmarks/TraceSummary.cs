@@ -54,16 +54,16 @@ var leaf = new Dictionary<string, long>();
 var methodInclusive = new Dictionary<string, long>();
 long engineSamples = 0;
 
-foreach (var ev in log.Events)
+foreach (var traceEvent in log.Events)
 {
-    if (ev is GCAllocationTickTraceData tick)
+    if (traceEvent is GCAllocationTickTraceData tick)
     {
         var type = tick.TypeName ?? Unknown;
         allocated[type] = allocated.GetValueOrDefault(type) + tick.AllocationAmount64;
         allocatedTotal += tick.AllocationAmount64;
         // A closure's type name ("<>c__DisplayClass62_0") does not name its class, so the allocating engine method does.
         string? site = null;
-        for (var frame = ev.CallStack(); frame != null && site == null; frame = frame.Caller)
+        for (var frame = traceEvent.CallStack(); frame != null && site == null; frame = frame.Caller)
         {
             string? method = frame.CodeAddress.FullMethodName;
             if (method != null && method.Contains(EngineNamespace)) site = method;
@@ -72,10 +72,10 @@ foreach (var ev in log.Events)
         allocatedAt[key] = allocatedAt.GetValueOrDefault(key) + tick.AllocationAmount64;
         continue;
     }
-    if (ev.ProviderName != SampleProfilerProvider || ev.EventName != SampleEventName) continue;
+    if (traceEvent.ProviderName != SampleProfilerProvider || traceEvent.EventName != SampleEventName) continue;
 
     var frames = new List<string>();
-    for (var frame = ev.CallStack(); frame != null; frame = frame.Caller)
+    for (var frame = traceEvent.CallStack(); frame != null; frame = frame.Caller)
     {
         frames.Add(frame.CodeAddress.FullMethodName ?? frame.CodeAddress.ModuleName ?? Unknown);
     }

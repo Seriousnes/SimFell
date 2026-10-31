@@ -286,9 +286,9 @@
             State.ProfileText = await reader.ReadToEndAsync();
             await ImportProfileAsync();
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            State.ImportStatus = MessageState.Error(ex.Message);
+            State.ImportStatus = MessageState.Error(exception.Message);
         }
     }
 

@@ -11,7 +11,7 @@
 
     protected override void OnInitialized() => _draft = ConditionBuilder.Number(Value);
 
-    private Task Key(KeyboardEventArgs e) => e.Key == JsInterop.EnterKey ? Commit() : Task.CompletedTask;
+    private Task Key(KeyboardEventArgs keyboardEvent) => keyboardEvent.Key == JsInterop.EnterKey ? Commit() : Task.CompletedTask;
 
     private Task Commit() =>
         OnChange.InvokeAsync(double.TryParse(_draft, NumberStyles.Float, CultureInfo.InvariantCulture, out var number) ? number : 0);

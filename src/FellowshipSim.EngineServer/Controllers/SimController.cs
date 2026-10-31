@@ -45,14 +45,14 @@ public sealed class SimController(ISimEngine engine, ILogger<SimController> log)
         {
             last = new SimStreamLine(Result: await sim);
         }
-        catch (SimEngineException ex)
+        catch (SimEngineException exception)
         {
-            last = new SimStreamLine(Error: ex.Message);
+            last = new SimStreamLine(Error: exception.Message);
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            log.LogError(ex, "Sim of {Hero} failed", request.Profile.Build.Hero);
-            last = new SimStreamLine(Error: $"{ex.GetType().Name}: {ex.Message}");
+            log.LogError(exception, "Sim of {Hero} failed", request.Profile.Build.Hero);
+            last = new SimStreamLine(Error: $"{exception.GetType().Name}: {exception.Message}");
         }
         await WriteLine(last, ct);
     }

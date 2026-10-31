@@ -110,9 +110,9 @@
 
     private void Close() => _open = false;
 
-    private void OnKeyDown(KeyboardEventArgs e)
+    private void OnKeyDown(KeyboardEventArgs keyboardEvent)
     {
-        if (e.Key == JsInterop.EscapeKey) _open = false;
+        if (keyboardEvent.Key == JsInterop.EscapeKey) _open = false;
     }
 
     private async Task LoadRecent()

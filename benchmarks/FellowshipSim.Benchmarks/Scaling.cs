@@ -61,7 +61,7 @@ public static class Scaling
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
             };
-            foreach (var a in new[] { RunMode, workload, iterations.ToString(), mask.ToString() }) start.ArgumentList.Add(a);
+            foreach (var argument in new[] { RunMode, workload, iterations.ToString(), mask.ToString() }) start.ArgumentList.Add(argument);
             start.Environment[ProcessorCountVariable] = cores.ToString();
             start.Environment[GcHeapCountVariable] = cores.ToString(HexFormat);
             start.Environment[GcHeapAffinitizeMaskVariable] = mask.ToString(HexFormat);
@@ -82,11 +82,11 @@ public static class Scaling
                 break;
             }
             if (peak > WorkingSetLimitBytes) continue;
-            var m = Measurement.Parse(output.Result.Trim().Split('\n').Last().Trim());
-            var rate = iterations / m.WallSeconds;
+            var measurement = Measurement.Parse(output.Result.Trim().Split('\n').Last().Trim());
+            var rate = iterations / measurement.WallSeconds;
             single ??= cores == 1 ? rate : null;
             var efficiency = single is { } one ? $"{rate / (one * cores),9:P0}" : "        -";
-            Console.WriteLine($"{cores,5}  {Ranges(chosen),-22} {m.WallSeconds,9:F1} {m.CpuSeconds,8:F1} {rate,8:N0}  {efficiency}  {m.AllocatedBytes / BytesPerGigabyte,12:F1} {m.Gen0,6} {m.Gen1,5} {m.Gen2,5} {m.PausePercent,8:P1} {m.PeakWorkingSetBytes / BytesPerGigabyte,8:F2}");
+            Console.WriteLine($"{cores,5}  {Ranges(chosen),-22} {measurement.WallSeconds,9:F1} {measurement.CpuSeconds,8:F1} {rate,8:N0}  {efficiency}  {measurement.AllocatedBytes / BytesPerGigabyte,12:F1} {measurement.Gen0,6} {measurement.Gen1,5} {measurement.Gen2,5} {measurement.PausePercent,8:P1} {measurement.PeakWorkingSetBytes / BytesPerGigabyte,8:F2}");
         }
     }
 
@@ -121,14 +121,14 @@ public static class Scaling
         work();
         clock.Stop();
         process.Refresh();
-        var m = new Measurement(
+        var measurement = new Measurement(
             clock.Elapsed.TotalSeconds,
             (process.TotalProcessorTime - cpu).TotalSeconds,
             GC.GetTotalAllocatedBytes(precise: true) - allocated,
             GC.CollectionCount(0) - gen0, GC.CollectionCount(1) - gen1, GC.CollectionCount(generation: 2) - gen2,
             (GC.GetTotalPauseDuration() - pause).TotalSeconds / clock.Elapsed.TotalSeconds,
             process.PeakWorkingSet64);
-        Console.WriteLine(m.ToString());
+        Console.WriteLine(measurement.ToString());
     }
 
     /// <summary>One Monte Carlo run of <paramref name="iterations"/> fights on <paramref name="cores"/> threads.</summary>
@@ -152,9 +152,9 @@ public static class Scaling
 
         public static Measurement Parse(string line)
         {
-            var p = line.Split(' ');
-            var c = System.Globalization.CultureInfo.InvariantCulture;
-            return new(double.Parse(p[0], c), double.Parse(p[1], c), long.Parse(p[2], c), int.Parse(p[3], c), int.Parse(p[4], c), int.Parse(p[5], c), double.Parse(p[6], c), long.Parse(p[7], c));
+            var fields = line.Split(' ');
+            var culture = System.Globalization.CultureInfo.InvariantCulture;
+            return new(double.Parse(fields[0], culture), double.Parse(fields[1], culture), long.Parse(fields[2], culture), int.Parse(fields[3], culture), int.Parse(fields[4], culture), int.Parse(fields[5], culture), double.Parse(fields[6], culture), long.Parse(fields[7], culture));
         }
     }
 

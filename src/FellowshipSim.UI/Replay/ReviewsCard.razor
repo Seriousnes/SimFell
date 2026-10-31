@@ -32,7 +32,7 @@
                             var hits = review.LogHits != 0 ? (double)review.MatchedHits / review.LogHits : 0;
                             var damage = review.LogDamage != 0 ? review.EngineDamage / review.LogDamage : 0;
                             var date = review.FightDate is { } fightDate ? fightDate.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : "";
-                            var fd = review.FreeDice;
+                            var freeDice = review.FreeDice;
                             <tr @key="review.Id">
                                 <td><button type="button" class="link-button" @onclick="() => Views.ShowReview(review.HtmlFile, ReviewTitle.Replay(review))">@review.PlayerName</button></td>
                                 <td>@review.Hero</td>
@@ -46,14 +46,14 @@
                                 </td>
                                 <td class="num @RatioClass(hits, HitsGood, HitsWarn)">@Percent(hits)</td>
                                 <td class="num @RatioClass(damage, DamageGood, DamageWarn)">@Percent(damage)</td>
-                                @if (fd != null)
+                                @if (freeDice != null)
                                 {
-                                    var fdDamage = fd.EngineMean / fd.LogDamage;
-                                    <td class="num @RatioClass(fdDamage, FreeDiceDamageGood, FreeDiceDamageWarn)"
-                                        data-tooltip="@($"{fd.Runs} runs, engine 5-95%: {Math.Round(fd.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(fd.Engine95, MidpointRounding.AwayFromZero):N0}")">
-                                        <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(review), ReviewTitle.FreeDice(review))">@Percent(fdDamage)</button>
+                                    var freeDiceDamage = freeDice.EngineMean / freeDice.LogDamage;
+                                    <td class="num @RatioClass(freeDiceDamage, FreeDiceDamageGood, FreeDiceDamageWarn)"
+                                        data-tooltip="@($"{freeDice.Runs} runs, engine 5-95%: {Math.Round(freeDice.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(freeDice.Engine95, MidpointRounding.AwayFromZero):N0}")">
+                                        <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(review), ReviewTitle.FreeDice(review))">@Percent(freeDiceDamage)</button>
                                     </td>
-                                    <td class="num @PlaceClass(fd.LogPercentile)">@(Math.Round(fd.LogPercentile * PercentScale, MidpointRounding.AwayFromZero))%</td>
+                                    <td class="num @PlaceClass(freeDice.LogPercentile)">@(Math.Round(freeDice.LogPercentile * PercentScale, MidpointRounding.AwayFromZero))%</td>
                                 }
                                 else
                                 {

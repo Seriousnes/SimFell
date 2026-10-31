@@ -7,7 +7,7 @@ namespace FellowshipSim.Tests.Apl.Editor;
 /// <summary>Every value, property, scope and operator a condition reads has a label and a meaning for the editor and the condition reference.</summary>
 public class ConditionDocsTests
 {
-    private readonly AplVocabulary _v = EditorVocabulary.Create();
+    private readonly AplVocabulary _vocabulary = EditorVocabulary.Create();
 
     private static void AssertDoc(AplDoc? doc, string what)
     {
@@ -37,14 +37,14 @@ public class ConditionDocsTests
     [Fact]
     public void Every_operator_has_a_doc()
     {
-        foreach (var op in Enum.GetValues<BinaryOperator>()) AssertDoc(op.Doc(), op.ToString());
-        foreach (var op in Enum.GetValues<UnaryOperator>()) AssertDoc(op.Doc(), op.ToString());
+        foreach (var binaryOperator in Enum.GetValues<BinaryOperator>()) AssertDoc(binaryOperator.Doc(), binaryOperator.ToString());
+        foreach (var unaryOperator in Enum.GetValues<UnaryOperator>()) AssertDoc(unaryOperator.Doc(), unaryOperator.ToString());
     }
 
     [Fact]
     public void Every_kind_and_property_in_the_builder_has_a_doc()
     {
-        foreach (var kind in ConditionBuilder.Kinds(_v, []))
+        foreach (var kind in ConditionBuilder.Kinds(_vocabulary, []))
         {
             Assert.False(string.IsNullOrEmpty(kind.Description), $"{kind.Id} has no meaning.");
             foreach (var property in kind.Properties ?? []) AssertDoc(ConditionBuilder.PropertyDoc(kind.Id, property), $"{kind.Id}.{property}");

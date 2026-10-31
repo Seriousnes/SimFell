@@ -25,7 +25,7 @@ public static class AplFormatter
     private const int ProductPrecedence = 5;
     private const int PrefixPrecedence = 6;
 
-    private static int Precedence(BinaryOperator op) => op switch
+    private static int Precedence(BinaryOperator binaryOperator) => binaryOperator switch
     {
         BinaryOperator.Or => OrPrecedence,
         BinaryOperator.And => AndPrecedence,
@@ -33,24 +33,24 @@ public static class AplFormatter
             or BinaryOperator.Greater or BinaryOperator.GreaterEqual => ComparisonPrecedence,
         BinaryOperator.Add or BinaryOperator.Subtract => SumPrecedence,
         BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo => ProductPrecedence,
-        _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
+        _ => throw new ArgumentOutOfRangeException(nameof(binaryOperator), binaryOperator, null)
     };
 
     private static int Precedence(IAplExpression expression) =>
         expression is BinaryOpExpression binary ? Precedence(binary.Operator) : PrefixPrecedence;
 
-    private static string Symbol(BinaryOperator op, AplOperatorStyle style) => style == AplOperatorStyle.Words
-        ? op switch
+    private static string Symbol(BinaryOperator binaryOperator, AplOperatorStyle style) => style == AplOperatorStyle.Words
+        ? binaryOperator switch
         {
             BinaryOperator.And => AplOperatorSymbols.AndWord,
             BinaryOperator.Or => AplOperatorSymbols.OrWord,
-            _ => op.Symbol()
+            _ => binaryOperator.Symbol()
         }
-        : op.Symbol();
+        : binaryOperator.Symbol();
 
     /// <summary>A prefix operator as written before its operand: "not " for <c>!</c> in words, else its symbol.</summary>
-    public static string Prefix(UnaryOperator op, AplOperatorStyle style) =>
-        op == UnaryOperator.Not && style == AplOperatorStyle.Words ? $"{AplOperatorSymbols.NotWord} " : op.Symbol();
+    public static string Prefix(UnaryOperator unaryOperator, AplOperatorStyle style) =>
+        unaryOperator == UnaryOperator.Not && style == AplOperatorStyle.Words ? $"{AplOperatorSymbols.NotWord} " : unaryOperator.Symbol();
 
     public static string Format(IAplExpression expression, AplOperatorStyle style = AplOperatorStyle.Symbols) => expression switch
     {

@@ -191,8 +191,8 @@ public class EventQueueBenchmarks
     {
         for (var i = 0; i < Events; i++)
         {
-            var ev = _kernel.ScheduleAt(_times[i], NoOp, "Benchmark");
-            if ((i & CancelMask) == 0) ev.Cancel();
+            var scheduledEvent = _kernel.ScheduleAt(_times[i], NoOp, "Benchmark");
+            if ((i & CancelMask) == 0) scheduledEvent.Cancel();
         }
         var fired = 0;
         while (_kernel.TryDequeueDue(SimTime.Infinite, out _)) fired++;

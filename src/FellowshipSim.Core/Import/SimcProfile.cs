@@ -93,10 +93,10 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 actions.AppendLine(line);
                 continue;
             }
-            var eq = line.IndexOf('=');
-            if (eq <= 0) throw Error(lineNumber, line, "expected key=value");
-            var key = line[..eq].Trim();
-            var value = line[(eq + 1)..].Trim();
+            var equalsIndex = line.IndexOf('=');
+            if (equalsIndex <= 0) throw Error(lineNumber, line, "expected key=value");
+            var key = line[..equalsIndex].Trim();
+            var value = line[(equalsIndex + 1)..].Trim();
             try
             {
                 if (hero == null)
@@ -343,9 +343,9 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         var options = new Dictionary<string, string> { [NameOption] = parts[0] };
         foreach (var part in parts.Skip(1))
         {
-            var eq = part.IndexOf('=');
-            if (eq <= 0) throw new FormatException($"expected key=value in '{part}'");
-            options[part[..eq]] = part[(eq + 1)..];
+            var equalsIndex = part.IndexOf('=');
+            if (equalsIndex <= 0) throw new FormatException($"expected key=value in '{part}'");
+            options[part[..equalsIndex]] = part[(equalsIndex + 1)..];
         }
         return options;
     }

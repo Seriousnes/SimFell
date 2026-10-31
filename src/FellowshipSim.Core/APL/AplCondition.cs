@@ -81,33 +81,33 @@ public static class AplCondition
 
     // The parser chains each level to the left and writes a looser operator under a tighter one only in parentheses, so
     // the terms in written order, with each group's parentheses, read back as the same expression.
-    private static void AddTerms(IAplExpression expression, string? op, List<AplTerm> terms)
+    private static void AddTerms(IAplExpression expression, string? operatorSymbol, List<AplTerm> terms)
     {
         if (expression is BinaryOpExpression arithmetic && IsArithmetic(arithmetic.Operator))
         {
-            AddTerms(arithmetic.Left, op, terms);
+            AddTerms(arithmetic.Left, operatorSymbol, terms);
             AddTerms(arithmetic.Right, arithmetic.Operator.Symbol(), terms);
             return;
         }
-        terms.Add(Term(expression, op));
+        terms.Add(Term(expression, operatorSymbol));
     }
 
     // A prefix operator binds to one primary: a value, a number, a group or another prefix operator.
-    private static AplTerm Term(IAplExpression expression, string? op) => expression switch
+    private static AplTerm Term(IAplExpression expression, string? operatorSymbol) => expression switch
     {
-        _ when Number(expression) is { } value => new AplTerm(op, Number: value),
-        PropertyExpression property => new AplTerm(op, Path: property.PropertyPath),
-        GroupExpression group => new AplTerm(op, Items: Rows(group.Inner)),
-        UnaryOpExpression unary => Prefixed(unary.Operator, Term(unary.Operand, op)),
+        _ when Number(expression) is { } value => new AplTerm(operatorSymbol, Number: value),
+        PropertyExpression property => new AplTerm(operatorSymbol, Path: property.PropertyPath),
+        GroupExpression group => new AplTerm(operatorSymbol, Items: Rows(group.Inner)),
+        UnaryOpExpression unary => Prefixed(unary.Operator, Term(unary.Operand, operatorSymbol)),
         _ => throw new ArgumentOutOfRangeException(nameof(expression), expression.GetType().Name, null)
     };
 
-    private static AplTerm Prefixed(UnaryOperator op, AplTerm operand) => operand with { Prefix = op.Symbol() + operand.Prefix };
+    private static AplTerm Prefixed(UnaryOperator unaryOperator, AplTerm operand) => operand with { Prefix = unaryOperator.Symbol() + operand.Prefix };
 
-    private static bool IsComparison(BinaryOperator op) => op is BinaryOperator.Equal or BinaryOperator.NotEqual
+    private static bool IsComparison(BinaryOperator binaryOperator) => binaryOperator is BinaryOperator.Equal or BinaryOperator.NotEqual
         or BinaryOperator.Less or BinaryOperator.LessEqual or BinaryOperator.Greater or BinaryOperator.GreaterEqual;
 
-    private static bool IsArithmetic(BinaryOperator op) => op is BinaryOperator.Add or BinaryOperator.Subtract
+    private static bool IsArithmetic(BinaryOperator binaryOperator) => binaryOperator is BinaryOperator.Add or BinaryOperator.Subtract
         or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo;
 
     private static double? Number(IAplExpression expression) => expression switch

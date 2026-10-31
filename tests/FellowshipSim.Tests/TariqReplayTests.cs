@@ -104,11 +104,11 @@ public class TariqReplayTests(ITestOutputHelper output)
             }));
         }
         if (Environment.GetEnvironmentVariable(HitsCsvVariable) is not { } dump) return;
-        var inv = System.Globalization.CultureInfo.InvariantCulture;
-        File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(inv, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3},{8},{9:F3}",
+        var invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
+        File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(invariantCulture, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3},{8},{9:F3}",
             h.EngineTime, h.AbilityId, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}", h.EngineAmount, h.Crit ? 1 : 0,
-            h.Log == null ? "" : h.Log.TotalAmount.ToString("F0", inv), h.Log == null ? "" : h.Log.Time.ToString("F3", inv), h.TickFraction,
-            h.State == null ? "" : string.Join(" ", h.State.Hero.Auras.Select(a => a.LogId > 0 ? a.LogId.ToString(inv) : a.Name.Replace(" ", "_"))),
+            h.Log == null ? "" : h.Log.TotalAmount.ToString("F0", invariantCulture), h.Log == null ? "" : h.Log.Time.ToString("F3", invariantCulture), h.TickFraction,
+            h.State == null ? "" : string.Join(" ", h.State.Hero.Auras.Select(a => a.LogId > 0 ? a.LogId.ToString(invariantCulture) : a.Name.Replace(" ", "_"))),
             h.TargetHealthFraction)));
     }
 }

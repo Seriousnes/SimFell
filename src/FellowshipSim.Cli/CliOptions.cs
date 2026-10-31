@@ -57,9 +57,9 @@ public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOut
             if (arg is ShortHelpOption or HelpOption) return null;
             if (!arg.StartsWith(OptionPrefix, StringComparison.Ordinal)) throw new CliUsageException($"Unexpected argument '{arg}'.");
 
-            var eq = arg.IndexOf('=');
-            var name = eq < 0 ? arg : arg[..eq];
-            var value = eq >= 0 ? arg[(eq + 1)..]
+            var equalsIndex = arg.IndexOf('=');
+            var name = equalsIndex < 0 ? arg : arg[..equalsIndex];
+            var value = equalsIndex >= 0 ? arg[(equalsIndex + 1)..]
                 : i + 1 < args.Count && !args[i + 1].StartsWith(OptionPrefix, StringComparison.Ordinal) ? args[++i]
                 : throw new CliUsageException($"{name} needs a value.");
             switch (name)

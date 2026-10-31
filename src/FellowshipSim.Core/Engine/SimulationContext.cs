@@ -125,12 +125,12 @@ public class SimulationContext
     /// </summary>
     public void RunUntil(SimTime time)
     {
-        while (Kernel.TryDequeueDue(time, out var ev))
+        while (Kernel.TryDequeueDue(time, out var scheduledEvent))
         {
-            if (ev.Time > CurrentTime) CurrentTime = ev.Time;
-            ev.HasFired = true;
-            if (ev.Hit is { } hit) Land(hit);
-            else ev.Action!(this);
+            if (scheduledEvent.Time > CurrentTime) CurrentTime = scheduledEvent.Time;
+            scheduledEvent.HasFired = true;
+            if (scheduledEvent.Hit is { } hit) Land(hit);
+            else scheduledEvent.Action!(this);
         }
         if (time > CurrentTime) CurrentTime = time;
     }

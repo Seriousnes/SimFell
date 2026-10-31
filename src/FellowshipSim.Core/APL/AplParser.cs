@@ -81,13 +81,13 @@ public static class AplParser
         _ => null
     };
 
-    private static IAplExpression Binary(BinaryOperator op, IAplExpression left, IAplExpression right) =>
-        new BinaryOpExpression(left, op, right);
+    private static IAplExpression Binary(BinaryOperator binaryOperator, IAplExpression left, IAplExpression right) =>
+        new BinaryOpExpression(left, binaryOperator, right);
 
     /// <summary>A left-associative precedence level over <paramref name="operand"/> for the given operators.</summary>
     private static TokenListParser<AplToken, IAplExpression> Level(TokenListParser<AplToken, IAplExpression> operand, params BinaryOperator[] operators) =>
         Parse.Chain(
-            Token.Matching<AplToken>(kind => InfixOperator(kind) is { } op && operators.Contains(op), string.Join(" or ", operators.Select(o => $"`{o.Symbol()}`")))
+            Token.Matching<AplToken>(kind => InfixOperator(kind) is { } infixOperator && operators.Contains(infixOperator), string.Join(" or ", operators.Select(o => $"`{o.Symbol()}`")))
                 .Select(t => InfixOperator(t.Kind)!.Value),
             operand,
             Binary);
@@ -104,9 +104,9 @@ public static class AplParser
             .Select(inner => (IAplExpression)new GroupExpression(inner));
 
     private static readonly TokenListParser<AplToken, IAplExpression> Prefixed =
-        from op in Token.Matching<AplToken>(kind => PrefixOperator(kind) is not null, "prefix operator").Select(t => PrefixOperator(t.Kind)!.Value)
+        from prefixOperator in Token.Matching<AplToken>(kind => PrefixOperator(kind) is not null, "prefix operator").Select(t => PrefixOperator(t.Kind)!.Value)
         from operand in Parse.Ref(() => Primary!)
-        select (IAplExpression)new UnaryOpExpression(op, operand);
+        select (IAplExpression)new UnaryOpExpression(prefixOperator, operand);
 
     // Primary: '!' Primary, '-' Primary, '(' Expression ')', Number, Property
     private static readonly TokenListParser<AplToken, IAplExpression> Primary =
@@ -259,19 +259,19 @@ public static class AplParser
         {
             throw new ParseException($"`{AplVariable.ActionName}` needs `{AplVariable.NameKey}=<variable>`.", Position.Empty);
         }
-        var op = AplVariableOp.Set;
+        var variableOperation = AplVariableOp.Set;
         if (Argument(AplVariable.OpKey) is { } opArgument
-            && !(opArgument is PropertyExpression opName && Enum.TryParse(opName.PropertyPath, ignoreCase: true, out op)))
+            && !(opArgument is PropertyExpression opName && Enum.TryParse(opName.PropertyPath, ignoreCase: true, out variableOperation)))
         {
             throw new ParseException($"`{AplVariable.OpKey}=` is one of {string.Join(", ", Enum.GetNames<AplVariableOp>().Select(n => n.ToLowerInvariant()))}.", Position.Empty);
         }
         var value = Argument(AplVariable.ValueKey);
-        if (value == null && op != AplVariableOp.Reset)
+        if (value == null && variableOperation != AplVariableOp.Reset)
         {
             throw new ParseException($"`{AplVariable.ActionName}` needs `{AplVariable.ValueKey}=<expression>`.", Position.Empty);
         }
         var @default = Argument(AplVariable.DefaultKey) is ConstantExpression constant ? constant.Value : 0.0;
-        return new AplVariable(name.PropertyPath, op, value, @default);
+        return new AplVariable(name.PropertyPath, variableOperation, value, @default);
     }
 
     /// <summary>

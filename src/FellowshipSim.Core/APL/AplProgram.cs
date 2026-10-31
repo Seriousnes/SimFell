@@ -181,12 +181,12 @@ public sealed class BoundAplListAction : BoundAplStep
 public sealed class BoundAplVariable : BoundAplStep
 {
     private readonly BoundVariableSlot _slot;
-    private readonly AplVariableOp _op;
+    private readonly AplVariableOp _variableOperation;
 
-    internal BoundAplVariable(BoundVariableSlot slot, AplVariableOp op, BoundExpression? value, BoundExpression? condition) : base(condition)
+    internal BoundAplVariable(BoundVariableSlot slot, AplVariableOp variableOperation, BoundExpression? value, BoundExpression? condition) : base(condition)
     {
         _slot = slot;
-        _op = op;
+        _variableOperation = variableOperation;
         Value = value;
     }
 
@@ -195,7 +195,7 @@ public sealed class BoundAplVariable : BoundAplStep
     public void Run(SimulationContext ctx)
     {
         var value = Value?.EvaluateNumeric(ctx) ?? 0.0;
-        _slot.Write(ctx, _op switch
+        _slot.Write(ctx, _variableOperation switch
         {
             AplVariableOp.Add => _slot.Read(ctx) + value,
             AplVariableOp.Sub => _slot.Read(ctx) - value,

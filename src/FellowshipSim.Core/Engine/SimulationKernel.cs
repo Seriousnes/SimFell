@@ -41,11 +41,11 @@ public class SimulationKernel
     private int _count;
     private long _sequence;
 
-    private readonly struct Entry(long milliseconds, long sequence, ScheduledEvent ev)
+    private readonly struct Entry(long milliseconds, long sequence, ScheduledEvent scheduledEvent)
     {
         public readonly long Milliseconds = milliseconds;
         public readonly long Sequence = sequence;
-        public readonly ScheduledEvent Event = ev;
+        public readonly ScheduledEvent Event = scheduledEvent;
 
         public bool Before(in Entry other) =>
             Milliseconds < other.Milliseconds || (Milliseconds == other.Milliseconds && Sequence < other.Sequence);
@@ -56,17 +56,17 @@ public class SimulationKernel
 
     public ScheduledEvent ScheduleAt(SimTime time, Action<SimulationContext> action, string label = "")
     {
-        var ev = new ScheduledEvent(time, _sequence++, action, null, label);
-        Push(new Entry(time.Milliseconds, ev.Sequence, ev));
-        return ev;
+        var scheduledEvent = new ScheduledEvent(time, _sequence++, action, null, label);
+        Push(new Entry(time.Milliseconds, scheduledEvent.Sequence, scheduledEvent));
+        return scheduledEvent;
     }
 
     /// <summary>Schedules <paramref name="hit"/> to land at <paramref name="time"/>.</summary>
     public ScheduledEvent ScheduleAt(SimTime time, PendingHit hit, string label = "")
     {
-        var ev = new ScheduledEvent(time, _sequence++, null, hit, label);
-        Push(new Entry(time.Milliseconds, ev.Sequence, ev));
-        return ev;
+        var scheduledEvent = new ScheduledEvent(time, _sequence++, null, hit, label);
+        Push(new Entry(time.Milliseconds, scheduledEvent.Sequence, scheduledEvent));
+        return scheduledEvent;
     }
 
     /// <summary>Time of the next live event, or null when the queue is empty.</summary>
@@ -74,29 +74,29 @@ public class SimulationKernel
     {
         while (_count > 0)
         {
-            var ev = _heap[0].Event;
-            if (!ev.IsCancelled) return ev.Time;
+            var scheduledEvent = _heap[0].Event;
+            if (!scheduledEvent.IsCancelled) return scheduledEvent.Time;
             Pop();
         }
         return null;
     }
 
     /// <summary>Removes and returns the next live event due at or before <paramref name="maxTime"/>.</summary>
-    public bool TryDequeueDue(SimTime maxTime, out ScheduledEvent ev)
+    public bool TryDequeueDue(SimTime maxTime, out ScheduledEvent scheduledEvent)
     {
         while (_count > 0)
         {
-            ev = _heap[0].Event;
-            if (ev.IsCancelled)
+            scheduledEvent = _heap[0].Event;
+            if (scheduledEvent.IsCancelled)
             {
                 Pop();
                 continue;
             }
-            if (ev.Time > maxTime) return false;
+            if (scheduledEvent.Time > maxTime) return false;
             Pop();
             return true;
         }
-        ev = null!;
+        scheduledEvent = null!;
         return false;
     }
 

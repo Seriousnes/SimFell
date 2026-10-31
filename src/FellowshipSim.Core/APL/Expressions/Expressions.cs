@@ -367,9 +367,9 @@ public class UnaryOpExpression : IAplExpression
     public UnaryOperator Operator { get; }
     public IAplExpression Operand { get; }
 
-    public UnaryOpExpression(UnaryOperator op, IAplExpression operand)
+    public UnaryOpExpression(UnaryOperator unaryOperator, IAplExpression operand)
     {
-        Operator = op;
+        Operator = unaryOperator;
         Operand = operand;
     }
 
@@ -414,10 +414,10 @@ public class BinaryOpExpression : IAplExpression
     public IAplExpression Right { get; init; }
     public BinaryOperator Operator { get; init; }
 
-    public BinaryOpExpression(IAplExpression left, BinaryOperator op, IAplExpression right)
+    public BinaryOpExpression(IAplExpression left, BinaryOperator binaryOperator, IAplExpression right)
     {
         Left = left;
-        Operator = op;
+        Operator = binaryOperator;
         Right = right;
     }
 

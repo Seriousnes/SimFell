@@ -12,9 +12,9 @@ public static class FileDownloads
     private const string DefaultFileName = "build";
 
     /// <summary>Saves <paramref name="text"/> as <paramref name="name"/> with <paramref name="extension"/> (".simc").</summary>
-    public static async Task SaveAsync(IJSRuntime js, string name, string extension, string text)
+    public static async Task SaveAsync(IJSRuntime jsRuntime, string name, string extension, string text)
     {
-        await using var module = await js.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
+        await using var module = await jsRuntime.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, ModulePath);
         await module.InvokeVoidAsync(SaveFunction, FileName(name) + extension, text);
     }
 

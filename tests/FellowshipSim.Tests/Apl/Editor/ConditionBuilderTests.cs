@@ -12,7 +12,7 @@ public class ConditionBuilderTests
     private const string CssFolder = "css";
     private const string StylesheetFile = "app.css";
 
-    private readonly AplVocabulary _v = EditorVocabulary.Create();
+    private readonly AplVocabulary _vocabulary = EditorVocabulary.Create();
 
     [Theory]
     [InlineData("worb >= 3")]
@@ -148,26 +148,26 @@ public class ConditionBuilderTests
     [Fact]
     public void Paths_split_into_kind_name_and_property()
     {
-        Assert.Equal(new PathParts("buff", "chill", "up"), ConditionBuilder.SplitPath(_v, "buff.chill.up"));
-        Assert.Equal(new PathParts(ConditionBuilder.ResourceKind, "worb", ConditionBuilder.CurrentProperty), ConditionBuilder.SplitPath(_v, PropertyExpression.ResourcePrefix + "worb"));
-        Assert.Equal(new PathParts(ConditionBuilder.ResourceKind, "winter_orbs", ConditionBuilder.DeficitProperty), ConditionBuilder.SplitPath(_v, "winter_orbs.deficit"));
-        Assert.Equal(new PathParts(ConditionBuilder.NamedKind, "target.health.pct"), ConditionBuilder.SplitPath(_v, "target.health.pct"));
-        Assert.Equal(new PathParts(ConditionBuilder.ActionValueKind, "full_recharge_time"), ConditionBuilder.SplitPath(_v, "full_recharge_time"));
-        Assert.Equal(new PathParts(PropertyExpression.TalentScope, "icy_talons"), ConditionBuilder.SplitPath(_v, "talent.icy_talons"));
-        Assert.Equal(new PathParts(PropertyExpression.ActiveDotScope, "chill"), ConditionBuilder.SplitPath(_v, "active_dot.chill"));
-        Assert.Equal(new PathParts(PropertyExpression.VariableScope, "x"), ConditionBuilder.SplitPath(_v, "variable.x"));
+        Assert.Equal(new PathParts("buff", "chill", "up"), ConditionBuilder.SplitPath(_vocabulary, "buff.chill.up"));
+        Assert.Equal(new PathParts(ConditionBuilder.ResourceKind, "worb", ConditionBuilder.CurrentProperty), ConditionBuilder.SplitPath(_vocabulary, PropertyExpression.ResourcePrefix + "worb"));
+        Assert.Equal(new PathParts(ConditionBuilder.ResourceKind, "winter_orbs", ConditionBuilder.DeficitProperty), ConditionBuilder.SplitPath(_vocabulary, "winter_orbs.deficit"));
+        Assert.Equal(new PathParts(ConditionBuilder.NamedKind, "target.health.pct"), ConditionBuilder.SplitPath(_vocabulary, "target.health.pct"));
+        Assert.Equal(new PathParts(ConditionBuilder.ActionValueKind, "full_recharge_time"), ConditionBuilder.SplitPath(_vocabulary, "full_recharge_time"));
+        Assert.Equal(new PathParts(PropertyExpression.TalentScope, "icy_talons"), ConditionBuilder.SplitPath(_vocabulary, "talent.icy_talons"));
+        Assert.Equal(new PathParts(PropertyExpression.ActiveDotScope, "chill"), ConditionBuilder.SplitPath(_vocabulary, "active_dot.chill"));
+        Assert.Equal(new PathParts(PropertyExpression.VariableScope, "x"), ConditionBuilder.SplitPath(_vocabulary, "variable.x"));
 
-        Assert.Equal("cooldown.ice_comet.ready", ConditionBuilder.JoinPath(_v, new PathParts("cooldown", "ice_comet", "ready")));
-        Assert.Equal("worb", ConditionBuilder.JoinPath(_v, new PathParts(ConditionBuilder.ResourceKind, "worb", ConditionBuilder.CurrentProperty)));
-        Assert.Equal("worb.deficit", ConditionBuilder.JoinPath(_v, new PathParts(ConditionBuilder.ResourceKind, "worb", ConditionBuilder.DeficitProperty)));
-        Assert.Equal("weapon.chronoshift", ConditionBuilder.JoinPath(_v, new PathParts(PropertyExpression.WeaponScope, "chronoshift")));
-        Assert.Equal("charges", ConditionBuilder.JoinPath(_v, new PathParts(ConditionBuilder.ActionValueKind, "charges")));
+        Assert.Equal("cooldown.ice_comet.ready", ConditionBuilder.JoinPath(_vocabulary, new PathParts("cooldown", "ice_comet", "ready")));
+        Assert.Equal("worb", ConditionBuilder.JoinPath(_vocabulary, new PathParts(ConditionBuilder.ResourceKind, "worb", ConditionBuilder.CurrentProperty)));
+        Assert.Equal("worb.deficit", ConditionBuilder.JoinPath(_vocabulary, new PathParts(ConditionBuilder.ResourceKind, "worb", ConditionBuilder.DeficitProperty)));
+        Assert.Equal("weapon.chronoshift", ConditionBuilder.JoinPath(_vocabulary, new PathParts(PropertyExpression.WeaponScope, "chronoshift")));
+        Assert.Equal("charges", ConditionBuilder.JoinPath(_vocabulary, new PathParts(ConditionBuilder.ActionValueKind, "charges")));
     }
 
     [Fact]
     public void Kinds_are_the_scopes_resource_fight_value_action_build_enemies_and_variables()
     {
-        var kinds = ConditionBuilder.Kinds(_v, ["will_spend_orbs"]);
+        var kinds = ConditionBuilder.Kinds(_vocabulary, ["will_spend_orbs"]);
 
         Assert.Equal(
             [
@@ -176,7 +176,7 @@ public class ConditionBuilderTests
             ],
             kinds.Select(k => k.Id));
         Assert.Equal("Debuff on target", kinds.Single(k => k.Id == PropertyExpression.DebuffScope).Label);
-        Assert.Equal(_v.Abilities, kinds.Single(k => k.Id == PropertyExpression.CooldownScope).Names);
+        Assert.Equal(_vocabulary.Abilities, kinds.Single(k => k.Id == PropertyExpression.CooldownScope).Names);
         Assert.Equal(["will_spend_orbs"], kinds.Single(k => k.Id == PropertyExpression.VariableScope).Names.Select(n => n.Slug));
         Assert.Equal(PropertyExpression.ActionValues.Keys, kinds.Single(k => k.Id == ConditionBuilder.ActionValueKind).Names.Select(n => n.Slug));
     }
@@ -194,7 +194,7 @@ public class ConditionBuilderTests
     public void Every_kind_has_its_own_colour()
     {
         var css = File.ReadAllText(Path.Combine(TestPaths.RepositoryRoot, TestPaths.SourceFolder, TestPaths.UiProjectFolder, WwwrootFolder, CssFolder, StylesheetFile));
-        var colours = ConditionBuilder.Kinds(_v, []).ToDictionary(k => k.Id, k =>
+        var colours = ConditionBuilder.Kinds(_vocabulary, []).ToDictionary(k => k.Id, k =>
         {
             var match = System.Text.RegularExpressions.Regex.Match(css, $@"--kind-{k.Id}:\s*([^;]+);");
             Assert.True(match.Success, $"app.css has no --kind-{k.Id}.");
@@ -207,10 +207,10 @@ public class ConditionBuilderTests
     [Fact]
     public void A_shared_name_shows_its_slug()
     {
-        var resource = ConditionBuilder.Kinds(_v, []).Single(k => k.Id == ConditionBuilder.ResourceKind);
+        var resource = ConditionBuilder.Kinds(_vocabulary, []).Single(k => k.Id == ConditionBuilder.ResourceKind);
 
         Assert.Equal("Winter Orbs (worb)", ConditionBuilder.NameLabel(resource, resource.Names.Single(n => n.Slug == "worb")));
-        var buff = ConditionBuilder.Kinds(_v, []).First();
+        var buff = ConditionBuilder.Kinds(_vocabulary, []).First();
         Assert.Equal("Chill", ConditionBuilder.NameLabel(buff, buff.Names.First()));
     }
 
@@ -263,59 +263,59 @@ public class ConditionBuilderTests
     [Fact]
     public void A_picked_name_takes_its_kinds_first_property_or_keeps_the_property_it_has()
     {
-        var kinds = ConditionBuilder.Kinds(_v, []);
+        var kinds = ConditionBuilder.Kinds(_vocabulary, []);
         var aura = kinds.Single(k => k.Id == PropertyExpression.BuffScope).Properties!;
         var term = new ConditionTerm { Number = 4 };
 
-        ConditionBuilder.Apply(term, new ValuePick(PropertyExpression.BuffScope, "chill"), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(PropertyExpression.BuffScope, "chill"), _vocabulary, kinds);
         Assert.Equal($"buff.chill.{aura[0]}", term.Path);
         Assert.Null(term.Number);
 
         term.Path = $"buff.chill.{aura[1]}";
-        ConditionBuilder.Apply(term, new ValuePick(PropertyExpression.BuffScope, "glacial_assault"), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(PropertyExpression.BuffScope, "glacial_assault"), _vocabulary, kinds);
         Assert.Equal($"buff.glacial_assault.{aura[1]}", term.Path);
 
-        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.ResourceKind, "worb"), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.ResourceKind, "worb"), _vocabulary, kinds);
         Assert.Equal("worb", term.Path);
 
-        ConditionBuilder.Apply(term, new ValuePick(PropertyExpression.TalentScope, "icy_talons"), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(PropertyExpression.TalentScope, "icy_talons"), _vocabulary, kinds);
         Assert.Equal("talent.icy_talons", term.Path);
     }
 
     [Fact]
     public void A_picked_number_group_or_prefix_changes_the_term()
     {
-        var kinds = ConditionBuilder.Kinds(_v, []);
+        var kinds = ConditionBuilder.Kinds(_vocabulary, []);
         var term = new ConditionTerm { Operator = "*", Prefix = "-", Path = "worb" };
 
-        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.PrefixKind, Prefix: "!"), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.PrefixKind, Prefix: "!"), _vocabulary, kinds);
         Assert.Equal("!-", term.Prefix);
 
-        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.GroupKind), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.GroupKind), _vocabulary, kinds);
         Assert.Equal(("*", "!-", null, null), (term.Operator, term.Prefix, term.Path, term.Number));
         var held = Assert.Single(Assert.Single(term.Items!).Left!);
         Assert.Equal((null, null, "worb"), (held.Operator, held.Prefix, held.Path));
         Assert.Equal("a * not -(worb)", ConditionBuilder.Text([new ConditionTerm { Path = "a" }, term]));
 
-        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.NumberKind), _v, kinds);
+        ConditionBuilder.Apply(term, new ValuePick(ConditionBuilder.NumberKind), _vocabulary, kinds);
         Assert.Equal(("*", "!-", null, 0d, null), (term.Operator, term.Prefix, term.Path, term.Number, term.Items));
     }
 
     [Fact]
     public void A_pick_on_a_groups_empty_row_makes_a_group_number_or_name_row()
     {
-        var kinds = ConditionBuilder.Kinds(_v, []);
+        var kinds = ConditionBuilder.Kinds(_vocabulary, []);
         var aura = kinds.Single(k => k.Id == PropertyExpression.BuffScope).Properties!;
 
-        var group = ConditionBuilder.RowFor(new ValuePick(ConditionBuilder.GroupKind), "or", true, _v, kinds);
+        var group = ConditionBuilder.RowFor(new ValuePick(ConditionBuilder.GroupKind), "or", true, _vocabulary, kinds);
         Assert.Equal(("or", true, 0), (group.Join, group.Not, group.Items!.Count));
         Assert.Null(group.Left);
 
-        var number = ConditionBuilder.RowFor(new ValuePick(ConditionBuilder.NumberKind), "and", false, _v, kinds);
+        var number = ConditionBuilder.RowFor(new ValuePick(ConditionBuilder.NumberKind), "and", false, _vocabulary, kinds);
         Assert.Equal(0d, Assert.Single(number.Left!).Number);
         Assert.Null(number.Items);
 
-        var name = ConditionBuilder.RowFor(new ValuePick(PropertyExpression.BuffScope, "chill"), "and", true, _v, kinds);
+        var name = ConditionBuilder.RowFor(new ValuePick(PropertyExpression.BuffScope, "chill"), "and", true, _vocabulary, kinds);
         Assert.Equal($"buff.chill.{aura[0]}", Assert.Single(name.Left!).Path);
         Assert.Equal($"not buff.chill.{aura[0]}", ConditionBuilder.Text([name]));
     }

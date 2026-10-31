@@ -22,14 +22,14 @@ public sealed class ReplayController(ISimEngine engine, ILogger<ReplayController
         {
             return Ok(await engine.ReviewAsync(Request.Body, playerId, ct: ct));
         }
-        catch (SimEngineException ex)
+        catch (SimEngineException exception)
         {
-            return BadRequest(new EngineError(ex.Message));
+            return BadRequest(new EngineError(exception.Message));
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            log.LogError(ex, "Replay review of player {Player} failed", playerId);
-            return StatusCode(StatusCodes.Status500InternalServerError, new EngineError($"{ex.GetType().Name}: {ex.Message}"));
+            log.LogError(exception, "Replay review of player {Player} failed", playerId);
+            return StatusCode(StatusCodes.Status500InternalServerError, new EngineError($"{exception.GetType().Name}: {exception.Message}"));
         }
     }
 }

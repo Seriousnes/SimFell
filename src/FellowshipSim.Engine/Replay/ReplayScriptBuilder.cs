@@ -177,7 +177,7 @@ public static class ReplayScriptBuilder
     public static JsonObject Build(JsonObject raw, int playerId)
     {
         var fight = raw[FightProperty]!.AsObject();
-        var f0 = Num(fight[StartTimeProperty]);
+        var fightStart = Num(fight[StartTimeProperty]);
         var fightEnd = Num(fight[EndTimeProperty]);
         var actors = new Dictionary<int, JsonNode>();
         foreach (var actor in raw[MasterDataProperty]![ActorsProperty]!.AsArray()) actors[actor![IdProperty]!.GetValue<int>()] = actor;
@@ -185,7 +185,7 @@ public static class ReplayScriptBuilder
         foreach (var ability in raw[MasterDataProperty]![AbilitiesProperty]!.AsArray()) abilityNames[(long)Num(ability![GameIdProperty])] = ability[NameProperty]?.GetValue<string>() ?? "";
         var events = Dedupe(raw[EventsProperty]!.AsArray()).Select(e => new LogEvent(e, LogEventTypes.Parse(Str(e[TypeProperty])))).ToList();
 
-        double Rel(double ts) => Math.Round((ts - f0) / SimTime.MillisecondsPerSecond, ScriptTimeDecimals);
+        double Rel(double timestamp) => Math.Round((timestamp - fightStart) / SimTime.MillisecondsPerSecond, ScriptTimeDecimals);
         bool IsEnemy(int? id) => id is { } actorId && actorId != -1 && actors.TryGetValue(actorId, out var actor)
             && actor[TypeProperty]?.GetValue<string>() == NpcActorType && actor[NameProperty]?.GetValue<string>() != EnvironmentActorName;
         string AbilityName(long id) => abilityNames.TryGetValue(id, out var knownName) ? knownName : $"ability_{id}";
@@ -211,9 +211,9 @@ public static class ReplayScriptBuilder
                 var id = Int(logEvent[$"{prefix}ID"]);
                 if (!IsEnemy(id)) continue;
                 var key = new UnitKey(id!.Value, Instance(logEvent, prefix));
-                var ts = Num(logEvent[TimestampProperty]);
-                if (!firstSeen.ContainsKey(key)) { firstSeen[key] = ts; order.Add(key); }
-                lastSeen[key] = ts;
+                var timestamp = Num(logEvent[TimestampProperty]);
+                if (!firstSeen.ContainsKey(key)) { firstSeen[key] = timestamp; order.Add(key); }
+                lastSeen[key] = timestamp;
                 nameOf[key] = actors[key.Id][NameProperty]?.GetValue<string>() ?? "";
                 if (logEvent[$"{prefix}Resources"]?[MaxHitPointsProperty] is { } mhp && Num(mhp) > 0)
                 {
@@ -260,19 +260,19 @@ public static class ReplayScriptBuilder
             if (logEvent.Type != LogEventType.Damage || !IsEnemy(Int(logEvent[TargetIdProperty]))) continue;
             var res = logEvent[TargetResourcesProperty];
             if (res?[HitPointsProperty] is not { } hpNode || res[MaxHitPointsProperty] is not { } maxNode || Num(maxNode) == 0) continue;
-            var hp = Num(hpNode);
+            var health = Num(hpNode);
             var maxNow = Num(maxNode);
             // A killing blow logs the health below 0 as an unsigned 32-bit number (1p7AXmHfwV9CYMxR fight 30 @ 157.097:
             // 4294950962 of 726971).
-            if (hp > maxNow) hp = 0;
+            if (health > maxNow) health = 0;
             var key = new UnitKey(Int(logEvent[TargetIdProperty])!.Value, Instance(logEvent, TargetProperty));
-            var fraction = hp / maxNow;
+            var fraction = health / maxNow;
             if (lastFraction.TryGetValue(key, out var last) && Math.Abs(fraction - last) < HealthSampleStep) continue;
             lastFraction[key] = fraction;
             commands.Add(new JsonObject
             {
                 [TimeProperty] = Rel(Num(logEvent[TimestampProperty])), [KindProperty] = ReplayCommandKind.EnemyHealth.LogText(), [EnemyProperty] = Unit(key.Id, key.Instance),
-                [HpProperty] = hp, [MaxHpProperty] = maxNode.DeepClone(),
+                [HpProperty] = health, [MaxHpProperty] = maxNode.DeepClone(),
             });
         }
 
@@ -442,10 +442,10 @@ public static class ReplayScriptBuilder
             var gearTraits = new Dictionary<string, int>();
             foreach (var item in logEvent[GearProperty]?.AsArray() ?? [])
             {
-                foreach (var tr in item?[TraitsProperty]?.AsArray() ?? [])
+                foreach (var trait in item?[TraitsProperty]?.AsArray() ?? [])
                 {
-                    var name = Str(tr![NameProperty]);
-                    gearTraits[name] = gearTraits.GetValueOrDefault(name) + (Int(tr[RankProperty]) ?? 1);
+                    var name = Str(trait![NameProperty]);
+                    gearTraits[name] = gearTraits.GetValueOrDefault(name) + (Int(trait[RankProperty]) ?? 1);
                 }
             }
             var weaponTraits = new JsonObject();
@@ -497,8 +497,8 @@ public static class ReplayScriptBuilder
     private static string? FightDate(JsonObject raw)
     {
         if (raw[ReportStartTimeProperty] is not { } start) return null;
-        var ms = Num(start) + Num(raw[FightProperty]?[StartTimeProperty]);
-        return DateTimeOffset.FromUnixTimeMilliseconds((long)ms).UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        var milliseconds = Num(start) + Num(raw[FightProperty]?[StartTimeProperty]);
+        return DateTimeOffset.FromUnixTimeMilliseconds((long)milliseconds).UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
     }
 
     /// <summary>Page boundaries in the API overlap: drops exact duplicate events, then orders by time.</summary>

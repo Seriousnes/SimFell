@@ -8,12 +8,12 @@ namespace FellowshipSim.Tests.Apl.Editor;
 /// <summary>The editor's changes to its lists: adding, moving, duplicating, renaming and removing.</summary>
 public class ActionListEditorTests
 {
-    private readonly AplVocabulary _v = EditorVocabulary.Create();
+    private readonly AplVocabulary _vocabulary = EditorVocabulary.Create();
 
     private ActionListEditor Loaded(params AplDocumentAction[] actions)
     {
         var editor = new ActionListEditor(new LocalSimEngine());
-        editor.Load(_v, actions);
+        editor.Load(_vocabulary, actions);
         return editor;
     }
 
@@ -24,11 +24,11 @@ public class ActionListEditorTests
         var changes = 0;
         editor.Changed += () => changes++;
 
-        editor.AddAction(_v.DefaultList);
+        editor.AddAction(_vocabulary.DefaultList);
         var key = editor.Lists[0].Actions.Single().Key;
         Assert.Contains(key, editor.Open);
 
-        editor.RemoveAction(_v.DefaultList, 0);
+        editor.RemoveAction(_vocabulary.DefaultList, 0);
         Assert.Empty(editor.Lists[0].Actions);
         Assert.DoesNotContain(key, editor.Open);
         Assert.Equal(2, changes);
@@ -38,7 +38,7 @@ public class ActionListEditorTests
     public void The_lists_have_edits_after_a_change_not_after_opening_an_action()
     {
         var state = new ActionListsState(new LocalSimEngine());
-        state.Editor.Load(_v, [new AplDocumentAction("a")]);
+        state.Editor.Load(_vocabulary, [new AplDocumentAction("a")]);
         Assert.True(state.HasEdits);
         state.MarkClean();
         Assert.False(state.HasEdits);
@@ -47,7 +47,7 @@ public class ActionListEditorTests
         state.Editor.SetStatus(MessageState.Ok("Saved."));
         Assert.False(state.HasEdits);
 
-        state.Editor.AddAction(_v.DefaultList);
+        state.Editor.AddAction(_vocabulary.DefaultList);
         Assert.True(state.HasEdits);
     }
 
@@ -56,11 +56,11 @@ public class ActionListEditorTests
     {
         var editor = Loaded(new AplDocumentAction("a"), new AplDocumentAction("b"), new AplDocumentAction("c"));
 
-        editor.MoveAction(_v.DefaultList, 0, 2);
+        editor.MoveAction(_vocabulary.DefaultList, 0, 2);
         Assert.Equal(["b", "c", "a"], editor.Lists[0].Actions.Select(a => a.Ability));
 
-        editor.MoveAction(_v.DefaultList, 0, -1);
-        editor.MoveAction(_v.DefaultList, 2, 3);
+        editor.MoveAction(_vocabulary.DefaultList, 0, -1);
+        editor.MoveAction(_vocabulary.DefaultList, 2, 3);
         Assert.Equal(["b", "c", "a"], editor.Lists[0].Actions.Select(a => a.Ability));
     }
 
@@ -71,7 +71,7 @@ public class ActionListEditorTests
         var action = editor.Lists[0].Actions[1];
         editor.Toggle(action.Key);
 
-        editor.DuplicateAction(_v.DefaultList, 1);
+        editor.DuplicateAction(_vocabulary.DefaultList, 1);
 
         var actions = editor.Lists[0].Actions;
         Assert.Equal(["a", "b", "b", "c"], actions.Select(a => a.Ability));
@@ -83,21 +83,21 @@ public class ActionListEditorTests
     [Fact]
     public void A_rename_renames_the_actions_naming_the_list()
     {
-        var editor = Loaded(new AplDocumentAction(_v.ListActions[0], ActionList: "aoe"), new AplDocumentAction("a", List: "aoe"));
+        var editor = Loaded(new AplDocumentAction(_vocabulary.ListActions[0], ActionList: "aoe"), new AplDocumentAction("a", List: "aoe"));
 
         Assert.False(editor.RenameList("aoe", "and"));
         Assert.Equal(MessageState.Error("`and` is an operator."), editor.Status);
 
         Assert.True(editor.RenameList("aoe", "cleave"));
         Assert.Equal(MessageState.None, editor.Status);
-        Assert.Equal([_v.DefaultList, "cleave"], editor.Lists.Select(l => l.Name));
+        Assert.Equal([_vocabulary.DefaultList, "cleave"], editor.Lists.Select(l => l.Name));
         Assert.Equal("cleave", editor.Lists[0].Actions[0].ActionList);
     }
 
     [Fact]
     public void A_list_an_action_names_is_not_removed()
     {
-        var editor = Loaded(new AplDocumentAction(_v.ListActions[1], ActionList: "aoe"), new AplDocumentAction("a", List: "aoe"));
+        var editor = Loaded(new AplDocumentAction(_vocabulary.ListActions[1], ActionList: "aoe"), new AplDocumentAction("a", List: "aoe"));
 
         editor.RemoveList("aoe");
         Assert.Equal(MessageState.Error("Default list has an action naming aoe. Change that action first."), editor.Status);
@@ -113,13 +113,13 @@ public class ActionListEditorTests
     {
         var editor = Loaded(new AplDocumentAction("a"), new AplDocumentAction("b"));
 
-        Assert.False(editor.AddList(_v.DefaultList));
+        Assert.False(editor.AddList(_vocabulary.DefaultList));
         Assert.True(editor.AddList("aoe"));
         Assert.Contains(editor.Lists[1].Actions.Single().Key, editor.Open);
 
-        editor.ToggleAll(_v.DefaultList, true);
+        editor.ToggleAll(_vocabulary.DefaultList, true);
         Assert.All(editor.Lists[0].Actions, a => Assert.Contains(a.Key, editor.Open));
-        editor.ToggleAll(_v.DefaultList, false);
+        editor.ToggleAll(_vocabulary.DefaultList, false);
         Assert.All(editor.Lists[0].Actions, a => Assert.DoesNotContain(a.Key, editor.Open));
         editor.Toggle(editor.Lists[0].Actions[0].Key);
         Assert.Contains(editor.Lists[0].Actions[0].Key, editor.Open);

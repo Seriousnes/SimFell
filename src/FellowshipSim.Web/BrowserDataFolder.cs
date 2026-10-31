@@ -13,7 +13,7 @@ namespace FellowshipSim.Web;
 /// fight is hundreds of MB once read, so a sim worker downloads and replays it (<see cref="WorkerFightReviewer"/>), and
 /// keeps the newest fights in a store of its own that the page never loads (sim/fights.js).
 /// </summary>
-public sealed class BrowserDataFolder(IJSRuntime js)
+public sealed class BrowserDataFolder(IJSRuntime jsRuntime)
 {
     public const string Root = "/simfell";
 
@@ -46,7 +46,7 @@ public sealed class BrowserDataFolder(IJSRuntime js)
     private IJSObjectReference? _storage;
 
     private async Task<IJSObjectReference> StorageAsync() =>
-        _storage ??= await js.InvokeAsync<IJSObjectReference>(ImportFunction, StorageModule);
+        _storage ??= await jsRuntime.InvokeAsync<IJSObjectReference>(ImportFunction, StorageModule);
 
     /// <summary>Writes every file the browser keeps into the data folder.</summary>
     public async Task RestoreAsync()

@@ -50,7 +50,7 @@ public static class AplOperatorSymbols
     public const string OrWord = "or";
     public const string NotWord = "not";
 
-    public static string Symbol(this BinaryOperator op) => op switch
+    public static string Symbol(this BinaryOperator binaryOperator) => binaryOperator switch
     {
         BinaryOperator.And => AndSymbol,
         BinaryOperator.Or => OrSymbol,
@@ -65,18 +65,18 @@ public static class AplOperatorSymbols
         BinaryOperator.LessEqual => LessEqualSymbol,
         BinaryOperator.Greater => GreaterSymbol,
         BinaryOperator.GreaterEqual => GreaterEqualSymbol,
-        _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
+        _ => throw new ArgumentOutOfRangeException(nameof(binaryOperator), binaryOperator, null)
     };
 
-    public static string Symbol(this UnaryOperator op) => op switch
+    public static string Symbol(this UnaryOperator unaryOperator) => unaryOperator switch
     {
         UnaryOperator.Not => NotSymbol,
         UnaryOperator.Minus => MinusSymbol,
-        _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
+        _ => throw new ArgumentOutOfRangeException(nameof(unaryOperator), unaryOperator, null)
     };
 
     /// <summary>The operator's name and meaning in the condition reference.</summary>
-    public static AplDoc Doc(this BinaryOperator op) => op switch
+    public static AplDoc Doc(this BinaryOperator binaryOperator) => binaryOperator switch
     {
         BinaryOperator.And => new("and", "1 if both sides are true. Otherwise 0. The word and has the same meaning."),
         BinaryOperator.Or => new("or", "1 if the left side, the right side or both sides are true. Otherwise 0. The word or has the same meaning."),
@@ -91,14 +91,14 @@ public static class AplOperatorSymbols
         BinaryOperator.LessEqual => new("At most", "1 if the left side is less than or equal to the right side. Otherwise 0."),
         BinaryOperator.Greater => new("Greater than", "1 if the left side is greater than the right side. Otherwise 0."),
         BinaryOperator.GreaterEqual => new("At least", "1 if the left side is greater than or equal to the right side. Otherwise 0."),
-        _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
+        _ => throw new ArgumentOutOfRangeException(nameof(binaryOperator), binaryOperator, null)
     };
 
     /// <summary>The prefix operator's name and meaning in the condition reference.</summary>
-    public static AplDoc Doc(this UnaryOperator op) => op switch
+    public static AplDoc Doc(this UnaryOperator unaryOperator) => unaryOperator switch
     {
         UnaryOperator.Not => new("not", "1 if the value is 0. Otherwise 0. The word not has the same meaning."),
         UnaryOperator.Minus => new("Negate", "The value with the opposite sign."),
-        _ => throw new ArgumentOutOfRangeException(nameof(op), op, null)
+        _ => throw new ArgumentOutOfRangeException(nameof(unaryOperator), unaryOperator, null)
     };
 }

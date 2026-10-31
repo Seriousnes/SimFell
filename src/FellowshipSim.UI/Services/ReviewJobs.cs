@@ -26,9 +26,9 @@ public sealed class ReviewJobs(SimJobQueue queue, ReplayLibrary library, Visitor
                 await reviews.AddAsync(visitor, review.Summary, CancellationToken.None);
                 return review.Summary;
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch (Exception exception) when (exception is not OperationCanceledException)
             {
-                log.LogError(ex, "Replay review of {Report} fight {Fight} player {Player} failed", reportCode, fightId, playerId);
+                log.LogError(exception, "Replay review of {Report} fight {Fight} player {Player} failed", reportCode, fightId, playerId);
                 throw;
             }
         }, target);

@@ -426,13 +426,13 @@ public sealed class LogOutcomeSource : IOutcomeSource
 
     private bool ClaimAuraEvidence(int logId, double now, int notCausedBy = 0)
     {
-        foreach (var ev in _playerAuraEvents)
+        foreach (var auraEvent in _playerAuraEvents)
         {
-            if (ev.Time < now - _options.ProcEarlySeconds) continue;
-            if (ev.Time > now + _options.ProcAuraWindowSeconds) break;
-            if (ev.AbilityId != logId || !ev.IsGain || _claimedAuraEvidence.Contains(ev)) continue;
-            if (notCausedBy != 0 && ev.ExtraAbilityId == notCausedBy) continue;
-            _claimedAuraEvidence.Add(ev);
+            if (auraEvent.Time < now - _options.ProcEarlySeconds) continue;
+            if (auraEvent.Time > now + _options.ProcAuraWindowSeconds) break;
+            if (auraEvent.AbilityId != logId || !auraEvent.IsGain || _claimedAuraEvidence.Contains(auraEvent)) continue;
+            if (notCausedBy != 0 && auraEvent.ExtraAbilityId == notCausedBy) continue;
+            _claimedAuraEvidence.Add(auraEvent);
             return true;
         }
         return false;

@@ -219,29 +219,29 @@ internal static class Polynomial
         turns.Sort();
         turns.Add(high);
         var previous = low;
-        var fa = Evaluate(polynomial, low);
+        var previousValue = Evaluate(polynomial, low);
         foreach (var turn in turns)
         {
-            var fb = Evaluate(polynomial, turn);
-            if (fb == 0.0) roots.Add(turn);
-            else if (fa != 0.0 && (fa < 0.0) != (fb < 0.0)) roots.Add(Halve(polynomial, previous, fa, turn));
+            var turnValue = Evaluate(polynomial, turn);
+            if (turnValue == 0.0) roots.Add(turn);
+            else if (previousValue != 0.0 && (previousValue < 0.0) != (turnValue < 0.0)) roots.Add(Halve(polynomial, previous, previousValue, turn));
             previous = turn;
-            fa = fb;
+            previousValue = turnValue;
         }
     }
 
     // The root of the polynomial between lower and upper, where its values there have opposite signs.
-    private static double Halve(double[] polynomial, double lower, double fa, double upper)
+    private static double Halve(double[] polynomial, double lower, double lowerValue, double upper)
     {
         for (var i = 0; i < MaxHalvings && upper - lower > Tolerance.Rounding; i++)
         {
             var middle = 0.5 * (lower + upper);
-            var fm = Evaluate(polynomial, middle);
-            if (fm == 0.0) return middle;
-            if ((fm < 0.0) == (fa < 0.0))
+            var middleValue = Evaluate(polynomial, middle);
+            if (middleValue == 0.0) return middle;
+            if ((middleValue < 0.0) == (lowerValue < 0.0))
             {
                 lower = middle;
-                fa = fm;
+                lowerValue = middleValue;
             }
             else upper = middle;
         }
@@ -285,9 +285,9 @@ internal static class Crossing
     {
         var at = now.Milliseconds + root;
         if (at - RootMarginMilliseconds >= limit.Milliseconds) return null;
-        for (var ms = Math.Max(now.Milliseconds + 1, (long)Math.Floor(at) - RootMarginMilliseconds); ms < limit.Milliseconds && ms <= (long)Math.Ceiling(at) + RootMarginMilliseconds; ms++)
+        for (var milliseconds = Math.Max(now.Milliseconds + 1, (long)Math.Floor(at) - RootMarginMilliseconds); milliseconds < limit.Milliseconds && milliseconds <= (long)Math.Ceiling(at) + RootMarginMilliseconds; milliseconds++)
         {
-            var time = SimTime.FromMilliseconds(ms);
+            var time = SimTime.FromMilliseconds(milliseconds);
             if (changed(time)) return time;
         }
         return null;
@@ -601,9 +601,9 @@ internal sealed class BoundMinus(BoundExpression operand) : BoundExpression
     internal override bool EvaluateAt(SimulationContext ctx, SimTime time) => operand.NumericAt(ctx, time) != 0.0;
 }
 
-internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, BoundExpression right) : BoundExpression
+internal sealed class BoundBinary(BoundExpression left, BinaryOperator binaryOperator, BoundExpression right) : BoundExpression
 {
-    public override bool Evaluate(SimulationContext ctx) => op switch
+    public override bool Evaluate(SimulationContext ctx) => binaryOperator switch
     {
         BinaryOperator.And => left.Evaluate(ctx) && right.Evaluate(ctx),
         BinaryOperator.Or => left.Evaluate(ctx) || right.Evaluate(ctx),
@@ -618,7 +618,7 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
 
     public override double EvaluateNumeric(SimulationContext ctx)
     {
-        switch (op)
+        switch (binaryOperator)
         {
             case BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo:
                 var leftValue = left.EvaluateNumeric(ctx);
@@ -629,12 +629,12 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         }
     }
 
-    private bool IsArithmetic => op is BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo;
+    private bool IsArithmetic => binaryOperator is BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo;
 
-    private bool IsComparison => op is BinaryOperator.Less or BinaryOperator.LessEqual or BinaryOperator.Greater
+    private bool IsComparison => binaryOperator is BinaryOperator.Less or BinaryOperator.LessEqual or BinaryOperator.Greater
         or BinaryOperator.GreaterEqual or BinaryOperator.Equal or BinaryOperator.NotEqual;
 
-    private double Arithmetic(double leftValue, double rightValue) => op switch
+    private double Arithmetic(double leftValue, double rightValue) => binaryOperator switch
     {
         BinaryOperator.Add => leftValue + rightValue,
         BinaryOperator.Subtract => leftValue - rightValue,
@@ -648,11 +648,11 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         if (!IsArithmetic) return NextChange(ctx);
         var now = ctx.CurrentTime;
         var until = Crossing.Earlier(left.Until(ctx), right.Until(ctx));
-        if (op is not (BinaryOperator.Divide or BinaryOperator.Modulo)) return until;
+        if (binaryOperator is not (BinaryOperator.Divide or BinaryOperator.Modulo)) return until;
         var divisor = right.Curve(ctx);
         // A quotient or remainder by a divisor of exactly 0 reads 0; a divisor that moves leaves 0 the next millisecond.
         if (right.EvaluateNumeric(ctx) == 0.0) return divisor.IsConstant ? until : Crossing.Earlier(until, Crossing.Next(now));
-        if (op == BinaryOperator.Divide) return until;
+        if (binaryOperator == BinaryOperator.Divide) return until;
         // A remainder wraps where the quotient passes a whole number, and where the divisor passes 0.
         var dividend = left.Curve(ctx);
         var whole = Math.Truncate(left.EvaluateNumeric(ctx) / right.EvaluateNumeric(ctx));
@@ -674,8 +674,8 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         if (!IsArithmetic) return TimeCurve.Constant(EvaluateNumeric(ctx));
         var leftCurve = left.Curve(ctx);
         var rightCurve = right.Curve(ctx);
-        if (op is BinaryOperator.Divide or BinaryOperator.Modulo && right.EvaluateNumeric(ctx) == 0.0) return TimeCurve.Constant(0.0);
-        return op switch
+        if (binaryOperator is BinaryOperator.Divide or BinaryOperator.Modulo && right.EvaluateNumeric(ctx) == 0.0) return TimeCurve.Constant(0.0);
+        return binaryOperator switch
         {
             BinaryOperator.Add => leftCurve + rightCurve,
             BinaryOperator.Subtract => leftCurve - rightCurve,
@@ -689,7 +689,7 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
     internal override double NumericAt(SimulationContext ctx, SimTime time) =>
         IsArithmetic ? Arithmetic(left.NumericAt(ctx, time), right.NumericAt(ctx, time)) : EvaluateAt(ctx, time) ? 1.0 : 0.0;
 
-    internal override bool EvaluateAt(SimulationContext ctx, SimTime time) => op switch
+    internal override bool EvaluateAt(SimulationContext ctx, SimTime time) => binaryOperator switch
     {
         BinaryOperator.And => left.EvaluateAt(ctx, time) && right.EvaluateAt(ctx, time),
         BinaryOperator.Or => left.EvaluateAt(ctx, time) || right.EvaluateAt(ctx, time),
@@ -704,14 +704,14 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
 
     public override SimTime NextChange(SimulationContext ctx)
     {
-        if (op is BinaryOperator.And or BinaryOperator.Or) return Crossing.Earlier(left.NextChange(ctx), right.NextChange(ctx));
+        if (binaryOperator is BinaryOperator.And or BinaryOperator.Or) return Crossing.Earlier(left.NextChange(ctx), right.NextChange(ctx));
         if (!IsComparison) return base.NextChange(ctx);
         // A comparison changes where the difference of its sides passes 0 (or the equality tolerance), where it has a pole,
         // or where a side's curve ends.
         var until = Crossing.Earlier(left.Until(ctx), right.Until(ctx));
         if (left.IsLevel(ctx) && right.IsLevel(ctx)) return Crossing.Later(ctx.CurrentTime, until);
         var difference = left.Curve(ctx) - right.Curve(ctx);
-        return op is BinaryOperator.Equal or BinaryOperator.NotEqual
+        return binaryOperator is BinaryOperator.Equal or BinaryOperator.NotEqual
             ? Crossing.First(ctx, this, until, difference.NumeratorLess(-AplTolerance.Equality), difference.NumeratorLess(AplTolerance.Equality), difference.Denominator)
             : Crossing.First(ctx, this, until, difference.Numerator, difference.Denominator);
     }
