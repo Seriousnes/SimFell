@@ -17,7 +17,7 @@ public class TheMystic : Glyph
 
     public override void Bind(Hero hero)
     {
-        double perStep = ForRank(PowerPerStepByRank);
+        var perStep = ForRank(PowerPerStepByRank);
         hero.AbilityDamageMultipliers.Add((ability, now) =>
             ability.Category == AbilityCategory.Power
                 ? 1.0 + perStep * (Math.Min(hero.SpiritPercent(now), SpiritCap) * Percentage.PerFraction / SpiritPercentPerStep)

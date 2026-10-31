@@ -16,12 +16,12 @@ public class RimeGearTests
     public void Skandis_Decree_Makes_Bursting_Ice_Pulse_For_Two_Seconds_More()
     {
         const string apl = "actions=bursting_ice\nactions+=/frost_bolt";
-        int without = Hits(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000 }, apl, h => h.GetAbility<BurstingIce>()!.DamageLogId);
+        var without = Hits(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000 }, apl, h => h.GetAbility<BurstingIce>()!.DamageLogId);
         var build = new CharacterBuild { Hero = "Rime", PrimaryStat = 1000, LegendaryItemIds = [SkandisDecree.LegsItemId] };
         Assert.Equal(SkandisDecree.BurstingIceBonusSeconds, HeroImporter.Import(build).GetAbility<BurstingIce>()!.BonusDurationSeconds);
 
         // Pulses every 0.5s: 3s of debuff is 6 pulses, 5s is 10.
-        int with = Hits(build, apl, h => h.GetAbility<BurstingIce>()!.DamageLogId);
+        var with = Hits(build, apl, h => h.GetAbility<BurstingIce>()!.DamageLogId);
         Assert.InRange((double)with / without, 1.5, 1.8);
     }
 
@@ -39,7 +39,7 @@ public class RimeGearTests
 
         // One cast in 30s (cooldown 60s): four hits, 0.3s apart.
         Assert.Equal(NaturesFury.Hits, hits.Count);
-        for (int i = 1; i < hits.Count; i++) Assert.Equal(NaturesFury.BounceSeconds, hits[i].Time - hits[i - 1].Time, 3);
+        for (var i = 1; i < hits.Count; i++) Assert.Equal(NaturesFury.BounceSeconds, hits[i].Time - hits[i - 1].Time, 3);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class RimeGearTests
         Assert.Equal(AplTokenKind.Debuff, vocabulary.Classify((PropertyExpression)touched).Kind);
 
         var hero = HeroImporter.Import(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000, WeaponAbilityId = VoidbringersTouch.AbilityId });
-        int frostBolt = hero.GetAbility<FrostBolt>()!.DamageLogId;
+        var frostBolt = hero.GetAbility<FrostBolt>()!.DamageLogId;
         var bolts = new List<DebuffStacksAtHit>();
         hero.OnDamageDealt += (in dmg) =>
         {
@@ -68,7 +68,8 @@ public class RimeGearTests
     private static int Hits(CharacterBuild build, string apl, Func<Hero, int> damageId)
     {
         var hero = HeroImporter.Import(build);
-        int id = damageId(hero), hits = 0;
+        var id = damageId(hero);
+        var hits = 0;
         hero.OnDamageDealt += (in dmg) => { if (dmg.AbilityId == id) hits++; };
         new MonteCarloSimulator(() => hero, AplParser.ParseScript(apl)).Run(SimTime.FromSeconds(120), 1, 1, degreeOfParallelism: 1);
         return hits;

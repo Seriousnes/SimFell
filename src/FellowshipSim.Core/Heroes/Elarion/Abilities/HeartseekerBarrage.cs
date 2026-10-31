@@ -66,8 +66,8 @@ public class HeartseekerBarrage : ElarionAbility
     {
         if (target is not { IsSleeping: false }) return;
         _arrow++;
-        double multiplier = _cast.Damage * (_impending ? 1.0 + ImpendingDamagePerArrow * _arrow : 1.0);
-        double crit = _cast.Crit + ArrowCritChance;
+        var multiplier = _cast.Damage * (_impending ? 1.0 + ImpendingDamagePerArrow * _arrow : 1.0);
+        var crit = _cast.Crit + ArrowCritChance;
         DealDamage(ctx, target, damageMultiplier: multiplier, extraCritChance: crit, onLanded: (c, _) => ArrowLanded?.Invoke(c));
         if (RicochetMultiplier <= 0) return;
         var others = ctx.ActiveEnemiesExcept(target);

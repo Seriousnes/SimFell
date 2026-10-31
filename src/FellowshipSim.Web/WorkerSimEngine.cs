@@ -30,8 +30,8 @@ public sealed class WorkerSimEngine(SimWorkerPool workers) : ISimEngine
     public async Task<ReviewArtifacts> ReviewAsync(Stream rawFight, int playerId, IProgress<string>? progress = null,
         CancellationToken ct = default)
     {
-        string raw = await new StreamReader(rawFight).ReadToEndAsync(ct);
-        string json = await workers.ReviewAsync(raw, playerId, progress);
+        var raw = await new StreamReader(rawFight).ReadToEndAsync(ct);
+        var json = await workers.ReviewAsync(raw, playerId, progress);
         var reply = JsonSerializer.Deserialize<ReviewReply>(json, SimChunks.Json)!;
         return reply.Review ?? throw new SimEngineException(reply.Error ?? "The replay gave no review.");
     }
@@ -41,8 +41,8 @@ public sealed class WorkerSimEngine(SimWorkerPool workers) : ISimEngine
     {
         // An action list the engine cannot run is refused here, with its reason, before any worker starts.
         SimChunks.NewSimulator(profile);
-        int chunks = SimChunks.Count(settings);
-        string json = await workers.SimulateAsync(JsonSerializer.Serialize(profile, SimChunks.Json),
+        var chunks = SimChunks.Count(settings);
+        var json = await workers.SimulateAsync(JsonSerializer.Serialize(profile, SimChunks.Json),
             JsonSerializer.Serialize(settings, SimChunks.Json), chunks, settings.DegreeOfParallelism,
             done => progress?.Report(new SimProgress(done == chunks ? settings.Iterations : settings.Iterations * done / chunks, settings.Iterations)),
             ct);

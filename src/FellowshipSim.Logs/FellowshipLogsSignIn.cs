@@ -76,14 +76,14 @@ public static class FellowshipLogsSignIn
     private static async Task<LogsUserToken> TokenAsync(HttpClient http, KeyValuePair<string, string>[] form, CancellationToken ct)
     {
         using var response = await http.PostAsync(FellowshipLogsClient.TokenUrl, new FormUrlEncodedContent(form), ct);
-        string body = await response.Content.ReadAsStringAsync(ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
         if (!response.IsSuccessStatusCode)
         {
             throw new FellowshipLogsException($"FellowshipLogs did not sign you in ({(int)response.StatusCode}). Try signing in again.");
         }
         var json = JsonNode.Parse(body);
-        string token = json?[FellowshipLogsClient.AccessTokenProperty]?.GetValue<string>() ?? throw new FellowshipLogsException("FellowshipLogs returned no access token.");
-        double lifetime = json[FellowshipLogsClient.ExpiresInProperty]?.GetValue<double>() ?? FellowshipLogsClient.DefaultTokenLifetimeSeconds;
+        var token = json?[FellowshipLogsClient.AccessTokenProperty]?.GetValue<string>() ?? throw new FellowshipLogsException("FellowshipLogs returned no access token.");
+        var lifetime = json[FellowshipLogsClient.ExpiresInProperty]?.GetValue<double>() ?? FellowshipLogsClient.DefaultTokenLifetimeSeconds;
         return new LogsUserToken(token, json[RefreshTokenProperty]?.GetValue<string>(), DateTime.UtcNow.AddSeconds(lifetime));
     }
 

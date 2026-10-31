@@ -322,7 +322,7 @@ public sealed class ReplayDriver
             return;
         }
 
-        double engineCast = attempt.CastTime.TotalSeconds;
+        var engineCast = attempt.CastTime.TotalSeconds;
         // The logged duration: to the complete_cast, or to the cancel_cast of a cast the log never completed.
         double? logCast = end == null ? null : end.Time - cmd.Time;
         if (cmd.Kind == ReplayCommandKind.BeginCast && attempt.Status == CastStatus.Resolved)
@@ -347,7 +347,7 @@ public sealed class ReplayDriver
         }
 
         // A cast the log completes without the debuff it applies ended at its completion with nothing done.
-        if (_options.CastProofDebuffIds.TryGetValue(cmd.AbilityId, out int proof) && !AppliedDebuff(proof, end.Time))
+        if (_options.CastProofDebuffIds.TryGetValue(cmd.AbilityId, out var proof) && !AppliedDebuff(proof, end.Time))
         {
             _handledCommands.Add(end);
             var at = SimTime.FromSeconds(end.Time);
@@ -410,10 +410,10 @@ public sealed class ReplayDriver
     private HastedTimer? QueueFlushingTimer(ReplayCommand cmd)
     {
         if (_hero.QueueFlushingTick is not { } tick || !tick.Timer.IsActive) return null;
-        double since = cmd.Time - tick.Timer.LastTick.TotalSeconds;
+        var since = cmd.Time - tick.Timer.LastTick.TotalSeconds;
         if (since < 0 || since > PeriodicEffect.ServerFrameSeconds + _options.SameTickSeconds) return null;
         var times = LogHitTimes(tick.DamageLogId);
-        int index = Array.BinarySearch(times, cmd.Time);
+        var index = Array.BinarySearch(times, cmd.Time);
         if (index < 0) index = ~index - 1;
         return index >= 0 && cmd.Time - times[index] <= _options.SameTickSeconds ? tick.Timer : null;
     }
@@ -466,11 +466,11 @@ public sealed class ReplayDriver
     /// </summary>
     private void ApplyExternalAura(ReplayCommand cmd, ReplayResult result)
     {
-        bool onPlayer = cmd.Target?.Id == _script.Player.Id;
+        var onPlayer = cmd.Target?.Id == _script.Player.Id;
         Actor? actor = onPlayer ? _hero : cmd.Target == null ? null : _ctx.FindEnemy(cmd.Target.Id, cmd.Target.Instance);
         if (actor == null) return;
 
-        bool removed = cmd.AuraEventType is LogAuraType.RemoveBuff or LogAuraType.RemoveDebuff;
+        var removed = cmd.AuraEventType is LogAuraType.RemoveBuff or LogAuraType.RemoveDebuff;
         if (onPlayer && AnomalousResidue.ColourByLogId.TryGetValue(cmd.AbilityId, out var colour))
         {
             ChangeResidue(colour, removed ? 0 : cmd.Stack ?? (cmd.AuraEventType is LogAuraType.RefreshBuff ? null : 1));
@@ -508,7 +508,7 @@ public sealed class ReplayDriver
             _hero.Gems.Add(gem);
             gem.Bind(_hero);
         }
-        double scale = _hero.RelicPassives.Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
+        var scale = _hero.RelicPassives.Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
         gem.ChangePower(gem.BasePower + AnomalousResidue.PowerPerStack * count * scale, _ctx.CurrentTime);
     }
 
@@ -528,9 +528,9 @@ public sealed class ReplayDriver
             def = buff.Aura with { Duration = SimTime.Infinite, MaxStacks = ExternalAuraMaxStacks, SourceId = sourceId };
             if (buff.ValueByGiverRank is { } byRank && _script.Players.TryGetValue(sourceId.ToString(), out var source))
             {
-                int rank = source.GearTraits.GetValueOrDefault(buff.SigilName!)
+                var rank = source.GearTraits.GetValueOrDefault(buff.SigilName!)
                            + source.WeaponTraits.GetValueOrDefault((LogIds.AugmentationOffset + buff.SigilId).ToString());
-                double value = byRank[Math.Clamp(rank, 1, byRank.Count) - 1];
+                var value = byRank[Math.Clamp(rank, 1, byRank.Count) - 1];
                 def = def with { Modifiers = def.Modifiers.Select(m => m with { Value = value }).ToArray() };
             }
         }
@@ -559,7 +559,7 @@ public sealed class ReplayDriver
             .Where(r => r.Time >= from && r.Resources.ContainsKey(logged.LogResourceType.ToString()))
             .OrderBy(r => r.Time).FirstOrDefault();
         if (first == null) return;
-        double value = logged.EngineAmount(first.Resources[logged.LogResourceType.ToString()]);
+        var value = logged.EngineAmount(first.Resources[logged.LogResourceType.ToString()]);
         var resource = logged.Resource;
         _ctx.ScheduleAt(SimTime.FromSeconds(Math.Max(from, first.Time - ReadingLeadSeconds)), c =>
         {
@@ -614,7 +614,7 @@ public sealed class ReplayDriver
                 .Where(a => a.AbilityId == aura.LogId && a.Target.Id == _script.Player.Id)
                 .OrderBy(a => a.Time).ToList();
             _hero.Auras.Remove(aura, SimTime.Zero);
-            bool bound = _hero.SituationalAuras.Contains(aura);
+            var bound = _hero.SituationalAuras.Contains(aura);
             if (events.FirstOrDefault() is { IsLoss: true }
                 || (bound && events.Count == 0 && aura.Changes(AuraDef.MaskOf(StatType.PrimaryAttributeMultiplier))))
             {
@@ -628,8 +628,8 @@ public sealed class ReplayDriver
                     else if (logEvent.IsGain || logEvent.Stack != null)
                     {
                         // A refresh logs no stacks: it keeps the ones it has (Gunde's Owed in Blood refreshes at 150).
-                        int held = c.Player.Auras.GetStacks(aura, c.CurrentTime);
-                        bool refresh = logEvent.Type is LogAuraType.RefreshBuff or LogAuraType.RefreshDebuff;
+                        var held = c.Player.Auras.GetStacks(aura, c.CurrentTime);
+                        var refresh = logEvent.Type is LogAuraType.RefreshBuff or LogAuraType.RefreshDebuff;
                         c.Player.Auras.Apply(aura, c.CurrentTime, setStacks: logEvent.Stack ?? (refresh && held > 0 ? held : 1));
                     }
                 }, $"{aura.Name} (log)");
@@ -721,7 +721,7 @@ public sealed class ReplayDriver
             _verifier.PendingIssues.Clear();
             return false;
         }
-        int firstStep = _verifier.PendingIssues.Min(i => i.Step);
+        var firstStep = _verifier.PendingIssues.Min(i => i.Step);
         result.HaltedAt = result.Steps.FirstOrDefault(s => s.Index == firstStep) ?? result.Steps.LastOrDefault();
         result.HaltIssues.AddRange(_verifier.PendingIssues);
         return true;

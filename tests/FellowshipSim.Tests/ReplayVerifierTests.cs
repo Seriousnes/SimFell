@@ -67,7 +67,7 @@ public class ReplayVerifierTests
         _verifier.CheckHit(_ctx, Hit(1000), Log(logged), 0);
         var issue = Only(IssueCategory.Damage);
         if (!flagged) { Assert.Null(issue); return; }
-        double bound = logged < 899 ? 899 : 1101;
+        var bound = logged < 899 ? 899.0 : 1101.0;
         AssertIssue(issue, 899, 1101, logged, logged - bound, (logged - bound) / bound);
     }
 
@@ -84,7 +84,7 @@ public class ReplayVerifierTests
         Assert.Equal(2201, pair.ExpectedHigh, Precision);
         var issue = Only(IssueCategory.Damage);
         if (!flagged) { Assert.Null(issue); return; }
-        double bound = logged < 1799 ? 1799 : 2201;
+        var bound = logged < 1799 ? 1799.0 : 2201.0;
         AssertIssue(issue, 1799, 2201, logged, logged - bound, (logged - bound) / bound);
     }
 
@@ -98,7 +98,7 @@ public class ReplayVerifierTests
         _verifier.CheckHit(_ctx, Hit(500, tickFraction: 0.5), Log(logged), 0);
         var issue = Only(IssueCategory.Damage);
         if (!flagged) { Assert.Null(issue); return; }
-        double bound = logged < 349 ? 349 : 651;
+        var bound = logged < 349 ? 349.0 : 651.0;
         AssertIssue(issue, 349, 651, logged, logged - bound, (logged - bound) / bound);
     }
 
@@ -134,7 +134,8 @@ public class ReplayVerifierTests
         _verifier.CheckHit(_ctx, Hit(1000, forcedCrit: forced), Log(loggedCrit ? 2000 : 1000, crit: loggedCrit), 0);
         var issue = Only(IssueCategory.Hits);
         if (!flagged) { Assert.Null(issue); return; }
-        double expected = forced ? 1 : 0, observed = loggedCrit ? 1 : 0;
+        var expected = forced ? 1.0 : 0.0;
+        var observed = loggedCrit ? 1.0 : 0.0;
         AssertIssue(issue, expected, expected, observed, observed - expected, forced ? -1.0 : null);
     }
 
@@ -172,7 +173,7 @@ public class ReplayVerifierTests
         _verifier.CheckCastTime(_ctx, Bolt, 2.0, logged);
         var issue = Only(IssueCategory.Casts);
         if (!flagged) { Assert.Null(issue); return; }
-        double bound = logged < 1.9 ? 1.9 : 2.1;
+        var bound = logged < 1.9 ? 1.9 : 2.1;
         AssertIssue(issue, 1.9, 2.1, logged, logged - bound, (logged - bound) / bound);
         Assert.NotNull(issue!.State!.Cast);
     }
@@ -188,8 +189,9 @@ public class ReplayVerifierTests
         _verifier.CheckInstantOrCast(_ctx, Bolt, engine, logged, logged == 0 ? ReplayCommandKind.Cast : ReplayCommandKind.BeginCast);
         var issue = Only(IssueCategory.Casts);
         if (!flagged) { Assert.Null(issue); return; }
-        double low = Math.Max(0, engine - 0.1), high = engine + 0.1;
-        double bound = logged < low ? low : high;
+        var low = Math.Max(0, engine - 0.1);
+        var high = engine + 0.1;
+        var bound = logged < low ? low : high;
         AssertIssue(issue, low, high, logged, logged - bound, (logged - bound) / bound);
     }
 
@@ -217,7 +219,7 @@ public class ReplayVerifierTests
         var cooldown = Only(IssueCategory.Cooldown);
         if (!onCooldown) { Assert.Null(cooldown); return; }
         // The cast at 0 comes no sooner than now plus the cooldown left.
-        double remains = _hero.GetCooldownRemains(ability.Name, _ctx.CurrentTime);
+        var remains = _hero.GetCooldownRemains(ability.Name, _ctx.CurrentTime);
         Assert.True(remains > 0);
         AssertIssue(cooldown, remains, double.PositiveInfinity, 0, -remains, -1.0);
     }
@@ -251,7 +253,7 @@ public class ReplayVerifierTests
         if (!beforeTheEnd) _ctx.RunUntil(cast.EndTime + SimTime.FromSeconds(0.1));
         var issue = _verifier.StillCasting(_ctx, _hero.GetAbility(IceComet.AbilityName)!);
         if (!beforeTheEnd) { Assert.Null(issue); return; }
-        double end = cast.EndTime.TotalSeconds;
+        var end = cast.EndTime.TotalSeconds;
         AssertIssue(issue, end, double.PositiveInfinity, 0, -end, -1.0);
     }
 
@@ -267,8 +269,8 @@ public class ReplayVerifierTests
         _verifier.CheckTickTime(_ctx, effect, SimTime.FromSeconds(2.0), logged);
         var issue = Only(IssueCategory.Ticks);
         if (!flagged) { Assert.Null(issue); return; }
-        double tolerance = PeriodicEffect.ServerFrameSeconds;
-        double bound = logged < 2.0 ? 2.0 - tolerance : 2.0 + tolerance;
+        var tolerance = PeriodicEffect.ServerFrameSeconds;
+        var bound = logged < 2.0 ? 2.0 - tolerance : 2.0 + tolerance;
         AssertIssue(issue, 2.0 - tolerance, 2.0 + tolerance, logged, logged - bound, (logged - bound) / bound);
     }
 
@@ -299,7 +301,7 @@ public class ReplayVerifierTests
         _verifier.CheckResource(_ctx, new ReplayStep(), "Anima", 5.0, logged, 1.0);
         var issue = Only(IssueCategory.Resources);
         if (!flagged) { Assert.Null(issue); return; }
-        double bound = logged < 5 ? 4 - Tolerance.Comparison : 6 + Tolerance.Comparison;
+        var bound = logged < 5 ? 4 - Tolerance.Comparison : 6 + Tolerance.Comparison;
         AssertIssue(issue, 4 - Tolerance.Comparison, 6 + Tolerance.Comparison, logged, logged - bound, (logged - bound) / bound);
     }
 

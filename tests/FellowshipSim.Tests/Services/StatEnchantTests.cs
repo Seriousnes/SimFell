@@ -32,7 +32,7 @@ public class StatEnchantTests
     {
         var editor = new BuildEditor(BuildEditor.NewBuild("Rime"));
         var enchants = editor.Catalog.ProtectiveEnchants;
-        for (int i = 0; i < ProtectiveEnchant.MaxPerBuild; i++) Assert.True(editor.ToggleProtectiveEnchant(enchants[i]));
+        for (var i = 0; i < ProtectiveEnchant.MaxPerBuild; i++) Assert.True(editor.ToggleProtectiveEnchant(enchants[i]));
 
         Assert.False(editor.ToggleProtectiveEnchant(enchants[ProtectiveEnchant.MaxPerBuild]));
         Assert.Equal(ProtectiveEnchant.MaxPerBuild, editor.ProtectiveEnchantCount);

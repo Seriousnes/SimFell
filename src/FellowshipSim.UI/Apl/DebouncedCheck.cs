@@ -66,8 +66,8 @@ public sealed class DebouncedCheck(ExpressionChecks checks, TimeSpan delay, Func
 
     private void StartCheck()
     {
-        int version = ++_version;
-        string text = Text;
+        var version = ++_version;
+        var text = Text;
         if (string.IsNullOrWhiteSpace(text)) return;
         var check = checks.Get(_hero!, text);
         if (check.IsCompletedSuccessfully)

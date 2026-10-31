@@ -29,7 +29,7 @@ public class SlayersMosh : Legendary
         if (hero.GetAbility<LeapSmash>() is not { } leapSmash) return;
         leapSmash.Smashed += (ctx, struck) =>
         {
-            for (int i = 0; i < struck.Count; i++) struck[i].Auras.Apply(Debuff, ctx.CurrentTime);
+            for (var i = 0; i < struck.Count; i++) struck[i].Auras.Apply(Debuff, ctx.CurrentTime);
         };
         hero.TargetDamageMultipliers.Add((target, now) => target.Auras.HasAura(Debuff, now) ? DamageTaken : 1.0);
     }

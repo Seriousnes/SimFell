@@ -14,5 +14,5 @@
     private Task Key(KeyboardEventArgs e) => e.Key == JsInterop.EnterKey ? Commit() : Task.CompletedTask;
 
     private Task Commit() =>
-        OnChange.InvokeAsync(double.TryParse(_draft, NumberStyles.Float, CultureInfo.InvariantCulture, out double number) ? number : 0);
+        OnChange.InvokeAsync(double.TryParse(_draft, NumberStyles.Float, CultureInfo.InvariantCulture, out var number) ? number : 0);
 }

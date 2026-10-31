@@ -39,9 +39,9 @@ public static class GearFit
     public static int Room(EnchantSlot kind, Func<EnchantSlot, int> used, bool weapon)
     {
         var counts = Kinds.Select(used).ToArray();
-        int kindIndex = IndexOf(kind);
-        int most = GearLimit(kind) + WeaponLimit(kind, weapon) - counts[kindIndex];
-        int room = 0;
+        var kindIndex = IndexOf(kind);
+        var most = GearLimit(kind) + WeaponLimit(kind, weapon) - counts[kindIndex];
+        var room = 0;
         while (room < most)
         {
             counts[kindIndex]++;
@@ -55,7 +55,7 @@ public static class GearFit
 
     private static int IndexOf(EnchantSlot kind)
     {
-        for (int i = 0; i < Kinds.Count; i++)
+        for (var i = 0; i < Kinds.Count; i++)
         {
             if (Kinds[i] == kind) return i;
         }
@@ -68,8 +68,8 @@ public static class GearFit
     private static bool Fits(int[] counts, bool weapon)
     {
         var capacity = new int[Nodes, Nodes];
-        int per = EnchantSlots.MostOfAKindPerPiece;
-        for (int i = 0; i < Kinds.Count; i++)
+        var per = EnchantSlots.MostOfAKindPerPiece;
+        for (var i = 0; i < Kinds.Count; i++)
         {
             var kind = Kinds[i];
             capacity[Source, 1 + i] = counts[i];
@@ -86,7 +86,7 @@ public static class GearFit
     // Edmonds-Karp on the ten nodes.
     private static int MaxFlow(int[,] capacity)
     {
-        int flow = 0;
+        var flow = 0;
         var from = new int[Nodes];
         while (true)
         {
@@ -95,8 +95,8 @@ public static class GearFit
             var queue = new Queue<int>([Source]);
             while (queue.Count > 0 && from[Sink] < 0)
             {
-                int node = queue.Dequeue();
-                for (int next = 0; next < Nodes; next++)
+                var node = queue.Dequeue();
+                for (var next = 0; next < Nodes; next++)
                 {
                     if (from[next] >= 0 || capacity[node, next] <= 0) continue;
                     from[next] = node;
@@ -104,9 +104,9 @@ public static class GearFit
                 }
             }
             if (from[Sink] < 0) return flow;
-            int push = int.MaxValue;
-            for (int node = Sink; node != Source; node = from[node]) push = Math.Min(push, capacity[from[node], node]);
-            for (int node = Sink; node != Source; node = from[node])
+            var push = int.MaxValue;
+            for (var node = Sink; node != Source; node = from[node]) push = Math.Min(push, capacity[from[node], node]);
+            for (var node = Sink; node != Source; node = from[node])
             {
                 capacity[from[node], node] -= push;
                 capacity[node, from[node]] += push;

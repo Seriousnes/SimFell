@@ -112,7 +112,7 @@ public class SimEngineContractTests
     private static void AssertRoundTrip<T>(T value, JsonSerializerOptions? options = null)
     {
         options ??= Web;
-        string json = JsonSerializer.Serialize(value, options);
+        var json = JsonSerializer.Serialize(value, options);
         Assert.Equal(json, JsonSerializer.Serialize(JsonSerializer.Deserialize<T>(json, options), options));
     }
 

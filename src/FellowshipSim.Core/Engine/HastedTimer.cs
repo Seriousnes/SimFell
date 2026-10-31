@@ -192,7 +192,7 @@ public sealed class HastedTimer
         try
         {
             var now = _ctx.CurrentTime;
-            double haste = _hero.GetHaste(now);
+            var haste = _hero.GetHaste(now);
             if (_executing)
             {
                 // The tick's own execution: the re-arm reads a remaining of 0, and the timer goes on from the tick.

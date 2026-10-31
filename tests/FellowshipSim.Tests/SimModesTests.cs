@@ -120,7 +120,7 @@ public class SimModesTests
     [Fact]
     public void The_Relic_Finder_Tries_Every_Other_Pair()
     {
-        int relics = BuildCatalog.For("Rime").Relics.Count;
+        var relics = BuildCatalog.For("Rime").Relics.Count;
         var build = Rime();
         var editor = new BuildEditor(build);
         var catalog = BuildCatalog.For("Rime");
@@ -138,7 +138,7 @@ public class SimModesTests
         build.GemPower[GemColor.Amethyst] = 100;
         var amethyst = BuildFinders.Variants(build, FinderKind.Gems, FinderRanks.NextRank)
             .Single(v => v.Label.StartsWith("Amethyst", StringComparison.Ordinal));
-        double next = Gem.Create(GemColor.Amethyst).Tree.Where(n => n.RequiredPower > 100).Min(n => n.RequiredPower);
+        var next = Gem.Create(GemColor.Amethyst).Tree.Where(n => n.RequiredPower > 100).Min(n => n.RequiredPower);
         Assert.Equal(next, amethyst.Build.GemPower[GemColor.Amethyst]);
 
         // Every node: each node above the power, a run each, in order.

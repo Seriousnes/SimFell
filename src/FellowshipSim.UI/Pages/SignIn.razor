@@ -25,7 +25,7 @@
     {
         try
         {
-            string back = await LogsSignIn.CompleteAsync(new Uri(Navigation.Uri));
+            var back = await LogsSignIn.CompleteAsync(new Uri(Navigation.Uri));
             Navigation.NavigateTo(back, replace: true);
         }
         catch (Exception exception) when (exception is FellowshipLogsException or HttpRequestException)

@@ -47,13 +47,13 @@ public class ArdeosReplayTests(ITestOutputHelper output)
         output.WriteLine("id        name                  log hits  matched  engine-only  log dmg      engine dmg   in spread  ratio(log/engine)");
         var logById = result.LogDamage.GroupBy(h => h.AbilityId).ToDictionary(g => g.Key, g => g.ToList());
         var engineById = result.AllHits.GroupBy(h => h.AbilityId).ToDictionary(g => g.Key, g => g.ToList());
-        foreach (int id in logById.Keys.Union(engineById.Keys).OrderByDescending(id => logById.GetValueOrDefault(id)?.Sum(h => h.TotalAmount) ?? 0))
+        foreach (var id in logById.Keys.Union(engineById.Keys).OrderByDescending(id => logById.GetValueOrDefault(id)?.Sum(h => h.TotalAmount) ?? 0))
         {
             var log = logById.GetValueOrDefault(id) ?? [];
             var engine = engineById.GetValueOrDefault(id) ?? [];
             var matched = engine.Where(h => h.Log != null && h.LandedTime.HasValue).ToList();
-            double ratio = matched.Sum(h => h.EngineAmount) > 0 ? matched.Sum(h => h.Log!.TotalAmount) / matched.Sum(h => h.EngineAmount) : 0;
-            string name = (engine.FirstOrDefault()?.AbilityName ?? log.FirstOrDefault()?.AbilityName ?? "?").PadRight(20)[..20];
+            var ratio = matched.Sum(h => h.EngineAmount) > 0 ? matched.Sum(h => h.Log!.TotalAmount) / matched.Sum(h => h.EngineAmount) : 0;
+            var name = (engine.FirstOrDefault()?.AbilityName ?? log.FirstOrDefault()?.AbilityName ?? "?").PadRight(20)[..20];
             output.WriteLine($"{id,-9} {name}  {log.Count,8}  {matched.Count,7}  {engine.Count - matched.Count,11}  {log.Sum(h => h.TotalAmount),11:N0}  {engine.Sum(h => h.EngineAmount),11:N0}  " +
                              $"{matched.Count(h => h.WithinRange),9}  {ratio,6:F3}");
         }
@@ -71,9 +71,9 @@ public class ArdeosReplayTests(ITestOutputHelper output)
         {
             output.WriteLine($"forced {forced.Count()}: {forced.First()}");
         }
-        string? folder = Environment.GetEnvironmentVariable(HitsFolderVariable);
+        var folder = Environment.GetEnvironmentVariable(HitsFolderVariable);
         if (folder == null) return;
-        string dump = Path.Combine(folder, $"hits_{result.ReportCode}_{result.FightId}.csv");
+        var dump = Path.Combine(folder, $"hits_{result.ReportCode}_{result.FightId}.csv");
         var inv = System.Globalization.CultureInfo.InvariantCulture;
         File.WriteAllLines(dump, result.AllHits.Select(h => string.Format(inv, "{0:F3},{1},{2},{3:F1},{4},{5},{6},{7:F3}",
             h.EngineTime, h.AbilityId, h.Target == null ? "" : $"{h.Target.Id}.{h.Target.Instance}", h.EngineAmount, h.Crit ? 1 : 0,

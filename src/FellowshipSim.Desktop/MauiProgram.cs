@@ -31,7 +31,7 @@ public static class MauiProgram
         builder.Configuration.AddJsonFile(Path.Combine(AppContext.BaseDirectory, SettingsFile), optional: true);
         builder.Configuration.AddEnvironmentVariables();
 
-        string dataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataFolder);
+        var dataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DataFolder);
         builder.Services.AddSimFellUI(dataDirectory).AddSimFellDesktopShell();
         builder.Services.AddSingleton<IDataFolder>(new DesktopDataFolder(dataDirectory));
         // Signing in to FellowshipLogs opens the browser; the way back comes to this computer.

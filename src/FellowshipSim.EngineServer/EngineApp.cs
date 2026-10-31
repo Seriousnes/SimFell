@@ -26,7 +26,7 @@ public static class EngineApp
         });
         configure?.Invoke(builder);
 
-        string key = builder.Configuration[EngineKeyName]
+        var key = builder.Configuration[EngineKeyName]
             ?? throw new InvalidOperationException("Set EngineKey: the key FellowshipSim.Service sends with each request.");
 
         builder.AddServiceDefaults();

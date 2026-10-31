@@ -50,7 +50,7 @@ public class AplSimcExpressionTests
         // Half a charge back halfway to the next charge.
         var nextCharge = hero.Cooldowns[coldSnap.Name].NextChargeAt;
         var half = BoundExpression.Bind(AplParser.ParseExpression("cooldown.cold_snap.charges_fractional>=1.5"), hero);
-        long halfway = (ctx.CurrentTime.Milliseconds + nextCharge.Milliseconds) / 2;
+        var halfway = (ctx.CurrentTime.Milliseconds + nextCharge.Milliseconds) / 2;
         Assert.InRange(half.NextChange(ctx).Milliseconds, halfway - 1, halfway + 1);
         Assert.Equal("(cooldown.cold_snap.charges_fractional >= 2)",
             AplParser.ParseActionLine("actions=cold_snap,if=charges_fractional>=2")!.Condition!.ToString());
@@ -108,7 +108,7 @@ public class AplSimcExpressionTests
         var ctx = new SimulationContext(hero);
         hero.ResetForIteration();
         hero.BeginFight(ctx);
-        for (int i = 0; i < enemies; i++) ctx.AddEnemy(100 + i, 1, "Mob", maxHealth: 1000);
+        for (var i = 0; i < enemies; i++) ctx.AddEnemy(100 + i, 1, "Mob", maxHealth: 1000);
         ctx.Player.CurrentTarget = ctx.AllEnemies.First();
         return new HeroInFight(hero, ctx);
     }

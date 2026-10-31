@@ -48,7 +48,7 @@ public class CelestialShot : ElarionAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         var now = ctx.CurrentTime;
-        bool impetus = Owner.Auras.HasAura(Impetus, now);
+        var impetus = Owner.Auras.HasAura(Impetus, now);
         if (impetus)
         {
             Owner.Auras.ConsumeStack(Impetus, now);

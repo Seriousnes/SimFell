@@ -20,7 +20,7 @@ public static class DungeonModifiers
     /// <summary>Applies the modifiers <paramref name="ids"/> to <paramref name="hero"/>.</summary>
     public static void Apply(Hero hero, IEnumerable<int> ids)
     {
-        foreach (int id in ids)
+        foreach (var id in ids)
         {
             if (id == UltimatumId) hero.Stats.CooldownReductionPct += UltimatumCooldownReduction;
         }

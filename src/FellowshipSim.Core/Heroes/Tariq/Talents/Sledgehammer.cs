@@ -27,8 +27,8 @@ public class Sledgehammer : Talent
             if (dealt <= 0.0) return;
             var nearby = ctx.Outcomes.SelectTargets(DamageId, ctx.ActiveEnemiesExcept(target), ctx);
             if (nearby.Count == 0) return;
-            double falloff = nearby.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / nearby.Count) : 1.0;
-            for (int i = 0; i < nearby.Count; i++)
+            var falloff = nearby.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / nearby.Count) : 1.0;
+            for (var i = 0; i < nearby.Count; i++)
             {
                 ctx.ApplyDamage(hero, nearby[i], dealt * Fraction * falloff, DamageId, TalentName, canCrit: false, 0.0, 1.0);
             }

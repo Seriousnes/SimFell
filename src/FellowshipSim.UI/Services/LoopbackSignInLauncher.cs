@@ -19,7 +19,8 @@ public sealed class LoopbackSignInLauncher(Func<string, Task> openBrowser) : ISi
 
     public async Task<LogsUserToken?> SignInAsync(HttpClient http, string returnTo, CancellationToken ct)
     {
-        string verifier = FellowshipLogsSignIn.NewVerifier(), state = FellowshipLogsSignIn.NewState();
+        var verifier = FellowshipLogsSignIn.NewVerifier();
+        var state = FellowshipLogsSignIn.NewState();
         var listener = new TcpListener(IPAddress.Loopback, FellowshipLogsSignIn.LoopbackPort);
         try
         {
@@ -38,15 +39,15 @@ public sealed class LoopbackSignInLauncher(Func<string, Task> openBrowser) : ISi
             {
                 using var connection = await listener.AcceptTcpClientAsync(timeout.Token);
                 var stream = connection.GetStream();
-                string? target = (await new StreamReader(stream).ReadLineAsync(timeout.Token))?.Split(' ').ElementAtOrDefault(1);
+                var target = (await new StreamReader(stream).ReadLineAsync(timeout.Token))?.Split(' ').ElementAtOrDefault(1);
                 if (target == null || !target.StartsWith(SignInPath, StringComparison.Ordinal))
                 {
                     await RespondAsync(stream, "404 Not Found", "Not here.", timeout.Token);
                     continue;
                 }
                 var query = LogsSignIn.Query(target.Contains('?') ? target[target.IndexOf('?')..] : "");
-                bool ours = query.GetValueOrDefault(LogsSignIn.StateParameter) == state;
-                bool done = ours && query.ContainsKey(LogsSignIn.CodeParameter);
+                var ours = query.GetValueOrDefault(LogsSignIn.StateParameter) == state;
+                var done = ours && query.ContainsKey(LogsSignIn.CodeParameter);
                 await RespondAsync(stream, "200 OK", done
                     ? "You are signed in to SimFell. You can close this tab."
                     : "SimFell did not sign you in. You can close this tab and try again.", timeout.Token);
@@ -69,10 +70,10 @@ public sealed class LoopbackSignInLauncher(Func<string, Task> openBrowser) : ISi
 
     private static async Task RespondAsync(Stream stream, string status, string message, CancellationToken ct)
     {
-        string page = $"<!doctype html><meta charset=\"utf-8\"><title>SimFell</title>" +
+        var page = $"<!doctype html><meta charset=\"utf-8\"><title>SimFell</title>" +
                       $"<body style=\"font-family:system-ui,sans-serif;background:#000;color:#ecedee;padding:40px\"><p>{WebUtility.HtmlEncode(message)}</p>";
-        byte[] body = Encoding.UTF8.GetBytes(page);
-        byte[] head = Encoding.ASCII.GetBytes($"HTTP/1.1 {status}\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {body.Length}\r\nConnection: close\r\n\r\n");
+        var body = Encoding.UTF8.GetBytes(page);
+        var head = Encoding.ASCII.GetBytes($"HTTP/1.1 {status}\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {body.Length}\r\nConnection: close\r\n\r\n");
         await stream.WriteAsync(head, ct);
         await stream.WriteAsync(body, ct);
     }

@@ -26,10 +26,10 @@ public class SlowBurn : Talent
         var searing = ardeos.GetAbility<SearingBlaze>()?.Dot;
         if (fireBall == null) return;
         var burn = fireBall.Dot;
-        double perTick = ExtensionOverDurationSeconds * burn.BasePeriod / burn.Duration;
+        var perTick = ExtensionOverDurationSeconds * burn.BasePeriod / burn.Duration;
         burn.Ticked += (ctx, dot, fraction) =>
         {
-            double seconds = perTick * fraction;
+            var seconds = perTick * fraction;
             foreach (var other in ardeos.Dots.On(dot.Target).Where(d => d.Effect == engulfing || d.Effect == searing).ToList())
             {
                 ardeos.Dots.Extend(ctx, other, seconds);

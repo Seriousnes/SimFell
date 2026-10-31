@@ -43,13 +43,13 @@ public sealed partial class ActionListStore(ReplayLibrary library, IBlobStore st
     public async Task<IReadOnlyList<ActionListEntry>> ListAsync(Visitor visitor, IEnumerable<string> heroes, CancellationToken ct = default)
     {
         var entries = new List<ActionListEntry>();
-        foreach (string hero in heroes)
+        foreach (var hero in heroes)
         {
-            string prefix = visitor.Key($"{Folder}/{hero}");
+            var prefix = visitor.Key($"{Folder}/{hero}");
             entries.AddRange((await store.ListAsync(prefix, ct))
                 .Where(key => key.EndsWith(ProfileStore.Extension, StringComparison.Ordinal) && key.LastIndexOf('/') == prefix.Length)
                 .Select(key => new ActionListEntry(hero, key[(prefix.Length + 1)..^ProfileStore.Extension.Length])));
-            string shared = Path.Combine(SharedDirectory, hero);
+            var shared = Path.Combine(SharedDirectory, hero);
             if (!visitor.OwnsDataFolder && Directory.Exists(shared))
             {
                 entries.AddRange(Directory.GetFiles(shared, SearchPattern).Select(path => new ActionListEntry(hero, Path.GetFileNameWithoutExtension(path), Shared: true)));
@@ -63,7 +63,7 @@ public sealed partial class ActionListStore(ReplayLibrary library, IBlobStore st
     {
         if (!IsValidName(entry.Name)) return null;
         if (!entry.Shared) return await store.ReadAsync(KeyOf(visitor, entry.Hero, entry.Name), ct);
-        string path = PathOf(entry.Hero, entry.Name);
+        var path = PathOf(entry.Hero, entry.Name);
         return File.Exists(path) ? await File.ReadAllTextAsync(path, ct) : null;
     }
 

@@ -30,7 +30,7 @@ public static partial class CodeEdits
     /// </summary>
     public static CompletionList? Open(AplVocabulary vocabulary, string text, CaretPlace caret, bool always)
     {
-        string word = PathBefore().Match(text[..Math.Min(caret.At, text.Length)]).Value;
+        var word = PathBefore().Match(text[..Math.Min(caret.At, text.Length)]).Value;
         if (!caret.Focused || (word.Length > 0 && char.IsAsciiDigit(word[0])) || (word.Length == 0 && !always)) return null;
         var items = Completions.For(vocabulary, word).Take(MaxItems).ToList();
         if (items.Count == 0) return null;
@@ -44,9 +44,9 @@ public static partial class CodeEdits
     public static AcceptedCompletion Accept(string text, int at, Completion item)
     {
         at = Math.Min(at, text.Length);
-        string partial = PartBefore().Match(text[..at]).Value;
-        string rest = PartAfter().Match(text[at..]).Value;
-        string written = item.Text + (item.HasMore ? Completions.PathSeparator : "");
+        var partial = PartBefore().Match(text[..at]).Value;
+        var rest = PartAfter().Match(text[at..]).Value;
+        var written = item.Text + (item.HasMore ? Completions.PathSeparator : "");
         return new AcceptedCompletion(text[..(at - partial.Length)] + written + text[(at + rest.Length)..], at - partial.Length + written.Length);
     }
 }

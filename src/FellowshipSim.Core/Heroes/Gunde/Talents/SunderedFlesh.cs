@@ -19,9 +19,9 @@ public class SunderedFlesh : Talent
         gunde.SunderedFleshCheck = (ctx, target) =>
         {
             if (target.MaxHealth <= 0 || target.IsSleeping) return;
-            double left = gunde.Rend.Remaining(target);
+            var left = gunde.Rend.Remaining(target);
             if (left <= 0.0 || left < target.CurrentHealth) return;
-            double damage = gunde.Rend.Consume(ctx, target);
+            var damage = gunde.Rend.Consume(ctx, target);
             ctx.ApplyDamage(gunde, target, damage, Rend.DamageId, Rend.DamageName, canCrit: false, 0.0, 1.0);
         };
     }

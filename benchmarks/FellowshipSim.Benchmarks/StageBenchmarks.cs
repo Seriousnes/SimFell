@@ -32,7 +32,7 @@ public class AplDecisionBenchmarks
     [Benchmark]
     public int EvaluateActionList()
     {
-        int ready = 0;
+        var ready = 0;
         foreach (var action in _actions)
         {
             if (action is BoundAplAction ability ? ability.CanExecute(_ctx) : action.ConditionHolds(_ctx)) ready++;
@@ -80,7 +80,7 @@ public class AuraBenchmarks
     {
         var now = ctx.CurrentTime;
         hero.Auras.Apply(def, now);
-        double during = hero.GetHaste(now) + hero.CritChance(now);
+        var during = hero.GetHaste(now) + hero.CritChance(now);
         hero.Auras.Remove(def, now);
         return during + hero.GetHaste(now) + hero.CritChance(now);
     }
@@ -183,18 +183,18 @@ public class EventQueueBenchmarks
         // A context with no fight running: only the benchmark's events are queued.
         _ctx = new SimulationContext(Fight.NewHero());
         var rng = new Random(EventSeed);
-        for (int i = 0; i < Events; i++) _times[i] = SimTime.FromSeconds(rng.NextDouble() * EventSpreadSeconds);
+        for (var i = 0; i < Events; i++) _times[i] = SimTime.FromSeconds(rng.NextDouble() * EventSpreadSeconds);
     }
 
     [Benchmark(OperationsPerInvoke = Events)]
     public int ScheduleCancelDequeue()
     {
-        for (int i = 0; i < Events; i++)
+        for (var i = 0; i < Events; i++)
         {
             var ev = _kernel.ScheduleAt(_times[i], NoOp, "Benchmark");
             if ((i & CancelMask) == 0) ev.Cancel();
         }
-        int fired = 0;
+        var fired = 0;
         while (_kernel.TryDequeueDue(SimTime.Infinite, out _)) fired++;
         return fired;
     }
@@ -202,12 +202,12 @@ public class EventQueueBenchmarks
     [Benchmark(OperationsPerInvoke = Events)]
     public int ScheduleCapturingClosure()
     {
-        for (int i = 0; i < Events; i++)
+        for (var i = 0; i < Events; i++)
         {
-            int index = i;
+            var index = i;
             _kernel.ScheduleAt(_times[i], _ => _fired += index, "Benchmark");
         }
-        int fired = 0;
+        var fired = 0;
         while (_kernel.TryDequeueDue(SimTime.Infinite, out _)) fired++;
         return fired + _fired;
     }

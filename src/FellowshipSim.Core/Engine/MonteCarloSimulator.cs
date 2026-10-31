@@ -100,7 +100,7 @@ public class MonteCarloSimulator
         CancellationToken cancellationToken = default, FightOptions? fight = null)
     {
         fight ??= FightOptions.Default;
-        double[]? fightDamage = keepFightDamage ? new double[iterations] : null;
+        var fightDamage = keepFightDamage ? new double[iterations] : null;
         var total = new Totals();
         var options = new ParallelOptions
         {
@@ -111,9 +111,9 @@ public class MonteCarloSimulator
 
         // Fights run in chunks of consecutive fights, and the chunks' totals merge in chunk order whatever thread ran
         // them, so a run gives the same totals to the last bit on any number of threads.
-        int chunkCount = ChunkCount(iterations);
+        var chunkCount = ChunkCount(iterations);
         var finished = new Totals?[chunkCount];
-        int nextToMerge = 0;
+        var nextToMerge = 0;
 
         Parallel.For(0, chunkCount, options,
             () => _idle.TryTake(out var worker) ? worker : NewWorker(),
@@ -156,11 +156,11 @@ public class MonteCarloSimulator
         var worker = _idle.TryTake(out var idle) ? idle : NewWorker();
         try
         {
-            int size = ChunkSize(iterations);
-            double[]? fightDamage = keepFightDamage ? new double[iterations] : null;
+            var size = ChunkSize(iterations);
+            var fightDamage = keepFightDamage ? new double[iterations] : null;
             var totals = FightChunk(worker, chunk, duration, iterations, targetCount, firstSeed, fight ?? FightOptions.Default,
                 fightDamage, cancellationToken);
-            int start = chunk * size;
+            var start = chunk * size;
             return totals.ToChunk(chunk, fightDamage == null ? [] : fightDamage[start..Math.Min(iterations, start + size)]);
         }
         finally
@@ -182,7 +182,7 @@ public class MonteCarloSimulator
         }
         var total = new Totals();
         foreach (var chunk in chunks) total.Merge(Totals.From(chunk));
-        double[]? fightDamage = keepFightDamage ? chunks.SelectMany(c => c.FightDamage).ToArray() : null;
+        var fightDamage = keepFightDamage ? chunks.SelectMany(c => c.FightDamage).ToArray() : null;
         return Result(total, fightDamage, duration, iterations, targetCount);
     }
 
@@ -190,16 +190,16 @@ public class MonteCarloSimulator
     private static Totals FightChunk(Worker worker, int chunk, SimTime duration, int iterations, int targetCount, int firstSeed,
         FightOptions fight, double[]? fightDamage, CancellationToken cancellationToken)
     {
-        int seconds = (int)Math.Ceiling(Math.Max(1.0, fight.LongestLength(duration).TotalSeconds));
-        int size = ChunkSize(iterations);
+        var seconds = (int)Math.Ceiling(Math.Max(1.0, fight.LongestLength(duration).TotalSeconds));
+        var size = ChunkSize(iterations);
         var totals = new Totals();
-        int end = Math.Min(iterations, (chunk + 1) * size);
-        for (int i = chunk * size; i < end; i++)
+        var end = Math.Min(iterations, (chunk + 1) * size);
+        for (var i = chunk * size; i < end; i++)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var length = fight.Length(duration, firstSeed + i);
-            double damage = Fight(worker, length, targetCount, firstSeed + i, i, seconds, fight, totals);
-            double lengthSeconds = Math.Max(1.0, length.TotalSeconds);
+            var damage = Fight(worker, length, targetCount, firstSeed + i, i, seconds, fight, totals);
+            var lengthSeconds = Math.Max(1.0, length.TotalSeconds);
             totals.Add(damage / lengthSeconds, damage, lengthSeconds);
             if (fightDamage != null) fightDamage[i] = damage;
         }
@@ -209,7 +209,7 @@ public class MonteCarloSimulator
     private static MonteCarloResult Result(Totals total, double[]? fightDamage, SimTime duration, int iterations, int targetCount)
     {
         // The fights' mean length: every fight's, or the duration for a run of none.
-        double totalSeconds = total.Count > 0 ? total.LengthSum / total.Count : Math.Max(1.0, duration.TotalSeconds);
+        var totalSeconds = total.Count > 0 ? total.LengthSum / total.Count : Math.Max(1.0, duration.TotalSeconds);
         var abilityDps = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
         foreach (var (ability, totalDmg) in total.AbilityDamage)
         {
@@ -259,7 +259,7 @@ public class MonteCarloSimulator
         if (!options.Boss) foreach (var aura in hero.BossAuras) hero.Auras.Remove(aura, SimTime.Zero);
 
         // Populate enemies
-        for (int i = 1; i <= targetCount; i++)
+        for (var i = 1; i <= targetCount; i++)
         {
             var enemy = ctx.AddEnemy(TrainingMobIdBase + i, i, $"Training Mob {i}", maxHealth: TrainingMobMaxHealth);
             if (options.HealthFollowsTime) enemy.FollowTime(ctx, duration);
@@ -271,7 +271,7 @@ public class MonteCarloSimulator
         // event queue carry time forward to the next decision point.
         while (ctx.CurrentTime < duration)
         {
-            bool acted = IsFreeToAct(hero, ctx) && worker.Program.TryAct(ctx);
+            var acted = IsFreeToAct(hero, ctx) && worker.Program.TryAct(ctx);
 
             var next = NextDecisionTime(hero);
             if (!acted && next <= ctx.CurrentTime)
@@ -287,7 +287,7 @@ public class MonteCarloSimulator
 
         foreach (var (ability, dmg) in ctx.AbilityDamage)
         {
-            totals.AbilityDamage.TryGetValue(ability, out double cur);
+            totals.AbilityDamage.TryGetValue(ability, out var cur);
             totals.AbilityDamage[ability] = cur + dmg;
         }
         return ctx.TotalDamage;
@@ -356,7 +356,7 @@ public class MonteCarloSimulator
             DamageSum += damage;
             LengthSum += seconds;
             Count++;
-            double delta = dps - Mean;
+            var delta = dps - Mean;
             Mean += delta / Count;
             M2 += delta * (dps - Mean);
             Min = Math.Min(Min, dps);
@@ -367,8 +367,8 @@ public class MonteCarloSimulator
         public void Merge(Totals other)
         {
             if (other.Count == 0) return;
-            long count = Count + other.Count;
-            double delta = other.Mean - Mean;
+            var count = Count + other.Count;
+            var delta = other.Mean - Mean;
             Mean += delta * other.Count / count;
             M2 += other.M2 + delta * delta * ((double)Count * other.Count / count);
             Count = count;
@@ -378,7 +378,7 @@ public class MonteCarloSimulator
             Max = Math.Max(Max, other.Max);
             foreach (var (ability, damage) in other.AbilityDamage)
             {
-                AbilityDamage.TryGetValue(ability, out double cur);
+                AbilityDamage.TryGetValue(ability, out var cur);
                 AbilityDamage[ability] = cur + damage;
             }
             Report.Merge(other.Report);

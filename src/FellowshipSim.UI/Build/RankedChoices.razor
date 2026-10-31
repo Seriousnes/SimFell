@@ -2,7 +2,7 @@
 <div class="grid">
     @foreach (var option in Options)
     {
-        int rank = RankOf(option.Id);
+        var rank = RankOf(option.Id);
         <div @key="option.Id" class="option @(rank > 0 ? "taken" : "")">
             <GameIcon Url="@option.IconUrl" />
             <span class="name">

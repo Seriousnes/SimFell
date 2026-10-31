@@ -66,19 +66,19 @@ public class MaraTalentSmokeTests(ITestOutputHelper output)
     [InlineData(Puncture.TalentId, "more:damage:Widow's Bite")]
     public void Talent_Is_Modeled_And_Takes_Effect(int talentId, string evidence, int minTargets = 1, int maxTargets = 8)
     {
-        foreach (int targets in new[] { 1, 8 }.Where(t => t >= minTargets && t <= maxTargets))
+        foreach (var targets in new[] { 1, 8 }.Where(t => t >= minTargets && t <= maxTargets))
         {
             // The base leaves the talent out, so only the talent can show the evidence.
-            int[] without = BaseTalents.Where(t => t != talentId).ToArray();
+            var without = BaseTalents.Where(t => t != talentId).ToArray();
             var (result, hero, gained) = Run([.. without, talentId], targets);
             Assert.DoesNotContain(hero.UnmodeledFeatures, f => f.StartsWith("Talent"));
             Assert.Contains(hero.Talents, t => t.Id == talentId);
             Assert.True(result.MeanDps > 0);
             // "more:" evidence is there without the talent too: the talent must add to it.
-            bool more = evidence.StartsWith("more:");
-            string shown = more ? evidence["more:".Length..] : evidence;
-            double amount = Amount(result, gained, shown);
-            double baseline = 0.0;
+            var more = evidence.StartsWith("more:");
+            var shown = more ? evidence["more:".Length..] : evidence;
+            var amount = Amount(result, gained, shown);
+            var baseline = 0.0;
             if (more)
             {
                 var (baseResult, _, baseGained) = Run(without, targets);
@@ -110,7 +110,7 @@ public class MaraTalentSmokeTests(ITestOutputHelper output)
         var (result, hero, gained) = Run(BaseTalents, 3, legendaryItemId: itemId);
         Assert.DoesNotContain(hero.UnmodeledFeatures, f => f.StartsWith("Legendary"));
         Assert.Single(hero.Legendaries);
-        double amount = Amount(result, gained, evidence);
+        var amount = Amount(result, gained, evidence);
         output.WriteLine($"Legendary item {itemId}: {result.MeanDps:N0} DPS, {evidence} -> {amount:N0}");
         Assert.True(amount > 0, $"Legendary item {itemId}: no {evidence}");
     }
@@ -140,7 +140,7 @@ public class MaraTalentSmokeTests(ITestOutputHelper output)
     /// <summary>Gains of an "aura:" evidence, the DPS of a "damage:" one, the Energy gained ("energy") or the DPS ("dps").</summary>
     private static double Amount(MonteCarloResult result, Dictionary<string, int> gained, string evidence)
     {
-        string[] parts = evidence.Split(':', 2);
+        var parts = evidence.Split(':', 2);
         return parts[0] switch
         {
             "aura" => gained.GetValueOrDefault(parts[1]),

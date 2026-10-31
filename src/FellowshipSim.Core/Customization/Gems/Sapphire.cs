@@ -65,7 +65,7 @@ public class Sapphire : Gem
         var old = before.FirstOrDefault(n => n.Slot == HeadlineSlot);
         var next = NodeInSlot(HeadlineSlot);
         if (old == null || next == null || old == next) return;
-        int index = hero.SpiritOfHeroismAuras.IndexOf(old.Grants!);
+        var index = hero.SpiritOfHeroismAuras.IndexOf(old.Grants!);
         if (index >= 0) hero.SpiritOfHeroismAuras[index] = hero.Register(next.Grants!);
         hero.AddMaxSpiritPoints(next.Value(SpiritPointsBonusKey) - old.Value(SpiritPointsBonusKey));
     }

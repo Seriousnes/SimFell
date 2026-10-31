@@ -29,9 +29,9 @@
                     <tbody>
                         @foreach (var review in Reviews)
                         {
-                            double hits = review.LogHits != 0 ? (double)review.MatchedHits / review.LogHits : 0;
-                            double damage = review.LogDamage != 0 ? review.EngineDamage / review.LogDamage : 0;
-                            string date = review.FightDate is { } fightDate ? fightDate.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : "";
+                            var hits = review.LogHits != 0 ? (double)review.MatchedHits / review.LogHits : 0;
+                            var damage = review.LogDamage != 0 ? review.EngineDamage / review.LogDamage : 0;
+                            var date = review.FightDate is { } fightDate ? fightDate.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : "";
                             var fd = review.FreeDice;
                             <tr @key="review.Id">
                                 <td><button type="button" class="link-button" @onclick="() => Views.ShowReview(review.HtmlFile, ReviewTitle.Replay(review))">@review.PlayerName</button></td>
@@ -48,7 +48,7 @@
                                 <td class="num @RatioClass(damage, DamageGood, DamageWarn)">@Percent(damage)</td>
                                 @if (fd != null)
                                 {
-                                    double fdDamage = fd.EngineMean / fd.LogDamage;
+                                    var fdDamage = fd.EngineMean / fd.LogDamage;
                                     <td class="num @RatioClass(fdDamage, FreeDiceDamageGood, FreeDiceDamageWarn)"
                                         data-tooltip="@($"{fd.Runs} runs, engine 5-95%: {Math.Round(fd.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(fd.Engine95, MidpointRounding.AwayFromZero):N0}")">
                                         <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(review), ReviewTitle.FreeDice(review))">@Percent(fdDamage)</button>
@@ -117,7 +117,7 @@
 
     private static string RatioClass(double ratio, double good, double warn)
     {
-        double off = Math.Abs(1 - ratio);
+        var off = Math.Abs(1 - ratio);
         return off <= good ? "good" : off <= warn ? "warn" : "bad";
     }
 

@@ -71,9 +71,9 @@ public class Kindling : Sigil
         {
             if (!burn.Active) return;
             burn.Active = false;
-            double fraction = burn.NextTick is { IsActive: true } timer ? timer.ElapsedBaseSeconds / TickSeconds : 0.0;
+            var fraction = burn.NextTick is { IsActive: true } timer ? timer.ElapsedBaseSeconds / TickSeconds : 0.0;
             // The partial tick reads how long the period has run (period - remaining, 0x1452D0C70) as the duration runs out.
-            double elapsed = fraction * TickSeconds / (1.0 + hero.GetHaste(ctx.CurrentTime));
+            var elapsed = fraction * TickSeconds / (1.0 + hero.GetHaste(ctx.CurrentTime));
             burn.NextTick?.Cancel();
             burn.NextTick = null;
             if (fraction <= 0 || elapsed < PeriodicEffect.MinHastedPartialTickSeconds - Tolerance.Comparison) return;

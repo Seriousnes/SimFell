@@ -47,7 +47,7 @@ public class AplEditorTests
     public void Formatter_Keeps_Written_Parentheses_And_Reads_Back_The_Same(string text, string expected)
     {
         var parsed = AplParser.ParseExpression(text);
-        string formatted = AplFormatter.Format(parsed);
+        var formatted = AplFormatter.Format(parsed);
         Assert.Equal(expected, formatted);
         Assert.Equal(parsed.ToString(), AplParser.ParseExpression(formatted).ToString());
     }
@@ -61,7 +61,7 @@ public class AplEditorTests
     public void Formatter_Writes_Words_For_The_Editor(string text, string expected)
     {
         var parsed = AplParser.ParseExpression(text);
-        string words = AplFormatter.Format(parsed, AplOperatorStyle.Words);
+        var words = AplFormatter.Format(parsed, AplOperatorStyle.Words);
         Assert.Equal(expected, words);
         Assert.Equal(AplFormatter.Format(parsed), AplFormatter.Format(AplParser.ParseExpression(words)));
     }
@@ -239,7 +239,7 @@ public class AplEditorTests
     {
         var (hero, ctx) = Fight(100);
         var charges = AplParser.ParseExpression("cooldown.cold_snap.charges");
-        double before = charges.EvaluateNumeric(hero, ctx);
+        var before = charges.EvaluateNumeric(hero, ctx);
         if (!AplParser.ParseScript(script).TryAct(hero, ctx)) return null;
         if (hero.CurrentCast != null) return AplNames.Slug(hero.CurrentCast.Ability.Name);
         ctx.RunUntil(SimTime.FromSeconds(0.5));
@@ -288,7 +288,7 @@ public class AplEditorTests
         Assert.DoesNotContain("frost_swallows", repeatable);
 
         var (hero, ctx) = Fight(100);
-        foreach (string slug in repeatable)
+        foreach (var slug in repeatable)
         {
             Assert.True(AplNames.FindAbility(hero, slug)!.CanCast(ctx), slug);
         }
@@ -428,7 +428,7 @@ public class AplEditorTests
         var ctx = new SimulationContext(hero);
         hero.ResetForIteration();
         hero.BeginFight(ctx);
-        for (int i = 0; i < healthPercents.Length; i++)
+        for (var i = 0; i < healthPercents.Length; i++)
         {
             var enemy = ctx.AddEnemy(100 + i, i + 1, $"Mob {i + 1}", maxHealth: 1000);
             enemy.CurrentHealth = 10 * healthPercents[i];

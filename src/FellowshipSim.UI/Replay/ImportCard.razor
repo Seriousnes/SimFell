@@ -35,7 +35,7 @@
             <div class="fights">
                 @foreach (var fight in linked != null && !State.ShowAllFights ? [linked] : fights)
                 {
-                    bool selected = fight.Id == State.Picked?.FightId;
+                    var selected = fight.Id == State.Picked?.FightId;
                     <div @key="fight.Id" class="fight @(selected ? "selected" : "")">
                         <div class="fight-head">
                             <span class="fight-name">@fight.Name</span>
@@ -46,8 +46,8 @@
                         <div class="players">
                             @foreach (var player in fight.Players)
                             {
-                                bool picked = selected && player.Id == State.Picked?.PlayerId;
-                                string kind = !player.Supported ? "player unsupported" : picked ? "player picked" : "player";
+                                var picked = selected && player.Id == State.Picked?.PlayerId;
+                                var kind = !player.Supported ? "player unsupported" : picked ? "player picked" : "player";
                                 <button @key="player.Id" type="button" class="@kind" aria-pressed="@picked"
                                         disabled="@(!player.Supported || Busy)"
                                         data-tooltip="@(player.Supported ? $"Pick {player.Name}'s {player.Hero}" : $"{player.Hero} is not supported yet")"
@@ -105,8 +105,8 @@
 
     private static string FormatDuration(double seconds)
     {
-        int minutes = (int)Math.Floor(seconds / SecondsPerMinute);
-        int remainder = (int)Math.Round(seconds % SecondsPerMinute, MidpointRounding.AwayFromZero);
+        var minutes = (int)Math.Floor(seconds / SecondsPerMinute);
+        var remainder = (int)Math.Round(seconds % SecondsPerMinute, MidpointRounding.AwayFromZero);
         return $"{minutes}:{remainder:00}";
     }
 

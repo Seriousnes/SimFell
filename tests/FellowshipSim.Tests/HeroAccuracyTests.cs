@@ -54,9 +54,9 @@ public class HeroAccuracyTests(ITestOutputHelper output)
             output.WriteLine("ACCURACY_HERO is not set; nothing to measure.");
             return;
         }
-        string label = Environment.GetEnvironmentVariable(LabelVariable) ?? DateTime.Now.ToString("yyyyMMdd-HHmmss");
-        int iterations = int.TryParse(Environment.GetEnvironmentVariable(FreeDiceIterationsVariable), out int parsedIterations) ? parsedIterations : DefaultFreeDiceIterations;
-        int threads = int.TryParse(Environment.GetEnvironmentVariable(ThreadsVariable), out int parsedThreads) ? parsedThreads : DefaultThreads;
+        var label = Environment.GetEnvironmentVariable(LabelVariable) ?? DateTime.Now.ToString("yyyyMMdd-HHmmss");
+        var iterations = int.TryParse(Environment.GetEnvironmentVariable(FreeDiceIterationsVariable), out var parsedIterations) ? parsedIterations : DefaultFreeDiceIterations;
+        var threads = int.TryParse(Environment.GetEnvironmentVariable(ThreadsVariable), out var parsedThreads) ? parsedThreads : DefaultThreads;
         var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder));
 
         var fights = new List<FightAccuracy>();
@@ -95,13 +95,13 @@ public class HeroAccuracyTests(ITestOutputHelper output)
                 .ToDictionary(g => g.Key, g => g.Sum(a => a.Value), StringComparer.OrdinalIgnoreCase),
             results.SelectMany(r => r.UnmodeledCustomizations).Distinct().Order().ToList());
 
-        string folder = Path.Combine(library.DataDirectory, AccuracyFolder, hero);
+        var folder = Path.Combine(library.DataDirectory, AccuracyFolder, hero);
         Directory.CreateDirectory(folder);
-        string baselinePath = Path.Combine(folder, BaselineFile);
+        var baselinePath = Path.Combine(folder, BaselineFile);
         var baseline = label != "baseline" && File.Exists(baselinePath)
             ? JsonSerializer.Deserialize<HeroAccuracy>(File.ReadAllText(baselinePath))
             : null;
-        string text = Format(accuracy, baseline);
+        var text = Format(accuracy, baseline);
         File.WriteAllText(Path.Combine(folder, $"{label}.txt"), text);
         File.WriteAllText(Path.Combine(folder, $"{label}.json"), JsonSerializer.Serialize(accuracy, Indented));
         output.WriteLine(text);
@@ -122,7 +122,7 @@ public class HeroAccuracyTests(ITestOutputHelper output)
                 var diceRows = dice.GetValueOrDefault(id) ?? [];
                 var normal = engineHits.Where(h => h.Ratio.HasValue && !h.Crit).Select(h => h.Ratio!.Value).ToList();
                 var crit = engineHits.Where(h => h.Ratio.HasValue && h.Crit).Select(h => h.Ratio!.Value).ToList();
-                string name = engineHits.FirstOrDefault()?.AbilityName ?? logHits.FirstOrDefault()?.AbilityName ?? diceRows.FirstOrDefault()?.Name ?? "?";
+                var name = engineHits.FirstOrDefault()?.AbilityName ?? logHits.FirstOrDefault()?.AbilityName ?? diceRows.FirstOrDefault()?.Name ?? "?";
                 return new AbilityAccuracy(id, name, logHits.Count, engineHits.Count(h => h.Log != null && h.LandedTime.HasValue), engineHits.Count(h => h.Log == null),
                     logHits.Sum(h => h.UnblockedAmount), engineHits.Sum(h => h.EngineAmount),
                     normal.Count, normal.Count == 0 ? 0 : normal.Average(), crit.Count, crit.Count == 0 ? 0 : crit.Average(),
@@ -153,7 +153,7 @@ public class HeroAccuracyTests(ITestOutputHelper output)
         sb.AppendLine("fight                              player            hits matched  exact/log  dice/log  log pct  clean steps  forced");
         foreach (var fightResult in accuracy.FightResults)
         {
-            string fight = $"{fightResult.ReportCode}#{fightResult.FightId} {fightResult.FightName}".PadRight(34)[..34];
+            var fight = $"{fightResult.ReportCode}#{fightResult.FightId} {fightResult.FightName}".PadRight(34)[..34];
             sb.AppendLine($"{fight} {fightResult.PlayerName.PadRight(16)[..16]}  {Ratio(fightResult.MatchedHits, fightResult.LogHits),12:P1}  {Ratio(fightResult.ExactDamage, fightResult.LogDamage),9:P1}  " +
                           $"{Ratio(fightResult.FreeDiceMean, fightResult.LogDamage),8:P1}  {fightResult.FreeDiceLogPercentile,7:P0}  {fightResult.PassedSteps,5}/{fightResult.TotalSteps,-5}  {fightResult.ForcedCasts,6}");
         }

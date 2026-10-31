@@ -71,14 +71,14 @@ public class ChainLightning : TariqAbility
     private void Launch(SimulationContext ctx, EnemyTarget target)
     {
         var hero = Tariq;
-        double castMultiplier = CastDamageMultiplier;
-        double castCrit = (CurrentCast?.CritChance ?? 0.0) + hero.LightningCritChance;
-        int hits = Hits + ExtraHits;
+        var castMultiplier = CastDamageMultiplier;
+        var castCrit = (CurrentCast?.CritChance ?? 0.0) + hero.LightningCritChance;
+        var hits = Hits + ExtraHits;
         var hitSoFar = new HashSet<EnemyTarget>();
         EnemyTarget? last = null;
-        for (int i = 0; i < hits; i++)
+        for (var i = 0; i < hits; i++)
         {
-            bool first = i == 0;
+            var first = i == 0;
             ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * BounceSeconds), c =>
             {
                 var next = NextTarget(c, target, first, last, hitSoFar);
@@ -86,7 +86,7 @@ public class ChainLightning : TariqAbility
                 if (!first) Bounced?.Invoke(c);
                 last = next;
                 if (next != target) hitSoFar.Add(next);
-                double motherload = 1.0 + DamagePerOtherEnemy * hitSoFar.Count;
+                var motherload = 1.0 + DamagePerOtherEnemy * hitSoFar.Count;
                 hero.GainFury(FuryPerHit * FuryMultiplier, c, next);
                 DealDamage(c, next, damageMultiplier: castMultiplier * motherload, extraCritChance: castCrit);
             }, Name);
@@ -102,7 +102,7 @@ public class ChainLightning : TariqAbility
         var enemies = ctx.ActiveEnemies;
         if (enemies.Count == 0) return null;
         EnemyTarget? preferred = first && target is { IsSleeping: false } ? target : null;
-        for (int i = 0; preferred == null && i < enemies.Count; i++)
+        for (var i = 0; preferred == null && i < enemies.Count; i++)
         {
             if (enemies[i] != target && enemies[i] != last && !hitSoFar.Contains(enemies[i])) preferred = enemies[i];
         }

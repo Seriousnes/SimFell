@@ -148,7 +148,7 @@ public class PropertyExpression : IAplExpression
     /// </summary>
     public static double FullRechargeTime(CooldownState state, Ability? ability, SimTime now)
     {
-        int missing = state.MaxCharges - state.ChargesAt(now);
+        var missing = state.MaxCharges - state.ChargesAt(now);
         if (missing <= 0) return 0.0;
         return Math.Max(0.0, (state.NextChargeAt - now).TotalSeconds) + (missing - 1) * (ability?.Cooldown.TotalSeconds ?? 0.0);
     }
@@ -275,7 +275,7 @@ public class PropertyExpression : IAplExpression
     {
         get
         {
-            string path = PropertyPath.StartsWith(ResourcePrefix) ? PropertyPath[ResourcePrefix.Length..] : PropertyPath;
+            var path = PropertyPath.StartsWith(ResourcePrefix) ? PropertyPath[ResourcePrefix.Length..] : PropertyPath;
             return IsDeficit ? path[..^DeficitSuffix.Length] : path;
         }
     }
@@ -444,8 +444,8 @@ public class BinaryOpExpression : IAplExpression
         switch (Operator)
         {
             case BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo:
-                double left = Left.EvaluateNumeric(hero, ctx);
-                double right = Right.EvaluateNumeric(hero, ctx);
+                var left = Left.EvaluateNumeric(hero, ctx);
+                var right = Right.EvaluateNumeric(hero, ctx);
                 return Operator switch
                 {
                     BinaryOperator.Add => left + right,

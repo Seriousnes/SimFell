@@ -16,7 +16,7 @@
         <div class="finders" role="radiogroup" aria-label="Finder">
             @foreach (var kind in Enum.GetValues<FinderKind>())
             {
-                bool selected = On && kind == State.Finder;
+                var selected = On && kind == State.Finder;
                 <label @key="kind" class="finder @(selected ? "on" : "")">
                     <input type="radio" name="finder" checked="@selected" @onchange="() => Pick(kind)" />
                     <strong>@Title(kind)</strong>

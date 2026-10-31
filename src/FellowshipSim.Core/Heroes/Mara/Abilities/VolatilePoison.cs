@@ -43,14 +43,14 @@ public class VolatilePoison : MaraAbility
             _version.Clear();
             _fight = ctx;
         }
-        int version = _version.GetValueOrDefault(target) + 1;
+        var version = _version.GetValueOrDefault(target) + 1;
         _version[target] = version;
         target.Auras.Apply(Debuff, ctx.CurrentTime);
-        int ticks = Math.Max(1, (int)Math.Round(BaseTicks * (1.0 + Owner.GetHaste(ctx.CurrentTime))));
-        double spacing = DurationSeconds / ticks;
-        for (int k = 1; k <= ticks; k++)
+        var ticks = Math.Max(1, (int)Math.Round(BaseTicks * (1.0 + Owner.GetHaste(ctx.CurrentTime))));
+        var spacing = DurationSeconds / ticks;
+        for (var k = 1; k <= ticks; k++)
         {
-            bool last = k == ticks;
+            var last = k == ticks;
             ctx.Schedule(SimTime.FromSeconds(spacing * k), c =>
             {
                 if (_version.GetValueOrDefault(target) != version || target.IsSleeping) return;

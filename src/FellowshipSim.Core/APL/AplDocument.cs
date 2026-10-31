@@ -54,9 +54,9 @@ public static class AplDocument
         var actions = new List<AplDocumentAction>();
         var comment = new List<string>();
         var lines = script.Split(LineBreak).Select(l => l.Trim()).ToArray();
-        for (int i = 0; i < lines.Length; i++)
+        for (var i = 0; i < lines.Length; i++)
         {
-            string line = lines[i];
+            var line = lines[i];
             if (line.Length == 0) continue;
             if (line.StartsWith('#'))
             {
@@ -73,7 +73,7 @@ public static class AplDocument
             {
                 throw new ParseException($"APL line {i + 1}: {exception.Message}", exception.ErrorPosition, exception);
             }
-            bool listAction = AplListActions.Parse(syntax.Name) != null;
+            var listAction = AplListActions.Parse(syntax.Name) != null;
             var arguments = syntax.Arguments
                 .Where(a => !(listAction && a.Key.Equals(AplActionLine.ListNameKey, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
@@ -107,10 +107,10 @@ public static class AplDocument
         var errors = new List<AplDocumentError>();
         var lists = actions.Select(ListOf).Prepend(AplActionLine.DefaultList).Distinct().ToList();
         var blocks = lists.ToDictionary(l => l, _ => new List<string>());
-        for (int i = 0; i < actions.Count; i++)
+        for (var i = 0; i < actions.Count; i++)
         {
             var action = actions[i];
-            string ability = action.Ability.Trim();
+            var ability = action.Ability.Trim();
             if (!IsName(ability)) errors.Add(new AplDocumentError(i, AplDocumentError.AbilityField, "Pick an ability."));
             var condition = ParseField(i, AplDocumentError.ConditionField, action.Condition, errors);
             var targetExpression = ParseField(i, AplDocumentError.TargetExpressionField, action.TargetExpression, errors);
@@ -118,13 +118,13 @@ public static class AplDocument
             {
                 errors.Add(new AplDocumentError(i, AplDocumentError.TargetExpressionField, "Enter an expression for target selection."));
             }
-            string list = ListOf(action);
+            var list = ListOf(action);
             if (!IsName(list)) errors.Add(new AplDocumentError(i, AplDocumentError.ListField, $"`{list}` is not a list name."));
 
             var arguments = ParseArguments(i, action.Arguments, errors).ToList();
             if (AplListActions.Parse(ability) != null)
             {
-                string actionList = action.ActionList?.Trim() ?? "";
+                var actionList = action.ActionList?.Trim() ?? "";
                 if (IsName(actionList) && lists.Contains(actionList))
                 {
                     arguments.Insert(0, new AplArgument(AplActionLine.ListNameKey, new Expressions.PropertyExpression(actionList)));
@@ -136,7 +136,7 @@ public static class AplDocument
             }
 
             var lines = blocks[list];
-            foreach (string comment in (action.Comment ?? "").Split(LineBreak).Select(c => c.TrimEnd()).Where(c => c.Length > 0))
+            foreach (var comment in (action.Comment ?? "").Split(LineBreak).Select(c => c.TrimEnd()).Where(c => c.Length > 0))
             {
                 lines.Add($"# {comment}");
             }

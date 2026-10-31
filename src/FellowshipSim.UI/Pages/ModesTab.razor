@@ -88,7 +88,7 @@
     private string LengthText()
     {
         if (!State.VaryLength || State.LengthVariancePercent <= 0) return "Every fight lasts the duration.";
-        double share = State.LengthVariancePercent / PercentScale;
+        var share = State.LengthVariancePercent / PercentScale;
         return $"Each fight lasts {Number(State.DurationSeconds * (1 - share))} – {Number(State.DurationSeconds * (1 + share))} s, so no build is tuned to one exact length.";
     }
 

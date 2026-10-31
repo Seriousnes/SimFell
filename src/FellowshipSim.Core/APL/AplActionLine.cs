@@ -39,7 +39,7 @@ public sealed record AplActionLine(string List, string Name, IAplExpression? Con
     /// <summary>The line in canonical form, with expressions in <see cref="AplFormatter"/> form.</summary>
     public override string ToString()
     {
-        string line = $"{PrefixOf(List)}+=/{Name}";
+        var line = $"{PrefixOf(List)}+=/{Name}";
         foreach (var argument in Arguments)
         {
             line += $",{argument}";

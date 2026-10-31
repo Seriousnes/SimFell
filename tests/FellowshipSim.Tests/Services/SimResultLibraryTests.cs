@@ -56,7 +56,7 @@ public sealed class SimResultLibraryTests : IDisposable
     {
         var kept = new SimResultLibrary(_store) { Keep = 2 };
         var day = new DateTime(2026, 10, 20, 0, 0, 0, DateTimeKind.Utc);
-        foreach (int index in Enumerable.Range(0, 4)) await kept.SaveAsync(FirstVisitor, Sim($"s{index}", day.AddDays(index)));
+        foreach (var index in Enumerable.Range(0, 4)) await kept.SaveAsync(FirstVisitor, Sim($"s{index}", day.AddDays(index)));
 
         Assert.Equal(["s3", "s2"], (await kept.ListAsync(FirstVisitor)).Select(s => s.Id));
         Assert.Null(await kept.GetAsync(FirstVisitor, "s0"));

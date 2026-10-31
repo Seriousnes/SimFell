@@ -52,11 +52,11 @@ public class Hemotoxin : Talent
         {
             if (!poison.ConsumeStack(ctx, target)) return;
             var hemorrhage = mara.Hemorrhage;
-            double bleed = hemorrhage.TickDamage(ctx, target) * hemorrhage.TicksIn(HemorrhagingStrike.BleedSeconds(points), ctx.CurrentTime);
+            var bleed = hemorrhage.TickDamage(ctx, target) * hemorrhage.TicksIn(HemorrhagingStrike.BleedSeconds(points), ctx.CurrentTime);
             burst.Strike(ctx, target, bleed * TargetShare);
             var nearby = ctx.ActiveEnemiesExcept(target);
             if (nearby.Count == 0) return;
-            double falloff = nearby.Count > NearbyTargetThreshold ? Math.Sqrt(NearbyTargetThreshold / nearby.Count) : 1.0;
+            var falloff = nearby.Count > NearbyTargetThreshold ? Math.Sqrt(NearbyTargetThreshold / nearby.Count) : 1.0;
             foreach (var enemy in nearby) burst.Strike(ctx, enemy, bleed * NearbyShare * falloff);
         };
     }

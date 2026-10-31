@@ -16,7 +16,7 @@ public class FellowshipLogsSignInTests
     [Fact]
     public void The_Sign_In_Page_Has_The_Public_Client_Its_Way_Back_And_The_Challenge()
     {
-        string uri = FellowshipLogsSignIn.AuthorizeUri(FellowshipLogsSignIn.SiteRedirect, "dBjftJeZ4CVP-mJ92K1ZhOVt3n4GfTvfcatrDaSu_cc7", "abc");
+        var uri = FellowshipLogsSignIn.AuthorizeUri(FellowshipLogsSignIn.SiteRedirect, "dBjftJeZ4CVP-mJ92K1ZhOVt3n4GfTvfcatrDaSu_cc7", "abc");
         Assert.StartsWith("https://www.fellowshiplogs.com/oauth/authorize?response_type=code&client_id=01a184e8-f34e-721e-9067-1fe8884bc1ca", uri);
         Assert.Contains("&redirect_uri=https%3A%2F%2Fsimfelldev.github.io%2Fsignin", uri);
         Assert.Contains("&code_challenge=WkTxhmINhW-bB_0mX6MFD8PVlfUilr6SNfg2-UUnN2M&code_challenge_method=S256&state=abc", uri);

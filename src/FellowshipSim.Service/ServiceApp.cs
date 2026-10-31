@@ -91,7 +91,7 @@ public static class ServiceApp
     {
         // The application name picks the assembly whose static assets are served, also when another program hosts this app.
         // The one-person app finds its wwwroot beside its exe, wherever it was started from.
-        bool localArgs = new ConfigurationBuilder().AddCommandLine(args).Build().GetValue<bool>(LocalKey);
+        var localArgs = new ConfigurationBuilder().AddCommandLine(args).Build().GetValue<bool>(LocalKey);
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = args,
@@ -101,11 +101,11 @@ public static class ServiceApp
         // A developer's FellowshipLogs API client: the repository's settings.json, copied beside the app by its build.
         builder.Configuration.AddJsonFile(Path.Combine(AppContext.BaseDirectory, SettingsFile), optional: true);
         configure?.Invoke(builder);
-        bool local = IsLocal(builder.Configuration);
+        var local = IsLocal(builder.Configuration);
 
         // Downloaded fights, replay scripts, review pages and local settings live in the data folder: "DataDirectory" in
         // configuration, otherwise the desktop app's folder for the one-person app, otherwise "data" next to the solution file.
-        string dataDirectory = builder.Configuration[DataDirectoryKey]
+        var dataDirectory = builder.Configuration[DataDirectoryKey]
             ?? (local ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), LocalDataFolder)
                 : DefaultDataDirectory(builder.Environment.ContentRootPath));
         // The one-person app takes any free port of this machine; the browser it opens finds it.
@@ -174,15 +174,15 @@ public static class ServiceApp
     /// </summary>
     private static async Task<IResult> ReviewFileAsync(string file, HttpContext context, ReplayLibrary library, VisitorReviews reviews)
     {
-        string name = Path.GetFileName(file);
-        string reviewId = name.Split('.')[0];
-        string path = Path.Combine(library.ReviewsDirectory, name);
+        var name = Path.GetFileName(file);
+        var reviewId = name.Split('.')[0];
+        var path = Path.Combine(library.ReviewsDirectory, name);
         if (VisitorIdentity.IdOf(context.User) is not { } id || !await reviews.HasAsync(new Visitor(id, OwnsDataFolder: false), reviewId, context.RequestAborted)
             || !File.Exists(path))
         {
             return Results.NotFound();
         }
-        if (!ContentTypes.TryGetContentType(name, out string? contentType)) contentType = FallbackContentType;
+        if (!ContentTypes.TryGetContentType(name, out var contentType)) contentType = FallbackContentType;
         context.Response.Headers.CacheControl = NoCache;
         return Results.File(path, contentType);
     }
@@ -190,10 +190,10 @@ public static class ServiceApp
     /// <summary>A file of any review in the reviews folder: in the one-person app every review is the person's.</summary>
     private static IResult OwnReviewFile(string file, HttpContext context, ReplayLibrary library)
     {
-        string name = Path.GetFileName(file);
-        string path = Path.Combine(library.ReviewsDirectory, name);
+        var name = Path.GetFileName(file);
+        var path = Path.Combine(library.ReviewsDirectory, name);
         if (!File.Exists(path)) return Results.NotFound();
-        if (!ContentTypes.TryGetContentType(name, out string? contentType)) contentType = FallbackContentType;
+        if (!ContentTypes.TryGetContentType(name, out var contentType)) contentType = FallbackContentType;
         context.Response.Headers.CacheControl = NoCache;
         return Results.File(path, contentType);
     }

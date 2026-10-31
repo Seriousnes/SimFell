@@ -38,9 +38,9 @@ public class GrimCarve : GundeAbility
     {
         TriggerCooldown(ctx);
         var rend = BeginRend(ctx);
-        double crit = 0.0;
+        var crit = 0.0;
         foreach (var bonus in CastCritChanceBonuses) crit += bonus(ctx);
-        for (int i = 0; i < SpinCount; i++)
+        for (var i = 0; i < SpinCount; i++)
         {
             ctx.Schedule(SimTime.FromSeconds(FirstSpinSeconds + i * SpinIntervalSeconds),
                 c => RendingPulse(c, rend, AreaTargets(c, target), extraCritChance: crit > 0.0 ? _ => crit : null), Name);

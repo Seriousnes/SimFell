@@ -33,8 +33,8 @@ public class Bloodcraze : Talent
         gunde.GetAbility<OwedInBlood>()!.Spent += (ctx, _, stacks) =>
         {
             hero.Auras.Apply(Buff, ctx.CurrentTime);
-            double multiplier = 1.0 + DamagePerStack * stacks;
-            for (int i = 1; i <= Pulses; i++)
+            var multiplier = 1.0 + DamagePerStack * stacks;
+            for (var i = 1; i <= Pulses; i++)
             {
                 ctx.Schedule(SimTime.FromSeconds(PulseSeconds * i), c =>
                 {

@@ -24,10 +24,10 @@ public class TheVehement : Glyph
 
     public override void Bind(Hero hero)
     {
-        int threshold = (int)ForRank(HitsPerEruptionByRank);
+        var threshold = (int)ForRank(HitsPerEruptionByRank);
         const double critCap = CritChanceCap;
         var counter = hero.Register(AuraDef.Effect(GlyphName, CounterEffectId, maxStacks: threshold - 1));
-        int damageId = LogIds.Effect(DamageEffectId);
+        var damageId = LogIds.Effect(DamageEffectId);
         const string damageName = DamageName;
         // The counter advances when a BASIC ability's hit lands (combat logs: Frost Bolt counts when the bolt hits, not when
         // its cast completes), and the hit that reaches the threshold erupts.
@@ -40,7 +40,7 @@ public class TheVehement : Glyph
             // The count is the counter's stacks: the hero's death removes the counter and the count starts again (combat
             // logs: GWChJ8P7tn6fHgV3 fight 20 @ 551.968 and 824.381, the counter removed 3ms after each death, the next
             // BASIC hit at 1 stack).
-            int hits = hero.Auras.GetStacks(counter, dmg.Timestamp) + 1;
+            var hits = hero.Auras.GetStacks(counter, dmg.Timestamp) + 1;
             if (hits < threshold)
             {
                 hero.Auras.Apply(counter, dmg.Timestamp, setStacks: hits);
@@ -50,8 +50,8 @@ public class TheVehement : Glyph
             var ctx = dmg.SimContext;
             var enemies = ctx.Outcomes.SelectTargets(damageId, ctx.ActiveEnemies, ctx);
             if (enemies.Count == 0) return;
-            double falloff = enemies.Count > TargetCountScaling ? Math.Sqrt(TargetCountScaling / enemies.Count) : 1.0;
-            double damage = dmg.Amount * (1.0 + Math.Min(hero.CritChance(dmg.Timestamp), critCap)) * falloff;
+            var falloff = enemies.Count > TargetCountScaling ? Math.Sqrt(TargetCountScaling / enemies.Count) : 1.0;
+            var damage = dmg.Amount * (1.0 + Math.Min(hero.CritChance(dmg.Timestamp), critCap)) * falloff;
             foreach (var enemy in enemies)
             {
                 ctx.ApplyDamage(hero, enemy, damage, damageId, damageName, canCrit: false, 0.0, 1.0);

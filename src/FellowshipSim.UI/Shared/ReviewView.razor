@@ -59,8 +59,8 @@
     [JSInvokable]
     public async Task<string?> Read()
     {
-        string name = Path.GetFileName(HtmlFile);
-        string path = Path.Combine(Library.ReviewsDirectory, name);
+        var name = Path.GetFileName(HtmlFile);
+        var path = Path.Combine(Library.ReviewsDirectory, name);
         if (!await VisitorReviews.HasAsync(Visitor, name.Split(FileNameSeparator)[0]) || !File.Exists(path)) return null;
         return await File.ReadAllTextAsync(path);
     }

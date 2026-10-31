@@ -93,7 +93,7 @@ public class SimulationContext
     /// <summary>The slot of <paramref name="name"/>'s total, added when the name first deals damage.</summary>
     private int DamageSlot(string name)
     {
-        if (!_damageSlotByName.TryGetValue(name, out int slot))
+        if (!_damageSlotByName.TryGetValue(name, out var slot))
         {
             slot = _damageByName.Count;
             _damageByName.Add(new DamageTotal(name, 0.0));
@@ -197,7 +197,7 @@ public class SimulationContext
         // (UWorld::Tick 0x143B785E0: client RPCs and actor ticks, then FTimerManager::Tick), unless an ability's end in
         // the frame's timers flushes the queue (UCRGameplayAbility::EndAbility 0x1450DACD0 calling 0x1452D7370): a tick's
         // execution, or a cast's completion or a channel's end right before.
-        int outer = AbilityActivation;
+        var outer = AbilityActivation;
         if (ExecutingTick == null && (CurrentTime - _lastAbilityEnd).TotalSeconds > AbilityQueueWindowSeconds) AbilityActivation = ++_activations;
         try { return Activate(hero, ability, target, force); }
         finally { AbilityActivation = outer; }
@@ -232,13 +232,13 @@ public class SimulationContext
 
         if (!ability.IgnoresGcd)
         {
-            double left = (hero.GlobalCooldownEndTime - CurrentTime).TotalSeconds;
+            var left = (hero.GlobalCooldownEndTime - CurrentTime).TotalSeconds;
             if (left > GlobalCooldownToleranceSeconds && !force)
             {
                 return CastAttempt.Rejected($"on global cooldown ({left:F2}s remaining)");
             }
             StopChannel(hero);
-            double gcd = ability.GlobalCooldownSeconds ?? hero.GlobalCooldownSeconds;
+            var gcd = ability.GlobalCooldownSeconds ?? hero.GlobalCooldownSeconds;
             if (ability.GlobalCooldownScalesWithHaste ?? hero.GlobalCooldownScalesWithHaste) gcd /= 1.0 + hero.GetHaste(CurrentTime);
             hero.GlobalCooldownEndTime = CurrentTime + SimTime.FromSeconds(gcd);
         }
@@ -321,7 +321,7 @@ public class SimulationContext
 
     private void BeginChannel(Hero hero, Ability ability, EnemyTarget? target)
     {
-        double period = ability.ChannelTickPeriodFor(this) / (1.0 + hero.GetHaste(CurrentTime));
+        var period = ability.ChannelTickPeriodFor(this) / (1.0 + hero.GetHaste(CurrentTime));
         ActiveChannel? channel = null;
         var ticks = PeriodicEffect.Begin(
             this,
@@ -433,7 +433,8 @@ public class SimulationContext
     private HitRequest Request(PendingHit hit)
     {
         var computed = hit.Compute(this);
-        double chance = 0.0, baseDamage = computed.BaseDamage;
+        var chance = 0.0;
+        var baseDamage = computed.BaseDamage;
         if (hit.CanCrit)
         {
             // Grievous: the crit multiplier plus the overflow (the crit multiplier applies as the hit lands).
@@ -443,7 +444,7 @@ public class SimulationContext
             }
             chance = Math.Clamp(computed.CritChance, 0.0, 1.0);
         }
-        double tickFraction = hit.TickFraction;
+        var tickFraction = hit.TickFraction;
         return new HitRequest(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, baseDamage, hit.CanCrit, chance, computed.CritMultiplier, CurrentTime, tickFraction,
             hit.ForcedCrit);
     }
@@ -456,14 +457,14 @@ public class SimulationContext
             hit.Tick = null;
             if (tick.IsActive && tick.LastTick == hit.Released.Time)
             {
-                double inTick = 0.0;
+                var inTick = 0.0;
                 tick.RunInLastTick(() => inTick = Land(hit));
                 return inTick;
             }
         }
         var outcome = hit.Outcome;
         var onLanded = hit.OnLanded;
-        double dealt = 0.0;
+        var dealt = 0.0;
         // A hit on a target already gone hits nothing; its projectile still finishes (e.g. a swallow comes back).
         if (outcome.Missed)
         {
@@ -478,7 +479,7 @@ public class SimulationContext
         dealt = Outcomes.Land(landed, outcome, this);
         CurrentHit = outer;
 
-        double critChance = landed.ForcedCrit is { } forced ? (forced ? 1.0 : 0.0) : landed.CanCrit ? landed.CritChance : 0.0;
+        var critChance = landed.ForcedCrit is { } forced ? (forced ? 1.0 : 0.0) : landed.CanCrit ? landed.CritChance : 0.0;
         Deal(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, dealt, outcome.IsCrit, critChance);
         Outcomes.HitFinished(this);
         onLanded?.Invoke(this, dealt);
@@ -497,7 +498,7 @@ public class SimulationContext
     private void Deal(Hero source, EnemyTarget? target, int abilityId, string abilityName, double dealt, bool isCrit, double critChance)
     {
         TotalDamage += dealt;
-        if (!_damageSlotByInstance.TryGetValue(abilityName, out int slot)) slot = DamageSlot(abilityName);
+        if (!_damageSlotByInstance.TryGetValue(abilityName, out var slot)) slot = DamageSlot(abilityName);
         CollectionsMarshal.AsSpan(_damageByName)[slot].Damage += dealt;
         if (target != null && target.MaxHealth > 0)
         {

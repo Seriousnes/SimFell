@@ -20,7 +20,7 @@ public class ConditionDocsTests
         foreach (var (scope, properties) in PropertyExpression.Scopes)
         {
             AssertDoc(PropertyExpression.ScopeDocs.GetValueOrDefault(scope), scope);
-            foreach (string property in properties) AssertDoc(PropertyExpression.PropertyDoc(scope, property), $"{scope}.<name>.{property}");
+            foreach (var property in properties) AssertDoc(PropertyExpression.PropertyDoc(scope, property), $"{scope}.<name>.{property}");
         }
         AssertDoc(PropertyExpression.ScopeDocs.GetValueOrDefault(PropertyExpression.ActiveDotScope), PropertyExpression.ActiveDotScope);
         AssertDoc(PropertyExpression.ScopeDocs.GetValueOrDefault(PropertyExpression.VariableScope), PropertyExpression.VariableScope);
@@ -30,7 +30,7 @@ public class ConditionDocsTests
     public void Every_named_value_action_value_and_build_scope_has_a_doc()
     {
         foreach (var (path, named) in PropertyExpression.Named) AssertDoc(named.Doc, path);
-        foreach (string path in PropertyExpression.ActionValues.Keys) AssertDoc(PropertyExpression.ActionValueDoc(path), path);
+        foreach (var path in PropertyExpression.ActionValues.Keys) AssertDoc(PropertyExpression.ActionValueDoc(path), path);
         foreach (var (scope, build) in PropertyExpression.BuildScopes) AssertDoc(build.Doc, scope);
     }
 
@@ -47,7 +47,7 @@ public class ConditionDocsTests
         foreach (var kind in ConditionBuilder.Kinds(_v, []))
         {
             Assert.False(string.IsNullOrEmpty(kind.Description), $"{kind.Id} has no meaning.");
-            foreach (string property in kind.Properties ?? []) AssertDoc(ConditionBuilder.PropertyDoc(kind.Id, property), $"{kind.Id}.{property}");
+            foreach (var property in kind.Properties ?? []) AssertDoc(ConditionBuilder.PropertyDoc(kind.Id, property), $"{kind.Id}.{property}");
         }
     }
 

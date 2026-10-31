@@ -41,7 +41,7 @@ public sealed class DeclaredAurasGenerator : IIncrementalGenerator
         var fields = new List<string>();
         for (var current = type; current != null; current = current.BaseType)
         {
-            string owner = current.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var owner = current.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             foreach (var field in current.GetMembers().OfType<IFieldSymbol>())
             {
                 if (field.IsStatic && field.DeclaredAccessibility == Accessibility.Public && field.Type.ToDisplayString() == AuraDefName)
@@ -66,9 +66,9 @@ public sealed class DeclaredAurasGenerator : IIncrementalGenerator
         source.AppendLine();
         source.AppendLine("    private static global::System.Collections.Generic.Dictionary<global::System.Type, AuraDef[]> Declared => _declared ??= new()");
         source.AppendLine("    {");
-        foreach (string entry in classes.Distinct())
+        foreach (var entry in classes.Distinct())
         {
-            int bar = entry.IndexOf(EntrySeparator);
+            var bar = entry.IndexOf(EntrySeparator);
             source.AppendLine($"        [typeof({entry.Substring(0, bar)})] = [{entry.Substring(bar + 1).Replace(FieldSeparator, ", ")}],");
         }
         source.AppendLine("    };");

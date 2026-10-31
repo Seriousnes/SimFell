@@ -37,9 +37,9 @@ public class DiamondStrike : Aspect
             if (dmg.Target is not { } target || dmg.SimContext is not { } ctx || dmg.AbilityId == beam.DamageLogId) return;
             if (!rppm.Roll(hero, ctx, target)) return;
             var now = ctx.CurrentTime;
-            int amplified = target.Auras.GetStacks(Amplified, now);
+            var amplified = target.Auras.GetStacks(Amplified, now);
             var harmonious = hero.Gems.OfType<Diamond>().FirstOrDefault()?.HarmoniousSoul;
-            int soul = harmonious == null ? 0 : hero.Auras.GetStacks(harmonious, now);
+            var soul = harmonious == null ? 0 : hero.Auras.GetStacks(harmonious, now);
             beam.DealDamage(ctx, target, damageMultiplier: (1.0 + DamagePerAmplifyStack * amplified) * (1.0 + DamagePerHarmoniousSoulStack * soul));
             target.Auras.Apply(Amplified, now);
         };

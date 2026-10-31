@@ -58,7 +58,7 @@ if (FreeDiceBenchmarks.ScriptPath == null)
 
 // The same garbage collector as the tests and the server: server GC, not concurrent. A job given on the command line
 // (--job dry) replaces it.
-IConfig config = args.Any(a => a is JobOption or JobShortOption)
+var config = args.Any(a => a is JobOption or JobShortOption)
     ? DefaultConfig.Instance
     : DefaultConfig.Instance.AddJob(Job.Default.WithGcServer(true).WithGcConcurrent(false));
 BenchmarkSwitcher.FromTypes(types.ToArray()).Run(args, config);
@@ -69,17 +69,17 @@ static void FirstHero()
     _ = Fight.Build;
     var clock = Stopwatch.StartNew();
     Fight.NewHero();
-    double first = clock.Elapsed.TotalMilliseconds;
+    var first = clock.Elapsed.TotalMilliseconds;
     const int heroes = 1000;
     clock.Restart();
-    for (int i = 0; i < heroes; i++) Fight.NewHero();
+    for (var i = 0; i < heroes; i++) Fight.NewHero();
     Console.WriteLine($"first hero {first:F2} ms; next {heroes} heroes {clock.Elapsed.TotalMilliseconds / heroes * MicrosecondsPerMillisecond:F1} µs each");
 }
 
 static void Profile(string workload, double seconds)
 {
     var clock = Stopwatch.StartNew();
-    int fights = 0;
+    var fights = 0;
     if (Fight.MonteCarloWorkload(workload) is { Targets: var targets, Idle: var idle })
     {
         var simulator = new MonteCarloSimulator(Fight.NewHero, Fight.Actions(idle));

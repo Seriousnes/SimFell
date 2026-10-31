@@ -147,7 +147,7 @@ public abstract class Ability
     {
         Cooldown = SimTime.FromSeconds(seconds);
         MaxCharges = charges;
-        bool hasted = seconds > 0 && scalesWithHaste && Category != AbilityCategory.Weapon;
+        var hasted = seconds > 0 && scalesWithHaste && Category != AbilityCategory.Weapon;
         ChargesRechargeWithHaste = hasted && charges > 1;
         CooldownScalesWithHaste = hasted && charges <= 1;
     }
@@ -216,7 +216,7 @@ public abstract class Ability
         if (Cooldown <= SimTime.Zero) return;
         // Cooldown reduction cuts the timer once, at cast; hasted cooldowns are divided by haste at cast too.
         // Cooldown recovery (and haste for charge abilities) then sets how fast it ticks down.
-        double seconds = Cooldown.TotalSeconds * cooldownMultiplier * (1.0 - Owner.Stats.CooldownReductionPct);
+        var seconds = Cooldown.TotalSeconds * cooldownMultiplier * (1.0 - Owner.Stats.CooldownReductionPct);
         if (CooldownScalesWithHaste) seconds /= 1.0 + Owner.GetHaste(ctx.CurrentTime);
         Owner.CooldownOf(this).Spend(ctx.CurrentTime, seconds);
     }
@@ -269,7 +269,7 @@ public abstract class Ability
     public virtual double BaseDamage(SimulationContext ctx, EnemyTarget? target, double damageMultiplier = 1.0)
     {
         var now = ctx.CurrentTime;
-        double expertiseAmp = ScalesWithExpertise ? 1.0 + Owner.Expertise(now) : 1.0;
+        var expertiseAmp = ScalesWithExpertise ? 1.0 + Owner.Expertise(now) : 1.0;
         return BaseCoefficient
                * Owner.PrimaryAttribute(now)
                * expertiseAmp
@@ -291,8 +291,8 @@ public abstract class Ability
         Action<SimulationContext, double>? onLanded = null, double extraCritChance = 0.0)
     {
         // Damage, crit chance and crit power are read when the hit lands; what talents added to the cast is kept.
-        double castCrit = CurrentCast?.CritChance ?? 0.0;
-        double castDamage = CastDamageMultiplier;
+        var castCrit = CurrentCast?.CritChance ?? 0.0;
+        var castDamage = CastDamageMultiplier;
         var hit = ctx.RentHit(Owner, target, overrideId ?? DamageLogId, overrideName ?? Name, canCrit, forcedCrit, onLanded, SnapshotsDamage);
         hit.FromAbility(this, damageMultiplier * castDamage, castCrit, extraCritChance);
         return ctx.ApplyDamage(hit);
@@ -304,15 +304,15 @@ public abstract class Ability
         var targetList = ctx.Outcomes.SelectTargets(overrideId ?? DamageLogId, targets as IReadOnlyList<EnemyTarget> ?? targets.ToList(), ctx);
         if (targetList.Count == 0) return 0.0;
 
-        double falloffMultiplier = 1.0;
+        var falloffMultiplier = 1.0;
         if (AoeTargetThreshold > 0.0 && targetList.Count > AoeTargetThreshold)
         {
             falloffMultiplier = Math.Sqrt(AoeTargetThreshold / targetList.Count);
         }
 
-        double total = 0.0;
+        var total = 0.0;
         // By index: a foreach over the list interface allocates its enumerator.
-        for (int i = 0; i < targetList.Count; i++)
+        for (var i = 0; i < targetList.Count; i++)
         {
             total += DealDamage(ctx, targetList[i], damageMultiplier * falloffMultiplier, canCrit, overrideName, overrideId, forcedCrit, extraCritChance: extraCritChance);
         }

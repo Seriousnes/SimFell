@@ -25,7 +25,7 @@
     <nav class="tabs" role="tablist" aria-label="Sim steps">
         @foreach (var tab in Enum.GetValues<SimTab>())
         {
-            bool selected = tab == State.Tab;
+            var selected = tab == State.Tab;
             <button @key="tab" type="button" role="tab" class="tab @(selected ? "selected" : "")" aria-selected="@selected" @onclick="() => State.Tab = tab">
                 @StepTitle(tab)
             </button>
@@ -151,7 +151,7 @@
         State.ThreadsRestored = true;
         try
         {
-            if (int.TryParse(await JS.InvokeAsync<string?>(StorageGetFunction, ThreadsKey), out int threads))
+            if (int.TryParse(await JS.InvokeAsync<string?>(StorageGetFunction, ThreadsKey), out var threads))
             {
                 State.Threads = Math.Clamp(threads, 1, MaxThreads);
                 StateHasChanged();
@@ -361,7 +361,7 @@
     // A run of <paramref name="build"/> with the action list <paramref name="listText"/>; throws for a profile that does not read.
     private static PlannedRun Plan(string label, string detail, CharacterBuild build, string listName, string listValue, string listText)
     {
-        string text = new SimcProfile(build, listText).Format();
+        var text = new SimcProfile(build, listText).Format();
         if (SimcProfile.Parse(text).ActionList.Trim().Length == 0)
         {
             throw new InvalidOperationException($"{label}: its action list is empty.");
@@ -382,7 +382,7 @@
             CharacterBuild build;
             if (row.Saved is { } saved)
             {
-                string text = await Profiles.ReadAsync(Visitor, saved) ?? throw new InvalidOperationException($"The saved build {saved.Name} is gone.");
+                var text = await Profiles.ReadAsync(Visitor, saved) ?? throw new InvalidOperationException($"The saved build {saved.Name} is gone.");
                 build = SimcProfile.Parse(text).Build;
             }
             else
@@ -390,8 +390,8 @@
                 build = BuildFinders.Copy(State.Build);
             }
             var list = _lists.FirstOrDefault(l => ListValue(l) == row.ListValue);
-            string listName = list?.Name ?? DefaultActionLists.DefaultName;
-            string listText = list == null
+            var listName = list?.Name ?? DefaultActionLists.DefaultName;
+            var listText = list == null
                 ? DefaultActionLists.Read(build.Hero, DefaultActionLists.DefaultName) ?? ""
                 : (await _savedLists.ReadAsync(list)).Text;
             runs.Add(Plan(row.Saved?.Name ?? $"{build.Name} (current)", listName, build, listName, row.ListValue, listText));
@@ -407,7 +407,7 @@
             State.Status = MessageState.Error($"The {FinderCard.Title(State.Finder)} finder has nothing to try for this build.");
             return;
         }
-        string listText = ActionListText();
+        var listText = ActionListText();
         var runs = new List<PlannedRun> { Plan(SimPageState.CurrentBuildLabel, State.Build.Name, State.Build, ActionListName(), State.ActionListValue, listText) };
         runs.AddRange(variants.Select(v => Plan(v.Label, v.Detail, v.Build, ActionListName(), State.ActionListValue, listText)));
         Enqueue($"{FinderCard.Title(State.Finder)} finder: {State.Build.Name} ({State.Build.Hero}), {CompareCard.Runs(runs.Count)}, {TargetsText()}", runs);
@@ -425,7 +425,7 @@
         var job = Jobs.Enqueue(SimJobKind.Sim, title, async c =>
         {
             var done = new List<SimRun>();
-            for (int i = 0; i < runs.Count; i++)
+            for (var i= 0; i < runs.Count; i++)
             {
                 var run = runs[i];
                 var progress = new RunProgress(c, i, runs.Count, run.Label);
@@ -467,7 +467,7 @@
             return;
         }
         var settings = Settings();
-        string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
+        var title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
             profile.Build.Name, profile.Build.Hero, State.Iterations, State.DurationSeconds, State.Targets, State.Targets == 1 ? "target" : "targets");
         // The job outlives this page's circuit, so the work captures the engine, the results library and values alone.
         var engine = Engine;

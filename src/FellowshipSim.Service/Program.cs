@@ -15,7 +15,7 @@ if (!ServiceApp.IsLocal(app.Configuration))
 
 // The one-person app: open the browser on it, and run until this console window closes (or Ctrl+C).
 await app.StartAsync();
-string url = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.First();
+var url = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.First();
 Console.WriteLine($"SimFell {(ServiceApp.AppVersion is { } version ? $"{version.ToString(VersionFieldCount)} " : "")}is running at {url}");
 Console.WriteLine("Close this window to stop it.");
 // "--NoBrowser=true" leaves the browser closed.

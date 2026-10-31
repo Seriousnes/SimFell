@@ -71,9 +71,9 @@ public sealed class PendingHit
             // Damage, crit chance and crit power are read now; what talents added to the cast is kept.
             var now = ctx.CurrentTime;
             var owner = ability.Owner;
-            double hitCrit = 0.0;
+            var hitCrit = 0.0;
             var bonuses = ability.HitCritChanceBonuses;
-            for (int i = 0; i < bonuses.Count; i++) hitCrit += bonuses[i](ctx);
+            for (var i = 0; i < bonuses.Count; i++) hitCrit += bonuses[i](ctx);
             return new SimulationContext.HitNumbers(
                 ability.BaseDamage(ctx, Target, DamageMultiplier),
                 owner.CritChanceAgainst(Target, now) + ability.CritChanceBonus + ExtraCritChance + CastCritChance + hitCrit,

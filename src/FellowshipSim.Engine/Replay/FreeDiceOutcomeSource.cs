@@ -30,7 +30,7 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
         var castTimes = script.Commands.Where(c => c.IsPlayerAction).Select(c => c.Time).Distinct().Order().ToArray();
         // Window i runs from cast i to cast i + 1; window 0 also covers anything before the first cast.
         var engaged = new HashSet<UnitKey>[Math.Max(1, castTimes.Length)];
-        for (int i = 0; i < engaged.Length; i++) engaged[i] = new HashSet<UnitKey>();
+        for (var i = 0; i < engaged.Length; i++) engaged[i] = new HashSet<UnitKey>();
         foreach (var hit in script.Observations.Damage)
         {
             engaged[Window(castTimes, engaged.Length, hit.Time)].Add(new UnitKey(hit.Target.Id, hit.Target.Instance));
@@ -42,7 +42,7 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
 
     private static int Window(double[] castTimes, int windows, double time)
     {
-        int index = Array.BinarySearch(castTimes, time);
+        var index = Array.BinarySearch(castTimes, time);
         if (index < 0) index = ~index - 1;
         return Math.Clamp(index, 0, windows - 1);
     }
@@ -51,7 +51,7 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
     {
         var engaged = _engaged[Window(ctx.CurrentTime.TotalSeconds)];
         var list = new List<EnemyTarget>(Math.Min(candidates.Count, engaged.Count));
-        for (int i = 0; i < candidates.Count; i++)
+        for (var i = 0; i < candidates.Count; i++)
         {
             if (engaged.Contains(new UnitKey(candidates[i].Id, candidates[i].InstanceId))) list.Add(candidates[i]);
         }

@@ -4,7 +4,7 @@
     <label for="@($"{Id}-type")">Type</label>
     <select id="@($"{Id}-type")" value="@(ListAction ? Action.Ability : "")" @onchange="e => ChangeType((string?)e.Value ?? string.Empty)">
         <option value="">Cast an ability</option>
-        @foreach (string name in Vocabulary.ListActions)
+        @foreach (var name in Vocabulary.ListActions)
         {
             <option @key="name" value="@name">@ActionListModel.ListActionName(name)</option>
         }
@@ -129,8 +129,8 @@
 
     private void ChangeType(string type)
     {
-        bool listAction = ListAction;
-        string? firstOther = OtherLists.FirstOrDefault()?.Name;
+        var listAction = ListAction;
+        var firstOther = OtherLists.FirstOrDefault()?.Name;
         Change(a => type.Length > 0
             ? a with { Ability = type, ActionList = listAction ? a.ActionList : firstOther, TargetSelection = null, TargetExpression = null }
             : a with { Ability = "", ActionList = null });

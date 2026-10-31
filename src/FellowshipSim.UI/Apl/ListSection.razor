@@ -16,7 +16,7 @@
     </div>
     <p class="field-warning" hidden="@(Warning == null)">@(Warning ?? "")</p>
     <ol class="actions">
-        @for (int i = 0; i < List.Actions.Count; i++)
+        @for (var i= 0; i < List.Actions.Count; i++)
         {
             var action = List.Actions[i];
             <ActionItem @key="action.Key" Vocabulary="Vocabulary" Lists="Lists" List="List" Action="action" Index="i"

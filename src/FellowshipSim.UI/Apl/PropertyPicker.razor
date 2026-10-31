@@ -14,9 +14,9 @@
     {
         <div @ref="_popup" class="popup">
             <ul @ref="_list" id="@($"{_id}-list")" role="listbox" aria-label="Properties" tabindex="-1">
-                @for (int i = 0; i < Properties.Count; i++)
+                @for (var i= 0; i < Properties.Count; i++)
                 {
-                    string property = Properties[i];
+                    var property = Properties[i];
                     <li @key="property" id="@($"{_id}-{i}")" role="option" data-picked="@(property == Value)"
                         data-tooltip="@Describe(property)" data-tooltip-direction="right"
                         @onmousedown="() => Pick(property)" @onmousedown:preventDefault>@Label(property)</li>

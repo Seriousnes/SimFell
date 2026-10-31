@@ -22,7 +22,7 @@ public class MartialInitiative : Aspect
 
     public override void Bind(Hero hero)
     {
-        double fraction = ForRank(WeaponCooldownFractionByRank);
+        var fraction = ForRank(WeaponCooldownFractionByRank);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability != hero.WeaponAbility) return;

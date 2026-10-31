@@ -18,7 +18,8 @@ public class BossFightTests
         var simulator = new MonteCarloSimulator(build, AplParser.ParseScript("actions+=/frost_bolt"));
         double Mean(FightOptions? fight) => simulator.Run(SimTime.FromSeconds(60), iterations: 20, degreeOfParallelism: 1, fight: fight).MeanDps;
 
-        double boss = Mean(new FightOptions(Boss: true)), noBoss = Mean(new FightOptions(Boss: false));
+        var boss = Mean(new FightOptions(Boss: true));
+        var noBoss = Mean(new FightOptions(Boss: false));
         Assert.Equal(boss, Mean(null));
         Assert.Equal(1.05, boss / noBoss, 2);
     }

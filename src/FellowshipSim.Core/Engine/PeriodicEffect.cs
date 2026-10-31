@@ -125,11 +125,11 @@ public sealed class PeriodicEffect
         var end = start + SimTime.FromSeconds(durationSeconds);
         var effect = new PeriodicEffect(name, start, end, periodSeconds, onTick, onEnd, ctx.Player, damageLogId, target, hastedBy: null);
 
-        int fullTicks = (int)Math.Floor((durationSeconds + Tolerance.Rounding) / periodSeconds);
-        int firstTick = tickOnStart && tickDelaySeconds > 0 ? 0 : 1;
-        double remainder = durationSeconds - fullTicks * periodSeconds;
-        bool partial = partialFinalTick && remainder >= Math.Max(minPartialSeconds, Tolerance.Rounding);
-        bool tickNow = tickOnStart && tickDelaySeconds <= 0;
+        var fullTicks = (int)Math.Floor((durationSeconds + Tolerance.Rounding) / periodSeconds);
+        var firstTick = tickOnStart && tickDelaySeconds > 0 ? 0 : 1;
+        var remainder = durationSeconds - fullTicks * periodSeconds;
+        var partial = partialFinalTick && remainder >= Math.Max(minPartialSeconds, Tolerance.Rounding);
+        var tickNow = tickOnStart && tickDelaySeconds <= 0;
         if (damageLogId != 0)
         {
             effect.BeginSlots(ctx, fullTicks, firstTick, remainder, partial, tickNow, durationSeconds, tickDelaySeconds);
@@ -138,7 +138,7 @@ public sealed class PeriodicEffect
 
         // One handler for every full tick.
         Action<SimulationContext> fullTick = c => effect.Tick(c, 1.0);
-        for (int k = firstTick; k <= fullTicks; k++)
+        for (var k = firstTick; k <= fullTicks; k++)
         {
             var at = start + SimTime.FromSeconds(Math.Min(k * periodSeconds + tickDelaySeconds, durationSeconds));
             effect._events.Add(ctx.Kernel.ScheduleAt(at, fullTick, name));
@@ -146,7 +146,7 @@ public sealed class PeriodicEffect
 
         if (partial)
         {
-            double fraction = remainder / periodSeconds;
+            var fraction = remainder / periodSeconds;
             effect._events.Add(ctx.Kernel.ScheduleAt(end, c => effect.Tick(c, fraction), name));
         }
 
@@ -172,7 +172,7 @@ public sealed class PeriodicEffect
         _partialFraction = partial ? remainder / Period : 0.0;
         _lastScheduled = Start;
         _fireSlot = FireSlot;
-        for (int k = firstTick; k <= fullTicks; k++)
+        for (var k = firstTick; k <= fullTicks; k++)
         {
             var at = Start + SimTime.FromSeconds(Math.Min(k * Period + tickDelaySeconds, durationSeconds));
             _events.Add(ctx.Kernel.ScheduleAt(at, _fireSlot, Name));
@@ -191,7 +191,7 @@ public sealed class PeriodicEffect
     private void AskSlot(SimulationContext ctx, int slot)
     {
         var scheduled = SlotTime(slot);
-        double fraction = slot == _slotCount - 1 && _partialFraction > 0 ? _partialFraction : 1.0;
+        var fraction = slot == _slotCount - 1 && _partialFraction > 0 ? _partialFraction : 1.0;
         var at = AskTick(ctx, scheduled, fraction);
         // Predicted: the previous tick plus the period, i.e. the schedule shifted by the previous tick's move.
         TickPredicted?.Invoke(ctx, this, SimTime.FromMilliseconds(scheduled.Milliseconds + LastTickTime.Milliseconds - _lastScheduled.Milliseconds));
@@ -211,7 +211,7 @@ public sealed class PeriodicEffect
     private void FireSlot(SimulationContext ctx)
     {
         if (!IsActive) return;
-        int slot = _nextSlot++;
+        var slot = _nextSlot++;
         LastTickTime = ctx.CurrentTime;
         _lastScheduled = SlotTime(slot);
         Tick(ctx, slot == _slotCount - 1 && _partialFraction > 0 ? _partialFraction : 1.0);
@@ -304,7 +304,7 @@ public sealed class PeriodicEffect
         }
 
         // A damage over time ticks on its period timer, a repeated tick included.
-        bool tickMoved = false;
+        var tickMoved = false;
         void PeriodTick(SimulationContext cc)
         {
             if (cc.CurrentTime > nominalEnd || !effect.IsActive) return;
@@ -370,15 +370,15 @@ public sealed class PeriodicEffect
         }
 
         // The duration runs out at the nominal end (no more ticks; the partial tick is measured there) ...
-        double partial = 0.0;
+        var partial = 0.0;
         effect._events.Add(ctx.Kernel.ScheduleAt(nominalEnd, c =>
         {
             if (!effect.IsActive) return;
             var timer = effect._nextHastedTick;
-            double fraction = timer is { IsActive: true } ? timer.ElapsedBaseSeconds / basePeriodSeconds : 0.0;
+            var fraction = timer is { IsActive: true } ? timer.ElapsedBaseSeconds / basePeriodSeconds : 0.0;
             // A damage over time's partial tick reads how long its period has run (period - remaining, 0x1452D0C70) as the
             // duration runs out: a re-arm since the last tick shortens it.
-            double elapsed = damageOverTime && timer is { IsActive: true }
+            var elapsed = damageOverTime && timer is { IsActive: true }
                 ? timer.ElapsedBaseSeconds / (1.0 + hero.GetHaste(c.CurrentTime))
                 : (c.CurrentTime - lastTick).TotalSeconds;
             timer?.Cancel();
@@ -394,7 +394,7 @@ public sealed class PeriodicEffect
             if (!effect.IsActive) return;
             if (partial > 0)
             {
-                double fraction = partial;
+                var fraction = partial;
                 partial = 0.0;
                 if (damageLogId != 0)
                 {

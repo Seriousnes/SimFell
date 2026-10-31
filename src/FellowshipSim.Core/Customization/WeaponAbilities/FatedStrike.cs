@@ -36,8 +36,8 @@ public class FatedStrike : Ability
         TriggerCooldown(ctx);
         DealDamage(ctx, target);
         var nearby = ctx.Outcomes.SelectTargets(DamageLogId, ctx.ActiveEnemiesExcept(target), ctx);
-        double falloff = nearby.Count > CleaveTargetThreshold ? Math.Sqrt(CleaveTargetThreshold / nearby.Count) : 1.0;
-        for (int i = 0; i < nearby.Count; i++) DealDamage(ctx, nearby[i], damageMultiplier: CleaveCoefficient / Coefficient * falloff);
+        var falloff = nearby.Count > CleaveTargetThreshold ? Math.Sqrt(CleaveTargetThreshold / nearby.Count) : 1.0;
+        for (var i = 0; i < nearby.Count; i++) DealDamage(ctx, nearby[i], damageMultiplier: CleaveCoefficient / Coefficient * falloff);
         Owner.Auras.Apply(GloriousPurpose, ctx.CurrentTime);
     }
 }

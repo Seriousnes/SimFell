@@ -212,7 +212,7 @@ public sealed class AplVocabulary
             };
             return new AplTokenSpan(t.Position.Absolute, t.Span.Length, kind, problem);
         }).ToList();
-        string inWords = InWords(text, tokenized.Value);
+        var inWords = InWords(text, tokenized.Value);
 
         try
         {
@@ -230,10 +230,10 @@ public sealed class AplVocabulary
     private static string InWords(string text, TokenList<AplToken> tokens)
     {
         var words = new StringBuilder();
-        int at = 0;
+        var at = 0;
         foreach (var token in tokens)
         {
-            string? word = token.Kind switch
+            var word = token.Kind switch
             {
                 AplToken.And => AplOperatorSymbols.AndWord,
                 AplToken.Or => AplOperatorSymbols.OrWord,

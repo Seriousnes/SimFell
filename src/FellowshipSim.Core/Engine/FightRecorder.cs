@@ -65,8 +65,8 @@ internal sealed class FightRecorder
             {
                 // At its start, so a cast with a cast time comes before what was used as it finished (an off-GCD
                 // ability, a channel beginning).
-                double start = _castStarts.Remove(ability, out double started) ? started : now.TotalSeconds;
-                int at = _casts.Count;
+                var start = _castStarts.Remove(ability, out var started) ? started : now.TotalSeconds;
+                var at = _casts.Count;
                 while (at > 0 && _casts[at - 1].Time > start) at--;
                 _casts.Insert(at, new CastReport(start, ability.Name, ability.Id));
             }
@@ -132,7 +132,7 @@ internal sealed class FightRecorder
         var tally = _tally!;
         foreach (var state in _active.Values) Close(state, Earlier(state.Aura.ExpiresAt, duration));
         _active.Clear();
-        int seconds = Math.Min(_spirit.Length, (int)Math.Ceiling(duration.TotalSeconds));
+        var seconds = Math.Min(_spirit.Length, (int)Math.Ceiling(duration.TotalSeconds));
         FillSpirit(seconds);
         tally.AddSpirit(_spirit, seconds, _spiritMax);
         tally.AddFight(_fight, _damage, _spans, _casts, _spans != null ? _spirit[..seconds] : null);
@@ -142,7 +142,7 @@ internal sealed class FightRecorder
     private void OnHit(in DamageContext hit)
     {
         if (_tally == null) return;
-        int second = Math.Clamp((int)hit.Timestamp.TotalSeconds, 0, _damage.Length - 1);
+        var second = Math.Clamp((int)hit.Timestamp.TotalSeconds, 0, _damage.Length - 1);
         _damage[second] += hit.Amount;
         if (ReferenceEquals(hit.Target, _primary)) _tally.PrimaryDamage += hit.Amount;
         if (!ReferenceEquals(hit.AbilityName, _lastName))
@@ -236,7 +236,7 @@ internal sealed class FightRecorder
     /// <summary>Adds the stacks held since the last change, up to <paramref name="now"/>.</summary>
     private static void Advance(AuraState state, SimTime now)
     {
-        double seconds = (now - state.Changed).TotalSeconds;
+        var seconds = (now - state.Changed).TotalSeconds;
         state.Tally.StackSeconds += state.Stacks * seconds;
         if (state.Aura.MaxStacks > 1 && state.Stacks >= state.Aura.MaxStacks) state.Tally.AtMaxSeconds += seconds;
         state.Changed = now;
@@ -313,7 +313,7 @@ internal sealed class FightRecorder
         public void AddSpirit(double[] spirit, int seconds, double max)
         {
             Grow(spirit.Length);
-            for (int i = 0; i < seconds; i++)
+            for (var i = 0; i < seconds; i++)
             {
                 SpiritSum[i] += spirit[i];
                 SpiritFights[i]++;
@@ -331,7 +331,7 @@ internal sealed class FightRecorder
         /// <summary>The run's Spirit Points over the fight: the mean, and the typical fight's.</summary>
         public SpiritTimeline Spirit()
         {
-            int seconds = SpiritFights.Count(n => n > 0);
+            var seconds = SpiritFights.Count(n => n > 0);
             var mean = Enumerable.Range(0, seconds).Select(i => SpiritSum[i] / SpiritFights[i]).ToList();
             return new SpiritTimeline(mean, Typical()?.Spirit ?? [], SpiritMax);
         }
@@ -358,7 +358,7 @@ internal sealed class FightRecorder
             Fights++;
             if (spans != null) Samples.Add(new SampledFight(fight, damage.Sum(), spans, casts ?? [], spirit ?? []));
             if (DamageSum.Length != damage.Length) DamageSum = new double[damage.Length];
-            for (int i = 0; i < damage.Length; i++) DamageSum[i] += damage[i];
+            for (var i = 0; i < damage.Length; i++) DamageSum[i] += damage[i];
             if (fight < BandFights) Band.Add(new BandFightDamage(fight, Array.ConvertAll(damage, d => (float)d)));
         }
 
@@ -368,11 +368,11 @@ internal sealed class FightRecorder
             Fights += other.Fights;
             PrimaryDamage += other.PrimaryDamage;
             if (DamageSum.Length == 0) DamageSum = new double[other.DamageSum.Length];
-            for (int i = 0; i < other.DamageSum.Length; i++) DamageSum[i] += other.DamageSum[i];
+            for (var i = 0; i < other.DamageSum.Length; i++) DamageSum[i] += other.DamageSum[i];
             Band.AddRange(other.Band);
             Samples.AddRange(other.Samples);
             Grow(other.SpiritSum.Length);
-            for (int i = 0; i < other.SpiritSum.Length; i++)
+            for (var i = 0; i < other.SpiritSum.Length; i++)
             {
                 SpiritSum[i] += other.SpiritSum[i];
                 SpiritFights[i] += other.SpiritFights[i];
@@ -434,8 +434,8 @@ internal sealed class FightRecorder
         /// <summary>The run's damage over time: the mean of every fight, and the band's 5th and 95th percentiles.</summary>
         public SimTimeline Timeline()
         {
-            int seconds = DamageSum.Length;
-            double[] mean = DamageSum.Select(d => Fights == 0 ? 0 : d / Fights).ToArray();
+            var seconds = DamageSum.Length;
+            var mean = DamageSum.Select(d => Fights == 0 ? 0 : d / Fights).ToArray();
             var cumulative = Cumulative(mean);
             var rolling = Rolling(mean);
             var bandCumulative = Band.Select(b => Cumulative(Array.ConvertAll(b.Damage, d => (double)d))).ToList();
@@ -471,7 +471,7 @@ internal sealed class FightRecorder
                 var (name, onTarget) = a.Key;
                 var tally = a.Value;
                 double fights = Math.Max(1, Fights);
-                double span = fights * seconds * (onTarget ? Math.Max(1, targets) : 1);
+                var span = fights * seconds * (onTarget ? Math.Max(1, targets) : 1);
                 return new BuffReport(name, onTarget, tally.UpSeconds / span, tally.Applications / fights, tally.Refreshes / fights,
                     tally.Applications > 0 ? tally.UpSeconds / tally.Applications : 0, tally.UpSeconds > 0 ? tally.StackSeconds / tally.UpSeconds : 0,
                     tally.MaxStacks, tally.StackCap > 1 ? tally.AtMaxSeconds / span : 0, tally.Gaps > 0 ? tally.GapSeconds / tally.Gaps : 0, tally.LogId,
@@ -490,7 +490,7 @@ internal sealed class FightRecorder
         private SampledFight? Typical()
         {
             if (Samples.Count == 0) return null;
-            double mean = Fights == 0 ? 0 : DamageSum.Sum() / Fights;
+            var mean = Fights == 0 ? 0 : DamageSum.Sum() / Fights;
             return Samples.OrderBy(s => Math.Abs(s.Damage - mean)).ThenBy(s => s.Fight).First();
         }
 
@@ -514,17 +514,17 @@ internal sealed class FightRecorder
         private static double[] Cumulative(double[] perSecond)
         {
             var sum = new double[perSecond.Length];
-            double total = 0;
-            for (int i = 0; i < perSecond.Length; i++) sum[i] = total += perSecond[i];
+            var total = 0.0;
+            for (var i = 0; i < perSecond.Length; i++) sum[i] = total += perSecond[i];
             return sum;
         }
 
         private static double[] Rolling(double[] perSecond)
         {
-            int window = (int)RollingSeconds;
+            var window = (int)RollingSeconds;
             var dps = new double[perSecond.Length];
-            double sum = 0;
-            for (int i = 0; i < perSecond.Length; i++)
+            var sum = 0.0;
+            for (var i = 0; i < perSecond.Length; i++)
             {
                 sum += perSecond[i];
                 if (i >= window) sum -= perSecond[i - window];
@@ -538,10 +538,10 @@ internal sealed class FightRecorder
             var result = new double[seconds];
             if (fights.Count == 0) return result;
             var values = new double[fights.Count];
-            int rank = (int)Math.Round(fraction * (fights.Count - 1));
-            for (int s = 0; s < seconds; s++)
+            var rank = (int)Math.Round(fraction * (fights.Count - 1));
+            for (var s = 0; s < seconds; s++)
             {
-                for (int f = 0; f < fights.Count; f++) values[f] = fights[f][s];
+                for (var f = 0; f < fights.Count; f++) values[f] = fights[f][s];
                 Array.Sort(values);
                 result[s] = values[rank];
             }

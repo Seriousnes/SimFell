@@ -90,7 +90,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         Kind? kind = null;
         for (var ancestor = type.BaseType; ancestor != null && kind == null; ancestor = ancestor.BaseType)
         {
-            string name = ancestor.ToDisplayString();
+            var name = ancestor.ToDisplayString();
             foreach (var baseClass in Bases)
             {
                 if (name == baseClass.Base) kind = baseClass.Kind;
@@ -98,8 +98,9 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         }
         if (kind == null) return null;
 
-        string typeName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-        string ids = "", name2 = "";
+        var typeName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        var ids = "";
+        var name2 = "";
         string? error = null;
         Location? location = null;
         bool Read(string property, out object[] values)
@@ -122,7 +123,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
             case Kind.Weapon:
             case Kind.RelicPassive:
             case Kind.Legendary:
-                string idProperty = kind switch
+                var idProperty = kind switch
                 {
                     Kind.Weapon => WeaponAbilityIdProperty,
                     Kind.Legendary => ItemIdsProperty,
@@ -197,7 +198,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
             var owners = new Dictionary<int, Entry>();
             foreach (var entry in entries.Where(e => e.Kind == kind))
             {
-                foreach (int id in entry.IdValues)
+                foreach (var id in entry.IdValues)
                 {
                     if (id == 0) continue;
                     if (owners.TryGetValue(id, out var other))
@@ -215,7 +216,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
         var legendaryKeys = new Dictionary<LegendaryKey, Entry>();
         foreach (var entry in entries.Where(e => e.Kind == Kind.Legendary))
         {
-            foreach (int id in entry.IdValues)
+            foreach (var id in entry.IdValues)
             {
                 if (legendaryKeys.TryGetValue(new LegendaryKey(entry.Name, id), out var other))
                 {
@@ -259,7 +260,7 @@ public sealed class CatalogGenerator : IIncrementalGenerator
 
         source.AppendLine("    private static global::FellowshipSim.Core.Customization.Legendaries.Legendary? NewLegendary(string hero, int itemId) => hero switch");
         source.AppendLine("    {");
-        foreach (string hero in legendaries.Select(l => l.Hero).Distinct())
+        foreach (var hero in legendaries.Select(l => l.Hero).Distinct())
         {
             source.AppendLine($"        {Literal(hero)} => itemId switch");
             source.AppendLine("        {");

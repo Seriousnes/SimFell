@@ -95,7 +95,7 @@ public sealed class Rime : Hero
     /// <summary>Gains Winter Orbs one at a time; each earned orb also sends Frost Swallows at enemies.</summary>
     public void GenerateWinterOrbs(int count, SimulationContext? ctx = null, EnemyTarget? target = null)
     {
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             if (ctx != null) _frostSwallows?.AttackEnemies(ctx, SwallowsPerWinterOrb);
             GainResource(WinterOrbsResource, 1, ctx, target);

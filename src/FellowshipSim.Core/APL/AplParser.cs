@@ -178,7 +178,7 @@ public static class AplParser
         var listActions = new List<NumberedListAction>();
         using var reader = new StringReader(script);
         string? line;
-        int lineNumber = 0;
+        var lineNumber = 0;
 
         while ((line = reader.ReadLine()) != null)
         {
@@ -270,7 +270,7 @@ public static class AplParser
         {
             throw new ParseException($"`{AplVariable.ActionName}` needs `{AplVariable.ValueKey}=<expression>`.", Position.Empty);
         }
-        double @default = Argument(AplVariable.DefaultKey) is ConstantExpression constant ? constant.Value : 0.0;
+        var @default = Argument(AplVariable.DefaultKey) is ConstantExpression constant ? constant.Value : 0.0;
         return new AplVariable(name.PropertyPath, op, value, @default);
     }
 

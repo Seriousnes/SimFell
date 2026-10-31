@@ -18,9 +18,9 @@ public sealed class ProfileStore(IBlobStore store)
     public async Task<IReadOnlyList<ProfileEntry>> ListAsync(Visitor visitor, IEnumerable<string> heroes, CancellationToken ct = default)
     {
         var entries = new List<ProfileEntry>();
-        foreach (string hero in heroes)
+        foreach (var hero in heroes)
         {
-            string prefix = visitor.Key($"{Folder}/{hero}");
+            var prefix = visitor.Key($"{Folder}/{hero}");
             entries.AddRange((await store.ListAsync(prefix, ct))
                 .Where(key => key.EndsWith(Extension, StringComparison.Ordinal) && key.LastIndexOf('/') == prefix.Length)
                 .Select(key => new ProfileEntry(hero, key[(prefix.Length + 1)..^Extension.Length])));

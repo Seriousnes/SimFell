@@ -78,8 +78,8 @@ public sealed class Ardeos : Hero, ITargetEffects
         var on = Dots.On(target);
         DamageOverTime? effect = null;
         var expiresAt = SimTime.Zero;
-        int stacks = 0;
-        for (int i = 0; i < on.Count; i++)
+        var stacks = 0;
+        for (var i = 0; i < on.Count; i++)
         {
             var dot = on[i];
             if (!dot.IsActive || dot.ExpiresAt <= now) continue;
@@ -90,7 +90,7 @@ public sealed class Ardeos : Hero, ITargetEffects
             if (dot.ExpiresAt > expiresAt) expiresAt = dot.ExpiresAt;
         }
         if (effect == null) return null;
-        int maxStacks = effect.Stacking == DotStacking.Concurrent ? int.MaxValue : effect.MaxStacks;
+        var maxStacks = effect.Stacking == DotStacking.Concurrent ? int.MaxValue : effect.MaxStacks;
         return new TargetEffect(expiresAt, stacks, maxStacks, SimTime.FromSeconds(effect.Duration));
     }
 

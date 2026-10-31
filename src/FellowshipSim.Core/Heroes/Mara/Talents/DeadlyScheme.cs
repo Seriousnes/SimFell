@@ -67,7 +67,7 @@ public class DeadlyScheme : Talent
     /// <summary>Shows the stacks counted; at 40 they activate Deadly Scheme and the rest carry over.</summary>
     private void Show(Hero hero, SimTime now)
     {
-        int stacks = (int)(_energy / EnergyPerStack);
+        var stacks = (int)(_energy / EnergyPerStack);
         if (stacks >= StacksToActivate)
         {
             _energy -= StacksToActivate * EnergyPerStack;

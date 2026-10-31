@@ -23,7 +23,7 @@ public class IntensifyingInferno : Talent
         hero.OnCastResolving += cast =>
         {
             if (cast.Ability != wave || cast.Target == null) return;
-            int unique = ardeos.Dots.On(cast.Target).Select(d => d.Effect).Distinct().Count();
+            var unique = ardeos.Dots.On(cast.Target).Select(d => d.Effect).Distinct().Count();
             cast.DamageMultiplier *= 1.0 + DamagePerEffect * unique;
         };
     }

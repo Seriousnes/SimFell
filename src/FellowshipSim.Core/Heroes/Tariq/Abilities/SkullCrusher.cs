@@ -44,7 +44,7 @@ public class SkullCrusher : TariqAbility
     {
         var hero = Tariq;
         TriggerCooldown(ctx);
-        double multiplier = FocusedWrath.Spend(hero, FuryCost, ctx);
+        var multiplier = FocusedWrath.Spend(hero, FuryCost, ctx);
         DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: (c, dealt) => Landed?.Invoke(c, target, dealt));
         if (hero.IsCharged(ctx.CurrentTime))
         {

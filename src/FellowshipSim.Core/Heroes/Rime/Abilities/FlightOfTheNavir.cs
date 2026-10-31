@@ -43,8 +43,8 @@ public class FlightOfTheNavir : RimeAbility
     {
         if (!Rime.Auras.HasAura(Buff, ctx.CurrentTime) || target == null) return;
         // Every swallow circling now; one that lands at once must not be sent again by the same command.
-        int available = Swallows.Available;
-        for (int i = 0; i < available; i++) Swallows.Send(ctx, target);
+        var available = Swallows.Available;
+        for (var i = 0; i < available; i++) Swallows.Send(ctx, target);
     }
 
     /// <summary>Freezing Torrent: one circling swallow attacks an enemy of its choosing.</summary>

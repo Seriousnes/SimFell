@@ -105,7 +105,7 @@ public sealed class Elarion : Hero
         var target = CurrentTarget is { IsSleeping: false } current ? current : ctx.ActiveEnemies.FirstOrDefault();
         if (target == null) return;
         LunarlightMark.Mark(ctx, target, RefundMarkStacks);
-        int chosen = 0;
+        var chosen = 0;
         foreach (var enemy in ctx.ActiveEnemiesExcept(target))
         {
             if (chosen == RefundNearbyEnemies) break;
@@ -131,7 +131,7 @@ public sealed class Elarion : Hero
             if (now == _focusRegeneratedAt) _focusRate = FocusRate(now);
             return;
         }
-        double seconds = (now - _focusRegeneratedAt).TotalSeconds;
+        var seconds = (now - _focusRegeneratedAt).TotalSeconds;
         _focusRegeneratedAt = now;
         var state = Resources.Get(Focus);
         state.Current = Math.Min(state.Max, state.Current + _focusRate * seconds);
@@ -147,7 +147,7 @@ public sealed class Elarion : Hero
     /// <summary>The Focus cost multiplier now (Event Horizon).</summary>
     public double FocusCostMultiplier(SimTime now)
     {
-        double multiplier = 1.0;
+        var multiplier = 1.0;
         foreach (var factor in FocusCostMultipliers) multiplier *= factor(now);
         return multiplier;
     }

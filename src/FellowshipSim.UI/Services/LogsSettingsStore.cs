@@ -25,8 +25,8 @@ public sealed class LogsSettingsStore(IHttpClientFactory httpClients, IConfigura
     {
         get
         {
-            string? id = configuration[ClientIdKey];
-            string? secret = configuration[ClientSecretKey];
+            var id = configuration[ClientIdKey];
+            var secret = configuration[ClientSecretKey];
             return !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(secret) ? new LogsCredentials(id, secret) : null;
         }
     }

@@ -74,8 +74,8 @@ public class HammerStorm : TariqAbility
     {
         if (_spins > 0) return;
         Spin(ctx, target);
-        int channel = _channel;
-        for (int k = 1; k < MaxSpins; k++)
+        var channel = _channel;
+        for (var k = 1; k < MaxSpins; k++)
         {
             ctx.ScheduleAt(_castTime + SimTime.FromSeconds(k * _spinPeriod), c =>
             {
@@ -91,8 +91,8 @@ public class HammerStorm : TariqAbility
 
     private void Spin(SimulationContext ctx, EnemyTarget target)
     {
-        double ramp = Math.Pow(SpinRamp, _spins++);
-        double multiplier = _castMultiplier * ramp;
+        var ramp = Math.Pow(SpinRamp, _spins++);
+        var multiplier = _castMultiplier * ramp;
         var area = WildSwing.AreaAround(ctx, target);
         // Combat logs: every enemy's physical hit, then every enemy's lightning, all under the ability's ID.
         DealToEach(ctx, ctx.Outcomes.SelectTargets(DamageLogId, area, ctx), TargetThreshold, multiplier, extraCritChance: _castCritChance);

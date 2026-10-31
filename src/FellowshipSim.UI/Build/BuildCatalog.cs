@@ -98,7 +98,7 @@ public sealed class BuildCatalog
     /// </summary>
     public static string? IconUrl(int logId, string name)
     {
-        string? icon = logId switch
+        var icon = logId switch
         {
             >= LogIds.AugmentationOffset => GameIcons.Augmentations.GetValueOrDefault(logId - LogIds.AugmentationOffset),
             >= LogIds.TalentOffset => GameIcons.Talents.GetValueOrDefault(logId - LogIds.TalentOffset),

@@ -23,8 +23,9 @@ public sealed class BrowserSignInLauncher(IJSRuntime js, NavigationManager navig
 
     public async Task<LogsUserToken?> SignInAsync(HttpClient http, string returnTo, CancellationToken ct)
     {
-        string verifier = FellowshipLogsSignIn.NewVerifier(), state = FellowshipLogsSignIn.NewState();
-        string redirect = navigation.BaseUri.StartsWith(LocalSiteBase, StringComparison.Ordinal)
+        var verifier = FellowshipLogsSignIn.NewVerifier();
+        var state = FellowshipLogsSignIn.NewState();
+        var redirect = navigation.BaseUri.StartsWith(LocalSiteBase, StringComparison.Ordinal)
             ? FellowshipLogsSignIn.LocalSiteRedirect
             : FellowshipLogsSignIn.SiteRedirect;
         await js.InvokeVoidAsync(SetItemFunction, ct, Key, JsonSerializer.Serialize(new PendingSignIn(verifier, state, redirect, returnTo)));
@@ -34,7 +35,7 @@ public sealed class BrowserSignInLauncher(IJSRuntime js, NavigationManager navig
 
     public async Task<PendingSignIn?> TakePendingAsync()
     {
-        string? json = await js.InvokeAsync<string?>(GetItemFunction, Key);
+        var json = await js.InvokeAsync<string?>(GetItemFunction, Key);
         await js.InvokeVoidAsync(RemoveItemFunction, Key);
         return json == null ? null : JsonSerializer.Deserialize<PendingSignIn>(json);
     }

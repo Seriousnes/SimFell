@@ -48,11 +48,11 @@ public sealed class ReplayVerifier
     /// </summary>
     public ExpectedRange HitDamageRange(double average, double tickFraction = 1.0, bool overkill = false)
     {
-        double low = average * (1.0 - _options.DamageSpread) - _options.DamageAbsoluteTolerance;
-        double high = average * (1.0 + _options.DamageSpread) * (1.0 + _options.UnexplainedHighMargin) + _options.DamageAbsoluteTolerance;
+        var low = average * (1.0 - _options.DamageSpread) - _options.DamageAbsoluteTolerance;
+        var high = average * (1.0 + _options.DamageSpread) * (1.0 + _options.UnexplainedHighMargin) + _options.DamageAbsoluteTolerance;
         if (tickFraction < 1.0 && tickFraction > 0.0)
         {
-            double fullTick = average / tickFraction;
+            var fullTick = average / tickFraction;
             low -= fullTick * _options.PartialTickFractionTolerance;
             high += fullTick * _options.PartialTickFractionTolerance;
         }
@@ -65,7 +65,7 @@ public sealed class ReplayVerifier
     /// </summary>
     public HitPair CheckHit(SimulationContext ctx, in HitRequest landed, LogDamage log, double releasedAt)
     {
-        double average = landed.BaseDamage * (log.Crit ? landed.CritMultiplier : 1.0);
+        var average = landed.BaseDamage * (log.Crit ? landed.CritMultiplier : 1.0);
         var range = HitDamageRange(average, landed.TickFraction, log.Overkill > 0);
         var state = EngineState.Capture(ctx, landed.Target, landed, releasedAt, ctx.CurrentTime.TotalSeconds);
         var target = landed.Target == null ? null : new UnitRef(landed.Target.Id, landed.Target.InstanceId);
@@ -109,7 +109,7 @@ public sealed class ReplayVerifier
     /// </summary>
     public HitPair EngineHitWithoutLogHit(SimulationContext ctx, in HitRequest released)
     {
-        double average = released.BaseDamage * (released.ForcedCrit == true ? released.CritMultiplier : 1.0);
+        var average = released.BaseDamage * (released.ForcedCrit == true ? released.CritMultiplier : 1.0);
         var range = HitDamageRange(average, released.TickFraction);
         var state = EngineState.Capture(ctx, released.Target, released);
         var target = released.Target == null ? null : new UnitRef(released.Target.Id, released.Target.InstanceId);
@@ -164,7 +164,7 @@ public sealed class ReplayVerifier
     {
         ExpectedRange? range = logSeconds.HasValue ? CastTimeRange(engineSeconds) : null;
         if (logSeconds is { } logged && range!.Contains(logged)) return;
-        string message = kind == ReplayCommandKind.Cast
+        var message = kind == ReplayCommandKind.Cast
             ? $"Log cast {ability.Name} instantly, but the engine expects a {engineSeconds:F3}s cast"
             : $"Log shows a cast time for {ability.Name}, but the engine resolves it in {engineSeconds:F3}s";
         Report(ctx, IssueCategory.Casts, message,
@@ -180,7 +180,7 @@ public sealed class ReplayVerifier
     {
         if (_hero.CurrentCast is not { } cast || next.IgnoresGcd) return null;
         var range = new ExpectedRange(cast.EndTime.TotalSeconds, double.PositiveInfinity, RangeUnit.Seconds);
-        double now = ctx.CurrentTime.TotalSeconds;
+        var now = ctx.CurrentTime.TotalSeconds;
         if (range.Contains(now)) return null;
         return Issue(ctx, IssueCategory.Casts,
             $"Engine is still casting {cast.Ability.Name} (ends {cast.EndTime}) when the log casts {next.Name}",
@@ -196,8 +196,8 @@ public sealed class ReplayVerifier
     {
         var refusals = new List<ReplayIssue>();
         var now = ctx.CurrentTime;
-        double time = now.TotalSeconds;
-        bool canCast = ability.CanCast(ctx, out var reason);
+        var time = now.TotalSeconds;
+        var canCast = ability.CanCast(ctx, out var reason);
         var state = EngineState.Capture(ctx, _hero.CurrentTarget, cast: ability, refusal: reason);
 
         if (!ability.IgnoresGcd)
@@ -211,7 +211,7 @@ public sealed class ReplayVerifier
             }
         }
 
-        bool onCooldown = false;
+        var onCooldown = false;
         if (ability.Cooldown > SimTime.Zero && _hero.Cooldowns.TryGetValue(ability.Name, out var cooldown) && cooldown.ChargesAt(now) == 0)
         {
             onCooldown = true;
@@ -233,7 +233,7 @@ public sealed class ReplayVerifier
     /// <summary>A log tick's time against the engine's predicted tick time.</summary>
     public void CheckTickTime(SimulationContext ctx, PeriodicEffect effect, SimTime predicted, double logTime)
     {
-        double tolerance = _options.TickTimeToleranceSeconds;
+        var tolerance = _options.TickTimeToleranceSeconds;
         var range = new ExpectedRange(predicted.TotalSeconds - tolerance, predicted.TotalSeconds + tolerance, RangeUnit.Seconds);
         if (range.Contains(logTime)) return;
         Report(ctx, IssueCategory.Ticks, $"{effect.Name} ticks at {logTime:F3} in the log; the engine predicts {predicted}",
@@ -294,21 +294,21 @@ public sealed class ReplayVerifier
             .ToDictionary(g => g.Key, g => g.Max(a => a.Stacks));
 
         // Each aura matches if the log shows the engine's stacks at some moment within the tolerance (server-frame timing).
-        double tol = _options.AuraToleranceSeconds;
+        var tol = _options.AuraToleranceSeconds;
         var shown = _logAuras.TrackedStateAt(cmd.Time - LogStateLeadSeconds);
         var window = _logAuras.ChangeTimesBetween(cmd.Time - tol, cmd.Time + tol)
             .Prepend(cmd.Time - tol)
             .Select(t => _logAuras.TrackedStateAt(t)).ToList();
         foreach (var id in engineState.Keys.Union(shown.Keys).OrderBy(id => _logAuras.NameOf(id)))
         {
-            int engine = engineState.GetValueOrDefault(id);
+            var engine = engineState.GetValueOrDefault(id);
             // An aura the engine removed within the tolerance still counts (the game ends auras on its next server frame).
             if (engine == 0 && _engineRemoved.TryGetValue(id, out var removed)
                 && (ctx.CurrentTime - removed.Time).TotalSeconds <= tol && shown.GetValueOrDefault(id) == removed.Stacks)
             {
                 engine = removed.Stacks;
             }
-            int log = window.Any(w => w.GetValueOrDefault(id) == engine) ? engine : shown.GetValueOrDefault(id);
+            var log = window.Any(w => w.GetValueOrDefault(id) == engine) ? engine : shown.GetValueOrDefault(id);
             CheckAura(ctx, step, _logAuras.NameOf(id), engine, log, id);
         }
 
@@ -337,7 +337,7 @@ public sealed class ReplayVerifier
         var check = new AuraCheck(aura, engine, log, logId);
         step.Auras.Add(check);
         if (check.Matches) return;
-        string how = engine == 0 ? "missing in engine" : log == 0 ? "extra in engine" : "wrong stacks";
+        var how = engine == 0 ? "missing in engine" : log == 0 ? "extra in engine" : "wrong stacks";
         Report(ctx, IssueCategory.Auras, $"Pre-cast {aura}: engine {engine} stacks vs log {log}", $"{aura} {how}",
             new ExpectedRange(engine, engine, RangeUnit.Stacks), log, EngineState.Capture(ctx, _hero.CurrentTarget));
     }

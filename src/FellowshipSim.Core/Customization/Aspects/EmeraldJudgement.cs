@@ -24,7 +24,7 @@ public class EmeraldJudgement : Aspect
     public override void Bind(Hero hero)
     {
         var rppm = new RealPpm(ProcKey, ForRank(ProcsPerMinuteByRank));
-        int logId = LogIds.Effect(DamageEffectId);
+        var logId = LogIds.Effect(DamageEffectId);
         const string name = DamageName;
         const double coefficient = Coefficient;
 

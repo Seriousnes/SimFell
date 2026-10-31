@@ -37,8 +37,8 @@ public class AplLanguageTests
     public void Gcd_Deficit_And_Execute_Time_Read_The_Hero()
     {
         var (hero, ctx) = Fight([]);
-        double haste = hero.GetHaste(ctx.CurrentTime);
-        double gcd = hero.GlobalCooldownSeconds / (1.0 + haste);
+        var haste = hero.GetHaste(ctx.CurrentTime);
+        var gcd = hero.GlobalCooldownSeconds / (1.0 + haste);
         var spirit = hero.Resources.Get(hero.FindResource("spirit")!);
         var frostBolt = AplNames.FindAbility(hero, "frost_bolt")!;
 
@@ -126,7 +126,7 @@ public class AplLanguageTests
     {
         Assert.Equal(DefaultActionLists.DefaultName, DefaultActionLists.Names("Rime")[0]);
         Assert.Equal(["Default", "Frostweaver", "Generic", "Soulfrost", "Talons"], DefaultActionLists.Names("rime"));
-        foreach (string name in DefaultActionLists.Names("Rime"))
+        foreach (var name in DefaultActionLists.Names("Rime"))
         {
             var (hero, ctx) = Fight([IcyTalons.TalentId]);
             Assert.True(AplParser.ParseScript(DefaultActionLists.Read("Rime", name)!).TryAct(hero, ctx), name);

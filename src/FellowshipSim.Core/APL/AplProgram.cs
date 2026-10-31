@@ -105,7 +105,7 @@ public sealed class AplProgram
     {
         if (!Catalog.HasHero(hero.GetType().Name)) return false;
         var abilities = BuildAbilities.GetOrAdd(hero.GetType(), type => AplVocabulary.For(type.Name).Abilities);
-        string key = AplNames.Slug(aplName).Replace(AplNames.WordSeparator, "");
+        var key = AplNames.Slug(aplName).Replace(AplNames.WordSeparator, "");
         return abilities.Any(a => a.Slug.Replace(AplNames.WordSeparator, "") == key);
     }
 
@@ -129,7 +129,7 @@ public sealed class AplProgram
                 if (step is BoundAplListAction listAction)
                 {
                     if (listAction.List.Running || !listAction.ConditionHolds(ctx)) continue;
-                    bool acted = TryAct(ctx, listAction.List);
+                    var acted = TryAct(ctx, listAction.List);
                     if (acted || listAction.Kind == AplListAction.Run) return acted;
                     continue;
                 }
@@ -194,7 +194,7 @@ public sealed class BoundAplVariable : BoundAplStep
 
     public void Run(SimulationContext ctx)
     {
-        double value = Value?.EvaluateNumeric(ctx) ?? 0.0;
+        var value = Value?.EvaluateNumeric(ctx) ?? 0.0;
         _slot.Write(ctx, _op switch
         {
             AplVariableOp.Add => _slot.Read(ctx) + value,
@@ -279,10 +279,10 @@ public sealed class BoundAplAction : BoundAplStep
             return next;
         }
         var current = ctx.Player.CurrentTarget;
-        bool level = true;
+        var level = true;
         try
         {
-            for (int i = 0; i < candidates.Count; i++)
+            for (var i = 0; i < candidates.Count; i++)
             {
                 ctx.Player.CurrentTarget = candidates[i];
                 level &= expression.IsLevel(ctx);
@@ -298,7 +298,7 @@ public sealed class BoundAplAction : BoundAplStep
         var curves = new TimeCurve[candidates.Count];
         try
         {
-            for (int i = 0; i < candidates.Count; i++)
+            for (var i = 0; i < candidates.Count; i++)
             {
                 ctx.Player.CurrentTarget = candidates[i];
                 curves[i] = expression.Curve(ctx);
@@ -309,9 +309,9 @@ public sealed class BoundAplAction : BoundAplStep
             ctx.Player.CurrentTarget = current;
         }
         var roots = new List<double>();
-        for (int i = 0; i < curves.Length; i++)
+        for (var i = 0; i < curves.Length; i++)
         {
-            for (int j = i + 1; j < curves.Length; j++)
+            for (var j = i + 1; j < curves.Length; j++)
             {
                 var difference = curves[i] - curves[j];
                 Polynomial.Roots(difference.Numerator, Polynomial.EarliestRoot, next.Milliseconds - (double)now.Milliseconds, roots);
@@ -320,7 +320,7 @@ public sealed class BoundAplAction : BoundAplStep
         }
         roots.Sort();
         var picked = PickAt(ctx, candidates, now);
-        foreach (double root in roots)
+        foreach (var root in roots)
         {
             if (Crossing.FirstAround(now, next, root, time => PickAt(ctx, candidates, time) != picked) is { } changed) return changed;
         }
@@ -332,14 +332,14 @@ public sealed class BoundAplAction : BoundAplStep
     {
         var (selection, expression) = _targetIf!;
         EnemyTarget? best = null;
-        double bestValue = 0;
+        var bestValue = 0.0;
         var current = ctx.Player.CurrentTarget;
         try
         {
             foreach (var enemy in candidates)
             {
                 ctx.Player.CurrentTarget = enemy;
-                double value = expression.NumericAt(ctx, time);
+                var value = expression.NumericAt(ctx, time);
                 if (best == null || (selection == AplTargetSelection.Min ? value < bestValue : value > bestValue))
                 {
                     best = enemy;
@@ -388,9 +388,9 @@ public sealed class BoundAplAction : BoundAplStep
     {
         var (selection, expression) = _targetIf!;
         EnemyTarget? best = null;
-        double bestValue = 0;
+        var bestValue = 0.0;
         // By index: a foreach over the list interface allocates its enumerator.
-        for (int i = 0; i < candidates.Count; i++)
+        for (var i = 0; i < candidates.Count; i++)
         {
             var enemy = candidates[i];
             if (selection == AplTargetSelection.First)
@@ -398,7 +398,7 @@ public sealed class BoundAplAction : BoundAplStep
                 if (EvaluateAt(ctx, enemy, expression)) return enemy;
                 continue;
             }
-            double value = EvaluateNumericAt(ctx, enemy, expression);
+            var value = EvaluateNumericAt(ctx, enemy, expression);
             if (best == null || (selection == AplTargetSelection.Min ? value < bestValue : value > bestValue))
             {
                 best = enemy;

@@ -17,7 +17,7 @@ public class TheSubduer : Glyph
 
     public override void Bind(Hero hero)
     {
-        double multiplier = 1.0 + ForRank(DamageByRank);
+        var multiplier = 1.0 + ForRank(DamageByRank);
         hero.TargetDamageMultipliers.Add((target, _) => target.HealthFraction <= LowHealthThreshold ? multiplier : 1.0);
     }
 }

@@ -156,7 +156,8 @@ public static class FellowshipLogsReports
         var meta = await client.QueryAsync(FightMetaQuery, new FightVariables(reportCode, [fightId]), ct);
         var report = meta[ReportDataProperty]?[ReportProperty] ?? throw new FellowshipLogsException($"Report '{reportCode}' was not found.");
         var fight = report[FightsProperty]?.AsArray().FirstOrDefault() ?? throw new FellowshipLogsException($"Fight {fightId} is not in report '{reportCode}'.");
-        double start = fight[StartTimeProperty]!.GetValue<double>(), end = fight[EndTimeProperty]!.GetValue<double>();
+        var start = fight[StartTimeProperty]!.GetValue<double>();
+        var end = fight[EndTimeProperty]!.GetValue<double>();
 
         var events = new JsonArray();
         double? cursor = start;
@@ -172,7 +173,7 @@ public static class FellowshipLogsReports
                 foreach (var logEvent in moved) events.Add(logEvent);
             }
             progress?.Report($"Downloaded {events.Count:N0} events");
-            double? next = page[NextPageTimestampProperty]?.GetValue<double?>();
+            var next = page[NextPageTimestampProperty]?.GetValue<double?>();
             if (next == null || next <= from) break;
             cursor = next;
         }

@@ -34,14 +34,14 @@ public abstract class GundeAbility : Ability
     protected RendCast BeginRend(SimulationContext ctx)
     {
         var now = ctx.CurrentTime;
-        double share = RendShare;
+        var share = RendShare;
         foreach (var bonus in Gunde.RendShareBonuses) share += bonus(now);
         if (TakesRendEmpowerments && Gunde.Auras.HasAura(BloodArc.SerratedEdge, now))
         {
             share += Gunde.SerratedEdgeShare;
             Gunde.Auras.Remove(BloodArc.SerratedEdge, now);
         }
-        double multiplier = 1.0;
+        var multiplier = 1.0;
         if (TakesRendEmpowerments)
         {
             foreach (var empower in Gunde.RendCastMultipliers) multiplier *= empower(ctx, this);
@@ -57,9 +57,9 @@ public abstract class GundeAbility : Ability
         Func<EnemyTarget, double>? extraCritChance = null, Action<SimulationContext, EnemyTarget, double>? onLanded = null)
     {
         if (targets.Count == 0) return;
-        double multiplier = damageMultiplier * rend.DamageMultiplier;
+        var multiplier = damageMultiplier * rend.DamageMultiplier;
         if (AoeTargetThreshold > 0 && targets.Count > AoeTargetThreshold) multiplier *= Math.Sqrt(AoeTargetThreshold / targets.Count);
-        for (int i = 0; i < targets.Count; i++)
+        for (var i = 0; i < targets.Count; i++)
         {
             var target = targets[i];
             DealDamage(ctx, target, damageMultiplier: multiplier, extraCritChance: extraCritChance?.Invoke(target) ?? 0.0,

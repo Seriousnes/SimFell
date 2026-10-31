@@ -40,7 +40,7 @@ public static class ReplayReview
     /// <summary>The review's files for a finished replay of <paramref name="script"/>.</summary>
     public static ReviewArtifacts Artifacts(ReplayResult result, ReplayScript script, string scriptJson, int playerId)
     {
-        string id = ReplayLibrary.ReviewId(script.ReportCode, script.FightId, playerId);
+        var id = ReplayLibrary.ReviewId(script.ReportCode, script.FightId, playerId);
         var (engineDamage, logDamage) = ReplayReportWriter.DamageTotals(result);
         var summary = new ReviewSummary(id, script.ReportCode, script.FightId, script.FightName, script.FightDate, playerId,
             result.PlayerName, script.Player.Hero, result.PassedSteps, result.Steps.Count, result.MatchedLogHits, result.LogHits,
@@ -55,7 +55,7 @@ public static class ReplayReview
         var inv = System.Globalization.CultureInfo.InvariantCulture;
         foreach (var hit in result.AllHits)
         {
-            string name = hit.AbilityName.Replace(',', ' ');
+            var name = hit.AbilityName.Replace(',', ' ');
             sb.Append(string.Format(inv, "{0:F3},{1},{2},{3},{4:F1},{5:F1},{6:F1},{7},{8:F4},{9},{10},{11},{12:F1},{13:F3},{14},{15}\n",
                 hit.EngineTime, hit.AbilityId, name, hit.Target == null ? "" : $"{hit.Target.Id}.{hit.Target.Instance}",
                 hit.EngineAmount, hit.ExpectedLow, hit.ExpectedHigh, hit.Crit ? 1 : 0, hit.CritChance,

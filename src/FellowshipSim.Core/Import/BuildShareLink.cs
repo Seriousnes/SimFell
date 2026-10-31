@@ -74,10 +74,10 @@ public static class BuildShareLink
     /// <summary>The share link of <paramref name="build"/> on the site at <paramref name="siteAddress"/> (ending in '/').</summary>
     public static string Create(string siteAddress, CharacterBuild build)
     {
-        string link = $"{siteAddress}{Marker}{build.Hero.ToLowerInvariant()}.{Code(build)}";
-        string name = build.Name.Trim();
+        var link = $"{siteAddress}{Marker}{build.Hero.ToLowerInvariant()}.{Code(build)}";
+        var name = build.Name.Trim();
         if (name.Length == 0 || name.Equals(build.Hero, StringComparison.OrdinalIgnoreCase)) return link;
-        string escaped = Uri.EscapeDataString(name);
+        var escaped = Uri.EscapeDataString(name);
         // Chat apps leave a final dot out of a link: escape it.
         if (escaped.EndsWith(PartSeparator)) escaped = escaped[..^1] + "%2E";
         return $"{link}.{escaped}";
@@ -89,14 +89,14 @@ public static class BuildShareLink
     /// </summary>
     public static CharacterBuild? TryRead(string text)
     {
-        int at = text.IndexOf(Marker, StringComparison.OrdinalIgnoreCase);
+        var at = text.IndexOf(Marker, StringComparison.OrdinalIgnoreCase);
         if (at < 0) return null;
-        string rest = text[(at + Marker.Length)..].Trim();
-        int end = rest.IndexOfAny([' ', '\r', '\n', '\t']);
+        var rest = text[(at + Marker.Length)..].Trim();
+        var end = rest.IndexOfAny([' ', '\r', '\n', '\t']);
         if (end >= 0) rest = rest[..end];
         var parts = rest.Split(PartSeparator, count: HeroCodeAndNameParts);
         if (parts.Length < HeroAndCodeParts) throw new FormatException("The share link has no build after its hero.");
-        string hero = Catalog.Heroes.Keys.FirstOrDefault(h => h.Equals(parts[0], StringComparison.OrdinalIgnoreCase))
+        var hero = Catalog.Heroes.Keys.FirstOrDefault(h => h.Equals(parts[0], StringComparison.OrdinalIgnoreCase))
                       ?? throw new FormatException($"The share link's hero \"{parts[0]}\" is not one the engine has.");
         var build = FromCode(parts[1]);
         build.Hero = hero;
@@ -109,13 +109,13 @@ public static class BuildShareLink
     {
         var writer = new BitWriter();
         writer.EG(Version, 0);
-        double[] stats = Stats(build);
-        bool thousandths = stats.Append(build.MaxHealth).Concat(build.GemPower.Values).Any(v => v != Math.Floor(v));
-        int extra = thousandths ? ThousandthsExtraOrder : 0;
+        var stats = Stats(build);
+        var thousandths = stats.Append(build.MaxHealth).Concat(build.GemPower.Values).Any(v => v != Math.Floor(v));
+        var extra = thousandths ? ThousandthsExtraOrder : 0;
         writer.Bit(thousandths);
         writer.Bit(build.StatsFromOldProfile);
         writer.Bit(build.MaxHealth > 0);
-        foreach (double stat in stats) writer.EG(Number(stat, thousandths), StatOrder + extra);
+        foreach (var stat in stats) writer.EG(Number(stat, thousandths), StatOrder + extra);
         if (build.MaxHealth > 0) writer.EG(Number(build.MaxHealth, thousandths), HealthOrder + extra);
 
         WriteSorted(writer, build.Talents, id => id, TalentFirstOrder, TalentGapOrder, _ => { });
@@ -135,7 +135,7 @@ public static class BuildShareLink
         WriteOptional(writer, build.Relic1ItemId, RelicBase);
         WriteOptional(writer, build.Relic2ItemId, RelicBase);
         writer.EG(build.LegendaryItemIds.Count, 0);
-        foreach (int id in build.LegendaryItemIds) writer.EG(Zigzag(id - LegendaryBase), OffsetOrder);
+        foreach (var id in build.LegendaryItemIds) writer.EG(Zigzag(id - LegendaryBase), OffsetOrder);
         WriteOptional(writer, build.WeaponAbilityId, WeaponBase);
         return writer.Text();
     }
@@ -144,10 +144,12 @@ public static class BuildShareLink
     public static CharacterBuild FromCode(string code)
     {
         var reader = new BitReader(code);
-        long version = reader.EG(0);
+        var version = reader.EG(0);
         if (version != Version) throw new FormatException($"The share link is of version {version}; this SimFell reads version {Version}.");
-        bool thousandths = reader.Bit(), old = reader.Bit(), health = reader.Bit();
-        int extra = thousandths ? ThousandthsExtraOrder : 0;
+        var thousandths = reader.Bit();
+        var old = reader.Bit();
+        var health = reader.Bit();
+        var extra = thousandths ? ThousandthsExtraOrder : 0;
         double ReadNumber(int order) => thousandths ? reader.EG(order + extra) / ThousandthsPerUnit : reader.EG(order);
         var build = new CharacterBuild
         {
@@ -165,16 +167,17 @@ public static class BuildShareLink
         ReadSorted(reader, 0, 0, c => build.GearGemBonuses[Color(c)] = reader.Int(0));
         ReadSorted(reader, EnchantFirstOrder, 0, id =>
         {
-            int rating = reader.Int(EnchantRatingOrder), count = reader.Int(0);
+            var rating = reader.Int(EnchantRatingOrder);
+            var count = reader.Int(0);
             if (rating > 0) build.StatEnchants.Add(new BuildEntry(id, rating));
             if (count > 0) build.StatEnchantCounts[id] = count;
         });
 
         build.Relic1ItemId = ReadOptional(reader, RelicBase);
         build.Relic2ItemId = ReadOptional(reader, RelicBase);
-        long legendaries = reader.EG(0);
+        var legendaries = reader.EG(0);
         if (legendaries > MaxListItems) throw reader.Broken();
-        for (int i = 0; i < legendaries; i++) build.LegendaryItemIds.Add(Id(LegendaryBase + Unzigzag(reader.EG(OffsetOrder)), reader));
+        for (var i = 0; i < legendaries; i++) build.LegendaryItemIds.Add(Id(LegendaryBase + Unzigzag(reader.EG(OffsetOrder)), reader));
         build.WeaponAbilityId = ReadOptional(reader, WeaponBase);
         reader.End();
         return build;
@@ -188,10 +191,10 @@ public static class BuildShareLink
     {
         var list = items.OrderBy(id).ToList();
         writer.EG(list.Count, 0);
-        int previous = 0;
-        for (int i = 0; i < list.Count; i++)
+        var previous = 0;
+        for (var i = 0; i < list.Count; i++)
         {
-            int current = Whole(id(list[i]));
+            var current = Whole(id(list[i]));
             writer.EG(current - previous, i == 0 ? firstOrder : gapOrder);
             previous = current;
             rest(list[i]);
@@ -200,10 +203,10 @@ public static class BuildShareLink
 
     private static void ReadSorted(BitReader reader, int firstOrder, int gapOrder, Action<int> item)
     {
-        long count = reader.EG(0);
+        var count = reader.EG(0);
         if (count > MaxListItems) throw reader.Broken();
-        long id = 0;
-        for (int i = 0; i < count; i++)
+        var id = 0L;
+        for (var i = 0; i < count; i++)
         {
             id += reader.EG(i == 0 ? firstOrder : gapOrder);
             item(Id(id, reader));
@@ -215,7 +218,7 @@ public static class BuildShareLink
 
     private static int ReadOptional(BitReader reader, int baseId)
     {
-        long value = reader.EG(OffsetOrder);
+        var value = reader.EG(OffsetOrder);
         return value == 0 ? 0 : Id(baseId + Unzigzag(value - 1), reader);
     }
 
@@ -245,19 +248,19 @@ public static class BuildShareLink
         /// <summary>Exp-Golomb of order <paramref name="order"/>: value + 2^order in binary, after as many 0s as it has bits beyond order + 1.</summary>
         public void EG(long value, int order)
         {
-            ulong number = (ulong)value + (1UL << order);
-            int length = NumberBits - System.Numerics.BitOperations.LeadingZeroCount(number);
-            for (int i = 0; i < length - 1 - order; i++) _bits.Add(false);
-            for (int i = length - 1; i >= 0; i--) _bits.Add(((number >> i) & 1) == 1);
+            var number = (ulong)value + (1UL << order);
+            var length = NumberBits - System.Numerics.BitOperations.LeadingZeroCount(number);
+            for (var i = 0; i < length - 1 - order; i++) _bits.Add(false);
+            for (var i = length - 1; i >= 0; i--) _bits.Add(((number >> i) & 1) == 1);
         }
 
         public string Text()
         {
             var builder = new System.Text.StringBuilder((_bits.Count + BitsPerCharacter - 1) / BitsPerCharacter);
-            for (int i = 0; i < _bits.Count; i += BitsPerCharacter)
+            for (var i = 0; i < _bits.Count; i += BitsPerCharacter)
             {
-                int value = 0;
-                for (int k = 0; k < BitsPerCharacter; k++) value = (value << 1) | (i + k < _bits.Count && _bits[i + k] ? 1 : 0);
+                var value = 0;
+                for (var k = 0; k < BitsPerCharacter; k++) value = (value << 1) | (i + k < _bits.Count && _bits[i + k] ? 1 : 0);
                 builder.Append(Alphabet[value]);
             }
             return builder.ToString();
@@ -271,11 +274,11 @@ public static class BuildShareLink
 
         public BitReader(string code)
         {
-            foreach (char character in code)
+            foreach (var character in code)
             {
-                int value = Alphabet.IndexOf(character);
+                var value = Alphabet.IndexOf(character);
                 if (value < 0) throw new FormatException($"The share link's code has a character it cannot have ('{character}').");
-                for (int k = BitsPerCharacter - 1; k >= 0; k--) _bits.Add(((value >> k) & 1) == 1);
+                for (var k = BitsPerCharacter - 1; k >= 0; k--) _bits.Add(((value >> k) & 1) == 1);
             }
         }
 
@@ -283,19 +286,19 @@ public static class BuildShareLink
 
         public long EG(int order)
         {
-            int zeros = 0;
+            var zeros = 0;
             while (!Bit())
             {
                 if (++zeros > MaxLeadingZeros) throw Broken();
             }
-            ulong number = 1;
-            for (int i = 0; i < zeros + order; i++) number = (number << 1) | (Bit() ? 1UL : 0);
+            var number = 1UL;
+            for (var i = 0; i < zeros + order; i++) number = (number << 1) | (Bit() ? 1UL : 0);
             return (long)(number - (1UL << order));
         }
 
         public int Int(int order)
         {
-            long value = EG(order);
+            var value = EG(order);
             return value <= int.MaxValue ? (int)value : throw Broken();
         }
 

@@ -63,9 +63,9 @@ public class CoalescingFrost : Talent
         }
 
         // "Freezing Torrent critical strikes have a 50% chance to apply 2 stacks."
-        int added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx, target) ? CritStackCount : 1;
+        var added = crit && ctx.Outcomes.RollProc(DoubleStackProc, CritDoubleStackChance, ctx, target) ? CritStackCount : 1;
         var (stacks, version) = _stacks.GetValueOrDefault(target);
-        int expected = version + 1;
+        var expected = version + 1;
         _stacks[target] = new StackCount(stacks + added, expected);
         ctx.Schedule(SimTime.FromSeconds(DurationSeconds), c =>
         {
@@ -85,13 +85,13 @@ public class CoalescingFrost : Talent
         if (enemies.Count == 0) return;
         var eruption = _eruption!;
         var struck = ctx.Outcomes.SelectTargets(eruption.DamageLogId, enemies, ctx);
-        int around = 0;
-        for (int i = 0; i < struck.Count; i++)
+        var around = 0;
+        for (var i = 0; i < struck.Count; i++)
         {
             if (struck[i] != target) around++;
         }
-        double falloff = around > TargetThreshold ? Math.Sqrt(TargetThreshold / around) : 1.0;
-        for (int i = 0; i < struck.Count; i++)
+        var falloff = around > TargetThreshold ? Math.Sqrt(TargetThreshold / around) : 1.0;
+        for (var i = 0; i < struck.Count; i++)
         {
             eruption.DealDamage(ctx, struck[i], damageMultiplier: state.Stacks * (struck[i] == target ? 1.0 : falloff));
         }

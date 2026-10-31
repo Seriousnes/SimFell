@@ -30,9 +30,9 @@ public class RawGearStatsTests
         var now = SimTime.Zero;
         double Rating(StatType type, double rating) => rating + hero.Auras.Fold(type, 0.0, now);
 
-        string fight = (string)entry["fight"]!;
+        var fight = (string)entry["fight"]!;
         double Log(string key) => (double)combatant[key]!;
-        double logMain = new[] { "strength", "agility", "intellect" }.Max(k => combatant[k] is { } statValue ? (double)statValue : 0.0);
+        var logMain = new[] { "strength", "agility", "intellect" }.Max(k => combatant[k] is { } statValue ? (double)statValue : 0.0);
         Assert.True(Math.Abs(logMain - hero.PrimaryAttribute(now)) < 1.0, $"{fight}: Main Stat {hero.PrimaryAttribute(now):F1}, log {logMain}");
         Assert.True(Math.Abs(Log("stamina") - hero.Stats.TotalStamina) < 1.0, $"{fight}: Stamina {hero.Stats.TotalStamina:F1}, log {Log("stamina")}");
         Assert.Equal((fight, Log("crit")), (fight, Rating(StatType.CritRating, hero.Stats.CritRating)));
@@ -49,7 +49,7 @@ public class RawGearStatsTests
         // CJ's crit: the gear's 89, before Berserker's Zeal II (24) and Banshee's Cunning (6) make the log's 119.
         Assert.Equal(89, build.CritRating);
 
-        string text = new SimcProfile(build, "").Format();
+        var text = new SimcProfile(build, "").Format();
         Assert.Contains("crit_rating=89", text);
         var read = SimcProfile.Parse(text).Build;
         var before = HeroImporter.Import(build);

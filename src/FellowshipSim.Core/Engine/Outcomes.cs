@@ -117,8 +117,8 @@ public class RandomOutcomeSource : IOutcomeSource
         if (hit.ForcedCrit is { } forced) return new HitOutcome(forced);
         if (Mode == OutcomeMode.Discrete)
         {
-            bool isCrit = hit.CanCrit && _rng.Roll(hit.CritChance);
-            double spread = (1.0 - DamageSpread) + (_rng.NextDouble() * 2.0 * DamageSpread);
+            var isCrit = hit.CanCrit && _rng.Roll(hit.CritChance);
+            var spread = (1.0 - DamageSpread) + (_rng.NextDouble() * 2.0 * DamageSpread);
             return new HitOutcome(isCrit, SimTime.Zero, spread);
         }
         return new HitOutcome(hit.CritChance > ExpectedCritThreshold);
@@ -186,7 +186,7 @@ public sealed class SimulationRng
     public void Seed(int seed)
     {
         // SplitMix64 spreads the seed over the four state words, so the state is never all zero.
-        ulong state = (ulong)seed;
+        var state = (ulong)seed;
         _s0 = SplitMix64(ref state);
         _s1 = SplitMix64(ref state);
         _s2 = SplitMix64(ref state);
@@ -200,8 +200,8 @@ public sealed class SimulationRng
 
     private ulong NextUInt64()
     {
-        ulong result = BitOperations.RotateLeft(_s1 * ScrambleMultiplier, ScrambleRotation) * ScrambleFinalMultiplier;
-        ulong shifted = _s1 << StateShift;
+        var result = BitOperations.RotateLeft(_s1 * ScrambleMultiplier, ScrambleRotation) * ScrambleFinalMultiplier;
+        var shifted = _s1 << StateShift;
         _s2 ^= _s0;
         _s3 ^= _s1;
         _s1 ^= _s2;
@@ -213,7 +213,7 @@ public sealed class SimulationRng
 
     private static ulong SplitMix64(ref ulong state)
     {
-        ulong mixed = state += SplitMixIncrement;
+        var mixed = state += SplitMixIncrement;
         mixed = (mixed ^ (mixed >> SplitMixFirstShift)) * SplitMixFirstMultiplier;
         mixed = (mixed ^ (mixed >> SplitMixSecondShift)) * SplitMixSecondMultiplier;
         return mixed ^ (mixed >> SplitMixFinalShift);

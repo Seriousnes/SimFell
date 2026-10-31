@@ -88,7 +88,7 @@ public static class FreeDiceReplay
             perRun[i] = tallies;
         });
         clock.Stop();
-        double logDamage = script.Observations.Damage.Sum(d => d.TotalAmount);
+        var logDamage = script.Observations.Damage.Sum(d => d.TotalAmount);
         return new Result(script.Player.Name, script.FightName, logDamage, totals, forced.Average(), clock.Elapsed,
             Abilities(script, perRun));
     }
@@ -98,14 +98,14 @@ public static class FreeDiceReplay
     {
         var log = script.Observations.Damage.GroupBy(d => d.AbilityId).ToDictionary(g => g.Key, g => g.ToList());
         var ids = log.Keys.Union(perRun.SelectMany(r => r.Keys)).ToList();
-        int runs = perRun.Length;
+        var runs = perRun.Length;
         var rows = new List<FreeDiceAbility>();
-        foreach (int id in ids)
+        foreach (var id in ids)
         {
             var hits = log.GetValueOrDefault(id) ?? [];
             var engine = perRun.Select(r => r.GetValueOrDefault(id)).ToList();
             var damage = engine.Select(t => t?.Damage ?? 0.0).ToList();
-            string name = hits.FirstOrDefault()?.AbilityName ?? engine.FirstOrDefault(t => t != null)?.Name ?? id.ToString();
+            var name = hits.FirstOrDefault()?.AbilityName ?? engine.FirstOrDefault(t => t != null)?.Name ?? id.ToString();
             rows.Add(new FreeDiceAbility(id, name,
                 hits.Sum(h => h.TotalAmount), hits.Count, hits.Count(h => h.Crit),
                 damage.Average(), Percentile(damage, LowPercentile), Percentile(damage, HighPercentile),

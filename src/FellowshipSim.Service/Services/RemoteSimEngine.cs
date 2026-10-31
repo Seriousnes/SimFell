@@ -145,7 +145,7 @@ public sealed class RemoteSimEngine : ISimEngine
     private static async Task EnsureAcceptedAsync(HttpResponseMessage response, CancellationToken ct)
     {
         if (response.IsSuccessStatusCode) return;
-        string? error = await ErrorOfAsync(response, ct);
+        var error = await ErrorOfAsync(response, ct);
         if (response.StatusCode == HttpStatusCode.BadRequest && error != null) throw new SimEngineException(error);
         throw new HttpRequestException($"The engine server refused the request ({(int)response.StatusCode}){(error == null ? "." : $": {error}")}",
             null, response.StatusCode);
@@ -154,7 +154,7 @@ public sealed class RemoteSimEngine : ISimEngine
     /// <summary>The <c>error</c> member of a reply's JSON body, or null when the body has none.</summary>
     private static async Task<string?> ErrorOfAsync(HttpResponseMessage response, CancellationToken ct)
     {
-        string text = await response.Content.ReadAsStringAsync(ct);
+        var text = await response.Content.ReadAsStringAsync(ct);
         try
         {
             return JsonNode.Parse(text)?[ErrorProperty]?.GetValue<string>();

@@ -67,8 +67,8 @@ public static class FreeDiceReportWriter
                   "procs and damage spread, and area hits reach the enemies the player was fighting at the time. " +
                   "If the engine is right, the log should look like a typical run (somewhere near the middle).</div>");
 
-        double place = result.LogPercentile;
-        string placeClass = place is >= PlaceOkLow and <= PlaceOkHigh ? "ok" : place is >= PlaceWarnLow and <= PlaceWarnHigh ? "warn" : "bad";
+        var place = result.LogPercentile;
+        var placeClass = place is >= PlaceOkLow and <= PlaceOkHigh ? "ok" : place is >= PlaceWarnLow and <= PlaceWarnHigh ? "warn" : "bad";
         sb.Append("<div class=\"panel grid\">");
         Stat(sb, "Log damage", FormatNumber(result.LogDamage), "");
         Stat(sb, "Engine average", $"{FormatNumber(result.Mean)} <span class=\"{RatioClass(result.Mean / result.LogDamage, MeanGoodDeviation, MeanWarnDeviation)}\">({FormatPercent(result.Mean / result.LogDamage)} of log)</span>", "");
@@ -90,8 +90,8 @@ public static class FreeDiceReportWriter
                   "<th class=\"num\">Log crit</th><th class=\"num\">Engine crit</th></tr></thead><tbody>");
         foreach (var ability in result.Abilities)
         {
-            bool outside = ability.LogDamage < ability.Engine5 || ability.LogDamage > ability.Engine95;
-            string ratio = ability.LogDamage > 0 ? $"<span class=\"{RatioClass(ability.EngineMean / ability.LogDamage, AbilityGoodDeviation, AbilityWarnDeviation)}\">{FormatPercent(ability.EngineMean / ability.LogDamage)}</span>" : "<span class=\"muted\">engine only</span>";
+            var outside = ability.LogDamage < ability.Engine5 || ability.LogDamage > ability.Engine95;
+            var ratio = ability.LogDamage > 0 ? $"<span class=\"{RatioClass(ability.EngineMean / ability.LogDamage, AbilityGoodDeviation, AbilityWarnDeviation)}\">{FormatPercent(ability.EngineMean / ability.LogDamage)}</span>" : "<span class=\"muted\">engine only</span>";
             sb.Append($"<tr><td>{EncodeHtml(ability.Name)}{(outside ? " <span class=\"tag\" title=\"The log's damage is outside the engine's 5-95% range\">outside range</span>" : "")}</td>" +
                       $"<td class=\"num muted\">{ability.Id}</td><td class=\"num\">{FormatNumber(ability.LogDamage)}</td><td class=\"num\">{FormatNumber(ability.EngineMean)}</td>" +
                       $"<td class=\"num\">{ratio}</td><td class=\"num muted\">{FormatNumber(ability.Engine5)} - {FormatNumber(ability.Engine95)}</td>" +
@@ -113,20 +113,21 @@ public static class FreeDiceReportWriter
     private static string Histogram(IReadOnlyList<double> totals, double log)
     {
         const int bins = 40, width = 1000, height = 180, pad = 24;
-        double lo = Math.Min(totals.Min(), log), hi = Math.Max(totals.Max(), log);
-        double span = Math.Max(hi - lo, 1.0);
+        var lo = Math.Min(totals.Min(), log);
+        var hi = Math.Max(totals.Max(), log);
+        var span = Math.Max(hi - lo, 1.0);
         lo -= span * HistogramMarginFraction;
         hi += span * HistogramMarginFraction;
         var counts = new int[bins];
-        foreach (double total in totals) counts[Math.Clamp((int)((total - lo) / (hi - lo) * bins), 0, bins - 1)]++;
-        int max = counts.Max();
+        foreach (var total in totals) counts[Math.Clamp((int)((total - lo) / (hi - lo) * bins), 0, bins - 1)]++;
+        var max = counts.Max();
         double ScaleX(double value) => (value - lo) / (hi - lo) * width;
         var sb = new StringBuilder($"<svg class=\"chart\" viewBox=\"0 0 {width} {height + pad}\" role=\"img\" aria-label=\"Engine runs against the log\">");
-        double barW = (double)width / bins;
-        for (int i = 0; i < bins; i++)
+        var barW = (double)width / bins;
+        for (var i = 0; i < bins; i++)
         {
             if (counts[i] == 0) continue;
-            double barHeight = (double)counts[i] / max * (height - BarTopInset);
+            var barHeight = (double)counts[i] / max * (height - BarTopInset);
             sb.Append(string.Format(Inv, "<rect x=\"{0:F1}\" y=\"{1:F1}\" width=\"{2:F1}\" height=\"{3:F1}\" fill=\"var(--engine)\" opacity=\"0.75\"/>",
                 i * barW + BarOffset, height - barHeight, barW - BarWidthTrim, barHeight));
         }
@@ -140,7 +141,7 @@ public static class FreeDiceReportWriter
 
     private static string RatioClass(double ratio, double good, double warn)
     {
-        double off = Math.Abs(1 - ratio);
+        var off = Math.Abs(1 - ratio);
         return off <= good ? "ok" : off <= warn ? "warn" : "bad";
     }
 

@@ -82,21 +82,21 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         var actions = new StringBuilder();
         var percents = new HashSet<string>();
         Hero? hero = null;
-        int lineNumber = 0;
-        foreach (string raw in text.Split('\n'))
+        var lineNumber = 0;
+        foreach (var raw in text.Split('\n'))
         {
             lineNumber++;
-            string line = raw.Trim();
+            var line = raw.Trim();
             if (line.Length == 0 || line.StartsWith(CommentMarker)) continue;
             if (line.StartsWith(ActionsKey, StringComparison.Ordinal))
             {
                 actions.AppendLine(line);
                 continue;
             }
-            int eq = line.IndexOf('=');
+            var eq = line.IndexOf('=');
             if (eq <= 0) throw Error(lineNumber, line, "expected key=value");
-            string key = line[..eq].Trim();
-            string value = line[(eq + 1)..].Trim();
+            var key = line[..eq].Trim();
+            var value = line[(eq + 1)..].Trim();
             try
             {
                 if (hero == null)
@@ -155,7 +155,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 break;
             case TalentsKey:
                 var tree = hero.TalentTreeSlots.Select(s => Catalog.CreateTalent(s.TalentId)).OfType<Talent>().Select(t => new NamedId(t.Name, t.Id));
-                foreach (string name in List(value)) build.Talents.Add(IdOf(name, tree, "talent"));
+                foreach (var name in List(value)) build.Talents.Add(IdOf(name, tree, "talent"));
                 break;
             case AspectsKey: AddAugmentations<Aspect>(build, value, "aspect"); break;
             case SigilsKey: AddAugmentations<Sigil>(build, value, "sigil"); break;
@@ -167,7 +167,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 }
                 break;
             case GemsKey:
-                foreach (string entry in List(value))
+                foreach (var entry in List(value))
                 {
                     var (name, power) = Pair(entry);
                     var colors = Enum.GetValues<GemColor>().Where(c => AplNames.Slug(c.ToString()) == name).ToList();
@@ -176,7 +176,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 }
                 break;
             case GemSocketsKey:
-                foreach (string name in List(value))
+                foreach (var name in List(value))
                 {
                     build.SocketedGemIds.Add((GemItem.All.FirstOrDefault(g => AplNames.Slug(g.Name) == name) ?? throw new FormatException($"no gem '{name}'")).Id);
                 }
@@ -208,7 +208,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
             case LegendaryKey:
             {
                 var options = Options(value);
-                int itemId = (int)Number(options.GetValueOrDefault(IdOption) ?? throw new FormatException("a legendary is <power>,id=<item id>"));
+                var itemId = (int)Number(options.GetValueOrDefault(IdOption) ?? throw new FormatException("a legendary is <power>,id=<item id>"));
                 var legendary = Catalog.CreateLegendary(build.Hero, itemId) ?? throw new FormatException($"no legendary item {itemId} for {build.Hero}");
                 if (AplNames.Slug(legendary.Name) != options[NameOption]) throw new FormatException($"item {itemId} grants {AplNames.Slug(legendary.Name)}");
                 build.LegendaryItemIds.Add(itemId);
@@ -278,7 +278,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         }
         RelicLine(builder, Relic1Key, build.Relic1ItemId);
         RelicLine(builder, Relic2Key, build.Relic2ItemId);
-        foreach (int itemId in build.LegendaryItemIds)
+        foreach (var itemId in build.LegendaryItemIds)
         {
             var legendary = Catalog.CreateLegendary(build.Hero, itemId) ?? throw new InvalidOperationException($"Legendary item {itemId} is not in the catalog");
             builder.AppendLine($"{LegendaryKey}={AplNames.Slug(legendary.Name)},{IdOption}={itemId}");
@@ -314,7 +314,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     /// <summary>"name:value" or "name=value".</summary>
     private static NamedValue Pair(string entry)
     {
-        int at = entry.IndexOfAny([':', '=']);
+        var at = entry.IndexOfAny([':', '=']);
         if (at <= 0) throw new FormatException($"expected name:value in '{entry}'");
         return new NamedValue(entry[..at].Trim(), Number(entry[(at + 1)..]));
     }
@@ -323,7 +323,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     private static int RelicItemId(string value)
     {
         var options = Options(value);
-        int itemId = (int)Number(options.GetValueOrDefault(IdOption) ?? throw new FormatException("a relic is <item>,id=<item id>"));
+        var itemId = (int)Number(options.GetValueOrDefault(IdOption) ?? throw new FormatException("a relic is <item>,id=<item id>"));
         var relic = Catalog.RelicItemOf(itemId) ?? throw new FormatException($"no relic item {itemId}");
         if (AplNames.Slug(relic.Name) != options[NameOption]) throw new FormatException($"item {itemId} is {AplNames.Slug(relic.Name)}");
         return itemId;
@@ -341,9 +341,9 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     {
         var parts = value.Split(',', StringSplitOptions.TrimEntries);
         var options = new Dictionary<string, string> { [NameOption] = parts[0] };
-        foreach (string part in parts.Skip(1))
+        foreach (var part in parts.Skip(1))
         {
-            int eq = part.IndexOf('=');
+            var eq = part.IndexOf('=');
             if (eq <= 0) throw new FormatException($"expected key=value in '{part}'");
             options[part[..eq]] = part[(eq + 1)..];
         }
@@ -356,13 +356,13 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
             : throw new FormatException($"no {kind} '{name}'");
 
     private static double Number(string text) =>
-        double.TryParse(text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double value)
+        double.TryParse(text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var value)
             ? value
             : throw new FormatException($"'{text}' is not a number");
 
     private static double Percent(string text)
     {
-        string trimmed = text.Trim();
+        var trimmed = text.Trim();
         if (!trimmed.EndsWith('%')) throw new FormatException($"'{text}' is not a percentage such as 24%");
         return Number(trimmed[..^1]) / Percentage.PerFraction;
     }

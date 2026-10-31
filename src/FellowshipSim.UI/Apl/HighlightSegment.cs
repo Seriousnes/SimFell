@@ -12,8 +12,8 @@ public sealed record HighlightSegment(string Text, AplTokenKind? Kind = null, bo
     public static IReadOnlyList<HighlightSegment> Of(string text, AplExpressionCheck? check)
     {
         var parts = new List<HighlightSegment>();
-        int? errorAt = check?.ErrorStart;
-        int at = 0;
+        var errorAt = check?.ErrorStart;
+        var at = 0;
         void Plain(int end)
         {
             end = Math.Min(end, text.Length);
@@ -30,8 +30,8 @@ public sealed record HighlightSegment(string Text, AplTokenKind? Kind = null, bo
         foreach (var token in check?.Tokens ?? [])
         {
             Plain(token.Start);
-            int end = Math.Min(token.Start + token.Length, text.Length);
-            bool error = errorAt is { } errorStart && errorStart >= token.Start && errorStart < token.Start + token.Length;
+            var end = Math.Min(token.Start + token.Length, text.Length);
+            var error = errorAt is { } errorStart && errorStart >= token.Start && errorStart < token.Start + token.Length;
             parts.Add(new HighlightSegment(token.Start < end ? text[token.Start..end] : "", token.Kind, error));
             at = token.Start + token.Length;
         }

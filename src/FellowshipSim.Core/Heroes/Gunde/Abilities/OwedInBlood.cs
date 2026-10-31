@@ -48,7 +48,7 @@ public class OwedInBlood : GundeAbility
     /// <summary>The stacks the cast uses: those held, or those the same moment removed.</summary>
     private int Stacks(SimTime now)
     {
-        int held = Gunde.Auras.GetStacks(Buff, now);
+        var held = Gunde.Auras.GetStacks(Buff, now);
         return held > 0 ? held : _removed.At == now ? _removed.Stacks : 0;
     }
 
@@ -66,12 +66,12 @@ public class OwedInBlood : GundeAbility
     {
         TriggerCooldown(ctx);
         var now = ctx.CurrentTime;
-        int stacks = Stacks(now);
+        var stacks = Stacks(now);
         Gunde.Auras.Remove(Buff, now);
         _removed = default;
         if (stacks == 0 || target is not { IsSleeping: false }) return;
         // A Rend stack is a Strength of Rend still to deal (Deep Rend included).
-        double rendStacks = Math.Min(stacks, ExactStacks) + LargeCastRendPerStack * Math.Max(0, stacks - ExactStacks);
+        var rendStacks = Math.Min(stacks, ExactStacks) + LargeCastRendPerStack * Math.Max(0, stacks - ExactStacks);
         Gunde.Rend.Apply(ctx, target, rendStacks * Gunde.PrimaryAttribute(now) / Gunde.Rend.TickRate);
         Spent?.Invoke(ctx, target, stacks);
     }

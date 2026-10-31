@@ -43,7 +43,7 @@ public class RagingTempest : TariqAbility
 
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
-        double points = Owner.ResourceAmount(Hero.SpiritPoints);
+        var points = Owner.ResourceAmount(Hero.SpiritPoints);
         if (points < Owner.SpiritAbilityCost)
         {
             reason = explain ? $"{Name} needs {Owner.SpiritAbilityCost:0} Spirit Points (have {points:0.#})" : null;

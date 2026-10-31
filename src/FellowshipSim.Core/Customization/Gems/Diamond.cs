@@ -90,7 +90,7 @@ public class Diamond : Gem
         var old = HarmoniousSoul;
         HarmoniousSoul = NodeInSlot(HeadlineSlot) is { } node ? hero.Register(SoulOf(node)) : null;
         if (now is not { } time || old == null || old == HarmoniousSoul || hero.Auras.Get(old, time) is not { } active) return;
-        int stacks = active.Stacks;
+        var stacks = active.Stacks;
         hero.Auras.Remove(old, time);
         if (HarmoniousSoul is { } soul) hero.Auras.Apply(soul, time, setStacks: Math.Min(stacks, soul.MaxStacks));
     }

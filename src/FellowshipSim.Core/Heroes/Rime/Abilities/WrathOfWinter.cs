@@ -29,7 +29,7 @@ public class WrathOfWinter : RimeAbility
     /// <summary>Rime's Spirit ability: it needs and spends the Spirit ability's cost in Spirit Points.</summary>
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
-        double points = Owner.ResourceAmount(Hero.SpiritPoints);
+        var points = Owner.ResourceAmount(Hero.SpiritPoints);
         if (points < Owner.SpiritAbilityCost)
         {
             reason = explain ? $"{Name} needs {Owner.SpiritAbilityCost:0} Spirit Points (have {points:0.#})" : null;
@@ -45,7 +45,7 @@ public class WrathOfWinter : RimeAbility
         hero.ActivateSpiritOfHeroism(ctx);
         hero.Auras.Apply(Buff, ctx.CurrentTime);
 
-        double duration = Buff.Duration.TotalSeconds;
+        var duration = Buff.Duration.TotalSeconds;
         // Not in the description, but every log shows it: the first orb comes on activation (yMAZVJL9hTpFjqbC fight 7 @ 709.809: 4 -> 5 orbs).
         // The datamine marks the ability scalesWithHaste: the 4 seconds between orbs are hasted (logs: orbs every ~2.4s at ~69% haste),
         // by the haste when the previous orb came (yMAZVJL9hTpFjqbC fight 7: orbs at ~40.2 and ~42.5 despite The Philosopher

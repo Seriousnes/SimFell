@@ -21,7 +21,7 @@ public static class AplNames
     /// </summary>
     public static bool NamesAbility(string aplName, Ability ability)
     {
-        string key = Key(aplName);
+        var key = Key(aplName);
         return Key(ability.Name) == key || Key(ability.GetType().Name) == key;
     }
 

@@ -61,14 +61,14 @@ public class HeartSplitter : GundeAbility
 
     private double CritChanceAgainst(EnemyTarget target)
     {
-        double bonus = 0.0;
+        var bonus = 0.0;
         foreach (var critChanceBonus in TargetCritChanceBonuses) bonus += critChanceBonus(target);
         return bonus;
     }
 
     private void Exsanguinate(SimulationContext ctx, EnemyTarget target, bool crit)
     {
-        double damage = ExsanguinateShare * Gunde.Rend.Remaining(target);
+        var damage = ExsanguinateShare * Gunde.Rend.Remaining(target);
         if (damage <= 0.0) return;
         Exsanguinated?.Invoke(ctx, target, damage, crit);
         ctx.ApplyDamage(Owner, target, damage, LogIds.Effect(ExsanguinateEffectId), ExsanguinateName, canCrit: false, 0.0, 1.0);

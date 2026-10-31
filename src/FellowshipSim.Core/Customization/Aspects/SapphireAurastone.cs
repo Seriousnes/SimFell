@@ -25,11 +25,11 @@ public class SapphireAurastone : Aspect
 
     public override void Bind(Hero hero)
     {
-        double share = ForRank(StoredShareByRank);
-        int logId = LogIds.Effect(DamageEffectId);
-        double stored = 0.0;
-        int stone = 0;
-        bool active = false;
+        var share = ForRank(StoredShareByRank);
+        var logId = LogIds.Effect(DamageEffectId);
+        var stored = 0.0;
+        var stone = 0;
+        var active = false;
 
         void Pulse(SimulationContext ctx, int id)
         {
@@ -38,7 +38,7 @@ public class SapphireAurastone : Aspect
             // With no enemy near it, the stone keeps what it holds for the next pulse.
             if (struck.Count > 0)
             {
-                double each = stored / struck.Count;
+                var each = stored / struck.Count;
                 stored = 0.0;
                 foreach (var enemy in struck)
                 {
@@ -52,7 +52,7 @@ public class SapphireAurastone : Aspect
         {
             active = true;
             stored = 0.0;
-            int id = ++stone;
+            var id = ++stone;
             ctx.Schedule(SimTime.FromSeconds(FirstPulseSeconds), c => Pulse(c, id), DamageName);
         };
         hero.SpiritOfHeroismEnded += _ => active = false;

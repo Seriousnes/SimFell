@@ -22,17 +22,18 @@ public class ArachnidAssault : Finisher
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target, int points)
     {
-        double multiplier = ComboPointMultiplier(points);
+        var multiplier = ComboPointMultiplier(points);
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, EnemiesAround(ctx, target), ctx).ToArray();
-        double falloff = struck.Length > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Length) : 1.0;
+        var falloff = struck.Length > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Length) : 1.0;
         foreach (var enemy in struck) DealDamage(ctx, enemy, damageMultiplier: multiplier * falloff);
-        double castDamage = CastDamageMultiplier, castCrit = CurrentCast?.CritChance ?? 0.0;
+        var castDamage = CastDamageMultiplier;
+        var castCrit = CurrentCast?.CritChance ?? 0.0;
         // A clone strikes the enemies present as it starts, one per server frame, without the falloff: each hit is a
         // single-target strike.
         Mara.Matriarch.Imitate(ctx, ctx.ActiveEnemies.Count, (c, power) =>
         {
             var enemies = EnemiesAround(c, target).ToArray();
-            for (int i = 0; i < enemies.Length; i++)
+            for (var i = 0; i < enemies.Length; i++)
             {
                 var enemy = enemies[i];
                 c.Schedule(SimTime.FromSeconds(i * PeriodicEffect.ServerFrameSeconds), cc =>

@@ -37,7 +37,7 @@
                    aria-autocomplete="list" aria-label="Search names" placeholder="Search names" spellcheck="false" autocomplete="off" />
             <ul @ref="_list" id="@($"{_id}-list")" role="listbox" aria-label="Values">
                 @* Each kind is a group, so its sticky heading stays in view only over its own names. *@
-                @{ int option = 0; }
+                @{ var option = 0; }
                 @foreach (var kind in Kinds.Where(k => k.Names.Count > 0))
                 {
                     <li @key="kind.Id" class="kind" role="presentation">
@@ -45,7 +45,7 @@
                         <ul role="group" aria-label="@kind.Label">
                             @foreach (var kindName in kind.Names)
                             {
-                                string label = ConditionBuilder.NameLabel(kind, kindName);
+                                var label = ConditionBuilder.NameLabel(kind, kindName);
                                 var pick = new ValuePick(kind.Id, kindName.Slug);
                                 <li @key="kindName.Slug" id="@($"{_id}-{option++}")" role="option" data-search="@($"{label} {kindName.Slug}".ToLowerInvariant())"
                                     data-picked="@(pick == Value)" data-tooltip="@Describe(kindName)" data-tooltip-direction="right"
@@ -72,9 +72,9 @@
                     <li @key="@("prefix")" class="kind" role="presentation">
                         <div class="kind-head" role="presentation">Prefix</div>
                         <ul role="group" aria-label="Prefix">
-                            @foreach (string prefix in ConditionBuilder.Prefixes)
+                            @foreach (var prefix in ConditionBuilder.Prefixes)
                             {
-                                string label = "Add " + ConditionBuilder.PrefixLabel(prefix);
+                                var label = "Add " + ConditionBuilder.PrefixLabel(prefix);
                                 <li @key="prefix" id="@($"{_id}-{option++}")" role="option" data-search="@label.ToLowerInvariant()"
                                     @onmousedown="() => Pick(new ValuePick(ConditionBuilder.PrefixKind, Prefix: prefix))" @onmousedown:preventDefault>
                                     <span class="operator">@label</span>

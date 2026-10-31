@@ -21,7 +21,7 @@ public class RedLedger : Talent
         var mara = (Mara)hero;
         hero.TargetCritChanceBonuses.Add((_, _) =>
         {
-            int bleeding = mara.SimContext is { } ctx ? mara.Hemorrhage.ActiveCount(ctx) : 0;
+            var bleeding = mara.SimContext is { } ctx ? mara.Hemorrhage.ActiveCount(ctx) : 0;
             return bleeding == 0 ? 0.0 : Math.Min(MaxCritChance, FirstEnemyCritChance + CritChancePerExtraEnemy * (bleeding - 1));
         });
     }

@@ -30,7 +30,7 @@ public sealed class SimResultLibrary(IBlobStore store)
     public async Task<IReadOnlyList<SavedSim>> ListAsync(Visitor visitor, CancellationToken ct = default)
     {
         var sims = new List<SavedSim>();
-        foreach (string key in await store.ListAsync(visitor.Key(Folder), ct))
+        foreach (var key in await store.ListAsync(visitor.Key(Folder), ct))
         {
             if (key.EndsWith(Extension, StringComparison.Ordinal) && await store.ReadAsync(key, ct) is { } json && Parse(json) is { } sim)
             {

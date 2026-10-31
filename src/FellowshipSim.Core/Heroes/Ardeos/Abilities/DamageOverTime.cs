@@ -75,13 +75,13 @@ public abstract class DamageOverTime : Ability
         var now = ctx.CurrentTime;
         var target = dot.Target;
         if (CindersPerTick > 0) Ardeos.GainCinders(TickCinders(ctx, dot, fraction), ctx, target);
-        double extraCrit = 0.0;
+        var extraCrit = 0.0;
         foreach (var bonus in TickCritChanceBonuses) extraCrit += bonus(ctx, dot);
         if (Stacking == DotStacking.Accumulate)
         {
-            double amount = dot.TickAmount * fraction;
-            double critChance = Owner.CritChanceAgainst(target, now) + CritChanceBonus + extraCrit;
-            double critMultiplier = CritMultiplierAt(now);
+            var amount = dot.TickAmount * fraction;
+            var critChance = Owner.CritChanceAgainst(target, now) + CritChanceBonus + extraCrit;
+            var critMultiplier = CritMultiplierAt(now);
             ctx.ApplyDamage(Owner, target, DamageLogId, Name, TicksCanCrit, _ => new SimulationContext.HitNumbers(amount, critChance, critMultiplier));
         }
         else

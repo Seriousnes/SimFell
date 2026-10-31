@@ -51,15 +51,15 @@ public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOut
         string? profile = null;
         var settings = DefaultSettings;
         var format = CliOutputFormat.Text;
-        for (int i = 0; i < args.Count; i++)
+        for (var i = 0; i < args.Count; i++)
         {
-            string arg = args[i];
+            var arg = args[i];
             if (arg is ShortHelpOption or HelpOption) return null;
             if (!arg.StartsWith(OptionPrefix, StringComparison.Ordinal)) throw new CliUsageException($"Unexpected argument '{arg}'.");
 
-            int eq = arg.IndexOf('=');
-            string name = eq < 0 ? arg : arg[..eq];
-            string value = eq >= 0 ? arg[(eq + 1)..]
+            var eq = arg.IndexOf('=');
+            var name = eq < 0 ? arg : arg[..eq];
+            var value = eq >= 0 ? arg[(eq + 1)..]
                 : i + 1 < args.Count && !args[i + 1].StartsWith(OptionPrefix, StringComparison.Ordinal) ? args[++i]
                 : throw new CliUsageException($"{name} needs a value.");
             switch (name)
@@ -86,12 +86,12 @@ public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOut
     }
 
     private static int Integer(string name, string value, int min) =>
-        int.TryParse(value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int number) && number >= min
+        int.TryParse(value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var number) && number >= min
             ? number
             : throw new CliUsageException(min == int.MinValue ? $"{name} is a whole number, not '{value}'." : $"{name} is a whole number of at least {min}, not '{value}'.");
 
     private static double Seconds(string name, string value) =>
-        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double seconds) && seconds > 0 && double.IsFinite(seconds)
+        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var seconds) && seconds > 0 && double.IsFinite(seconds)
             ? seconds
             : throw new CliUsageException($"{name} is a number of seconds above 0, not '{value}'.");
 }

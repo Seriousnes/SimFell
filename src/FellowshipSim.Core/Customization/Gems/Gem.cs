@@ -123,9 +123,9 @@ public abstract class Gem
     /// <summary>The nodes active at <paramref name="power"/>, in slot order.</summary>
     public IReadOnlyList<GemNode> ActiveNodesAt(double power)
     {
-        int whole = (int)power;
+        var whole = (int)power;
         var active = new List<GemNode>();
-        for (int i = NodeTable.Count - 1; i >= 0 && active.Count < ActiveGemNodes; i--)
+        for (var i = NodeTable.Count - 1; i >= 0 && active.Count < ActiveGemNodes; i--)
         {
             if (whole >= NodeTable[i].RequiredPower) active.Add(NodeTable[i]);
         }
@@ -151,7 +151,7 @@ public abstract class Gem
                 if (node.Grants != null) hero.Register(node.Grants);
                 if (_boundSlots.Add(node.Slot)) BindLater(hero, node, now);
             }
-            for (int slot = 1; slot <= SlotsPerRank; slot++)
+            for (var slot = 1; slot <= SlotsPerRank; slot++)
             {
                 var old = before.FirstOrDefault(n => n.Slot == slot);
                 var next = after.FirstOrDefault(n => n.Slot == slot);
@@ -169,7 +169,7 @@ public abstract class Gem
         foreach (var node in after.Except(_baseNodes)) modifiers.AddRange(StatEffects(node));
         foreach (var node in _baseNodes.Except(after)) modifiers.AddRange(StatEffects(node).Select(Inverse));
         // The overcap bonus captures the live power (no snapshot); the bound power's is in the bound stats.
-        double overcap = Math.Max(0.0, power - OvercapPower) - Math.Max(0.0, BasePower - OvercapPower);
+        var overcap = Math.Max(0.0, power - OvercapPower) - Math.Max(0.0, BasePower - OvercapPower);
         if (overcap != 0.0) modifiers.Add(StatModifier.Increased(StatType.PrimaryAttributeMultiplier, 1.0 + OvercapBonusPerPower * overcap));
         if (_liveStats != null) hero.Auras.Remove(_liveStats, now);
         _liveStats = modifiers.Count == 0 ? null : AuraDef.Internal($"{Color} gem power", 0, 1, modifiers.ToArray());
@@ -198,7 +198,7 @@ public abstract class Gem
     private static void SwapGrant(Hero hero, GemNode? old, GemNode? next, SimTime now)
     {
         if (old?.Grants is not { } oldAura || hero.Auras.Get(oldAura, now) is not { } active) return;
-        int stacks = active.Stacks;
+        var stacks = active.Stacks;
         hero.Auras.Remove(oldAura, now);
         if (next?.Grants is { } nextAura) hero.Auras.Apply(nextAura, now, setStacks: Math.Min(stacks, nextAura.MaxStacks));
     }

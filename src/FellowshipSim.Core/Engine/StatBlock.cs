@@ -89,15 +89,15 @@ public static class StatDiminishingReturns
         if (unmitigatedPercent <= Breakpoints[0])
             return unmitigatedPercent * Multipliers[0];
 
-        double output = Breakpoints[0] * Multipliers[0];
-        double remaining = unmitigatedPercent - output;
-        double currentBreakpoint = output;
+        var output = Breakpoints[0] * Multipliers[0];
+        var remaining = unmitigatedPercent - output;
+        var currentBreakpoint = output;
 
-        for (int i = 1; i < Breakpoints.Length; i++)
+        for (var i = 1; i < Breakpoints.Length; i++)
         {
-            double prevBreakpoint = currentBreakpoint;
+            var prevBreakpoint = currentBreakpoint;
             currentBreakpoint += (Breakpoints[i] - Breakpoints[i - 1]) / Multipliers[i];
-            double segment = currentBreakpoint - prevBreakpoint;
+            var segment = currentBreakpoint - prevBreakpoint;
 
             if (remaining <= segment)
             {
@@ -122,12 +122,12 @@ public static class StatDiminishingReturns
     /// <summary>The rating whose percentage is <paramref name="percent"/>: the inverse of <see cref="FromRating"/>.</summary>
     public static double ToRating(double percent)
     {
-        double unmitigated = Math.Min(percent, Breakpoints[0]) / Multipliers[0];
-        double output = Breakpoints[0];
-        int i = 1;
+        var unmitigated = Math.Min(percent, Breakpoints[0]) / Multipliers[0];
+        var output = Breakpoints[0];
+        var i = 1;
         for (; i < Breakpoints.Length && percent > output; i++)
         {
-            double segment = Math.Min(percent, Breakpoints[i]) - output;
+            var segment = Math.Min(percent, Breakpoints[i]) - output;
             unmitigated += segment / Multipliers[i];
             output += segment;
         }

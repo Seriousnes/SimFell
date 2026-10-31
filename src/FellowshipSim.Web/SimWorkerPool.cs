@@ -61,7 +61,7 @@ public sealed class SimWorkerPool(IJSRuntime js)
         Action<int> chunkDone, CancellationToken ct)
     {
         var pool = await PoolAsync();
-        int run = Interlocked.Increment(ref _nextRun);
+        var run = Interlocked.Increment(ref _nextRun);
         using var sink = DotNetObjectReference.Create(new Sink(chunkDone, null));
         await using var stop = ct.Register(() => _ = pool.InvokeVoidAsync(CancelFunction, run).AsTask());
         try
@@ -117,7 +117,7 @@ public sealed class SimWorkerPool(IJSRuntime js)
     // The first line of a worker's error, without the JS error's own prefix.
     private static string Reason(JSException exception)
     {
-        string line = exception.Message.Split('\n')[0].Trim();
+        var line = exception.Message.Split('\n')[0].Trim();
         return line.StartsWith(ErrorPrefix, StringComparison.Ordinal) ? line[ErrorPrefix.Length..] : line;
     }
 

@@ -69,7 +69,7 @@
         <Card Title="Hero">
                 @* Every hero's portrait, loaded with the page, so the hero menu opens with its portraits drawn. *@
                 <div hidden>
-                    @foreach (string hero in BuildCatalog.GameHeroes)
+                    @foreach (var hero in BuildCatalog.GameHeroes)
                     {
                         <GameIcon @key="hero" Url="@BuildCatalog.PortraitUrl(hero)" Size="36" />
                     }
@@ -92,9 +92,9 @@
                         <div class="hero-backdrop" @onclick="() => _heroMenuOpen = false"></div>
                         <div class="hero-menu" role="listbox" aria-label="Hero">
                             <span class="group">In the engine</span>
-                            @foreach (string hero in BuildCatalog.GameHeroes.Where(IsSupported))
+                            @foreach (var hero in BuildCatalog.GameHeroes.Where(IsSupported))
                             {
-                                bool picked = hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase);
+                                var picked = hero.Equals(Build.Hero, StringComparison.OrdinalIgnoreCase);
                                 <button @key="hero" type="button" role="option" class="hero-option @(picked ? "picked" : "")" aria-selected="@(picked ? "true" : "false")"
                                         @onclick="() => PickHeroFromMenu(hero)">
                                     <GameIcon Url="@BuildCatalog.PortraitUrl(hero)" Size="36" />
@@ -106,7 +106,7 @@
                                 </button>
                             }
                             <span class="group">Not in the engine yet</span>
-                            @foreach (string hero in BuildCatalog.GameHeroes.Where(h => !IsSupported(h)))
+                            @foreach (var hero in BuildCatalog.GameHeroes.Where(h => !IsSupported(h)))
                             {
                                 <button @key="hero" type="button" role="option" class="hero-option" aria-selected="false" disabled>
                                     <GameIcon Url="@BuildCatalog.PortraitUrl(hero)" Size="36" />
@@ -177,7 +177,7 @@
             <div class="gem-totals">
                 @foreach (var color in BuildCatalog.GemColors)
                 {
-                    double power = Editor.SheetGem(color);
+                    var power = Editor.SheetGem(color);
                     <span @key="color" class="gem-total @(power > 0 ? "taken" : "")">
                         <GameIcon Url="@BuildCatalog.GemIconUrl(color)" Size="20" />
                         @color
@@ -201,8 +201,8 @@
                         <span class="tier">@Roman(row.Key) <span class="meta">- @row.First().Slot.Cost pt</span></span>
                         @foreach (var talentOption in row)
                         {
-                            bool picked = Editor.HasTalent(talentOption.Slot.TalentId);
-                            bool affordable = picked || talentOption.Slot.Cost <= Editor.PointsLeft;
+                            var picked = Editor.HasTalent(talentOption.Slot.TalentId);
+                            var affordable = picked || talentOption.Slot.Cost <= Editor.PointsLeft;
                             <button @key="talentOption.Slot.TalentId" type="button" class="talent @(picked ? "picked" : "")" aria-pressed="@picked"
                                     disabled="@(!affordable)" data-tooltip="@TalentTitle(talentOption)"
                                     @onclick="() => ToggleTalent(talentOption)">
@@ -224,7 +224,7 @@
                 <div class="chips">
                     @foreach (var weapon in Catalog.Weapons)
                     {
-                        bool picked = Editor.Weapon == weapon.Id;
+                        var picked = Editor.Weapon == weapon.Id;
                         <button @key="weapon.Id" type="button" class="chip @(picked ? "picked" : "")" aria-pressed="@picked"
                                 @onclick="() => Set(() => Editor.Weapon = picked ? null : weapon.Id)">
                             <GameIcon Url="@weapon.IconUrl" Size="24" />
@@ -236,7 +236,7 @@
                 <div class="chips">
                     @foreach (var legendary in Catalog.Legendaries)
                     {
-                        bool picked = Editor.Legendary == legendary.Id;
+                        var picked = Editor.Legendary == legendary.Id;
                         <button @key="legendary.Id" type="button" class="chip @(picked ? "picked" : "")" aria-pressed="@picked"
                                 data-tooltip="@(legendary.Modeled ? null : "Not modeled yet")" @onclick="() => Set(() => Editor.Legendary = picked ? null : legendary.Id)">
                             <GameIcon Url="@legendary.IconUrl" Size="24" />
@@ -252,8 +252,8 @@
                 <div class="chips">
                     @foreach (var relic in Catalog.Relics)
                     {
-                        bool worn = Editor.HasRelic(relic.ItemId);
-                        bool full = !worn && Editor.RelicCount >= BuildEditor.RelicSlots;
+                        var worn = Editor.HasRelic(relic.ItemId);
+                        var full = !worn && Editor.RelicCount >= BuildEditor.RelicSlots;
                         <button @key="relic.ItemId" type="button" class="chip @(worn ? "picked" : "")" aria-pressed="@worn" disabled="@full"
                                 data-tooltip="@(full ? $"Take off one of the {BuildEditor.RelicSlots} first" : relic.Name)" @onclick="() => Set(() => Editor.ToggleRelic(relic.ItemId))">
                             <GameIcon Url="@relic.IconUrl" Size="24" />
@@ -268,9 +268,9 @@
                 <div class="enchants">
                     @foreach (var statEnchant in Catalog.StatEnchants)
                     {
-                        double rating = Editor.StatEnchantRating(statEnchant.Enchant.Id);
-                        int count = Editor.StatEnchantCount(statEnchant.Enchant.Id);
-                        bool full = Editor.Room(EnchantSlot.StatEnchants) <= 0;
+                        var rating = Editor.StatEnchantRating(statEnchant.Enchant.Id);
+                        var count = Editor.StatEnchantCount(statEnchant.Enchant.Id);
+                        var full = Editor.Room(EnchantSlot.StatEnchants) <= 0;
                         <div @key="statEnchant.Enchant.Id" class="enchant @(rating > 0 ? "taken" : "")">
                             <GameIcon Url="@statEnchant.IconUrl" Size="34" />
                             <span class="enchant-name">
@@ -290,9 +290,9 @@
             </Card>
             <Card Title="Gems" CountContent="@GearCount(EnchantSlot.Gems)" CountTitle="@GearTitle(EnchantSlot.Gems)" Over="@GearOver(EnchantSlot.Gems)">
                     <div class="sockets">
-                        @for (int i = 0; i < GemItem.Sockets; i++)
+                        @for (var i= 0; i < GemItem.Sockets; i++)
                         {
-                            int socket = i;
+                            var socket = i;
                             var gem = Editor.Socket(socket);
                             if (gem == null)
                             {
@@ -310,14 +310,14 @@
                 <div class="gem-rows">
                     @foreach (var color in BuildCatalog.GemColors)
                     {
-                        int bonuses = Editor.GearBonuses(color);
-                        bool socketsFull = Build.SocketedGemIds.Count >= GemItem.Sockets;
+                        var bonuses = Editor.GearBonuses(color);
+                        var socketsFull = Build.SocketedGemIds.Count >= GemItem.Sockets;
                         <div @key="color" class="gem-row @(Editor.Gem(color) > 0 ? "taken" : "")">
                             <span class="gem-name">@color</span>
                             <span class="gem-picks">
                                 @foreach (var gemItem in GemItem.All.Where(g => g.Color == color))
                                 {
-                                    int count = Editor.SocketedCount(gemItem.Id);
+                                    var count = Editor.SocketedCount(gemItem.Id);
                                     <button @key="gemItem.Id" type="button" class="gem-pick @(count > 0 ? "picked" : "")" disabled="@socketsFull"
                                             data-tooltip="@(socketsFull ? "Every socket is filled: take a gem out first" : $"Socket a {gemItem.Name} (+{gemItem.Power})")"
                                             @onclick="() => Set(() => Editor.AddGem(gemItem.Id))">
@@ -366,8 +366,8 @@
                 <div class="chips">
                     @foreach (var protectiveEnchant in Catalog.ProtectiveEnchants)
                     {
-                        bool taken = Editor.AugmentationRank(protectiveEnchant.Id) > 0;
-                        bool full = !taken && Editor.Room(EnchantSlot.Protective) <= 0;
+                        var taken = Editor.AugmentationRank(protectiveEnchant.Id) > 0;
+                        var full = !taken && Editor.Room(EnchantSlot.Protective) <= 0;
                         <button @key="protectiveEnchant.Id" type="button" class="chip @(taken ? "picked" : "")" aria-pressed="@taken" disabled="@full"
                                 data-tooltip="@(full ? FullText(EnchantSlot.Protective) : null)" @onclick="() => Set(() => Editor.ToggleProtectiveEnchant(protectiveEnchant))">
                             <GameIcon Url="@protectiveEnchant.IconUrl" Size="24" />
@@ -473,8 +473,8 @@
     // A gear kind's count: on the armor (or all gear) against its most, the room left, and the weapon's tree on a line of its own.
     private RenderFragment GearCount(EnchantSlot slot) => __builder =>
     {
-        int room = Editor.Room(slot);
-        int weaponLimit = GearFit.WeaponLimit(slot, Editor.HasWeapon);
+        var room = Editor.Room(slot);
+        var weaponLimit = GearFit.WeaponLimit(slot, Editor.HasWeapon);
         <span class="gear-count">
             <span>
                 <span class="@(room > 0 ? "room" : "full")">@(room > 0 ? $"{room} Slots Available" : "Full")</span>
@@ -503,7 +503,7 @@
 
     private static string Roman(int row) => row switch { 1 => "I", 2 => "II", 3 => "III", 4 => "IV", 5 => "V", 6 => "VI", _ => row.ToString() };
 
-    private static int? Id(string value) => int.TryParse(value, out int id) ? id : null;
+    private static int? Id(string value) => int.TryParse(value, out var id) ? id : null;
 
     private Task Changed() => OnChanged.InvokeAsync();
 
@@ -617,7 +617,7 @@
     private string ShareSite()
     {
         var site = new Uri(Navigation.BaseUri);
-        bool shareable = site.Scheme is HttpScheme or HttpsScheme && !site.IsLoopback && site.Host != UnspecifiedHost;
+        var shareable = site.Scheme is HttpScheme or HttpsScheme && !site.IsLoopback && site.Host != UnspecifiedHost;
         return shareable ? Navigation.BaseUri : PublicSite;
     }
 
@@ -688,7 +688,7 @@
     // A build from an import or a sim's run can be another hero's, so the list reads the builds of the hero shown.
     private async Task LoadSavedListAsync(bool force = false)
     {
-        string hero = Build.Hero;
+        var hero = Build.Hero;
         if (!force && hero.Equals(_savedHero, StringComparison.OrdinalIgnoreCase)) return;
         var saved = (await Profiles.ListAsync(Visitor, [hero])).ToList();
         // The build shows another hero now, whose list replaces this one.
@@ -705,7 +705,7 @@
         if (name.Length == 0) return;
         try
         {
-            string text = await Profiles.ReadAsync(Visitor, new ProfileEntry(Build.Hero, name))
+            var text = await Profiles.ReadAsync(Visitor, new ProfileEntry(Build.Hero, name))
                           ?? throw new KeyNotFoundException($"No build named {name}.");
             var build = SimcProfile.Parse(text).Build;
             build.Name = name;
@@ -722,7 +722,7 @@
 
     private async Task SaveAsync()
     {
-        string name = Build.Name.Trim();
+        var name = Build.Name.Trim();
         if (!ActionListStore.IsValidName(name))
         {
             State.BuildStatus = MessageState.Error("Name the build with letters, digits, spaces, '_' and '-' (up to 64 characters).");
@@ -745,7 +745,7 @@
 
     private async Task DeleteAsync()
     {
-        string name = State.SavedName;
+        var name = State.SavedName;
         try
         {
             await Profiles.DeleteAsync(Visitor, new ProfileEntry(Build.Hero, name));

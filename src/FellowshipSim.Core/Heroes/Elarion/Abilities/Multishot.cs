@@ -53,18 +53,18 @@ public class Multishot : ElarionAbility
         var now = ctx.CurrentTime;
         Pay(ctx, CostAt(now));
         var empowering = EmpoweringBuffs.FirstOrDefault(b => b.IsUp(now));
-        bool empowered = empowering != null;
-        double multiplier = 1.0;
+        var empowered = empowering != null;
+        var multiplier = 1.0;
         foreach (var factor in DamageMultipliers) multiplier *= factor(now, empowered);
         empowering?.Use(now);
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
-        double falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
-        for (int i = 0; i < struck.Count; i++) DealDamage(ctx, struck[i], damageMultiplier: multiplier * falloff);
+        var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
+        for (var i = 0; i < struck.Count; i++) DealDamage(ctx, struck[i], damageMultiplier: multiplier * falloff);
         // The arrows past one per enemy go to the enemies struck, in turn.
         if (empowered && struck.Count > 0)
         {
-            for (int i = struck.Count; i < EmpoweredMinimumArrows; i++) DealDamage(ctx, struck[i % struck.Count], damageMultiplier: multiplier);
+            for (var i = struck.Count; i < EmpoweredMinimumArrows; i++) DealDamage(ctx, struck[i % struck.Count], damageMultiplier: multiplier);
         }
         Cast?.Invoke(ctx, empowered);
     }

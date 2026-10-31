@@ -114,11 +114,11 @@ public static class ConditionBuilder
     /// </summary>
     public static PathParts SplitPath(AplVocabulary vocabulary, string path)
     {
-        string[] parts = path.Split(Completions.PathSeparator);
+        var parts = path.Split(Completions.PathSeparator);
         if (parts.Length >= ScopedPathParts && vocabulary.Scopes.ContainsKey(parts[0])) return new PathParts(parts[0], parts[1], string.Join(Completions.PathSeparator, parts[2..]));
         if (parts.Length == 2 && IsNameScope(vocabulary, parts[0])) return new PathParts(parts[0], parts[1]);
-        string resource = path.StartsWith(vocabulary.ResourcePrefix, StringComparison.Ordinal) ? path[vocabulary.ResourcePrefix.Length..] : path;
-        bool deficit = resource.EndsWith(vocabulary.DeficitSuffix, StringComparison.Ordinal);
+        var resource = path.StartsWith(vocabulary.ResourcePrefix, StringComparison.Ordinal) ? path[vocabulary.ResourcePrefix.Length..] : path;
+        var deficit = resource.EndsWith(vocabulary.DeficitSuffix, StringComparison.Ordinal);
         if (deficit) resource = resource[..^vocabulary.DeficitSuffix.Length];
         if (vocabulary.Resources.Any(r => r.Slug == resource)) return new PathParts(ResourceKind, resource, deficit ? DeficitProperty : CurrentProperty);
         if (vocabulary.ActionValues.Contains(path)) return new PathParts(ActionValueKind, path);
@@ -175,7 +175,7 @@ public static class ConditionBuilder
             return;
         }
         var kind = kinds.First(k => k.Id == pick.Kind);
-        string? property = !string.IsNullOrEmpty(term.Path) && SplitPath(vocabulary, term.Path) is { } current && current.Kind == kind.Id
+        var property = !string.IsNullOrEmpty(term.Path) && SplitPath(vocabulary, term.Path) is { } current && current.Kind == kind.Id
                            && kind.Properties?.Contains(current.Property!) == true
             ? current.Property
             : kind.Properties?.FirstOrDefault();
@@ -209,12 +209,12 @@ public static class ConditionBuilder
     public static string Text(IReadOnlyList<ConditionRow> rows) =>
         string.Concat(rows.Where(IsComplete).Select((row, i) =>
         {
-            bool compared = row.Items == null && row.Comparisons.Count > 0;
-            string value = row.Items is { } items
+            var compared = row.Items == null && row.Comparisons.Count > 0;
+            var value = row.Items is { } items
                 ? $"({Text(items)})"
                 : Text(row.Left!) + string.Concat(row.Comparisons.Select(c =>
                     $" {c.Comparison} {(c.Terms.Any(IsComplete) ? Text(c.Terms) : Number(0))}"));
-            string negated = !row.Not ? value : compared || row.Left?.Count(IsComplete) > 1 ? $"not ({value})" : $"not {value}";
+            var negated = !row.Not ? value : compared || row.Left?.Count(IsComplete) > 1 ? $"not ({value})" : $"not {value}";
             return i == 0 ? negated : $" {(string.IsNullOrEmpty(row.Join) ? AndJoin : row.Join)} {negated}";
         }));
 
@@ -225,8 +225,8 @@ public static class ConditionBuilder
     public static string Text(IReadOnlyList<ConditionTerm> terms) =>
         string.Concat(terms.Where(IsComplete).Select((term, i) =>
         {
-            string value = term.Items is { } items ? $"({Text(items)})" : !string.IsNullOrEmpty(term.Path) ? term.Path : Number(term.Number!.Value);
-            string prefixed = string.Concat(PrefixOperators(term.Prefix).Select(op => AplFormatter.Prefix(op, AplOperatorStyle.Words))) + value;
+            var value = term.Items is { } items ? $"({Text(items)})" : !string.IsNullOrEmpty(term.Path) ? term.Path : Number(term.Number!.Value);
+            var prefixed = string.Concat(PrefixOperators(term.Prefix).Select(op => AplFormatter.Prefix(op, AplOperatorStyle.Words))) + value;
             return i == 0 ? prefixed : $" {(string.IsNullOrEmpty(term.Operator) ? DefaultOperator : term.Operator)} {prefixed}";
         }));
 

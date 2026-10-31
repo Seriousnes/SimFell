@@ -20,13 +20,13 @@ public class RubyStorm : Aspect
 
     public override void Bind(Hero hero)
     {
-        double share = ForRank(HealthShareByRank);
-        int logId = LogIds.Effect(DamageEffectId);
+        var share = ForRank(HealthShareByRank);
+        var logId = LogIds.Effect(DamageEffectId);
         var rppm = new RealPpm(ProcKey, ProcsPerMinute);
         hero.OnCastCompleted += (ability, target, _) =>
         {
             if (target == null || ability.BaseCoefficient <= 0 || hero.SimContext is not { } ctx || !rppm.Roll(hero, ctx)) return;
-            double damage = share * hero.Stats.MaxHealth;
+            var damage = share * hero.Stats.MaxHealth;
             foreach (var enemy in ctx.Outcomes.SelectTargets(logId, ctx.ActiveEnemies, ctx))
             {
                 ctx.ApplyDamage(hero, enemy, damage, logId, AspectName, canCrit: false, 0.0, 1.0);

@@ -118,7 +118,7 @@ public sealed class ActionListEditor(ISimEngine engine)
 
     public void RemoveAction(string listName, int index)
     {
-        int key = Lists.First(l => l.Name == listName).Actions[index].Key;
+        var key = Lists.First(l => l.Name == listName).Actions[index].Key;
         UpdateList(listName, actions => actions.Where((_, i) => i != index).ToList());
         _open.Remove(key);
         Changed?.Invoke();

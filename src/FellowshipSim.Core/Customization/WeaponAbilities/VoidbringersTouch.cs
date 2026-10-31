@@ -61,7 +61,7 @@ public class VoidbringersTouch : Ability
         _target = target;
         target.Auras.Apply(Debuff, ctx.CurrentTime);
         _stored = 0.0;
-        int touch = ++_touch;
+        var touch = ++_touch;
         ctx.Schedule(SimTime.FromSeconds(DurationSeconds), c => { if (touch == _touch) Erupt(c); }, Name);
     }
 
@@ -76,7 +76,7 @@ public class VoidbringersTouch : Ability
     {
         if (_target is not { } target) return;
         target.Auras.Remove(Debuff, ctx.CurrentTime);
-        double share = Math.Min(1.0, _stored / Cap(ctx));
+        var share = Math.Min(1.0, _stored / Cap(ctx));
         _target = null;
         _stored = 0.0;
         _touch++;

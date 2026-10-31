@@ -54,13 +54,13 @@ public class Detonate : ArdeosAbility
         var dots = Ardeos.Dots;
         foreach (var enemy in dots.Targets.ToList())
         {
-            double perSecond = 0.0;
+            var perSecond = 0.0;
             foreach (var dot in dots.On(enemy)) perSecond += dot.Effect.DamagePerSecond(ctx, dot);
-            double damage = perSecond * DetonatedSeconds / HitsPerEnemy * CastDamageMultiplier;
+            var damage = perSecond * DetonatedSeconds / HitsPerEnemy * CastDamageMultiplier;
             if (damage <= 0) continue;
-            double critChance = Owner.CritChanceAgainst(enemy, now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
-            double critMultiplier = CritMultiplierAt(now);
-            for (int i = 0; i < HitsPerEnemy; i++)
+            var critChance = Owner.CritChanceAgainst(enemy, now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
+            var critMultiplier = CritMultiplierAt(now);
+            for (var i = 0; i < HitsPerEnemy; i++)
             {
                 ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * HitSpacingSeconds), c =>
                 {

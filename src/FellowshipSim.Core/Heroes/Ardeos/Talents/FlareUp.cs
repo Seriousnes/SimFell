@@ -32,8 +32,8 @@ public class FlareUp : Talent
             var burning = ctx.ActiveEnemies.Where(e => ardeos.Dots.Has(e, searing)).ToList();
             var struck = ctx.Outcomes.SelectTargets(LogIds.Effect(DamageEffectId), burning, ctx);
             if (struck.Count == 0) return;
-            double falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
-            double damage = hit.Amount * FractionOfHit * falloff;
+            var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
+            var damage = hit.Amount * FractionOfHit * falloff;
             foreach (var enemy in struck)
             {
                 ctx.ApplyDamage(hero, enemy, damage, LogIds.Effect(DamageEffectId), DamageName, canCrit: false, 0.0, 1.0);

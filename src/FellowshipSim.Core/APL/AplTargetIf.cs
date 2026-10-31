@@ -49,7 +49,7 @@ public sealed record AplTargetIf(AplTargetSelection Selection, IAplExpression Ex
     public EnemyTarget? Select(Hero hero, SimulationContext ctx, IReadOnlyList<EnemyTarget> candidates)
     {
         EnemyTarget? best = null;
-        double bestValue = 0;
+        var bestValue = 0.0;
         foreach (var enemy in candidates)
         {
             if (Selection == AplTargetSelection.First)
@@ -57,7 +57,7 @@ public sealed record AplTargetIf(AplTargetSelection Selection, IAplExpression Ex
                 if (AplAction.AtTarget(ctx, enemy, () => Expression.Evaluate(hero, ctx))) return enemy;
                 continue;
             }
-            double value = AplAction.AtTarget(ctx, enemy, () => Expression.EvaluateNumeric(hero, ctx));
+            var value = AplAction.AtTarget(ctx, enemy, () => Expression.EvaluateNumeric(hero, ctx));
             if (best == null || (Selection == AplTargetSelection.Min ? value < bestValue : value > bestValue))
             {
                 best = enemy;

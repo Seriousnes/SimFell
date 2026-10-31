@@ -57,7 +57,7 @@ public class HighwindArrow : ElarionAbility
     {
         var now = ctx.CurrentTime;
         TriggerCooldown(ctx);
-        double multiplier = 1.0;
+        var multiplier = 1.0;
         if (ResurgentWindsUp(now))
         {
             Owner.Auras.ConsumeStack(ResurgentWinds.Buff, now);
@@ -67,7 +67,7 @@ public class HighwindArrow : ElarionAbility
         {
             Pay(ctx, CostAt(now));
         }
-        int ricochets = CastRicochets;
+        var ricochets = CastRicochets;
         CastRicochets = BaseRicochets;
         var (castDamage, castCrit) = CastBonuses;
         var struck = new HashSet<EnemyTarget>();

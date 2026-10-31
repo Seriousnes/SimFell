@@ -240,5 +240,5 @@ public static class CreatureSpiritPoints
     };
 
     /// <summary>The Spirit Points an enemy of this name is worth (0 when unknown).</summary>
-    public static int For(string name) => ByName.TryGetValue(name.Trim(), out int points) ? points : 0;
+    public static int For(string name) => ByName.TryGetValue(name.Trim(), out var points) ? points : 0;
 }

@@ -34,7 +34,7 @@ public class WidowsBite : MaraAbility
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
-        bool stealthed = Mara.IsStealthed(ctx.CurrentTime);
+        var stealthed = Mara.IsStealthed(ctx.CurrentTime);
         TriggerCooldown(ctx);
         Pay(ctx);
         Mara.GainEnergy(EnergyGained, ctx);

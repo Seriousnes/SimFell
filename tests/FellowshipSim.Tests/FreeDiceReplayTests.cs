@@ -26,8 +26,8 @@ public class FreeDiceReplayTests(ITestOutputHelper output)
     [Fact]
     public void FreeDice_Replay_Of_One_Fight()
     {
-        string data = Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder);
-        string scripts = Path.Combine(data, ScriptsFolder);
+        var data = Path.Combine(TestPaths.RepositoryRoot, TestPaths.DataFolder);
+        var scripts = Path.Combine(data, ScriptsFolder);
         if (!Directory.Exists(scripts) || Directory.GetFiles(scripts, "*" + ReplayScriptExtension).Length == 0)
         {
             output.WriteLine("No replay scripts downloaded; nothing to run.");
@@ -36,18 +36,18 @@ public class FreeDiceReplayTests(ITestOutputHelper output)
 
         var all = Directory.GetFiles(scripts, "*" + ReplayScriptExtension).OrderBy(f => f)
             .Select(f => Path.GetFileName(f).Replace(ReplayScriptExtension, "")).ToList();
-        string setting = Environment.GetEnvironmentVariable(ReviewVariable) ?? all[0];
+        var setting = Environment.GetEnvironmentVariable(ReviewVariable) ?? all[0];
         var reviews = setting == "all" ? all : [setting];
-        int iterations = int.TryParse(Environment.GetEnvironmentVariable(IterationsVariable), out int parsedIterations) ? parsedIterations : DefaultIterations;
-        string? seedSetting = Environment.GetEnvironmentVariable(SeedVariable);
-        int seed = seedSetting == "random" ? Random.Shared.Next(1, int.MaxValue / 2) : int.TryParse(seedSetting, out int parsedSeed) ? parsedSeed : DefaultSeed;
+        var iterations = int.TryParse(Environment.GetEnvironmentVariable(IterationsVariable), out var parsedIterations) ? parsedIterations : DefaultIterations;
+        var seedSetting = Environment.GetEnvironmentVariable(SeedVariable);
+        var seed = seedSetting == "random" ? Random.Shared.Next(1, int.MaxValue / 2) : int.TryParse(seedSetting, out var parsedSeed) ? parsedSeed : DefaultSeed;
 
         var clock = System.Diagnostics.Stopwatch.StartNew();
-        foreach (string review in reviews)
+        foreach (var review in reviews)
         {
             var script = ReplayScript.Load(Path.Combine(scripts, $"{review}{ReplayScriptExtension}"));
             var result = FreeDiceReplay.Run(script, iterations, seed);
-            string text = $"seeds {seed}-{seed + iterations - 1}\n" + result;
+            var text = $"seeds {seed}-{seed + iterations - 1}\n" + result;
             output.WriteLine($"{review}: {result.Mean / result.LogDamage:P1} of log, log at the {result.LogPercentile:P0} point ({result.Elapsed.TotalSeconds:F1}s)");
             File.WriteAllText(Path.Combine(data, ReviewsFolder, $"{review}.freedice.txt"), text);
             File.WriteAllText(Path.Combine(data, ReviewsFolder, $"{review}.freedice.json"), System.Text.Json.JsonSerializer.Serialize(result.ToSummary()));

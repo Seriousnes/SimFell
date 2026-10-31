@@ -95,9 +95,9 @@ public static class ReplayReportWriter
         foreach (var (result, file) in fights)
         {
             var (eng, log) = DamageTotals(result);
-            double deviation = log > 0 ? eng / log - 1 : 0;
-            double dur = Math.Max(1, result.DurationSeconds);
-            string cls = Math.Abs(deviation) <= IndexDeviationTolerance ? "diff-ok" : "diff-bad";
+            var deviation = log > 0 ? eng / log - 1 : 0;
+            var dur = Math.Max(1, result.DurationSeconds);
+            var cls = Math.Abs(deviation) <= IndexDeviationTolerance ? "diff-ok" : "diff-bad";
             sb.Append($"<tr><td><a href=\"{EncodeHtml(file)}\">{EncodeHtml(result.FightName)}</a></td><td>{EncodeHtml(result.PlayerName)}</td><td>{EncodeHtml(result.ReportCode)} #{result.FightId}</td>");
             sb.Append($"<td class=\"num\">{result.PassedSteps} / {result.Steps.Count}</td><td class=\"num\">{(result.LogHits > 0 ? (double)result.MatchedLogHits / result.LogHits : 0):P1}</td>");
             sb.Append($"<td class=\"num\">{log / dur:N0}</td><td class=\"num\">{eng / dur:N0}</td><td class=\"num {cls}\">{deviation:+0.0%;-0.0%;0.0%}</td><td class=\"num\">{result.ForcedCasts.Count}</td></tr>");
@@ -179,7 +179,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         }
         else
         {
-            string cls = result.Completed ? "done" : "halt";
+            var cls = result.Completed ? "done" : "halt";
             sb.Append($"<div class=\"panel {cls}\"><strong>Replayed all {result.Steps.Count} steps</strong> — {result.PassedSteps} passed, {result.Steps.Count - result.PassedSteps} failed.</div>");
         }
 
@@ -208,10 +208,11 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         foreach (var step in result.Steps)
         {
             var matched = step.Hits.Where(h => h.Log != null && h.LandedTime.HasValue).ToList();
-            double engineSum = matched.Sum(h => h.EngineAmount), logSum = matched.Sum(h => h.Log!.UnblockedAmount);
-            bool stateOk = step.Resources.All(c => c.Matches) && step.Auras.All(a => a.Matches);
-            string cls = !step.Passed ? "fail" : !step.Modeled ? "skip" : "";
-            string index = step.Passed ? step.Index.ToString() : $"<a href=\"#step-{step.Index}\">{step.Index}</a>";
+            var engineSum = matched.Sum(h => h.EngineAmount);
+            var logSum = matched.Sum(h => h.Log!.UnblockedAmount);
+            var stateOk = step.Resources.All(c => c.Matches) && step.Auras.All(a => a.Matches);
+            var cls = !step.Passed ? "fail" : !step.Modeled ? "skip" : "";
+            var index = step.Passed ? step.Index.ToString() : $"<a href=\"#step-{step.Index}\">{step.Index}</a>";
             sb.Append($"<tr class=\"{cls}\"><td class=\"num\">{index}</td><td class=\"num\">{step.Time:F3}</td><td>{EncodeHtml(step.Kind.LogText())}</td><td>{EncodeHtml(step.AbilityName)}</td><td class=\"num\">{step.ActiveEnemies}</td>");
             sb.Append($"<td class=\"num\">{matched.Count}/{step.Hits.Count}</td><td class=\"num\">{(engineSum > 0 ? (logSum / engineSum).ToString("F3") : "—")}</td>");
             sb.Append($"<td>{(stateOk ? "<span class=ok>match</span>" : "<span class=bad>differs</span>")}</td>");
@@ -242,10 +243,10 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
     private static void RenderDamageOverview(StringBuilder sb, ReplayResult result)
     {
         var engineHits = result.AllHits.Where(IsEngineHit).ToList();
-        double duration = Math.Max(result.DurationSeconds,
+        var duration = Math.Max(result.DurationSeconds,
             Math.Max(result.LogDamage.Select(d => d.Time).DefaultIfEmpty(0).Max(), engineHits.Select(h => h.LandedTime ?? h.EngineTime).DefaultIfEmpty(0).Max()));
         if (duration <= 0) return;
-        int bins = (int)Math.Ceiling(duration);
+        var bins = (int)Math.Ceiling(duration);
 
         double[] Bin(IEnumerable<TimedAmount> hits)
         {
@@ -259,16 +260,16 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         double[] Cumulative(double[] values)
         {
             var totals = new double[values.Length];
-            double sum = 0;
-            for (int i = 0; i < values.Length; i++) totals[i] = sum += values[i];
+            var sum = 0.0;
+            for (var i = 0; i < values.Length; i++) totals[i] = sum += values[i];
             return totals;
         }
         double[] Rolling(double[] values)
         {
-            int window = (int)DpsWindowSeconds;
+            var window = (int)DpsWindowSeconds;
             var averages = new double[values.Length];
-            double sum = 0;
-            for (int i = 0; i < values.Length; i++)
+            var sum = 0.0;
+            for (var i = 0; i < values.Length; i++)
             {
                 sum += values[i];
                 if (i >= window) sum -= values[i - window];
@@ -277,7 +278,8 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
             return averages;
         }
 
-        double logTotal = logBins.Sum(), engTotal = engBins.Sum();
+        var logTotal = logBins.Sum();
+        var engTotal = engBins.Sum();
         sb.Append("<h2>Damage overview</h2>");
         sb.Append($"<div class=\"grid\"><div class=\"panel\"><div class=\"muted\">Log damage</div><strong>{logTotal:N0}</strong> · {logTotal / duration:N0} DPS</div>");
         sb.Append($"<div class=\"panel\"><div class=\"muted\">Engine damage (average rolls of every engine hit)</div><strong>{engTotal:N0}</strong> · {engTotal / duration:N0} DPS</div>");
@@ -297,7 +299,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
     {
         const double Width = 1100, Height = 240, Left = 64, Right = 12, Top = 10, Bottom = 26;
         var inv = System.Globalization.CultureInfo.InvariantCulture;
-        double max = Math.Max(log.DefaultIfEmpty(0).Max(), engine.DefaultIfEmpty(0).Max());
+        var max = Math.Max(log.DefaultIfEmpty(0).Max(), engine.DefaultIfEmpty(0).Max());
         if (max <= 0) max = 1;
         double ScaleX(double second) => Left + (Width - Left - Right) * second / Math.Max(1, log.Length - 1);
         double ScaleY(double value) => Top + (Height - Top - Bottom) * (1 - value / max);
@@ -305,13 +307,13 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         string Points(double[] values) => string.Join(" ", values.Select((y, i) => $"{FormatNumber(ScaleX(i))},{FormatNumber(ScaleY(y))}"));
 
         sb.Append($"<svg class=\"chart\" viewBox=\"0 0 {Width} {Height}\" role=\"img\">");
-        for (int g = 0; g <= ChartGridLineCount; g++)
+        for (var g = 0; g <= ChartGridLineCount; g++)
         {
-            double value = max * g / ChartGridLineCount;
+            var value = max * g / ChartGridLineCount;
             sb.Append($"<line class=\"axis\" x1=\"{Left}\" x2=\"{Width - Right}\" y1=\"{FormatNumber(ScaleY(value))}\" y2=\"{FormatNumber(ScaleY(value))}\"/>");
             sb.Append($"<text x=\"{Left - ChartAxisLabelGap}\" y=\"{FormatNumber(ScaleY(value) + ChartAxisLabelDrop)}\" text-anchor=\"end\">{Short(value)}</text>");
         }
-        for (int t = 0; t <= duration; t += ChartTimeStepSeconds)
+        for (var t = 0; t <= duration; t += ChartTimeStepSeconds)
         {
             sb.Append($"<text x=\"{FormatNumber(ScaleX(t))}\" y=\"{Height - ChartTimeLabelRise}\" text-anchor=\"middle\">{t / ChartTimeStepSeconds}:00</text>");
         }
@@ -329,19 +331,20 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
         {
             var lh = result.LogDamage.Where(d => d.AbilityId == id).ToList();
             var eh = engineHits.Where(h => h.AbilityId == id).ToList();
-            string name = lh.FirstOrDefault()?.AbilityName ?? eh.First().AbilityName;
+            var name = lh.FirstOrDefault()?.AbilityName ?? eh.First().AbilityName;
             return new AbilityRow(Id: id, Name: name,
                 LogDmg: lh.Sum(d => d.UnblockedAmount), EngDmg: eh.Sum(h => h.EngineAmount),
                 LogHits: lh.Count, EngHits: eh.Count,
                 LogCrits: lh.Count(d => d.Crit), EngCrits: eh.Count(h => h.Crit),
                 LogCasts: result.LogCasts.GetValueOrDefault(name), EngCasts: result.EngineCasts.GetValueOrDefault(name));
         }).OrderByDescending(x => x.LogDmg).ToList();
-        double logTotal = rows.Sum(x => x.LogDmg), engTotal = rows.Sum(x => x.EngDmg);
+        var logTotal = rows.Sum(x => x.LogDmg);
+        var engTotal = rows.Sum(x => x.EngDmg);
 
         string Diff(double eng, double log)
         {
             if (log <= 0) return "<td class=\"num\">-</td>";
-            double difference = eng / log - 1;
+            var difference = eng / log - 1;
             return $"<td class=\"num {(Math.Abs(difference) <= AbilityDiffTolerance ? "diff-ok" : "diff-bad")}\">{(Math.Abs(difference) < ZeroDiffThreshold ? 0 : difference):+0.0%;-0.0%;0.0%}</td>";
         }
         string Pct(int count, int of) => of == 0 ? "-" : $"{(double)count / of:P1}";
@@ -369,7 +372,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
 
     private static void RenderStepDetail(StringBuilder sb, ReplayStep step, bool open)
     {
-        string status = !step.Modeled ? "skipped" : step.Passed ? "<span class=ok>pass</span>" : $"<span class=bad>{step.Issues.Count} issue(s)</span>";
+        var status = !step.Modeled ? "skipped" : step.Passed ? "<span class=ok>pass</span>" : $"<span class=bad>{step.Issues.Count} issue(s)</span>";
         sb.Append($"<details class=\"panel\" id=\"step-{step.Index}\"{(open ? " open" : "")}><summary>Step {step.Index} · {step.Time:F3}s · {EncodeHtml(step.Kind.LogText())} {EncodeHtml(step.AbilityName)}{(step.Target != null ? $" → {EncodeHtml(step.Target)}" : "")} · {status}</summary>");
         if (step.Note != null) sb.Append($"<p class=\"muted\">{EncodeHtml(step.Note)}</p>");
         if (step.Issues.Count > 0)
@@ -404,7 +407,7 @@ button.state{font:inherit;font-size:12px;padding:1px 8px;border:1px solid var(--
             sb.Append("<div class=\"scroll\"><table><thead><tr><th class=num>Engine t</th><th class=num>Log t</th><th>Ability</th><th>Target</th><th>Crit</th><th class=num>Engine avg</th><th class=num>Expected low</th><th class=num>Expected high</th><th class=num>Log</th><th class=num>Deviation</th></tr></thead><tbody>");
             foreach (var hit in step.Hits)
             {
-                bool bad = !hit.WithinRange;
+                var bad = !hit.WithinRange;
                 sb.Append($"<tr class=\"{(bad ? "fail" : "")}\"><td class=num>{hit.EngineTime:F3}</td><td class=num>{(hit.Log != null ? hit.Log.Time.ToString("F3") : "—")}</td><td>{EncodeHtml(hit.AbilityName)}</td><td>{EncodeHtml(hit.Target?.ToString() ?? "")}</td>");
                 sb.Append($"<td>{(hit.Log == null ? $"({hit.CritChance:P0})" : hit.Crit ? "crit" : "")}</td><td class=num>{hit.EngineAmount:F0}</td><td class=num>{hit.ExpectedLow:F0}</td><td class=num>{hit.ExpectedHigh:F0}</td>");
                 sb.Append($"<td class=num>{(hit.Log != null ? EncodeHtml(hit.Log.ComparedAmountText()) : "none")}</td><td class=num>{(hit.Deviation == 0 ? "—" : hit.Deviation.ToString("+0;-0"))}</td></tr>");

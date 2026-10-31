@@ -23,12 +23,12 @@ public class RealPpm
             LastProcAttemptTime = SimTime.Zero;
             _fight = ctx;
         }
-        double timeSinceLastSeconds = (ctx.CurrentTime - LastProcAttemptTime).TotalSeconds;
+        var timeSinceLastSeconds = (ctx.CurrentTime - LastProcAttemptTime).TotalSeconds;
         LastProcAttemptTime = ctx.CurrentTime;
 
         // Haste scales RPPM proc frequency
-        double hastedPpm = BasePpm * (1.0 + hero.GetHaste(ctx.CurrentTime));
-        double procChance = Math.Clamp((hastedPpm * timeSinceLastSeconds) / SimTime.SecondsPerMinute, 0.0, 1.0);
+        var hastedPpm = BasePpm * (1.0 + hero.GetHaste(ctx.CurrentTime));
+        var procChance = Math.Clamp((hastedPpm * timeSinceLastSeconds) / SimTime.SecondsPerMinute, 0.0, 1.0);
 
         return ctx.Outcomes.RollProc(ProcKey, procChance, ctx, target);
     }

@@ -11,7 +11,7 @@ internal static class ExactReplayAssertions
         // Every log hit is dealt once: matched by an engine hit, or by the replay itself.
         Assert.Equal(result.LogHits, result.MatchedLogHits + result.LoggedHitsDealt);
         // The replay deals the log's damage.
-        double logTotal = result.LogDamage.Sum(d => d.UnblockedAmount);
+        var logTotal = result.LogDamage.Sum(d => d.UnblockedAmount);
         Assert.Equal(logTotal, result.DamageDealt, Math.Max(1e-6, logTotal * 1e-9));
         foreach (var issue in result.Issues.Where(i => i.Expected != null))
         {

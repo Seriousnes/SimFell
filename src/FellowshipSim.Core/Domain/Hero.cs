@@ -36,7 +36,7 @@ public abstract class Hero : Actor
     /// </summary>
     private void AuraChanged(Aura aura, SimTime now)
     {
-        bool acceleration = CooldownAccelerationAuraKeys.Count > 0 && CooldownAccelerationAuraKeys.Contains(aura.Key);
+        var acceleration = CooldownAccelerationAuraKeys.Count > 0 && CooldownAccelerationAuraKeys.Contains(aura.Key);
         if (acceleration) _accelerationAuraChanges++;
         if (!acceleration && !aura.Def.Changes(CooldownRateStats)) return;
         foreach (var state in Cooldowns.Values) state.Advance(now);
@@ -192,7 +192,7 @@ public abstract class Hero : Actor
         add { if (value != null) Subscribe(new DamageDealtSubscriber(null, null, value)); }
         remove
         {
-            int index = _damageDealt.FindLastIndex(s => s.Ability == null && s.DamageId == null && s.Handler == value);
+            var index = _damageDealt.FindLastIndex(s => s.Ability == null && s.DamageId == null && s.Handler == value);
             if (index < 0) return;
             _damageDealt.RemoveAt(index);
             _damageDealtById.Clear();
@@ -273,7 +273,7 @@ public abstract class Hero : Actor
     {
         if (!_damageDealtById.TryGetValue(hit.AbilityId, out var subscribers))
         {
-            int id = hit.AbilityId;
+            var id = hit.AbilityId;
             subscribers = _damageDealt.Where(s => s.Receives(id)).ToArray();
             _damageDealtById[id] = subscribers;
         }
@@ -355,7 +355,7 @@ public abstract class Hero : Actor
     private double AddToResource(ResourceDef resource, double amount, SimulationContext? ctx, EnemyTarget? from, bool isGain)
     {
         var state = Resources.Get(resource);
-        double added = Math.Min(amount, Math.Max(0.0, state.Max - state.Current));
+        var added = Math.Min(amount, Math.Max(0.0, state.Max - state.Current));
         state.Current += added;
         if (amount - added > 0) OnResourceOverflow?.Invoke(resource, amount - added, ctx?.CurrentTime ?? default);
         if (isGain && added > 0 && ctx != null) OnResourceGained?.Invoke(resource, added, from, ctx);
@@ -436,7 +436,7 @@ public abstract class Hero : Actor
             if (guaranteed(ctx.CurrentTime)) return true;
         }
         // Spirit Refund chance is Spirit / (1 + Spirit) (per the user: "%/(100+%)").
-        double spirit = SpiritPercent(ctx.CurrentTime);
+        var spirit = SpiritPercent(ctx.CurrentTime);
         return ctx.Outcomes.RollProc(SpiritRefundProc, spirit / (1.0 + spirit), ctx);
     }
 
@@ -470,7 +470,7 @@ public abstract class Hero : Actor
 
     public double AbilityDamageMultiplier(Ability ability, SimTime now)
     {
-        double mult = 1.0;
+        var mult = 1.0;
         foreach (var multiplier in AbilityDamageMultipliers) mult *= multiplier(ability, now);
         return mult;
     }
@@ -485,8 +485,8 @@ public abstract class Hero : Actor
     /// </summary>
     public double CooldownRate(Ability ability, SimTime now)
     {
-        bool weaponOwnOnly = ability.IgnoresCooldownRecovery;
-        double pool = 1.0 + (weaponOwnOnly ? 0.0 : CooldownAcceleration(ability, now));
+        var weaponOwnOnly = ability.IgnoresCooldownRecovery;
+        var pool = 1.0 + (weaponOwnOnly ? 0.0 : CooldownAcceleration(ability, now));
         if (!weaponOwnOnly)
         {
             pool += Auras.SumBonuses(StatType.CooldownRecovery, now);
@@ -498,7 +498,7 @@ public abstract class Hero : Actor
                 // Weapon abilities only speed up from their own recovery effects (Chronoshift's barrier, per the user).
                 if (!aura.Def.Changes(CooldownRecoveryStat) || !ability.OwnRecoveryAuraLogIds.Contains(aura.Def.LogId)) continue;
                 var mods = aura.Modifiers;
-                for (int i = 0; i < mods.Count; i++)
+                for (var i = 0; i < mods.Count; i++)
                 {
                     if (mods[i].Type == StatType.CooldownRecovery) pool += mods[i].Value - 1.0;
                 }
@@ -510,7 +510,7 @@ public abstract class Hero : Actor
     /// <summary>Recovery bonuses specific to an ability (e.g. The Monarch for Major abilities), as fractions.</summary>
     public double CooldownAcceleration(Ability ability, SimTime now)
     {
-        double accel = 0.0;
+        var accel = 0.0;
         foreach (var acceleration in CooldownAccelerations) accel += acceleration(ability, now);
         return accel;
     }
@@ -528,7 +528,7 @@ public abstract class Hero : Actor
     public double PrimaryAttribute(SimTime now)
     {
         if (IsCurrent(ref _primaryAttribute, StatType.PrimaryAttribute, StatType.PrimaryAttributeMultiplier, now)) return _primaryAttribute.Value;
-        double value = Auras.Fold(StatType.PrimaryAttribute, Stats.PrimaryStat, now);
+        var value = Auras.Fold(StatType.PrimaryAttribute, Stats.PrimaryStat, now);
         return _primaryAttribute.Value = value * Auras.Fold(StatType.PrimaryAttributeMultiplier, 1.0, now);
     }
 
@@ -540,7 +540,7 @@ public abstract class Hero : Actor
 
     public double CritChanceAgainst(EnemyTarget? target, SimTime now)
     {
-        double chance = CritChance(now);
+        var chance = CritChance(now);
         if (target != null)
         {
             foreach (var bonus in TargetCritChanceBonuses) chance += bonus(target, now);
@@ -617,7 +617,7 @@ public abstract class Hero : Actor
 
     public double DamageMultiplierAgainst(EnemyTarget? target, SimTime now)
     {
-        double mult = 1.0;
+        var mult = 1.0;
         if (target != null)
         {
             foreach (var multiplier in TargetDamageMultipliers) mult *= multiplier(target, now);
@@ -760,7 +760,7 @@ public sealed class CooldownState
     {
         if (_rateInputs != null)
         {
-            long inputs = _rateInputs(now);
+            var inputs = _rateInputs(now);
             if (inputs == _rateReadAt) return;
             _rateReadAt = inputs;
         }
@@ -802,7 +802,7 @@ public sealed class CooldownState
     {
         Advance(now);
         if (_charges <= 0) return;
-        bool wasFull = _charges == MaxCharges;
+        var wasFull = _charges == MaxCharges;
         _charges--;
         if (wasFull)
         {
@@ -861,8 +861,8 @@ public sealed class CooldownState
             var time = _last;
             while (time < now && Recharging)
             {
-                double span = (now - time).TotalSeconds;
-                double rate = Math.Max(Tolerance.Comparison, _rate);
+                var span = (now - time).TotalSeconds;
+                var rate = Math.Max(Tolerance.Comparison, _rate);
                 if (_remaining > span * rate)
                 {
                     _remaining -= span * rate;

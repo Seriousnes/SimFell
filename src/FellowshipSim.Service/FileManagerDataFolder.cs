@@ -9,7 +9,7 @@ public sealed class FileManagerDataFolder(string path) : IDataFolder
     public Task OpenAsync()
     {
         Directory.CreateDirectory(path);
-        string fileManager = OperatingSystem.IsWindows() ? "explorer.exe" : OperatingSystem.IsMacOS() ? "open" : "xdg-open";
+        var fileManager = OperatingSystem.IsWindows() ? "explorer.exe" : OperatingSystem.IsMacOS() ? "open" : "xdg-open";
         using var _ = Process.Start(new ProcessStartInfo(fileManager) { ArgumentList = { path }, UseShellExecute = false });
         return Task.CompletedTask;
     }

@@ -40,7 +40,7 @@ public abstract class MaraAbility : Ability
         }
         if (EnergyCost > 0)
         {
-            double energy = Mara.EnergyAt(now);
+            var energy = Mara.EnergyAt(now);
             if (energy < EnergyCost)
             {
                 reason = explain ? $"{Name} needs {EnergyCost:0} Energy (have {energy:0.#})" : null;
@@ -64,7 +64,7 @@ public abstract class MaraAbility : Ability
 
     public override double BaseDamage(SimulationContext ctx, EnemyTarget? target, double damageMultiplier = 1.0)
     {
-        double damage = base.BaseDamage(ctx, target, damageMultiplier);
+        var damage = base.BaseDamage(ctx, target, damageMultiplier);
         if (HasCreepingDeath) damage *= Mara.CreepingDeath(ctx.CurrentTime);
         if (target != null)
         {

@@ -63,7 +63,7 @@ public sealed class BuildEditor(CharacterBuild build)
     {
         var hero = Totals;
         var type = RatingType(stat);
-        double rating = stat switch
+        var rating = stat switch
         {
             RatedStat.Crit => hero.Stats.CritRating,
             RatedStat.Haste => hero.Stats.HasteRating,
@@ -130,7 +130,7 @@ public sealed class BuildEditor(CharacterBuild build)
     {
         get
         {
-            string key = System.Text.Json.JsonSerializer.Serialize(Build);
+            var key = System.Text.Json.JsonSerializer.Serialize(Build);
             if (key != _totalsFor || _totals == null)
             {
                 _totals = HeroImporter.Import(Build);
@@ -157,10 +157,10 @@ public sealed class BuildEditor(CharacterBuild build)
     /// </summary>
     public void SetStatEnchantRating(StatEnchant enchant, double rating)
     {
-        int value = (int)Math.Max(0, Math.Round(rating));
+        var value = (int)Math.Max(0, Math.Round(rating));
         // A rating set by hand leaves the log's count of the enchant: it counts as its rating over 6.
         Build.StatEnchantCounts.Remove(enchant.Id);
-        int at = Build.StatEnchants.FindIndex(e => e.Id == enchant.Id);
+        var at = Build.StatEnchants.FindIndex(e => e.Id == enchant.Id);
         if (value == 0)
         {
             if (at >= 0) Build.StatEnchants.RemoveAt(at);
@@ -256,7 +256,7 @@ public sealed class BuildEditor(CharacterBuild build)
     /// How many of stat enchant <paramref name="id"/> the build wears: as a log counted them, otherwise its rating over 6.
     /// </summary>
     public int StatEnchantCount(int id) =>
-        Build.StatEnchantCounts.TryGetValue(id, out int count) && StatEnchantRating(id) > 0 ? count : StatEnchantsFor(StatEnchantRating(id));
+        Build.StatEnchantCounts.TryGetValue(id, out var count) && StatEnchantRating(id) > 0 ? count : StatEnchantsFor(StatEnchantRating(id));
 
     /// <summary>
     /// Wears <paramref name="count"/> of a stat enchant (<see cref="EnchantSlots.RatingPerStatEnchant"/> rating each), as
@@ -264,7 +264,7 @@ public sealed class BuildEditor(CharacterBuild build)
     /// </summary>
     public void SetStatEnchantCount(StatEnchant enchant, int count)
     {
-        int now = StatEnchantCount(enchant.Id);
+        var now = StatEnchantCount(enchant.Id);
         count = Math.Clamp(count, 0, now + Room(EnchantSlot.StatEnchants));
         if (count == now) return;
         SetStatEnchantRating(enchant, count * EnchantSlots.RatingPerStatEnchant);
@@ -318,7 +318,7 @@ public sealed class BuildEditor(CharacterBuild build)
     /// </summary>
     public double SheetGem(GemColor color)
     {
-        double multiplier = new[] { Build.Relic1ItemId, Build.Relic2ItemId }
+        var multiplier = new[] { Build.Relic1ItemId, Build.Relic2ItemId }
             .Select(CoreCatalog.RelicPassiveOfItem).OfType<RelicPassive>().Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
         return Math.Floor(Gem(color) * multiplier);
     }
@@ -347,7 +347,7 @@ public sealed class BuildEditor(CharacterBuild build)
     /// <summary>Sets the gear's gem power bonuses of a colour, raised no further than the gems' room.</summary>
     public void SetGearBonuses(GemColor color, int count)
     {
-        int current = GearBonuses(color);
+        var current = GearBonuses(color);
         if (count > current) count = Math.Min(count, current + Room(EnchantSlot.Gems));
         if (count > 0) Build.GearGemBonuses[color] = count;
         else Build.GearGemBonuses.Remove(color);
@@ -399,7 +399,7 @@ public sealed class BuildEditor(CharacterBuild build)
     private static void SetRank(List<BuildEntry> entries, BuildOption option, int rank)
     {
         rank = Math.Clamp(rank, 0, option.MaxRank);
-        int at = entries.FindIndex(e => e.Id == option.Id);
+        var at = entries.FindIndex(e => e.Id == option.Id);
         if (rank == 0)
         {
             if (at >= 0) entries.RemoveAt(at);
@@ -416,7 +416,7 @@ public sealed class BuildEditor(CharacterBuild build)
     {
         var removed = new List<string>();
         var tree = CoreCatalog.CreateHero(build.Hero).TalentTreeSlots.Select(s => s.TalentId).ToHashSet();
-        foreach (int id in build.Talents.Where(id => !tree.Contains(id) || CoreCatalog.CreateTalent(id) == null).ToList())
+        foreach (var id in build.Talents.Where(id => !tree.Contains(id) || CoreCatalog.CreateTalent(id) == null).ToList())
         {
             build.Talents.Remove(id);
             removed.Add($"talent {id}");
@@ -441,7 +441,7 @@ public sealed class BuildEditor(CharacterBuild build)
             removed.Add($"relic item {build.Relic2ItemId}");
             build.Relic2ItemId = 0;
         }
-        foreach (int id in build.LegendaryItemIds.Where(id => CoreCatalog.CreateLegendary(build.Hero, id) == null).ToList())
+        foreach (var id in build.LegendaryItemIds.Where(id => CoreCatalog.CreateLegendary(build.Hero, id) == null).ToList())
         {
             build.LegendaryItemIds.Remove(id);
             removed.Add($"legendary item {id}");

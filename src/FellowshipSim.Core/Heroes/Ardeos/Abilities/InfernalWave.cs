@@ -29,7 +29,7 @@ public class InfernalWave : ArdeosAbility
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
-        double cinders = CindersGained;
+        var cinders = CindersGained;
         if (CurrentCast != null)
         {
             foreach (var multiplier in CinderMultipliers) cinders *= multiplier(CurrentCast);

@@ -14,7 +14,7 @@ public class CompletionsTests
     [Fact]
     public void Empty_word_lists_scopes_resources_named_values_and_operators_in_that_order()
     {
-        string resourceScope = PropertyExpression.ResourcePrefix.TrimEnd('.');
+        var resourceScope = PropertyExpression.ResourcePrefix.TrimEnd('.');
         var expected = PropertyExpression.Scopes.Keys
             .Concat(_v.Resources.Select(r => r.Slug).Take(1))
             .Append(resourceScope)

@@ -16,11 +16,11 @@ public sealed record FightOptions(double LengthVariance = 0, bool HealthFollowsT
     {
         if (LengthVariance <= 0) return duration;
         // SplitMix64 of the seed: a uniform share in [0, 1) that leaves the fight's own dice alone.
-        ulong mixed = unchecked((ulong)seed * SimulationRng.SplitMixIncrement + SimulationRng.SplitMixIncrement);
+        var mixed = unchecked((ulong)seed * SimulationRng.SplitMixIncrement + SimulationRng.SplitMixIncrement);
         mixed = unchecked((mixed ^ (mixed >> SimulationRng.SplitMixFirstShift)) * SimulationRng.SplitMixFirstMultiplier);
         mixed = unchecked((mixed ^ (mixed >> SimulationRng.SplitMixSecondShift)) * SimulationRng.SplitMixSecondMultiplier);
         mixed ^= mixed >> SimulationRng.SplitMixFinalShift;
-        double share = (mixed >> SimulationRng.DiscardedBits) * SimulationRng.UniformStep;
+        var share = (mixed >> SimulationRng.DiscardedBits) * SimulationRng.UniformStep;
         return SimTime.FromSeconds(Math.Max(1.0, duration.TotalSeconds * (1 + LengthVariance * (2 * share - 1))));
     }
 

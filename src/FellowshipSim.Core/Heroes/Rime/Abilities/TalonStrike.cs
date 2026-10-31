@@ -41,11 +41,11 @@ public class TalonStrike : GlacialBlast
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         var hero = Rime;
-        bool assault = GlacialAssaultReady;
+        var assault = GlacialAssaultReady;
         // With Glacial Assault it is free and fires as if cast with full Winter Orbs (per the user; Rising Talons never
         // consumes Glacial Assault in the logs).
-        int spikes = assault ? Rime.MaxWinterOrbs : Math.Max(1, hero.WinterOrbs);
-        double multiplier = 1.0;
+        var spikes = assault ? Rime.MaxWinterOrbs : Math.Max(1, hero.WinterOrbs);
+        var multiplier = 1.0;
         if (assault)
         {
             multiplier = ConsumeGlacialAssault(ctx);
@@ -59,7 +59,7 @@ public class TalonStrike : GlacialBlast
             hero.SpendWinterOrbs(spikes, ctx);
         }
 
-        for (int i = 0; i < spikes; i++)
+        for (var i = 0; i < spikes; i++)
         {
             DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: assault ? (c, dealt) => Explode(c, target, dealt) : null);
         }

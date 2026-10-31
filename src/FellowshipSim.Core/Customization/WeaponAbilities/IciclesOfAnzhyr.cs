@@ -54,14 +54,14 @@ public class IciclesOfAnzhyr : Ability
         }
         // The waves keep the damage, crit chance and crit power of the cast.
         var now = ctx.CurrentTime;
-        double damage = BaseDamage(ctx, null);
-        double critChance = Owner.CritChance(now) + CritChanceBonus;
-        double critMultiplier = CritMultiplierAt(now);
+        var damage = BaseDamage(ctx, null);
+        var critChance = Owner.CritChance(now) + CritChanceBonus;
+        var critMultiplier = CritMultiplierAt(now);
         // The curse this cast applies (or re-applies) snapshots the cast too.
         var curse = new CurseSnapshot(_curse.BaseDamage(ctx, null), critChance, critMultiplier);
-        for (int i = 0; i < Waves; i++)
+        for (var i = 0; i < Waves; i++)
         {
-            bool final = i == Waves - 1;
+            var final = i == Waves - 1;
             ctx.Schedule(SimTime.FromSeconds(FirstWaveSeconds + i * WaveIntervalSeconds),
                 c => Wave(c, target, final, damage, critChance, critMultiplier, curse), Name);
         }
@@ -79,18 +79,18 @@ public class IciclesOfAnzhyr : Ability
     {
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
-        double falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
+        var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
         foreach (var enemy in struck)
         {
-            bool cursed = enemy.Auras.HasAura(Curse, ctx.CurrentTime);
-            double multiplier = falloff * (cursed ? CursedDamageMultiplier : 1.0);
+            var cursed = enemy.Auras.HasAura(Curse, ctx.CurrentTime);
+            var multiplier = falloff * (cursed ? CursedDamageMultiplier : 1.0);
             var now = ctx.CurrentTime;
             ctx.ApplyDamage(Owner, enemy, damage * multiplier * Owner.DamageMultiplierAgainst(enemy, now), DamageLogId, Name, canCrit: true,
                 critChance + Owner.CritChanceAgainst(enemy, now) - Owner.CritChance(now), critMultiplier, snapshot: true);
             if (final)
             {
                 // Re-applying the curse gives it the new cast's snapshot; a new curse also starts ticking.
-                bool ticking = _curses.ContainsKey(enemy) && cursed;
+                var ticking = _curses.ContainsKey(enemy) && cursed;
                 _curses[enemy] = curse;
                 if (!ticking) Afflict(ctx, enemy);
             }

@@ -47,7 +47,7 @@ public static class HeroImporter
         hero.Abilities.AddRange(CommonAbilities.For(hero));
         foreach (var ability in hero.Abilities.ToList()) ability.Connect();
 
-        foreach (int talentId in build.Talents)
+        foreach (var talentId in build.Talents)
         {
             var talent = Catalog.CreateTalent(talentId);
             if (talent == null)
@@ -69,7 +69,7 @@ public static class HeroImporter
         hero.Relic1 = BindRelic(hero, build.Relic1ItemId);
         hero.Relic2 = BindRelic(hero, build.Relic2ItemId);
 
-        double gemPowerMultiplier = hero.RelicPassives.Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
+        var gemPowerMultiplier = hero.RelicPassives.Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
         foreach (var (color, power) in build.GemPower)
         {
             var gem = Gem.Create(color);
@@ -79,7 +79,7 @@ public static class HeroImporter
             hero.UnmodeledFeatures.AddRange(gem.UnmodeledNodes.Select(n => $"Gem node: {n}"));
         }
         // Gem power over the cap raises Main Stat and Stamina.
-        double overcap = Gem.OvercapBonusPerPower * hero.Gems.Sum(g => Math.Max(0.0, g.Power - Gem.OvercapPower));
+        var overcap = Gem.OvercapBonusPerPower * hero.Gems.Sum(g => Math.Max(0.0, g.Power - Gem.OvercapPower));
         if (overcap > 0)
         {
             hero.PassiveAuras.Add(AuraDef.Internal("Gem power overcap", 0, 1, StatModifier.Increased(StatType.PrimaryAttributeMultiplier, 1.0 + overcap)));
@@ -120,7 +120,7 @@ public static class HeroImporter
 
         if (build.LegendaryItemIds.Count > 0)
         {
-            foreach (int itemId in build.LegendaryItemIds)
+            foreach (var itemId in build.LegendaryItemIds)
             {
                 var legendary = Catalog.CreateLegendary(build.Hero, itemId);
                 if (legendary == null || !legendary.IsModeled) hero.UnmodeledFeatures.Add($"Legendary item {itemId}");

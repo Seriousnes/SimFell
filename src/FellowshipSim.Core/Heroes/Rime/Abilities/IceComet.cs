@@ -83,7 +83,7 @@ public class IceComet : RimeAbility
     /// <summary>Seconds from the cast to the impact (the hasted part shortened by what talents took off the cast).</summary>
     private double ImpactDelay(SimulationContext ctx)
     {
-        double hasted = Math.Max(0.0, ImpactDelayHastedSeconds - (CurrentCast?.DelayReductionSeconds ?? 0.0));
+        var hasted = Math.Max(0.0, ImpactDelayHastedSeconds - (CurrentCast?.DelayReductionSeconds ?? 0.0));
         return ImpactDelayFixedSeconds + hasted / (1.0 + Owner.GetHaste(ctx.CurrentTime));
     }
 
@@ -91,12 +91,12 @@ public class IceComet : RimeAbility
     private void Launch(SimulationContext ctx, EnemyTarget target, double delaySeconds, bool raisesStruck)
     {
         var now = ctx.CurrentTime;
-        double damage = BaseDamage(ctx, null) * CastDamageMultiplier;
-        double critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
-        double critMultiplier = CritMultiplierAt(now);
+        var damage = BaseDamage(ctx, null) * CastDamageMultiplier;
+        var critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
+        var critMultiplier = CritMultiplierAt(now);
         ctx.Schedule(SimTime.FromSeconds(delaySeconds), c =>
         {
-            double impactCrit = 0.0;
+            var impactCrit = 0.0;
             foreach (var bonus in ImpactCritChanceBonuses) impactCrit += bonus(c);
             Impact(c, target, damage, critChance + impactCrit, critMultiplier, fixedFalloff: null);
             if (raisesStruck) RaiseStruck(c, target);
@@ -122,7 +122,7 @@ public class IceComet : RimeAbility
     {
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
-        double falloff = fixedFalloff ?? (AoeTargetThreshold > 0 && struck.Count > AoeTargetThreshold ? Math.Sqrt(AoeTargetThreshold / struck.Count) : 1.0);
+        var falloff = fixedFalloff ?? (AoeTargetThreshold > 0 && struck.Count > AoeTargetThreshold ? Math.Sqrt(AoeTargetThreshold / struck.Count) : 1.0);
         foreach (var enemy in struck)
         {
             var now = ctx.CurrentTime;

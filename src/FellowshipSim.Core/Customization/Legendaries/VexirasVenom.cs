@@ -41,7 +41,7 @@ public class VexirasVenom : Legendary
             if (finisher == null) continue;
             // Mara's own crits: the shadowy clones' add none (@ 20.935 a clone's 6,809 crit leaves the ticks as the
             // Arachnid Assault crit before it made them).
-            string own = finisher.Name;
+            var own = finisher.Name;
             finisher.Hit += (in hit) =>
             {
                 if (hit.IsCrit && hit.Amount > 0 && hit.AbilityName == own && hit.Target is { } target && hit.SimContext is { } ctx)
@@ -57,7 +57,7 @@ public class VexirasVenom : Legendary
     {
         public void Add(SimulationContext ctx, EnemyTarget target, double damage)
         {
-            double kept = IsOn(target, ctx) && Get(target) is { } dot ? dot.Multiplier * Remaining(target, ctx) / TickSeconds : 0.0;
+            var kept = IsOn(target, ctx) && Get(target) is { } dot ? dot.Multiplier * Remaining(target, ctx) / TickSeconds : 0.0;
             var applied = Apply(ctx, target);
             applied.Multiplier = (kept + damage) / TicksPerVenom;
         }

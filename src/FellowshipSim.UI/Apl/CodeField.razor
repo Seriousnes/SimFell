@@ -23,10 +23,10 @@
         <ul @ref="_list" class="completions" role="listbox" hidden="@(_completion == null)" style="@ListStyle">
             @if (_completion is { } completion)
             {
-                for (int i = 0; i < completion.Items.Count; i++)
+                for (var i= 0; i < completion.Items.Count; i++)
                 {
                     var item = completion.Items[i];
-                    bool selected = i == completion.Selected;
+                    var selected = i == completion.Selected;
                     <li @key="item.Text" role="option" aria-selected="@(selected ? "true" : "false")" class="@(selected ? "selected" : null)"
                         @onmousedown="() => Accept(item, _caretAt)" @onmousedown:preventDefault>
                         <TokenText Text="@(item.Text + (item.HasMore ? Completions.PathSeparator : ""))" Kind="item.Node.Kind" />
@@ -46,7 +46,7 @@
         }
         @if (!string.IsNullOrWhiteSpace(Text))
         {
-            foreach (string problem in ActionListModel.ProblemsOf(Check))
+            foreach (var problem in ActionListModel.ProblemsOf(Check))
             {
                 <p @key="problem" class="field-warning">@problem</p>
             }
@@ -158,7 +158,7 @@
             {
                 case JsInterop.ArrowDownKey:
                 case JsInterop.ArrowUpKey:
-                    int count = completion.Items.Count;
+                    var count = completion.Items.Count;
                     _completion = completion with { Selected = (completion.Selected + (key == JsInterop.ArrowDownKey ? 1 : count - 1)) % count };
                     break;
                 case JsInterop.EnterKey:
@@ -197,7 +197,7 @@
     {
         _completion = null;
         StateHasChanged();
-        string text = _domText;
+        var text = _domText;
         var check = await Editor.Checks.Get(Vocabulary.Hero, text);
         if (_domText != text || check?.InWords is not { } inWords || inWords == text) return;
         _domText = inWords;

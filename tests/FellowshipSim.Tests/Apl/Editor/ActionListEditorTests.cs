@@ -21,11 +21,11 @@ public class ActionListEditorTests
     public void A_new_action_is_open_and_its_removal_closes_it()
     {
         var editor = Loaded();
-        int changes = 0;
+        var changes = 0;
         editor.Changed += () => changes++;
 
         editor.AddAction(_v.DefaultList);
-        int key = editor.Lists[0].Actions.Single().Key;
+        var key = editor.Lists[0].Actions.Single().Key;
         Assert.Contains(key, editor.Open);
 
         editor.RemoveAction(_v.DefaultList, 0);

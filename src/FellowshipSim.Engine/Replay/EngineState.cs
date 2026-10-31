@@ -53,7 +53,7 @@ public sealed record EngineState(double Time, EngineHero Hero, EngineTarget? Tar
         {
             // An ability that never started its cooldown has no state; reading CooldownOf would make one.
             var cooldown = hero.Cooldowns.GetValueOrDefault(cast.Name);
-            int charges = cooldown?.ChargesAt(now) ?? cast.MaxCharges;
+            var charges = cooldown?.ChargesAt(now) ?? cast.MaxCharges;
             castState = new EngineCast(
                 cast.Name,
                 cast.GetAdjustedCastTime(now).TotalSeconds,

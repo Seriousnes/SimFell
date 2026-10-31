@@ -43,7 +43,7 @@ public sealed class DotTracker
     /// </summary>
     public double Rate(DamageOverTime effect, SimTime now)
     {
-        double rate = effect.TicksScaleWithHaste ? 1.0 + _hero.GetHaste(now) : 1.0;
+        var rate = effect.TicksScaleWithHaste ? 1.0 + _hero.GetHaste(now) : 1.0;
         foreach (var multiplier in RateMultipliers) rate *= multiplier(now);
         return rate;
     }
@@ -61,8 +61,8 @@ public sealed class DotTracker
     {
         // By index: a foreach over the list interface allocates its enumerator.
         var on = On(target);
-        int count = 0;
-        for (int i = 0; i < on.Count; i++)
+        var count = 0;
+        for (var i = 0; i < on.Count; i++)
         {
             if (on[i].Effect == effect) count++;
         }
@@ -89,7 +89,7 @@ public sealed class DotTracker
             {
                 // The ticks left count at the base tick rate: counted at Wildfire's rate, the frogs refreshing an effect many
                 // times a second would multiply its damage (logged Fire Frogs ticks in Wildfire fit the base rate within 12%).
-                double ticksLeft = dot.RemainingSeconds(now) / effect.BasePeriod;
+                var ticksLeft = dot.RemainingSeconds(now) / effect.BasePeriod;
                 dot.TickAmount = (dot.TickAmount * ticksLeft + pool) / effect.BaseTicks;
             }
             if (effect.Stacking == DotStacking.Stacking) dot.Stacks = Math.Min(effect.MaxStacks, dot.Stacks + stacks);
@@ -117,7 +117,7 @@ public sealed class DotTracker
     {
         if (!dot.IsActive || seconds <= 0) return;
         var now = ctx.CurrentTime;
-        double remaining = Math.Min(dot.RemainingSeconds(now) + seconds, maxRemainingSeconds + AuraContainer.ExpiryLagSeconds);
+        var remaining = Math.Min(dot.RemainingSeconds(now) + seconds, maxRemainingSeconds + AuraContainer.ExpiryLagSeconds);
         if (remaining <= dot.RemainingSeconds(now)) return;
         Advance(dot, now);
         dot.ExpiresAt = now + SimTime.FromSeconds(remaining);
@@ -161,7 +161,7 @@ public sealed class DotTracker
         if (!aura.Def.Changes(HasteStats) && !RateAuraKeys.Contains(aura.Key)) return;
         foreach (var dot in _active)
         {
-            double rate = Rate(dot.Effect, now);
+            var rate = Rate(dot.Effect, now);
             if (Math.Abs(dot.Rate - rate) < Tolerance.Change) continue;
             Advance(dot, now);
             dot.Rate = rate;
@@ -180,7 +180,7 @@ public sealed class DotTracker
     private void Schedule(SimulationContext ctx, DotInstance dot)
     {
         dot.Event?.Cancel();
-        double toTick = Math.Max(0.0, dot.Effect.BasePeriod - dot.Progress) / dot.Rate;
+        var toTick = Math.Max(0.0, dot.Effect.BasePeriod - dot.Progress) / dot.Rate;
         var tickAt = dot.LastUpdate + SimTime.FromSeconds(toTick);
         dot.Event = tickAt < dot.ExpiresAt
             ? ctx.ScheduleAt(tickAt, c => TickDue(c, dot), dot.Effect.Name)
@@ -203,7 +203,7 @@ public sealed class DotTracker
         if (!dot.IsActive) return;
         var now = ctx.CurrentTime;
         Advance(dot, now);
-        double fraction = Math.Min(1.0, dot.Progress / dot.Effect.BasePeriod);
+        var fraction = Math.Min(1.0, dot.Progress / dot.Effect.BasePeriod);
         // As every hasted effect: no partial tick within a few server frames of the last one (PeriodicEffect).
         if (dot.Effect.PartialFinalTick && fraction > 0 && (now - dot.LastTickAt).TotalSeconds >= PeriodicEffect.MinHastedPartialTickSeconds - Tolerance.Comparison)
         {
@@ -226,8 +226,8 @@ public sealed class DotTracker
     private void UpdateDebuff(DamageOverTime effect, EnemyTarget target, SimTime now)
     {
         var on = On(target);
-        int stacks = 0;
-        for (int i = 0; i < on.Count; i++)
+        var stacks = 0;
+        for (var i = 0; i < on.Count; i++)
         {
             if (on[i].Effect == effect) stacks += on[i].Stacks;
         }

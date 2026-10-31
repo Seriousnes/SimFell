@@ -45,7 +45,7 @@ public class FireFrogs : ArdeosAbility
         TriggerCooldown(ctx);
         // Each frog of the cast is a certain proc: it always comes, and a replay takes the log's attacks of the cast's frogs
         // as theirs, so they are no proof of Pyrophibian Frenzy's frogs.
-        for (int frog = 0; frog < Frogs; frog++) ctx.Outcomes.RollProc(ConjuredProcKey, 1.0, ctx);
+        for (var frog = 0; frog < Frogs; frog++) ctx.Outcomes.RollProc(ConjuredProcKey, 1.0, ctx);
         Spawn(ctx, Frogs, FirstAttackSeconds);
     }
 
@@ -56,11 +56,11 @@ public class FireFrogs : ArdeosAbility
     public void Spawn(SimulationContext ctx, int frogs, double firstAttackSeconds)
     {
         _fight = ctx;
-        for (int frog = 0; frog < frogs; frog++)
+        for (var frog = 0; frog < frogs; frog++)
         {
-            for (int attack = 0; attack < AttacksPerFrog; attack++)
+            for (var attack = 0; attack < AttacksPerFrog; attack++)
             {
-                double delay = firstAttackSeconds + frog * FrogStaggerSeconds + attack * AttackIntervalSeconds;
+                var delay = firstAttackSeconds + frog * FrogStaggerSeconds + attack * AttackIntervalSeconds;
                 ctx.Schedule(SimTime.FromSeconds(delay), Leap, AbilityName);
             }
         }

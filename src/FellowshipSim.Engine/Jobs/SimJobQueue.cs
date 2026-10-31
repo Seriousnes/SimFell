@@ -78,7 +78,7 @@ public sealed class SimJobQueue
     {
         lock (_lock)
         {
-            int ahead = 0;
+            var ahead = 0;
             for (var node = _queued.First; node != null; node = node.Next, ahead++)
             {
                 if (node.Value == job) return ahead;
@@ -95,7 +95,7 @@ public sealed class SimJobQueue
     public bool Cancel(string owner, string id)
     {
         SimJob? job;
-        bool leftQueue = false;
+        var leftQueue = false;
         lock (_lock)
         {
             job = Find(owner, id);

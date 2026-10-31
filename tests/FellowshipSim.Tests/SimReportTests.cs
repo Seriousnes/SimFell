@@ -25,13 +25,13 @@ public class SimReportTests
         Assert.Equal(Seconds, timeline.Damage.Count);
         Assert.Equal(result.TotalMeanDamage, timeline.Damage[^1], result.TotalMeanDamage * 1e-9);
         // The band holds the middle 90% of fights (early on most have dealt nothing yet, so the mean can lie above it).
-        for (int s = 0; s < Seconds; s++)
+        for (var s = 0; s < Seconds; s++)
         {
             Assert.True(timeline.DamageLow[s] <= timeline.DamageHigh[s]);
             Assert.True(timeline.DpsLow[s] <= timeline.DpsHigh[s]);
         }
         // Fights in a sim differ little (each hit deals its expected damage), and the band is kept in single precision.
-        double slack = timeline.Damage[^1] * 0.001;
+        var slack = timeline.Damage[^1] * 0.001;
         Assert.InRange(timeline.Damage[^1], timeline.DamageLow[^1] - slack, timeline.DamageHigh[^1] + slack);
         // The last 10 s's rolling DPS is that window's damage over 10 s.
         Assert.Equal((timeline.Damage[^1] - timeline.Damage[^11]) / timeline.RollingSeconds, timeline.Dps[^1], 6);
@@ -55,12 +55,12 @@ public class SimReportTests
         var result = Run();
         var casts = result.Casts;
         Assert.NotEmpty(casts);
-        for (int i = 1; i < casts.Count; i++) Assert.True(casts[i].Time >= casts[i - 1].Time);
+        for (var i = 1; i < casts.Count; i++) Assert.True(casts[i].Time >= casts[i - 1].Time);
         Assert.InRange(casts[^1].Time, 0, Seconds);
         Assert.Contains(casts, c => c.Name == "Frost Bolt" && c.Id > 0);
         Assert.Contains(casts, c => c.Name == BurstingIce.Debuff.Name || c.Name == "Bursting Ice");
         // One fight's casts: about as many as a fight's mean.
-        double meanCasts = result.Abilities.Sum(a => a.Casts);
+        var meanCasts = result.Abilities.Sum(a => a.Casts);
         Assert.InRange(casts.Count, meanCasts * 0.8, meanCasts * 1.2 + 2);
     }
 
@@ -76,7 +76,7 @@ public class SimReportTests
         Assert.Equal(Seconds, spirit.Typical.Count);
         // It starts at the starting Spirit, and with nothing spending it, never falls and never passes the most.
         Assert.Equal(40, spirit.Typical[0]);
-        for (int s = 1; s < Seconds; s++) Assert.True(spirit.Typical[s] >= spirit.Typical[s - 1]);
+        for (var s = 1; s < Seconds; s++) Assert.True(spirit.Typical[s] >= spirit.Typical[s - 1]);
         Assert.All(spirit.Mean, v => Assert.InRange(v, 40, 100));
         // At least 1 every 3 seconds of regeneration.
         Assert.True(spirit.Mean[^1] >= 40 + (Seconds - 3) / Hero.SpiritPointRegenSeconds);
@@ -97,9 +97,9 @@ public class SimReportTests
         // The typical fight's timeline: ordered spans inside the fight, covering about its uptime.
         var spans = debuff.Spans!;
         Assert.True(spans.Count >= 2 && spans.Count % 2 == 0);
-        for (int i = 1; i < spans.Count; i++) Assert.True(spans[i] >= spans[i - 1]);
+        for (var i = 1; i < spans.Count; i++) Assert.True(spans[i] >= spans[i - 1]);
         Assert.InRange(spans[^1], 0, Seconds);
-        double covered = Enumerable.Range(0, spans.Count / 2).Sum(i => spans[2 * i + 1] - spans[2 * i]);
+        var covered = Enumerable.Range(0, spans.Count / 2).Sum(i => spans[2 * i + 1] - spans[2 * i]);
         Assert.InRange(covered / Seconds, debuff.Uptime - 0.1, debuff.Uptime + 0.1);
         // Buffs come first.
         Assert.True(result.Buffs.TakeWhile(b => !b.OnTarget).Count() + result.Buffs.SkipWhile(b => !b.OnTarget).Count() == result.Buffs.Count);

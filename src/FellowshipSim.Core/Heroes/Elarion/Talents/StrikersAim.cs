@@ -28,7 +28,7 @@ public class StrikersAim : Talent
         if (hero.GetAbility<HighwindArrow>() is not { } highwind) return;
         highwind.RicochetsMissed += (ctx, missed) =>
         {
-            int stacks = Math.Min(MaxStacks, missed);
+            var stacks = Math.Min(MaxStacks, missed);
             if (stacks <= hero.Auras.GetStacks(Buff, ctx.CurrentTime)) return;
             hero.Auras.Apply(Buff, ctx.CurrentTime, setStacks: stacks);
             Decay(ctx, hero.Auras.Get(Buff, ctx.CurrentTime)!);

@@ -88,12 +88,12 @@ public class StarfallVolley : ElarionAbility
         if (ctx.CurrentTime > volley.End - SimTime.FromSeconds(FallSeconds)) return;
         var enemies = ctx.ActiveEnemies;
         var struck = new List<EnemyTarget>(enemies.Count);
-        for (int i = 0; i < enemies.Count; i++)
+        for (var i = 0; i < enemies.Count; i++)
         {
             if (ctx.Outcomes.RollProc(ArrowProcKey, 1.0, ctx, enemies[i])) struck.Add(enemies[i]);
         }
-        double falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
-        for (int i = 0; i < struck.Count; i++)
+        var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
+        for (var i = 0; i < struck.Count; i++)
         {
             var enemy = struck[i];
             DealDamage(ctx, enemy, damageMultiplier: falloff * (enemy == volley.Target ? MainTargetMultiplier : 1.0));

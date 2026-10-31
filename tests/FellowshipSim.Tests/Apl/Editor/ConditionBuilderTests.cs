@@ -51,11 +51,11 @@ public class ConditionBuilderTests
     public void Every_expression_of_the_grammar_has_rows_that_write_its_text()
     {
         var random = new Random(1);
-        for (int i = 0; i < 2000; i++)
+        for (var i = 0; i < 2000; i++)
         {
-            string text = AplFormatter.Format(Expression(random, 4), AplOperatorStyle.Words);
+            var text = AplFormatter.Format(Expression(random, 4), AplOperatorStyle.Words);
             var parsed = AplParser.ParseExpression(text);
-            string expected = AplFormatter.Format(parsed, AplOperatorStyle.Words);
+            var expected = AplFormatter.Format(parsed, AplOperatorStyle.Words);
 
             Assert.Equal(expected, ConditionBuilder.Text(ConditionRow.From(AplCondition.Rows(parsed))));
         }
@@ -65,7 +65,7 @@ public class ConditionBuilderTests
 
     private static IAplExpression Expression(Random random, int depth)
     {
-        int pick = depth == 0 ? random.Next(2) : random.Next(6);
+        var pick = depth == 0 ? random.Next(2) : random.Next(6);
         return pick switch
         {
             0 => new PropertyExpression(GeneratedPaths[random.Next(GeneratedPaths.Length)]),
@@ -91,7 +91,7 @@ public class ConditionBuilderTests
             foreach (var list in hero.GroupBy(a => a.List))
             {
                 var kinds = ConditionBuilder.Kinds(vocabulary, ConditionBuilder.Variables([new ActionList(list.Key, list.Select(a => EditorAction.From(a.Action)).ToList())]));
-                foreach (string path in list.SelectMany(a => new[] { a.Action.Condition, a.Action.TargetExpression }).OfType<string>()
+                foreach (var path in list.SelectMany(a => new[] { a.Action.Condition, a.Action.TargetExpression }).OfType<string>()
                              .SelectMany(text => Paths(AplCondition.Rows(AplParser.ParseExpression(text)))).Distinct())
                 {
                     var parts = ConditionBuilder.SplitPath(vocabulary, path);
@@ -193,7 +193,7 @@ public class ConditionBuilderTests
     [Fact]
     public void Every_kind_has_its_own_colour()
     {
-        string css = File.ReadAllText(Path.Combine(TestPaths.RepositoryRoot, TestPaths.SourceFolder, TestPaths.UiProjectFolder, WwwrootFolder, CssFolder, StylesheetFile));
+        var css = File.ReadAllText(Path.Combine(TestPaths.RepositoryRoot, TestPaths.SourceFolder, TestPaths.UiProjectFolder, WwwrootFolder, CssFolder, StylesheetFile));
         var colours = ConditionBuilder.Kinds(_v, []).ToDictionary(k => k.Id, k =>
         {
             var match = System.Text.RegularExpressions.Regex.Match(css, $@"--kind-{k.Id}:\s*([^;]+);");
@@ -245,12 +245,12 @@ public class ConditionBuilderTests
     public void Each_kind_has_the_token_kind_of_its_names()
     {
         var tokens = new HashSet<AplTokenKind>();
-        foreach (string hero in Catalog.Heroes.Keys)
+        foreach (var hero in Catalog.Heroes.Keys)
         {
             var vocabulary = AplVocabulary.For(hero);
             foreach (var kind in ConditionBuilder.Kinds(vocabulary, ["x"]).Where(k => k.Names.Count > 0))
             {
-                string path = ConditionBuilder.JoinPath(vocabulary, new PathParts(kind.Id, kind.Names[0].Slug, kind.Properties?.FirstOrDefault()));
+                var path = ConditionBuilder.JoinPath(vocabulary, new PathParts(kind.Id, kind.Names[0].Slug, kind.Properties?.FirstOrDefault()));
 
                 Assert.True(vocabulary.Classify(new PropertyExpression(path)).Kind == kind.Token, $"{hero} {kind.Label}: {path}");
                 tokens.Add(kind.Token);

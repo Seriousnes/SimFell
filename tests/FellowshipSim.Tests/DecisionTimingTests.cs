@@ -68,10 +68,11 @@ public class DecisionTimingTests
         // After Mark and Strike the hero waits: the product falls as both remaining times fall.
         Fight(hero, "actions+=/mark\nactions+=/strike\nactions+=/gather,if=buff.mark.remains*cooldown.strike.remains<4", seconds: 5);
 
-        long strike = starts.Single(s => s.Ability.Name == "Strike").At.Milliseconds;
-        long expires = markExpires!.Value.Milliseconds, ready = strike + 4250;
+        var strike = starts.Single(s => s.Ability.Name == "Strike").At.Milliseconds;
+        var expires = markExpires!.Value.Milliseconds;
+        var ready = strike + 4250;
         // The first millisecond after Strike's global cooldown at which the product is below 4.
-        long expected = strike + 1500;
+        var expected = strike + 1500;
         while ((expires - expected) / 1000.0 * ((ready - expected) / 1000.0) >= 4) expected++;
         Assert.Equal(expected, starts.Single(s => s.Ability.Name == "Gather").At.Milliseconds);
     }

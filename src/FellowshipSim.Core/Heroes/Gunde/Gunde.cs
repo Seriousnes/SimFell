@@ -120,7 +120,7 @@ public sealed class Gunde : Hero
     internal void RendCastLanded(SimulationContext ctx)
     {
         if (!TriggerSpiritRefund(null, 0.0, ctx)) return;
-        for (int i = 0; i < FeathersPerSpiritRefund; i++)
+        for (var i = 0; i < FeathersPerSpiritRefund; i++)
         {
             if (ctx.Outcomes.RollProc(FeatherProcKey, 1.0, ctx)) CollectFeathers(ctx, 1);
         }
@@ -130,7 +130,7 @@ public sealed class Gunde : Hero
     public void CollectFeathers(SimulationContext ctx, int count) =>
         ctx.Schedule(SimTime.FromSeconds(FeatherPickupSeconds), c =>
         {
-            for (int i = 0; i < count; i++) Auras.Apply(OwedInBlood.Buff, c.CurrentTime);
+            for (var i = 0; i < count; i++) Auras.Apply(OwedInBlood.Buff, c.CurrentTime);
         }, "Blood Feather");
 
     /// <summary>Sundered Flesh: an enemy whose Rend holds more damage than its health takes it at once.</summary>

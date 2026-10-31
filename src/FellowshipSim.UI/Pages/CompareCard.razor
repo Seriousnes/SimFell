@@ -21,10 +21,10 @@
             <p class="field-error">@_error</p>
         }
         <ol class="rows">
-            @for (int i = 0; i < State.CompareRows.Count; i++)
+            @for (var i= 0; i < State.CompareRows.Count; i++)
             {
                 var row = State.CompareRows[i];
-                string hero = HeroOf(row);
+                var hero = HeroOf(row);
                 <li @key="row" class="compare-row @(i == 0 ? "base" : "")">
                     <span class="num">@(i + 1)</span>
                     <span class="hero">@hero</span>
@@ -103,7 +103,7 @@
 
     private async Task Toggle(ChangeEventArgs args)
     {
-        bool on = args.Value is true;
+        var on = args.Value is true;
         State.Extra = on ? SimExtra.Compare : SimExtra.None;
         if (on && State.CompareRows.Count == 0) AddRun();
         await OnChanged.InvokeAsync();
@@ -111,7 +111,7 @@
 
     private void PickBuild(CompareRow row, string? value)
     {
-        string before = HeroOf(row);
+        var before = HeroOf(row);
         row.Saved = _saved.FirstOrDefault(s => BuildValue(s) == value);
         // A build of another hero takes that hero's default list.
         if (!HeroOf(row).Equals(before, StringComparison.OrdinalIgnoreCase)) row.ListValue = DefaultList(HeroOf(row));

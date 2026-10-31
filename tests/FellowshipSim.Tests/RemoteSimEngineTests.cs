@@ -74,7 +74,7 @@ public sealed class RemoteSimEngineTests : IAsyncLifetime
     [Fact]
     public async Task Parsed_Actions_And_Written_Text_Are_The_Engines()
     {
-        string actionList = SimcProfile.Parse(Profile).ActionList;
+        var actionList = SimcProfile.Parse(Profile).ActionList;
         var actions = await _engine.ParseActionListAsync(actionList);
         Assert.Equal(Json(await _local.ParseActionListAsync(actionList)), Json(actions));
         Assert.Equal(Json(await _local.WriteActionListAsync(actions.Actions)), Json(await _engine.WriteActionListAsync(actions.Actions)));

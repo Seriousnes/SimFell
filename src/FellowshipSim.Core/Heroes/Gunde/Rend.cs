@@ -67,7 +67,7 @@ public sealed class Rend
     public double Remaining(EnemyTarget target)
     {
         if (!_bleeds.TryGetValue(target, out var bleed)) return 0.0;
-        double left = 0.0;
+        var left = 0.0;
         foreach (var application in bleed.Applications) left += application.PerTick * application.TicksLeft;
         return left;
     }
@@ -77,7 +77,7 @@ public sealed class Rend
     /// <summary>Removes <paramref name="target"/>'s Rend; returns the damage it had still to deal (Slaughter).</summary>
     public double Consume(SimulationContext ctx, EnemyTarget target)
     {
-        double left = Remaining(target);
+        var left = Remaining(target);
         if (_bleeds.Remove(target, out var bleed)) bleed.NextTick?.Cancel();
         target.Auras.Remove(Debuff, ctx.CurrentTime);
         return left;
@@ -107,9 +107,9 @@ public sealed class Rend
     {
         if (!_bleeds.TryGetValue(target, out var bleed)) return;
         bleed.NextTick = null;
-        double damage = 0.0;
+        var damage = 0.0;
         var applications = bleed.Applications;
-        for (int i = 0; i < applications.Count; i++)
+        for (var i = 0; i < applications.Count; i++)
         {
             var application = applications[i];
             damage += application.PerTick;
@@ -133,8 +133,8 @@ public sealed class Rend
     private void UpdateDebuff(EnemyTarget target, SimTime now)
     {
         if (!_bleeds.ContainsKey(target)) return;
-        double strength = Math.Max(1.0, _gunde.PrimaryAttribute(now));
-        int stacks = Math.Max(1, (int)Math.Ceiling(Remaining(target) / strength - Tolerance.Comparison));
+        var strength = Math.Max(1.0, _gunde.PrimaryAttribute(now));
+        var stacks = Math.Max(1, (int)Math.Ceiling(Remaining(target) / strength - Tolerance.Comparison));
         target.Auras.Apply(Debuff, now, setStacks: Math.Min(stacks, Debuff.MaxStacks));
     }
 

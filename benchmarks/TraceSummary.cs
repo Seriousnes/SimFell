@@ -54,11 +54,11 @@ var leaf = new Dictionary<string, long>();
 var methodInclusive = new Dictionary<string, long>();
 long engineSamples = 0;
 
-foreach (TraceEvent ev in log.Events)
+foreach (var ev in log.Events)
 {
     if (ev is GCAllocationTickTraceData tick)
     {
-        string type = tick.TypeName ?? Unknown;
+        var type = tick.TypeName ?? Unknown;
         allocated[type] = allocated.GetValueOrDefault(type) + tick.AllocationAmount64;
         allocatedTotal += tick.AllocationAmount64;
         // A closure's type name ("<>c__DisplayClass62_0") does not name its class, so the allocating engine method does.
@@ -68,7 +68,7 @@ foreach (TraceEvent ev in log.Events)
             string? method = frame.CodeAddress.FullMethodName;
             if (method != null && method.Contains(EngineNamespace)) site = method;
         }
-        string key = $"{type}  <-  {site ?? Unknown}";
+        var key = $"{type}  <-  {site ?? Unknown}";
         allocatedAt[key] = allocatedAt.GetValueOrDefault(key) + tick.AllocationAmount64;
         continue;
     }
@@ -83,20 +83,20 @@ foreach (TraceEvent ev in log.Events)
     if (!frames.Any(f => f.Contains(EngineNamespace))) continue;
     engineSamples++;
     leaf[frames[0]] = leaf.GetValueOrDefault(frames[0]) + 1;
-    foreach (string method in frames.Distinct()) methodInclusive[method] = methodInclusive.GetValueOrDefault(method) + 1;
+    foreach (var method in frames.Distinct()) methodInclusive[method] = methodInclusive.GetValueOrDefault(method) + 1;
 
-    bool attributed = false;
+    var attributed = false;
     var seen = new bool[stages.Length];
-    foreach (string frame in frames)
+    foreach (var frame in frames)
     {
-        for (int s = 0; s < stages.Length; s++)
+        for (var s= 0; s < stages.Length; s++)
         {
             if (!stages[s].Patterns.Any(frame.Contains)) continue;
             if (!attributed) { innermost[s]++; attributed = true; }
             seen[s] = true;
         }
     }
-    for (int s = 0; s < stages.Length; s++) if (seen[s]) inclusive[s]++;
+    for (var s= 0; s < stages.Length; s++) if (seen[s]) inclusive[s]++;
 }
 
 Console.WriteLine($"Allocations: {allocatedTotal / BytesPerMegabyte:N0} MB sampled");
@@ -115,7 +115,7 @@ foreach (var (key, bytes) in allocatedAt.OrderByDescending(kv => kv.Value).Take(
 Console.WriteLine();
 Console.WriteLine($"CPU:{engineSamples} samples on the engine thread");
 Console.WriteLine("  stage                          inclusive  innermost");
-for (int s = 0; s < stages.Length; s++)
+for (var s= 0; s < stages.Length; s++)
 {
     Console.WriteLine($"  {stages[s].Stage,-30} {inclusive[s] * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%  {innermost[s] * PercentPerFraction / Math.Max(1, engineSamples),8:F1}%");
 }

@@ -23,7 +23,7 @@ public class EngulfingFlames : ArdeosAbility
         Dot = new EngulfingFlamesDot(owner);
         owner.Dots.EnemyDying += (ctx, _, dots) =>
         {
-            int instances = dots.Count(d => d.Effect == Dot);
+            var instances = dots.Count(d => d.Effect == Dot);
             if (instances > 0) Owner.ReduceCooldown(Name, SimTime.FromSeconds(RekindledFlameSeconds * instances), ctx.CurrentTime);
         };
     }

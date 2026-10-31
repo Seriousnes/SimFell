@@ -23,11 +23,11 @@ public sealed record ReportLink(string ReportCode, int? FightId, int? PlayerId)
     public static ReportLink Parse(string linkOrCode)
     {
         if (string.IsNullOrWhiteSpace(linkOrCode)) throw new ArgumentException("Paste a FellowshipLogs report link or code.");
-        string text = linkOrCode.Trim();
+        var text = linkOrCode.Trim();
         var code = Regex.Match(text, ReportPathPattern);
         var fight = Regex.Match(text, FightPattern);
         var source = Regex.Match(text, SourcePattern);
-        string reportCode = code.Success ? code.Groups[1].Value : text.Split('?', '#')[0].Trim('/');
+        var reportCode = code.Success ? code.Groups[1].Value : text.Split('?', '#')[0].Trim('/');
         if (!Regex.IsMatch(reportCode, ReportCodePattern)) throw new ArgumentException($"'{linkOrCode}' is not a FellowshipLogs report link or code.");
         return new ReportLink(
             reportCode,

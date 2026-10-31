@@ -32,7 +32,7 @@ public class NaturesFury : Ability
     {
         TriggerCooldown(ctx);
         DealDamage(ctx, target, FirstHitMultiplier);
-        for (int i = 1; i < Hits; i++)
+        for (var i = 1; i < Hits; i++)
         {
             ctx.Schedule(SimTime.FromSeconds(i * BounceSeconds), c =>
             {

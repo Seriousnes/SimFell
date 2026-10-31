@@ -124,7 +124,7 @@ public sealed class Mara : Hero
         OnSpiritRefund += (resource, _, ctx) =>
         {
             if (resource != ComboPoints || _lastFinisherEnergy <= 0) return;
-            double energy = _lastFinisherEnergy;
+            var energy = _lastFinisherEnergy;
             ctx.Schedule(SimTime.FromSeconds(SpiritRefundDelaySeconds), c => GainEnergy(energy, c), "Spirit Refund");
         };
         // Energy regenerates at the rate held since the last regeneration: haste and the buffs that change the rate are
@@ -156,7 +156,7 @@ public sealed class Mara : Hero
     /// <summary>Energy per second now: <see cref="EnergyPerSecond"/> raised by haste, times the regeneration buffs.</summary>
     public double EnergyRate(SimTime now)
     {
-        double rate = EnergyPerSecond * (1.0 + GetHaste(now));
+        var rate = EnergyPerSecond * (1.0 + GetHaste(now));
         foreach (var multiplier in EnergyRegenMultipliers) rate *= multiplier(now);
         return rate;
     }
@@ -169,7 +169,7 @@ public sealed class Mara : Hero
             if (now == _energyRegeneratedAt) _energyRate = EnergyRate(now);
             return;
         }
-        double seconds = (now - _energyRegeneratedAt).TotalSeconds;
+        var seconds = (now - _energyRegeneratedAt).TotalSeconds;
         _energyRegeneratedAt = now;
         var state = Resources.Get(Energy);
         state.Current = Math.Min(state.Max, state.Current + _energyRate * seconds);
@@ -214,7 +214,7 @@ public sealed class Mara : Hero
     /// <summary>Spends every Combo Point held for a finisher that cost <paramref name="energySpent"/>; returns the points spent.</summary>
     public int SpendComboPoints(SimulationContext ctx, double energySpent)
     {
-        int points = (int)ComboPointsHeld;
+        var points = (int)ComboPointsHeld;
         _lastFinisherEnergy = energySpent;
         SpendResource(ComboPoints, points, ctx);
         _lastFinisherEnergy = 0;

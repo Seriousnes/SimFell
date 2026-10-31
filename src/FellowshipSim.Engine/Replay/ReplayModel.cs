@@ -158,7 +158,7 @@ public class ReplayOptions
         [Core.Domain.LogIds.Effect(Core.Heroes.Tariq.Abilities.ChainLightning.DamageEffectId)] = ChainLightningHitLateSeconds,
     };
     /// <summary>How late a log hit with damage ID <paramref name="logId"/> may land after the engine hit.</summary>
-    public double LateSecondsOf(int logId) => HitLateSecondsById.TryGetValue(logId, out double seconds) ? seconds : HitLateSeconds;
+    public double LateSecondsOf(int logId) => HitLateSecondsById.TryGetValue(logId, out var seconds) ? seconds : HitLateSeconds;
     /// <summary>Log hits with the same damage ID landing within this window belong to one multi-target hit.</summary>
     /// <remarks>
     /// Combat logs (Y4wpb2f3gc8LqJDX fight 25, Gunde): a pulse on 20-27 enemies is logged over up to 9ms; separate pulses
@@ -174,7 +174,7 @@ public class ReplayOptions
     public Dictionary<int, double> HitGroupSecondsById { get; set; } = new() { [Core.Heroes.Elarion.Abilities.Multishot.AbilityId] = MultishotHitGroupSeconds };
 
     /// <summary>The window of one multi-target hit with damage ID <paramref name="logId"/>.</summary>
-    public double GroupSecondsOf(int logId) => HitGroupSecondsById.TryGetValue(logId, out double seconds) ? seconds : HitGroupSeconds;
+    public double GroupSecondsOf(int logId) => HitGroupSecondsById.TryGetValue(logId, out var seconds) ? seconds : HitGroupSeconds;
     /// <summary>A log hit still unmatched this long after it landed is reported as missing from the engine.</summary>
     public double SettleSeconds { get; set; } = DefaultSettleSeconds;
 
@@ -254,14 +254,14 @@ public sealed record ReplayIssue(double Time, int Step, IssueCategory Category, 
         get
         {
             if (Deviation is not { } deviation || Observed is not { } observed) return null;
-            double bound = Expected!.NearerBound(observed);
+            var bound = Expected!.NearerBound(observed);
             return bound == 0 || double.IsInfinity(bound) ? null : deviation / Math.Abs(bound);
         }
     }
 
     public override string ToString()
     {
-        string text = $"[{Category}] step {Step} @ {Time:F3}s: {Message}";
+        var text = $"[{Category}] step {Step} @ {Time:F3}s: {Message}";
         if (Expected is { } expected)
         {
             text += $" (expected {expected}, observed {(Observed is { } observed ? expected.Format(observed) : "none")}";

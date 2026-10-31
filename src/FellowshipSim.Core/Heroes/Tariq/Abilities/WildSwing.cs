@@ -37,13 +37,13 @@ public class WildSwing : TariqAbility
         TriggerCooldown(ctx);
         Tariq.GainFury(FuryGain, ctx, target);
         // Combat logs (3 Tariq fights, 388 hits): no Wild Swing hit crits.
-        double recklessness = 1.0 + Owner.CritChance(ctx.CurrentTime);
+        var recklessness = 1.0 + Owner.CritChance(ctx.CurrentTime);
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, AreaAround(ctx, target), ctx);
-        double falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
-        for (int i = 0; i < struck.Count; i++)
+        var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
+        for (var i = 0; i < struck.Count; i++)
         {
             // A swing the enemy avoids is a hit of no damage.
-            bool avoided = ctx.Outcomes.RollProc(AvoidedProcKey, AvoidChance, ctx, struck[i]);
+            var avoided = ctx.Outcomes.RollProc(AvoidedProcKey, AvoidChance, ctx, struck[i]);
             DealDamage(ctx, struck[i], avoided ? 0.0 : recklessness * falloff, canCrit: false);
         }
     }

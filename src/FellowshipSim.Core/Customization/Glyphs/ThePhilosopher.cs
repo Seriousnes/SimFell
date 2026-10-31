@@ -28,13 +28,13 @@ public class ThePhilosopher : Glyph
 
     public override void Bind(Hero hero)
     {
-        double spiritPerStep = ForRank(SpiritPercentPerStepByRank);
+        var spiritPerStep = ForRank(SpiritPercentPerStepByRank);
         // Applied once the MAJOR ability resolves, so its own effects (e.g. Winter's Blessing's Spirit) count.
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability.Category != AbilityCategory.Major) return;
-            double spiritPercent = Math.Min(hero.SpiritPercent(now), SpiritCap) * Percentage.PerFraction;
-            double bonus = IncreasePerStep * spiritPercent / spiritPerStep;
+            var spiritPercent = Math.Min(hero.SpiritPercent(now), SpiritCap) * Percentage.PerFraction;
+            var bonus = IncreasePerStep * spiritPercent / spiritPerStep;
             hero.Auras.Apply(Buff.WithModifiers(
                 StatModifier.Add(StatType.Haste, bonus),
                 StatModifier.Add(StatType.Expertise, bonus),

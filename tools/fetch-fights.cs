@@ -23,7 +23,7 @@ using static Names;
 string root = Path.GetDirectoryName((string)AppContext.GetData("EntryPointFileDirectoryPath")!)!;
 string? hero = null;
 int count = DefaultCount, maxPerPlayer = DefaultMaxPerPlayer, maxPages = DefaultMaxPages;
-for (int i = 0; i < args.Length; i++)
+for (var i= 0; i < args.Length; i++)
 {
     string Next() => i + 1 < args.Length ? args[++i] : throw new ArgumentException($"{args[i]} needs a value.");
     switch (args[i])
@@ -81,7 +81,7 @@ while (taken.Count < count && queues.Any(q => !q.Exhausted))
         if (taken.Count >= count) break;
         while (await queue.NextAsync(client, spec.Class, spec.Slug, maxPages) is { } run)
         {
-            string? reason = await Reject(run);
+            var reason = await Reject(run);
             if (reason == null) break;
             skipped[reason] = skipped.GetValueOrDefault(reason) + 1;
         }
@@ -100,9 +100,9 @@ return 0;
 
 async Task<string?> Reject(JsonNode run)
 {
-    string? code = (string?)run[ReportProperty]?[CodeProperty];
-    int? fightId = (int?)run[ReportProperty]?[FightIdProperty];
-    string player = ((string?)run[NameProperty] ?? "").Trim();
+    var code = (string?)run[ReportProperty]?[CodeProperty];
+    var fightId = (int?)run[ReportProperty]?[FightIdProperty];
+    var player = ((string?)run[NameProperty] ?? "").Trim();
     if (code == null || fightId == null) return "no report";
     if ((long?)run[StartTimeProperty] is not { } startMs || startMs < releasedMs) return "before the patch";
     if (taken.Any(t => t.Code == code && t.FightId == fightId)) return "fight already taken";
@@ -120,7 +120,7 @@ async Task<string?> Reject(JsonNode run)
     await WaitForPointsAsync();
     try { await library.GetRawFightFileAsync(client, code, fightId.Value); }
     catch (FellowshipLogsException exception) when (!Throttled(exception)) { return "download failed"; }
-    string encounter = queues.First(q => q.Holds(run)).Name;
+    var encounter = queues.First(q => q.Holds(run)).Name;
     taken.Add(new TakenFight(encounter, player, code, fightId.Value));
     Console.WriteLine($"  {encounter}: {player} {code} fight {fightId} ({fight.Name}, {fight.DurationSeconds / SecondsPerMinute:F0} min)");
     return null;
@@ -131,9 +131,9 @@ async Task WaitForPointsAsync()
 {
     const int Reserve = 600;
     var rate = (await client.QueryAsync(RateLimitQuery))[RateLimitDataProperty]!;
-    double left = (double)rate[LimitPerHourProperty]! - (double)rate[PointsSpentThisHourProperty]!;
+    var left = (double)rate[LimitPerHourProperty]! - (double)rate[PointsSpentThisHourProperty]!;
     if (left >= Reserve) return;
-    int wait = (int)rate[PointsResetInProperty]! + ResetMarginSeconds;
+    var wait = (int)rate[PointsResetInProperty]! + ResetMarginSeconds;
     Console.WriteLine($"  {left:F0} FellowshipLogs points left this hour; waiting {wait}s for the reset.");
     await Task.Delay(TimeSpan.FromSeconds(wait));
 }
@@ -148,8 +148,8 @@ static ApiCredentials? Credentials()
         .AddUserSecrets(Assembly.GetEntryAssembly()!)
         .AddEnvironmentVariables()
         .Build();
-    string? id = configuration[ClientIdVariable];
-    string? secret = configuration[ClientSecretVariable];
+    var id = configuration[ClientIdVariable];
+    var secret = configuration[ClientSecretVariable];
     return !string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(secret) ? new ApiCredentials(id, secret) : null;
 }
 /// <summary>One encounter's ranking list of the hero, read a page at a time from rank 1.</summary>

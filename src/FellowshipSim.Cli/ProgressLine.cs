@@ -23,7 +23,7 @@ public sealed class ProgressLine(TextWriter writer) : IProgress<SimProgress>
         {
             if (_cleared || _clock.Elapsed - _last < Interval) return;
             _last = _clock.Elapsed;
-            string text = $"{value.CompletedFights:N0}/{value.Fights:N0} fights ({value.Fraction:P0})";
+            var text = $"{value.CompletedFights:N0}/{value.Fights:N0} fights ({value.Fraction:P0})";
             writer.Write('\r' + text.PadRight(_width));
             writer.Flush();
             _width = Math.Max(_width, text.Length);

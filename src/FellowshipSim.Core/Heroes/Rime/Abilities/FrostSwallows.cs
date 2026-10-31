@@ -27,13 +27,13 @@ public class FrostSwallows : RimeAbility
     public void Attack(SimulationContext ctx, EnemyTarget target, int count)
     {
         if (target == null) return;
-        for (int i = 0; i < count; i++) DealDamage(ctx, target);
+        for (var i = 0; i < count; i++) DealDamage(ctx, target);
     }
 
     /// <summary>Swallows that pick their own targets among the enemies in combat.</summary>
     public void AttackEnemies(SimulationContext ctx, int count)
     {
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             var target = ctx.Outcomes.ChooseTarget(DamageLogId, ctx.ActiveEnemies, ctx);
             if (target != null) Attack(ctx, target, 1);

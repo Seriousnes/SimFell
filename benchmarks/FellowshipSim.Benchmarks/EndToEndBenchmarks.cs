@@ -40,7 +40,7 @@ public class MonteCarloBenchmarks
     [IterationSetup]
     public void IterationSetup()
     {
-        for (int i = 0; i < Fights; i++) _simulators[i] = new MonteCarloSimulator(Fight.NewHero, _actions);
+        for (var i = 0; i < Fights; i++) _simulators[i] = new MonteCarloSimulator(Fight.NewHero, _actions);
     }
 
     [Benchmark]
@@ -52,7 +52,7 @@ public class MonteCarloBenchmarks
     [InvocationCount(1)]
     public double TenFightsNewHeroes()
     {
-        double damage = 0;
+        var damage = 0.0;
         foreach (var simulator in _simulators)
         {
             damage += simulator.Run(Fight.Duration, iterations: 1, targetCount: Targets, degreeOfParallelism: 1).TotalMeanDamage;

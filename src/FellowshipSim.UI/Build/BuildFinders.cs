@@ -52,9 +52,9 @@ public static class BuildFinders
         var current = new BuildEditor(build);
         foreach (var option in options.Where(o => o.Modeled))
         {
-            int rank = rankOf(current, option);
+            var rank = rankOf(current, option);
             if (rank >= option.MaxRank) continue;
-            int next = ranks == FinderRanks.MaxRank ? option.MaxRank : rank + 1;
+            var next = ranks == FinderRanks.MaxRank ? option.MaxRank : rank + 1;
             var editor = new BuildEditor(Copy(build));
             setRank(editor, option, next);
             variants.Add(new BuildVariant(option.Name, $"{rank} → {next}", editor.Build));
@@ -67,9 +67,9 @@ public static class BuildFinders
         var variants = new List<BuildVariant>();
         var worn = new[] { build.Relic1ItemId, build.Relic2ItemId }.Where(id => id != 0).Order().ToArray();
         var relics = catalog.Relics;
-        for (int i = 0; i < relics.Count; i++)
+        for (var i = 0; i < relics.Count; i++)
         {
-            for (int j = i + 1; j < relics.Count; j++)
+            for (var j = i + 1; j < relics.Count; j++)
             {
                 var pair = new[] { relics[i].ItemId, relics[j].ItemId }.Order().ToArray();
                 if (pair.SequenceEqual(worn)) continue;
@@ -88,17 +88,17 @@ public static class BuildFinders
     {
         // The power a sim gives each colour: the build's, times the relics' multiplier.
         var hero = HeroImporter.Import(build);
-        double multiplier = hero.RelicPassives.Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
+        var multiplier = hero.RelicPassives.Aggregate(1.0, (m, r) => m * r.GemPowerMultiplier);
         var variants = new List<BuildVariant>();
         foreach (var color in BuildCatalog.GemColors)
         {
-            double power = build.GemPower.GetValueOrDefault(color);
-            double effective = power * multiplier;
+            var power = build.GemPower.GetValueOrDefault(color);
+            var effective = power * multiplier;
             var above = Gem.Create(color).Tree.Where(n => n.RequiredPower > effective).OrderBy(n => n.RequiredPower).ToList();
             foreach (var node in ranks == FinderRanks.EveryRank ? above : above.Take(1))
             {
                 var copy = Copy(build);
-                double needed = Math.Ceiling(node.RequiredPower / multiplier);
+                var needed = Math.Ceiling(node.RequiredPower / multiplier);
                 copy.GemPower[color] = needed;
                 variants.Add(new BuildVariant($"{color}: {node.Name}", $"{power:0} → {needed:0} power", copy));
             }

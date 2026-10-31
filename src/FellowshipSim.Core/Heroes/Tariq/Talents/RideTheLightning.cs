@@ -31,7 +31,7 @@ public class RideTheLightning : Talent
         PeriodicEffect? ticks = null;
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            double seconds = ability switch
+            var seconds = ability switch
             {
                 ThunderCall => ThunderCall.BuffSeconds,
                 RagingTempest => RagingTempest.BuffSeconds,

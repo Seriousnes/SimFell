@@ -30,8 +30,8 @@ public sealed class ReviewPages(ReplayLibrary library) : IReviewPages
     {
         if (!url.AbsoluteUri.StartsWith(Root, StringComparison.OrdinalIgnoreCase))
             return null;
-        string name = Path.GetFileName(Uri.UnescapeDataString(url.AbsolutePath));
-        string path = Path.Combine(Directory, name);
+        var name = Path.GetFileName(Uri.UnescapeDataString(url.AbsolutePath));
+        var path = Path.Combine(Directory, name);
         return name.Length > 0 && System.IO.File.Exists(path) ? path : null;
     }
 }

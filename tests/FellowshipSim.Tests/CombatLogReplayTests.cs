@@ -27,7 +27,7 @@ public class CombatLogReplayTests(ITestOutputHelper output)
             var raw = await library.GetRawFightAsync(null, reportCode, fightId);
             foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => ReplayDriver.SupportsHero(p.Hero)))
             {
-                string scriptJson = ReplayScriptBuilder.Build(raw, player.Id).ToJsonString();
+                var scriptJson = ReplayScriptBuilder.Build(raw, player.Id).ToJsonString();
                 var script = ReplayScript.FromJson(scriptJson);
                 var result = new ReplayDriver(ReplayDriver.CreateHero(script), script, new ReplayOptions { StopOnFirstFailure = false }).Run();
                 var artifacts = ReplayReview.Artifacts(result, script, scriptJson, player.Id);

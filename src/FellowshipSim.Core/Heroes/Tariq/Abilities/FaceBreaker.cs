@@ -43,9 +43,9 @@ public class FaceBreaker : TariqAbility
         if (dealt <= 0.0) return;
         var nearby = ctx.Outcomes.SelectTargets(SplashId, ctx.ActiveEnemiesExcept(target), ctx);
         if (nearby.Count == 0) return;
-        double falloff = nearby.Count > SplashTargetThreshold ? Math.Sqrt(SplashTargetThreshold / nearby.Count) : 1.0;
-        double damage = dealt * SplashFraction * falloff;
-        for (int i = 0; i < nearby.Count; i++)
+        var falloff = nearby.Count > SplashTargetThreshold ? Math.Sqrt(SplashTargetThreshold / nearby.Count) : 1.0;
+        var damage = dealt * SplashFraction * falloff;
+        for (var i = 0; i < nearby.Count; i++)
         {
             ctx.ApplyDamage(Owner, nearby[i], damage, SplashId, AbilityName, canCrit: false, 0.0, 1.0);
         }

@@ -25,7 +25,7 @@
                     <label class="field">
                         Hero
                         <select @key="_pickerKey" @bind:get="vocabulary.Hero" @bind:set="SelectHero">
-                            @foreach (string hero in State.Heroes)
+                            @foreach (var hero in State.Heroes)
                             {
                                 <option @key="hero">@hero</option>
                             }
@@ -253,7 +253,7 @@
     /// <summary>Opens <paramref name="hero"/>'s built-in default list, or an empty one when it has none.</summary>
     private Task PickDefault(string hero)
     {
-        string defaultList = SavedValue(new ActionListEntry(hero, DefaultActionLists.DefaultName, BuiltIn: true));
+        var defaultList = SavedValue(new ActionListEntry(hero, DefaultActionLists.DefaultName, BuiltIn: true));
         return PickSaved(State.Saved.Any(s => SavedValue(s) == defaultList) ? defaultList : "");
     }
 
@@ -297,8 +297,9 @@
             State.MarkClean();
             return;
         }
-        string[] parts = value.Split('/');
-        string hero = parts.Length > HeroPart ? parts[HeroPart] : "", savedName = parts.Length > NamePart ? parts[NamePart] : "";
+        var parts = value.Split('/');
+        var hero = parts.Length > HeroPart ? parts[HeroPart] : "";
+        var savedName = parts.Length > NamePart ? parts[NamePart] : "";
         try
         {
             var list = await _savedLists.ReadAsync(new ActionListEntry(hero, savedName, Shared: parts[0] == ActionListStore.SharedValue, BuiltIn: parts[0] == ActionListStore.BuiltInValue));
@@ -391,7 +392,7 @@
     private async Task Save()
     {
         var vocabulary = State.Editor.Vocabulary!;
-        string listName = State.Name.Trim();
+        var listName = State.Name.Trim();
         if (listName.Length == 0)
         {
             State.Editor.SetStatus(MessageState.Error("Name the action list first."));

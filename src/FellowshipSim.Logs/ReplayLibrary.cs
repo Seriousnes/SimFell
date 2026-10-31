@@ -96,7 +96,7 @@ public sealed class ReplayLibrary
     public async Task<JsonObject> GetRawFightAsync(FellowshipLogsClient? client, string reportCode, int fightId,
         IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        string path = await GetRawFightFileAsync(client, reportCode, fightId, progress, ct);
+        var path = await GetRawFightFileAsync(client, reportCode, fightId, progress, ct);
         return JsonNode.Parse(await File.ReadAllTextAsync(path, ct))!.AsObject();
     }
 
@@ -104,7 +104,7 @@ public sealed class ReplayLibrary
     public async Task<string> GetRawFightFileAsync(FellowshipLogsClient? client, string reportCode, int fightId,
         IProgress<string>? progress = null, CancellationToken ct = default)
     {
-        string path = RawFightPath(reportCode, fightId);
+        var path = RawFightPath(reportCode, fightId);
         if (File.Exists(path))
         {
             progress?.Report("Using the downloaded fight");
@@ -120,7 +120,7 @@ public sealed class ReplayLibrary
     /// <summary>Writes a review's replay script, page, summary, text and hits.</summary>
     public void Save(ReviewArtifacts review)
     {
-        string id = review.Summary.Id;
+        var id = review.Summary.Id;
         File.WriteAllText(Path.Combine(ScriptsDirectory, $"{id}{ReplayScriptExtension}"), review.ScriptJson);
         File.WriteAllText(Path.Combine(ReviewsDirectory, review.Summary.HtmlFile), review.Html);
         File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}{SummaryExtension}"), JsonSerializer.Serialize(review.Summary, Indented));
@@ -140,14 +140,14 @@ public sealed class ReplayLibrary
     /// <summary>The review <paramref name="id"/>, or null when its summary or page is not in the reviews folder.</summary>
     public ReviewSummary? GetReview(string id)
     {
-        string path = Path.Combine(ReviewsDirectory, $"{Path.GetFileName(id)}{SummaryExtension}");
+        var path = Path.Combine(ReviewsDirectory, $"{Path.GetFileName(id)}{SummaryExtension}");
         if (!File.Exists(path) || JsonSerializer.Deserialize<ReviewSummary>(File.ReadAllText(path)) is not { } summary) return null;
         return File.Exists(Path.Combine(ReviewsDirectory, summary.HtmlFile)) ? summary with { FreeDice = LoadFreeDice(summary.Id) } : null;
     }
 
     private FreeDiceSummary? LoadFreeDice(string id)
     {
-        string path = Path.Combine(ReviewsDirectory, $"{id}{FreeDiceExtension}");
+        var path = Path.Combine(ReviewsDirectory, $"{id}{FreeDiceExtension}");
         return File.Exists(path) ? JsonSerializer.Deserialize<FreeDiceSummary>(File.ReadAllText(path)) : null;
     }
 

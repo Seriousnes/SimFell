@@ -42,13 +42,13 @@ public sealed class LogOutcomeSource : IOutcomeSource
                      .Where(a => a.Source.Id == script.Player.Id && a.Target.Id != script.Player.Id)
                      .GroupBy(a => new DebuffTarget(a.AbilityId, a.Target)))
         {
-            int stacks = 0;
+            var stacks = 0;
             var list = new List<StackGain>();
             var losses = new List<double>();
             _enemyDebuffApplications[group.Key] = group.Where(a => a.Type is LogAuraType.ApplyDebuff or LogAuraType.RefreshDebuff).OrderBy(a => a.Time).ToList();
             foreach (var aura in group.OrderBy(a => a.Time))
             {
-                int now = aura.Type is LogAuraType.RemoveDebuff or LogAuraType.RemoveBuff ? 0 : aura.Stack ?? (aura.IsGain ? Math.Max(stacks, 1) : stacks);
+                var now = aura.Type is LogAuraType.RemoveDebuff or LogAuraType.RemoveBuff ? 0 : aura.Stack ?? (aura.IsGain ? Math.Max(stacks, 1) : stacks);
                 if (aura.IsGain && now > stacks) list.Add(new StackGain(aura, now - stacks));
                 if (aura.IsLoss && now < stacks) losses.Add(aura.Time);
                 stacks = now;
@@ -72,7 +72,8 @@ public sealed class LogOutcomeSource : IOutcomeSource
     private bool ClaimEnemyDebuffEvidence(ProcEvidence.Evidence evidence, double now, EnemyTarget? target)
     {
         if (target == null || !_enemyDebuffApplications.TryGetValue(new DebuffTarget(evidence.LogId, new UnitRef(target.Id, target.InstanceId)), out var applied)) return false;
-        double from = now + evidence.MinDelaySeconds - _options.SameTickSeconds, to = now + evidence.DelaySeconds + _options.SameTickSeconds;
+        var from = now + evidence.MinDelaySeconds - _options.SameTickSeconds;
+        var to = now + evidence.DelaySeconds + _options.SameTickSeconds;
         foreach (var application in applied)
         {
             if (application.Time < from || _claimedDebuffApplications.Contains(application)) continue;
@@ -142,7 +143,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
             // The preferred enemy's log hit landing now; else the log hit nearest the expected landing, the preferred
             // enemy's on a tie. A later hit on the preferred enemy belongs to a later hit (Chain
             // Lightning's bounces land 0.05s apart).
-            double now = ctx.CurrentTime.TotalSeconds;
+            var now = ctx.CurrentTime.TotalSeconds;
             var unitRef = new UnitRef(preferred.Id, preferred.InstanceId);
             if (_hits.HasUnclaimed(damageLogId, unitRef, now - PeriodicEffect.ServerFrameSeconds, now + PeriodicEffect.ServerFrameSeconds)) return preferred;
             var next = _hits.NextUnclaimedTarget(damageLogId, now, _options, prefer: unitRef);
@@ -164,9 +165,9 @@ public sealed class LogOutcomeSource : IOutcomeSource
     public HitOutcome ResolveHit(in HitRequest hit, SimulationContext ctx)
     {
         var target = hit.Target == null ? null : new UnitRef(hit.Target.Id, hit.Target.InstanceId);
-        double now = ctx.CurrentTime.TotalSeconds;
+        var now = ctx.CurrentTime.TotalSeconds;
         // A tick's hit takes the log tick its effect reserved, and no other: one missing log tick shifts no later pairing.
-        bool tickHit = LogTimedTick(hit.AbilityId, ctx) != null;
+        var tickHit = LogTimedTick(hit.AbilityId, ctx) != null;
         var match = target == null ? null : _hits.Match(hit.AbilityId, target, now, _options, ctx.CurrentPeriodicEffect, reservedOnly: tickHit);
         if (match != null) _hits.RecordTravel(hit.AbilityId, match.Time - now);
 
@@ -245,8 +246,8 @@ public sealed class LogOutcomeSource : IOutcomeSource
             }
             ticks.Reserved.RemoveLast();
         }
-        double scheduled = tick.Scheduled.TotalSeconds;
-        double half = effect.PeriodSecondsAt(ctx.CurrentTime) / 2.0;
+        var scheduled = tick.Scheduled.TotalSeconds;
+        var half = effect.PeriodSecondsAt(ctx.CurrentTime) / 2.0;
         double? at;
         if (tick.Target is { } enemy)
         {
@@ -291,7 +292,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
         if (!_ticks.Remove(effect, out var ticks)) return;
         _hits.Release(effect);
         // The last tick asked for did not fire when the effect ended before it.
-        int reserved = ticks.ReservedCount - (ticks.TicksFiredAtLastAsk == effect.TicksFired && ticks.LastAt.HasValue ? 1 : 0);
+        var reserved = ticks.ReservedCount - (ticks.TicksFiredAtLastAsk == effect.TicksFired && ticks.LastAt.HasValue ? 1 : 0);
         _verifier.CheckTickCount(ctx, effect, reserved);
     }
 
@@ -314,8 +315,8 @@ public sealed class LogOutcomeSource : IOutcomeSource
             return false;
         }
 
-        double now = ctx.CurrentTime.TotalSeconds;
-        bool procced = evidence.Resource != null
+        var now = ctx.CurrentTime.TotalSeconds;
+        var procced = evidence.Resource != null
             ? ClaimResourceEvidence(evidence, now)
             : evidence.EnemyDebuffApplied
             ? ClaimEnemyDebuffEvidence(evidence, now, target)
@@ -341,7 +342,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
             jumps = ResourceJumps(evidence);
             _resourceJumps[evidence] = jumps;
         }
-        for (int i = 0; i < jumps.Count; i++)
+        for (var i = 0; i < jumps.Count; i++)
         {
             var jump = jumps[i];
             if (jump.To < now - _options.SameTickSeconds) continue;
@@ -358,18 +359,18 @@ public sealed class LogOutcomeSource : IOutcomeSource
         var jumps = new List<ResourceJump>();
         var log = LogResources.All.FirstOrDefault(r => r.Resource == evidence.Resource);
         if (log == null) return jumps;
-        string type = log.LogResourceType.ToString();
-        double max = evidence.Resource!.Max;
+        var type = log.LogResourceType.ToString();
+        var max = evidence.Resource!.Max;
         LogResourceSnapshot? previous = null;
-        double previousAmount = 0;
+        var previousAmount = 0.0;
         foreach (var reading in _resourceReadings)
         {
             if (!reading.Resources.TryGetValue(type, out var value)) continue;
-            double amount = log.EngineAmount(value);
+            var amount = log.EngineAmount(value);
             if (previous != null && previous.Event != LogResourceEvent.Cast && reading.Time - previous.Time <= ResourceEvidenceWindowSeconds
                 && amount < max - ResourceNearMaxMargin && previousAmount < max - ResourceNearMaxMargin)
             {
-                double excess = amount - previousAmount - evidence.ResourceRegenPerSecond * (reading.Time - previous.Time);
+                var excess = amount - previousAmount - evidence.ResourceRegenPerSecond * (reading.Time - previous.Time);
                 if (Math.Abs(excess - evidence.ResourceGain) <= ResourceGainTolerance * evidence.ResourceGain) jumps.Add(new ResourceJump(previous.Time, reading.Time));
             }
             previous = reading;
@@ -407,7 +408,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
             .FirstOrDefault();
         if (gain.Event == null) return false;
         _claimedStackEvidence.Add(gain.Event);
-        int added = gain.Added;
+        var added = gain.Added;
         if (added < jump)
         {
             // A new debuff given several stacks at once is logged as its application (1 stack) and its stack count in the
@@ -443,7 +444,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
         // Hits an engine hit already accounts for (matched, or a group claimed for its targets) are not evidence of a proc.
         // A hit type proves a proc of the hit itself: its group is claimed before the roll (a Wild Swing the enemy avoided).
         bool Free(LogDamage candidate) => !_claimedDamageEvidence.Contains(candidate) && (evidence.HitTypes != null || !_hits.IsAccountedFor(candidate));
-        int logId = evidence.LogId;
+        var logId = evidence.LogId;
         var hit = _hits.Peek(logId, now + evidence.MinDelaySeconds - _options.SameTickSeconds, now + _options.SameTickSeconds + evidence.DelaySeconds,
             h => Free(h) && (evidence.HitTypes == null || (h.HitType is { } type && evidence.HitTypes.Contains(type)))
                  && (target == null || evidence.AnyEnemy || (h.Target.Id == target.Id && h.Target.Instance == target.InstanceId))
@@ -462,8 +463,8 @@ public sealed class LogOutcomeSource : IOutcomeSource
         foreach (var damage in _hits.GroupOf(hit, _options)) _claimedDamageEvidence.Add(damage);
         // So are the hits the proc deals after it, on any enemy (a summoned attacker's later attacks): each the first free
         // hit from 3/4 to 3/2 of the spacing after the one before.
-        double previous = hit.Time;
-        for (int k = 1; k <= evidence.FollowingHits; k++)
+        var previous = hit.Time;
+        for (var k = 1; k <= evidence.FollowingHits; k++)
         {
             var following = _hits.Peek(logId, previous + FollowingWindowStartFactor * evidence.FollowingSpacingSeconds - evidence.FollowingSlackSeconds,
                 previous + FollowingWindowEndFactor * evidence.FollowingSpacingSeconds + evidence.FollowingSlackSeconds, Free);
@@ -612,15 +613,15 @@ public sealed class HitLedger
         double tickFraction = 1.0)
     {
         List<LogDamage>? best = null;
-        double bestDistance = double.MaxValue;
+        var bestDistance = double.MaxValue;
         foreach (var group in Groups(logId, options))
         {
             var first = group[0];
             if (first.Time < scheduled - halfWindow) continue;
             if (first.Time > scheduled + halfWindow) break;
             if (_claimedGroups.Contains(first) || !group.All(h => FreeForTick(h, owner))) continue;
-            double distance = Math.Abs(first.Time - scheduled);
-            bool looksPartial = GroupRatio(group, options) < options.PartialTickRatio;
+            var distance = Math.Abs(first.Time - scheduled);
+            var looksPartial = GroupRatio(group, options) < options.PartialTickRatio;
             if (looksPartial != tickFraction < 1.0) distance += options.PartialMismatchPenaltySeconds;
             if (distance < bestDistance)
             {
@@ -719,15 +720,15 @@ public sealed class HitLedger
         if (!_byAbility.TryGetValue(logId, out var list)) return null;
         // An ID that does not travel (its own late window) lands at the engine's time; learning a travel time from it
         // would carry one mispairing into the next.
-        double expected = engineTime + (options.HitLateSecondsById.ContainsKey(logId) ? 0.0 : TypicalTravel(logId, options));
+        var expected = engineTime + (options.HitLateSecondsById.ContainsKey(logId) ? 0.0 : TypicalTravel(logId, options));
         LogDamage? best = null;
-        double bestScore = double.MaxValue;
+        var bestScore = double.MaxValue;
         foreach (var damage in list)
         {
             if (damage.Time < engineTime - options.HitEarlySeconds) continue;
             if (damage.Time > engineTime + options.LateSecondsOf(logId)) break;
             if (_matched.Contains(damage) || _targetChoices.Contains(damage) || _dealt.Contains(damage) || OwnedByOther(damage, null)) continue;
-            double score = Math.Abs(damage.Time - expected) + (avoid != null && damage.Target == avoid ? options.AvoidedTargetPenaltySeconds : 0.0)
+            var score = Math.Abs(damage.Time - expected) + (avoid != null && damage.Target == avoid ? options.AvoidedTargetPenaltySeconds : 0.0)
                            - (prefer != null && damage.Target == prefer ? options.SameTickSeconds : 0.0);
             if (score < bestScore)
             {
@@ -788,15 +789,15 @@ public sealed class HitLedger
         // The nearest unclaimed group in time: engine and log tick times differ by a few milliseconds
         // (server frames), and travelling hits land after the engine releases them.
         List<LogDamage>? best = null;
-        double bestDistance = double.MaxValue;
+        var bestDistance = double.MaxValue;
         foreach (var group in Groups(logId, options))
         {
             var first = group[0];
             if (first.Time < engineTime - options.HitEarlySeconds) continue;
             if (first.Time > engineTime + options.LateSecondsOf(logId)) break;
             if (_claimedGroups.Contains(first) || group.Any(h => OwnedByOther(h, null) || _dealt.Contains(h))) continue;
-            double distance = Math.Abs(first.Time - engineTime);
-            bool looksPartial = GroupRatio(group, options) < options.PartialTickRatio;
+            var distance = Math.Abs(first.Time - engineTime);
+            var looksPartial = GroupRatio(group, options) < options.PartialTickRatio;
             if (looksPartial != tickFraction < 1.0) distance += options.PartialMismatchPenaltySeconds;
             if (distance < bestDistance)
             {
@@ -895,7 +896,7 @@ public sealed record HitPair(
     {
         get
         {
-            double observed = Log?.UnblockedAmount ?? 0.0;
+            var observed = Log?.UnblockedAmount ?? 0.0;
             return observed < ExpectedLow ? observed - ExpectedLow : observed > ExpectedHigh ? observed - ExpectedHigh : 0.0;
         }
     }

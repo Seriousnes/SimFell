@@ -44,7 +44,7 @@ public sealed class DesktopTabs : IAppViews
     /// </summary>
     public void Close(DesktopTab tab)
     {
-        int index = _tabs.IndexOf(tab);
+        var index = _tabs.IndexOf(tab);
         if (!tab.Closable || index < 0) return;
         _tabs.RemoveAt(index);
         _shown.Remove(tab.Key);

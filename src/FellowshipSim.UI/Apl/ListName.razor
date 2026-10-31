@@ -18,7 +18,7 @@
 
     private void Commit()
     {
-        string name = _name.Trim();
+        var name = _name.Trim();
         if (name == List.Name || !Editor.RenameList(List.Name, name)) _name = List.Name;
     }
 }

@@ -37,7 +37,7 @@ public class FrostwyrmsSpite : Legendary
         if (hero is not Rime rime) return;
         var coldSnap = rime.GetAbility<ColdSnap>();
         if (coldSnap == null) return;
-        int consumed = 0;
+        var consumed = 0;
 
         hero.OnChannelTick += (ability, _, _, ctx) =>
         {
@@ -56,12 +56,12 @@ public class FrostwyrmsSpite : Legendary
         hero.OnCastCompleted += (ability, target, _) =>
         {
             if (ability != coldSnap || consumed == 0 || target == null || hero.SimContext is not { } ctx) return;
-            int stacks = consumed;
+            var stacks = consumed;
             consumed = 0;
             var selected = ctx.Outcomes.SelectTargets(LogIds.Effect(DamageEffectId), ctx.ActiveEnemiesExcept(target), ctx);
-            int struck = Math.Min(stacks, selected.Count);
-            double falloff = struck > ExtraHitTargetThreshold ? Math.Sqrt(ExtraHitTargetThreshold / struck) : 1.0;
-            for (int i = 0; i < struck; i++)
+            var struck = Math.Min(stacks, selected.Count);
+            var falloff = struck > ExtraHitTargetThreshold ? Math.Sqrt(ExtraHitTargetThreshold / struck) : 1.0;
+            for (var i = 0; i < struck; i++)
             {
                 coldSnap.DealDamage(ctx, selected[i], damageMultiplier: DamageMultiplier(stacks) * falloff,
                     overrideName: DamageName, overrideId: LogIds.Effect(DamageEffectId));

@@ -44,7 +44,7 @@ public class BloodboundSpirit : GundeAbility
     /// <summary>Gunde's Spirit ability: it needs and spends the Spirit ability's cost in Spirit Points.</summary>
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
-        double points = Owner.ResourceAmount(Hero.SpiritPoints);
+        var points = Owner.ResourceAmount(Hero.SpiritPoints);
         if (points < Owner.SpiritAbilityCost)
         {
             reason = explain ? $"{Name} needs {Owner.SpiritAbilityCost:0} Spirit Points (have {points:0.#})" : null;
@@ -63,7 +63,7 @@ public class BloodboundSpirit : GundeAbility
         // Every pulse keeps the damage, crit chance and crit power of the first, which comes after the buffs the cast
         // grants as it completes (Accursed Trophy's Drakheim's Absolution).
         SimulationContext.HitNumbers? first = null;
-        for (int i = 0; i < Pulses; i++)
+        for (var i = 0; i < Pulses; i++)
         {
             ctx.Schedule(SimTime.FromSeconds(FirstPulseSeconds + i * PulseIntervalSeconds), c =>
             {
@@ -78,7 +78,7 @@ public class BloodboundSpirit : GundeAbility
     {
         var targets = AreaTargets(ctx, target);
         if (targets.Count == 0) return;
-        double falloff = targets.Count > AoeTargetThreshold ? Math.Sqrt(AoeTargetThreshold / targets.Count) : 1.0;
+        var falloff = targets.Count > AoeTargetThreshold ? Math.Sqrt(AoeTargetThreshold / targets.Count) : 1.0;
         var now = ctx.CurrentTime;
         foreach (var enemy in targets)
         {

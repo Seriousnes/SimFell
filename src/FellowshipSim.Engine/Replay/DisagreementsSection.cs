@@ -75,7 +75,7 @@ internal static class DisagreementsSection
                 foreach (var aura in auras)
                 {
                     var key = new AuraKey(aura.Name, aura.LogId, aura.Modifiers);
-                    if (!auraIndex.TryGetValue(key, out int index))
+                    if (!auraIndex.TryGetValue(key, out var index))
                     {
                         auraIndex[key] = index = auraList.Count;
                         auraList.Add(key);

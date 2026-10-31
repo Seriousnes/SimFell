@@ -70,7 +70,7 @@ public static class VisitorIdentity
     {
         var state = authentication.GetAuthenticationStateAsync();
         if (!state.IsCompletedSuccessfully) throw new InvalidOperationException("The visitor is not known yet.");
-        string id = IdOf(state.Result.User) ?? throw new InvalidOperationException("The request has no visitor cookie.");
+        var id = IdOf(state.Result.User) ?? throw new InvalidOperationException("The request has no visitor cookie.");
         return new Visitor(id, OwnsDataFolder: false);
     }
 }

@@ -54,8 +54,8 @@ public class AmethystSplinters : Aspect
 
     public override void Bind(Hero hero)
     {
-        double share = ForRank(DamageShareByRank);
-        int logId = LogIds.Effect(DotEffectId);
+        var share = ForRank(DamageShareByRank);
+        var logId = LogIds.Effect(DotEffectId);
         // Effect 101 is tagged EffectType.Dot: its ticks run on the game's period timer.
         hero.DotDamageIds.Add(logId);
         var splinters = new Dictionary<EnemyTarget, Splinter>();
@@ -74,7 +74,7 @@ public class AmethystSplinters : Aspect
             }
             if (!splinters.TryGetValue(dmg.Target, out var splinter)) splinters[dmg.Target] = splinter = new Splinter(hero, dmg.Target, logId);
             // The damage not yet dealt (the time left in unhasted ticks) carries over into the new 8 seconds.
-            double left = splinter.EndsAt > now ? splinter.TickValue * (splinter.EndsAt - now).TotalSeconds / TickPeriodSeconds : 0.0;
+            var left = splinter.EndsAt > now ? splinter.TickValue * (splinter.EndsAt - now).TotalSeconds / TickPeriodSeconds : 0.0;
             splinter.TickValue = (left + dmg.Amount * share) / BaseTicks;
             splinter.EndsAt = now + SimTime.FromSeconds(DurationSeconds);
             splinter.NextTick ??= HastedTimer.StartPeriod(ctx, hero, TickPeriodSeconds, splinter.Tick, DotName, logId);

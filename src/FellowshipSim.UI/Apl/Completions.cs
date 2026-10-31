@@ -27,7 +27,7 @@ public static class Completions
         {
             var node = root;
             var list = parts.ToList();
-            for (int i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
                 if (!node.Children.TryGetValue(list[i], out var child)) node.Children.Add(list[i], child = new CompletionNode(kind));
                 node = child;
@@ -51,21 +51,21 @@ public static class Completions
             };
             foreach (var name in scopeNames[scope])
             {
-                foreach (string property in properties) Add([scope, name.Slug, property], kind);
+                foreach (var property in properties) Add([scope, name.Slug, property], kind);
                 if (root.Children.TryGetValue(scope, out var scopeNode) && scopeNode.Children.TryGetValue(name.Slug, out var nameNode))
                 {
                     nameNode.Detail = name.Name == name.Slug ? "" : name.Name;
                 }
             }
         }
-        string[] prefix = vocabulary.ResourcePrefix.Split(PathSeparator, StringSplitOptions.RemoveEmptyEntries);
+        var prefix = vocabulary.ResourcePrefix.Split(PathSeparator, StringSplitOptions.RemoveEmptyEntries);
         foreach (var resource in vocabulary.Resources)
         {
             Add([resource.Slug], AplTokenKind.Resource, resource.Name);
             Add([.. prefix, resource.Slug], AplTokenKind.Resource, resource.Name);
         }
-        foreach (string named in vocabulary.Named) Add(named.Split(PathSeparator), AplTokenKind.Named);
-        foreach (string word in Operators) Add([word], AplTokenKind.Operator);
+        foreach (var named in vocabulary.Named) Add(named.Split(PathSeparator), AplTokenKind.Named);
+        foreach (var word in Operators) Add([word], AplTokenKind.Operator);
         return root;
     }
 
@@ -75,10 +75,10 @@ public static class Completions
     /// </summary>
     public static IReadOnlyList<Completion> For(AplVocabulary vocabulary, string word)
     {
-        string[] parts = word.ToLowerInvariant().Split(PathSeparator);
-        string partial = parts[^1];
+        var parts = word.ToLowerInvariant().Split(PathSeparator);
+        var partial = parts[^1];
         var node = TreeOf(vocabulary);
-        foreach (string part in parts[..^1])
+        foreach (var part in parts[..^1])
         {
             if (!node.Children.TryGetValue(part, out var child)) return [];
             node = child;

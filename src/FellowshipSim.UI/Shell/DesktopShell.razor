@@ -98,7 +98,7 @@
 
     private RenderFragment TabButton(DesktopTab tab) => __builder =>
     {
-        bool selected = tab == Tabs.Selected;
+        var selected = tab == Tabs.Selected;
         <div @key="tab.Key" class="tab @(selected ? "selected" : "") @(tab.Closable ? "closable" : "")">
             <button type="button" class="select" role="tab" aria-selected="@(selected ? "true" : "false")" data-tooltip="@tab.Title"
                     @onclick="() => Tabs.Select(tab)">

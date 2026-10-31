@@ -69,9 +69,9 @@ public class BurstingIce : RimeAbility
         var hero = Rime;
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target != null ? [target] : ctx.ActiveEnemies;
 
-        double multiplier = fraction;
+        var multiplier = fraction;
         foreach (var pulseMultiplier in PulseDamageMultipliers) multiplier *= pulseMultiplier(ctx);
-        double dealt = DealAoeDamage(ctx, enemies, damageMultiplier: multiplier);
+        var dealt = DealAoeDamage(ctx, enemies, damageMultiplier: multiplier);
         // The Anima comes after the damage, for an enemy whose 1396 application succeeded: a pulse that strikes no enemy
         // gives none (game-data-authority answer 08: GA_Rime_CastedDebuffAoeDamage DoAoeExplosion 2148-2726).
         if (dealt > 0) hero.AddAnima(AnimaPerPulse, ctx, target);
@@ -81,11 +81,11 @@ public class BurstingIce : RimeAbility
     /// <summary>"Winter's Embrace does not affect Bursting Ice."</summary>
     protected override double DamageScaleFor(SimulationContext ctx)
     {
-        double scale = Owner.DamageScale(ctx.CurrentTime);
+        var scale = Owner.DamageScale(ctx.CurrentTime);
         if (Rime.Auras.HasAura(WintersEmbrace, ctx.CurrentTime))
         {
             var mods = WintersEmbrace.Modifiers;
-            for (int i = 0; i < mods.Count; i++)
+            for (var i = 0; i < mods.Count; i++)
             {
                 if (mods[i].Type == StatType.DamageScale && mods[i].Op == ModifierOp.MultiplyCompound) scale /= mods[i].Value;
             }

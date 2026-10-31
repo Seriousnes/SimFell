@@ -66,7 +66,7 @@ public class FrostweaversWrath : Talent
         }
         // A Talon Strike's spikes: the first to land uses a stack and crits, the cast's other spikes do not.
         var talons = hero.GetAbility<TalonStrike>();
-        bool talonFirstSpike = false;
+        var talonFirstSpike = false;
         if (talons != null)
         {
             talons.HitCritChanceBonuses.Add(ctx => talonFirstSpike && hero.Auras.HasAura(Buff, ctx.CurrentTime) ? CritChance : 0.0);

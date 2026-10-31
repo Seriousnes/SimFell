@@ -26,8 +26,8 @@ public static class Counters
 
     public static void Run()
     {
-        foreach (bool idle in new[] { false, true })
-        foreach (int targets in TargetCounts)
+        foreach (var idle in new[] { false, true })
+        foreach (var targets in TargetCounts)
         {
             var hero = Fight.NewHero();
             var ctx = Fight.Start(hero, targets);
@@ -62,22 +62,23 @@ public static class Counters
     {
         var hero = Fight.NewHero();
         var actions = Fight.Actions();
-        int casts = 0, hits = 0;
+        var casts = 0;
+        var hits = 0;
         hero.OnCastCompleted += (_, _, _) => casts++;
         hero.OnDamageDealt += (in _) => hits++;
         Console.WriteLine($"Fights on one hero, {Fight.Duration.TotalSeconds:F0} s, {targets} target(s)");
         Console.WriteLine("  fight      ms        damage  casts   hits  events  hasted timers");
         // One thread: the simulator builds one hero, the one above.
         var simulator = new MonteCarloSimulator(() => hero, actions);
-        for (int fight = 1; fight <= SequenceFights; fight++)
+        for (var fight = 1; fight <= SequenceFights; fight++)
         {
             casts = 0;
             hits = 0;
             var clock = System.Diagnostics.Stopwatch.StartNew();
             var result = simulator.Run(Fight.Duration, iterations: 1, targetCount: targets, degreeOfParallelism: 1);
             clock.Stop();
-            long events = (long)Sequence.GetValue(hero.SimContext!.Kernel)!;
-            int timers = ((System.Collections.ICollection)Timers.GetValue(hero.Auras)!).Count;
+            var events = (long)Sequence.GetValue(hero.SimContext!.Kernel)!;
+            var timers = ((System.Collections.ICollection)Timers.GetValue(hero.Auras)!).Count;
             Console.WriteLine($"  {fight,5} {clock.Elapsed.TotalMilliseconds,7:F2} {result.TotalMeanDamage,13:N0} {casts,6} {hits,6} {events,7} {timers,14}");
         }
     }
@@ -122,10 +123,10 @@ public static class Counters
 
         public void Print(string title, LoopCounts? loop)
         {
-            long events = (long)Sequence.GetValue(_ctx.Kernel)!;
-            int queued = _ctx.Kernel.Count;
+            var events = (long)Sequence.GetValue(_ctx.Kernel)!;
+            var queued = _ctx.Kernel.Count;
             // The tally's own handler is not counted.
-            int subscribers = ((System.Collections.ICollection)DamageDealt.GetValue(_hero)!).Count - 1;
+            var subscribers = ((System.Collections.ICollection)DamageDealt.GetValue(_hero)!).Count - 1;
             Console.WriteLine(title);
             Console.WriteLine($"  total damage            {_ctx.TotalDamage:N0}");
             Console.WriteLine($"  casts                   {_casts}  ({string.Join(", ", _castsByAbility.OrderByDescending(kv => kv.Value).Select(kv => $"{kv.Key} {kv.Value}"))})");

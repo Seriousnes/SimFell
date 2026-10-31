@@ -71,7 +71,7 @@ public static class CharacterReader
         // Talents: talent ID + 2,000,000.
         foreach (var talent in combatant[TalentsProperty]?.AsArray() ?? [])
         {
-            int id = (int)Num(talent?[IdProperty]) - LogIds.TalentOffset;
+            var id = (int)Num(talent?[IdProperty]) - LogIds.TalentOffset;
             if (id > 0) build.Talents.Add(id);
         }
 
@@ -87,7 +87,7 @@ public static class CharacterReader
         foreach (var item in combatant[GearProperty]?.AsArray() ?? [])
         {
             if (item == null) continue;
-            int itemId = (int)Num(item[IdProperty]);
+            var itemId = (int)Num(item[IdProperty]);
             if (Catalog.RelicItemOf(itemId) != null)
             {
                 // Relic slots fill in gear order.
@@ -96,8 +96,8 @@ public static class CharacterReader
             }
             foreach (var trait in item[TraitsProperty]?.AsArray() ?? [])
             {
-                int id = (int)Num(trait?[IdProperty]) - LogIds.AugmentationOffset;
-                int rank = (int)Num(trait?[RankProperty], 1);
+                var id = (int)Num(trait?[IdProperty]) - LogIds.AugmentationOffset;
+                var rank = (int)Num(trait?[RankProperty], 1);
                 // A stat enchant's rank is its rating, added to the item's other enchants of the same ID.
                 if (StatEnchant.Find(id) != null)
                 {
@@ -108,8 +108,8 @@ public static class CharacterReader
             }
             foreach (var blessing in item[BlessingsProperty]?.AsArray() ?? [])
             {
-                string name = Str(blessing?[NameProperty]) ?? "";
-                int index = glyphs.FindIndex(x => x.Name == name);
+                var name = Str(blessing?[NameProperty]) ?? "";
+                var index = glyphs.FindIndex(x => x.Name == name);
                 if (index < 0) glyphs.Add(new RankedEntry(Catalog.GlyphIdByName(name), (int)Num(blessing?[LevelProperty], 1), name));
                 else glyphs[index] = new RankedEntry(glyphs[index].Id, glyphs[index].Rank + (int)Num(blessing?[LevelProperty], 1), name);
             }
@@ -125,8 +125,8 @@ public static class CharacterReader
         // Weapon and neck trees: augmentation IDs + 3,000,000 with the points spent; the weapon ability is listed by its own ID.
         foreach (var trait in (combatant[WeaponTraitsProperty]?.AsArray() ?? []).Concat(combatant[NeckTraitsProperty]?.AsArray() ?? []))
         {
-            int id = (int)Num(trait?[IdProperty]);
-            int points = (int)Num(trait?[PointsProperty]);
+            var id = (int)Num(trait?[IdProperty]);
+            var points = (int)Num(trait?[PointsProperty]);
             if (points <= 0) continue;
             // The weapon tree has a node per stat enchant (65 to 70); each point is one more slot of that enchant, 6 rating
             // to each of its stats (combat logs: the combatantinfo ratings are the gear's, the enchants' and the gem nodes'
@@ -156,13 +156,13 @@ public static class CharacterReader
     private static void AddRank(List<RankedEntry> list, int id, int rank, string? name, bool cap = false)
     {
         if (id <= 0) return;
-        int index = list.FindIndex(e => e.Id == id);
+        var index = list.FindIndex(e => e.Id == id);
         if (index < 0)
         {
             list.Add(new RankedEntry(id, cap ? Math.Min(MaxAugmentationRank, rank) : rank, name));
             return;
         }
-        int total = list[index].Rank + rank;
+        var total = list[index].Rank + rank;
         list[index] = new RankedEntry(id, cap ? Math.Min(MaxAugmentationRank, total) : total, list[index].Name ?? name);
     }
 

@@ -31,7 +31,7 @@ public sealed class BuildEditorTests : IDisposable
     {
         var editor = new BuildEditor(BuildEditor.NewBuild("Rime"));
         editor.SetGearBonuses(GemColor.Topaz, 1);
-        double gear = editor.Gem(GemColor.Topaz);
+        var gear = editor.Gem(GemColor.Topaz);
         Assert.Equal(gear, editor.SheetGem(GemColor.Topaz));
 
         editor.Relic1 = CovetousGreed.OrbItemId;
@@ -90,7 +90,7 @@ public sealed class BuildEditorTests : IDisposable
     public void Gem_Nodes_Add_Their_Bonus_To_The_Sheet_Percentage_As_The_Sim_Does()
     {
         var editor = new BuildEditor(BuildEditor.NewBuild("Rime"));
-        double crit = editor.Percent(RatedStat.Crit);
+        var crit = editor.Percent(RatedStat.Crit);
 
         // Killer Instinct adds 2% and Berserker's Zeal 8 crit rating.
         editor.SetGem(GemColor.Amethyst, 300);

@@ -27,7 +27,7 @@ if (options == null)
     return 0;
 }
 
-string path = Path.GetFullPath(options.ProfilePath);
+var path = Path.GetFullPath(options.ProfilePath);
 if (!File.Exists(path))
 {
     Console.Error.WriteLine($"simfell: no profile at {path}");

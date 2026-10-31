@@ -91,7 +91,7 @@ public sealed class FellowshipLogsClient
         request.Headers.Authorization = new AuthenticationHeaderValue(BearerScheme, token);
         request.Headers.UserAgent.ParseAdd(UserAgent);
         using var response = await _http.SendAsync(request, ct);
-        string body = await response.Content.ReadAsStringAsync(ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
         if (!response.IsSuccessStatusCode)
         {
             throw new FellowshipLogsException($"FellowshipLogs API returned {(int)response.StatusCode}: {Truncate(body)}");
@@ -114,7 +114,7 @@ public sealed class FellowshipLogsClient
         request.Headers.Authorization = new AuthenticationHeaderValue(BasicScheme,
             Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_clientId}:{_clientSecret}")));
         using var response = await _http.SendAsync(request, ct);
-        string body = await response.Content.ReadAsStringAsync(ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
         if (!response.IsSuccessStatusCode)
         {
             throw new FellowshipLogsException(
@@ -122,7 +122,7 @@ public sealed class FellowshipLogsClient
         }
         var json = JsonNode.Parse(body);
         _token = json?[AccessTokenProperty]?.GetValue<string>() ?? throw new FellowshipLogsException("FellowshipLogs returned no access token.");
-        double lifetime = json[ExpiresInProperty]?.GetValue<double>() ?? DefaultTokenLifetimeSeconds;
+        var lifetime = json[ExpiresInProperty]?.GetValue<double>() ?? DefaultTokenLifetimeSeconds;
         _tokenExpires = DateTime.UtcNow.AddSeconds(Math.Max(TokenExpiryMarginSeconds, lifetime - TokenExpiryMarginSeconds));
         return _token;
     }

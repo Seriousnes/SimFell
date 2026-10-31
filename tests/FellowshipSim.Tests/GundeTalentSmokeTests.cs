@@ -47,13 +47,13 @@ public class GundeTalentSmokeTests(ITestOutputHelper output)
     [InlineData(Massacre.TalentId, "aura:Massacre")]
     public void Talent_Is_Modeled_And_Takes_Effect(int talentId, string evidence)
     {
-        foreach (int targets in new[] { 1, 8 })
+        foreach (var targets in new[] { 1, 8 })
         {
             var (result, hero, gained) = Run([.. BaseTalents, talentId], targets);
             Assert.DoesNotContain(hero.UnmodeledFeatures, f => f.StartsWith("Talent"));
             Assert.True(result.MeanDps > 0);
-            string[] parts = evidence.Split(':', 2);
-            bool seen = parts[0] == "aura"
+            var parts = evidence.Split(':', 2);
+            var seen = parts[0] == "aura"
                 ? gained.GetValueOrDefault(parts[1]) > 0
                 : result.AbilityDpsBreakdown.GetValueOrDefault(parts[1]) > 0;
             output.WriteLine($"Talent {talentId} on {targets} target(s): {result.MeanDps:N0} DPS, {evidence} -> " +

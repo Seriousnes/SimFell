@@ -37,7 +37,7 @@ public class Pyromania : ArdeosAbility
             .OrderBy(e => dots.Has(e, _dot))
             .ThenByDescending(e => e.CurrentHealth)
             .ToList();
-        int chosen = 0;
+        var chosen = 0;
         foreach (var enemy in others)
         {
             if (chosen == ExtraTargets) break;

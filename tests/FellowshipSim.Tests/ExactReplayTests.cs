@@ -41,7 +41,7 @@ public class ExactReplayTests
     private static FrostBoltCasting FrostBoltCast(ReplayScript probe)
     {
         var bolt = ReplayDriver.CreateHero(probe).GetAbility(FrostBolt.AbilityName)!;
-        double completed = 1.0 + bolt.GetAdjustedCastTime().TotalSeconds;
+        var completed = 1.0 + bolt.GetAdjustedCastTime().TotalSeconds;
         return new FrostBoltCasting([
             new ReplayCommand { Time = 1.0, Kind = ReplayCommandKind.BeginCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
             new ReplayCommand { Time = completed, Kind = ReplayCommandKind.CompleteCast, AbilityId = bolt.Id, AbilityName = bolt.Name, Target = Dummy },
@@ -186,9 +186,9 @@ public class ExactReplayTests
     {
         // Each tick is due one hasted period after the one before; the log has each 20ms later.
         var probe = new TickFight();
-        double period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
+        var period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
         var log = new List<double>();
-        for (double tickTime = 0; ;)
+        for (var tickTime = 0.0; ;)
         {
             tickTime = (SimTime.FromSeconds(tickTime) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
             if (tickTime > 3.9) break;
@@ -213,9 +213,9 @@ public class ExactReplayTests
         // The period timer's next period runs from the moved tick: each tick is due one hasted period after the log tick
         // before it, and the log has each 20ms later.
         var probe = new TickFight();
-        double period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
+        var period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
         var log = new List<double>();
-        for (double tickTime = 0; ;)
+        for (var tickTime = 0.0; ;)
         {
             tickTime = (SimTime.FromSeconds(tickTime) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
             if (tickTime > 3.9) break;
@@ -238,12 +238,12 @@ public class ExactReplayTests
         // Two full pulses on both enemies, then a partial pulse (0.7 of a period left) on the first alone. The pulse after
         // the second is due past the end, so it never fires; the partial pulse takes the log tick it reserved.
         var probe = new TickFight();
-        double period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
+        var period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
         var second = new UnitRef(101, 1);
-        double first = SimTime.FromSeconds(period).TotalSeconds;
-        double secondPulse = (SimTime.FromSeconds(first) + SimTime.FromSeconds(period)).TotalSeconds;
-        double duration = 2.7 * period;
-        double partialAt = (SimTime.FromSeconds(duration) + SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds)).TotalSeconds + 0.010;
+        var first = SimTime.FromSeconds(period).TotalSeconds;
+        var secondPulse = (SimTime.FromSeconds(first) + SimTime.FromSeconds(period)).TotalSeconds;
+        var duration = 2.7 * period;
+        var partialAt = (SimTime.FromSeconds(duration) + SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds)).TotalSeconds + 0.010;
         LogDamage On(UnitRef target, double time, double amount) =>
             new() { Time = time, AbilityId = TickId, AbilityName = "Test Pulse", Target = target, Amount = amount };
         var fight = new TickFight([On(Dummy, first, 100), On(second, first, 100), On(Dummy, secondPulse, 100), On(second, secondPulse, 100),

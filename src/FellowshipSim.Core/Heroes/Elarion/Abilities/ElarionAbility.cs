@@ -21,10 +21,10 @@ public abstract class ElarionAbility : Ability
 
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
-        double cost = CostAt(ctx.CurrentTime);
+        var cost = CostAt(ctx.CurrentTime);
         if (cost > 0)
         {
-            double focus = Elarion.FocusAt(ctx.CurrentTime);
+            var focus = Elarion.FocusAt(ctx.CurrentTime);
             if (focus < cost)
             {
                 reason = explain ? $"{Name} needs {cost:0.#} Focus (have {focus:0.#})" : null;

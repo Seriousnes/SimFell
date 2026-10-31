@@ -35,7 +35,7 @@ public class SquareHammer : Talent
         hero.OnCastResolving += cast =>
         {
             if (cast.Ability is not (SkullCrusher or HammerStorm)) return;
-            int stacks = hero.Auras.GetStacks(Stacks, cast.Time);
+            var stacks = hero.Auras.GetStacks(Stacks, cast.Time);
             if (stacks == 0) return;
             hero.Auras.Remove(Stacks, cast.Time);
             hero.ReduceCooldown<ThunderCall>(SimTime.FromSeconds(CooldownPerStackSeconds * stacks), cast.Time);

@@ -37,7 +37,7 @@ public class CharacterReaderTests
     public void A_Profile_Writes_The_Relics_It_Read()
     {
         var build = CharacterReader.FromCombatantInfo(JsonNode.Parse(Combatant)!.AsObject(), "player", "Rime");
-        string text = new SimcProfile(build, "").Format();
+        var text = new SimcProfile(build, "").Format();
         Assert.Contains("relic1=orb_of_inner_seas,id=5926", text);
         Assert.Contains("relic2=orb_of_gathering_storms,id=5924", text);
         var read = SimcProfile.Parse(text).Build;

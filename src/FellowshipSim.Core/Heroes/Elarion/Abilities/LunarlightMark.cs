@@ -46,7 +46,7 @@ public class LunarlightMark : ElarionAbility
     {
         TriggerCooldown(ctx);
         if (target != null) Mark(ctx, target, Stacks);
-        int chosen = 0;
+        var chosen = 0;
         foreach (var enemy in ctx.ActiveEnemiesExcept(target))
         {
             if (chosen == ExtraTargets) break;

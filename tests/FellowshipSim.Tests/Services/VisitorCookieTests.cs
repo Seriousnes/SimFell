@@ -39,7 +39,7 @@ public sealed class VisitorCookieTests : IAsyncLifetime
     [Fact]
     public async Task The_First_Request_Sets_A_Visitor_Cookie_And_The_Cookie_Keeps_The_Visitor()
     {
-        string cookie = await NewVisitorCookieAsync();
+        var cookie = await NewVisitorCookieAsync();
 
         using var again = await GetAsync("/reviews/none.html", cookie);
         Assert.False(again.Headers.Contains("Set-Cookie"));
@@ -56,10 +56,10 @@ public sealed class VisitorCookieTests : IAsyncLifetime
         var session = new Microsoft.AspNetCore.Authentication.AuthenticationTicket(user,
             new Microsoft.AspNetCore.Authentication.AuthenticationProperties { IsPersistent = false, ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1) },
             CookieAuthenticationDefaults.AuthenticationScheme);
-        string cookie = $"{VisitorIdentity.CookieName}={Uri.EscapeDataString(options.TicketDataFormat.Protect(session))}";
+        var cookie = $"{VisitorIdentity.CookieName}={Uri.EscapeDataString(options.TicketDataFormat.Protect(session))}";
 
         using var response = await GetAsync("/reviews/none.html", cookie);
-        string setCookie = Assert.Single(response.Headers.GetValues("Set-Cookie"), c => c.StartsWith(VisitorIdentity.CookieName + "="));
+        var setCookie = Assert.Single(response.Headers.GetValues("Set-Cookie"), c => c.StartsWith(VisitorIdentity.CookieName + "="));
         Assert.Contains("expires=", setCookie, StringComparison.OrdinalIgnoreCase);
         Assert.Equal("0123456789abcdef0123456789abcdef", VisitorId(setCookie.Split(';')[0]));
     }
@@ -67,7 +67,8 @@ public sealed class VisitorCookieTests : IAsyncLifetime
     [Fact]
     public async Task A_Reviews_Files_Are_Found_Only_For_The_Visitor_Who_Ran_It()
     {
-        string firstCookie = await NewVisitorCookieAsync(), secondCookie = await NewVisitorCookieAsync();
+        var firstCookie = await NewVisitorCookieAsync();
+        var secondCookie = await NewVisitorCookieAsync();
         Assert.NotEqual(VisitorId(firstCookie), VisitorId(secondCookie));
         var summary = new ReviewSummary(ReplayLibrary.ReviewId("aaaa", 1, 2), "aaaa", 1, "Fight", null, 2, "Player", "Rime",
             1, 1, 1, 1, 100, 100, 0, DateTime.UtcNow);
@@ -88,10 +89,10 @@ public sealed class VisitorCookieTests : IAsyncLifetime
     private async Task<string> NewVisitorCookieAsync()
     {
         using var response = await GetAsync("/reviews/none.html", null);
-        string setCookie = Assert.Single(response.Headers.GetValues("Set-Cookie"), c => c.StartsWith(VisitorIdentity.CookieName + "="));
+        var setCookie = Assert.Single(response.Headers.GetValues("Set-Cookie"), c => c.StartsWith(VisitorIdentity.CookieName + "="));
         Assert.Contains("httponly", setCookie, StringComparison.OrdinalIgnoreCase);
         // A cookie without an expiry ends with the browser, and the next visit would be a new visitor without their saves.
-        string expires = Assert.Single(setCookie.Split(';').Select(p => p.Trim()), p => p.StartsWith("expires=", StringComparison.OrdinalIgnoreCase));
+        var expires = Assert.Single(setCookie.Split(';').Select(p => p.Trim()), p => p.StartsWith("expires=", StringComparison.OrdinalIgnoreCase));
         Assert.True(DateTimeOffset.Parse(expires["expires=".Length..]) > DateTimeOffset.UtcNow.AddDays(399));
         return setCookie.Split(';')[0];
     }

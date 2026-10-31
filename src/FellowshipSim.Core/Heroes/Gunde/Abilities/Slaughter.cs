@@ -41,8 +41,8 @@ public class Slaughter : GundeAbility
         foreach (var enemy in ctx.Outcomes.SelectTargets(DamageLogId, withRend, ctx))
         {
             if (!rend.IsOn(enemy)) continue;
-            double consumed = rend.Consume(ctx, enemy);
-            double multiplier = RendMultiplier;
+            var consumed = rend.Consume(ctx, enemy);
+            var multiplier = RendMultiplier;
             if (enemy.Auras.HasAura(Rupture.OpenWounds, ctx.CurrentTime))
             {
                 multiplier *= Rupture.OpenWoundsSlaughterDamage;
@@ -58,8 +58,8 @@ public class Slaughter : GundeAbility
     {
         if (damage <= 0.0) return;
         enemy.Auras.Apply(Dot, ctx.CurrentTime);
-        int ticks = (int)Math.Round(DotSeconds / TickSeconds);
-        double perTick = damage / ticks;
+        var ticks = (int)Math.Round(DotSeconds / TickSeconds);
+        var perTick = damage / ticks;
         PeriodicEffect.Begin(ctx, Name, DotSeconds, TickSeconds, tickOnStart: false, partialFinalTick: false,
             onTick: (c, _) =>
             {

@@ -45,8 +45,8 @@ public class GlacialBlast : RimeAbility
     {
         // Instant with 4 Glacial Assault stacks or during Wrath of Winter.
         if (GlacialAssaultReady || Rime.Auras.HasAura(WrathOfWinter.Buff, now)) return SimTime.Zero;
-        double seconds = CastTime.TotalSeconds + ExtraCastTimeSeconds;
-        double castHaste = CastHasteBonuses.Sum(bonus => bonus(now));
+        var seconds = CastTime.TotalSeconds + ExtraCastTimeSeconds;
+        var castHaste = CastHasteBonuses.Sum(bonus => bonus(now));
         return SimTime.FromSeconds(seconds / (1.0 + Owner.GetHaste(now) + castHaste));
     }
 
@@ -73,8 +73,8 @@ public class GlacialBlast : RimeAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         var hero = Rime;
-        bool assault = GlacialAssaultReady;
-        double multiplier = 1.0;
+        var assault = GlacialAssaultReady;
+        var multiplier = 1.0;
         if (assault) multiplier = ConsumeGlacialAssault(ctx);
         else hero.SpendWinterOrbs(DefaultWinterOrbCost, ctx);
 
@@ -92,11 +92,11 @@ public class GlacialBlast : RimeAbility
     protected void Explode(SimulationContext ctx, EnemyTarget target, double initialDamage)
     {
         if (initialDamage <= 0.0) return;
-        IReadOnlyList<EnemyTarget> nearby = ctx.Outcomes.SelectTargets(GlacialAssaultExplosionId, ctx.ActiveEnemiesExcept(target), ctx);
+        var nearby = ctx.Outcomes.SelectTargets(GlacialAssaultExplosionId, ctx.ActiveEnemiesExcept(target), ctx);
         if (nearby.Count == 0) return;
         if (nearby.Count > GlacialAssaultExplosionMaxTargets) nearby = nearby.Take(GlacialAssaultExplosionMaxTargets).ToList();
-        double falloff = nearby.Count > GlacialAssaultExplosionTargetThreshold ? Math.Sqrt(GlacialAssaultExplosionTargetThreshold / nearby.Count) : 1.0;
-        double damage = initialDamage * GlacialAssaultExplosionFraction * falloff;
+        var falloff = nearby.Count > GlacialAssaultExplosionTargetThreshold ? Math.Sqrt(GlacialAssaultExplosionTargetThreshold / nearby.Count) : 1.0;
+        var damage = initialDamage * GlacialAssaultExplosionFraction * falloff;
         foreach (var enemy in nearby)
         {
             ctx.ApplyDamage(Owner, enemy, damage, GlacialAssaultExplosionId, GlacialAssault.TalentName, canCrit: false, 0.0, 1.0);

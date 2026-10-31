@@ -20,8 +20,8 @@ public static class DefaultActionLists
         .Where(r => r.StartsWith(Prefix, StringComparison.Ordinal) && r.EndsWith(Extension, StringComparison.Ordinal) && r.Contains(Folder))
         .ToDictionary(r =>
         {
-            string rest = r[Prefix.Length..^Extension.Length];
-            int folder = rest.IndexOf(Folder, StringComparison.Ordinal);
+            var rest = r[Prefix.Length..^Extension.Length];
+            var folder = rest.IndexOf(Folder, StringComparison.Ordinal);
             return new ActionListKey(rest[..folder], rest[(folder + Folder.Length)..]);
         }, r => r, new KeyComparer());
 

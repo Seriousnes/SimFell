@@ -148,7 +148,7 @@ internal static class Polynomial
     /// <summary>The highest power with a coefficient that is not 0; -1 for the zero polynomial.</summary>
     public static int Degree(double[] polynomial)
     {
-        int degree = polynomial.Length - 1;
+        var degree = polynomial.Length - 1;
         while (degree >= 0 && polynomial[degree] == 0.0) degree--;
         return degree;
     }
@@ -156,32 +156,32 @@ internal static class Polynomial
     public static double[] Add(double[] left, double[] right)
     {
         var sum = new double[Math.Max(left.Length, right.Length)];
-        for (int i = 0; i < left.Length; i++) sum[i] += left[i];
-        for (int i = 0; i < right.Length; i++) sum[i] += right[i];
+        for (var i = 0; i < left.Length; i++) sum[i] += left[i];
+        for (var i = 0; i < right.Length; i++) sum[i] += right[i];
         return sum;
     }
 
     public static double[] Scale(double[] polynomial, double factor)
     {
         var scaled = new double[polynomial.Length];
-        for (int i = 0; i < polynomial.Length; i++) scaled[i] = polynomial[i] * factor;
+        for (var i = 0; i < polynomial.Length; i++) scaled[i] = polynomial[i] * factor;
         return scaled;
     }
 
     public static double[] Multiply(double[] left, double[] right)
     {
         var product = new double[left.Length + right.Length - 1];
-        for (int i = 0; i < left.Length; i++)
+        for (var i = 0; i < left.Length; i++)
         {
-            for (int j = 0; j < right.Length; j++) product[i + j] += left[i] * right[j];
+            for (var j = 0; j < right.Length; j++) product[i + j] += left[i] * right[j];
         }
         return product;
     }
 
     public static double Evaluate(double[] polynomial, double argument)
     {
-        double value = 0.0;
-        for (int i = polynomial.Length - 1; i >= 0; i--) value = value * argument + polynomial[i];
+        var value = 0.0;
+        for (var i = polynomial.Length - 1; i >= 0; i--) value = value * argument + polynomial[i];
         return value;
     }
 
@@ -189,7 +189,7 @@ internal static class Polynomial
     {
         if (polynomial.Length <= 1) return [0.0];
         var derivative = new double[polynomial.Length - 1];
-        for (int i = 1; i < polynomial.Length; i++) derivative[i - 1] = polynomial[i] * i;
+        for (var i = 1; i < polynomial.Length; i++) derivative[i - 1] = polynomial[i] * i;
         return derivative;
     }
 
@@ -200,17 +200,17 @@ internal static class Polynomial
     /// </summary>
     public static void Roots(double[] polynomial, double low, double high, List<double> roots)
     {
-        int degree = Degree(polynomial);
+        var degree = Degree(polynomial);
         if (degree <= 0) return;
         // Every root lies within Cauchy's bound.
-        double bound = 0.0;
-        for (int i = 0; i < degree; i++) bound = Math.Max(bound, Math.Abs(polynomial[i] / polynomial[degree]));
+        var bound = 0.0;
+        for (var i = 0; i < degree; i++) bound = Math.Max(bound, Math.Abs(polynomial[i] / polynomial[degree]));
         high = Math.Min(high, 1.0 + bound);
         low = Math.Max(low, -1.0 - bound);
         if (!(low < high)) return;
         if (degree == 1)
         {
-            double root = -polynomial[0] / polynomial[1];
+            var root = -polynomial[0] / polynomial[1];
             if (root > low && root < high) roots.Add(root);
             return;
         }
@@ -218,10 +218,11 @@ internal static class Polynomial
         Roots(Derivative(polynomial), low, high, turns);
         turns.Sort();
         turns.Add(high);
-        double previous = low, fa = Evaluate(polynomial, low);
-        foreach (double turn in turns)
+        var previous = low;
+        var fa = Evaluate(polynomial, low);
+        foreach (var turn in turns)
         {
-            double fb = Evaluate(polynomial, turn);
+            var fb = Evaluate(polynomial, turn);
             if (fb == 0.0) roots.Add(turn);
             else if (fa != 0.0 && (fa < 0.0) != (fb < 0.0)) roots.Add(Halve(polynomial, previous, fa, turn));
             previous = turn;
@@ -232,10 +233,10 @@ internal static class Polynomial
     // The root of the polynomial between lower and upper, where its values there have opposite signs.
     private static double Halve(double[] polynomial, double lower, double fa, double upper)
     {
-        for (int i = 0; i < MaxHalvings && upper - lower > Tolerance.Rounding; i++)
+        for (var i = 0; i < MaxHalvings && upper - lower > Tolerance.Rounding; i++)
         {
-            double middle = 0.5 * (lower + upper);
-            double fm = Evaluate(polynomial, middle);
+            var middle = 0.5 * (lower + upper);
+            var fm = Evaluate(polynomial, middle);
             if (fm == 0.0) return middle;
             if ((fm < 0.0) == (fa < 0.0))
             {
@@ -267,8 +268,8 @@ internal static class Crossing
         foreach (var polynomial in polynomials) Polynomial.Roots(polynomial, Polynomial.EarliestRoot, limit.Milliseconds - (double)now.Milliseconds, roots);
         if (roots.Count == 0) return limit;
         roots.Sort();
-        bool current = expression.Evaluate(ctx);
-        foreach (double root in roots)
+        var current = expression.Evaluate(ctx);
+        foreach (var root in roots)
         {
             if (FirstAround(now, limit, root, ms => expression.EvaluateAt(ctx, ms) != current) is { } changed) return changed;
         }
@@ -282,9 +283,9 @@ internal static class Crossing
     /// </summary>
     public static SimTime? FirstAround(SimTime now, SimTime limit, double root, Func<SimTime, bool> changed)
     {
-        double at = now.Milliseconds + root;
+        var at = now.Milliseconds + root;
         if (at - RootMarginMilliseconds >= limit.Milliseconds) return null;
-        for (long ms = Math.Max(now.Milliseconds + 1, (long)Math.Floor(at) - RootMarginMilliseconds); ms < limit.Milliseconds && ms <= (long)Math.Ceiling(at) + RootMarginMilliseconds; ms++)
+        for (var ms = Math.Max(now.Milliseconds + 1, (long)Math.Floor(at) - RootMarginMilliseconds); ms < limit.Milliseconds && ms <= (long)Math.Ceiling(at) + RootMarginMilliseconds; ms++)
         {
             var time = SimTime.FromMilliseconds(ms);
             if (changed(time)) return time;
@@ -438,7 +439,7 @@ internal sealed class BoundAura(Hero hero, bool debuff, string slug, BoundAura.A
         if (Find(ctx, now) is not { } aura) return SimTime.Infinite;
         if (property == AuraProperty.Refreshable && aura.ExpiresAt != SimTime.Infinite)
         {
-            double window = aura.ExpiresAt.Milliseconds - PropertyExpression.RefreshableFraction * aura.Duration.Milliseconds;
+            var window = aura.ExpiresAt.Milliseconds - PropertyExpression.RefreshableFraction * aura.Duration.Milliseconds;
             var refreshable = SimTime.FromMilliseconds((long)Math.Floor(window) + 1);
             if (refreshable > now) return refreshable;
         }
@@ -482,7 +483,7 @@ internal sealed class BoundActiveDot(Hero hero, string slug) : BoundNumeric
     internal override double NumericAt(SimulationContext ctx, SimTime time)
     {
         var now = ctx.CurrentTime;
-        int count = 0;
+        var count = 0;
         foreach (var enemy in ctx.ActiveEnemies)
         {
             if (AuraLookup.On(hero, enemy, slug, now) is { } effect && time < effect.ExpiresAt) count++;
@@ -620,8 +621,8 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         switch (op)
         {
             case BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo:
-                double leftValue = left.EvaluateNumeric(ctx);
-                double rightValue = right.EvaluateNumeric(ctx);
+                var leftValue = left.EvaluateNumeric(ctx);
+                var rightValue = right.EvaluateNumeric(ctx);
                 return Arithmetic(leftValue, rightValue);
             default:
                 return Evaluate(ctx) ? 1.0 : 0.0;
@@ -654,12 +655,12 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         if (op == BinaryOperator.Divide) return until;
         // A remainder wraps where the quotient passes a whole number, and where the divisor passes 0.
         var dividend = left.Curve(ctx);
-        double whole = Math.Truncate(left.EvaluateNumeric(ctx) / right.EvaluateNumeric(ctx));
+        var whole = Math.Truncate(left.EvaluateNumeric(ctx) / right.EvaluateNumeric(ctx));
         var roots = new List<double>();
-        double span = Crossing.Later(now, until).Milliseconds - (double)now.Milliseconds;
-        for (double k = whole - 1; k <= whole + 1; k++) Polynomial.Roots((dividend - TimeCurve.Constant(k) * divisor).Numerator, 0.0, span, roots);
+        var span = Crossing.Later(now, until).Milliseconds - (double)now.Milliseconds;
+        for (var k = whole - 1; k <= whole + 1; k++) Polynomial.Roots((dividend - TimeCurve.Constant(k) * divisor).Numerator, 0.0, span, roots);
         Polynomial.Roots(divisor.Numerator, 0.0, span, roots);
-        foreach (double root in roots)
+        foreach (var root in roots)
         {
             until = Crossing.Earlier(until, Crossing.Later(now, SimTime.FromMilliseconds(now.Milliseconds + (long)Math.Floor(root))));
         }

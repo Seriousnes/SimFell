@@ -53,7 +53,7 @@
                     <span>@tick</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Damage done over the fight: the mean of every fight and the 5 to 95 percent band">
-                    @for (int g = 1; g < AxisIntervals; g++)
+                    @for (var g= 1; g < AxisIntervals; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
@@ -73,13 +73,13 @@
                 <span class="legend"><i class="mean"></i>Mean <i class="band"></i>5–95% of fights <i class="average"></i>Mean DPS</span>
             </div>
             <div class="chart">
-                @{ double dpsMax = Max(timeline.DpsHigh, timeline.Dps); }
+                @{ var dpsMax = Max(timeline.DpsHigh, timeline.Dps); }
                 <div class="y">@foreach (var tick in Ticks(dpsMax).Reverse())
                 {
                     <span>@tick</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="DPS over the fight, as a rolling average: the mean of every fight and the 5 to 95 percent band">
-                    @for (int g = 1; g < AxisIntervals; g++)
+                    @for (var g= 1; g < AxisIntervals; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
@@ -103,13 +103,13 @@
                 <span class="legend"><i class="mean"></i>Typical fight <i class="spirit-mean"></i>Mean of every fight <i class="average"></i>Most (@Number(spirit.Max))</span>
             </div>
             <div class="chart">
-                @{ double spiritTop = SpiritTop(spirit.Max); }
-                <div class="y">@for (int i = AxisIntervals; i >= 0; i--)
+                @{ var spiritTop = SpiritTop(spirit.Max); }
+                <div class="y">@for (var i= AxisIntervals; i >= 0; i--)
                 {
                     <span>@Number(spiritTop * i / AxisIntervals)</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Spirit Points over the fight: one typical fight and the mean of every fight">
-                    @for (int g = 1; g < AxisIntervals; g++)
+                    @for (var g= 1; g < AxisIntervals; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * GridSpacing)" y2="@(g * GridSpacing)" class="grid" />
                     }
@@ -130,7 +130,7 @@
         <div class="table-wrap">
             @if (Result.Abilities is { Count: > 0 } abilities)
             {
-                double total = abilities.Sum(a => a.Damage);
+                var total = abilities.Sum(a => a.Damage);
                 <table class="report-table">
                     <thead>
                         <tr>
@@ -147,7 +147,7 @@
                     <tbody>
                         @foreach (var ability in abilities)
                         {
-                            double share = total > 0 ? ability.Damage / total : 0;
+                            var share = total > 0 ? ability.Damage / total : 0;
                             <tr @key="ability.Name">
                                 <td class="name"><GameIcon Url="@BuildCatalog.IconUrl(ability.Id, ability.Name)" Size="22" /><span>@ability.Name</span></td>
                                 <td class="amount-cell">
@@ -364,8 +364,8 @@
             foreach (var aura in Result.Buffs ?? [])
             {
                 var spans = aura.Spans ?? [];
-                string kind = aura.OnTarget ? "debuff" : "buff";
-                for (int i = 0; i + 1 < spans.Count; i += SpanFields)
+                var kind = aura.OnTarget ? "debuff" : "buff";
+                for (var i= 0; i + 1 < spans.Count; i += SpanFields)
                 {
                     rows.Add(new SequenceRow(spans[i], aura.Name, aura.LogId, $"{kind} gained"));
                     if (spans[i + 1] < Result.DurationSeconds - FightEndSeconds) rows.Add(new SequenceRow(spans[i + 1], aura.Name, aura.LogId, $"{kind} faded"));
@@ -401,7 +401,7 @@
             <tbody>
                 @foreach (var aura in auras)
                 {
-                    bool stacks = aura.MaxStacks > 1;
+                    var stacks = aura.MaxStacks > 1;
                     <tr @key="aura.Name">
                         <td class="name"><GameIcon Url="@BuildCatalog.IconUrl(aura.LogId, aura.Name)" Size="22" /><span>@aura.Name</span></td>
                         <td class="amount-cell">
@@ -445,9 +445,10 @@
     {
         if (spans is not { Count: > 1 } || Result.DurationSeconds <= 0) return "";
         var builder = new System.Text.StringBuilder();
-        for (int i = 0; i + 1 < spans.Count; i += SpanFields)
+        for (var i= 0; i + 1 < spans.Count; i += SpanFields)
         {
-            double start = spans[i] / Result.DurationSeconds * ChartWidth, end = Math.Max(start + MinSpanWidth, spans[i + 1] / Result.DurationSeconds * ChartWidth);
+            var start = spans[i] / Result.DurationSeconds * ChartWidth;
+            var end = Math.Max(start + MinSpanWidth, spans[i + 1] / Result.DurationSeconds * ChartWidth);
             builder.Append('M').Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append(" 2.5H").Append(end.ToString("0.#", CultureInfo.InvariantCulture))
                 .Append("V5.5H").Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append("Z ");
         }
@@ -460,16 +461,16 @@
     private static double Nice(double max)
     {
         if (max <= 0) return 1;
-        double step = max / AxisIntervals;
-        double power = Math.Pow(DecimalBase, Math.Floor(Math.Log10(step)));
-        double unit = NiceMultipliers.Select(m => m * power).First(s => s >= step);
+        var step = max / AxisIntervals;
+        var power = Math.Pow(DecimalBase, Math.Floor(Math.Log10(step)));
+        var unit = NiceMultipliers.Select(m => m * power).First(s => s >= step);
         return unit * AxisIntervals;
     }
 
     private static IEnumerable<string> Ticks(double max)
     {
-        double top = Nice(max);
-        for (int i = 0; i <= AxisIntervals; i++) yield return Short(top * i / AxisIntervals);
+        var top = Nice(max);
+        for (var i= 0; i <= AxisIntervals; i++) yield return Short(top * i / AxisIntervals);
     }
 
     private static string Short(double value) => value switch
@@ -485,9 +486,9 @@
 
     private static string Line(IReadOnlyList<double> values, double max, bool nice = true)
     {
-        double top = nice ? Nice(max) : max;
+        var top = nice ? Nice(max) : max;
         var builder = new System.Text.StringBuilder();
-        for (int i = 0; i < values.Count; i++) builder.Append(i == 0 ? 'M' : 'L').Append(ChartX(i, values.Count)).Append(' ').Append(ChartY(values[i], top)).Append(' ');
+        for (var i= 0; i < values.Count; i++) builder.Append(i == 0 ? 'M' : 'L').Append(ChartX(i, values.Count)).Append(' ').Append(ChartY(values[i], top)).Append(' ');
         return builder.ToString();
     }
 
@@ -502,9 +503,10 @@
     {
         if (values.Count == 0 || seconds < MinStepSeconds) return "";
         var builder = new System.Text.StringBuilder();
-        for (int i = 0; i < values.Count; i++)
+        for (var i= 0; i < values.Count; i++)
         {
-            string positionX = ChartX(i, seconds), positionY = ChartY(Math.Min(values[i], top), top);
+            var positionX = ChartX(i, seconds);
+            var positionY = ChartY(Math.Min(values[i], top), top);
             builder.Append(i == 0 ? "M" : "H").Append(positionX).Append(i == 0 ? " " : "V").Append(positionY).Append(' ');
         }
         return builder.Append('H').Append(ChartX(Math.Min(values.Count, seconds - 1), seconds)).ToString();
@@ -512,20 +514,20 @@
 
     private static string Band(IReadOnlyList<double> low, IReadOnlyList<double> high, double max)
     {
-        double top = Nice(max);
+        var top = Nice(max);
         var builder = new System.Text.StringBuilder(Line(high, max));
-        for (int i = low.Count - 1; i >= 0; i--) builder.Append('L').Append(ChartX(i, low.Count)).Append(' ').Append(ChartY(low[i], top)).Append(' ');
+        for (var i= low.Count - 1; i >= 0; i--) builder.Append('L').Append(ChartX(i, low.Count)).Append(' ').Append(ChartY(low[i], top)).Append(' ');
         return builder.Append('Z').ToString();
     }
 
     /// <summary>Time labels along the fight: at most about ten, on round minutes or half minutes.</summary>
     private static IEnumerable<string> TimeLabels(int seconds)
     {
-        int step = TimeLabelSteps.FirstOrDefault(s => seconds / s <= MaxTimeLabels, LongestTimeLabelStep);
-        int labels = Math.Max(1, (seconds - 1) / step);
-        for (int i = 0; i <= labels; i++)
+        var step = TimeLabelSteps.FirstOrDefault(s => seconds / s <= MaxTimeLabels, LongestTimeLabelStep);
+        var labels = Math.Max(1, (seconds - 1) / step);
+        for (var i= 0; i <= labels; i++)
         {
-            int tick = Math.Min(seconds, i * step);
+            var tick = Math.Min(seconds, i * step);
             yield return $"{tick / SecondsPerMinute}:{tick % SecondsPerMinute:00}";
         }
     }

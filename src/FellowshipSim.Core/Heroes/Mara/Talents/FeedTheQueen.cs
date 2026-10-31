@@ -31,7 +31,7 @@ public class FeedTheQueen : Talent
         // them, the Feed the Queen bonus of 3 to 4 stacks; the clones have every other bonus.
         hero.GetAbility<QueensFang>()?.OwnHitMultipliers.Add(ctx =>
         {
-            int stacks = hero.Auras.GetStacks(Buff, ctx.CurrentTime);
+            var stacks = hero.Auras.GetStacks(Buff, ctx.CurrentTime);
             if (stacks == 0) return 1.0;
             hero.Auras.Remove(Buff, ctx.CurrentTime);
             return 1.0 + DamagePerStack * stacks;

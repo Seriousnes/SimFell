@@ -48,7 +48,7 @@
 
     private void RenderClause(RenderTreeBuilder __builder, string keyword, string? label, DebouncedCheck clause)
     {
-        string text = clause.Text;
+        var text = clause.Text;
         <div class="clause"><span class="keyword">@keyword</span>@(" " + (label != null ? $"{label} " : ""))@if (clause.Result is { } result && result.Text == text)
             {
                 <Highlight Text="@text" Check="result.Check" />

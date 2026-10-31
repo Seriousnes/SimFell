@@ -38,7 +38,7 @@ public class MonteCarloProgressTests
     {
         const int fights = 100_000;
         using var cancel = new CancellationTokenSource();
-        int last = 0;
+        var last = 0;
         Assert.ThrowsAny<OperationCanceledException>(() => Simulator().Run(SimTime.FromSeconds(Seconds), fights,
             degreeOfParallelism: 2, progress: completed =>
             {

@@ -53,7 +53,7 @@ public sealed class BrowserDataFolder(IJSRuntime js)
     {
         Directory.CreateDirectory(Root);
         var storage = await StorageAsync();
-        foreach (string key in await storage.InvokeAsync<string[]>(ListFunction))
+        foreach (var key in await storage.InvokeAsync<string[]>(ListFunction))
         {
             // An earlier version kept fights: they go without being read.
             if (NotKept.Any(key.StartsWith))
@@ -93,16 +93,16 @@ public sealed class BrowserDataFolder(IJSRuntime js)
         Prune();
         var storage = await StorageAsync();
         var present = new HashSet<string>(StringComparer.Ordinal);
-        foreach (string path in Directory.EnumerateFiles(Root, "*", SearchOption.AllDirectories))
+        foreach (var path in Directory.EnumerateFiles(Root, "*", SearchOption.AllDirectories))
         {
-            string key = Path.GetRelativePath(Root, path).Replace('\\', '/');
+            var key = Path.GetRelativePath(Root, path).Replace('\\', '/');
             present.Add(key);
             var stamp = Stamp(path);
             if (_copied.TryGetValue(key, out var copied) && copied == stamp) continue;
             await storage.InvokeVoidAsync(WriteFunction, key, await File.ReadAllTextAsync(path));
             _copied[key] = stamp;
         }
-        foreach (string key in _copied.Keys.Where(k => !present.Contains(k)).ToList())
+        foreach (var key in _copied.Keys.Where(k => !present.Contains(k)).ToList())
         {
             await storage.InvokeVoidAsync(RemoveFunction, key);
             _copied.Remove(key);
@@ -112,7 +112,7 @@ public sealed class BrowserDataFolder(IJSRuntime js)
     // No fight or replay script stays (a review writes its script); the newest reviews stay, the rest go.
     private static void Prune()
     {
-        foreach (string path in NotKept.Select(p => Path.Combine(Root, p)))
+        foreach (var path in NotKept.Select(p => Path.Combine(Root, p)))
         {
             if (File.Exists(path)) File.Delete(path);
             else if (Directory.Exists(path)) foreach (var file in new DirectoryInfo(path).GetFiles()) file.Delete();
@@ -121,7 +121,7 @@ public sealed class BrowserDataFolder(IJSRuntime js)
         if (!reviews.Exists) return;
         foreach (var old in reviews.GetFiles(ReplayLibrary.SummaryPattern).OrderByDescending(f => f.LastWriteTimeUtc).Skip(KeptReviews))
         {
-            string id = old.Name[..^ReplayLibrary.SummaryExtension.Length];
+            var id = old.Name[..^ReplayLibrary.SummaryExtension.Length];
             foreach (var file in reviews.GetFiles($"{id}.*")) file.Delete();
         }
     }
@@ -135,7 +135,7 @@ public sealed class BrowserDataFolder(IJSRuntime js)
     // A storage key as a path under Root; null for one that would leave it.
     private static string? PathOf(string key)
     {
-        string path = Path.GetFullPath(Path.Combine(Root, key));
+        var path = Path.GetFullPath(Path.Combine(Root, key));
         return path.StartsWith(Root + "/", StringComparison.Ordinal) ? path : null;
     }
 

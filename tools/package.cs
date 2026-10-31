@@ -48,7 +48,7 @@ const int BytesPerMegabyte = 1024 * 1024;
 
 string rid = DefaultRid;
 string? version = null;
-for (int i = 0; i < args.Length; i++)
+for (var i= 0; i < args.Length; i++)
 {
     switch (args[i])
     {
@@ -75,7 +75,7 @@ Run([.. publish]);
 
 if (windows)
 {
-    string launcher = Path.Combine(package, LauncherFolder);
+    var launcher = Path.Combine(package, LauncherFolder);
     Run("build", LauncherProject, "-c", Configuration, "-o", launcher);
     File.Copy(Path.Combine(launcher, LauncherExe), Path.Combine(app, LauncherExe));
     Directory.Delete(launcher, recursive: true);
@@ -83,9 +83,9 @@ if (windows)
 else
 {
     // The start script runs the app from its own folder; the window it runs in is the console that stops it.
-    string script = "#!/bin/sh\n# Starts SimFell: it opens in your browser; close this window to stop it.\n" +
+    var script = "#!/bin/sh\n# Starts SimFell: it opens in your browser; close this window to stop it.\n" +
                     "cd \"$(dirname \"$0\")/Runtime\" && exec ./FellowshipSim.Service --Local=true \"$@\"\n";
-    string name = rid.StartsWith(MacRidPrefix, StringComparison.Ordinal) ? MacScriptName : LinuxScriptName;
+    var name = rid.StartsWith(MacRidPrefix, StringComparison.Ordinal) ? MacScriptName : LinuxScriptName;
     File.WriteAllText(Path.Combine(app, name), script.Replace("\r\n", "\n"));
     if (!OperatingSystem.IsWindows())
     {
@@ -95,7 +95,7 @@ else
 }
 
 // Only the app: no debug symbols.
-foreach (string pdb in Directory.EnumerateFiles(runtime, SymbolsPattern)) File.Delete(pdb);
+foreach (var pdb in Directory.EnumerateFiles(runtime, SymbolsPattern)) File.Delete(pdb);
 
 if (File.Exists(zip)) File.Delete(zip);
 ZipFile.CreateFromDirectory(app, zip, CompressionLevel.Optimal, includeBaseDirectory: true);
@@ -105,7 +105,7 @@ return 0;
 void Run(params string[] args)
 {
     var start = new ProcessStartInfo(DotnetCommand) { WorkingDirectory = root };
-    foreach (string arg in args) start.ArgumentList.Add(arg);
+    foreach (var arg in args) start.ArgumentList.Add(arg);
     // Every core: MSBuild builds the projects side by side.
     start.ArgumentList.Add($"-maxcpucount:{Environment.ProcessorCount}");
     using var process = Process.Start(start)!;

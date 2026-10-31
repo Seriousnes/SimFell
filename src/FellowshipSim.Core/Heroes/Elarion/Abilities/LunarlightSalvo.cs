@@ -64,9 +64,9 @@ public sealed class LunarlightSalvo : Ability
         if (hit.Target is not { } enemy || hit.SimContext is not { } ctx || hit.Amount <= 0 || _noSalvo.Contains(hit.AbilityId)) return;
         var now = hit.Timestamp;
         if (!enemy.Auras.HasAura(LunarlightMark.Debuff, now)) return;
-        double chance = hit.IsCrit ? CritChance : Chance;
+        var chance = hit.IsCrit ? CritChance : Chance;
         foreach (var factor in ChanceMultipliers) chance *= factor(hit.AbilityId);
-        bool keepsMark = KeepsMarkFor.Contains(hit.AbilityId);
+        var keepsMark = KeepsMarkFor.Contains(hit.AbilityId);
         if (!ctx.Outcomes.RollProc(keepsMark ? KeptMarkProcKey : ProcKey, Math.Min(1.0, chance), ctx, enemy)) return;
         if (!keepsMark) enemy.Auras.ConsumeStack(LunarlightMark.Debuff, now);
         DealDamage(ctx, enemy);

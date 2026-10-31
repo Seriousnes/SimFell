@@ -13,7 +13,7 @@
     {
         get
         {
-            string? kind = Kind?.ToString().ToLowerInvariant();
+            var kind = Kind?.ToString().ToLowerInvariant();
             return Error ? (kind == null ? "error" : $"{kind} error") : kind;
         }
     }

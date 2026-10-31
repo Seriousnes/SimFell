@@ -30,7 +30,7 @@ public class CorrosiveSpill : Talent
         hero.OnResourceSpent += (resource, amount, _) =>
         {
             if (resource != Mara.ComboPoints || mara.SimContext is not { } ctx) return;
-            for (int i = 0; i < (int)amount; i++)
+            for (var i = 0; i < (int)amount; i++)
             {
                 if (!ctx.Outcomes.RollProc(ProcKey, ChancePerComboPoint, ctx)) continue;
                 PeriodicEffect.BeginHasted(ctx, mara, TalentName, SpillSeconds, TickSeconds, tickOnStart: false, partialFinalTick: false,

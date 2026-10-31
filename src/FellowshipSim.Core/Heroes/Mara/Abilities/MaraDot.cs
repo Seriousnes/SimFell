@@ -99,7 +99,7 @@ public abstract class MaraDot : MaraAbility
     /// <summary>Unhasted seconds between two ticks, with the tick rate bonuses.</summary>
     protected double HastedPeriod(SimTime now)
     {
-        double bonus = 0.0;
+        var bonus = 0.0;
         foreach (var rateBonus in TickRateBonuses) bonus += rateBonus(now);
         return PeriodSeconds / (1.0 + bonus);
     }
@@ -113,10 +113,10 @@ public abstract class MaraDot : MaraAbility
     {
         SameFight(ctx);
         var now = ctx.CurrentTime;
-        double duration = durationSeconds ?? DurationSeconds;
+        var duration = durationSeconds ?? DurationSeconds;
         if (_active.TryGetValue(target, out var dot))
         {
-            double left = Math.Max(0.0, (dot.End - now).TotalSeconds);
+            var left = Math.Max(0.0, (dot.End - now).TotalSeconds);
             dot.End = now + SimTime.FromSeconds(duration + Math.Min(left, duration * RefreshCarryoverFraction));
             ScheduleEnd(ctx, dot);
             target.Auras.Apply(Debuff, now);
@@ -134,7 +134,7 @@ public abstract class MaraDot : MaraAbility
     /// <summary>Applies one more stack (up to <paramref name="maxStacks"/>), refreshing the duration.</summary>
     protected Instance ApplyStack(SimulationContext ctx, EnemyTarget target, int maxStacks)
     {
-        bool had = IsOn(target, ctx);
+        var had = IsOn(target, ctx);
         var dot = Apply(ctx, target);
         if (had) dot.Stacks = Math.Min(maxStacks, dot.Stacks + 1);
         return dot;
@@ -167,7 +167,7 @@ public abstract class MaraDot : MaraAbility
         {
             if (_active.GetValueOrDefault(dot.Target) != dot) return;
             // The hasted progress toward the next tick is a partial tick, when enough time passed since the last one.
-            double fraction = dot.Timer is { IsActive: true } timer ? timer.ElapsedBaseSeconds / HastedPeriod(c.CurrentTime) : 0.0;
+            var fraction = dot.Timer is { IsActive: true } timer ? timer.ElapsedBaseSeconds / HastedPeriod(c.CurrentTime) : 0.0;
             if (fraction > 0 && (c.CurrentTime - dot.LastTick).TotalSeconds >= PeriodicEffect.MinHastedPartialTickSeconds - Tolerance.Comparison)
             {
                 Tick(c, dot, Math.Min(fraction, 1.0));

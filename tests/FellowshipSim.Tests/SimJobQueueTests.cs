@@ -64,7 +64,7 @@ public class SimJobQueueTests
         var queue = new SimJobQueue(new SimJobQueueOptions { MaxConcurrentJobs = 1 });
         var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
         var first = queue.Enqueue("a", SimJobKind.Sim, "first", _ => gate.Task);
-        bool ran = false;
+        var ran = false;
         var second = queue.Enqueue("a", SimJobKind.Sim, "second", _ =>
         {
             ran = true;
@@ -132,11 +132,11 @@ public class SimJobQueueTests
         var start = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var latest = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        int events = 0;
+        var events = 0;
         var job = queue.Enqueue("a", SimJobKind.Sim, "sim", async c =>
         {
             await start.Task;
-            for (int i = 1; i <= 1000; i++) c.Report(i / 1000.0, $"step {i}");
+            for (var i = 1; i <= 1000; i++) c.Report(i / 1000.0, $"step {i}");
             return await release.Task;
         });
         queue.Changed += j =>
@@ -202,7 +202,7 @@ public class SimJobQueueTests
     {
         var queue = new SimJobQueue(new SimJobQueueOptions { MaxConcurrentJobs = 1 });
         var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        int moved = 0;
+        var moved = 0;
         queue.QueueMoved += () => Interlocked.Increment(ref moved);
         var running = queue.Enqueue("a", SimJobKind.Sim, "running", _ => gate.Task);
         var first = queue.Enqueue("b", SimJobKind.Sim, "first", _ => gate.Task);
@@ -212,7 +212,7 @@ public class SimJobQueueTests
         Assert.Equal(0, queue.JobsAhead(first));
         Assert.Equal(1, queue.JobsAhead(second));
 
-        int before = moved;
+        var before = moved;
         Assert.True(queue.Cancel("b", first.Id));
         Assert.True(moved > before);
         Assert.Equal(0, queue.JobsAhead(second));

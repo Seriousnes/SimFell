@@ -18,13 +18,13 @@ public sealed partial class DiskBlobStore(string root) : IBlobStore
 
     public async Task<string?> ReadAsync(string key, CancellationToken ct = default)
     {
-        string path = PathOf(key);
+        var path = PathOf(key);
         return File.Exists(path) ? await File.ReadAllTextAsync(path, ct) : null;
     }
 
     public async Task WriteAsync(string key, string text, CancellationToken ct = default)
     {
-        string path = PathOf(key);
+        var path = PathOf(key);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await File.WriteAllTextAsync(path, text, ct);
     }
@@ -37,7 +37,7 @@ public sealed partial class DiskBlobStore(string root) : IBlobStore
 
     public Task<IReadOnlyList<string>> ListAsync(string prefix, CancellationToken ct = default)
     {
-        string folder = PathOf(prefix);
+        var folder = PathOf(prefix);
         IReadOnlyList<string> keys = Directory.Exists(folder)
             ? Directory.GetFiles(folder, AnyFile, SearchOption.AllDirectories)
                 .Select(file => $"{prefix}/{Path.GetRelativePath(folder, file).Replace('\\', '/')}")
@@ -48,7 +48,7 @@ public sealed partial class DiskBlobStore(string root) : IBlobStore
 
     private string PathOf(string key)
     {
-        string[] segments = key.Split('/');
+        var segments = key.Split('/');
         if (!segments.All(IsSegment)) throw new ArgumentException($"'{key}' is not a blob key.", nameof(key));
         return Path.Combine([root, .. segments]);
     }

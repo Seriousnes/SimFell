@@ -22,8 +22,8 @@ public sealed class SavedActionLists(ActionListStore store, ISimEngine engine, V
     /// <summary>A saved action list's text and actions. An unknown hero or list throws <see cref="KeyNotFoundException"/>.</summary>
     public async Task<SavedActionList> ReadAsync(ActionListEntry entry, CancellationToken ct = default)
     {
-        string known = await HeroNamed(entry.Hero, ct) ?? throw new KeyNotFoundException($"No hero named {entry.Hero}.");
-        string text = (entry.BuiltIn ? DefaultActionLists.Read(known, entry.Name) : await store.ReadAsync(visitor, entry with { Hero = known }, ct))
+        var known = await HeroNamed(entry.Hero, ct) ?? throw new KeyNotFoundException($"No hero named {entry.Hero}.");
+        var text = (entry.BuiltIn ? DefaultActionLists.Read(known, entry.Name) : await store.ReadAsync(visitor, entry with { Hero = known }, ct))
                       ?? throw new KeyNotFoundException($"No action list named {entry.Name}.");
         try
         {
@@ -42,7 +42,7 @@ public sealed class SavedActionLists(ActionListStore store, ISimEngine engine, V
     /// </summary>
     public async Task<ActionListEntry> SaveAsync(string hero, string name, IReadOnlyList<Core.APL.AplDocumentAction> actions, CancellationToken ct = default)
     {
-        string known = await HeroNamed(hero, ct) ?? throw new KeyNotFoundException($"No hero named {hero}.");
+        var known = await HeroNamed(hero, ct) ?? throw new KeyNotFoundException($"No hero named {hero}.");
         if (!ActionListStore.IsValidName(name))
         {
             throw new ActionListNotSavedException("Name the list with letters, digits, spaces, '_' or '-' (up to 64 characters).", []);

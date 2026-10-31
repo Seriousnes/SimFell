@@ -31,8 +31,8 @@ public class MonteCarloParallelTests
     {
         const int fights = 96;
         var (single, _) = Run(fights, degreeOfParallelism: 1);
-        int mostHeroes = 0;
-        foreach (int threads in new[] { 2, 4, 8 })
+        var mostHeroes = 0;
+        foreach (var threads in new[] { 2, 4, 8 })
         {
             var (result, heroes) = Run(fights, threads);
             mostHeroes = Math.Max(mostHeroes, heroes);
@@ -48,7 +48,7 @@ public class MonteCarloParallelTests
     {
         const int fights = 32;
         var (result, _) = Run(fights, degreeOfParallelism: 4);
-        for (int i = 0; i < fights; i++)
+        for (var i = 0; i < fights; i++)
         {
             var (fresh, _) = Run(1, degreeOfParallelism: 1, firstSeed: 1 + i);
             Assert.Equal(fresh.IterationDamage[0], result.IterationDamage[i]);
@@ -61,8 +61,8 @@ public class MonteCarloParallelTests
         const int fights = 96;
         var (result, _) = Run(fights, degreeOfParallelism: 8);
         var dps = result.IterationDamage.Select(d => d / Seconds).ToList();
-        double mean = dps.Average();
-        double deviation = Math.Sqrt(dps.Sum(d => (d - mean) * (d - mean)) / fights);
+        var mean = dps.Average();
+        var deviation = Math.Sqrt(dps.Sum(d => (d - mean) * (d - mean)) / fights);
         Assert.Equal(mean, result.MeanDps, mean * 1e-12);
         Assert.Equal(deviation, result.StandardDeviation, deviation * 1e-9);
         Assert.Equal(dps.Min(), result.MinDps);
@@ -74,7 +74,7 @@ public class MonteCarloParallelTests
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
             File.ReadAllText(Path.Combine(AppContext.BaseDirectory, TestPaths.FixturesFolder, TestPaths.RimeCharacterFile)))!;
-        int heroes = 0;
+        var heroes = 0;
         var simulator = new MonteCarloSimulator(() =>
         {
             Interlocked.Increment(ref heroes);

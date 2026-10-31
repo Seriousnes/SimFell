@@ -36,7 +36,7 @@ public class MatriarchMacabre : MaraAbility
     /// <summary>Mara's Spirit ability: it needs and spends the Spirit ability's cost in Spirit Points.</summary>
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)
     {
-        double points = Owner.ResourceAmount(Hero.SpiritPoints);
+        var points = Owner.ResourceAmount(Hero.SpiritPoints);
         if (points < Owner.SpiritAbilityCost)
         {
             reason = explain ? $"{Name} needs {Owner.SpiritAbilityCost:0} Spirit Points (have {points:0.#})" : null;
@@ -60,10 +60,10 @@ public class MatriarchMacabre : MaraAbility
     public void Imitate(SimulationContext ctx, int hits, Action<SimulationContext, double> strike)
     {
         if (!Mara.Auras.HasAura(Buff, ctx.CurrentTime)) return;
-        double sweep = Math.Max(0, hits - 1) * PeriodicEffect.ServerFrameSeconds;
-        for (int clone = 0; clone < Clones; clone++)
+        var sweep = Math.Max(0, hits - 1) * PeriodicEffect.ServerFrameSeconds;
+        for (var clone = 0; clone < Clones; clone++)
         {
-            double delay = CloneDelaySeconds * (clone + 1) + sweep * clone;
+            var delay = CloneDelaySeconds * (clone + 1) + sweep * clone;
             ctx.Schedule(SimTime.FromSeconds(delay), c => strike(c, ClonePower), "Shadowy clone");
         }
     }

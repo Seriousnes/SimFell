@@ -34,7 +34,7 @@ public class CascadingInferno : Talent
             if (ability is Detonate) hero.Auras.Apply(Buff, now);
         };
         // The empowered wave is decided as it resolves: the cast consumes the stacks.
-        bool empowered = false;
+        var empowered = false;
         hero.OnCastResolving += cast =>
         {
             empowered = false;

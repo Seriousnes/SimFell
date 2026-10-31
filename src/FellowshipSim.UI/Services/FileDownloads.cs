@@ -22,7 +22,7 @@ public static class FileDownloads
     public static string FileName(string name)
     {
         var invalid = Path.GetInvalidFileNameChars().Concat(['/', '\\', ':', '*', '?', '"', '<', '>', '|']).ToHashSet();
-        string file = new string(name.Trim().Select(c => invalid.Contains(c) ? '_' : c).ToArray()).Trim('.', ' ');
+        var file = new string(name.Trim().Select(c => invalid.Contains(c) ? '_' : c).ToArray()).Trim('.', ' ');
         return file.Length > 0 ? file : DefaultFileName;
     }
 }

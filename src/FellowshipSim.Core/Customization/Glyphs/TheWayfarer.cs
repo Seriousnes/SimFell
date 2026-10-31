@@ -58,7 +58,7 @@ public class TheWayfarer : Glyph
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability.Category != AbilityCategory.Core) return;
-            double reduction = Math.Clamp(ability.Cooldown.TotalSeconds * ReductionPerCooldownSecond, MinReductionSeconds, MaxReductionSeconds);
+            var reduction = Math.Clamp(ability.Cooldown.TotalSeconds * ReductionPerCooldownSecond, MinReductionSeconds, MaxReductionSeconds);
             if (hero.Auras.Get(Cooldown, now) is not { } cooldown || cooldown.ExpiresAt == SimTime.Infinite) return;
             if (cooldown.ExpiresAt - SimTime.FromSeconds(reduction) <= now) hero.Auras.Remove(Cooldown, now);
             else hero.Auras.Extend(Cooldown, SimTime.FromSeconds(-reduction));

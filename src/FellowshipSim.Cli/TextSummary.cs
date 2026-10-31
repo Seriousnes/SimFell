@@ -23,8 +23,8 @@ public static class TextSummary
             .Select(a => new SummaryRow(a.Key, a.Value.ToString("N1", culture)))
             .ToList();
         var all = rows.Concat(abilities).ToList();
-        int labelWidth = all.Max(r => r.Label.Length);
-        int valueWidth = all.Max(r => r.Value.Length);
+        var labelWidth = all.Max(r => r.Label.Length);
+        var valueWidth = all.Max(r => r.Value.Length);
 
         var builder = new StringBuilder();
         foreach (var (label, value) in rows) builder.AppendLine($"{label.PadRight(labelWidth)}  {value.PadLeft(valueWidth)}");

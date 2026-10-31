@@ -19,8 +19,8 @@ public class BraveMachinations : Aspect
     {
         if (hero.WeaponAbility is not { } weapon) return;
         weapon.CritChanceBonus += ForRank(CritChanceByRank);
-        double reduction = ForRank(CooldownReductionByRank);
-        bool reducedThisCast = false;
+        var reduction = ForRank(CooldownReductionByRank);
+        var reducedThisCast = false;
         // The fight the flag belongs to (each sim iteration and replay has its own).
         SimulationContext? fight = null;
         hero.OnCastCompleted += (ability, _, _) =>

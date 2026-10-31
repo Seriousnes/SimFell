@@ -19,7 +19,7 @@
         </div>
         @if (Building && ConditionBuilder.Groups(Rows!).ToList() is { Count: > 0 } groups)
         {
-            bool allClosed = groups.All(g => g.Collapsed);
+            var allClosed = groups.All(g => g.Collapsed);
             <button type="button" class="link-button" @onclick="() => Arrange(next => { foreach (var conditionGroup in ConditionBuilder.Groups(next)) conditionGroup.Collapsed = !allClosed; })">
                 @(allClosed ? "Open all groups" : "Close all groups")
             </button>
@@ -110,7 +110,7 @@
     {
         var next = (Rows ?? []).Select(r => r.Clone()).ToList();
         change(next);
-        string written = ConditionBuilder.Text(next);
+        var written = ConditionBuilder.Text(next);
         _built = new BuiltRows(written, next);
         return OnChange.InvokeAsync(written);
     }
@@ -129,7 +129,7 @@
     /// </summary>
     private void ToggleGroup(ConditionRow group)
     {
-        int at = ConditionBuilder.Groups(Rows ?? []).ToList().IndexOf(group);
+        var at = ConditionBuilder.Groups(Rows ?? []).ToList().IndexOf(group);
         if (at < 0) return;
         Arrange(next =>
         {
@@ -141,11 +141,11 @@
     /// <summary>The rows of a group, then its empty row. <paramref name="updateRows"/> changes the rows on a copy of the condition.</summary>
     private void RenderItems(RenderTreeBuilder __builder, List<ConditionRow> items, string key, Func<Action<List<ConditionRow>>, Task> updateRows, int depth, bool nested = false)
     {
-        for (int index = 0; index < items.Count; index++)
+        for (var index= 0; index < items.Count; index++)
         {
             var item = items[index];
-            int at = index;
-            string rowKey = $"{key}:{at}";
+            var at = index;
+            var rowKey = $"{key}:{at}";
             Task Update(Action<ConditionRow> patch) => updateRows(rows => patch(rows[at]));
             Task Delete() => updateRows(rows => rows.RemoveAt(at));
             Task Duplicate() => updateRows(rows => rows.Insert(at + 1, rows[at].Clone()));
@@ -209,17 +209,17 @@
     /// </summary>
     private void RenderSides(RenderTreeBuilder __builder, ConditionRow row, string key, Func<Action<ConditionRow>, Task> update, Func<string, Task>? addRow)
     {
-        bool lastSide = row.Comparisons.Count == 0;
+        var lastSide = row.Comparisons.Count == 0;
         RenderTerms(__builder, row.Left ?? [], $"{key}:left", update, r => r.Left!, lastSide, lastSide ? addRow : null);
-        for (int index = 0; index < row.Comparisons.Count; index++)
+        for (var index= 0; index < row.Comparisons.Count; index++)
         {
             var comparison = row.Comparisons[index];
-            int at = index;
-            bool last = at == row.Comparisons.Count - 1;
+            var at = index;
+            var last = at == row.Comparisons.Count - 1;
             <select @key="@($"{key}:{at}:comparison")" aria-label="Comparison" class="comparison" value="@comparison.Comparison"
                     @onchange="e => update(r => { if (string.IsNullOrEmpty((string?)e.Value)) r.Comparisons.RemoveAt(at); else r.Comparisons[at].Comparison = (string)e.Value!; })">
                 <option value=""></option>
-                @foreach (string symbol in ConditionBuilder.Comparisons)
+                @foreach (var symbol in ConditionBuilder.Comparisons)
                 {
                     <option @key="symbol" value="@symbol">@symbol</option>
                 }
@@ -236,17 +236,17 @@
     private void RenderTerms(RenderTreeBuilder __builder, List<ConditionTerm> terms, string key, Func<Action<ConditionRow>, Task> update,
         Func<ConditionRow, List<ConditionTerm>> locate, bool lastSide, Func<string, Task>? addRow)
     {
-        for (int index = 0; index < terms.Count; index++)
+        for (var index= 0; index < terms.Count; index++)
         {
             var term = terms[index];
-            int at = index;
-            string termKey = $"{key}.{at}";
+            var at = index;
+            var termKey = $"{key}.{at}";
             if (at > 0)
             {
                 <select @key="@($"{termKey}:operator")" aria-label="Operator" class="operator" value="@(term.Operator ?? "")"
                         @onchange="e => update(r => { if (string.IsNullOrEmpty((string?)e.Value)) locate(r).RemoveAt(at); else locate(r)[at].Operator = (string)e.Value!; })">
                     <option value=""></option>
-                    @foreach (string symbol in ConditionBuilder.Operators)
+                    @foreach (var symbol in ConditionBuilder.Operators)
                     {
                         <option @key="symbol" value="@symbol">@symbol</option>
                     }
@@ -258,7 +258,7 @@
                 @onchange="e => PickName(e, picked => AddToSide(picked, update, locate, addRow))">
             <option value=""></option>
             <optgroup label="Arithmetic">
-                @foreach (string symbol in ConditionBuilder.Operators)
+                @foreach (var symbol in ConditionBuilder.Operators)
                 {
                     <option @key="symbol" value="@(OperatorPick + symbol)">@symbol</option>
                 }
@@ -266,7 +266,7 @@
             @if (lastSide)
             {
                 <optgroup label="Comparison">
-                    @foreach (string symbol in ConditionBuilder.Comparisons)
+                    @foreach (var symbol in ConditionBuilder.Comparisons)
                     {
                         <option @key="symbol" value="@(ComparisonPick + symbol)">@symbol</option>
                     }
@@ -313,7 +313,7 @@
                 {
                     <option value="@term.Prefix">@ConditionBuilder.PrefixLabel(term.Prefix)</option>
                 }
-                @foreach (string prefix in ConditionBuilder.Prefixes)
+                @foreach (var prefix in ConditionBuilder.Prefixes)
                 {
                     <option @key="prefix" value="@prefix">@ConditionBuilder.PrefixLabel(prefix)</option>
                 }

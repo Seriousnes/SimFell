@@ -50,7 +50,7 @@ public class RisingTalons : IceComet
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
-        int spikes = Math.Max(1, Rime.WinterOrbs);
+        var spikes = Math.Max(1, Rime.WinterOrbs);
         Rime.SpendWinterOrbs(spikes, ctx);
 
         // Combat logs: every wave keeps the damage of the cast, even if buffs drop before it lands
@@ -58,20 +58,20 @@ public class RisingTalons : IceComet
         // (@ 32.358: an enemy appearing after the cast is hit by every wave). The target falloff is fixed at the cast too
         // (PrkThcx8Y3RgVXyq @ 38.61: waves on 19, 7 and 3 enemies deal the same per hit).
         var now = ctx.CurrentTime;
-        int enemiesAtCast = Math.Max(1, ctx.ActiveEnemies.Count);
-        double falloff = enemiesAtCast > TargetThreshold ? Math.Sqrt(TargetThreshold / enemiesAtCast) : 1.0;
-        double damage = BaseDamage(ctx, null) * CastDamageMultiplier * falloff;
+        var enemiesAtCast = Math.Max(1, ctx.ActiveEnemies.Count);
+        var falloff = enemiesAtCast > TargetThreshold ? Math.Sqrt(TargetThreshold / enemiesAtCast) : 1.0;
+        var damage = BaseDamage(ctx, null) * CastDamageMultiplier * falloff;
         // The waves keep the crit chance of the cast, with what talents added to it (it counts as an Ice Comet for them).
-        double critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
-        double critMultiplier = CritMultiplierAt(now);
-        for (int i = 0; i < spikes; i++)
+        var critChance = Owner.CritChance(now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
+        var critMultiplier = CritMultiplierAt(now);
+        for (var i = 0; i < spikes; i++)
         {
-            bool first = i == 0;
+            var first = i == 0;
             ctx.Schedule(SimTime.FromSeconds(FirstWaveDelaySeconds + i * WaveIntervalSeconds), c =>
             {
                 // The first wave is the comet's impact for what the next comet to deal damage uses up (Frostweaver's
                 // Wrath): it reads the impact bonuses, the later waves do not (per the user).
-                double impactCrit = 0.0;
+                var impactCrit = 0.0;
                 if (first) foreach (var bonus in ImpactCritChanceBonuses) impactCrit += bonus(c);
                 // Each wave is an impact with the damage of the cast; the falloff is already in it.
                 Impact(c, target, damage, critChance + impactCrit, critMultiplier, fixedFalloff: 1.0);

@@ -33,7 +33,7 @@ public class HemorrhagingStrike : Finisher
     {
         DealDamage(ctx, target);
         Struck?.Invoke(ctx, target, points);
-        double seconds = BleedSeconds(points);
+        var seconds = BleedSeconds(points);
         Mara.Hemorrhage.ApplyTo(ctx, target, seconds);
         foreach (var extra in ExtraBleedTargets)
         {

@@ -55,7 +55,7 @@ public class BuildShareLinkTests
     public void A_Link_Opens_The_Build_It_Was_Made_From()
     {
         var build = Build();
-        string link = BuildShareLink.Create(Site, build);
+        var link = BuildShareLink.Create(Site, build);
 
         Assert.StartsWith($"{Site}build#elarion.", link);
         Assert.EndsWith(".TTV%20TheSpryFrog", link);
@@ -90,7 +90,7 @@ public class BuildShareLinkTests
         var build = Build();
         build.Name = name;
 
-        string link = BuildShareLink.Create(Site, build);
+        var link = BuildShareLink.Create(Site, build);
 
         Assert.False(link.EndsWith('.'));
         Assert.Equal(name, BuildShareLink.TryRead(link)!.Name);
@@ -101,7 +101,7 @@ public class BuildShareLinkTests
     {
         var build = Build();
         build.Name = "";
-        string link = BuildShareLink.Create(Site, build);
+        var link = BuildShareLink.Create(Site, build);
 
         Assert.Equal(2, link[(link.IndexOf('#') + 1)..].Split('.').Length);
         Assert.Equal("Elarion", BuildShareLink.TryRead(link)!.Name);
@@ -110,7 +110,7 @@ public class BuildShareLinkTests
     [Fact]
     public void A_Link_Pasted_With_Text_Around_It_Reads()
     {
-        string link = BuildShareLink.Create(Site, Build());
+        var link = BuildShareLink.Create(Site, Build());
 
         var read = BuildShareLink.TryRead($"try this one\n{link} it's good");
 
@@ -130,8 +130,8 @@ public class BuildShareLinkTests
     [Fact]
     public void A_Link_Cut_Short_Says_So()
     {
-        string link = BuildShareLink.Create(Site, Build());
-        int dot = link.LastIndexOf('.');
+        var link = BuildShareLink.Create(Site, Build());
+        var dot = link.LastIndexOf('.');
 
         Assert.Throws<FormatException>(() => BuildShareLink.TryRead(link[..(dot - 4)]));
     }

@@ -57,7 +57,7 @@ public class GemSourcesTests
         Assert.Equal(logged, build.GemPower);
 
         // Without the relic, no 25%.
-        int relic = build.Relic1ItemId == 5921 ? 1 : 2;
+        var relic = build.Relic1ItemId == 5921 ? 1 : 2;
         if (relic == 1) editor.Relic1 = null; else editor.Relic2 = null;
         Assert.Equal(1200, editor.Gem(GemColor.Amethyst));
     }
@@ -86,7 +86,7 @@ public class GemSourcesTests
     public void A_Picked_Gem_Fills_The_Next_Socket_Until_All_Four_Are_Filled()
     {
         var editor = new BuildEditor(BuildEditor.NewBuild("Rime"));
-        for (int i = 0; i < GemItem.Sockets; i++) Assert.True(editor.AddGem(24));
+        for (var i = 0; i < GemItem.Sockets; i++) Assert.True(editor.AddGem(24));
         Assert.False(editor.AddGem(46));
         Assert.Equal(GemItem.Sockets, editor.SocketedCount(24));
         Assert.Equal(GemItem.Sockets * GemItem.SplendidPower, editor.Gem(GemColor.Amethyst));
@@ -112,7 +112,7 @@ public class GemSourcesTests
     public void A_Profile_Keeps_The_Sockets_And_Gear_Bonuses()
     {
         var build = Read();
-        string text = new SimcProfile(build, "").Format();
+        var text = new SimcProfile(build, "").Format();
         Assert.Contains("gem_sockets=", text);
         Assert.Contains("gear_gem_bonuses=", text);
         var read = SimcProfile.Parse(text).Build;

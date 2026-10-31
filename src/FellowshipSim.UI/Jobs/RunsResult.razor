@@ -57,10 +57,10 @@ else
                     </tr>
                 </thead>
                 <tbody>
-                    @{ int rank = 0; }
+                    @{ var rank = 0; }
                     @foreach (var run in Runs.OrderByDescending(r => r.Result.MeanDps))
                     {
-                        bool isBase = run == Base;
+                        var isBase = run == Base;
                         if (!isBase) rank++;
                         <tr class="@(isBase ? "base" : "")">
                             <td>@(isBase ? "–" : rank.ToString(CultureInfo.CurrentCulture))</td>
@@ -100,8 +100,8 @@ else
                                     <i class="zero" style="left: @CssNumber(Position(0))%"></i>
                                     @if (!isBase)
                                     {
-                                        double change = Change(run);
-                                        double whisker = DifferenceMargin(run) / Base.Result.MeanDps * 100;
+                                        var change = Change(run);
+                                        var whisker = DifferenceMargin(run) / Base.Result.MeanDps * 100;
                                         <i class="bar @Class(run)" style="@Span(Math.Min(0, change), Math.Max(0, change))"></i>
                                         <i class="whisker" style="@Span(change - whisker, change + whisker)"></i>
                                     }
@@ -182,7 +182,7 @@ else
     /// <summary>1 for a clear gain, -1 for a clear loss, 0 inside the margin.</summary>
     private int Verdict(SimRun run)
     {
-        double difference = run.Result.MeanDps - Base.Result.MeanDps;
+        var difference = run.Result.MeanDps - Base.Result.MeanDps;
         return Math.Abs(difference) <= DifferenceMargin(run) ? 0 : Math.Sign(difference);
     }
 
@@ -198,14 +198,16 @@ else
     // The chart's range in percent: every change and its whisker, and zero, with a little room.
     private ChartRange Range()
     {
-        double low = 0, high = 0;
+        var low = 0.0;
+        var high = 0.0;
         foreach (var run in Others)
         {
-            double change = Change(run), whisker = DifferenceMargin(run) / Math.Max(1, Base.Result.MeanDps) * PercentScale;
+            var change = Change(run);
+            var whisker = DifferenceMargin(run) / Math.Max(1, Base.Result.MeanDps) * PercentScale;
             low = Math.Min(low, change - whisker);
             high = Math.Max(high, change + whisker);
         }
-        double pad = Math.Max(MinRangePadding, (high - low) * RangePaddingShare);
+        var pad = Math.Max(MinRangePadding, (high - low) * RangePaddingShare);
         return new ChartRange(low - pad, high + pad);
     }
 

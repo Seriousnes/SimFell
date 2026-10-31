@@ -63,10 +63,10 @@ public class MonteCarloSeedTests
     [InlineData(true, 300, 1)]
     public void A_Hero_After_A_Fight_Fights_As_A_Fresh_Hero(bool weapon, int seconds, int targets)
     {
-        string apl = weapon ? WeaponApl : Apl;
+        var apl = weapon ? WeaponApl : Apl;
         // One hero: fights 2-10 each follow another fight.
         var reused = Run(apl, iterations: 10, firstSeed: 1, seconds, targets);
-        for (int i = 1; i < 10; i++)
+        for (var i = 1; i < 10; i++)
         {
             Assert.Equal(Run(apl, iterations: 1, firstSeed: 1 + i, seconds, targets).IterationDamage[0], reused.IterationDamage[i]);
         }

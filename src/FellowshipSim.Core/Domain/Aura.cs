@@ -52,8 +52,8 @@ public sealed partial record AuraDef(string Name, int LogId, SimTime Duration, i
 
     private static int MaskOf(IReadOnlyList<StatModifier> modifiers)
     {
-        int mask = 0;
-        for (int i = 0; i < modifiers.Count; i++) mask |= MaskOf(modifiers[i].Type);
+        var mask = 0;
+        for (var i = 0; i < modifiers.Count; i++) mask |= MaskOf(modifiers[i].Type);
         return mask;
     }
 
@@ -197,15 +197,15 @@ public class AuraContainer
     private void NotifyTimers(Aura aura)
     {
         var mods = aura.Modifiers;
-        bool haste = false;
-        for (int i = 0; i < mods.Count && !haste; i++) haste = mods[i].Type is StatType.Haste or StatType.HasteRating;
+        var haste = false;
+        for (var i = 0; i < mods.Count && !haste; i++) haste = mods[i].Type is StatType.Haste or StatType.HasteRating;
         if (!haste) return;
         // Timers started meanwhile are new (they read haste themselves); finished ones are only cleared out between updates.
         _notifying++;
         try
         {
-            int count = _timers.Count;
-            for (int i = 0; i < count; i++) _timers[i].Update();
+            var count = _timers.Count;
+            for (var i = 0; i < count; i++) _timers[i].Update();
         }
         finally { _notifying--; }
     }
@@ -240,9 +240,9 @@ public class AuraContainer
         var expires = def.Duration == SimTime.Infinite ? SimTime.Infinite : now + def.Duration + SimTime.FromSeconds(ExpiryLagSeconds);
         if (_auras.TryGetValue(def.Key, out var existing))
         {
-            int before = existing.Stacks;
+            var before = existing.Stacks;
             var previousExpiry = existing.ExpiresAt;
-            int changedStats = 0;
+            var changedStats = 0;
             if (!ReferenceEquals(existing.Def, def) && existing.Def != def)
             {
                 // Re-applied with different values (e.g. a bonus recomputed from current stats): the new values win.
@@ -260,7 +260,7 @@ public class AuraContainer
             }
             else if (def.RefreshCarryoverFraction > 0 && expires != SimTime.Infinite && previousExpiry > now)
             {
-                double left = (previousExpiry - now).TotalSeconds;
+                var left = (previousExpiry - now).TotalSeconds;
                 expires += SimTime.FromSeconds(Math.Min(left, def.Duration.TotalSeconds * def.RefreshCarryoverFraction));
             }
             existing.ExpiresAt = expires;
@@ -338,7 +338,7 @@ public class AuraContainer
         {
             if (aura.Stacks > count)
             {
-                int before = aura.Stacks;
+                var before = aura.Stacks;
                 aura.Stacks -= count;
                 StatsChanged(aura.Def.StatMask);
                 OnStacksLost?.Invoke(aura, before, now);
@@ -355,7 +355,7 @@ public class AuraContainer
             if (_activeSince.Remove(key, out var start))
             {
                 var endTime = aura.ExpiresAt != SimTime.Infinite && aura.ExpiresAt < now ? aura.ExpiresAt : now;
-                long dur = Math.Max(0, (endTime - start).Milliseconds);
+                var dur = Math.Max(0, (endTime - start).Milliseconds);
                 _uptimeMs[key] = _uptimeMs.GetValueOrDefault(key, 0L) + dur;
             }
             OnRemoved?.Invoke(aura, now);
@@ -440,7 +440,7 @@ public class AuraContainer
     private void LoseStackOnExpiry(Aura aura)
     {
         var at = aura.ExpiresAt;
-        int before = aura.Stacks;
+        var before = aura.Stacks;
         aura.Stacks--;
         aura.ExpiresAt = at + aura.Duration + SimTime.FromSeconds(ExpiryLagSeconds);
         StatsChanged(aura.Def.StatMask);
@@ -456,22 +456,22 @@ public class AuraContainer
     public double Fold(StatType type, double baseValue, SimTime now = default)
     {
         CleanExpired(now);
-        int statIndex = (int)type;
+        var statIndex = (int)type;
         if (_foldVersions[statIndex] != _statVersions[statIndex]) Refold(type);
         return _folds[statIndex].Apply(baseValue);
     }
 
     private void Refold(StatType type)
     {
-        int statIndex = (int)type;
-        int stat = AuraDef.MaskOf(type);
+        var statIndex = (int)type;
+        var stat = AuraDef.MaskOf(type);
         var fold = new ModifierFold();
         foreach (var aura in _auras.Values)
         {
             // An aura with no modifier of the stat adds nothing to its fold.
             if (!aura.Def.Changes(stat)) continue;
             var mods = aura.Modifiers;
-            for (int i = 0; i < mods.Count; i++)
+            for (var i = 0; i < mods.Count; i++)
             {
                 if (mods[i].Type == type) fold.Accept(mods[i], aura.Stacks);
             }
@@ -488,21 +488,21 @@ public class AuraContainer
     public double SumBonuses(StatType type, SimTime now = default)
     {
         CleanExpired(now);
-        int statIndex = (int)type;
+        var statIndex = (int)type;
         if (_bonusVersions[statIndex] != _statVersions[statIndex]) Resum(type);
         return _bonuses[statIndex];
     }
 
     private void Resum(StatType type)
     {
-        int statIndex = (int)type;
-        int stat = AuraDef.MaskOf(type);
-        double sum = 0.0;
+        var statIndex = (int)type;
+        var stat = AuraDef.MaskOf(type);
+        var sum = 0.0;
         foreach (var aura in _auras.Values)
         {
             if (!aura.Def.Changes(stat)) continue;
             var mods = aura.Modifiers;
-            for (int i = 0; i < mods.Count; i++)
+            for (var i = 0; i < mods.Count; i++)
             {
                 if (mods[i].Type == type) sum += mods[i].Value - 1.0;
             }
@@ -518,7 +518,7 @@ public class AuraContainer
     {
         _auras.Clear();
         _activeSince.Clear();
-        for (int t = 0; t < StatTypes; t++) _statVersions[t]++;
+        for (var t = 0; t < StatTypes; t++) _statVersions[t]++;
         _nextExpiry = SimTime.Infinite;
         _expiry?.Cancel();
         _expiry = null;
@@ -528,7 +528,7 @@ public class AuraContainer
     {
         foreach (var (key, start) in _activeSince)
         {
-            long dur = Math.Max(0, (combatEndTime - start).Milliseconds);
+            var dur = Math.Max(0, (combatEndTime - start).Milliseconds);
             _uptimeMs[key] = _uptimeMs.GetValueOrDefault(key, 0L) + dur;
         }
         _activeSince.Clear();

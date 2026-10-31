@@ -24,8 +24,8 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        string runtime = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, RuntimeFolder);
-        string app = Path.Combine(runtime, AppExe);
+        var runtime = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, RuntimeFolder);
+        var app = Path.Combine(runtime, AppExe);
         if (!File.Exists(app))
         {
             MessageBox.Show($"SimFell could not find {Path.Combine(RuntimeFolder, AppExe)} beside SimFell.exe. Extract the whole SimFell folder from the zip and run SimFell.exe from it.",

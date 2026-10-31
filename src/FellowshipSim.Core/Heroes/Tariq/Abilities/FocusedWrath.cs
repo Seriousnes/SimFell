@@ -42,7 +42,7 @@ public class FocusedWrath : TariqAbility
     /// </summary>
     public static double Spend(Tariq hero, double baseCost, SimulationContext ctx)
     {
-        bool focused = hero.Auras.HasAura(Buff, ctx.CurrentTime);
+        var focused = hero.Auras.HasAura(Buff, ctx.CurrentTime);
         hero.SpendFury(focused ? baseCost * CostMultiplier : baseCost, ctx);
         if (!focused) return 1.0;
         hero.Auras.ConsumeStack(Buff, ctx.CurrentTime);

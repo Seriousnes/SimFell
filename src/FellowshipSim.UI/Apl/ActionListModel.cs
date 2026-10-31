@@ -30,14 +30,14 @@ public static partial class ActionListModel
     /// <summary>"run_action_list" -> "Run action list".</summary>
     public static string ListActionName(string name)
     {
-        string words = name.Replace('_', ' ');
+        var words = name.Replace('_', ' ');
         return words.Length == 0 ? words : char.ToUpperInvariant(words[0]) + words[1..];
     }
 
     public static string ActionTitle(AplVocabulary vocabulary, EditorAction action)
     {
         if (IsListAction(vocabulary, action)) return $"{ListActionName(action.Ability)}: {(string.IsNullOrEmpty(action.ActionList) ? "pick a list" : action.ActionList)}";
-        string name = AbilityName(vocabulary, action.Ability);
+        var name = AbilityName(vocabulary, action.Ability);
         return name.Length > 0 ? name : "Pick an ability";
     }
 
@@ -74,7 +74,7 @@ public static partial class ActionListModel
     /// <summary>The warning for a list named by a run_action_list that can cast nothing.</summary>
     public static string? ListWarning(AplVocabulary vocabulary, IReadOnlyList<ActionList> lists, ActionList list)
     {
-        bool runBy = lists.Any(l => l.Actions.Any(a => IsRunAction(vocabulary, a) && a.ActionList == list.Name));
+        var runBy = lists.Any(l => l.Actions.Any(a => IsRunAction(vocabulary, a) && a.ActionList == list.Name));
         if (!runBy || AlwaysCasts(vocabulary, lists, list.Name, [])) return null;
         return "A Run action list action names this list. When nothing here is ready, the hero casts nothing. " +
                $"End it with an action that is always ready{Example(vocabulary)}.";

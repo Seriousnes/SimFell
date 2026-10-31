@@ -81,7 +81,7 @@ public static class Fight
         var ctx = new SimulationContext(hero);
         hero.ResetForIteration();
         hero.BeginFight(ctx);
-        for (int i = 1; i <= targets; i++)
+        for (var i = 1; i <= targets; i++)
         {
             ctx.AddEnemy(MonteCarloSimulator.TrainingMobIdBase + i, i, $"Training Mob {i}", maxHealth: MonteCarloSimulator.TrainingMobMaxHealth);
         }
@@ -97,8 +97,8 @@ public static class Fight
     {
         while (ctx.CurrentTime < until)
         {
-            bool free = hero.CurrentCast == null && hero.CurrentChannel == null && ctx.CurrentTime >= hero.GlobalCooldownEndTime;
-            bool acted = free && actions.TryAct(hero, ctx);
+            var free = hero.CurrentCast == null && hero.CurrentChannel == null && ctx.CurrentTime >= hero.GlobalCooldownEndTime;
+            var acted = free && actions.TryAct(hero, ctx);
             if (counts != null)
             {
                 counts.Passes++;
@@ -136,11 +136,11 @@ public static class Fight
     {
         for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
         {
-            string local = Path.Combine(dir.FullName, FixturesFolder, name);
+            var local = Path.Combine(dir.FullName, FixturesFolder, name);
             if (File.Exists(local)) return local;
             if (File.Exists(Path.Combine(dir.FullName, SolutionFile)))
             {
-                foreach (string path in new[]
+                foreach (var path in new[]
                          {
                              Path.Combine(dir.FullName, "benchmarks", "FellowshipSim.Benchmarks", FixturesFolder, name),
                              Path.Combine(dir.FullName, "tests", "FellowshipSim.Tests", FixturesFolder, name),

@@ -36,8 +36,8 @@ public class Avalanche : Talent
         foreach (var source in hero.Abilities.OfType<IceComet>()) source.Struck += (ctx, target) =>
         {
             if (!ctx.Outcomes.RollProc(ProcKey, AnyExtraChance, ctx)) return;
-            int extra = ctx.Outcomes.RollProc(SecondProcKey, SecondExtraChance, ctx) ? MaxExtraComets : 1;
-            for (int i = 1; i <= extra; i++)
+            var extra = ctx.Outcomes.RollProc(SecondProcKey, SecondExtraChance, ctx) ? MaxExtraComets : 1;
+            for (var i = 1; i <= extra; i++)
             {
                 comet.FreeCast(ctx, target, source: this, countsAsCast: false, impactDelaySeconds: CometSpacingSeconds * i);
             }

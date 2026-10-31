@@ -36,8 +36,8 @@ public class FireBall : ArdeosAbility
     {
         TriggerCooldown(ctx);
         // What talents added to the cast (Reign of Fire's crit) goes with the ball.
-        double castCrit = CurrentCast?.CritChance ?? 0.0;
-        double castDamage = CastDamageMultiplier;
+        var castCrit = CurrentCast?.CritChance ?? 0.0;
+        var castDamage = CastDamageMultiplier;
         ctx.Schedule(SimTime.FromSeconds(ImpactDelaySeconds), c => Strike(c, target, castCrit, castDamage), Name);
     }
 
@@ -47,7 +47,7 @@ public class FireBall : ArdeosAbility
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         if (struck.Count == 0) return;
-        double falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
+        var falloff = struck.Count > TargetThreshold ? Math.Sqrt(TargetThreshold / struck.Count) : 1.0;
         foreach (var enemy in struck)
         {
             DealDamage(ctx, enemy, damageMultiplier: falloff * castDamage, extraCritChance: castCrit, onLanded: (c, dealt) =>
