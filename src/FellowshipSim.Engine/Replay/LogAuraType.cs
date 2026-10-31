@@ -5,14 +5,14 @@ namespace FellowshipSim.Engine.Replay;
 /// <summary>The combat log event types that change an aura.</summary>
 public enum LogAuraType
 {
-    [JsonStringEnumMemberName("applybuff")] ApplyBuff,
-    [JsonStringEnumMemberName("applybuffstack")] ApplyBuffStack,
-    [JsonStringEnumMemberName("applydebuff")] ApplyDebuff,
-    [JsonStringEnumMemberName("applydebuffstack")] ApplyDebuffStack,
-    [JsonStringEnumMemberName("refreshbuff")] RefreshBuff,
-    [JsonStringEnumMemberName("refreshdebuff")] RefreshDebuff,
-    [JsonStringEnumMemberName("removebuff")] RemoveBuff,
-    [JsonStringEnumMemberName("removebuffstack")] RemoveBuffStack,
-    [JsonStringEnumMemberName("removedebuff")] RemoveDebuff,
-    [JsonStringEnumMemberName("removedebuffstack")] RemoveDebuffStack,
+    [JsonStringEnumMemberName(LogAuraTypeText.ApplyBuff)] ApplyBuff,
+    [JsonStringEnumMemberName(LogAuraTypeText.ApplyBuffStack)] ApplyBuffStack,
+    [JsonStringEnumMemberName(LogAuraTypeText.ApplyDebuff)] ApplyDebuff,
+    [JsonStringEnumMemberName(LogAuraTypeText.ApplyDebuffStack)] ApplyDebuffStack,
+    [JsonStringEnumMemberName(LogAuraTypeText.RefreshBuff)] RefreshBuff,
+    [JsonStringEnumMemberName(LogAuraTypeText.RefreshDebuff)] RefreshDebuff,
+    [JsonStringEnumMemberName(LogAuraTypeText.RemoveBuff)] RemoveBuff,
+    [JsonStringEnumMemberName(LogAuraTypeText.RemoveBuffStack)] RemoveBuffStack,
+    [JsonStringEnumMemberName(LogAuraTypeText.RemoveDebuff)] RemoveDebuff,
+    [JsonStringEnumMemberName(LogAuraTypeText.RemoveDebuffStack)] RemoveDebuffStack,
 }

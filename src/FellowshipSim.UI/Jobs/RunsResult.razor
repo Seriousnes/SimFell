@@ -19,7 +19,7 @@ else
         <div class="tile">
             <span>@BaseName</span>
             <strong>@Number(Base.Result.MeanDps) DPS</strong>
-            <em>@(BaseName == "Baseline" ? Base.Label : "what the others are measured against")</em>
+            <em>@(BaseName == BaselineLabel ? Base.Label : "what the others are measured against")</em>
         </div>
         <div class="tile">
             <span>Best change</span>
@@ -96,12 +96,12 @@ else
                             </td>
                             <td class="change">
                                 <div class="track">
-                                    <i class="band" style="@Span(-Margin(Base) / Base.Result.MeanDps * 100, Margin(Base) / Base.Result.MeanDps * 100)"></i>
+                                    <i class="band" style="@Span(-Margin(Base) / Base.Result.MeanDps * DisplayScale.PercentScale, Margin(Base) / Base.Result.MeanDps * DisplayScale.PercentScale)"></i>
                                     <i class="zero" style="left: @CssNumber(Position(0))%"></i>
                                     @if (!isBase)
                                     {
                                         var change = Change(run);
-                                        var whisker = DifferenceMargin(run) / Base.Result.MeanDps * 100;
+                                        var whisker = DifferenceMargin(run) / Base.Result.MeanDps * DisplayScale.PercentScale;
                                         <i class="bar @Class(run)" style="@Span(Math.Min(0, change), Math.Max(0, change))"></i>
                                         <i class="whisker" style="@Span(change - whisker, change + whisker)"></i>
                                     }
@@ -135,8 +135,8 @@ else
 }
 
 @code {
-    /// <summary>The percent of a whole.</summary>
-    private const int PercentScale = 100;
+    /// <summary>The label of the run that the others are measured against when it is not the current build.</summary>
+    private const string BaselineLabel = "Baseline";
 
     /// <summary>The least room in percent the chart keeps beyond its lowest and highest values.</summary>
     private const double MinRangePadding = 0.1;
@@ -157,7 +157,7 @@ else
     private SimRun Base => Runs[0];
 
     // A finder's baseline is the current build; a compare's is its first row.
-    private string BaseName => Base.Label == SimPageState.CurrentBuildLabel ? SimPageState.CurrentBuildLabel : "Baseline";
+    private string BaseName => Base.Label == SimPageState.CurrentBuildLabel ? SimPageState.CurrentBuildLabel : BaselineLabel;
 
     private IReadOnlyList<SimRun> Others => Runs.Skip(1).ToList();
 
@@ -170,7 +170,7 @@ else
     private bool Heroes => Runs.Select(r => r.Hero).Distinct(StringComparer.OrdinalIgnoreCase).Count() > 1;
 
     /// <summary>The run's DPS change against the baseline, in percent.</summary>
-    private double Change(SimRun run) => Base.Result.MeanDps > 0 ? (run.Result.MeanDps / Base.Result.MeanDps - 1) * PercentScale : 0;
+    private double Change(SimRun run) => Base.Result.MeanDps > 0 ? (run.Result.MeanDps / Base.Result.MeanDps - 1) * DisplayScale.PercentScale : 0;
 
     /// <summary>The 95% margin of a run's mean DPS.</summary>
     private static double Margin(SimRun run) =>
@@ -203,7 +203,7 @@ else
         foreach (var run in Others)
         {
             var change = Change(run);
-            var whisker = DifferenceMargin(run) / Math.Max(1, Base.Result.MeanDps) * PercentScale;
+            var whisker = DifferenceMargin(run) / Math.Max(1, Base.Result.MeanDps) * DisplayScale.PercentScale;
             low = Math.Min(low, change - whisker);
             high = Math.Max(high, change + whisker);
         }
@@ -214,7 +214,7 @@ else
     private double Position(double change)
     {
         var (low, high) = Range();
-        return Math.Clamp((change - low) / (high - low) * PercentScale, 0, PercentScale);
+        return Math.Clamp((change - low) / (high - low) * DisplayScale.PercentScale, 0, DisplayScale.PercentScale);
     }
 
     private string Span(double from, double to) => $"left: {CssNumber(Position(from))}%; width: {CssNumber(Math.Max(0, Position(to) - Position(from)))}%";

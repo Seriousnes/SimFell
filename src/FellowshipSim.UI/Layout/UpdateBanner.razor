@@ -4,7 +4,7 @@
 @if (_newer is { } newer)
 {
     <div class="update" role="status">
-        <span>Your SimFell is out of date: @newer.Version.ToString(3) is out (you have @_updates!.Version!.ToString(3)).</span>
+        <span>Your SimFell is out of date: @newer.Version.ToString(fieldCount: 3) is out (you have @_updates!.Version!.ToString(fieldCount: 3)).</span>
         <a href="@newer.Url" target="_blank" rel="noopener">Download the latest</a>
         <button type="button" class="dismiss" aria-label="Hide until next start" @onclick="() => _newer = null">✕</button>
     </div>

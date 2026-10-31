@@ -35,7 +35,7 @@ public static class ReplayScriptBuilder
     /// <summary>The log actor type of a non-player character.</summary>
     private const string NpcActorType = "NPC";
 
-    /// <summary>The name of the log actor for the environment, which is not an enemy.</summary>
+    /// <summary>The name of the log actor for the environment. It is not an enemy.</summary>
     private const string EnvironmentActorName = "Environment";
 
     /// <summary>Property names of the combat log and of the replay script.</summary>
@@ -136,6 +136,15 @@ public static class ReplayScriptBuilder
     /// <summary>Order of a command kind that <see cref="KindOrder"/> does not list.</summary>
     private const int UnlistedKindOrder = 5;
 
+    /// <summary>Smallest change in an enemy's health fraction between two health samples.</summary>
+    private const double HealthSampleStep = 0.01;
+
+    /// <summary>A cast event this soon before a begincast of the same ability is a press that did not go through (ms).</summary>
+    private const double LoneCastBeforeBeginCastMs = 500;
+
+    /// <summary>Longest a begincast can stay open before it is taken as abandoned (ms).</summary>
+    private const double MaxCastWindowMs = 6000;
+
     /// <summary>One combat log event with its <c>type</c> parsed once.</summary>
     private sealed record LogEvent(JsonObject Json, LogEventType Type)
     {
@@ -146,22 +155,13 @@ public static class ReplayScriptBuilder
         or LogEventType.RemoveBuffStack or LogEventType.RefreshBuff or LogEventType.ApplyDebuff or LogEventType.ApplyDebuffStack
         or LogEventType.RemoveDebuff or LogEventType.RemoveDebuffStack or LogEventType.RefreshDebuff;
 
-    /// <summary>Smallest change in an enemy's health fraction between two health samples.</summary>
-    private const double HealthSampleStep = 0.01;
-
-    /// <summary>A cast event this soon before a begincast of the same ability is a press that did not go through (ms).</summary>
-    private const double LoneCastBeforeBeginCastMs = 500;
-
-    /// <summary>Longest a begincast can stay open before it is taken as abandoned (ms).</summary>
-    private const double MaxCastWindowMs = 6000;
-
     /// <summary>Order of commands at the same moment.</summary>
     private static readonly Dictionary<string, int> KindOrder = new()
     {
-        [ReplayCommandKind.EnemyArise.LogText()] = 0, [ReplayCommandKind.EnemyHealth.LogText()] = 1, [ReplayCommandKind.ExternalAura.LogText()] = 1,
-        [ReplayCommandKind.CancelCast.LogText()] = 2, [ReplayCommandKind.StopChannel.LogText()] = 3, [ReplayCommandKind.BeginCast.LogText()] = 4,
-        [ReplayCommandKind.CompleteCast.LogText()] = 4, [ReplayCommandKind.Cast.LogText()] = 4, [ReplayCommandKind.PlayerRevive.LogText()] = 1,
-        [ReplayCommandKind.PlayerDeath.LogText()] = 8, [ReplayCommandKind.EnemyDemise.LogText()] = 9,
+        [ReplayCommandKindText.EnemyArise] = 0, [ReplayCommandKindText.EnemyHealth] = 1, [ReplayCommandKindText.ExternalAura] = 1,
+        [ReplayCommandKindText.CancelCast] = 2, [ReplayCommandKindText.StopChannel] = 3, [ReplayCommandKindText.BeginCast] = 4,
+        [ReplayCommandKindText.CompleteCast] = 4, [ReplayCommandKindText.Cast] = 4, [ReplayCommandKindText.PlayerRevive] = 1,
+        [ReplayCommandKindText.PlayerDeath] = 8, [ReplayCommandKindText.EnemyDemise] = 9,
     };
 
     /// <summary>The players of a raw fight (actor ID, name, hero).</summary>

@@ -9,13 +9,10 @@
 </div>
 
 @code {
-    /// <summary>The percent of a whole progress.</summary>
-    private const int PercentScale = 100;
-
     [Parameter, EditorRequired] public SimJob Job { get; set; } = null!;
 
     /// <summary>Progress in whole percent, in the invariant culture for the bar's CSS width.</summary>
-    private string Percent => Math.Floor((Job.Progress ?? 0) * PercentScale).ToString(CultureInfo.InvariantCulture);
+    private string Percent => Math.Floor((Job.Progress ?? 0) * DisplayScale.PercentScale).ToString(CultureInfo.InvariantCulture);
 
     private string StatusClass => Job.Status.ToString().ToLowerInvariant();
 

@@ -11,6 +11,22 @@ namespace FellowshipSim.Engine.Replay;
 /// </summary>
 public sealed class LogOutcomeSource : IOutcomeSource
 {
+    private const double StackEvidenceWindowSeconds = 0.1;
+
+    /// <summary>Distance below a resource's maximum from which a reading can show a proc's gain (the resource has room to rise).</summary>
+    private const double ResourceNearMaxMargin = 0.5;
+
+    /// <summary>Largest difference between a reading's rise and the proc's gain, as a fraction of the gain, that counts as that gain.</summary>
+    private const double ResourceGainTolerance = 0.3;
+
+    /// <summary>A following hit of a proc lands from this fraction of the proc's hit spacing after the hit before it.</summary>
+    private const double FollowingWindowStartFactor = 0.75;
+
+    /// <summary>A following hit of a proc lands up to this fraction of the proc's hit spacing after the hit before it.</summary>
+    private const double FollowingWindowEndFactor = 1.5;
+
+    private const double ResourceEvidenceWindowSeconds = 0.5;
+
     private readonly ReplayOptions _options;
     private readonly HitLedger _hits;
     private readonly ReplayVerifier _verifier;
@@ -90,7 +106,6 @@ public sealed class LogOutcomeSource : IOutcomeSource
     private bool LostStackAt(int logId, UnitRef target, double time) =>
         _enemyStackLosses.TryGetValue(new DebuffTarget(logId, target), out var losses) && losses.Any(t => Math.Abs(t - time) <= _options.SameTickSeconds);
     private readonly HashSet<LogAura> _claimedStackEvidence = new();
-    private const double StackEvidenceWindowSeconds = 0.1;
 
     /// <summary>Hits that would have landed on an enemy already dead in the log (the projectile hit nothing).</summary>
     public int MissedHits { get; private set; }
@@ -379,19 +394,6 @@ public sealed class LogOutcomeSource : IOutcomeSource
         return jumps;
     }
 
-    /// <summary>Distance below a resource's maximum from which a reading can show a proc's gain (the resource has room to rise).</summary>
-    private const double ResourceNearMaxMargin = 0.5;
-
-    /// <summary>Largest difference between a reading's rise and the proc's gain, as a fraction of the gain, that counts as that gain.</summary>
-    private const double ResourceGainTolerance = 0.3;
-
-    /// <summary>A following hit of a proc lands from this fraction of the proc's hit spacing after the hit before it.</summary>
-    private const double FollowingWindowStartFactor = 0.75;
-
-    /// <summary>A following hit of a proc lands up to this fraction of the proc's hit spacing after the hit before it.</summary>
-    private const double FollowingWindowEndFactor = 1.5;
-
-    private const double ResourceEvidenceWindowSeconds = 0.5;
     private readonly List<LogResourceSnapshot> _resourceReadings = [];
     private readonly Dictionary<ProcEvidence.Evidence, List<ResourceJump>> _resourceJumps = new();
     private readonly HashSet<ClaimedJump> _claimedResourceJumps = new();

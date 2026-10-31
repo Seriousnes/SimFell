@@ -9,34 +9,27 @@ namespace FellowshipSim.Engine.Replay;
 /// </summary>
 public sealed class LogResourceEventConverter : JsonConverter<LogResourceEvent>
 {
-    public const string BeginCast = "begincast";
-    public const string BeginChannel = "beginchannel";
-    public const string Cast = "cast";
-    public const string Damage = "damage";
-    public const string EndChannel = "endchannel";
-    public const string Heal = "heal";
-
     public override LogResourceEvent Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
         reader.GetString() switch
         {
-            BeginCast => LogResourceEvent.BeginCast,
-            BeginChannel => LogResourceEvent.BeginChannel,
-            Cast => LogResourceEvent.Cast,
-            Damage => LogResourceEvent.Damage,
-            EndChannel => LogResourceEvent.EndChannel,
-            Heal => LogResourceEvent.Heal,
+            LogEventTypes.BeginCast => LogResourceEvent.BeginCast,
+            LogEventTypes.BeginChannel => LogResourceEvent.BeginChannel,
+            LogEventTypes.Cast => LogResourceEvent.Cast,
+            LogEventTypes.Damage => LogResourceEvent.Damage,
+            LogEventTypes.EndChannel => LogResourceEvent.EndChannel,
+            LogEventTypes.Heal => LogResourceEvent.Heal,
             _ => LogResourceEvent.Other,
         };
 
     public override void Write(Utf8JsonWriter writer, LogResourceEvent value, JsonSerializerOptions options) =>
         writer.WriteStringValue(value switch
         {
-            LogResourceEvent.BeginCast => BeginCast,
-            LogResourceEvent.BeginChannel => BeginChannel,
-            LogResourceEvent.Cast => Cast,
-            LogResourceEvent.Damage => Damage,
-            LogResourceEvent.EndChannel => EndChannel,
-            LogResourceEvent.Heal => Heal,
+            LogResourceEvent.BeginCast => LogEventTypes.BeginCast,
+            LogResourceEvent.BeginChannel => LogEventTypes.BeginChannel,
+            LogResourceEvent.Cast => LogEventTypes.Cast,
+            LogResourceEvent.Damage => LogEventTypes.Damage,
+            LogResourceEvent.EndChannel => LogEventTypes.EndChannel,
+            LogResourceEvent.Heal => LogEventTypes.Heal,
             _ => throw new JsonException($"The resource event {value} has no combat log string."),
         });
 }

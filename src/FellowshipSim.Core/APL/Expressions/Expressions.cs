@@ -8,7 +8,7 @@ public class ConstantExpression : IAplExpression
 
     public ConstantExpression(double value) => Value = value;
 
-    public bool Evaluate(Hero hero, SimulationContext ctx) => Math.Abs(Value) > AplTolerance.Truth;
+    public bool Evaluate(Hero hero, SimulationContext ctx) => Math.Abs(Value) > Tolerance.AplTruth;
 
     public double EvaluateNumeric(Hero hero, SimulationContext ctx) => Value;
 
@@ -39,6 +39,13 @@ public class PropertyExpression : IAplExpression
     public const string ExecuteTimeProperty = "execute_time";
     public const string ReadyProperty = "ready";
     public const string UpProperty = "up";
+    public const string DownProperty = "down";
+    public const string StackProperty = "stack";
+    public const string ReactProperty = "react";
+    public const string AtMaxStacksProperty = "at_max_stacks";
+    public const string RemainsProperty = "remains";
+    public const string DurationProperty = "duration";
+    public const string CastTimeProperty = "cast_time";
     public const string ResourcePrefix = "resource.";
     public const string DeficitSuffix = ".deficit";
     public const string BuffScope = "buff";
@@ -67,6 +74,9 @@ public class PropertyExpression : IAplExpression
     /// <summary>The fight's remaining time in every fight.</summary>
     public const double FightRemains = 100.0;
 
+    /// <summary>The target's health in percent when there is no target.</summary>
+    public const double FullHealthPercent = 100.0;
+
     /// <summary>Values named by their whole path.</summary>
     public static IReadOnlyDictionary<string, AplDescribed<Func<Hero, SimulationContext, double>>> Named { get; } =
         new Dictionary<string, AplDescribed<Func<Hero, SimulationContext, double>>>
@@ -74,7 +84,7 @@ public class PropertyExpression : IAplExpression
             ["active_enemies"] = new(new("Enemies in combat", "The number of enemies in combat. The minimum is 1."),
                 (_, ctx) => Math.Max(1, ctx.ActiveEnemies.Count)),
             ["target.health.pct"] = new(new("Target health %", "The health of the target, in percent. 100 if there is no target."),
-                (_, ctx) => ctx.Player.CurrentTarget?.HealthPercent ?? 100.0),
+                (_, ctx) => ctx.Player.CurrentTarget?.HealthPercent ?? FullHealthPercent),
             ["target.health"] = new(new("Target health", "The current health of the target. 0 if there is no target."),
                 (_, ctx) => ctx.Player.CurrentTarget?.CurrentHealth ?? 0.0),
             ["target.time_to_die"] = new(new("Target time to die", $"Seconds until the target dies. The value is {TargetTimeToDie} in every fight."),
@@ -104,13 +114,13 @@ public class PropertyExpression : IAplExpression
         [UpProperty] = new(new("Up", "1 if the aura is up. Otherwise 0."), (aura, _) => aura != null ? 1.0 : 0.0),
         // SimulationCraft's word for a damage over time effect that is up.
         [TickingProperty] = new(new("Ticking", "The same value as up: 1 if the aura is up. Otherwise 0."), (aura, _) => aura != null ? 1.0 : 0.0),
-        ["down"] = new(new("Down", "1 if the aura is down. Otherwise 0."), (aura, _) => aura == null ? 1.0 : 0.0),
-        ["stack"] = new(new("Stacks", "The number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
+        [DownProperty] = new(new("Down", "1 if the aura is down. Otherwise 0."), (aura, _) => aura == null ? 1.0 : 0.0),
+        [StackProperty] = new(new("Stacks", "The number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
         // SimulationCraft's react is the stacks the player has seen; the sim reacts at once.
-        ["react"] = new(new("Stacks (react)", "The same value as stack: the number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
-        ["at_max_stacks"] = new(new("At max stacks", "1 if the aura has its maximum number of stacks. Otherwise 0."),
+        [ReactProperty] = new(new("Stacks (react)", "The same value as stack: the number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
+        [AtMaxStacksProperty] = new(new("At max stacks", "1 if the aura has its maximum number of stacks. Otherwise 0."),
             (aura, _) => aura is { } present && present.Stacks >= present.MaxStacks ? 1.0 : 0.0),
-        ["remains"] = new(new("Time remaining", "Seconds until the aura expires. 0 if the aura is down. For an aura that does not expire, the value is a very large number."),
+        [RemainsProperty] = new(new("Time remaining", "Seconds until the aura expires. 0 if the aura is down. For an aura that does not expire, the value is a very large number."),
             (aura, now) => aura is not { } present ? 0.0 : present.ExpiresAt == SimTime.Infinite ? double.MaxValue : (present.ExpiresAt - now).TotalSeconds),
         [RefreshableProperty] = new(new("Refreshable", $"1 if the aura is down or in the last {RefreshableFraction * Percentage.PerFraction}% of its duration. Otherwise 0."),
             (aura, now) => IsRefreshable(aura, now) ? 1.0 : 0.0),
@@ -127,11 +137,11 @@ public class PropertyExpression : IAplExpression
             (hero, _, name, now) => hero.IsCooldownReady(name, now) ? 1.0 : 0.0),
         [UpProperty] = new(new("Ready (up)", "The same value as ready: 1 if the ability has a charge ready. Otherwise 0."),
             (hero, _, name, now) => hero.IsCooldownReady(name, now) ? 1.0 : 0.0),
-        ["remains"] = new(new("Time until ready", "Seconds until the ability has a charge ready. 0 if a charge is ready now."),
+        [RemainsProperty] = new(new("Time until ready", "Seconds until the ability has a charge ready. 0 if a charge is ready now."),
             (hero, _, name, now) => hero.GetCooldownRemains(name, now)),
         [ChargesProperty] = new(new("Charges", "The number of charges that are ready now."),
             (hero, ability, name, now) => hero.Cooldowns.TryGetValue(name, out var state) ? state.ChargesAt(now) : ability?.MaxCharges ?? 1),
-        ["duration"] = new(new("Cooldown", "The base cooldown of the ability, in seconds."),
+        [DurationProperty] = new(new("Cooldown", "The base cooldown of the ability, in seconds."),
             (_, ability, _, _) => ability?.Cooldown.TotalSeconds ?? 0.0),
         [FullRechargeTimeProperty] = new(new("Time to full charges",
                 "Seconds until all charges of the ability are ready. The value is the time that remains on the charge that recharges now, plus a full cooldown for each other missing charge. 0 if all charges are ready."),
@@ -353,7 +363,7 @@ public class PropertyExpression : IAplExpression
         [ChargesProperty] = ability => $"{CooldownScope}.{ability}.{ChargesProperty}",
         [ChargesFractionalProperty] = ability => $"{CooldownScope}.{ability}.{ChargesFractionalProperty}",
         [ExecuteTimeProperty] = ability => $"{ActionScope}.{ability}.{ExecuteTimeProperty}",
-        ["cast_time"] = ability => $"{ActionScope}.{ability}.{ExecuteTimeProperty}",
+        [CastTimeProperty] = ability => $"{ActionScope}.{ability}.{ExecuteTimeProperty}",
     };
 
     private static Func<TargetEffect?, SimTime, double> AuraProperty(string property) =>
@@ -431,8 +441,8 @@ public class BinaryOpExpression : IAplExpression
             BinaryOperator.LessEqual => Left.EvaluateNumeric(hero, ctx) <= Right.EvaluateNumeric(hero, ctx),
             BinaryOperator.Greater => Left.EvaluateNumeric(hero, ctx) > Right.EvaluateNumeric(hero, ctx),
             BinaryOperator.GreaterEqual => Left.EvaluateNumeric(hero, ctx) >= Right.EvaluateNumeric(hero, ctx),
-            BinaryOperator.Equal => Math.Abs(Left.EvaluateNumeric(hero, ctx) - Right.EvaluateNumeric(hero, ctx)) < AplTolerance.Equality,
-            BinaryOperator.NotEqual => Math.Abs(Left.EvaluateNumeric(hero, ctx) - Right.EvaluateNumeric(hero, ctx)) >= AplTolerance.Equality,
+            BinaryOperator.Equal => Math.Abs(Left.EvaluateNumeric(hero, ctx) - Right.EvaluateNumeric(hero, ctx)) < Tolerance.AplEquality,
+            BinaryOperator.NotEqual => Math.Abs(Left.EvaluateNumeric(hero, ctx) - Right.EvaluateNumeric(hero, ctx)) >= Tolerance.AplEquality,
             BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo =>
                 EvaluateNumeric(hero, ctx) != 0.0,
             _ => throw new InvalidOperationException($"Unsupported APL binary operator: '{Operator}'")

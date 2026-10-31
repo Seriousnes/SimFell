@@ -114,8 +114,8 @@ public static class Scaling
         var cpu = process.TotalProcessorTime;
         var allocated = GC.GetTotalAllocatedBytes(precise: true);
         var pause = GC.GetTotalPauseDuration();
-        var gen0 = GC.CollectionCount(0);
-        var gen1 = GC.CollectionCount(1);
+        var gen0 = GC.CollectionCount(generation: 0);
+        var gen1 = GC.CollectionCount(generation: 1);
         var gen2 = GC.CollectionCount(generation: 2);
         var clock = Stopwatch.StartNew();
         work();
@@ -125,7 +125,7 @@ public static class Scaling
             clock.Elapsed.TotalSeconds,
             (process.TotalProcessorTime - cpu).TotalSeconds,
             GC.GetTotalAllocatedBytes(precise: true) - allocated,
-            GC.CollectionCount(0) - gen0, GC.CollectionCount(1) - gen1, GC.CollectionCount(generation: 2) - gen2,
+            GC.CollectionCount(generation: 0) - gen0, GC.CollectionCount(generation: 1) - gen1, GC.CollectionCount(generation: 2) - gen2,
             (GC.GetTotalPauseDuration() - pause).TotalSeconds / clock.Elapsed.TotalSeconds,
             process.PeakWorkingSet64);
         Console.WriteLine(measurement.ToString());

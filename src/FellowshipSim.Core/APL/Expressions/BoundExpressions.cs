@@ -230,7 +230,7 @@ internal static class Polynomial
         }
     }
 
-    // The root of the polynomial between lower and upper, where its values there have opposite signs.
+    // The root of the polynomial between lower and upper. Its values at lower and upper have opposite signs.
     private static double Halve(double[] polynomial, double lower, double lowerValue, double upper)
     {
         for (var i = 0; i < MaxHalvings && upper - lower > Tolerance.Rounding; i++)
@@ -318,7 +318,7 @@ internal abstract class BoundEventValue : BoundNumeric
 
 internal sealed class BoundConstant(double value) : BoundExpression
 {
-    public override bool Evaluate(SimulationContext ctx) => Math.Abs(value) > AplTolerance.Truth;
+    public override bool Evaluate(SimulationContext ctx) => Math.Abs(value) > Tolerance.AplTruth;
     public override double EvaluateNumeric(SimulationContext ctx) => value;
     internal override SimTime Until(SimulationContext ctx) => SimTime.Infinite;
     internal override double NumericAt(SimulationContext ctx, SimTime time) => value;
@@ -400,11 +400,11 @@ internal sealed class BoundAura(Hero hero, bool debuff, string slug, BoundAura.A
     /// <summary>The property named <paramref name="name"/>; a property auras lack reads as "up".</summary>
     public static AuraProperty PropertyOf(string name) => name switch
     {
-        "down" => AuraProperty.Down,
-        "stack" or "react" => AuraProperty.Stack,
-        "refreshable" => AuraProperty.Refreshable,
-        "at_max_stacks" => AuraProperty.AtMaxStacks,
-        "remains" => AuraProperty.Remains,
+        PropertyExpression.DownProperty => AuraProperty.Down,
+        PropertyExpression.StackProperty or PropertyExpression.ReactProperty => AuraProperty.Stack,
+        PropertyExpression.RefreshableProperty => AuraProperty.Refreshable,
+        PropertyExpression.AtMaxStacksProperty => AuraProperty.AtMaxStacks,
+        PropertyExpression.RemainsProperty => AuraProperty.Remains,
         _ => AuraProperty.Up,
     };
 
@@ -519,11 +519,11 @@ internal sealed class BoundCooldown : BoundNumeric
     public static BoundCooldown For(Hero hero, Ability? ability, string slug, string property) =>
         new(hero, ability, ability?.Name ?? slug, property switch
         {
-            "remains" => CooldownProperty.Remains,
-            "charges" => CooldownProperty.Charges,
-            "charges_fractional" => CooldownProperty.ChargesFractional,
-            "duration" => CooldownProperty.Duration,
-            "full_recharge_time" => CooldownProperty.FullRechargeTime,
+            PropertyExpression.RemainsProperty => CooldownProperty.Remains,
+            PropertyExpression.ChargesProperty => CooldownProperty.Charges,
+            PropertyExpression.ChargesFractionalProperty => CooldownProperty.ChargesFractional,
+            PropertyExpression.DurationProperty => CooldownProperty.Duration,
+            PropertyExpression.FullRechargeTimeProperty => CooldownProperty.FullRechargeTime,
             _ => CooldownProperty.Ready,
         });
 
@@ -611,8 +611,8 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator binaryOpe
         BinaryOperator.LessEqual => left.EvaluateNumeric(ctx) <= right.EvaluateNumeric(ctx),
         BinaryOperator.Greater => left.EvaluateNumeric(ctx) > right.EvaluateNumeric(ctx),
         BinaryOperator.GreaterEqual => left.EvaluateNumeric(ctx) >= right.EvaluateNumeric(ctx),
-        BinaryOperator.Equal => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) < AplTolerance.Equality,
-        BinaryOperator.NotEqual => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) >= AplTolerance.Equality,
+        BinaryOperator.Equal => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) < Tolerance.AplEquality,
+        BinaryOperator.NotEqual => Math.Abs(left.EvaluateNumeric(ctx) - right.EvaluateNumeric(ctx)) >= Tolerance.AplEquality,
         _ => EvaluateNumeric(ctx) != 0.0,
     };
 
@@ -697,8 +697,8 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator binaryOpe
         BinaryOperator.LessEqual => left.NumericAt(ctx, time) <= right.NumericAt(ctx, time),
         BinaryOperator.Greater => left.NumericAt(ctx, time) > right.NumericAt(ctx, time),
         BinaryOperator.GreaterEqual => left.NumericAt(ctx, time) >= right.NumericAt(ctx, time),
-        BinaryOperator.Equal => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) < AplTolerance.Equality,
-        BinaryOperator.NotEqual => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) >= AplTolerance.Equality,
+        BinaryOperator.Equal => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) < Tolerance.AplEquality,
+        BinaryOperator.NotEqual => Math.Abs(left.NumericAt(ctx, time) - right.NumericAt(ctx, time)) >= Tolerance.AplEquality,
         _ => NumericAt(ctx, time) != 0.0,
     };
 
@@ -712,7 +712,7 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator binaryOpe
         if (left.IsLevel(ctx) && right.IsLevel(ctx)) return Crossing.Later(ctx.CurrentTime, until);
         var difference = left.Curve(ctx) - right.Curve(ctx);
         return binaryOperator is BinaryOperator.Equal or BinaryOperator.NotEqual
-            ? Crossing.First(ctx, this, until, difference.NumeratorLess(-AplTolerance.Equality), difference.NumeratorLess(AplTolerance.Equality), difference.Denominator)
+            ? Crossing.First(ctx, this, until, difference.NumeratorLess(-Tolerance.AplEquality), difference.NumeratorLess(Tolerance.AplEquality), difference.Denominator)
             : Crossing.First(ctx, this, until, difference.Numerator, difference.Denominator);
     }
 }

@@ -1,3 +1,4 @@
+using FellowshipSim.UI.Services;
 using FellowshipSim.Logs;
 using Microsoft.JSInterop;
 
@@ -21,11 +22,12 @@ public sealed class BrowserDataFolder(IJSRuntime jsRuntime)
 
     /// <summary>Reviews kept: each page is several MB, all of it in the page's memory.</summary>
     public const int KeptReviews = 10;
-    /// <summary>Function of the page that loads a module.</summary>
-    private const string ImportFunction = "import";
 
     /// <summary>Module that copies the files to the browser's IndexedDB.</summary>
     private const string StorageModule = "./storage.js";
+
+    /// <summary>The FellowshipLogs credentials file. The browser's storage does not keep it.</summary>
+    private const string SettingsFile = "settings.json";
 
     private const string ListFunction = "list";
     private const string ReadFunction = "read";
@@ -37,7 +39,7 @@ public sealed class BrowserDataFolder(IJSRuntime jsRuntime)
     /// What the browser keeps nothing of: raw fights, replay scripts, and an API client a visitor saved before the app
     /// stopped taking one.
     /// </summary>
-    private static readonly string[] NotKept = [$"{ReplayLibrary.FightsFolder}/", $"{ReplayLibrary.ScriptsFolder}/", "settings.json"];
+    private static readonly string[] NotKept = [$"{ReplayLibrary.FightsFolder}/", $"{ReplayLibrary.ScriptsFolder}/", SettingsFile];
 
     private static readonly TimeSpan SaveEvery = TimeSpan.FromSeconds(2);
 
@@ -46,7 +48,7 @@ public sealed class BrowserDataFolder(IJSRuntime jsRuntime)
     private IJSObjectReference? _storage;
 
     private async Task<IJSObjectReference> StorageAsync() =>
-        _storage ??= await jsRuntime.InvokeAsync<IJSObjectReference>(ImportFunction, StorageModule);
+        _storage ??= await jsRuntime.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, StorageModule);
 
     /// <summary>Writes every file the browser keeps into the data folder.</summary>
     public async Task RestoreAsync()

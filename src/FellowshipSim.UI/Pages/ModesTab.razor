@@ -71,9 +71,6 @@
     /// <summary>The most a fight's length varies, in percent.</summary>
     private const int MaxLengthVariancePercent = 90;
 
-    /// <summary>The percent of a whole.</summary>
-    private const int PercentScale = 100;
-
     /// <summary>Every hero the engine has, for the saved builds.</summary>
     [Parameter, EditorRequired] public IReadOnlyList<string> Heroes { get; set; } = [];
 
@@ -88,7 +85,7 @@
     private string LengthText()
     {
         if (!State.VaryLength || State.LengthVariancePercent <= 0) return "Every fight lasts the duration.";
-        var share = State.LengthVariancePercent / PercentScale;
+        var share = State.LengthVariancePercent / DisplayScale.PercentScale;
         return $"Each fight lasts {Number(State.DurationSeconds * (1 - share))} – {Number(State.DurationSeconds * (1 + share))} s, so no build is tuned to one exact length.";
     }
 

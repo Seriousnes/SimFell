@@ -2,11 +2,11 @@ namespace FellowshipSim.Core.Engine;
 
 public readonly record struct SimTime(long Milliseconds) : IComparable<SimTime>
 {
-    public static SimTime Zero => new(0);
-    public static SimTime Infinite => new(long.MaxValue);
-
     public const double MillisecondsPerSecond = 1000.0;
     public const double SecondsPerMinute = 60.0;
+
+    public static SimTime Zero => new(0);
+    public static SimTime Infinite => new(long.MaxValue);
 
     public static SimTime FromSeconds(double seconds) => new((long)Math.Round(seconds * MillisecondsPerSecond));
     public static SimTime FromMilliseconds(long milliseconds) => new(milliseconds);

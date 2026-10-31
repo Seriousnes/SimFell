@@ -53,7 +53,7 @@
                                         data-tooltip="@($"{freeDice.Runs} runs, engine 5-95%: {Math.Round(freeDice.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(freeDice.Engine95, MidpointRounding.AwayFromZero):N0}")">
                                         <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(review), ReviewTitle.FreeDice(review))">@Percent(freeDiceDamage)</button>
                                     </td>
-                                    <td class="num @PlaceClass(freeDice.LogPercentile)">@(Math.Round(freeDice.LogPercentile * PercentScale, MidpointRounding.AwayFromZero))%</td>
+                                    <td class="num @PlaceClass(freeDice.LogPercentile)">@(Math.Round(freeDice.LogPercentile * DisplayScale.PercentScale, MidpointRounding.AwayFromZero))%</td>
                                 }
                                 else
                                 {
@@ -73,9 +73,6 @@
 
 @code {
     private const string FreeDiceSuffix = ".freedice.html";
-
-    /// <summary>The percent of a whole.</summary>
-    private const int PercentScale = 100;
 
     /// <summary>The largest share a hit count may be off the log's and show as good.</summary>
     private const double HitsGood = 0.02;
@@ -113,7 +110,7 @@
     /// <summary>Reviews run so far, newest first.</summary>
     [Parameter] public IReadOnlyList<ReviewSummary> Reviews { get; set; } = [];
 
-    private static string Percent(double ratio) => (ratio * PercentScale).ToString("F1", CultureInfo.InvariantCulture) + "%";
+    private static string Percent(double ratio) => (ratio * DisplayScale.PercentScale).ToString("F1", CultureInfo.InvariantCulture) + "%";
 
     private static string RatioClass(double ratio, double good, double warn)
     {

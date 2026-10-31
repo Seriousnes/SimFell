@@ -60,9 +60,9 @@ public class AuraBenchmarks
     [GlobalSetup]
     public void GlobalSetup()
     {
-        (_hero, _ctx, _) = Fight.AtMidFight(1);
+        (_hero, _ctx, _) = Fight.AtMidFight(targets: 1);
         // The same hero with no cooldown states: an aura change advances no cooldown.
-        (_noCooldowns, _noCooldownsCtx, _) = Fight.AtMidFight(1);
+        (_noCooldowns, _noCooldownsCtx, _) = Fight.AtMidFight(targets: 1);
         _noCooldowns.Cooldowns.Clear();
     }
 
@@ -100,7 +100,7 @@ public class HasteAuraBenchmarks
     private SimulationContext _ctx = null!;
 
     [IterationSetup]
-    public void IterationSetup() => (_hero, _ctx, _) = Fight.AtMidFight(1);
+    public void IterationSetup() => (_hero, _ctx, _) = Fight.AtMidFight(targets: 1);
 
     [Benchmark]
     [InvocationCount(ChangesPerIteration)]

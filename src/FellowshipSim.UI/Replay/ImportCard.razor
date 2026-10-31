@@ -70,9 +70,6 @@
 </Card>
 
 @code {
-    /// <summary>The seconds in a minute.</summary>
-    private const int SecondsPerMinute = 60;
-
     /// <summary>True while a replay runs: the player buttons are disabled.</summary>
     /// <summary>The card's title: what the import is for.</summary>
     [Parameter] public string Title { get; set; } = "Import a fight";
@@ -105,8 +102,8 @@
 
     private static string FormatDuration(double seconds)
     {
-        var minutes = (int)Math.Floor(seconds / SecondsPerMinute);
-        var remainder = (int)Math.Round(seconds % SecondsPerMinute, MidpointRounding.AwayFromZero);
+        var minutes = (int)Math.Floor(seconds / DisplayScale.SecondsPerMinute);
+        var remainder = (int)Math.Round(seconds % DisplayScale.SecondsPerMinute, MidpointRounding.AwayFromZero);
         return $"{minutes}:{remainder:00}";
     }
 

@@ -112,9 +112,6 @@
 
     private const string StorageSetFunction = "localStorage.setItem";
 
-    /// <summary>The percent of a whole.</summary>
-    private const int PercentScale = 100;
-
     /// <summary>Largest profile file the page reads.</summary>
     private const long MaxProfileBytes = 1024 * 1024;
 
@@ -322,7 +319,7 @@
     // The fights every run of a sim has.
     private SimSettings Settings() => new(State.Iterations, State.DurationSeconds, State.Targets,
         DegreeOfParallelism: Math.Clamp(State.Threads, 1, MaxThreads),
-        LengthVariance: State.VaryLength ? State.LengthVariancePercent / PercentScale : 0,
+        LengthVariance: State.VaryLength ? State.LengthVariancePercent / DisplayScale.PercentScale : 0,
         HealthFollowsTime: true,
         StartingSpirit: State.StartWithSpirit ? State.StartingSpirit : 0,
         Boss: State.Boss);

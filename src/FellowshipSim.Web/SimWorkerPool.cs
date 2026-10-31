@@ -18,9 +18,6 @@ public sealed class SimWorkerPool(IJSRuntime jsRuntime)
     /// <summary>Stamp of a build made without one.</summary>
     private const string DefaultBuildStamp = "0";
 
-    /// <summary>Function of the page that loads a module.</summary>
-    private const string ImportFunction = "import";
-
     /// <summary>Module of the page's side of the sim workers.</summary>
     private const string SimPoolModule = "./sim/simPool.js";
 
@@ -45,7 +42,7 @@ public sealed class SimWorkerPool(IJSRuntime jsRuntime)
         .FirstOrDefault(a => a.Key == BuildStampKey)?.Value ?? DefaultBuildStamp;
 
     private async Task<IJSObjectReference> PoolAsync() =>
-        _pool ??= await jsRuntime.InvokeAsync<IJSObjectReference>(ImportFunction, $"{SimPoolModule}?v={BuildStamp}");
+        _pool ??= await jsRuntime.InvokeAsync<IJSObjectReference>(JsInterop.ImportFunction, $"{SimPoolModule}?v={BuildStamp}");
 
     /// <summary>The workers a sim can use: the cores but the page's, up to the pool's most.</summary>
     public async Task<int> SizeAsync() => await (await PoolAsync()).InvokeAsync<int>(SizeFunction);

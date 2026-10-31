@@ -7,7 +7,7 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 public abstract class DamageOverTime : Ability
 {
     /// <summary>Stacks the enemy's debuff can show: its instances or stacks (UNVERIFIED).</summary>
-    private const int DebuffMaxStacks = 99;
+    public const int DebuffMaxStacks = 99;
 
     protected DamageOverTime(Ardeos owner, int effectId, string name, double periodSeconds, double durationSeconds, DotStacking stacking)
         : base(owner, LogIds.Effect(effectId), name)

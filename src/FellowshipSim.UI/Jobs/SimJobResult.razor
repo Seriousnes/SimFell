@@ -294,12 +294,6 @@
     /// <summary>The standard score of a 95% confidence interval.</summary>
     public const double ConfidenceZ95 = 1.96;
 
-    /// <summary>The percent of a whole.</summary>
-    private const int PercentScale = 100;
-
-    /// <summary>The seconds in a minute.</summary>
-    private const int SecondsPerMinute = 60;
-
     /// <summary>The intervals between the ticks of a chart axis, and between its grid lines.</summary>
     private const int AxisIntervals = 4;
 
@@ -380,7 +374,7 @@
     private const double FightEndSeconds = 0.05;
 
     private static string Clock(double seconds, bool tenths = false) =>
-        $"{(int)seconds / SecondsPerMinute}:{(tenths ? (seconds % SecondsPerMinute).ToString("00.0", CultureInfo.CurrentCulture) : ((int)seconds % SecondsPerMinute).ToString("00", CultureInfo.CurrentCulture))}";
+        $"{(int)seconds / DisplayScale.SecondsPerMinute}:{(tenths ? (seconds % DisplayScale.SecondsPerMinute).ToString("00.0", CultureInfo.CurrentCulture) : ((int)seconds % DisplayScale.SecondsPerMinute).ToString("00", CultureInfo.CurrentCulture))}";
 
     /// <summary>The table of buffs or debuffs: uptime, applications, refreshes, duration, stacks and gaps.</summary>
     private RenderFragment AuraTable(IReadOnlyList<BuffReport> auras, string kind) =>
@@ -429,15 +423,15 @@
 
     private static string Number(double value) => Math.Round(value, MidpointRounding.AwayFromZero).ToString("N0", CultureInfo.CurrentCulture);
 
-    private static string Percent(double fraction) => (fraction * PercentScale).ToString("0.0", CultureInfo.CurrentCulture) + "%";
+    private static string Percent(double fraction) => (fraction * DisplayScale.PercentScale).ToString("0.0", CultureInfo.CurrentCulture) + "%";
 
     private static string Seconds(double seconds) => seconds.ToString("0.0", CultureInfo.CurrentCulture) + " s";
 
-    private static string Width(double fraction) => Math.Clamp(fraction * PercentScale, 0, PercentScale).ToString("0.#", CultureInfo.InvariantCulture) + "%";
+    private static string Width(double fraction) => Math.Clamp(fraction * DisplayScale.PercentScale, 0, DisplayScale.PercentScale).ToString("0.#", CultureInfo.InvariantCulture) + "%";
 
     /// <summary>The 95% confidence margin of the mean DPS, as a share of it.</summary>
     private string MarginText => Result.MeanDps > 0 && Result.Iterations > 0
-        ? (ConfidenceZ95 * Result.StandardDeviation / Math.Sqrt(Result.Iterations) / Result.MeanDps * PercentScale).ToString("0.00", CultureInfo.CurrentCulture) + "%"
+        ? (ConfidenceZ95 * Result.StandardDeviation / Math.Sqrt(Result.Iterations) / Result.MeanDps * DisplayScale.PercentScale).ToString("0.00", CultureInfo.CurrentCulture) + "%"
         : "–";
 
     /// <summary>A thin bar for each span (start and end seconds in turn) along the fight, 1000 units wide.</summary>
@@ -528,7 +522,7 @@
         for (var i= 0; i <= labels; i++)
         {
             var tick = Math.Min(seconds, i * step);
-            yield return $"{tick / SecondsPerMinute}:{tick % SecondsPerMinute:00}";
+            yield return $"{tick / DisplayScale.SecondsPerMinute}:{tick % DisplayScale.SecondsPerMinute:00}";
         }
     }
 }

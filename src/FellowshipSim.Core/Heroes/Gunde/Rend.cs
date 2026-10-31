@@ -22,7 +22,7 @@ public sealed class Rend
     public const int DebuffEffectId = 3231;
     public const double TickSeconds = 3.0;
     public const int TicksPerApplication = 10;
-    private const int DebuffMaxStacks = 9999; // UNVERIFIED
+    public const int DebuffMaxStacks = 9999; // UNVERIFIED
 
     /// <summary>"Each stack of Rend corresponds to 100% Strength damage over its full duration."</summary>
     public static readonly AuraDef Debuff = AuraDef.Effect(DamageName, DebuffEffectId, maxStacks: DebuffMaxStacks) with { Duration = SimTime.Infinite };

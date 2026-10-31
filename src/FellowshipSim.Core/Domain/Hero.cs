@@ -9,6 +9,9 @@ namespace FellowshipSim.Core.Domain;
 
 public abstract class Hero : Actor
 {
+    /// <summary>The global cooldown before haste (per the user: 1.5s, hasted).</summary>
+    public const double BaseGlobalCooldownSeconds = 1.5;
+
     protected Hero()
     {
         AddResource(SpiritPoints);
@@ -89,9 +92,6 @@ public abstract class Hero : Actor
     /// <summary>Changes whenever a cooldown state is added to <see cref="Cooldowns"/> or they are cleared.</summary>
     public int CooldownsVersion { get; private set; }
     public SimTime GlobalCooldownEndTime { get; set; } = SimTime.Zero;
-
-    /// <summary>The global cooldown before haste (per the user: 1.5s, hasted).</summary>
-    public const double BaseGlobalCooldownSeconds = 1.5;
 
     public double GlobalCooldownSeconds { get; set; } = BaseGlobalCooldownSeconds;
 

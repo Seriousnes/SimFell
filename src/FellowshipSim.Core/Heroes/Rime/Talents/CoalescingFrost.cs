@@ -109,6 +109,6 @@ public class CoalescingFrost : Talent
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }
     }
 
-    /// <summary>The stacks on an enemy and the version of its last change, which its expiry checks.</summary>
+    /// <summary>The stacks on an enemy and the version of its last change. Its expiry checks the version.</summary>
     private readonly record struct StackCount(int Stacks, int Version);
 }
