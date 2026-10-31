@@ -8,6 +8,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- Sims, results and reviews cross between the page and its workers as JSON of the engine's own records. -->
     <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    <!-- index.html's #[.{fingerprint}] placeholders and import map get each build's file names, so a browser that kept an
+         older build's start files (GitHub Pages lets it keep them for 10 minutes) cannot start that build again. -->
+    <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
   </PropertyGroup>
 
   <ItemGroup>
