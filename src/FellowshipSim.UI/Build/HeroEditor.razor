@@ -29,7 +29,7 @@
         <button type="button" class="secondary-button" @onclick="Duplicate">Duplicate</button>
         <button type="button" class="secondary-button" aria-expanded="@(_exportOpen ? "true" : "false")" @onclick="ExportAsync">Export</button>
         <button type="button" class="secondary-button delete" disabled="@(State.SavedName.Length == 0)" @onclick="DeleteAsync">Delete</button>
-        <button type="button" class="share-button" aria-expanded="@(_shareOpen ? "true" : "false")" data-tooltip="Copy a link that opens this build in SimFell, for anyone you send it to" @onclick="ShareAsync">
+        <button type="button" class="build-link-button"aria-expanded="@(_shareOpen ? "true" : "false")" data-tooltip="Copy a link that opens this build in SimFell, for anyone you send it to" @onclick="ShareAsync">
             <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"><path d="M10 2h4v4M14 2 8 8M12 9v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
             Share build
         </button>
@@ -55,7 +55,7 @@
         @* The build's share link; it follows the build while it shows. *@
         <div class="export">
             <p class="hint">Anyone who opens this link gets this build in SimFell, ready to sim. Pasting it into Import works too.</p>
-            <input class="share-link" aria-label="Share link" readonly spellcheck="false" value="@ShareLink" />
+            <input class="build-link-field"aria-label="Share link" readonly spellcheck="false" value="@ShareLink" />
             <div class="row">
                 <button type="button" class="secondary-button" @onclick="CopyShareAsync">Copy</button>
                 <button type="button" class="secondary-button" @onclick="() => _shareOpen = false">Close</button>
