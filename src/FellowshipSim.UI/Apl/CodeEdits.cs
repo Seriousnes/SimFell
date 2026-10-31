@@ -25,11 +25,11 @@ public static partial class CodeEdits
     /// The completion list for the path before the caret, or null when the field does not have the focus, the path is a
     /// number, nothing completes it, or it is empty and <paramref name="always"/> (Ctrl+Space) is false.
     /// </summary>
-    public static CompletionList? Open(AplVocabulary v, string text, CaretPlace caret, bool always)
+    public static CompletionList? Open(AplVocabulary vocabulary, string text, CaretPlace caret, bool always)
     {
         string word = PathBefore().Match(text[..Math.Min(caret.At, text.Length)]).Value;
         if (!caret.Focused || (word.Length > 0 && char.IsAsciiDigit(word[0])) || (word.Length == 0 && !always)) return null;
-        var items = Completions.For(v, word).Take(MaxItems).ToList();
+        var items = Completions.For(vocabulary, word).Take(MaxItems).ToList();
         if (items.Count == 0) return null;
         return new CompletionList(items, 0, Math.Max(0, Math.Min(caret.Left, caret.Width - ListWidth)), caret.Top + 4);
     }

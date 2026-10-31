@@ -179,8 +179,8 @@ public sealed record ReplayIssue(double Time, int Step, IssueCategory Category, 
     public EngineState? State { get; init; }
 
     /// <summary><see cref="Observed"/> minus the bound it is outside (0 inside the range); null with no <see cref="Expected"/>.</summary>
-    public double? Deviation => Expected is { } e && Observed is { } o
-        ? o < e.Low ? o - e.Low : o > e.High ? o - e.High : 0.0
+    public double? Deviation => Expected is { } expected && Observed is { } observed
+        ? observed < expected.Low ? observed - expected.Low : observed > expected.High ? observed - expected.High : 0.0
         : null;
 
     /// <summary><see cref="Deviation"/> over the nearer bound; null when that bound is 0 or infinite.</summary>
@@ -188,8 +188,8 @@ public sealed record ReplayIssue(double Time, int Step, IssueCategory Category, 
     {
         get
         {
-            if (Deviation is not { } deviation || Observed is not { } o) return null;
-            double bound = Expected!.NearerBound(o);
+            if (Deviation is not { } deviation || Observed is not { } observed) return null;
+            double bound = Expected!.NearerBound(observed);
             return bound == 0 || double.IsInfinity(bound) ? null : deviation / Math.Abs(bound);
         }
     }
@@ -197,11 +197,11 @@ public sealed record ReplayIssue(double Time, int Step, IssueCategory Category, 
     public override string ToString()
     {
         string text = $"[{Category}] step {Step} @ {Time:F3}s: {Message}";
-        if (Expected is { } e)
+        if (Expected is { } expected)
         {
-            text += $" (expected {e}, observed {(Observed is { } o ? ExpectedRange.Format(o, e.Unit) : "none")}";
-            if (Deviation is { } d) text += $", deviation {(d > 0 ? "+" : "")}{ExpectedRange.Format(d, e.Unit)}";
-            if (RelativeDeviation is { } r) text += $" ({r:+0.0%;-0.0%;0.0%})";
+            text += $" (expected {expected}, observed {(Observed is { } observed ? ExpectedRange.Format(observed, expected.Unit) : "none")}";
+            if (Deviation is { } deviation) text += $", deviation {(deviation > 0 ? "+" : "")}{ExpectedRange.Format(deviation, expected.Unit)}";
+            if (RelativeDeviation is { } relativeDeviation) text += $" ({relativeDeviation:+0.0%;-0.0%;0.0%})";
             text += ")";
         }
         return text;

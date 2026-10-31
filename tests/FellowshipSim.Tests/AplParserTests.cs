@@ -115,7 +115,7 @@ public class AplParserTests
     [Fact]
     public void Script_Error_Names_The_Line()
     {
-        var e = Assert.Throws<ParseException>(() => AplParser.ParseScript("actions=a\n# c\nactions+=/b,if=(x"));
-        Assert.StartsWith("APL line 3:", e.Message);
+        var exception = Assert.Throws<ParseException>(() => AplParser.ParseScript("actions=a\n# c\nactions+=/b,if=(x"));
+        Assert.StartsWith("APL line 3:", exception.Message);
     }
 }

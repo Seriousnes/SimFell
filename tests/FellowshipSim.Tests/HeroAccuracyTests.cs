@@ -46,8 +46,8 @@ public class HeroAccuracyTests(ITestOutputHelper output)
             return;
         }
         string label = Environment.GetEnvironmentVariable("ACCURACY_LABEL") ?? DateTime.Now.ToString("yyyyMMdd-HHmmss");
-        int iterations = int.TryParse(Environment.GetEnvironmentVariable("ACCURACY_FREEDICE_ITERATIONS"), out int n) ? n : 100;
-        int threads = int.TryParse(Environment.GetEnvironmentVariable("ACCURACY_THREADS"), out int t) ? t : 8;
+        int iterations = int.TryParse(Environment.GetEnvironmentVariable("ACCURACY_FREEDICE_ITERATIONS"), out int parsedIterations) ? parsedIterations : 100;
+        int threads = int.TryParse(Environment.GetEnvironmentVariable("ACCURACY_THREADS"), out int parsedThreads) ? parsedThreads : 8;
         var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
 
         var fights = new List<FightAccuracy>();
@@ -131,50 +131,50 @@ public class HeroAccuracyTests(ITestOutputHelper output)
             .Select(g => new IssueCount(g.Key.Category.ToString(), g.Key.Subject, g.Count(), g.First().Message))
             .ToList();
 
-    private static string Format(HeroAccuracy a, HeroAccuracy? baseline)
+    private static string Format(HeroAccuracy accuracy, HeroAccuracy? baseline)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"{a.Hero} accuracy '{a.Label}', patch {a.Patch}: {a.Fights} fights");
-        Headline(sb, "hits matched", a.LogHits == 0 ? 0 : (double)a.MatchedHits / a.LogHits, baseline is { LogHits: > 0 } b1 ? (double)b1.MatchedHits / b1.LogHits : null);
-        Headline(sb, "exact replay damage / log", a.LogDamage == 0 ? 0 : a.ExactDamage / a.LogDamage, baseline is { LogDamage: > 0 } b2 ? b2.ExactDamage / b2.LogDamage : null);
-        Headline(sb, "free dice mean / log", a.FreeDiceLogDamage == 0 ? 0 : a.FreeDiceMean / a.FreeDiceLogDamage, baseline is { FreeDiceLogDamage: > 0 } b3 ? b3.FreeDiceMean / b3.FreeDiceLogDamage : null);
-        Headline(sb, "mean log percentile in free dice", a.MeanFreeDiceLogPercentile, baseline?.MeanFreeDiceLogPercentile);
+        sb.AppendLine($"{accuracy.Hero} accuracy '{accuracy.Label}', patch {accuracy.Patch}: {accuracy.Fights} fights");
+        Headline(sb, "hits matched", accuracy.LogHits == 0 ? 0 : (double)accuracy.MatchedHits / accuracy.LogHits, baseline is { LogHits: > 0 } hitsBaseline ? (double)hitsBaseline.MatchedHits / hitsBaseline.LogHits : null);
+        Headline(sb, "exact replay damage / log", accuracy.LogDamage == 0 ? 0 : accuracy.ExactDamage / accuracy.LogDamage, baseline is { LogDamage: > 0 } exactBaseline ? exactBaseline.ExactDamage / exactBaseline.LogDamage : null);
+        Headline(sb, "free dice mean / log", accuracy.FreeDiceLogDamage == 0 ? 0 : accuracy.FreeDiceMean / accuracy.FreeDiceLogDamage, baseline is { FreeDiceLogDamage: > 0 } freeDiceBaseline ? freeDiceBaseline.FreeDiceMean / freeDiceBaseline.FreeDiceLogDamage : null);
+        Headline(sb, "mean log percentile in free dice", accuracy.MeanFreeDiceLogPercentile, baseline?.MeanFreeDiceLogPercentile);
 
         sb.AppendLine();
         sb.AppendLine("fight                              player            hits matched  exact/log  dice/log  log pct  clean steps  forced");
-        foreach (var f in a.FightResults)
+        foreach (var fightResult in accuracy.FightResults)
         {
-            string fight = $"{f.ReportCode}#{f.FightId} {f.FightName}".PadRight(34)[..34];
-            sb.AppendLine($"{fight} {f.PlayerName.PadRight(16)[..16]}  {Ratio(f.MatchedHits, f.LogHits),12:P1}  {Ratio(f.ExactDamage, f.LogDamage),9:P1}  " +
-                          $"{Ratio(f.FreeDiceMean, f.LogDamage),8:P1}  {f.FreeDiceLogPercentile,7:P0}  {f.PassedSteps,5}/{f.TotalSteps,-5}  {f.ForcedCasts,6}");
+            string fight = $"{fightResult.ReportCode}#{fightResult.FightId} {fightResult.FightName}".PadRight(34)[..34];
+            sb.AppendLine($"{fight} {fightResult.PlayerName.PadRight(16)[..16]}  {Ratio(fightResult.MatchedHits, fightResult.LogHits),12:P1}  {Ratio(fightResult.ExactDamage, fightResult.LogDamage),9:P1}  " +
+                          $"{Ratio(fightResult.FreeDiceMean, fightResult.LogDamage),8:P1}  {fightResult.FreeDiceLogPercentile,7:P0}  {fightResult.PassedSteps,5}/{fightResult.TotalSteps,-5}  {fightResult.ForcedCasts,6}");
         }
 
         sb.AppendLine();
         sb.AppendLine("id        ability               log hits  matched  engine-only  log dmg        exact/log  dice/log  normal (n)       crit (n)");
-        foreach (var x in a.Abilities)
+        foreach (var ability in accuracy.Abilities)
         {
-            sb.AppendLine($"{x.Id,-9} {x.Name.PadRight(20)[..20]}  {x.LogHits,8}  {x.MatchedHits,7}  {x.EngineOnlyHits,11}  {x.LogDamage,13:N0}  " +
-                          $"{Ratio(x.ExactDamage, x.LogDamage),9:P1}  {Ratio(x.FreeDiceMean, x.FreeDiceLogDamage),8:P1}  " +
-                          $"{(x.NormalN == 0 ? "-" : $"{x.NormalRatio:F3} ({x.NormalN})"),-15}  {(x.CritN == 0 ? "-" : $"{x.CritRatio:F3} ({x.CritN})")}");
+            sb.AppendLine($"{ability.Id,-9} {ability.Name.PadRight(20)[..20]}  {ability.LogHits,8}  {ability.MatchedHits,7}  {ability.EngineOnlyHits,11}  {ability.LogDamage,13:N0}  " +
+                          $"{Ratio(ability.ExactDamage, ability.LogDamage),9:P1}  {Ratio(ability.FreeDiceMean, ability.FreeDiceLogDamage),8:P1}  " +
+                          $"{(ability.NormalN == 0 ? "-" : $"{ability.NormalRatio:F3} ({ability.NormalN})"),-15}  {(ability.CritN == 0 ? "-" : $"{ability.CritRatio:F3} ({ability.CritN})")}");
         }
 
         sb.AppendLine();
         sb.AppendLine("most common issues over all fights:");
-        foreach (var issue in a.Issues) sb.AppendLine($"{issue.Count,6} [{issue.Category}] {issue.Subject}: {issue.Example}");
-        if (a.UnmodeledAbilities.Count > 0)
+        foreach (var issue in accuracy.Issues) sb.AppendLine($"{issue.Count,6} [{issue.Category}] {issue.Subject}: {issue.Example}");
+        if (accuracy.UnmodeledAbilities.Count > 0)
         {
             sb.AppendLine();
-            sb.AppendLine("unmodeled abilities: " + string.Join(", ", a.UnmodeledAbilities.OrderByDescending(u => u.Value).Select(u => $"{u.Key} ({u.Value})")));
+            sb.AppendLine("unmodeled abilities: " + string.Join(", ", accuracy.UnmodeledAbilities.OrderByDescending(u => u.Value).Select(u => $"{u.Key} ({u.Value})")));
         }
-        if (a.UnmodeledCustomizations.Count > 0)
+        if (accuracy.UnmodeledCustomizations.Count > 0)
         {
-            sb.AppendLine("unmodeled customizations: " + string.Join(", ", a.UnmodeledCustomizations));
+            sb.AppendLine("unmodeled customizations: " + string.Join(", ", accuracy.UnmodeledCustomizations));
         }
         return sb.ToString();
     }
 
     private static void Headline(StringBuilder sb, string name, double value, double? baseline) =>
-        sb.AppendLine($"  {name,-34} {value,8:P1}" + (baseline is { } b ? $"   baseline {b,8:P1}   change {value - b:+0.0%;-0.0%;0.0%}" : ""));
+        sb.AppendLine($"  {name,-34} {value,8:P1}" + (baseline is { } baselineValue ? $"   baseline {baselineValue,8:P1}   change {value - baselineValue:+0.0%;-0.0%;0.0%}" : ""));
 
-    private static double Ratio(double a, double b) => b == 0 ? 0 : a / b;
+    private static double Ratio(double numerator, double denominator) => denominator == 0 ? 0 : numerator / denominator;
 }

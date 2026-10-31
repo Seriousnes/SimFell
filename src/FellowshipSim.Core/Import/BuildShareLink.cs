@@ -84,118 +84,118 @@ public static class BuildShareLink
     }
 
     /// <summary>The code of <paramref name="build"/>: everything but its hero and name.</summary>
-    public static string Code(CharacterBuild b)
+    public static string Code(CharacterBuild build)
     {
-        var w = new BitWriter();
-        w.EG(Version, 0);
-        double[] stats = Stats(b);
-        bool thousandths = stats.Append(b.MaxHealth).Concat(b.GemPower.Values).Any(v => v != Math.Floor(v));
+        var writer = new BitWriter();
+        writer.EG(Version, 0);
+        double[] stats = Stats(build);
+        bool thousandths = stats.Append(build.MaxHealth).Concat(build.GemPower.Values).Any(v => v != Math.Floor(v));
         int extra = thousandths ? ThousandthsExtraOrder : 0;
-        w.Bit(thousandths);
-        w.Bit(b.StatsFromOldProfile);
-        w.Bit(b.MaxHealth > 0);
-        foreach (double s in stats) w.EG(Number(s, thousandths), StatOrder + extra);
-        if (b.MaxHealth > 0) w.EG(Number(b.MaxHealth, thousandths), HealthOrder + extra);
+        writer.Bit(thousandths);
+        writer.Bit(build.StatsFromOldProfile);
+        writer.Bit(build.MaxHealth > 0);
+        foreach (double stat in stats) writer.EG(Number(stat, thousandths), StatOrder + extra);
+        if (build.MaxHealth > 0) writer.EG(Number(build.MaxHealth, thousandths), HealthOrder + extra);
 
-        WriteSorted(w, b.Talents, id => id, TalentFirstOrder, TalentGapOrder, _ => { });
-        WriteSorted(w, b.Augmentations, e => e.Id, AugmentationFirstOrder, AugmentationGapOrder, e => w.EG(Rank(e.Rank), 0));
-        WriteSorted(w, b.Glyphs, e => e.Id, GlyphFirstOrder, GlyphGapOrder, e => w.EG(Rank(e.Rank), 0));
-        WriteSorted(w, b.GemPower.ToList(), g => (int)g.Key, 0, 0, g => w.EG(Number(g.Value, thousandths), GemPowerOrder + extra));
-        WriteSorted(w, b.SocketedGemIds, id => id, GemFirstOrder, 0, _ => { });
-        WriteSorted(w, b.GearGemBonuses.ToList(), g => (int)g.Key, 0, 0, g => w.EG(Whole(g.Value), 0));
+        WriteSorted(writer, build.Talents, id => id, TalentFirstOrder, TalentGapOrder, _ => { });
+        WriteSorted(writer, build.Augmentations, e => e.Id, AugmentationFirstOrder, AugmentationGapOrder, e => writer.EG(Rank(e.Rank), 0));
+        WriteSorted(writer, build.Glyphs, e => e.Id, GlyphFirstOrder, GlyphGapOrder, e => writer.EG(Rank(e.Rank), 0));
+        WriteSorted(writer, build.GemPower.ToList(), g => (int)g.Key, 0, 0, g => writer.EG(Number(g.Value, thousandths), GemPowerOrder + extra));
+        WriteSorted(writer, build.SocketedGemIds, id => id, GemFirstOrder, 0, _ => { });
+        WriteSorted(writer, build.GearGemBonuses.ToList(), g => (int)g.Key, 0, 0, g => writer.EG(Whole(g.Value), 0));
         // One list of every stat enchant, with its rating and its count.
-        var enchants = b.StatEnchants.Select(e => e.Id).Union(b.StatEnchantCounts.Keys).ToList();
-        WriteSorted(w, enchants, id => id, EnchantFirstOrder, 0, id =>
+        var enchants = build.StatEnchants.Select(e => e.Id).Union(build.StatEnchantCounts.Keys).ToList();
+        WriteSorted(writer, enchants, id => id, EnchantFirstOrder, 0, id =>
         {
-            w.EG(Whole(b.StatEnchants.FirstOrDefault(e => e.Id == id)?.Rank ?? 0), EnchantRatingOrder);
-            w.EG(Whole(b.StatEnchantCounts.GetValueOrDefault(id)), 0);
+            writer.EG(Whole(build.StatEnchants.FirstOrDefault(e => e.Id == id)?.Rank ?? 0), EnchantRatingOrder);
+            writer.EG(Whole(build.StatEnchantCounts.GetValueOrDefault(id)), 0);
         });
 
-        WriteOptional(w, b.Relic1ItemId, RelicBase);
-        WriteOptional(w, b.Relic2ItemId, RelicBase);
-        w.EG(b.LegendaryItemIds.Count, 0);
-        foreach (int id in b.LegendaryItemIds) w.EG(Zigzag(id - LegendaryBase), OffsetOrder);
-        WriteOptional(w, b.WeaponAbilityId, WeaponBase);
-        return w.Text();
+        WriteOptional(writer, build.Relic1ItemId, RelicBase);
+        WriteOptional(writer, build.Relic2ItemId, RelicBase);
+        writer.EG(build.LegendaryItemIds.Count, 0);
+        foreach (int id in build.LegendaryItemIds) writer.EG(Zigzag(id - LegendaryBase), OffsetOrder);
+        WriteOptional(writer, build.WeaponAbilityId, WeaponBase);
+        return writer.Text();
     }
 
     /// <summary>The build of <paramref name="code"/>, with no hero or name. Throws <see cref="FormatException"/> for a code that is not one.</summary>
     public static CharacterBuild FromCode(string code)
     {
-        var r = new BitReader(code);
-        long version = r.EG(0);
+        var reader = new BitReader(code);
+        long version = reader.EG(0);
         if (version != Version) throw new FormatException($"The share link is of version {version}; this SimFell reads version {Version}.");
-        bool thousandths = r.Bit(), old = r.Bit(), health = r.Bit();
+        bool thousandths = reader.Bit(), old = reader.Bit(), health = reader.Bit();
         int extra = thousandths ? ThousandthsExtraOrder : 0;
-        double N(int order) => thousandths ? r.EG(order + extra) / 1000.0 : r.EG(order);
-        var b = new CharacterBuild
+        double ReadNumber(int order) => thousandths ? reader.EG(order + extra) / 1000.0 : reader.EG(order);
+        var build = new CharacterBuild
         {
             StatsFromOldProfile = old,
-            PrimaryStat = N(StatOrder), Stamina = N(StatOrder), Armor = N(StatOrder), CritRating = N(StatOrder),
-            HasteRating = N(StatOrder), ExpertiseRating = N(StatOrder), SpiritRating = N(StatOrder),
+            PrimaryStat = ReadNumber(StatOrder), Stamina = ReadNumber(StatOrder), Armor = ReadNumber(StatOrder), CritRating = ReadNumber(StatOrder),
+            HasteRating = ReadNumber(StatOrder), ExpertiseRating = ReadNumber(StatOrder), SpiritRating = ReadNumber(StatOrder),
         };
-        if (health) b.MaxHealth = N(HealthOrder);
+        if (health) build.MaxHealth = ReadNumber(HealthOrder);
 
-        ReadSorted(r, TalentFirstOrder, TalentGapOrder, id => b.Talents.Add(id));
-        ReadSorted(r, AugmentationFirstOrder, AugmentationGapOrder, id => b.Augmentations.Add(new BuildEntry(id, r.Int(0) + 1)));
-        ReadSorted(r, GlyphFirstOrder, GlyphGapOrder, id => b.Glyphs.Add(new BuildEntry(id, r.Int(0) + 1)));
-        ReadSorted(r, 0, 0, c => b.GemPower[Color(c)] = N(GemPowerOrder));
-        ReadSorted(r, GemFirstOrder, 0, id => b.SocketedGemIds.Add(id));
-        ReadSorted(r, 0, 0, c => b.GearGemBonuses[Color(c)] = r.Int(0));
-        ReadSorted(r, EnchantFirstOrder, 0, id =>
+        ReadSorted(reader, TalentFirstOrder, TalentGapOrder, id => build.Talents.Add(id));
+        ReadSorted(reader, AugmentationFirstOrder, AugmentationGapOrder, id => build.Augmentations.Add(new BuildEntry(id, reader.Int(0) + 1)));
+        ReadSorted(reader, GlyphFirstOrder, GlyphGapOrder, id => build.Glyphs.Add(new BuildEntry(id, reader.Int(0) + 1)));
+        ReadSorted(reader, 0, 0, c => build.GemPower[Color(c)] = ReadNumber(GemPowerOrder));
+        ReadSorted(reader, GemFirstOrder, 0, id => build.SocketedGemIds.Add(id));
+        ReadSorted(reader, 0, 0, c => build.GearGemBonuses[Color(c)] = reader.Int(0));
+        ReadSorted(reader, EnchantFirstOrder, 0, id =>
         {
-            int rating = r.Int(EnchantRatingOrder), count = r.Int(0);
-            if (rating > 0) b.StatEnchants.Add(new BuildEntry(id, rating));
-            if (count > 0) b.StatEnchantCounts[id] = count;
+            int rating = reader.Int(EnchantRatingOrder), count = reader.Int(0);
+            if (rating > 0) build.StatEnchants.Add(new BuildEntry(id, rating));
+            if (count > 0) build.StatEnchantCounts[id] = count;
         });
 
-        b.Relic1ItemId = ReadOptional(r, RelicBase);
-        b.Relic2ItemId = ReadOptional(r, RelicBase);
-        long legendaries = r.EG(0);
-        if (legendaries > MaxListItems) throw r.Broken();
-        for (int i = 0; i < legendaries; i++) b.LegendaryItemIds.Add(Id(LegendaryBase + Unzigzag(r.EG(OffsetOrder)), r));
-        b.WeaponAbilityId = ReadOptional(r, WeaponBase);
-        r.End();
-        return b;
+        build.Relic1ItemId = ReadOptional(reader, RelicBase);
+        build.Relic2ItemId = ReadOptional(reader, RelicBase);
+        long legendaries = reader.EG(0);
+        if (legendaries > MaxListItems) throw reader.Broken();
+        for (int i = 0; i < legendaries; i++) build.LegendaryItemIds.Add(Id(LegendaryBase + Unzigzag(reader.EG(OffsetOrder)), reader));
+        build.WeaponAbilityId = ReadOptional(reader, WeaponBase);
+        reader.End();
+        return build;
     }
 
-    private static double[] Stats(CharacterBuild b) =>
-        [b.PrimaryStat, b.Stamina, b.Armor, b.CritRating, b.HasteRating, b.ExpertiseRating, b.SpiritRating];
+    private static double[] Stats(CharacterBuild build) =>
+        [build.PrimaryStat, build.Stamina, build.Armor, build.CritRating, build.HasteRating, build.ExpertiseRating, build.SpiritRating];
 
     // A sorted list: its count, then each item's ID as its gap from the one before (the first's from 0), then what it holds.
-    private static void WriteSorted<T>(BitWriter w, IEnumerable<T> items, Func<T, int> id, int firstOrder, int gapOrder, Action<T> rest)
+    private static void WriteSorted<T>(BitWriter writer, IEnumerable<T> items, Func<T, int> id, int firstOrder, int gapOrder, Action<T> rest)
     {
         var list = items.OrderBy(id).ToList();
-        w.EG(list.Count, 0);
+        writer.EG(list.Count, 0);
         int previous = 0;
         for (int i = 0; i < list.Count; i++)
         {
             int current = Whole(id(list[i]));
-            w.EG(current - previous, i == 0 ? firstOrder : gapOrder);
+            writer.EG(current - previous, i == 0 ? firstOrder : gapOrder);
             previous = current;
             rest(list[i]);
         }
     }
 
-    private static void ReadSorted(BitReader r, int firstOrder, int gapOrder, Action<int> item)
+    private static void ReadSorted(BitReader reader, int firstOrder, int gapOrder, Action<int> item)
     {
-        long count = r.EG(0);
-        if (count > MaxListItems) throw r.Broken();
+        long count = reader.EG(0);
+        if (count > MaxListItems) throw reader.Broken();
         long id = 0;
         for (int i = 0; i < count; i++)
         {
-            id += r.EG(i == 0 ? firstOrder : gapOrder);
-            item(Id(id, r));
+            id += reader.EG(i == 0 ? firstOrder : gapOrder);
+            item(Id(id, reader));
         }
     }
 
     // 0 for none, else 1 + the zigzag of the ID less the base.
-    private static void WriteOptional(BitWriter w, int id, int baseId) => w.EG(id == 0 ? 0 : Zigzag(Whole(id) - baseId) + 1, OffsetOrder);
+    private static void WriteOptional(BitWriter writer, int id, int baseId) => writer.EG(id == 0 ? 0 : Zigzag(Whole(id) - baseId) + 1, OffsetOrder);
 
-    private static int ReadOptional(BitReader r, int baseId)
+    private static int ReadOptional(BitReader reader, int baseId)
     {
-        long v = r.EG(OffsetOrder);
-        return v == 0 ? 0 : Id(baseId + Unzigzag(v - 1), r);
+        long value = reader.EG(OffsetOrder);
+        return value == 0 ? 0 : Id(baseId + Unzigzag(value - 1), reader);
     }
 
     private static int Rank(int rank) => rank >= 1 ? rank - 1 : throw Negative(rank);
@@ -207,13 +207,13 @@ public static class BuildShareLink
 
     private static ArgumentOutOfRangeException Negative(object value) => new(nameof(value), value, "A share link holds no negative values or ranks below 1.");
 
-    private static long Zigzag(long v) => v >= 0 ? 2 * v : -2 * v - 1;
+    private static long Zigzag(long value) => value >= 0 ? 2 * value : -2 * value - 1;
 
-    private static long Unzigzag(long v) => (v & 1) == 0 ? v / 2 : -(v + 1) / 2;
+    private static long Unzigzag(long value) => (value & 1) == 0 ? value / 2 : -(value + 1) / 2;
 
-    private static int Id(long id, BitReader r) => id is >= 0 and <= int.MaxValue ? (int)id : throw r.Broken();
+    private static int Id(long id, BitReader reader) => id is >= 0 and <= int.MaxValue ? (int)id : throw reader.Broken();
 
-    private static GemColor Color(int c) => Enum.IsDefined(typeof(GemColor), c) ? (GemColor)c : throw new FormatException("The share link's code is not a build.");
+    private static GemColor Color(int value) => Enum.IsDefined(typeof(GemColor), value) ? (GemColor)value : throw new FormatException("The share link's code is not a build.");
 
     private sealed class BitWriter
     {
@@ -221,25 +221,25 @@ public static class BuildShareLink
 
         public void Bit(bool bit) => _bits.Add(bit);
 
-        /// <summary>Exp-Golomb of order <paramref name="order"/>: v + 2^order in binary, after as many 0s as it has bits beyond order + 1.</summary>
-        public void EG(long v, int order)
+        /// <summary>Exp-Golomb of order <paramref name="order"/>: value + 2^order in binary, after as many 0s as it has bits beyond order + 1.</summary>
+        public void EG(long value, int order)
         {
-            ulong x = (ulong)v + (1UL << order);
-            int length = 64 - System.Numerics.BitOperations.LeadingZeroCount(x);
+            ulong number = (ulong)value + (1UL << order);
+            int length = 64 - System.Numerics.BitOperations.LeadingZeroCount(number);
             for (int i = 0; i < length - 1 - order; i++) _bits.Add(false);
-            for (int i = length - 1; i >= 0; i--) _bits.Add(((x >> i) & 1) == 1);
+            for (int i = length - 1; i >= 0; i--) _bits.Add(((number >> i) & 1) == 1);
         }
 
         public string Text()
         {
-            var s = new System.Text.StringBuilder((_bits.Count + 5) / 6);
+            var builder = new System.Text.StringBuilder((_bits.Count + 5) / 6);
             for (int i = 0; i < _bits.Count; i += 6)
             {
-                int v = 0;
-                for (int k = 0; k < 6; k++) v = (v << 1) | (i + k < _bits.Count && _bits[i + k] ? 1 : 0);
-                s.Append(Alphabet[v]);
+                int value = 0;
+                for (int k = 0; k < 6; k++) value = (value << 1) | (i + k < _bits.Count && _bits[i + k] ? 1 : 0);
+                builder.Append(Alphabet[value]);
             }
-            return s.ToString();
+            return builder.ToString();
         }
     }
 
@@ -250,11 +250,11 @@ public static class BuildShareLink
 
         public BitReader(string code)
         {
-            foreach (char c in code)
+            foreach (char character in code)
             {
-                int v = Alphabet.IndexOf(c);
-                if (v < 0) throw new FormatException($"The share link's code has a character it cannot have ('{c}').");
-                for (int k = 5; k >= 0; k--) _bits.Add(((v >> k) & 1) == 1);
+                int value = Alphabet.IndexOf(character);
+                if (value < 0) throw new FormatException($"The share link's code has a character it cannot have ('{character}').");
+                for (int k = 5; k >= 0; k--) _bits.Add(((value >> k) & 1) == 1);
             }
         }
 
@@ -267,15 +267,15 @@ public static class BuildShareLink
             {
                 if (++zeros > 40) throw Broken();
             }
-            ulong x = 1;
-            for (int i = 0; i < zeros + order; i++) x = (x << 1) | (Bit() ? 1UL : 0);
-            return (long)(x - (1UL << order));
+            ulong number = 1;
+            for (int i = 0; i < zeros + order; i++) number = (number << 1) | (Bit() ? 1UL : 0);
+            return (long)(number - (1UL << order));
         }
 
         public int Int(int order)
         {
-            long v = EG(order);
-            return v <= int.MaxValue ? (int)v : throw Broken();
+            long value = EG(order);
+            return value <= int.MaxValue ? (int)value : throw Broken();
         }
 
         /// <summary>Only the 0 bits that fill the last character are left.</summary>

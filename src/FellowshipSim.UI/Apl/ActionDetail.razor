@@ -20,9 +20,9 @@
                 {
                     <option value="">@(OtherLists.Count > 0 ? "Pick a list" : "Add an action list first")</option>
                 }
-                @foreach (var l in OtherLists)
+                @foreach (var list in OtherLists)
                 {
-                    <option @key="l.Name" value="@l.Name">@l.Name</option>
+                    <option @key="list.Name" value="@list.Name">@list.Name</option>
                 }
             </select>
             <p class="hint list-hint">@ListHint</p>
@@ -40,9 +40,9 @@
             {
                 <option value="@Action.Ability">@Action.Ability (not a @Vocabulary.Hero ability)</option>
             }
-            @foreach (var a in Vocabulary.Abilities)
+            @foreach (var ability in Vocabulary.Abilities)
             {
-                <option @key="a.Slug" value="@a.Slug">@a.Name</option>
+                <option @key="ability.Slug" value="@ability.Slug">@ability.Name</option>
             }
         </select>
     }
@@ -59,9 +59,9 @@
         <label for="@($"{Id}-target")">Target</label>
         <select id="@($"{Id}-target")" value="@(Action.TargetSelection?.ToString() ?? "")" @onchange="e => ChangeTarget((string?)e.Value)">
             <option value="">Current target</option>
-            @foreach (var s in Vocabulary.TargetSelections)
+            @foreach (var targetSelection in Vocabulary.TargetSelections)
             {
-                <option @key="s.Selection" value="@s.Selection.ToString()">@s.Label</option>
+                <option @key="targetSelection.Selection" value="@targetSelection.Selection.ToString()">@targetSelection.Label</option>
             }
         </select>
         <label hidden="@(Action.TargetSelection == null)">Target by</label>

@@ -56,9 +56,9 @@ public sealed class SimChunks
         {
             return new MonteCarloSimulator(profile.Build, AplParser.ParseScript(profile.ActionList));
         }
-        catch (Exception e) when (e is ParseException or InvalidOperationException)
+        catch (Exception exception) when (exception is ParseException or InvalidOperationException)
         {
-            throw new SimEngineException(e.Message, e);
+            throw new SimEngineException(exception.Message, exception);
         }
     }
 }

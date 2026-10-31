@@ -84,9 +84,9 @@
         {
             _saved = await Profiles.ListAsync(Visitor, Heroes);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            _error = e.Message;
+            _error = exception.Message;
         }
     }
 
@@ -101,9 +101,9 @@
 
     private static string DefaultList(string hero) => $"builtin/{hero}/{DefaultActionLists.DefaultName}";
 
-    private async Task Toggle(ChangeEventArgs e)
+    private async Task Toggle(ChangeEventArgs args)
     {
-        bool on = e.Value is true;
+        bool on = args.Value is true;
         State.Extra = on ? SimExtra.Compare : SimExtra.None;
         if (on && State.CompareRows.Count == 0) AddRun();
         await OnChanged.InvokeAsync();

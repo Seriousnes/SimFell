@@ -42,8 +42,8 @@ public static class DefaultActionLists
 
     private sealed class KeyComparer : IEqualityComparer<(string Hero, string Name)>
     {
-        public bool Equals((string Hero, string Name) a, (string Hero, string Name) b) =>
-            a.Hero.Equals(b.Hero, StringComparison.OrdinalIgnoreCase) && a.Name.Equals(b.Name, StringComparison.OrdinalIgnoreCase);
+        public bool Equals((string Hero, string Name) left, (string Hero, string Name) right) =>
+            left.Hero.Equals(right.Hero, StringComparison.OrdinalIgnoreCase) && left.Name.Equals(right.Name, StringComparison.OrdinalIgnoreCase);
 
         public int GetHashCode((string Hero, string Name) key) =>
             HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(key.Hero), StringComparer.OrdinalIgnoreCase.GetHashCode(key.Name));

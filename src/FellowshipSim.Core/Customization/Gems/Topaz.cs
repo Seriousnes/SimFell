@@ -7,19 +7,19 @@ public class Topaz : Gem
 
     public static readonly GemNode[] AllNodes =
     [
-        new(318, 1, "Adrenaline Rush", 80, V(("HasteBonus", 0.03), ("Duration", AdrenalineRushSeconds), ("HealthThreshold", 0.3)),
+        new(318, 1, "Adrenaline Rush", 80, NodeValues(("HasteBonus", 0.03), ("Duration", AdrenalineRushSeconds), ("HealthThreshold", 0.3)),
             AuraDef.Effect("Adrenaline Rush", 1939, AdrenalineRushSeconds, modifiers: StatModifier.Add(StatType.Haste, 0.03))),
-        new(280, 2, "Thief's Alacrity", 150, V(("StaminaBonus", 4), ("HasteBonus", 8))),
-        new(344, 3, "Rogue's Resurgence", 220, V(("HealthThreshold", 0.5), ("HealPercent", 0.08), ("Cooldown", 20))),
-        new(320, 4, "Feline Grace", 300, V(("HasteBonus", 0.02))),
-        new(316, 5, "Blessing of the Virtuoso", 450, V(("HasteBonus", 0.02)),
+        new(280, 2, "Thief's Alacrity", 150, NodeValues(("StaminaBonus", 4), ("HasteBonus", 8))),
+        new(344, 3, "Rogue's Resurgence", 220, NodeValues(("HealthThreshold", 0.5), ("HealPercent", 0.08), ("Cooldown", 20))),
+        new(320, 4, "Feline Grace", 300, NodeValues(("HasteBonus", 0.02))),
+        new(316, 5, "Blessing of the Virtuoso", 450, NodeValues(("HasteBonus", 0.02)),
             AuraDef.Effect("Essence of the Virtuoso", 1937, modifiers: StatModifier.Add(StatType.Haste, 0.02))),
-        new(319, 6, "Adrenaline Rush - II", 600, V(("HasteBonus", 0.09), ("Duration", AdrenalineRushSeconds), ("HealthThreshold", 0.3)),
+        new(319, 6, "Adrenaline Rush - II", 600, NodeValues(("HasteBonus", 0.09), ("Duration", AdrenalineRushSeconds), ("HealthThreshold", 0.3)),
             AuraDef.Effect("Adrenaline Rush - II", 1940, AdrenalineRushSeconds, modifiers: StatModifier.Add(StatType.Haste, 0.09))),
-        new(281, 7, "Thief's Alacrity - II", 800, V(("StaminaBonus", 12), ("HasteBonus", 24))),
-        new(345, 8, "Rogue's Resurgence - II", 1000, V(("HealthThreshold", 0.5), ("HealPercent", 0.24), ("Cooldown", 20))),
-        new(321, 9, "Feline Grace - II", 1250, V(("HasteBonus", 0.06))),
-        new(317, 10, "Blessing of the Virtuoso - II", 1500, V(("HasteBonus", 0.06)),
+        new(281, 7, "Thief's Alacrity - II", 800, NodeValues(("StaminaBonus", 12), ("HasteBonus", 24))),
+        new(345, 8, "Rogue's Resurgence - II", 1000, NodeValues(("HealthThreshold", 0.5), ("HealPercent", 0.24), ("Cooldown", 20))),
+        new(321, 9, "Feline Grace - II", 1250, NodeValues(("HasteBonus", 0.06))),
+        new(317, 10, "Blessing of the Virtuoso - II", 1500, NodeValues(("HasteBonus", 0.06)),
             AuraDef.Effect("Essence of the Virtuoso - II", 1938, modifiers: StatModifier.Add(StatType.Haste, 0.06))),
     ];
 

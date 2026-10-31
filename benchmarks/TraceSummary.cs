@@ -116,14 +116,14 @@ Console.WriteLine($"  {"(no stage)",-30} {"",9}  {none * 100.0 / Math.Max(1, eng
 
 Console.WriteLine();
 Console.WriteLine("Top methods by own samples:");
-foreach (var (method, n) in leaf.OrderByDescending(kv => kv.Value).Take(top))
+foreach (var (method, samples) in leaf.OrderByDescending(kv => kv.Value).Take(top))
 {
-    Console.WriteLine($"  {n * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
+    Console.WriteLine($"  {samples * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
 }
 
 Console.WriteLine();
 Console.WriteLine("Top engine methods by inclusive samples:");
-foreach (var (method, n) in methodInclusive.Where(kv => kv.Key.Contains("FellowshipSim.")).OrderByDescending(kv => kv.Value).Take(top * 2))
+foreach (var (method, samples) in methodInclusive.Where(kv => kv.Key.Contains("FellowshipSim.")).OrderByDescending(kv => kv.Value).Take(top * 2))
 {
-    Console.WriteLine($"  {n * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
+    Console.WriteLine($"  {samples * 100.0 / Math.Max(1, engineSamples),5:F1}%  {method}");
 }

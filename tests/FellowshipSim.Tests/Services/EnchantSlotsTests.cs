@@ -34,7 +34,7 @@ public class EnchantSlotsTests
         Assert.Equal(7, editor.Room(EnchantSlot.StatEnchants));
         Assert.True(editor.FitsGear);
         // Protective enchants are apart: all three still fit, and a fourth does not.
-        foreach (var p in editor.Catalog.ProtectiveEnchants.Take(3)) Assert.True(editor.ToggleProtectiveEnchant(p));
+        foreach (var protectiveEnchant in editor.Catalog.ProtectiveEnchants.Take(3)) Assert.True(editor.ToggleProtectiveEnchant(protectiveEnchant));
         Assert.False(editor.ToggleProtectiveEnchant(editor.Catalog.ProtectiveEnchants[3]));
     }
 

@@ -13,12 +13,12 @@ public readonly record struct SimTime(long Milliseconds) : IComparable<SimTime>
 
     public int CompareTo(SimTime other) => Milliseconds.CompareTo(other.Milliseconds);
 
-    public static SimTime operator +(SimTime a, SimTime b) => new(a.Milliseconds + b.Milliseconds);
-    public static SimTime operator -(SimTime a, SimTime b) => new(Math.Max(0, a.Milliseconds - b.Milliseconds));
-    public static bool operator <(SimTime a, SimTime b) => a.Milliseconds < b.Milliseconds;
-    public static bool operator >(SimTime a, SimTime b) => a.Milliseconds > b.Milliseconds;
-    public static bool operator <=(SimTime a, SimTime b) => a.Milliseconds <= b.Milliseconds;
-    public static bool operator >=(SimTime a, SimTime b) => a.Milliseconds >= b.Milliseconds;
+    public static SimTime operator +(SimTime left, SimTime right) => new(left.Milliseconds + right.Milliseconds);
+    public static SimTime operator -(SimTime left, SimTime right) => new(Math.Max(0, left.Milliseconds - right.Milliseconds));
+    public static bool operator <(SimTime left, SimTime right) => left.Milliseconds < right.Milliseconds;
+    public static bool operator >(SimTime left, SimTime right) => left.Milliseconds > right.Milliseconds;
+    public static bool operator <=(SimTime left, SimTime right) => left.Milliseconds <= right.Milliseconds;
+    public static bool operator >=(SimTime left, SimTime right) => left.Milliseconds >= right.Milliseconds;
 
     public override string ToString() => $"{TotalSeconds:F3}s";
 }

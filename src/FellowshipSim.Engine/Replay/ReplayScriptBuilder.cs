@@ -66,15 +66,15 @@ public static class ReplayScriptBuilder
         double f0 = Num(fight["startTime"]);
         double fightEnd = Num(fight["endTime"]);
         var actors = new Dictionary<int, JsonNode>();
-        foreach (var a in raw["master_data"]!["actors"]!.AsArray()) actors[a!["id"]!.GetValue<int>()] = a;
+        foreach (var actor in raw["master_data"]!["actors"]!.AsArray()) actors[actor!["id"]!.GetValue<int>()] = actor;
         var abilityNames = new Dictionary<long, string>();
-        foreach (var a in raw["master_data"]!["abilities"]!.AsArray()) abilityNames[(long)Num(a!["gameID"])] = a["name"]?.GetValue<string>() ?? "";
+        foreach (var ability in raw["master_data"]!["abilities"]!.AsArray()) abilityNames[(long)Num(ability!["gameID"])] = ability["name"]?.GetValue<string>() ?? "";
         var events = Dedupe(raw["events"]!.AsArray());
 
         double Rel(double ts) => Math.Round((ts - f0) / 1000.0, 3);
-        bool IsEnemy(int? id) => id is { } i && i != -1 && actors.TryGetValue(i, out var a)
-            && a["type"]?.GetValue<string>() == "NPC" && a["name"]?.GetValue<string>() != "Environment";
-        string AbilityName(long id) => abilityNames.TryGetValue(id, out var n) ? n : $"ability_{id}";
+        bool IsEnemy(int? id) => id is { } actorId && actorId != -1 && actors.TryGetValue(actorId, out var actor)
+            && actor["type"]?.GetValue<string>() == "NPC" && actor["name"]?.GetValue<string>() != "Environment";
+        string AbilityName(long id) => abilityNames.TryGetValue(id, out var knownName) ? knownName : $"ability_{id}";
         JsonObject Unit(int? id, int instance) => new() { ["id"] = id, ["instance"] = instance };
 
         var commands = new List<JsonObject>();
@@ -90,25 +90,25 @@ public static class ReplayScriptBuilder
         var deathAt = new Dictionary<(int, int), double>();
         var maxHp = new Dictionary<(int, int), double>();
         var nameOf = new Dictionary<(int, int), string>();
-        foreach (var e in events)
+        foreach (var logEvent in events)
         {
             foreach (var prefix in new[] { "source", "target" })
             {
-                int? id = Int(e[$"{prefix}ID"]);
+                int? id = Int(logEvent[$"{prefix}ID"]);
                 if (!IsEnemy(id)) continue;
-                var key = (id!.Value, Instance(e, prefix));
-                double ts = Num(e["timestamp"]);
+                var key = (id!.Value, Instance(logEvent, prefix));
+                double ts = Num(logEvent["timestamp"]);
                 if (!firstSeen.ContainsKey(key)) { firstSeen[key] = ts; order.Add(key); }
                 lastSeen[key] = ts;
                 nameOf[key] = actors[key.Item1]["name"]?.GetValue<string>() ?? "";
-                if (e[$"{prefix}Resources"]?["maxHitPoints"] is { } mhp && Num(mhp) > 0)
+                if (logEvent[$"{prefix}Resources"]?["maxHitPoints"] is { } mhp && Num(mhp) > 0)
                 {
                     maxHp[key] = Math.Max(maxHp.GetValueOrDefault(key), Num(mhp));
                 }
             }
-            if (Str(e["type"]) == "death" && IsEnemy(Int(e["targetID"])))
+            if (Str(logEvent["type"]) == "death" && IsEnemy(Int(logEvent["targetID"])))
             {
-                deathAt.TryAdd((Int(e["targetID"])!.Value, Instance(e, "target")), Num(e["timestamp"]));
+                deathAt.TryAdd((Int(logEvent["targetID"])!.Value, Instance(logEvent, "target")), Num(logEvent["timestamp"]));
             }
         }
 
@@ -140,22 +140,22 @@ public static class ReplayScriptBuilder
 
         // ---- Enemy health (from everyone's damage; health-dependent effects need it) ---------
         var lastFraction = new Dictionary<(int, int), double>();
-        foreach (var e in events)
+        foreach (var logEvent in events)
         {
-            if (Str(e["type"]) != "damage" || !IsEnemy(Int(e["targetID"]))) continue;
-            var res = e["targetResources"];
+            if (Str(logEvent["type"]) != "damage" || !IsEnemy(Int(logEvent["targetID"]))) continue;
+            var res = logEvent["targetResources"];
             if (res?["hitPoints"] is not { } hpNode || res["maxHitPoints"] is not { } maxNode || Num(maxNode) == 0) continue;
             double hp = Num(hpNode), maxNow = Num(maxNode);
             // A killing blow logs the health below 0 as an unsigned 32-bit number (1p7AXmHfwV9CYMxR fight 30 @ 157.097:
             // 4294950962 of 726971).
             if (hp > maxNow) hp = 0;
-            var key = (Int(e["targetID"])!.Value, Instance(e, "target"));
+            var key = (Int(logEvent["targetID"])!.Value, Instance(logEvent, "target"));
             double fraction = hp / maxNow;
             if (lastFraction.TryGetValue(key, out var last) && Math.Abs(fraction - last) < HealthSampleStep) continue;
             lastFraction[key] = fraction;
             commands.Add(new JsonObject
             {
-                ["t"] = Rel(Num(e["timestamp"])), ["kind"] = "enemy_health", ["enemy"] = Unit(key.Item1, key.Item2),
+                ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "enemy_health", ["enemy"] = Unit(key.Item1, key.Item2),
                 ["hp"] = hp, ["max_hp"] = maxNode.DeepClone(),
             });
         }
@@ -163,24 +163,24 @@ public static class ReplayScriptBuilder
         // ---- Player deaths -------------------------------------------------------------------
         // A dead player's events log their health below 0 as an unsigned 32-bit number (above their maximum). Many returns
         // log no resurrect event (a release, or a wipe): the player is back at their first event with health in range.
-        bool Alive(JsonNode e, string prefix) => e[$"{prefix}Resources"] is { } r && r["hitPoints"] is { } hpNode
-            && r["maxHitPoints"] is { } maxNode && Num(hpNode) > 0 && Num(hpNode) <= Num(maxNode);
+        bool Alive(JsonNode logEvent, string prefix) => logEvent[$"{prefix}Resources"] is { } unitResources && unitResources["hitPoints"] is { } hpNode
+            && unitResources["maxHitPoints"] is { } maxNode && Num(hpNode) > 0 && Num(hpNode) <= Num(maxNode);
         bool dead = false;
-        foreach (var e in events)
+        foreach (var logEvent in events)
         {
-            string type = Str(e["type"]);
-            bool onPlayer = Int(e["targetID"]) == playerId, byPlayer = Int(e["sourceID"]) == playerId;
+            string type = Str(logEvent["type"]);
+            bool onPlayer = Int(logEvent["targetID"]) == playerId, byPlayer = Int(logEvent["sourceID"]) == playerId;
             if (!dead)
             {
                 if (type != "death" || !onPlayer) continue;
                 dead = true;
-                commands.Add(new JsonObject { ["t"] = Rel(Num(e["timestamp"])), ["kind"] = "player_death" });
+                commands.Add(new JsonObject { ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "player_death" });
                 continue;
             }
-            if ((type == "resurrect" && onPlayer) || (byPlayer && Alive(e, "source")) || (onPlayer && Alive(e, "target")))
+            if ((type == "resurrect" && onPlayer) || (byPlayer && Alive(logEvent, "source")) || (onPlayer && Alive(logEvent, "target")))
             {
                 dead = false;
-                commands.Add(new JsonObject { ["t"] = Rel(Num(e["timestamp"])), ["kind"] = "player_revive" });
+                commands.Add(new JsonObject { ["t"] = Rel(Num(logEvent["timestamp"])), ["kind"] = "player_revive" });
             }
         }
 
@@ -206,42 +206,42 @@ public static class ReplayScriptBuilder
         var ignoredCasts = new JsonArray();
         for (int i = 0; i < playerEvents.Count; i++)
         {
-            var e = playerEvents[i];
-            long gid = (long)Num(e["abilityGameID"]);
+            var logEvent = playerEvents[i];
+            long gid = (long)Num(logEvent["abilityGameID"]);
             JsonObject Base() => new()
             {
-                ["t"] = Rel(Num(e["timestamp"])), ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
-                ["target"] = Unit(Int(e["targetID"]) ?? -1, Instance(e, "target")),
+                ["t"] = Rel(Num(logEvent["timestamp"])), ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
+                ["target"] = Unit(Int(logEvent["targetID"]) ?? -1, Instance(logEvent, "target")),
             };
-            double t = Rel(Num(e["timestamp"]));
-            switch (Str(e["type"]))
+            double eventTime = Rel(Num(logEvent["timestamp"]));
+            switch (Str(logEvent["type"]))
             {
                 case "begincast":
-                    if (openCast != null) CancelOpen(t);
+                    if (openCast != null) CancelOpen(eventTime);
                     openCast = Base();
-                    openTs = Num(e["timestamp"]);
+                    openTs = Num(logEvent["timestamp"]);
                     actionsSinceOpen.Clear();
                     commands.Add(With(Base(), "kind", "begin_cast"));
                     break;
 
                 case "cast":
-                    if (e["fake"]?.GetValue<bool>() == true) break; // duplicate activation marker emitted alongside begincast
+                    if (logEvent["fake"]?.GetValue<bool>() == true) break; // duplicate activation marker emitted alongside begincast
                     if (openCast != null && (long)Num(openCast["ability_id"]) == gid)
                     {
                         commands.Add(With(Base(), "kind", "complete_cast"));
                         openCast = null;
                         break;
                     }
-                    if (openCast != null && Num(e["timestamp"]) - openTs > MaxCastWindowMs)
+                    if (openCast != null && Num(logEvent["timestamp"]) - openTs > MaxCastWindowMs)
                     {
-                        CancelOpen(t);
+                        CancelOpen(eventTime);
                         openCast = null;
                     }
-                    if (openCast != null) actionsSinceOpen.Add(t);
+                    if (openCast != null) actionsSinceOpen.Add(eventTime);
                     // A lone cast event right before the same ability's begincast is not a real activation (the game logs
                     // it when a press does not go through; e.g. Chronoshift @ 124.882 then begincast @ 125.047).
                     bool lone = playerEvents.Skip(i + 1).Take(5).Any(n => Str(n["type"]) == "begincast"
-                        && (long)Num(n["abilityGameID"]) == gid && Num(n["timestamp"]) - Num(e["timestamp"]) <= LoneCastBeforeBeginCastMs);
+                        && (long)Num(n["abilityGameID"]) == gid && Num(n["timestamp"]) - Num(logEvent["timestamp"]) <= LoneCastBeforeBeginCastMs);
                     if (lone)
                     {
                         ignoredCasts.Add(With(Base(), "reason", "cast event right before its own begincast"));
@@ -264,19 +264,19 @@ public static class ReplayScriptBuilder
         if (openCast != null) CancelOpen(Rel(fightEnd));
 
         // ---- Auras, damage, resources --------------------------------------------------------
-        foreach (var e in events)
+        foreach (var logEvent in events)
         {
-            string type = Str(e["type"]);
-            int? src = Int(e["sourceID"]), tgt = Int(e["targetID"]);
+            string type = Str(logEvent["type"]);
+            int? src = Int(logEvent["sourceID"]), tgt = Int(logEvent["targetID"]);
             if (AuraTypes.Contains(type))
             {
-                long gid = (long)Num(e["abilityGameID"]);
+                long gid = (long)Num(logEvent["abilityGameID"]);
                 var rec = new JsonObject
                 {
-                    ["t"] = Rel(Num(e["timestamp"])), ["type"] = type, ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
-                    ["source"] = Unit(src, Instance(e, "source")), ["target"] = Unit(tgt, Instance(e, "target")),
-                    ["stack"] = e["stack"]?.DeepClone(), ["duration_ms"] = e["duration"]?.DeepClone(),
-                    ["extra_ability_id"] = e["extraAbilityGameID"]?.DeepClone(),
+                    ["t"] = Rel(Num(logEvent["timestamp"])), ["type"] = type, ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
+                    ["source"] = Unit(src, Instance(logEvent, "source")), ["target"] = Unit(tgt, Instance(logEvent, "target")),
+                    ["stack"] = logEvent["stack"]?.DeepClone(), ["duration_ms"] = logEvent["duration"]?.DeepClone(),
+                    ["extra_ability_id"] = logEvent["extraAbilityGameID"]?.DeepClone(),
                 };
                 if (tgt == playerId && src == playerId) obsAuras.Add(rec);
                 // Buffs from others on the player, and debuffs from others on enemies: engine inputs.
@@ -286,28 +286,28 @@ public static class ReplayScriptBuilder
             else if (type == "damage" && src == playerId && IsEnemy(tgt))
             {
                 // Only damage to enemies: party mechanics logged as the player hurting themselves (Xavian's Stagger) are not ours.
-                long gid = (long)Num(e["abilityGameID"]);
+                long gid = (long)Num(logEvent["abilityGameID"]);
                 obsDamage.Add(new JsonObject
                 {
-                    ["t"] = Rel(Num(e["timestamp"])), ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
-                    ["target"] = Unit(tgt, Instance(e, "target")),
-                    ["amount"] = e["amount"]?.DeepClone() ?? 0, ["unmitigated"] = e["unmitigatedAmount"]?.DeepClone(),
-                    ["absorbed"] = e["absorbed"]?.DeepClone() ?? 0, ["blocked"] = e["blocked"]?.DeepClone() ?? 0, ["overkill"] = e["overkill"]?.DeepClone() ?? 0,
-                    ["crit"] = Int(e["hitType"]) is HitTypeCrit or HitTypeGrievousCrit, ["hit_type"] = e["hitType"]?.DeepClone(), ["tick"] = e["tick"]?.GetValue<bool>() ?? false,
+                    ["t"] = Rel(Num(logEvent["timestamp"])), ["ability_id"] = gid, ["ability_name"] = AbilityName(gid),
+                    ["target"] = Unit(tgt, Instance(logEvent, "target")),
+                    ["amount"] = logEvent["amount"]?.DeepClone() ?? 0, ["unmitigated"] = logEvent["unmitigatedAmount"]?.DeepClone(),
+                    ["absorbed"] = logEvent["absorbed"]?.DeepClone() ?? 0, ["blocked"] = logEvent["blocked"]?.DeepClone() ?? 0, ["overkill"] = logEvent["overkill"]?.DeepClone() ?? 0,
+                    ["crit"] = Int(logEvent["hitType"]) is HitTypeCrit or HitTypeGrievousCrit, ["hit_type"] = logEvent["hitType"]?.DeepClone(), ["tick"] = logEvent["tick"]?.GetValue<bool>() ?? false,
                 });
             }
 
-            if (src == playerId && e["sourceResources"]?["resources"] is JsonArray { Count: > 0 } resources)
+            if (src == playerId && logEvent["sourceResources"]?["resources"] is JsonArray { Count: > 0 } resources)
             {
                 var byType = new JsonObject();
-                foreach (var r in resources)
+                foreach (var resource in resources)
                 {
-                    byType[Int(r!["type"])!.Value.ToString()] = new JsonObject { ["amount"] = r["amount"]?.DeepClone(), ["max"] = r["max"]?.DeepClone() };
+                    byType[Int(resource!["type"])!.Value.ToString()] = new JsonObject { ["amount"] = resource["amount"]?.DeepClone(), ["max"] = resource["max"]?.DeepClone() };
                 }
                 obsResources.Add(new JsonObject
                 {
-                    ["t"] = Rel(Num(e["timestamp"])), ["event"] = type, ["ability_id"] = e["abilityGameID"]?.DeepClone(),
-                    ["activation"] = e["activation"]?.GetValue<bool>() == true, ["resources"] = byType,
+                    ["t"] = Rel(Num(logEvent["timestamp"])), ["event"] = type, ["ability_id"] = logEvent["abilityGameID"]?.DeepClone(),
+                    ["activation"] = logEvent["activation"]?.GetValue<bool>() == true, ["resources"] = byType,
                 });
             }
         }
@@ -319,10 +319,10 @@ public static class ReplayScriptBuilder
 
         // Every player's augmentation ranks (buffs other players give scale with the giver's rank).
         var players = new JsonObject();
-        foreach (var e in events.Where(e => Str(e["type"]) == "combatantinfo"))
+        foreach (var logEvent in events.Where(e => Str(e["type"]) == "combatantinfo"))
         {
             var gearTraits = new Dictionary<string, int>();
-            foreach (var item in e["gear"]?.AsArray() ?? [])
+            foreach (var item in logEvent["gear"]?.AsArray() ?? [])
             {
                 foreach (var tr in item?["traits"]?.AsArray() ?? [])
                 {
@@ -331,8 +331,8 @@ public static class ReplayScriptBuilder
                 }
             }
             var weaponTraits = new JsonObject();
-            foreach (var w in e["weaponTraits"]?.AsArray() ?? []) weaponTraits[Int(w!["id"])!.Value.ToString()] = Int(w["points"]) ?? 0;
-            int sid = Int(e["sourceID"])!.Value;
+            foreach (var weaponTrait in logEvent["weaponTraits"]?.AsArray() ?? []) weaponTraits[Int(weaponTrait!["id"])!.Value.ToString()] = Int(weaponTrait["points"]) ?? 0;
+            int sid = Int(logEvent["sourceID"])!.Value;
             players[sid.ToString()] = new JsonObject
             {
                 ["name"] = actors.TryGetValue(sid, out var who) ? who["name"]?.DeepClone() : null,
@@ -390,35 +390,35 @@ public static class ReplayScriptBuilder
         var list = new List<JsonObject>();
         foreach (var node in events)
         {
-            if (node is not JsonObject e) continue;
-            if (seen.Add(Canonical(e))) list.Add(e);
+            if (node is not JsonObject logEvent) continue;
+            if (seen.Add(Canonical(logEvent))) list.Add(logEvent);
         }
         return list.OrderBy(e => Num(e["timestamp"])).ToList();
     }
 
     private static string Canonical(JsonNode? node) => node switch
     {
-        JsonObject o => "{" + string.Join(",", o.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"\"{kv.Key}\":{Canonical(kv.Value)}")) + "}",
-        JsonArray a => "[" + string.Join(",", a.Select(Canonical)) + "]",
+        JsonObject jsonObject => "{" + string.Join(",", jsonObject.OrderBy(kv => kv.Key, StringComparer.Ordinal).Select(kv => $"\"{kv.Key}\":{Canonical(kv.Value)}")) + "}",
+        JsonArray jsonArray => "[" + string.Join(",", jsonArray.Select(Canonical)) + "]",
         null => "null",
         _ => node.ToJsonString(),
     };
 
-    private static JsonObject With(JsonObject o, string key, JsonNode? value)
+    private static JsonObject With(JsonObject jsonObject, string key, JsonNode? value)
     {
-        o[key] = value;
-        return o;
+        jsonObject[key] = value;
+        return jsonObject;
     }
 
-    private static int Instance(JsonNode e, string prefix) => Int(e[$"{prefix}Instance"]) ?? 1;
-    private static string Str(JsonNode? n) => n?.GetValue<string>() ?? "";
-    private static int? Int(JsonNode? n) => n == null ? null : (int)Num(n);
-    private static double Num(JsonNode? n)
+    private static int Instance(JsonNode logEvent, string prefix) => Int(logEvent[$"{prefix}Instance"]) ?? 1;
+    private static string Str(JsonNode? node) => node?.GetValue<string>() ?? "";
+    private static int? Int(JsonNode? node) => node == null ? null : (int)Num(node);
+    private static double Num(JsonNode? node)
     {
-        if (n is not JsonValue v) return 0;
-        if (v.TryGetValue<double>(out var d)) return d;
-        if (v.TryGetValue<long>(out var l)) return l;
-        if (v.TryGetValue<int>(out var i)) return i;
+        if (node is not JsonValue jsonValue) return 0;
+        if (jsonValue.TryGetValue<double>(out var number)) return number;
+        if (jsonValue.TryGetValue<long>(out var longValue)) return longValue;
+        if (jsonValue.TryGetValue<int>(out var intValue)) return intValue;
         return 0;
     }
 }

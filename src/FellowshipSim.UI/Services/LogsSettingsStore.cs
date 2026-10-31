@@ -37,7 +37,7 @@ public sealed class LogsSettingsStore(IHttpClientFactory httpClients, IConfigura
     /// <summary>A client as the signed-in user, else with a developer's credentials; null when there is neither.</summary>
     public async Task<FellowshipLogsClient?> CreateClientAsync(CancellationToken ct = default) =>
         await signIn.AccessTokenAsync(ct) is { } token ? FellowshipLogsClient.ForUser(httpClients.CreateClient(HttpClientName), token)
-        : Credentials is { } c ? Create(c) : null;
+        : Credentials is { } credentials ? Create(credentials) : null;
 
-    public FellowshipLogsClient Create(LogsCredentials c) => new(httpClients.CreateClient(HttpClientName), c.ClientId, c.ClientSecret);
+    public FellowshipLogsClient Create(LogsCredentials credentials) => new(httpClients.CreateClient(HttpClientName), credentials.ClientId, credentials.ClientSecret);
 }

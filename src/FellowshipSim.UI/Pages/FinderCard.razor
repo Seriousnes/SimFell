@@ -80,9 +80,9 @@
         }
     }
 
-    private async Task Toggle(ChangeEventArgs e)
+    private async Task Toggle(ChangeEventArgs args)
     {
-        State.Extra = e.Value is true ? SimExtra.Finder : SimExtra.None;
+        State.Extra = args.Value is true ? SimExtra.Finder : SimExtra.None;
         await OnChanged.InvokeAsync();
     }
 

@@ -4,16 +4,16 @@ public class Amethyst : Gem
 {
     public static readonly GemNode[] AllNodes =
     [
-        new(531, 1, "Sealed Fate", 80, V(("HealthThreshold", 0.5), ("CritChanceBonus", 0.05))),
-        new(284, 2, "Berserker's Zeal", 150, V(("StaminaBonus", 4), ("CritBonus", 8))),
-        new(306, 3, "Reaper's Reprieve", 220, V(("HealPercent", 0.12), ("Duration", 18))),
-        new(332, 4, "Killer Instinct", 300, V(("CritChanceBonus", 0.02))),
-        new(334, 5, "Blessing of the Deathdealer", 450, V(("CritPowerBonus", 0.02))),
-        new(532, 6, "Sealed Fate - II", 600, V(("HealthThreshold", 0.5), ("CritChanceBonus", 0.15))),
-        new(285, 7, "Berserker's Zeal - II", 800, V(("StaminaBonus", 12), ("CritBonus", 24))),
-        new(307, 8, "Reaper's Reprieve - II", 1000, V(("HealPercent", 0.36), ("Duration", 18))),
-        new(333, 9, "Killer Instinct - II", 1250, V(("CritChanceBonus", 0.06))),
-        new(335, 10, "Blessing of the Deathdealer - II", 1500, V(("CritPowerBonus", 0.06))),
+        new(531, 1, "Sealed Fate", 80, NodeValues(("HealthThreshold", 0.5), ("CritChanceBonus", 0.05))),
+        new(284, 2, "Berserker's Zeal", 150, NodeValues(("StaminaBonus", 4), ("CritBonus", 8))),
+        new(306, 3, "Reaper's Reprieve", 220, NodeValues(("HealPercent", 0.12), ("Duration", 18))),
+        new(332, 4, "Killer Instinct", 300, NodeValues(("CritChanceBonus", 0.02))),
+        new(334, 5, "Blessing of the Deathdealer", 450, NodeValues(("CritPowerBonus", 0.02))),
+        new(532, 6, "Sealed Fate - II", 600, NodeValues(("HealthThreshold", 0.5), ("CritChanceBonus", 0.15))),
+        new(285, 7, "Berserker's Zeal - II", 800, NodeValues(("StaminaBonus", 12), ("CritBonus", 24))),
+        new(307, 8, "Reaper's Reprieve - II", 1000, NodeValues(("HealPercent", 0.36), ("Duration", 18))),
+        new(333, 9, "Killer Instinct - II", 1250, NodeValues(("CritChanceBonus", 0.06))),
+        new(335, 10, "Blessing of the Deathdealer - II", 1500, NodeValues(("CritPowerBonus", 0.06))),
     ];
 
     public override GemColor Color => GemColor.Amethyst;

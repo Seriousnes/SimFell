@@ -9,17 +9,17 @@ namespace FellowshipSim.Tests.Services;
 /// </summary>
 public sealed class VisitorJobsTests
 {
-    private static readonly Visitor A = new("a1b2", OwnsDataFolder: false);
-    private static readonly Visitor B = new("c3d4", OwnsDataFolder: false);
+    private static readonly Visitor FirstVisitor = new("a1b2", OwnsDataFolder: false);
+    private static readonly Visitor SecondVisitor = new("c3d4", OwnsDataFolder: false);
 
     [Fact]
     public void Two_Tabs_Of_One_Visitor_List_The_Same_Jobs_And_Another_Visitor_Lists_None()
     {
         var queue = new SimJobQueue(new SimJobQueueOptions { MaxConcurrentJobs = 1 });
         var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var firstTab = new VisitorJobs(queue, A);
-        using var secondTab = new VisitorJobs(queue, A);
-        using var other = new VisitorJobs(queue, B);
+        using var firstTab = new VisitorJobs(queue, FirstVisitor);
+        using var secondTab = new VisitorJobs(queue, FirstVisitor);
+        using var other = new VisitorJobs(queue, SecondVisitor);
         var heard = new List<string>();
         other.Changed += job => heard.Add(job.Id);
 
@@ -39,19 +39,19 @@ public sealed class VisitorJobsTests
     {
         var queue = new SimJobQueue(new SimJobQueueOptions { MaxConcurrentJobs = 1 });
         var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var a = new VisitorJobs(queue, A);
-        using var b = new VisitorJobs(queue, B);
-        a.Enqueue(SimJobKind.Sim, "running", _ => gate.Task);
-        var bQueued = b.Enqueue(SimJobKind.Sim, "b queued", _ => gate.Task);
-        var aQueued = a.Enqueue(SimJobKind.Sim, "a queued", _ => gate.Task);
+        using var firstVisitorJobs = new VisitorJobs(queue, FirstVisitor);
+        using var secondVisitorJobs = new VisitorJobs(queue, SecondVisitor);
+        firstVisitorJobs.Enqueue(SimJobKind.Sim, "running", _ => gate.Task);
+        var bQueued = secondVisitorJobs.Enqueue(SimJobKind.Sim, "b queued", _ => gate.Task);
+        var aQueued = firstVisitorJobs.Enqueue(SimJobKind.Sim, "a queued", _ => gate.Task);
         var heard = new List<SimJob>();
-        a.Changed += heard.Add;
+        firstVisitorJobs.Changed += heard.Add;
 
-        Assert.Equal(1, a.JobsAhead(aQueued));
-        b.Cancel(bQueued.Id);
+        Assert.Equal(1, firstVisitorJobs.JobsAhead(aQueued));
+        secondVisitorJobs.Cancel(bQueued.Id);
 
         Assert.Equal([aQueued], heard);
-        Assert.Equal(0, a.JobsAhead(aQueued));
+        Assert.Equal(0, firstVisitorJobs.JobsAhead(aQueued));
         gate.SetResult(1);
     }
 }

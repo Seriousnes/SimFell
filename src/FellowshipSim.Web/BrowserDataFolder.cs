@@ -68,9 +68,9 @@ public sealed class BrowserDataFolder(IJSRuntime js)
             {
                 await SaveAsync();
             }
-            catch (Exception e) when (e is IOException or JSException)
+            catch (Exception exception) when (exception is IOException or JSException)
             {
-                Console.Error.WriteLine($"SimFell could not save its files in the browser: {e.Message}");
+                Console.Error.WriteLine($"SimFell could not save its files in the browser: {exception.Message}");
             }
         }
     }

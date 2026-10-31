@@ -11,9 +11,9 @@ try
 {
     options = CliOptions.Parse(args);
 }
-catch (CliUsageException e)
+catch (CliUsageException exception)
 {
-    Console.Error.WriteLine($"simfell: {e.Message}");
+    Console.Error.WriteLine($"simfell: {exception.Message}");
     Console.Error.WriteLine("Run simfell --help for the options.");
     return 2;
 }
@@ -36,9 +36,9 @@ try
 {
     profile = SimcProfile.Load(path);
 }
-catch (FormatException e)
+catch (FormatException exception)
 {
-    Console.Error.WriteLine($"simfell: {path}: {e.Message}");
+    Console.Error.WriteLine($"simfell: {path}: {exception.Message}");
     return 1;
 }
 if (string.IsNullOrWhiteSpace(profile.ActionList))
@@ -66,10 +66,10 @@ catch (OperationCanceledException) when (cancel.IsCancellationRequested)
     Console.Error.WriteLine("simfell: the sim was cancelled.");
     return 130;
 }
-catch (SimEngineException e)
+catch (SimEngineException exception)
 {
     progress.Clear();
-    Console.Error.WriteLine($"simfell: {e.Message}");
+    Console.Error.WriteLine($"simfell: {exception.Message}");
     return 1;
 }
 progress.Clear();

@@ -23,18 +23,18 @@ internal static class DisagreementsSection
             if (rows.Count == 0) continue;
             sb.Append($"<details class=\"panel\"><summary>{category} ({rows.Count:N0})</summary><div class=\"scroll\"><table class=\"issues\"><thead><tr>");
             sb.Append("<th class=num>Time</th><th class=num>Step</th><th>Subject</th><th class=num>Expected</th><th class=num>Observed</th><th class=num>Deviation</th><th class=num>Relative</th><th></th></tr></thead><tbody>");
-            foreach (var i in rows)
+            foreach (var issue in rows)
             {
-                string unit = i.Expected?.Unit ?? "";
-                sb.Append($"<tr><td class=num>{i.Time:F3}</td><td class=num><a href=\"#step-{i.Step}\">{i.Step}</a></td><td title=\"{E(i.Message)}\">{E(i.Subject ?? i.Message)}</td>");
-                sb.Append($"<td class=num>{(i.Expected is { } e ? E(e.ToString()) : "—")}</td>");
-                sb.Append($"<td class=num>{(i.Observed is { } o ? E(ExpectedRange.Format(o, unit)) : "—")}</td>");
-                sb.Append($"<td class=num>{(i.Deviation is { } d ? E((d > 0 ? "+" : "") + ExpectedRange.Format(d, unit)) : "—")}</td>");
-                sb.Append($"<td class=num>{(i.RelativeDeviation is { } rel ? rel.ToString("+0.0%;-0.0%;0.0%", CultureInfo.InvariantCulture) : "—")}</td>");
-                if (i.State is { } state)
+                string unit = issue.Expected?.Unit ?? "";
+                sb.Append($"<tr><td class=num>{issue.Time:F3}</td><td class=num><a href=\"#step-{issue.Step}\">{issue.Step}</a></td><td title=\"{EncodeHtml(issue.Message)}\">{EncodeHtml(issue.Subject ?? issue.Message)}</td>");
+                sb.Append($"<td class=num>{(issue.Expected is { } expected ? EncodeHtml(expected.ToString()) : "—")}</td>");
+                sb.Append($"<td class=num>{(issue.Observed is { } observed ? EncodeHtml(ExpectedRange.Format(observed, unit)) : "—")}</td>");
+                sb.Append($"<td class=num>{(issue.Deviation is { } deviation ? EncodeHtml((deviation > 0 ? "+" : "") + ExpectedRange.Format(deviation, unit)) : "—")}</td>");
+                sb.Append($"<td class=num>{(issue.RelativeDeviation is { } rel ? rel.ToString("+0.0%;-0.0%;0.0%", CultureInfo.InvariantCulture) : "—")}</td>");
+                if (issue.State is { } state)
                 {
                     sb.Append($"<td><button class=\"state\" data-s=\"{states.Count}\">Engine state</button></td></tr>");
-                    states.Add((i, state));
+                    states.Add((issue, state));
                 }
                 else sb.Append("<td></td></tr>");
             }
@@ -56,112 +56,112 @@ internal static class DisagreementsSection
         var auraIndex = new Dictionary<(string Name, int LogId, IReadOnlyList<StatModifier> Modifiers), int>();
         var auraList = new List<(string Name, int LogId, IReadOnlyList<StatModifier> Modifiers)>();
         using var stream = new MemoryStream();
-        using (var w = new Utf8JsonWriter(stream))
+        using (var writer = new Utf8JsonWriter(stream))
         {
-            void Number(double v) => w.WriteNumberValue(Math.Round(v, 4));
-            void NullableNumber(double? v) { if (v is { } x) Number(x); else w.WriteNullValue(); }
+            void Number(double value) => writer.WriteNumberValue(Math.Round(value, 4));
+            void NullableNumber(double? value) { if (value is { } present) Number(present); else writer.WriteNullValue(); }
             void Auras(IReadOnlyList<EngineAura> auras)
             {
-                w.WriteStartArray();
-                foreach (var a in auras)
+                writer.WriteStartArray();
+                foreach (var aura in auras)
                 {
-                    var key = (a.Name, a.LogId, a.Modifiers);
+                    var key = (aura.Name, aura.LogId, aura.Modifiers);
                     if (!auraIndex.TryGetValue(key, out int index))
                     {
                         auraIndex[key] = index = auraList.Count;
                         auraList.Add(key);
                     }
-                    w.WriteStartArray();
-                    w.WriteNumberValue(index);
-                    w.WriteNumberValue(a.Stacks);
-                    NullableNumber(a.SecondsLeft);
-                    w.WriteEndArray();
+                    writer.WriteStartArray();
+                    writer.WriteNumberValue(index);
+                    writer.WriteNumberValue(aura.Stacks);
+                    NullableNumber(aura.SecondsLeft);
+                    writer.WriteEndArray();
                 }
-                w.WriteEndArray();
+                writer.WriteEndArray();
             }
 
-            w.WriteStartObject();
-            w.WritePropertyName("s");
-            w.WriteStartArray();
-            foreach (var (issue, s) in states)
+            writer.WriteStartObject();
+            writer.WritePropertyName("s");
+            writer.WriteStartArray();
+            foreach (var (issue, state) in states)
             {
-                w.WriteStartArray();
-                Number(s.Time);
-                w.WriteStringValue(issue.Message);
+                writer.WriteStartArray();
+                Number(state.Time);
+                writer.WriteStringValue(issue.Message);
 
-                var h = s.Hero;
-                w.WriteStartArray();
-                foreach (var v in new[] { h.PrimaryAttribute, h.CritChance, h.CritChanceAgainstTarget, h.CritMultiplier, h.Haste, h.Expertise, h.Spirit, h.DamageScale, h.GlobalCooldownEnd }) Number(v);
-                w.WriteStringValue(string.Join(", ", h.Resources.Select(x => $"{x.Name} {x.Current.ToString("0.##", CultureInfo.InvariantCulture)}/{x.Max.ToString("0.##", CultureInfo.InvariantCulture)}")));
-                w.WriteStringValue(h.CurrentCast);
-                w.WriteStringValue(h.CurrentChannel);
-                w.WriteNumberValue(h.ActiveEnemies);
-                Auras(h.Auras);
-                w.WriteEndArray();
+                var hero = state.Hero;
+                writer.WriteStartArray();
+                foreach (var value in new[] { hero.PrimaryAttribute, hero.CritChance, hero.CritChanceAgainstTarget, hero.CritMultiplier, hero.Haste, hero.Expertise, hero.Spirit, hero.DamageScale, hero.GlobalCooldownEnd }) Number(value);
+                writer.WriteStringValue(string.Join(", ", hero.Resources.Select(x => $"{x.Name} {x.Current.ToString("0.##", CultureInfo.InvariantCulture)}/{x.Max.ToString("0.##", CultureInfo.InvariantCulture)}")));
+                writer.WriteStringValue(hero.CurrentCast);
+                writer.WriteStringValue(hero.CurrentChannel);
+                writer.WriteNumberValue(hero.ActiveEnemies);
+                Auras(hero.Auras);
+                writer.WriteEndArray();
 
-                if (s.Target is { } t)
+                if (state.Target is { } target)
                 {
-                    w.WriteStartArray();
-                    w.WriteStringValue($"{t.Name} ({t.Id}.{t.InstanceId})");
-                    Number(t.HealthFraction);
-                    Number(t.IncomingDamageMultiplier);
-                    Auras(t.Auras);
-                    w.WriteEndArray();
+                    writer.WriteStartArray();
+                    writer.WriteStringValue($"{target.Name} ({target.Id}.{target.InstanceId})");
+                    Number(target.HealthFraction);
+                    Number(target.IncomingDamageMultiplier);
+                    Auras(target.Auras);
+                    writer.WriteEndArray();
                 }
-                else w.WriteNullValue();
+                else writer.WriteNullValue();
 
-                if (s.Hit is { } x)
+                if (state.Hit is { } hit)
                 {
-                    w.WriteStartArray();
-                    w.WriteStringValue($"{x.AbilityName} ({x.AbilityId})");
-                    Number(x.BaseDamage);
-                    NullableNumber(x.HitDamageMultiplier);
-                    NullableNumber(x.AbilityDamageMultiplier);
-                    Number(x.TargetDamageMultiplier);
-                    Number(x.CritChance);
-                    NullableNumber(x.CastCritChance);
-                    NullableNumber(x.ExtraCritChance);
-                    Number(x.CritMultiplier);
-                    Number(x.TickFraction);
-                    w.WriteBooleanValue(x.Snapshot == true);
-                    Number(x.ReleaseTime);
-                    NullableNumber(x.LandingTime);
-                    w.WriteEndArray();
+                    writer.WriteStartArray();
+                    writer.WriteStringValue($"{hit.AbilityName} ({hit.AbilityId})");
+                    Number(hit.BaseDamage);
+                    NullableNumber(hit.HitDamageMultiplier);
+                    NullableNumber(hit.AbilityDamageMultiplier);
+                    Number(hit.TargetDamageMultiplier);
+                    Number(hit.CritChance);
+                    NullableNumber(hit.CastCritChance);
+                    NullableNumber(hit.ExtraCritChance);
+                    Number(hit.CritMultiplier);
+                    Number(hit.TickFraction);
+                    writer.WriteBooleanValue(hit.Snapshot == true);
+                    Number(hit.ReleaseTime);
+                    NullableNumber(hit.LandingTime);
+                    writer.WriteEndArray();
                 }
-                else w.WriteNullValue();
+                else writer.WriteNullValue();
 
-                if (s.Cast is { } c)
+                if (state.Cast is { } cast)
                 {
-                    w.WriteStartArray();
-                    w.WriteStringValue(c.Ability);
-                    Number(c.CastTime);
-                    Number(c.GlobalCooldown);
-                    w.WriteBooleanValue(c.GlobalCooldownScalesWithHaste);
-                    Number(c.CooldownLeft);
-                    w.WriteNumberValue(c.Charges);
-                    Number(c.CooldownRate);
-                    w.WriteStringValue(c.Refusal);
-                    w.WriteEndArray();
+                    writer.WriteStartArray();
+                    writer.WriteStringValue(cast.Ability);
+                    Number(cast.CastTime);
+                    Number(cast.GlobalCooldown);
+                    writer.WriteBooleanValue(cast.GlobalCooldownScalesWithHaste);
+                    Number(cast.CooldownLeft);
+                    writer.WriteNumberValue(cast.Charges);
+                    Number(cast.CooldownRate);
+                    writer.WriteStringValue(cast.Refusal);
+                    writer.WriteEndArray();
                 }
-                else w.WriteNullValue();
-                w.WriteEndArray();
+                else writer.WriteNullValue();
+                writer.WriteEndArray();
             }
-            w.WriteEndArray();
+            writer.WriteEndArray();
 
-            w.WritePropertyName("a");
-            w.WriteStartArray();
+            writer.WritePropertyName("a");
+            writer.WriteStartArray();
             foreach (var (name, logId, modifiers) in auraList)
             {
-                w.WriteStartArray();
-                w.WriteStringValue(name);
-                w.WriteNumberValue(logId);
-                w.WriteStartArray();
-                foreach (var m in modifiers) w.WriteStringValue($"{m.Type} {m.Op} {m.Value.ToString("0.####", CultureInfo.InvariantCulture)}");
-                w.WriteEndArray();
-                w.WriteEndArray();
+                writer.WriteStartArray();
+                writer.WriteStringValue(name);
+                writer.WriteNumberValue(logId);
+                writer.WriteStartArray();
+                foreach (var modifier in modifiers) writer.WriteStringValue($"{modifier.Type} {modifier.Op} {modifier.Value.ToString("0.####", CultureInfo.InvariantCulture)}");
+                writer.WriteEndArray();
+                writer.WriteEndArray();
             }
-            w.WriteEndArray();
-            w.WriteEndObject();
+            writer.WriteEndArray();
+            writer.WriteEndObject();
         }
         // The default encoder escapes '<', so the block cannot close its script element early.
         return Encoding.UTF8.GetString(stream.ToArray());
@@ -187,5 +187,5 @@ if(next&&next.classList.contains('state-row')){next.remove();return}
 const r=document.createElement('tr');r.className='state-row';r.innerHTML='<td colspan="8">'+draw(d.s[+b.dataset.s])+'</td>';row.after(r)})})();
 """;
 
-    private static string E(string s) => WebUtility.HtmlEncode(s);
+    private static string EncodeHtml(string text) => WebUtility.HtmlEncode(text);
 }

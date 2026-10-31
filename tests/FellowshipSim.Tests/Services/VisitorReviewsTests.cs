@@ -9,8 +9,8 @@ public sealed class VisitorReviewsTests : IDisposable
     private readonly string _data = Path.Combine(Path.GetTempPath(), $"simfell-reviews-{Guid.NewGuid():N}");
     private readonly ReplayLibrary _library;
     private readonly VisitorReviews _reviews;
-    private static readonly Visitor A = new("a1b2", OwnsDataFolder: false);
-    private static readonly Visitor B = new("c3d4", OwnsDataFolder: false);
+    private static readonly Visitor FirstVisitor = new("a1b2", OwnsDataFolder: false);
+    private static readonly Visitor SecondVisitor = new("c3d4", OwnsDataFolder: false);
 
     public VisitorReviewsTests()
     {
@@ -31,13 +31,13 @@ public sealed class VisitorReviewsTests : IDisposable
     {
         var mine = Save("aaaa");
         Save("bbbb");
-        await _reviews.AddAsync(A, mine);
+        await _reviews.AddAsync(FirstVisitor, mine);
 
-        Assert.Equal([mine.Id], (await _reviews.ListAsync(A)).Select(r => r.Id));
-        Assert.True(await _reviews.HasAsync(A, mine.Id));
-        Assert.Empty(await _reviews.ListAsync(B));
-        Assert.False(await _reviews.HasAsync(B, mine.Id));
-        Assert.False(await _reviews.HasAsync(A, "../aaaa_fight1_p2"));
+        Assert.Equal([mine.Id], (await _reviews.ListAsync(FirstVisitor)).Select(r => r.Id));
+        Assert.True(await _reviews.HasAsync(FirstVisitor, mine.Id));
+        Assert.Empty(await _reviews.ListAsync(SecondVisitor));
+        Assert.False(await _reviews.HasAsync(SecondVisitor, mine.Id));
+        Assert.False(await _reviews.HasAsync(FirstVisitor, "../aaaa_fight1_p2"));
     }
 
     [Fact]

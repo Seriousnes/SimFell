@@ -30,7 +30,7 @@ public class RawGearStatsTests
 
         string fight = (string)entry["fight"]!;
         double Log(string key) => (double)combatant[key]!;
-        double logMain = new[] { "strength", "agility", "intellect" }.Max(k => combatant[k] is { } v ? (double)v : 0.0);
+        double logMain = new[] { "strength", "agility", "intellect" }.Max(k => combatant[k] is { } statValue ? (double)statValue : 0.0);
         Assert.True(Math.Abs(logMain - hero.PrimaryAttribute(now)) < 1.0, $"{fight}: Main Stat {hero.PrimaryAttribute(now):F1}, log {logMain}");
         Assert.True(Math.Abs(Log("stamina") - hero.Stats.TotalStamina) < 1.0, $"{fight}: Stamina {hero.Stats.TotalStamina:F1}, log {Log("stamina")}");
         Assert.Equal((fight, Log("crit")), (fight, Rating(StatType.CritRating, hero.Stats.CritRating)));

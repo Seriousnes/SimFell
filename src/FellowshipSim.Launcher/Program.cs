@@ -41,9 +41,9 @@ internal static class Program
             });
             return 0;
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            MessageBox.Show($"SimFell could not start: {e.Message}", "SimFell", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"SimFell could not start: {exception.Message}", "SimFell", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 1;
         }
     }

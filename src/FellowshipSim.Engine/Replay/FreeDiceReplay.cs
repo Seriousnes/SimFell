@@ -24,7 +24,7 @@ public static class FreeDiceReplay
     {
         public double Mean => EngineTotals.Average();
         public double StdDev => Math.Sqrt(EngineTotals.Sum(t => (t - Mean) * (t - Mean)) / Math.Max(1, EngineTotals.Count - 1));
-        public double Percentile(double p) => FreeDiceReplay.Percentile(EngineTotals, p);
+        public double Percentile(double fraction) => FreeDiceReplay.Percentile(EngineTotals, fraction);
 
         /// <summary>The share of runs that dealt less than the log (0.5 = the log is the typical outcome).</summary>
         public double LogPercentile => EngineTotals.Count(t => t < LogDamage) / (double)EngineTotals.Count;
@@ -70,10 +70,10 @@ public static class FreeDiceReplay
             var tallies = new Dictionary<int, Tally>();
             hero.OnDamageDealt += (in dmg) =>
             {
-                if (!tallies.TryGetValue(dmg.AbilityId, out var t)) tallies[dmg.AbilityId] = t = new Tally { Name = dmg.AbilityName };
-                t.Damage += dmg.Amount;
-                t.Hits++;
-                if (dmg.IsCrit) t.Crits++;
+                if (!tallies.TryGetValue(dmg.AbilityId, out var tally)) tallies[dmg.AbilityId] = tally = new Tally { Name = dmg.AbilityName };
+                tally.Damage += dmg.Amount;
+                tally.Hits++;
+                if (dmg.IsCrit) tally.Crits++;
             };
             var options = new ReplayOptions { FreeDiceSeed = firstSeed + i, StopOnFirstFailure = false, ForceCasts = true };
             var result = new ReplayDriver(hero, script, options).Run();
@@ -108,9 +108,9 @@ public static class FreeDiceReplay
         return rows.OrderByDescending(r => Math.Max(r.LogDamage, r.EngineMean)).ToList();
     }
 
-    private static double Percentile(IReadOnlyList<double> values, double p)
+    private static double Percentile(IReadOnlyList<double> values, double fraction)
     {
         var sorted = values.OrderBy(t => t).ToList();
-        return sorted[(int)Math.Clamp(Math.Round(p * (sorted.Count - 1)), 0, sorted.Count - 1)];
+        return sorted[(int)Math.Clamp(Math.Round(fraction * (sorted.Count - 1)), 0, sorted.Count - 1)];
     }
 }

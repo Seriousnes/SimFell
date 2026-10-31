@@ -18,11 +18,11 @@ public sealed record HighlightSegment(string Text, AplTokenKind? Kind = null, bo
         {
             end = Math.Min(end, text.Length);
             if (end <= at) return;
-            if (errorAt is { } e && e >= at && e < end)
+            if (errorAt is { } errorStart && errorStart >= at && errorStart < end)
             {
-                if (e > at) parts.Add(new HighlightSegment(text[at..e]));
-                parts.Add(new HighlightSegment(text[e].ToString(), Error: true));
-                at = e + 1;
+                if (errorStart > at) parts.Add(new HighlightSegment(text[at..errorStart]));
+                parts.Add(new HighlightSegment(text[errorStart].ToString(), Error: true));
+                at = errorStart + 1;
             }
             if (end > at) parts.Add(new HighlightSegment(text[at..end]));
             at = Math.Max(at, end);
@@ -31,7 +31,7 @@ public sealed record HighlightSegment(string Text, AplTokenKind? Kind = null, bo
         {
             Plain(token.Start);
             int end = Math.Min(token.Start + token.Length, text.Length);
-            bool error = errorAt is { } e && e >= token.Start && e < token.Start + token.Length;
+            bool error = errorAt is { } errorStart && errorStart >= token.Start && errorStart < token.Start + token.Length;
             parts.Add(new HighlightSegment(token.Start < end ? text[token.Start..end] : "", token.Kind, error));
             at = token.Start + token.Length;
         }

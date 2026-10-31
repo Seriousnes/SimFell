@@ -92,7 +92,7 @@ while (taken.Count < count && queues.Any(q => !q.Exhausted))
 
 Console.WriteLine($"{taken.Count} of {count} fights wanted.");
 foreach (var group in taken.GroupBy(t => t.Encounter)) Console.WriteLine($"  {group.Key}: {group.Count()}");
-foreach (var (reason, n) in skipped.OrderByDescending(s => s.Value)) Console.WriteLine($"  skipped, {reason}: {n}");
+foreach (var (reason, reasonCount) in skipped.OrderByDescending(s => s.Value)) Console.WriteLine($"  skipped, {reason}: {reasonCount}");
 if (taken.Count < count)
 {
     Console.WriteLine($"The ranking lists hold {taken.Count} usable runs of patch {patch.Name} within {maxPages} pages per encounter. " +
@@ -113,7 +113,7 @@ async Task<string?> Reject(JsonNode run)
     if (!reports.TryGetValue(code, out var report))
     {
         try { report = reports[code] = await client.GetSummaryAsync(code); }
-        catch (FellowshipLogsException e) when (!Throttled(e)) { return "report unavailable"; }
+        catch (FellowshipLogsException exception) when (!Throttled(exception)) { return "report unavailable"; }
     }
     if (!patch.Covers(DateTimeOffset.FromUnixTimeMilliseconds(report.StartTime).UtcDateTime, report.LogVersion)) return "older log format";
     var fight = report.Fights.FirstOrDefault(f => f.Id == fightId);
@@ -121,7 +121,7 @@ async Task<string?> Reject(JsonNode run)
 
     await WaitForPointsAsync();
     try { await library.GetRawFightFileAsync(client, code, fightId.Value); }
-    catch (FellowshipLogsException e) when (!Throttled(e)) { return "download failed"; }
+    catch (FellowshipLogsException exception) when (!Throttled(exception)) { return "download failed"; }
     string encounter = queues.First(q => q.Holds(run)).Name;
     taken.Add((encounter, player, code, fightId.Value));
     Console.WriteLine($"  {encounter}: {player} {code} fight {fightId} ({fight.Name}, {fight.DurationSeconds / 60:F0} min)");
@@ -141,8 +141,8 @@ async Task WaitForPointsAsync()
 }
 
 // A refusal for the rate limit or a server error stops the run; it says nothing about the report.
-static bool Throttled(FellowshipLogsException e) =>
-    e.Message.Contains("returned 429") || System.Text.RegularExpressions.Regex.IsMatch(e.Message, @"returned 5\d\d");
+static bool Throttled(FellowshipLogsException exception) =>
+    exception.Message.Contains("returned 429") || System.Text.RegularExpressions.Regex.IsMatch(exception.Message, @"returned 5\d\d");
 
 static (string Id, string Secret)? Credentials()
 {

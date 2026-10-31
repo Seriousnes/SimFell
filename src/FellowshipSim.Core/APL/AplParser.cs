@@ -192,9 +192,9 @@ public static class AplParser
                 syntax = ParseActionSyntax(trimmed);
                 action = ToAction(syntax, trimmed);
             }
-            catch (ParseException e)
+            catch (ParseException exception)
             {
-                throw new ParseException($"APL line {lineNumber}: {e.Message}", e.ErrorPosition, e);
+                throw new ParseException($"APL line {lineNumber}: {exception.Message}", exception.ErrorPosition, exception);
             }
 
             if (action == null) continue;
@@ -268,7 +268,7 @@ public static class AplParser
         {
             throw new ParseException($"`{AplVariable.ActionName}` needs `{AplVariable.ValueKey}=<expression>`.", Position.Empty);
         }
-        double @default = Argument(AplVariable.DefaultKey) is ConstantExpression c ? c.Value : 0.0;
+        double @default = Argument(AplVariable.DefaultKey) is ConstantExpression constant ? constant.Value : 0.0;
         return new AplVariable(name.PropertyPath, op, value, @default);
     }
 
@@ -278,10 +278,10 @@ public static class AplParser
     /// </summary>
     private static IAplExpression? OfAction(IAplExpression? expression, string ability) => expression switch
     {
-        PropertyExpression p when PropertyExpression.OfAction(p.PropertyPath, ability) is { } path => new PropertyExpression(path),
-        GroupExpression g => new GroupExpression(OfAction(g.Inner, ability)!),
-        UnaryOpExpression u => new UnaryOpExpression(u.Operator, OfAction(u.Operand, ability)!),
-        BinaryOpExpression b => new BinaryOpExpression(OfAction(b.Left, ability)!, b.Operator, OfAction(b.Right, ability)!),
+        PropertyExpression property when PropertyExpression.OfAction(property.PropertyPath, ability) is { } path => new PropertyExpression(path),
+        GroupExpression group => new GroupExpression(OfAction(group.Inner, ability)!),
+        UnaryOpExpression unary => new UnaryOpExpression(unary.Operator, OfAction(unary.Operand, ability)!),
+        BinaryOpExpression binary => new BinaryOpExpression(OfAction(binary.Left, ability)!, binary.Operator, OfAction(binary.Right, ability)!),
         _ => expression,
     };
 

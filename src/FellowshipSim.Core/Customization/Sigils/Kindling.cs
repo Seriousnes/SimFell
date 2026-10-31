@@ -53,30 +53,30 @@ public class Kindling : Sigil
         // The fight the burning enemies belong to (each sim iteration and replay has its own).
         SimulationContext? fight = null;
 
-        void Tick(SimulationContext c, EnemyTarget target, Burn burn)
+        void Tick(SimulationContext ctx, EnemyTarget target, Burn burn)
         {
-            if (!burn.Active || c.CurrentTime > burn.EndsAt)
+            if (!burn.Active || ctx.CurrentTime > burn.EndsAt)
             {
                 burn.NextTick?.Cancel();
                 burn.NextTick = null;
                 return;
             }
-            if (!target.IsSleeping) dot.DealDamage(c, target);
+            if (!target.IsSleeping) dot.DealDamage(ctx, target);
         }
 
         // The duration runs out at its end; the partial tick (the hasted progress left) comes on the next server frame.
-        void RunOut(SimulationContext c, EnemyTarget target, Burn burn)
+        void RunOut(SimulationContext ctx, EnemyTarget target, Burn burn)
         {
             if (!burn.Active) return;
             burn.Active = false;
             double fraction = burn.NextTick is { IsActive: true } timer ? timer.ElapsedBaseSeconds / TickSeconds : 0.0;
             // The partial tick reads how long the period has run (period - remaining, 0x1452D0C70) as the duration runs out.
-            double elapsed = fraction * TickSeconds / (1.0 + hero.GetHaste(c.CurrentTime));
+            double elapsed = fraction * TickSeconds / (1.0 + hero.GetHaste(ctx.CurrentTime));
             burn.NextTick?.Cancel();
             burn.NextTick = null;
             if (fraction <= 0 || elapsed < PeriodicEffect.MinHastedPartialTickSeconds - 1e-9) return;
             fraction = Math.Min(fraction, 1.0);
-            c.Schedule(SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds), cc =>
+            ctx.Schedule(SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds), cc =>
             {
                 if (target.IsSleeping) return;
                 cc.CurrentTickFraction = fraction;

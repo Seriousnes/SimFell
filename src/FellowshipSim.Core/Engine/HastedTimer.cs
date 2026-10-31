@@ -218,19 +218,19 @@ public sealed class HastedTimer
         finally { _updating = false; }
     }
 
-    private void Execute(SimulationContext c, bool regular)
+    private void Execute(SimulationContext ctx, bool regular)
     {
-        var now = c.CurrentTime;
+        var now = ctx.CurrentTime;
         LastTick = now;
-        var outer = c.ExecutingTick;
-        c.ExecutingTick = this;
+        var outer = ctx.ExecutingTick;
+        ctx.ExecutingTick = this;
         _executing = true;
         _rearmedInTick = false;
-        try { _onFire(c); }
+        try { _onFire(ctx); }
         finally
         {
             _executing = false;
-            c.ExecutingTick = outer;
+            ctx.ExecutingTick = outer;
         }
         if (!IsActive) return;
         if (_rearmedInTick) Rearm(now, keepMove: false);
@@ -241,7 +241,7 @@ public sealed class HastedTimer
             _lastUpdate = now;
             Reschedule();
         }
-        if (IsActive) _afterTick?.Invoke(c);
+        if (IsActive) _afterTick?.Invoke(ctx);
     }
 
     /// <summary>

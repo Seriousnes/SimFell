@@ -27,19 +27,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var r in Reviews)
+                        @foreach (var review in Reviews)
                         {
-                            double hits = r.LogHits != 0 ? (double)r.MatchedHits / r.LogHits : 0;
-                            double damage = r.LogDamage != 0 ? r.EngineDamage / r.LogDamage : 0;
-                            string date = r.FightDate is { } d ? d.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : "";
-                            var fd = r.FreeDice;
-                            <tr @key="r.Id">
-                                <td><button type="button" class="link-button" @onclick="() => Views.ShowReview(r.HtmlFile, ReviewTitle.Replay(r))">@r.PlayerName</button></td>
-                                <td>@r.Hero</td>
-                                <td>@r.FightName <span class="meta">@r.ReportCode #@r.FightId</span></td>
+                            double hits = review.LogHits != 0 ? (double)review.MatchedHits / review.LogHits : 0;
+                            double damage = review.LogDamage != 0 ? review.EngineDamage / review.LogDamage : 0;
+                            string date = review.FightDate is { } fightDate ? fightDate.ToLocalTime().ToString("d", CultureInfo.CurrentCulture) : "";
+                            var fd = review.FreeDice;
+                            <tr @key="review.Id">
+                                <td><button type="button" class="link-button" @onclick="() => Views.ShowReview(review.HtmlFile, ReviewTitle.Replay(review))">@review.PlayerName</button></td>
+                                <td>@review.Hero</td>
+                                <td>@review.FightName <span class="meta">@review.ReportCode #@review.FightId</span></td>
                                 <td>
                                     @date
-                                    @if (r.FightDate is { } logged && !GamePatch.Current.Covers(logged, null))
+                                    @if (review.FightDate is { } logged && !GamePatch.Current.Covers(logged, null))
                                     {
                                         <span class="old-patch" data-tooltip="@($"Logged before patch {GamePatch.Current.Name}, which the engine models: this review is no guide to the engine's accuracy now.")">old patch</span>
                                     }
@@ -51,7 +51,7 @@
                                     double fdDamage = fd.EngineMean / fd.LogDamage;
                                     <td class="num @RatioClass(fdDamage, 0.02, 0.05)"
                                         data-tooltip="@($"{fd.Runs} runs, engine 5-95%: {Math.Round(fd.Engine5, MidpointRounding.AwayFromZero):N0} - {Math.Round(fd.Engine95, MidpointRounding.AwayFromZero):N0}")">
-                                        <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(r), ReviewTitle.FreeDice(r))">@Percent(fdDamage)</button>
+                                        <button type="button" class="link-button" @onclick="() => Views.ShowReview(FreeDiceFile(review), ReviewTitle.FreeDice(review))">@Percent(fdDamage)</button>
                                     </td>
                                     <td class="num @PlaceClass(fd.LogPercentile)">@(Math.Round(fd.LogPercentile * 100, MidpointRounding.AwayFromZero))%</td>
                                 }
@@ -60,8 +60,8 @@
                                     <td class="num">-</td>
                                     <td class="num">-</td>
                                 }
-                                <td class="num">@r.PassedSteps/@r.TotalSteps</td>
-                                <td class="num">@r.ForcedCasts</td>
+                                <td class="num">@review.PassedSteps/@review.TotalSteps</td>
+                                <td class="num">@review.ForcedCasts</td>
                             </tr>
                         }
                     </tbody>

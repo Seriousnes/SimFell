@@ -33,9 +33,9 @@ public sealed class LocalSimEngine : ISimEngine
         {
             return Task.FromResult(new AplDocumentActions(AplDocument.Parse(text)));
         }
-        catch (ParseException e)
+        catch (ParseException exception)
         {
-            throw new SimEngineException(e.Message, e);
+            throw new SimEngineException(exception.Message, exception);
         }
     }
 
@@ -54,9 +54,9 @@ public sealed class LocalSimEngine : ISimEngine
         {
             return await Task.Run(() => ReplayReview.Run(raw, playerId, progress: progress, cancellationToken: ct), ct);
         }
-        catch (Exception e) when (e is NotSupportedException or ArgumentException)
+        catch (Exception exception) when (exception is NotSupportedException or ArgumentException)
         {
-            throw new SimEngineException(e.Message, e);
+            throw new SimEngineException(exception.Message, exception);
         }
     }
 

@@ -33,27 +33,27 @@
                 </div>
             }
             <div class="fights">
-                @foreach (var f in linked != null && !State.ShowAllFights ? [linked] : fights)
+                @foreach (var fight in linked != null && !State.ShowAllFights ? [linked] : fights)
                 {
-                    bool selected = f.Id == State.Picked?.FightId;
-                    <div @key="f.Id" class="fight @(selected ? "selected" : "")">
+                    bool selected = fight.Id == State.Picked?.FightId;
+                    <div @key="fight.Id" class="fight @(selected ? "selected" : "")">
                         <div class="fight-head">
-                            <span class="fight-name">@f.Name</span>
+                            <span class="fight-name">@fight.Name</span>
                             <span class="meta">
-                                Fight @f.Id · @FormatDuration(f.DurationSeconds) · @(f.Kill ? "kill" : "wipe/ongoing")@(f.Downloaded ? " · downloaded" : "")
+                                Fight @fight.Id · @FormatDuration(fight.DurationSeconds) · @(fight.Kill ? "kill" : "wipe/ongoing")@(fight.Downloaded ? " · downloaded" : "")
                             </span>
                         </div>
                         <div class="players">
-                            @foreach (var p in f.Players)
+                            @foreach (var player in fight.Players)
                             {
-                                bool picked = selected && p.Id == State.Picked?.PlayerId;
-                                string kind = !p.Supported ? "player unsupported" : picked ? "player picked" : "player";
-                                <button @key="p.Id" type="button" class="@kind" aria-pressed="@picked"
-                                        disabled="@(!p.Supported || Busy)"
-                                        data-tooltip="@(p.Supported ? $"Pick {p.Name}'s {p.Hero}" : $"{p.Hero} is not supported yet")"
-                                        @onclick="() => State.Picked = (f.Id, p.Id)">
-                                    <span class="player-name">@p.Name</span>
-                                    <span class="player-hero">@p.Hero</span>
+                                bool picked = selected && player.Id == State.Picked?.PlayerId;
+                                string kind = !player.Supported ? "player unsupported" : picked ? "player picked" : "player";
+                                <button @key="player.Id" type="button" class="@kind" aria-pressed="@picked"
+                                        disabled="@(!player.Supported || Busy)"
+                                        data-tooltip="@(player.Supported ? $"Pick {player.Name}'s {player.Hero}" : $"{player.Hero} is not supported yet")"
+                                        @onclick="() => State.Picked = (fight.Id, player.Id)">
+                                    <span class="player-name">@player.Name</span>
+                                    <span class="player-hero">@player.Hero</span>
                                 </button>
                             }
                         </div>
@@ -102,9 +102,9 @@
 
     private static string FormatDuration(double seconds)
     {
-        int m = (int)Math.Floor(seconds / 60);
-        int s = (int)Math.Round(seconds % 60, MidpointRounding.AwayFromZero);
-        return $"{m}:{s:00}";
+        int minutes = (int)Math.Floor(seconds / 60);
+        int remainder = (int)Math.Round(seconds % 60, MidpointRounding.AwayFromZero);
+        return $"{minutes}:{remainder:00}";
     }
 
     private async Task LoadAsync()
@@ -124,9 +124,9 @@
             // The link's fight and player start picked.
             if (loaded.SelectedFightId is { } linkFight && loaded.SelectedPlayerId is { } linkPlayer) State.Picked = (linkFight, linkPlayer);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.Status = new MessageState(e.Message, MessageKind.Error);
+            State.Status = new MessageState(exception.Message, MessageKind.Error);
         }
     }
 }

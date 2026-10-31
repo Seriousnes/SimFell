@@ -108,15 +108,15 @@ public class SimulationKernel
     private void Push(Entry entry)
     {
         if (_count == _heap.Length) Array.Resize(ref _heap, _heap.Length * 2);
-        int i = _count++;
-        while (i > 0)
+        int index = _count++;
+        while (index > 0)
         {
-            int parent = (i - 1) >> 1;
+            int parent = (index - 1) >> 1;
             if (!entry.Before(_heap[parent])) break;
-            _heap[i] = _heap[parent];
-            i = parent;
+            _heap[index] = _heap[parent];
+            index = parent;
         }
-        _heap[i] = entry;
+        _heap[index] = entry;
     }
 
     private void Pop()
@@ -125,16 +125,16 @@ public class SimulationKernel
         var entry = _heap[last];
         _heap[last] = default;
         if (last == 0) return;
-        int i = 0;
+        int index = 0;
         while (true)
         {
-            int child = 2 * i + 1;
+            int child = 2 * index + 1;
             if (child >= last) break;
             if (child + 1 < last && _heap[child + 1].Before(_heap[child])) child++;
             if (!_heap[child].Before(entry)) break;
-            _heap[i] = _heap[child];
-            i = child;
+            _heap[index] = _heap[child];
+            index = child;
         }
-        _heap[i] = entry;
+        _heap[index] = entry;
     }
 }

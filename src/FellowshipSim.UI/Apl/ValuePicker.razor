@@ -43,12 +43,12 @@
                     <li @key="kind.Id" class="kind" role="presentation">
                         <div class="kind-head" role="presentation" data-tooltip="@kind.Description" data-tooltip-direction="right"><span class="swatch" style="@KindColour(kind)"></span>@kind.Label</div>
                         <ul role="group" aria-label="@kind.Label">
-                            @foreach (var n in kind.Names)
+                            @foreach (var kindName in kind.Names)
                             {
-                                string label = ConditionBuilder.NameLabel(kind, n);
-                                var pick = new ValuePick(kind.Id, n.Slug);
-                                <li @key="n.Slug" id="@($"{_id}-{option++}")" role="option" data-search="@($"{label} {n.Slug}".ToLowerInvariant())"
-                                    data-picked="@(pick == Value)" data-tooltip="@Describe(n)" data-tooltip-direction="right"
+                                string label = ConditionBuilder.NameLabel(kind, kindName);
+                                var pick = new ValuePick(kind.Id, kindName.Slug);
+                                <li @key="kindName.Slug" id="@($"{_id}-{option++}")" role="option" data-search="@($"{label} {kindName.Slug}".ToLowerInvariant())"
+                                    data-picked="@(pick == Value)" data-tooltip="@Describe(kindName)" data-tooltip-direction="right"
                                     @onmousedown="() => Pick(pick)" @onmousedown:preventDefault>
                                     <span style="@KindColour(kind)">@label</span>
                                 </li>
@@ -72,11 +72,11 @@
                     <li @key="@("prefix")" class="kind" role="presentation">
                         <div class="kind-head" role="presentation">Prefix</div>
                         <ul role="group" aria-label="Prefix">
-                            @foreach (string p in ConditionBuilder.Prefixes)
+                            @foreach (string prefix in ConditionBuilder.Prefixes)
                             {
-                                string label = "Add " + ConditionBuilder.PrefixLabel(p);
-                                <li @key="p" id="@($"{_id}-{option++}")" role="option" data-search="@label.ToLowerInvariant()"
-                                    @onmousedown="() => Pick(new ValuePick(ConditionBuilder.PrefixKind, Prefix: p))" @onmousedown:preventDefault>
+                                string label = "Add " + ConditionBuilder.PrefixLabel(prefix);
+                                <li @key="prefix" id="@($"{_id}-{option++}")" role="option" data-search="@label.ToLowerInvariant()"
+                                    @onmousedown="() => Pick(new ValuePick(ConditionBuilder.PrefixKind, Prefix: prefix))" @onmousedown:preventDefault>
                                     <span class="operator">@label</span>
                                 </li>
                             }
@@ -185,7 +185,7 @@
                 await _button.FocusAsync();
             }
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The page closed, or the button left it.
         }

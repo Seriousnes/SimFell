@@ -243,12 +243,12 @@ public class ConditionBuilderTests
         var tokens = new HashSet<AplTokenKind>();
         foreach (string hero in Catalog.Heroes.Keys)
         {
-            var v = AplVocabulary.For(hero);
-            foreach (var kind in ConditionBuilder.Kinds(v, ["x"]).Where(k => k.Names.Count > 0))
+            var vocabulary = AplVocabulary.For(hero);
+            foreach (var kind in ConditionBuilder.Kinds(vocabulary, ["x"]).Where(k => k.Names.Count > 0))
             {
-                string path = ConditionBuilder.JoinPath(v, new PathParts(kind.Id, kind.Names[0].Slug, kind.Properties?.FirstOrDefault()));
+                string path = ConditionBuilder.JoinPath(vocabulary, new PathParts(kind.Id, kind.Names[0].Slug, kind.Properties?.FirstOrDefault()));
 
-                Assert.True(v.Classify(new PropertyExpression(path)).Kind == kind.Token, $"{hero} {kind.Label}: {path}");
+                Assert.True(vocabulary.Classify(new PropertyExpression(path)).Kind == kind.Token, $"{hero} {kind.Label}: {path}");
                 tokens.Add(kind.Token);
             }
         }

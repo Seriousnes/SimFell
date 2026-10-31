@@ -83,11 +83,11 @@ public sealed class ReplayDriver
 
         // An enemy's arrival is only known from its first event in the log, so it was there a little earlier.
         // A channel's stop is logged up to a few milliseconds into its server frame, so it comes before the frame's tick.
-        double When(ReplayCommand c) => c.Kind switch
+        double When(ReplayCommand command) => command.Kind switch
         {
-            CommandKind.EnemyArise => c.Time - _options.EnemyAriseLeadSeconds,
-            CommandKind.StopChannel => c.Time - _options.ChannelStopLeadSeconds,
-            _ => c.Time,
+            CommandKind.EnemyArise => command.Time - _options.EnemyAriseLeadSeconds,
+            CommandKind.StopChannel => command.Time - _options.ChannelStopLeadSeconds,
+            _ => command.Time,
         };
         var order = OrderOf(_script, (_options.EnemyAriseLeadSeconds, _options.ChannelStopLeadSeconds), When);
         var commands = order.Commands;
@@ -153,9 +153,9 @@ public sealed class ReplayDriver
         result.AllHits.AddRange(_verifier.AllHits);
         result.Issues.AddRange(_verifier.Issues);
         result.UnmodeledCustomizations.AddRange(_hero.UnmodeledFeatures);
-        foreach (var s in result.Steps)
+        foreach (var replayStep in result.Steps)
         {
-            foreach (var a in s.UntrackedLogAuras) result.UntrackedLogAuras[a] = result.UntrackedLogAuras.GetValueOrDefault(a) + 1;
+            foreach (var untrackedAura in replayStep.UntrackedLogAuras) result.UntrackedLogAuras[untrackedAura] = result.UntrackedLogAuras.GetValueOrDefault(untrackedAura) + 1;
         }
         return result;
     }
@@ -175,9 +175,9 @@ public sealed class ReplayDriver
         if (_orders.TryGetValue(script, out var cached) && cached.Leads == leads) return cached;
         var commands = script.Commands.OrderBy(when).ToList();
         var logCasts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-        foreach (var c in commands.Where(c => c.Kind is CommandKind.Cast or CommandKind.CompleteCast))
+        foreach (var command in commands.Where(c => c.Kind is CommandKind.Cast or CommandKind.CompleteCast))
         {
-            logCasts[c.AbilityName] = logCasts.GetValueOrDefault(c.AbilityName) + 1;
+            logCasts[command.AbilityName] = logCasts.GetValueOrDefault(command.AbilityName) + 1;
         }
         var order = new CommandOrder(leads, commands, MatchCastEnds(commands), commands.Count(c => c.IsPlayerAction), logCasts);
         _orders.AddOrUpdate(script, order);
@@ -401,9 +401,9 @@ public sealed class ReplayDriver
         double since = cmd.Time - tick.Timer.LastTick.TotalSeconds;
         if (since < 0 || since > PeriodicEffect.ServerFrameSeconds + _options.SameTickSeconds) return null;
         var times = LogHitTimes(tick.DamageLogId);
-        int i = Array.BinarySearch(times, cmd.Time);
-        if (i < 0) i = ~i - 1;
-        return i >= 0 && cmd.Time - times[i] <= _options.SameTickSeconds ? tick.Timer : null;
+        int index = Array.BinarySearch(times, cmd.Time);
+        if (index < 0) index = ~index - 1;
+        return index >= 0 && cmd.Time - times[index] <= _options.SameTickSeconds ? tick.Timer : null;
     }
 
     private readonly Dictionary<int, double[]> _logHitTimes = new();
@@ -608,17 +608,17 @@ public sealed class ReplayDriver
             {
                 _hero.Auras.Apply(aura, SimTime.Zero);
             }
-            foreach (var e in events)
+            foreach (var logEvent in events)
             {
-                _ctx.Schedule(SimTime.FromSeconds(Math.Max(0.0, e.Time)), c =>
+                _ctx.Schedule(SimTime.FromSeconds(Math.Max(0.0, logEvent.Time)), c =>
                 {
-                    if (e.Type is "removebuff" or "removedebuff") c.Player.Auras.Remove(aura, c.CurrentTime);
-                    else if (e.IsGain || e.Stack != null)
+                    if (logEvent.Type is "removebuff" or "removedebuff") c.Player.Auras.Remove(aura, c.CurrentTime);
+                    else if (logEvent.IsGain || logEvent.Stack != null)
                     {
                         // A refresh logs no stacks: it keeps the ones it has (Gunde's Owed in Blood refreshes at 150).
                         int held = c.Player.Auras.GetStacks(aura, c.CurrentTime);
-                        bool refresh = e.Type is "refreshbuff" or "refreshdebuff";
-                        c.Player.Auras.Apply(aura, c.CurrentTime, setStacks: e.Stack ?? (refresh && held > 0 ? held : 1));
+                        bool refresh = logEvent.Type is "refreshbuff" or "refreshdebuff";
+                        c.Player.Auras.Apply(aura, c.CurrentTime, setStacks: logEvent.Stack ?? (refresh && held > 0 ? held : 1));
                     }
                 }, $"{aura.Name} (log)");
             }
@@ -658,7 +658,7 @@ public sealed class ReplayDriver
         Kind = cmd.Kind,
         AbilityId = cmd.AbilityId,
         AbilityName = cmd.AbilityName,
-        Target = cmd.Target is { Id: > 0 } t ? t.ToString() : null,
+        Target = cmd.Target is { Id: > 0 } target ? target.ToString() : null,
         ActiveEnemies = _ctx.ActiveEnemies.Count(),
         // For the review page only (free dice has none).
         ExternalAurasOnPlayer = FreeDice ? [] : _externalAurasOnPlayer.Values.Distinct().OrderBy(n => n).ToList(),
@@ -759,10 +759,10 @@ public sealed class LogAuraTimeline
     {
         _events = playerAuraEvents.OrderBy(e => e.Time).ToList();
         _tracked = modeledLogIds.ToHashSet();
-        foreach (var e in _events)
+        foreach (var logEvent in _events)
         {
             // An aura whose first event is its removal was up as the fight began (carried over from an earlier pull).
-            if (_names.TryAdd(e.AbilityId, e.AbilityName) && e.Type is "removebuff" or "removedebuff") _initial[e.AbilityId] = 1;
+            if (_names.TryAdd(logEvent.AbilityId, logEvent.AbilityName) && logEvent.Type is "removebuff" or "removedebuff") _initial[logEvent.AbilityId] = 1;
         }
     }
 
@@ -786,19 +786,19 @@ public sealed class LogAuraTimeline
     private Dictionary<int, int> StacksAt(double time)
     {
         var stacks = new Dictionary<int, int>(_initial);
-        foreach (var e in _events)
+        foreach (var logEvent in _events)
         {
-            if (e.Time > time) break;
-            switch (e.Type)
+            if (logEvent.Time > time) break;
+            switch (logEvent.Type)
             {
                 case "applybuff" or "applydebuff" or "applybuffstack" or "applydebuffstack" or "removebuffstack" or "removedebuffstack":
-                    stacks[e.AbilityId] = e.Stack ?? 1;
+                    stacks[logEvent.AbilityId] = logEvent.Stack ?? 1;
                     break;
                 case "refreshbuff" or "refreshdebuff":
-                    if (stacks.GetValueOrDefault(e.AbilityId) == 0) stacks[e.AbilityId] = e.Stack ?? 1;
+                    if (stacks.GetValueOrDefault(logEvent.AbilityId) == 0) stacks[logEvent.AbilityId] = logEvent.Stack ?? 1;
                     break;
                 case "removebuff" or "removedebuff":
-                    stacks[e.AbilityId] = 0;
+                    stacks[logEvent.AbilityId] = 0;
                     break;
             }
         }

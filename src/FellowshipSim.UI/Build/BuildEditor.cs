@@ -421,15 +421,15 @@ public sealed class BuildEditor(CharacterBuild build)
             build.Talents.Remove(id);
             removed.Add($"talent {id}");
         }
-        foreach (var a in build.Augmentations.Where(a => CoreCatalog.CreateAugmentation(a.Id, a.Rank) == null).ToList())
+        foreach (var augmentation in build.Augmentations.Where(a => CoreCatalog.CreateAugmentation(a.Id, a.Rank) == null).ToList())
         {
-            build.Augmentations.Remove(a);
-            removed.Add($"augmentation {a.Name ?? a.Id.ToString()}");
+            build.Augmentations.Remove(augmentation);
+            removed.Add($"augmentation {augmentation.Name ?? augmentation.Id.ToString()}");
         }
-        foreach (var g in build.Glyphs.Where(g => CoreCatalog.CreateGlyph(g.Id, g.Rank) == null).ToList())
+        foreach (var glyph in build.Glyphs.Where(g => CoreCatalog.CreateGlyph(g.Id, g.Rank) == null).ToList())
         {
-            build.Glyphs.Remove(g);
-            removed.Add($"glyph {g.Name ?? g.Id.ToString()}");
+            build.Glyphs.Remove(glyph);
+            removed.Add($"glyph {glyph.Name ?? glyph.Id.ToString()}");
         }
         if (build.Relic1ItemId != 0 && CoreCatalog.RelicPassiveOfItem(build.Relic1ItemId) == null)
         {

@@ -95,7 +95,7 @@
                 await _button.FocusAsync();
             }
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The page closed, or the button left it.
         }

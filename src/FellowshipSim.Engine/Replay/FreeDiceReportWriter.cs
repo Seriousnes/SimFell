@@ -12,32 +12,32 @@ public static class FreeDiceReportWriter
 {
     private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
 
-    public static void Write(FreeDiceReplay.Result r, string path, string? navigation = null) =>
-        File.WriteAllText(path, Render(r, navigation));
+    public static void Write(FreeDiceReplay.Result result, string path, string? navigation = null) =>
+        File.WriteAllText(path, Render(result, navigation));
 
-    public static string Render(FreeDiceReplay.Result r, string? navigation = null)
+    public static string Render(FreeDiceReplay.Result result, string? navigation = null)
     {
         var sb = new StringBuilder();
-        sb.Append(ReplayReportWriter.Head($"Free dice: {r.PlayerName}"));
+        sb.Append(ReplayReportWriter.Head($"Free dice: {result.PlayerName}"));
         if (navigation != null) sb.Append(navigation);
-        sb.Append($"<h1>Free dice: {E(r.PlayerName)} - {E(r.FightName)}</h1>");
+        sb.Append($"<h1>Free dice: {EncodeHtml(result.PlayerName)} - {EncodeHtml(result.FightName)}</h1>");
         sb.Append("<div class=\"muted\">The fight replayed many times: casts follow the log, the engine rolls its own crits, " +
                   "procs and damage spread, and area hits reach the enemies the player was fighting at the time. " +
                   "If the engine is right, the log should look like a typical run (somewhere near the middle).</div>");
 
-        double place = r.LogPercentile;
+        double place = result.LogPercentile;
         string placeClass = place is >= 0.1 and <= 0.9 ? "ok" : place is >= 0.03 and <= 0.97 ? "warn" : "bad";
         sb.Append("<div class=\"panel grid\">");
-        Stat(sb, "Log damage", N(r.LogDamage), "");
-        Stat(sb, "Engine average", $"{N(r.Mean)} <span class=\"{RatioClass(r.Mean / r.LogDamage, 0.02, 0.05)}\">({P(r.Mean / r.LogDamage)} of log)</span>", "");
-        Stat(sb, "Engine 5-95%", $"{N(r.Percentile(0.05))} - {N(r.Percentile(0.95))}", $"spread {P(r.StdDev / r.Mean)} (1 std dev)");
+        Stat(sb, "Log damage", FormatNumber(result.LogDamage), "");
+        Stat(sb, "Engine average", $"{FormatNumber(result.Mean)} <span class=\"{RatioClass(result.Mean / result.LogDamage, 0.02, 0.05)}\">({FormatPercent(result.Mean / result.LogDamage)} of log)</span>", "");
+        Stat(sb, "Engine 5-95%", $"{FormatNumber(result.Percentile(0.05))} - {FormatNumber(result.Percentile(0.95))}", $"spread {FormatPercent(result.StdDev / result.Mean)} (1 std dev)");
         Stat(sb, "Log's place", $"<span class=\"{placeClass}\">{place.ToString("P0", Inv)}</span>", "of the engine's runs dealt less than the log");
-        Stat(sb, "Runs", r.EngineTotals.Count.ToString(Inv), $"{r.Elapsed.TotalSeconds.ToString("F1", Inv)}s; casts forced (engine short of resources): {r.MeanForcedCasts.ToString("F1", Inv)} per run");
+        Stat(sb, "Runs", result.EngineTotals.Count.ToString(Inv), $"{result.Elapsed.TotalSeconds.ToString("F1", Inv)}s; casts forced (engine short of resources): {result.MeanForcedCasts.ToString("F1", Inv)} per run");
         sb.Append("</div>");
 
         sb.Append("<h2>Engine runs</h2><div class=\"panel\">");
         sb.Append("<div class=\"legend\"><span><i style=\"background:var(--engine)\"></i>engine runs</span><span><i style=\"background:var(--log)\"></i>log</span></div>");
-        sb.Append(Histogram(r.EngineTotals, r.LogDamage));
+        sb.Append(Histogram(result.EngineTotals, result.LogDamage));
         sb.Append("</div>");
 
         sb.Append("<h2>Damage by ability</h2><div class=\"muted\">Engine columns are averages over the runs. A log damage outside the " +
@@ -46,19 +46,19 @@ public static class FreeDiceReportWriter
                   "<th class=\"num\">Log damage</th><th class=\"num\">Engine average</th><th class=\"num\">Engine vs log</th>" +
                   "<th class=\"num\">Engine 5-95%</th><th class=\"num\">Log hits</th><th class=\"num\">Engine hits</th>" +
                   "<th class=\"num\">Log crit</th><th class=\"num\">Engine crit</th></tr></thead><tbody>");
-        foreach (var a in r.Abilities)
+        foreach (var ability in result.Abilities)
         {
-            bool outside = a.LogDamage < a.Engine5 || a.LogDamage > a.Engine95;
-            string ratio = a.LogDamage > 0 ? $"<span class=\"{RatioClass(a.EngineMean / a.LogDamage, 0.03, 0.10)}\">{P(a.EngineMean / a.LogDamage)}</span>" : "<span class=\"muted\">engine only</span>";
-            sb.Append($"<tr><td>{E(a.Name)}{(outside ? " <span class=\"tag\" title=\"The log's damage is outside the engine's 5-95% range\">outside range</span>" : "")}</td>" +
-                      $"<td class=\"num muted\">{a.Id}</td><td class=\"num\">{N(a.LogDamage)}</td><td class=\"num\">{N(a.EngineMean)}</td>" +
-                      $"<td class=\"num\">{ratio}</td><td class=\"num muted\">{N(a.Engine5)} - {N(a.Engine95)}</td>" +
-                      $"<td class=\"num\">{a.LogHits.ToString("N0", Inv)}</td><td class=\"num\">{a.EngineHits.ToString("N1", Inv)}</td>" +
-                      $"<td class=\"num\">{Rate(a.LogCrits, a.LogHits)}</td><td class=\"num\">{Rate(a.EngineCrits, a.EngineHits)}</td></tr>");
+            bool outside = ability.LogDamage < ability.Engine5 || ability.LogDamage > ability.Engine95;
+            string ratio = ability.LogDamage > 0 ? $"<span class=\"{RatioClass(ability.EngineMean / ability.LogDamage, 0.03, 0.10)}\">{FormatPercent(ability.EngineMean / ability.LogDamage)}</span>" : "<span class=\"muted\">engine only</span>";
+            sb.Append($"<tr><td>{EncodeHtml(ability.Name)}{(outside ? " <span class=\"tag\" title=\"The log's damage is outside the engine's 5-95% range\">outside range</span>" : "")}</td>" +
+                      $"<td class=\"num muted\">{ability.Id}</td><td class=\"num\">{FormatNumber(ability.LogDamage)}</td><td class=\"num\">{FormatNumber(ability.EngineMean)}</td>" +
+                      $"<td class=\"num\">{ratio}</td><td class=\"num muted\">{FormatNumber(ability.Engine5)} - {FormatNumber(ability.Engine95)}</td>" +
+                      $"<td class=\"num\">{ability.LogHits.ToString("N0", Inv)}</td><td class=\"num\">{ability.EngineHits.ToString("N1", Inv)}</td>" +
+                      $"<td class=\"num\">{Rate(ability.LogCrits, ability.LogHits)}</td><td class=\"num\">{Rate(ability.EngineCrits, ability.EngineHits)}</td></tr>");
         }
-        sb.Append($"<tr class=\"total\"><td>Total</td><td></td><td class=\"num\">{N(r.LogDamage)}</td><td class=\"num\">{N(r.Mean)}</td>" +
-                  $"<td class=\"num\"><span class=\"{RatioClass(r.Mean / r.LogDamage, 0.02, 0.05)}\">{P(r.Mean / r.LogDamage)}</span></td>" +
-                  $"<td class=\"num muted\">{N(r.Percentile(0.05))} - {N(r.Percentile(0.95))}</td><td></td><td></td><td></td><td></td></tr>");
+        sb.Append($"<tr class=\"total\"><td>Total</td><td></td><td class=\"num\">{FormatNumber(result.LogDamage)}</td><td class=\"num\">{FormatNumber(result.Mean)}</td>" +
+                  $"<td class=\"num\"><span class=\"{RatioClass(result.Mean / result.LogDamage, 0.02, 0.05)}\">{FormatPercent(result.Mean / result.LogDamage)}</span></td>" +
+                  $"<td class=\"num muted\">{FormatNumber(result.Percentile(0.05))} - {FormatNumber(result.Percentile(0.95))}</td><td></td><td></td><td></td><td></td></tr>");
         sb.Append("</tbody></table></div></main></body></html>");
         return sb.ToString();
     }
@@ -76,22 +76,22 @@ public static class FreeDiceReportWriter
         lo -= span * 0.02;
         hi += span * 0.02;
         var counts = new int[bins];
-        foreach (double t in totals) counts[Math.Clamp((int)((t - lo) / (hi - lo) * bins), 0, bins - 1)]++;
+        foreach (double total in totals) counts[Math.Clamp((int)((total - lo) / (hi - lo) * bins), 0, bins - 1)]++;
         int max = counts.Max();
-        double X(double v) => (v - lo) / (hi - lo) * width;
+        double ScaleX(double value) => (value - lo) / (hi - lo) * width;
         var sb = new StringBuilder($"<svg class=\"chart\" viewBox=\"0 0 {width} {height + pad}\" role=\"img\" aria-label=\"Engine runs against the log\">");
         double barW = (double)width / bins;
         for (int i = 0; i < bins; i++)
         {
             if (counts[i] == 0) continue;
-            double h = (double)counts[i] / max * (height - 10);
+            double barHeight = (double)counts[i] / max * (height - 10);
             sb.Append(string.Format(Inv, "<rect x=\"{0:F1}\" y=\"{1:F1}\" width=\"{2:F1}\" height=\"{3:F1}\" fill=\"var(--engine)\" opacity=\"0.75\"/>",
-                i * barW + 1, height - h, barW - 2, h));
+                i * barW + 1, height - barHeight, barW - 2, barHeight));
         }
         sb.Append($"<line class=\"axis\" x1=\"0\" y1=\"{height}\" x2=\"{width}\" y2=\"{height}\"/>");
-        sb.Append(string.Format(Inv, "<line x1=\"{0:F1}\" y1=\"0\" x2=\"{0:F1}\" y2=\"{1}\" stroke=\"var(--log)\" stroke-width=\"3\"/>", X(log), height));
-        sb.Append(string.Format(Inv, "<text x=\"{0:F1}\" y=\"{1}\" text-anchor=\"middle\">log {2}</text>", Math.Clamp(X(log), 40, width - 40), height + 16, N(log)));
-        sb.Append($"<text x=\"0\" y=\"{height + 16}\">{N(lo)}</text><text x=\"{width}\" y=\"{height + 16}\" text-anchor=\"end\">{N(hi)}</text>");
+        sb.Append(string.Format(Inv, "<line x1=\"{0:F1}\" y1=\"0\" x2=\"{0:F1}\" y2=\"{1}\" stroke=\"var(--log)\" stroke-width=\"3\"/>", ScaleX(log), height));
+        sb.Append(string.Format(Inv, "<text x=\"{0:F1}\" y=\"{1}\" text-anchor=\"middle\">log {2}</text>", Math.Clamp(ScaleX(log), 40, width - 40), height + 16, FormatNumber(log)));
+        sb.Append($"<text x=\"0\" y=\"{height + 16}\">{FormatNumber(lo)}</text><text x=\"{width}\" y=\"{height + 16}\" text-anchor=\"end\">{FormatNumber(hi)}</text>");
         sb.Append("</svg>");
         return sb.ToString();
     }
@@ -103,7 +103,7 @@ public static class FreeDiceReportWriter
     }
 
     private static string Rate(double crits, double hits) => hits > 0 ? (crits / hits).ToString("P1", Inv) : "-";
-    private static string N(double v) => v.ToString("N0", Inv);
-    private static string P(double v) => v.ToString("P1", Inv);
-    private static string E(string s) => WebUtility.HtmlEncode(s);
+    private static string FormatNumber(double value) => value.ToString("N0", Inv);
+    private static string FormatPercent(double value) => value.ToString("P1", Inv);
+    private static string EncodeHtml(string text) => WebUtility.HtmlEncode(text);
 }

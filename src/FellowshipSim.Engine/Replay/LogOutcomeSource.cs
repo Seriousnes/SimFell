@@ -46,19 +46,19 @@ public sealed class LogOutcomeSource : IOutcomeSource
             var list = new List<(LogAura Event, int Added)>();
             var losses = new List<double>();
             _enemyDebuffApplications[group.Key] = group.Where(a => a.Type is "applydebuff" or "refreshdebuff").OrderBy(a => a.Time).ToList();
-            foreach (var a in group.OrderBy(a => a.Time))
+            foreach (var aura in group.OrderBy(a => a.Time))
             {
-                int now = a.Type is "removedebuff" or "removebuff" ? 0 : a.Stack ?? (a.IsGain ? Math.Max(stacks, 1) : stacks);
-                if (a.IsGain && now > stacks) list.Add((a, now - stacks));
-                if (a.IsLoss && now < stacks) losses.Add(a.Time);
+                int now = aura.Type is "removedebuff" or "removebuff" ? 0 : aura.Stack ?? (aura.IsGain ? Math.Max(stacks, 1) : stacks);
+                if (aura.IsGain && now > stacks) list.Add((aura, now - stacks));
+                if (aura.IsLoss && now < stacks) losses.Add(aura.Time);
                 stacks = now;
             }
             _enemyStackGains[group.Key] = list;
             _enemyStackLosses[group.Key] = losses;
         }
-        foreach (var c in script.Commands.Where(c => c.Kind == CommandKind.EnemyDemise && c.Enemy != null))
+        foreach (var command in script.Commands.Where(c => c.Kind == CommandKind.EnemyDemise && c.Enemy != null))
         {
-            _demise[new UnitRef(c.Enemy!.Id, c.Enemy.Instance)] = c.Time;
+            _demise[new UnitRef(command.Enemy!.Id, command.Enemy.Instance)] = command.Time;
         }
     }
 
@@ -73,11 +73,11 @@ public sealed class LogOutcomeSource : IOutcomeSource
     {
         if (target == null || !_enemyDebuffApplications.TryGetValue((evidence.LogId, new UnitRef(target.Id, target.InstanceId)), out var applied)) return false;
         double from = now + evidence.MinDelaySeconds - _options.SameTickSeconds, to = now + evidence.DelaySeconds + _options.SameTickSeconds;
-        foreach (var a in applied)
+        foreach (var application in applied)
         {
-            if (a.Time < from || _claimedDebuffApplications.Contains(a)) continue;
-            if (a.Time > to) break;
-            _claimedDebuffApplications.Add(a);
+            if (application.Time < from || _claimedDebuffApplications.Contains(application)) continue;
+            if (application.Time > to) break;
+            _claimedDebuffApplications.Add(application);
             return true;
         }
         return false;
@@ -401,11 +401,11 @@ public sealed class LogOutcomeSource : IOutcomeSource
             // A new debuff given several stacks at once is logged as its application (1 stack) and its stack count in the
             // same millisecond (combat logs: all 220 Coalescing Frost applications with 2 stacks in the 15 Rime fights of
             // docs/accuracy/rime-accuracy-v1.md, each on a Freezing Torrent crit).
-            foreach (var g in gains)
+            foreach (var otherGain in gains)
             {
-                if (g.Event.Time != gain.Event.Time || _claimedStackEvidence.Contains(g.Event)) continue;
-                _claimedStackEvidence.Add(g.Event);
-                added += g.Added;
+                if (otherGain.Event.Time != gain.Event.Time || _claimedStackEvidence.Contains(otherGain.Event)) continue;
+                _claimedStackEvidence.Add(otherGain.Event);
+                added += otherGain.Added;
             }
         }
         return added >= jump;
@@ -430,7 +430,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
     {
         // Hits an engine hit already accounts for (matched, or a group claimed for its targets) are not evidence of a proc.
         // A hit type proves a proc of the hit itself: its group is claimed before the roll (a Wild Swing the enemy avoided).
-        bool Free(LogDamage h) => !_claimedDamageEvidence.Contains(h) && (evidence.HitTypes != null || !_hits.IsAccountedFor(h));
+        bool Free(LogDamage candidate) => !_claimedDamageEvidence.Contains(candidate) && (evidence.HitTypes != null || !_hits.IsAccountedFor(candidate));
         int logId = evidence.LogId;
         var hit = _hits.Peek(logId, now + evidence.MinDelaySeconds - _options.SameTickSeconds, now + _options.SameTickSeconds + evidence.DelaySeconds,
             h => Free(h) && (evidence.HitTypes == null || (h.HitType is { } type && evidence.HitTypes.Contains(type)))
@@ -447,7 +447,7 @@ public sealed class LogOutcomeSource : IOutcomeSource
             return true;
         }
         // The whole multi-target group is one proc.
-        foreach (var h in _hits.GroupOf(hit, _options)) _claimedDamageEvidence.Add(h);
+        foreach (var damage in _hits.GroupOf(hit, _options)) _claimedDamageEvidence.Add(damage);
         // So are the hits the proc deals after it, on any enemy (a summoned attacker's later attacks): each the first free
         // hit from 3/4 to 3/2 of the spacing after the one before.
         double previous = hit.Time;
@@ -479,13 +479,13 @@ public sealed class HitLedger
     public HitLedger(IEnumerable<LogDamage> hits)
     {
         _all = hits.OrderBy(h => h.Time).ToList();
-        foreach (var h in _all)
+        foreach (var damage in _all)
         {
-            var key = (h.AbilityId, h.Target.Id, h.Target.Instance);
+            var key = (damage.AbilityId, damage.Target.Id, damage.Target.Instance);
             if (!_byKey.TryGetValue(key, out var list)) _byKey[key] = list = new List<LogDamage>();
-            list.Add(h);
-            if (!_byAbility.TryGetValue(h.AbilityId, out var byAbility)) _byAbility[h.AbilityId] = byAbility = new List<LogDamage>();
-            byAbility.Add(h);
+            list.Add(damage);
+            if (!_byAbility.TryGetValue(damage.AbilityId, out var byAbility)) _byAbility[damage.AbilityId] = byAbility = new List<LogDamage>();
+            byAbility.Add(damage);
         }
     }
 
@@ -501,10 +501,10 @@ public sealed class HitLedger
         if (owner != null && _owned.TryGetValue(owner, out var owned))
         {
             LogDamage? best = null;
-            foreach (var h in owned)
+            foreach (var damage in owned)
             {
-                if (h.AbilityId != logId || h.Target != target || _matched.Contains(h) || _dealt.Contains(h)) continue;
-                if (best == null || Math.Abs(h.Time - engineTime) < Math.Abs(best.Time - engineTime)) best = h;
+                if (damage.AbilityId != logId || damage.Target != target || _matched.Contains(damage) || _dealt.Contains(damage)) continue;
+                if (best == null || Math.Abs(damage.Time - engineTime) < Math.Abs(best.Time - engineTime)) best = damage;
             }
             if (best != null)
             {
@@ -525,13 +525,13 @@ public sealed class HitLedger
             }
         }
         if (!_byKey.TryGetValue((logId, target.Id, target.Instance), out var list)) return null;
-        foreach (var h in list)
+        foreach (var damage in list)
         {
-            if (h.Time < engineTime - options.HitEarlySeconds) continue;
-            if (h.Time > engineTime + options.LateSecondsOf(logId)) break;
-            if (_matched.Contains(h) || _dealt.Contains(h) || OwnedByOther(h, owner)) continue;
-            _matched.Add(h);
-            return h;
+            if (damage.Time < engineTime - options.HitEarlySeconds) continue;
+            if (damage.Time > engineTime + options.LateSecondsOf(logId)) break;
+            if (_matched.Contains(damage) || _dealt.Contains(damage) || OwnedByOther(damage, owner)) continue;
+            _matched.Add(damage);
+            return damage;
         }
         return null;
     }
@@ -542,21 +542,21 @@ public sealed class HitLedger
     private readonly Dictionary<PeriodicEffect, List<LogDamage>> _owned = new(ReferenceEqualityComparer.Instance);
 
     /// <summary>True when an active periodic effect other than <paramref name="owner"/> reserved this log hit.</summary>
-    private bool OwnedByOther(LogDamage h, PeriodicEffect? owner) =>
-        _ownerOf.TryGetValue(h, out var o) && o != owner && o.IsActive;
+    private bool OwnedByOther(LogDamage damage, PeriodicEffect? owner) =>
+        _ownerOf.TryGetValue(damage, out var currentOwner) && currentOwner != owner && currentOwner.IsActive;
 
     /// <remarks>
     /// A log hit an engine hit chose as its target and has not matched yet is free for a tick: the effect's own cast
     /// chooses its enemies from its first tick's hits (Slaughter).
     /// </remarks>
-    private bool FreeForTick(LogDamage h, PeriodicEffect owner) =>
-        !_matched.Contains(h) && !_dealt.Contains(h) && !OwnedByOther(h, owner) && !(_ownerOf.TryGetValue(h, out var o) && o == owner);
+    private bool FreeForTick(LogDamage damage, PeriodicEffect owner) =>
+        !_matched.Contains(damage) && !_dealt.Contains(damage) && !OwnedByOther(damage, owner) && !(_ownerOf.TryGetValue(damage, out var currentOwner) && currentOwner == owner);
 
-    private void Own(LogDamage h, PeriodicEffect owner)
+    private void Own(LogDamage damage, PeriodicEffect owner)
     {
-        _ownerOf[h] = owner;
+        _ownerOf[damage] = owner;
         if (!_owned.TryGetValue(owner, out var list)) _owned[owner] = list = new List<LogDamage>();
-        list.Add(h);
+        list.Add(damage);
     }
 
     /// <summary>
@@ -567,12 +567,12 @@ public sealed class HitLedger
     {
         if (!_byKey.TryGetValue((logId, target.Id, target.Instance), out var list)) return null;
         LogDamage? best = null;
-        foreach (var h in list)
+        foreach (var damage in list)
         {
-            if (h.Time < scheduled - halfWindow) continue;
-            if (h.Time > scheduled + halfWindow) break;
-            if (!FreeForTick(h, owner)) continue;
-            if (best == null || Math.Abs(h.Time - scheduled) < Math.Abs(best.Time - scheduled)) best = h;
+            if (damage.Time < scheduled - halfWindow) continue;
+            if (damage.Time > scheduled + halfWindow) break;
+            if (!FreeForTick(damage, owner)) continue;
+            if (best == null || Math.Abs(damage.Time - scheduled) < Math.Abs(best.Time - scheduled)) best = damage;
         }
         if (best != null) Own(best, owner);
         return best;
@@ -604,7 +604,7 @@ public sealed class HitLedger
         }
         if (best == null) return null;
         _claimedGroups.Add(best[0]);
-        foreach (var h in best) Own(h, owner);
+        foreach (var damage in best) Own(damage, owner);
         return best;
     }
 
@@ -612,10 +612,10 @@ public sealed class HitLedger
     public void Release(PeriodicEffect owner)
     {
         if (!_owned.Remove(owner, out var list)) return;
-        foreach (var h in list)
+        foreach (var damage in list)
         {
-            _ownerOf.Remove(h);
-            if (!_matched.Contains(h) && _groupOf.TryGetValue(h, out var group) && group[0] == h) _claimedGroups.Remove(h);
+            _ownerOf.Remove(damage);
+            if (!_matched.Contains(damage) && _groupOf.TryGetValue(damage, out var group) && group[0] == damage) _claimedGroups.Remove(damage);
         }
     }
 
@@ -636,26 +636,26 @@ public sealed class HitLedger
     private readonly HashSet<LogDamage> _targetChoices = new();
     private readonly Dictionary<(int LogId, UnitRef Unit), Queue<LogDamage>> _reserved = new();
 
-    /// <summary>The next engine hit with the ID of <paramref name="h"/> on its target matches <paramref name="h"/>.</summary>
-    public void ReserveForMatch(LogDamage h) => Reserve(h);
+    /// <summary>The next engine hit with the ID of <paramref name="damage"/> on its target matches <paramref name="damage"/>.</summary>
+    public void ReserveForMatch(LogDamage damage) => Reserve(damage);
 
-    private void Reserve(LogDamage h)
+    private void Reserve(LogDamage damage)
     {
-        _targetChoices.Add(h);
-        var key = (h.AbilityId, h.Target);
+        _targetChoices.Add(damage);
+        var key = (damage.AbilityId, damage.Target);
         if (!_reserved.TryGetValue(key, out var queue)) _reserved[key] = queue = new Queue<LogDamage>();
-        queue.Enqueue(h);
+        queue.Enqueue(damage);
     }
 
     /// <summary>True when the log has a hit with <paramref name="logId"/> on <paramref name="unit"/> from <paramref name="from"/> to <paramref name="to"/> that is still free.</summary>
     public bool HasUnclaimed(int logId, UnitRef unit, double from, double to)
     {
         if (!_byKey.TryGetValue((logId, unit.Id, unit.Instance), out var list)) return false;
-        foreach (var h in list)
+        foreach (var damage in list)
         {
-            if (h.Time < from) continue;
-            if (h.Time > to) break;
-            if (!_matched.Contains(h) && !_targetChoices.Contains(h) && !_dealt.Contains(h)) return true;
+            if (damage.Time < from) continue;
+            if (damage.Time > to) break;
+            if (!_matched.Contains(damage) && !_targetChoices.Contains(damage) && !_dealt.Contains(damage)) return true;
         }
         return false;
     }
@@ -696,16 +696,16 @@ public sealed class HitLedger
         double expected = engineTime + (options.HitLateSecondsById.ContainsKey(logId) ? 0.0 : TypicalTravel(logId, options));
         LogDamage? best = null;
         double bestScore = double.MaxValue;
-        foreach (var h in list)
+        foreach (var damage in list)
         {
-            if (h.Time < engineTime - options.HitEarlySeconds) continue;
-            if (h.Time > engineTime + options.LateSecondsOf(logId)) break;
-            if (_matched.Contains(h) || _targetChoices.Contains(h) || _dealt.Contains(h) || OwnedByOther(h, null)) continue;
-            double score = Math.Abs(h.Time - expected) + (avoid != null && h.Target == avoid ? options.AvoidedTargetPenaltySeconds : 0.0)
-                           - (prefer != null && h.Target == prefer ? options.SameTickSeconds : 0.0);
+            if (damage.Time < engineTime - options.HitEarlySeconds) continue;
+            if (damage.Time > engineTime + options.LateSecondsOf(logId)) break;
+            if (_matched.Contains(damage) || _targetChoices.Contains(damage) || _dealt.Contains(damage) || OwnedByOther(damage, null)) continue;
+            double score = Math.Abs(damage.Time - expected) + (avoid != null && damage.Target == avoid ? options.AvoidedTargetPenaltySeconds : 0.0)
+                           - (prefer != null && damage.Target == prefer ? options.SameTickSeconds : 0.0);
             if (score < bestScore)
             {
-                best = h;
+                best = damage;
                 bestScore = score;
             }
         }
@@ -729,13 +729,13 @@ public sealed class HitLedger
         if (_byAbility.TryGetValue(logId, out var list))
         {
             List<LogDamage>? current = null;
-            foreach (var h in list)
+            foreach (var damage in list)
             {
-                if (current == null || h.Time - current[0].Time > options.GroupSecondsOf(logId) || current.Any(x => x.Target == h.Target))
+                if (current == null || damage.Time - current[0].Time > options.GroupSecondsOf(logId) || current.Any(x => x.Target == damage.Target))
                 {
                     // A repeated target opens a new group only if no later open group can take it.
-                    current = groups.Count > 0 && h.Time - groups[^1][0].Time <= options.GroupSecondsOf(logId)
-                              && current != null && current != groups[^1] && !groups[^1].Any(x => x.Target == h.Target)
+                    current = groups.Count > 0 && damage.Time - groups[^1][0].Time <= options.GroupSecondsOf(logId)
+                              && current != null && current != groups[^1] && !groups[^1].Any(x => x.Target == damage.Target)
                         ? groups[^1]
                         : null;
                     if (current == null)
@@ -744,8 +744,8 @@ public sealed class HitLedger
                         groups.Add(current);
                     }
                 }
-                current.Add(h);
-                _groupOf[h] = current;
+                current.Add(damage);
+                _groupOf[damage] = current;
             }
         }
         _groups[logId] = groups;
@@ -780,10 +780,10 @@ public sealed class HitLedger
         }
         if (best == null) return null;
         _claimedGroups.Add(best[0]);
-        foreach (var h in best)
+        foreach (var damage in best)
         {
-            _claimedGroupHits.Add(h);
-            Reserve(h); // the hits on these targets match this group, not another group's
+            _claimedGroupHits.Add(damage);
+            Reserve(damage); // the hits on these targets match this group, not another group's
         }
         return best.Select(h => h.Target).Distinct().ToList();
     }
@@ -793,11 +793,11 @@ public sealed class HitLedger
     {
         var list = _byAbility[group[0].AbilityId];
         var ratios = new List<double>();
-        foreach (var h in group)
+        foreach (var damage in group)
         {
-            var prev = list.LastOrDefault(p => p.Time < group[0].Time - options.GroupSecondsOf(group[0].AbilityId) && p.Time > h.Time - 3.0
-                                               && p.Target == h.Target && p.Crit == h.Crit && p.TotalAmount > 0);
-            if (prev != null) ratios.Add(h.TotalAmount / prev.TotalAmount);
+            var prev = list.LastOrDefault(p => p.Time < group[0].Time - options.GroupSecondsOf(group[0].AbilityId) && p.Time > damage.Time - 3.0
+                                               && p.Target == damage.Target && p.Crit == damage.Crit && p.TotalAmount > 0);
+            if (prev != null) ratios.Add(damage.TotalAmount / prev.TotalAmount);
         }
         if (ratios.Count == 0) return 1.0;
         ratios.Sort();
@@ -814,11 +814,11 @@ public sealed class HitLedger
     public LogDamage? Peek(int logId, double from, double to, Func<LogDamage, bool> filter)
     {
         if (!_byAbility.TryGetValue(logId, out var list)) return null;
-        foreach (var h in list)
+        foreach (var damage in list)
         {
-            if (h.Time < from) continue;
-            if (h.Time > to) break;
-            if (filter(h)) return h;
+            if (damage.Time < from) continue;
+            if (damage.Time > to) break;
+            if (filter(damage)) return damage;
         }
         return null;
     }

@@ -25,9 +25,9 @@ public class SimulationContext
             if (_activeEnemies == null)
             {
                 var active = new List<EnemyTarget>();
-                foreach (var e in _enemies)
+                foreach (var enemy in _enemies)
                 {
-                    if (!e.IsSleeping) active.Add(e);
+                    if (!enemy.IsSleeping) active.Add(enemy);
                 }
                 _activeEnemies = active;
             }
@@ -44,9 +44,9 @@ public class SimulationContext
         if (_others == null || !ReferenceEquals(active, _othersOf) || target != _othersExcept)
         {
             var others = new List<EnemyTarget>(active.Count);
-            foreach (var e in active)
+            foreach (var enemy in active)
             {
-                if (e != target) others.Add(e);
+                if (enemy != target) others.Add(enemy);
             }
             (_others, _othersOf, _othersExcept) = (others, active, target);
         }
@@ -430,19 +430,19 @@ public class SimulationContext
 
     private HitRequest Request(PendingHit hit)
     {
-        var n = hit.Compute(this);
-        double chance = 0.0, baseDamage = n.BaseDamage;
+        var computed = hit.Compute(this);
+        double chance = 0.0, baseDamage = computed.BaseDamage;
         if (hit.CanCrit)
         {
             // Grievous: the crit multiplier plus the overflow (the crit multiplier applies as the hit lands).
-            if (n.CritChance > 1.0 && n.CritMultiplier > 0.0)
+            if (computed.CritChance > 1.0 && computed.CritMultiplier > 0.0)
             {
-                baseDamage *= (n.CritMultiplier + (n.CritChance - 1.0) * GrievousCritScalar) / n.CritMultiplier;
+                baseDamage *= (computed.CritMultiplier + (computed.CritChance - 1.0) * GrievousCritScalar) / computed.CritMultiplier;
             }
-            chance = Math.Clamp(n.CritChance, 0.0, 1.0);
+            chance = Math.Clamp(computed.CritChance, 0.0, 1.0);
         }
         double tickFraction = hit.TickFraction;
-        return new HitRequest(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, baseDamage, hit.CanCrit, chance, n.CritMultiplier, CurrentTime, tickFraction,
+        return new HitRequest(hit.Source, hit.Target, hit.AbilityId, hit.AbilityName, baseDamage, hit.CanCrit, chance, computed.CritMultiplier, CurrentTime, tickFraction,
             hit.ForcedCrit);
     }
 

@@ -100,7 +100,7 @@ public abstract class MaraDot : MaraAbility
     protected double HastedPeriod(SimTime now)
     {
         double bonus = 0.0;
-        foreach (var b in TickRateBonuses) bonus += b(now);
+        foreach (var rateBonus in TickRateBonuses) bonus += rateBonus(now);
         return PeriodSeconds / (1.0 + bonus);
     }
 

@@ -20,7 +20,7 @@
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/tooltip/tooltip.js");
             _handle = await _module.InvokeAsync<IJSObjectReference>("start", _bubble);
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The page closed.
         }

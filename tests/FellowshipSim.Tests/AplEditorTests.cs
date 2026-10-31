@@ -69,9 +69,9 @@ public class AplEditorTests
     [Fact]
     public void Formatter_Adds_The_Parentheses_A_Built_Expression_Needs()
     {
-        var a = new PropertyExpression("a");
-        var b = new PropertyExpression("b");
-        var expression = new BinaryOpExpression(new BinaryOpExpression(a, BinaryOperator.Or, b), BinaryOperator.And, new UnaryOpExpression(UnaryOperator.Not, new BinaryOpExpression(a, BinaryOperator.And, b)));
+        var first = new PropertyExpression("a");
+        var second = new PropertyExpression("b");
+        var expression = new BinaryOpExpression(new BinaryOpExpression(first, BinaryOperator.Or, second), BinaryOperator.And, new UnaryOpExpression(UnaryOperator.Not, new BinaryOpExpression(first, BinaryOperator.And, second)));
         Assert.Equal("(a | b) & !(a & b)", AplFormatter.Format(expression));
     }
 

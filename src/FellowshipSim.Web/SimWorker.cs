@@ -50,9 +50,9 @@ public static partial class SimWorker
             var review = await new LocalSimEngine().ReviewAsync(stream, playerId, new ProgressTo(callId));
             reply = new ReviewReply(review, null);
         }
-        catch (SimEngineException e)
+        catch (SimEngineException exception)
         {
-            reply = new ReviewReply(null, e.Message);
+            reply = new ReviewReply(null, exception.Message);
         }
         return JsonSerializer.Serialize(reply, SimChunks.Json);
     }
@@ -79,9 +79,9 @@ public static partial class SimWorker
             progress.Report("Replaying the fight");
             reply = new ReviewReply(ReplayReview.Run(raw, playerId, progress: progress), null);
         }
-        catch (Exception e) when (e is FellowshipLogsException or HttpRequestException or NotSupportedException or ArgumentException)
+        catch (Exception exception) when (exception is FellowshipLogsException or HttpRequestException or NotSupportedException or ArgumentException)
         {
-            reply = new ReviewReply(null, e.Message);
+            reply = new ReviewReply(null, exception.Message);
         }
         return JsonSerializer.Serialize(reply, SimChunks.Json);
     }

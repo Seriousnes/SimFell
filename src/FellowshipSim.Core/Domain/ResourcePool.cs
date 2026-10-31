@@ -96,24 +96,24 @@ public class ResourcePool
     public Dictionary<ResourceDef, double> CreateSnapshot()
     {
         var dict = new Dictionary<ResourceDef, double>();
-        foreach (var (k, v) in _resources)
+        foreach (var (resource, state) in _resources)
         {
-            dict[k] = v.Current;
+            dict[resource] = state.Current;
         }
         return dict;
     }
 
     public void RestoreSnapshot(Dictionary<ResourceDef, double> snapshot)
     {
-        foreach (var (k, v) in snapshot)
+        foreach (var (resource, amount) in snapshot)
         {
-            if (TryGet(k, out var state))
+            if (TryGet(resource, out var state))
             {
-                state.Current = v;
+                state.Current = amount;
             }
             else
             {
-                Set(k, new ResourceState(100, v));
+                Set(resource, new ResourceState(100, amount));
             }
         }
     }

@@ -35,7 +35,7 @@ public sealed class ActionListEditor(ISimEngine engine)
         ConditionModePicked?.Invoke(mode);
     }
 
-    private AplVocabulary V => Vocabulary ?? throw new InvalidOperationException("The editor has no vocabulary yet.");
+    private AplVocabulary RequiredVocabulary => Vocabulary ?? throw new InvalidOperationException("The editor has no vocabulary yet.");
 
     public void SetVocabulary(AplVocabulary vocabulary)
     {
@@ -133,7 +133,7 @@ public sealed class ActionListEditor(ISimEngine engine)
     /// <summary>Renames the list and the actions that name it; false, with the problem in <see cref="Status"/>, when the name is refused.</summary>
     public bool RenameList(string listName, string renamed)
     {
-        var v = V;
+        var vocabulary = RequiredVocabulary;
         if (ActionListModel.ListNameProblem(Lists, renamed, listName) is { } problem)
         {
             SetStatus(MessageState.Error(problem));
@@ -142,7 +142,7 @@ public sealed class ActionListEditor(ISimEngine engine)
         Status = MessageState.None;
         Lists = Lists.Select(l => new ActionList(
             l.Name == listName ? renamed : l.Name,
-            l.Actions.Select(a => ActionListModel.IsListAction(v, a) && a.ActionList == listName ? a with { ActionList = renamed } : a).ToList()))
+            l.Actions.Select(a => ActionListModel.IsListAction(vocabulary, a) && a.ActionList == listName ? a with { ActionList = renamed } : a).ToList()))
             .ToList();
         Changed?.Invoke();
         return true;
@@ -150,11 +150,11 @@ public sealed class ActionListEditor(ISimEngine engine)
 
     public void RemoveList(string listName)
     {
-        var v = V;
-        var runBy = Lists.FirstOrDefault(l => l.Actions.Any(a => ActionListModel.IsListAction(v, a) && a.ActionList == listName));
+        var vocabulary = RequiredVocabulary;
+        var runBy = Lists.FirstOrDefault(l => l.Actions.Any(a => ActionListModel.IsListAction(vocabulary, a) && a.ActionList == listName));
         if (runBy != null)
         {
-            SetStatus(MessageState.Error($"{ActionListModel.ListTitle(v, runBy)} has an action naming {listName}. Change that action first."));
+            SetStatus(MessageState.Error($"{ActionListModel.ListTitle(vocabulary, runBy)} has an action naming {listName}. Change that action first."));
             return;
         }
         Status = MessageState.None;

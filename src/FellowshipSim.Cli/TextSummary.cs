@@ -26,14 +26,14 @@ public static class TextSummary
         int labelWidth = all.Max(r => r.Label.Length);
         int valueWidth = all.Max(r => r.Value.Length);
 
-        var s = new StringBuilder();
-        foreach (var (label, value) in rows) s.AppendLine($"{label.PadRight(labelWidth)}  {value.PadLeft(valueWidth)}");
+        var builder = new StringBuilder();
+        foreach (var (label, value) in rows) builder.AppendLine($"{label.PadRight(labelWidth)}  {value.PadLeft(valueWidth)}");
         if (abilities.Count > 0)
         {
-            s.AppendLine();
-            s.AppendLine("DPS by ability");
-            foreach (var (label, value) in abilities) s.AppendLine($"{label.PadRight(labelWidth)}  {value.PadLeft(valueWidth)}");
+            builder.AppendLine();
+            builder.AppendLine("DPS by ability");
+            foreach (var (label, value) in abilities) builder.AppendLine($"{label.PadRight(labelWidth)}  {value.PadLeft(valueWidth)}");
         }
-        return s.ToString();
+        return builder.ToString();
     }
 }

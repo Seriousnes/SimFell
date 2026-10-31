@@ -40,9 +40,9 @@ public sealed class FreeDiceOutcomeSource : RandomOutcomeSource
 
     private static int Window(double[] castTimes, int windows, double time)
     {
-        int i = Array.BinarySearch(castTimes, time);
-        if (i < 0) i = ~i - 1;
-        return Math.Clamp(i, 0, windows - 1);
+        int index = Array.BinarySearch(castTimes, time);
+        if (index < 0) index = ~index - 1;
+        return Math.Clamp(index, 0, windows - 1);
     }
 
     private List<EnemyTarget> Engaged(IReadOnlyList<EnemyTarget> candidates, SimulationContext ctx)

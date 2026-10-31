@@ -68,7 +68,7 @@ public abstract class MaraAbility : Ability
         if (HasCreepingDeath) damage *= Mara.CreepingDeath(ctx.CurrentTime);
         if (target != null)
         {
-            foreach (var m in TargetMultipliers) damage *= m(target, ctx);
+            foreach (var factor in TargetMultipliers) damage *= factor(target, ctx);
         }
         return damage;
     }

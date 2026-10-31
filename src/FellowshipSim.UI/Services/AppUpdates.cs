@@ -36,7 +36,7 @@ public sealed class AppUpdates(HttpClient http, Version? version, AppRelease? pr
 
     /// <summary>A version as releases write it: major.minor.patch ("0.1.0"), or null.</summary>
     public static Version? Parse(string? text) =>
-        System.Version.TryParse(text, out var v) && v.Build >= 0 && v.Revision < 0 ? v : null;
+        System.Version.TryParse(text, out var version) && version.Build >= 0 && version.Revision < 0 ? version : null;
 
     /// <summary>The version of tag <paramref name="tag"/> (<c>v0.1.0</c>), or null.</summary>
     public static Version? VersionOf(string? tag) =>
@@ -55,9 +55,9 @@ public sealed class AppUpdates(HttpClient http, Version? version, AppRelease? pr
             using var response = await http.SendAsync(request);
             if (!response.IsSuccessStatusCode) return null;
             var release = await response.Content.ReadFromJsonAsync<GitHubRelease>();
-            return VersionOf(release?.TagName) is { } v ? new AppRelease(v, release!.TagName!, release.HtmlUrl ?? LatestReleasePage) : null;
+            return VersionOf(release?.TagName) is { } releaseVersion ? new AppRelease(releaseVersion, release!.TagName!, release.HtmlUrl ?? LatestReleasePage) : null;
         }
-        catch (Exception e) when (e is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
         {
             return null;
         }

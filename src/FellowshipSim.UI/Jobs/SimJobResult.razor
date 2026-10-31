@@ -6,35 +6,35 @@
     <div class="tiles">
         <div class="tile main">
             <span>Mean DPS</span>
-            <strong>@N(Result.MeanDps)</strong>
+            <strong>@Number(Result.MeanDps)</strong>
             <em>±@MarginText at 95% confidence</em>
         </div>
         @if (Result.PrimaryTargetDps is { } primary && primary < Result.MeanDps * 0.999)
         {
             <div class="tile">
                 <span>Main target DPS</span>
-                <strong>@N(primary)</strong>
+                <strong>@Number(primary)</strong>
                 <em>@Percent(Result.MeanDps > 0 ? primary / Result.MeanDps : 0) of the damage, to the first target</em>
             </div>
         }
         <div class="tile">
             <span>Range</span>
-            <strong>@N(Result.MinDps) – @N(Result.MaxDps)</strong>
+            <strong>@Number(Result.MinDps) – @Number(Result.MaxDps)</strong>
             <em>lowest and highest fight</em>
         </div>
         <div class="tile">
             <span>Std dev</span>
-            <strong>@N(Result.StandardDeviation)</strong>
+            <strong>@Number(Result.StandardDeviation)</strong>
             <em>@Percent(Result.MeanDps > 0 ? Result.StandardDeviation / Result.MeanDps : 0) of the mean</em>
         </div>
         <div class="tile">
             <span>Mean damage</span>
-            <strong>@N(Result.MeanDps * Result.DurationSeconds)</strong>
+            <strong>@Number(Result.MeanDps * Result.DurationSeconds)</strong>
             <em>per fight</em>
         </div>
         <div class="tile">
             <span>Fights</span>
-            <strong>@N(Result.Iterations)</strong>
+            <strong>@Number(Result.Iterations)</strong>
             <em>@Result.DurationSeconds.ToString("0.##", CultureInfo.CurrentCulture) s each</em>
         </div>
     </div>
@@ -83,7 +83,7 @@
                         <line x1="0" x2="1000" y1="@(g * 60)" y2="@(g * 60)" class="grid" />
                     }
                     <path d="@Band(timeline.DpsLow, timeline.DpsHigh, dpsMax)" class="band" />
-                    <line x1="0" x2="1000" y1="@Y(Result.MeanDps, Nice(dpsMax))" y2="@Y(Result.MeanDps, Nice(dpsMax))" class="average" />
+                    <line x1="0" x2="1000" y1="@ChartY(Result.MeanDps, Nice(dpsMax))" y2="@ChartY(Result.MeanDps, Nice(dpsMax))" class="average" />
                     <path d="@Line(timeline.Dps, dpsMax)" class="mean" />
                 </svg>
                 <div class="x">@foreach (var label in TimeLabels(timeline.Dps.Count))
@@ -99,20 +99,20 @@
         <section class="card">
             <div class="card-head">
                 <h3>Spirit over time</h3>
-                <span class="legend"><i class="mean"></i>Typical fight <i class="spirit-mean"></i>Mean of every fight <i class="average"></i>Most (@N(spirit.Max))</span>
+                <span class="legend"><i class="mean"></i>Typical fight <i class="spirit-mean"></i>Mean of every fight <i class="average"></i>Most (@Number(spirit.Max))</span>
             </div>
             <div class="chart">
                 @{ double spiritTop = SpiritTop(spirit.Max); }
                 <div class="y">@for (int i = 4; i >= 0; i--)
                 {
-                    <span>@N(spiritTop * i / 4)</span>
+                    <span>@Number(spiritTop * i / 4)</span>
                 }</div>
                 <svg viewBox="0 0 1000 240" preserveAspectRatio="none" role="img" aria-label="Spirit Points over the fight: one typical fight and the mean of every fight">
                     @for (int g = 1; g < 4; g++)
                     {
                         <line x1="0" x2="1000" y1="@(g * 60)" y2="@(g * 60)" class="grid" />
                     }
-                    <line x1="0" x2="1000" y1="@Y(spirit.Max, spiritTop)" y2="@Y(spirit.Max, spiritTop)" class="average" />
+                    <line x1="0" x2="1000" y1="@ChartY(spirit.Max, spiritTop)" y2="@ChartY(spirit.Max, spiritTop)" class="average" />
                     <path d="@Line(spirit.Mean, spiritTop, nice: false)" class="spirit-mean" />
                     <path d="@Steps(spirit.Typical, spirit.Mean.Count, spiritTop)" class="mean" />
                 </svg>
@@ -144,32 +144,32 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var a in abilities)
+                        @foreach (var ability in abilities)
                         {
-                            double share = total > 0 ? a.Damage / total : 0;
-                            <tr @key="a.Name">
-                                <td class="name"><GameIcon Url="@BuildCatalog.IconUrl(a.Id, a.Name)" Size="22" /><span>@a.Name</span></td>
+                            double share = total > 0 ? ability.Damage / total : 0;
+                            <tr @key="ability.Name">
+                                <td class="name"><GameIcon Url="@BuildCatalog.IconUrl(ability.Id, ability.Name)" Size="22" /><span>@ability.Name</span></td>
                                 <td class="amount-cell">
                                     @* As FellowshipLogs shows it: share, bar, damage. *@
-                                    <span class="amount"><span class="pct">@Percent(share)</span><span class="bar"><b style="width: @Width(share / abilities.Max(x => x.Damage / total))"></b></span><span class="value">@N(a.Damage)</span></span>
+                                    <span class="amount"><span class="pct">@Percent(share)</span><span class="bar"><b style="width: @Width(share / abilities.Max(x => x.Damage / total))"></b></span><span class="value">@Number(ability.Damage)</span></span>
                                 </td>
-                                <td>@(a.Casts > 0 ? a.Casts.ToString("N1", CultureInfo.CurrentCulture) : "–")</td>
-                                <td>@(a.Casts > 0 ? N(a.Damage / a.Casts) : "–")</td>
-                                <td>@a.Hits.ToString("N1", CultureInfo.CurrentCulture)</td>
-                                <td>@N(a.AverageHit)</td>
-                                <td>@Percent(a.CritChance)</td>
-                                <td>@N(a.Dps)</td>
+                                <td>@(ability.Casts > 0 ? ability.Casts.ToString("N1", CultureInfo.CurrentCulture) : "–")</td>
+                                <td>@(ability.Casts > 0 ? Number(ability.Damage / ability.Casts) : "–")</td>
+                                <td>@ability.Hits.ToString("N1", CultureInfo.CurrentCulture)</td>
+                                <td>@Number(ability.AverageHit)</td>
+                                <td>@Percent(ability.CritChance)</td>
+                                <td>@Number(ability.Dps)</td>
                             </tr>
                         }
                         <tr class="total">
                             <td class="name">Total</td>
-                            <td class="amount-cell"><span class="amount">@N(total)</span></td>
+                            <td class="amount-cell"><span class="amount">@Number(total)</span></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td>@N(Result.MeanDps)</td>
+                            <td>@Number(Result.MeanDps)</td>
                         </tr>
                     </tbody>
                 </table>
@@ -184,7 +184,7 @@
                     <tbody>
                         @foreach (var (ability, dps) in Result.AbilityDps.OrderByDescending(a => a.Value))
                         {
-                            <tr @key="ability"><td class="name"><GameIcon Url="@BuildCatalog.IconUrl(0, ability)" Size="22" /><span>@ability</span></td><td>@N(dps)</td></tr>
+                            <tr @key="ability"><td class="name"><GameIcon Url="@BuildCatalog.IconUrl(0, ability)" Size="22" /><span>@ability</span></td><td>@Number(dps)</td></tr>
                         }
                     </tbody>
                 </table>
@@ -198,7 +198,7 @@
         <section class="card">
             <div class="card-head">
                 <h3>Cast sequence</h3>
-                <span class="legend">One typical fight · @N(casts.Count) casts</span>
+                <span class="legend">One typical fight · @Number(casts.Count) casts</span>
                 <span class="sequence-switches">
                     <label class="switch" data-tooltip="Every cast as a line of text with its time, so the page's search finds a spell">
                         <input type="checkbox" @bind="_castList" />
@@ -263,7 +263,7 @@
                 </div>
                 @if (windows.Count > ShownCastWindows)
                 {
-                    <button type="button" class="link-button" @onclick="() => _allCasts = !_allCasts">@(_allCasts ? "Show the first minute" : $"Show the whole fight ({N(casts.Count)} casts)")</button>
+                    <button type="button" class="link-button" @onclick="() => _allCasts = !_allCasts">@(_allCasts ? "Show the first minute" : $"Show the whole fight ({Number(casts.Count)} casts)")</button>
                 }
             }
         </section>
@@ -350,27 +350,27 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var b in auras)
+                @foreach (var aura in auras)
                 {
-                    bool stacks = b.MaxStacks > 1;
-                    <tr @key="b.Name">
-                        <td class="name"><GameIcon Url="@BuildCatalog.IconUrl(b.LogId, b.Name)" Size="22" /><span>@b.Name</span></td>
+                    bool stacks = aura.MaxStacks > 1;
+                    <tr @key="aura.Name">
+                        <td class="name"><GameIcon Url="@BuildCatalog.IconUrl(aura.LogId, aura.Name)" Size="22" /><span>@aura.Name</span></td>
                         <td class="amount-cell">
                             @* As FellowshipLogs shows it: the share, then when it was up in one typical fight. *@
                             <span class="amount">
-                                <span class="pct">@Percent(b.Uptime)</span>
-                                <svg class="spans" viewBox="0 0 1000 8" preserveAspectRatio="none" role="img" aria-label="@($"When {b.Name} was up in a typical fight")">
-                                    <path d="@SpanPath(b.Spans)" fill="currentColor" />
+                                <span class="pct">@Percent(aura.Uptime)</span>
+                                <svg class="spans" viewBox="0 0 1000 8" preserveAspectRatio="none" role="img" aria-label="@($"When {aura.Name} was up in a typical fight")">
+                                    <path d="@SpanPath(aura.Spans)" fill="currentColor" />
                                 </svg>
                             </span>
                         </td>
-                        <td>@b.Applications.ToString("N1", CultureInfo.CurrentCulture)</td>
-                        <td>@b.Refreshes.ToString("N1", CultureInfo.CurrentCulture)</td>
-                        <td>@Seconds(b.AverageDuration)</td>
-                        <td>@(stacks ? b.AverageStacks.ToString("N1", CultureInfo.CurrentCulture) : "–")</td>
-                        <td>@(stacks ? b.MaxStacks.ToString(CultureInfo.CurrentCulture) : "–")</td>
-                        <td>@(stacks && b.AtMaxStacks > 0 ? Percent(b.AtMaxStacks) : "–")</td>
-                        <td>@(b.AverageGap > 0 ? Seconds(b.AverageGap) : "–")</td>
+                        <td>@aura.Applications.ToString("N1", CultureInfo.CurrentCulture)</td>
+                        <td>@aura.Refreshes.ToString("N1", CultureInfo.CurrentCulture)</td>
+                        <td>@Seconds(aura.AverageDuration)</td>
+                        <td>@(stacks ? aura.AverageStacks.ToString("N1", CultureInfo.CurrentCulture) : "–")</td>
+                        <td>@(stacks ? aura.MaxStacks.ToString(CultureInfo.CurrentCulture) : "–")</td>
+                        <td>@(stacks && aura.AtMaxStacks > 0 ? Percent(aura.AtMaxStacks) : "–")</td>
+                        <td>@(aura.AverageGap > 0 ? Seconds(aura.AverageGap) : "–")</td>
                     </tr>
                 }
             </tbody>
@@ -378,7 +378,7 @@
 
     private const double Height = 240;
 
-    private static string N(double value) => Math.Round(value, MidpointRounding.AwayFromZero).ToString("N0", CultureInfo.CurrentCulture);
+    private static string Number(double value) => Math.Round(value, MidpointRounding.AwayFromZero).ToString("N0", CultureInfo.CurrentCulture);
 
     private static string Percent(double fraction) => (fraction * 100).ToString("0.0", CultureInfo.CurrentCulture) + "%";
 
@@ -395,17 +395,17 @@
     private string SpanPath(IReadOnlyList<double>? spans)
     {
         if (spans is not { Count: > 1 } || Result.DurationSeconds <= 0) return "";
-        var d = new System.Text.StringBuilder();
+        var builder = new System.Text.StringBuilder();
         for (int i = 0; i + 1 < spans.Count; i += 2)
         {
             double start = spans[i] / Result.DurationSeconds * 1000, end = Math.Max(start + 2, spans[i + 1] / Result.DurationSeconds * 1000);
-            d.Append('M').Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append(" 2.5H").Append(end.ToString("0.#", CultureInfo.InvariantCulture))
+            builder.Append('M').Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append(" 2.5H").Append(end.ToString("0.#", CultureInfo.InvariantCulture))
                 .Append("V5.5H").Append(start.ToString("0.#", CultureInfo.InvariantCulture)).Append("Z ");
         }
-        return d.ToString();
+        return builder.ToString();
     }
 
-    private static double Max(IReadOnlyList<double> a, IReadOnlyList<double> b) => Math.Max(a.Count > 0 ? a.Max() : 0, b.Count > 0 ? b.Max() : 0);
+    private static double Max(IReadOnlyList<double> first, IReadOnlyList<double> second) => Math.Max(first.Count > 0 ? first.Max() : 0, second.Count > 0 ? second.Max() : 0);
 
     /// <summary>A round axis top at or above <paramref name="max"/>: 1, 2, 2.5 or 5 times a power of ten, times 4 ticks.</summary>
     private static double Nice(double max)
@@ -430,16 +430,16 @@
         _ => value.ToString("0", CultureInfo.CurrentCulture),
     };
 
-    private static string Y(double value, double top) => (Height - value / top * Height).ToString("0.#", CultureInfo.InvariantCulture);
+    private static string ChartY(double value, double top) => (Height - value / top * Height).ToString("0.#", CultureInfo.InvariantCulture);
 
-    private static string X(int index, int count) => (count <= 1 ? 0 : index * 1000.0 / (count - 1)).ToString("0.#", CultureInfo.InvariantCulture);
+    private static string ChartX(int index, int count) => (count <= 1 ? 0 : index * 1000.0 / (count - 1)).ToString("0.#", CultureInfo.InvariantCulture);
 
     private static string Line(IReadOnlyList<double> values, double max, bool nice = true)
     {
         double top = nice ? Nice(max) : max;
-        var d = new System.Text.StringBuilder();
-        for (int i = 0; i < values.Count; i++) d.Append(i == 0 ? 'M' : 'L').Append(X(i, values.Count)).Append(' ').Append(Y(values[i], top)).Append(' ');
-        return d.ToString();
+        var builder = new System.Text.StringBuilder();
+        for (int i = 0; i < values.Count; i++) builder.Append(i == 0 ? 'M' : 'L').Append(ChartX(i, values.Count)).Append(' ').Append(ChartY(values[i], top)).Append(' ');
+        return builder.ToString();
     }
 
     /// <summary>The Spirit chart's top: the most Spirit Points rounded up to 40, so its quarters fall on round numbers.</summary>
@@ -452,21 +452,21 @@
     private static string Steps(IReadOnlyList<double> values, int seconds, double top)
     {
         if (values.Count == 0 || seconds < 2) return "";
-        var d = new System.Text.StringBuilder();
+        var builder = new System.Text.StringBuilder();
         for (int i = 0; i < values.Count; i++)
         {
-            string x = X(i, seconds), y = Y(Math.Min(values[i], top), top);
-            d.Append(i == 0 ? "M" : "H").Append(x).Append(i == 0 ? " " : "V").Append(y).Append(' ');
+            string positionX = ChartX(i, seconds), positionY = ChartY(Math.Min(values[i], top), top);
+            builder.Append(i == 0 ? "M" : "H").Append(positionX).Append(i == 0 ? " " : "V").Append(positionY).Append(' ');
         }
-        return d.Append('H').Append(X(Math.Min(values.Count, seconds - 1), seconds)).ToString();
+        return builder.Append('H').Append(ChartX(Math.Min(values.Count, seconds - 1), seconds)).ToString();
     }
 
     private static string Band(IReadOnlyList<double> low, IReadOnlyList<double> high, double max)
     {
         double top = Nice(max);
-        var d = new System.Text.StringBuilder(Line(high, max));
-        for (int i = low.Count - 1; i >= 0; i--) d.Append('L').Append(X(i, low.Count)).Append(' ').Append(Y(low[i], top)).Append(' ');
-        return d.Append('Z').ToString();
+        var builder = new System.Text.StringBuilder(Line(high, max));
+        for (int i = low.Count - 1; i >= 0; i--) builder.Append('L').Append(ChartX(i, low.Count)).Append(' ').Append(ChartY(low[i], top)).Append(' ');
+        return builder.Append('Z').ToString();
     }
 
     /// <summary>Time labels along the fight: at most about ten, on round minutes or half minutes.</summary>
@@ -476,8 +476,8 @@
         int labels = Math.Max(1, (seconds - 1) / step);
         for (int i = 0; i <= labels; i++)
         {
-            int t = Math.Min(seconds, i * step);
-            yield return $"{t / 60}:{t % 60:00}";
+            int tick = Math.Min(seconds, i * step);
+            yield return $"{tick / 60}:{tick % 60:00}";
         }
     }
 }

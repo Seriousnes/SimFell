@@ -29,9 +29,9 @@ public class FreeDiceReplayTests(ITestOutputHelper output)
             .Select(f => Path.GetFileName(f).Replace(".replay.json", "")).ToList();
         string setting = Environment.GetEnvironmentVariable("FREEDICE_REVIEW") ?? all[0];
         var reviews = setting == "all" ? all : [setting];
-        int iterations = int.TryParse(Environment.GetEnvironmentVariable("FREEDICE_ITERATIONS"), out int n) ? n : 10;
+        int iterations = int.TryParse(Environment.GetEnvironmentVariable("FREEDICE_ITERATIONS"), out int parsedIterations) ? parsedIterations : 10;
         string? seedSetting = Environment.GetEnvironmentVariable("FREEDICE_SEED");
-        int seed = seedSetting == "random" ? Random.Shared.Next(1, int.MaxValue / 2) : int.TryParse(seedSetting, out int s) ? s : 1;
+        int seed = seedSetting == "random" ? Random.Shared.Next(1, int.MaxValue / 2) : int.TryParse(seedSetting, out int parsedSeed) ? parsedSeed : 1;
 
         var clock = System.Diagnostics.Stopwatch.StartNew();
         foreach (string review in reviews)

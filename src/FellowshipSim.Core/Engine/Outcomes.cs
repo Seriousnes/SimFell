@@ -146,11 +146,11 @@ public sealed class SimulationRng
     public void Seed(int seed)
     {
         // SplitMix64 spreads the seed over the four state words, so the state is never all zero.
-        ulong x = (ulong)seed;
-        _s0 = SplitMix64(ref x);
-        _s1 = SplitMix64(ref x);
-        _s2 = SplitMix64(ref x);
-        _s3 = SplitMix64(ref x);
+        ulong state = (ulong)seed;
+        _s0 = SplitMix64(ref state);
+        _s1 = SplitMix64(ref state);
+        _s2 = SplitMix64(ref state);
+        _s3 = SplitMix64(ref state);
     }
 
     public bool Roll(double chance) => NextDouble() < chance;
@@ -161,21 +161,21 @@ public sealed class SimulationRng
     private ulong NextUInt64()
     {
         ulong result = BitOperations.RotateLeft(_s1 * 5, 7) * 9;
-        ulong t = _s1 << 17;
+        ulong shifted = _s1 << 17;
         _s2 ^= _s0;
         _s3 ^= _s1;
         _s1 ^= _s2;
         _s0 ^= _s3;
-        _s2 ^= t;
+        _s2 ^= shifted;
         _s3 = BitOperations.RotateLeft(_s3, 45);
         return result;
     }
 
-    private static ulong SplitMix64(ref ulong x)
+    private static ulong SplitMix64(ref ulong state)
     {
-        ulong z = x += 0x9E3779B97F4A7C15UL;
-        z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9UL;
-        z = (z ^ (z >> 27)) * 0x94D049BB133111EBUL;
-        return z ^ (z >> 31);
+        ulong mixed = state += 0x9E3779B97F4A7C15UL;
+        mixed = (mixed ^ (mixed >> 30)) * 0xBF58476D1CE4E5B9UL;
+        mixed = (mixed ^ (mixed >> 27)) * 0x94D049BB133111EBUL;
+        return mixed ^ (mixed >> 31);
     }
 }

@@ -159,10 +159,10 @@ public class ExactReplayTests
             PeriodicEffect.Begin(Ctx, "Test Dot", seconds, period, tickOnStart: false, partialFinalTick: false,
                 onTick: (c, _) => Tick(c), damageLogId: TickId, target: Enemy);
 
-        public void Tick(SimulationContext c)
+        public void Tick(SimulationContext simulationContext)
         {
-            Fired.Add(c.CurrentTime.TotalSeconds);
-            c.ApplyDamage(Hero, Enemy, 100, TickId, "Test Dot", canCrit: false, 0.0, 1.0);
+            Fired.Add(simulationContext.CurrentTime.TotalSeconds);
+            simulationContext.ApplyDamage(Hero, Enemy, 100, TickId, "Test Dot", canCrit: false, 0.0, 1.0);
         }
     }
 
@@ -188,11 +188,11 @@ public class ExactReplayTests
         var probe = new TickFight();
         double period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
         var log = new List<double>();
-        for (double t = 0; ;)
+        for (double tickTime = 0; ;)
         {
-            t = (SimTime.FromSeconds(t) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
-            if (t > 3.9) break;
-            log.Add(Math.Round(t, 3));
+            tickTime = (SimTime.FromSeconds(tickTime) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
+            if (tickTime > 3.9) break;
+            log.Add(Math.Round(tickTime, 3));
         }
         var fight = new TickFight(log.ToArray());
         // The effect ends half a period after the last log tick, before another tick is due.
@@ -215,11 +215,11 @@ public class ExactReplayTests
         var probe = new TickFight();
         double period = 1.0 / (1.0 + probe.Hero.GetHaste(SimTime.Zero));
         var log = new List<double>();
-        for (double t = 0; ;)
+        for (double tickTime = 0; ;)
         {
-            t = (SimTime.FromSeconds(t) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
-            if (t > 3.9) break;
-            log.Add(Math.Round(t, 3));
+            tickTime = (SimTime.FromSeconds(tickTime) + SimTime.FromSeconds(period)).TotalSeconds + 0.020;
+            if (tickTime > 3.9) break;
+            log.Add(Math.Round(tickTime, 3));
         }
         var fight = new TickFight(log.ToArray());
         PeriodicEffect.BeginHasted(fight.Ctx, fight.Hero, "Test Dot", log[^1] + period / 2, 1.0, tickOnStart: false, partialFinalTick: false,
@@ -244,8 +244,8 @@ public class ExactReplayTests
         double secondPulse = (SimTime.FromSeconds(first) + SimTime.FromSeconds(period)).TotalSeconds;
         double duration = 2.7 * period;
         double partialAt = (SimTime.FromSeconds(duration) + SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds)).TotalSeconds + 0.010;
-        LogDamage On(UnitRef target, double t, double amount) =>
-            new() { Time = t, AbilityId = TickId, AbilityName = "Test Pulse", Target = target, Amount = amount };
+        LogDamage On(UnitRef target, double time, double amount) =>
+            new() { Time = time, AbilityId = TickId, AbilityName = "Test Pulse", Target = target, Amount = amount };
         var fight = new TickFight([On(Dummy, first, 100), On(second, first, 100), On(Dummy, secondPulse, 100), On(second, secondPulse, 100),
             On(Dummy, Math.Round(partialAt, 3), 70)]);
         var other = fight.Ctx.AddEnemy(second.Id, second.Instance, "Second", 1e9);

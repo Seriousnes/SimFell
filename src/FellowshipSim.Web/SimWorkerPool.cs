@@ -50,9 +50,9 @@ public sealed class SimWorkerPool(IJSRuntime js)
         {
             throw new OperationCanceledException(ct);
         }
-        catch (JSException e)
+        catch (JSException exception)
         {
-            throw new SimEngineException(Reason(e));
+            throw new SimEngineException(Reason(exception));
         }
     }
 
@@ -65,9 +65,9 @@ public sealed class SimWorkerPool(IJSRuntime js)
         {
             return await pool.InvokeAsync<string>("review", CancellationToken.None, rawFight, playerId, sink);
         }
-        catch (JSException e)
+        catch (JSException exception)
         {
-            throw new SimEngineException(Reason(e));
+            throw new SimEngineException(Reason(exception));
         }
     }
 
@@ -86,16 +86,16 @@ public sealed class SimWorkerPool(IJSRuntime js)
             return await pool.InvokeAsync<string>("reviewFight", CancellationToken.None, reportCode, fightId, playerId,
                 accessToken ?? "", credentials?.ClientId ?? "", credentials?.ClientSecret ?? "", sink);
         }
-        catch (JSException e)
+        catch (JSException exception)
         {
-            throw new SimEngineException(Reason(e));
+            throw new SimEngineException(Reason(exception));
         }
     }
 
     // The first line of a worker's error, without the JS error's own prefix.
-    private static string Reason(JSException e)
+    private static string Reason(JSException exception)
     {
-        string line = e.Message.Split('\n')[0].Trim();
+        string line = exception.Message.Split('\n')[0].Trim();
         return line.StartsWith("Error: ", StringComparison.Ordinal) ? line["Error: ".Length..] : line;
     }
 

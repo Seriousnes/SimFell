@@ -190,9 +190,9 @@ public abstract class Hero : Actor
         add { if (value != null) Subscribe(new DamageDealtSubscriber(null, null, value)); }
         remove
         {
-            int i = _damageDealt.FindLastIndex(s => s.Ability == null && s.DamageId == null && s.Handler == value);
-            if (i < 0) return;
-            _damageDealt.RemoveAt(i);
+            int index = _damageDealt.FindLastIndex(s => s.Ability == null && s.DamageId == null && s.Handler == value);
+            if (index < 0) return;
+            _damageDealt.RemoveAt(index);
             _damageDealtById.Clear();
         }
     }
@@ -281,11 +281,11 @@ public abstract class Hero : Actor
             else subscriber.Handler!(in hit);
         }
     }
-    public void TriggerCastStarted(Ability a, EnemyTarget? t, SimTime now = default) => OnCastStarted?.Invoke(a, t, now);
-    public void TriggerCastCompleted(Ability a, EnemyTarget? t, SimTime now = default) => OnCastCompleted?.Invoke(a, t, now);
-    public void TriggerCastCancelled(Ability a, EnemyTarget? t, SimTime now = default) => OnCastCancelled?.Invoke(a, t, now);
-    public void TriggerChannelEnded(Ability a, EnemyTarget? t, SimTime now, bool clipped) => OnChannelEnded?.Invoke(a, t, now, clipped);
-    public void TriggerChannelTick(Ability a, EnemyTarget? t, double fraction, SimulationContext ctx) => OnChannelTick?.Invoke(a, t, fraction, ctx);
+    public void TriggerCastStarted(Ability ability, EnemyTarget? target, SimTime now = default) => OnCastStarted?.Invoke(ability, target, now);
+    public void TriggerCastCompleted(Ability ability, EnemyTarget? target, SimTime now = default) => OnCastCompleted?.Invoke(ability, target, now);
+    public void TriggerCastCancelled(Ability ability, EnemyTarget? target, SimTime now = default) => OnCastCancelled?.Invoke(ability, target, now);
+    public void TriggerChannelEnded(Ability ability, EnemyTarget? target, SimTime now, bool clipped) => OnChannelEnded?.Invoke(ability, target, now, clipped);
+    public void TriggerChannelTick(Ability ability, EnemyTarget? target, double fraction, SimulationContext ctx) => OnChannelTick?.Invoke(ability, target, fraction, ctx);
 
     // ------------------------------------------------------------------ resources and Spirit Refund
 
@@ -314,10 +314,10 @@ public abstract class Hero : Actor
     /// <summary>Starts what runs for the whole fight on its own: the Spirit Point regeneration.</summary>
     public void BeginFight(SimulationContext ctx)
     {
-        void Regen(SimulationContext c)
+        void Regen(SimulationContext tickContext)
         {
-            GainResource(SpiritPoints, SpiritPointRegenAmount, c);
-            c.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
+            GainResource(SpiritPoints, SpiritPointRegenAmount, tickContext);
+            tickContext.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
         }
         ctx.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
         OnFightBegins(ctx);
@@ -469,7 +469,7 @@ public abstract class Hero : Actor
     public double AbilityDamageMultiplier(Ability ability, SimTime now)
     {
         double mult = 1.0;
-        foreach (var m in AbilityDamageMultipliers) mult *= m(ability, now);
+        foreach (var multiplier in AbilityDamageMultipliers) mult *= multiplier(ability, now);
         return mult;
     }
 
@@ -509,7 +509,7 @@ public abstract class Hero : Actor
     public double CooldownAcceleration(Ability ability, SimTime now)
     {
         double accel = 0.0;
-        foreach (var a in CooldownAccelerations) accel += a(ability, now);
+        foreach (var acceleration in CooldownAccelerations) accel += acceleration(ability, now);
         return accel;
     }
 
@@ -615,7 +615,7 @@ public abstract class Hero : Actor
         double mult = 1.0;
         if (target != null)
         {
-            foreach (var m in TargetDamageMultipliers) mult *= m(target, now);
+            foreach (var multiplier in TargetDamageMultipliers) mult *= multiplier(target, now);
         }
         return mult;
     }
@@ -849,10 +849,10 @@ public sealed class CooldownState
         _advancing = true;
         try
         {
-            var t = _last;
-            while (t < now && Recharging)
+            var time = _last;
+            while (time < now && Recharging)
             {
-                double span = (now - t).TotalSeconds;
+                double span = (now - time).TotalSeconds;
                 double rate = Math.Max(1e-9, _rate);
                 if (_remaining > span * rate)
                 {
@@ -860,7 +860,7 @@ public sealed class CooldownState
                     break;
                 }
                 // A charge returns before now.
-                t += SimTime.FromSeconds(_remaining / rate);
+                time += SimTime.FromSeconds(_remaining / rate);
                 _charges++;
                 _remaining = Recharging ? _rechargeBase : 0;
             }

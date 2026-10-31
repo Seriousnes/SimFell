@@ -80,19 +80,19 @@ public class MaraReplayTests(ITestOutputHelper output)
             }
         }
         // How far the engine's resources are from the log's before the steps, below the maximum.
-        foreach (var g in result.Steps.SelectMany(s => s.Resources).Where(r => r.Resource != "Spirit" && r.Log < 195).GroupBy(r => r.Resource))
+        foreach (var resourceGroup in result.Steps.SelectMany(s => s.Resources).Where(r => r.Resource != "Spirit" && r.Log < 195).GroupBy(r => r.Resource))
         {
-            var diffs = g.Select(r => r.Engine - r.Log).OrderBy(d => d).ToList();
-            output.WriteLine($"{g.Key}: {diffs.Count} readings, engine - log median {diffs[diffs.Count / 2]:F2}, p10 {diffs[diffs.Count / 10]:F2}, " +
-                             $"p90 {diffs[diffs.Count * 9 / 10]:F2}, within tolerance {g.Count(r => r.Matches) * 100.0 / diffs.Count:F1}%");
+            var diffs = resourceGroup.Select(r => r.Engine - r.Log).OrderBy(d => d).ToList();
+            output.WriteLine($"{resourceGroup.Key}: {diffs.Count} readings, engine - log median {diffs[diffs.Count / 2]:F2}, p10 {diffs[diffs.Count / 10]:F2}, " +
+                             $"p90 {diffs[diffs.Count * 9 / 10]:F2}, within tolerance {resourceGroup.Count(r => r.Matches) * 100.0 / diffs.Count:F1}%");
         }
         if (Environment.GetEnvironmentVariable("MARA_BREAKDOWN") is { } ids)
         {
             // The log/engine ratio of every matched hit, per minute of the fight.
             var all = result.AllHits.Where(h => h.Log != null && h.EngineAmount > 0 && h.Log.Overkill <= 0).ToList();
-            foreach (var g in all.GroupBy(h => (int)(h.EngineTime / 60)).OrderBy(g => g.Key))
+            foreach (var minuteGroup in all.GroupBy(h => (int)(h.EngineTime / 60)).OrderBy(g => g.Key))
             {
-                output.WriteLine($"minute {g.Key}: {g.Count()} hits, ratio {g.Sum(h => h.Log!.UnblockedAmount) / g.Sum(h => h.EngineAmount):F3}");
+                output.WriteLine($"minute {minuteGroup.Key}: {minuteGroup.Count()} hits, ratio {minuteGroup.Sum(h => h.Log!.UnblockedAmount) / minuteGroup.Sum(h => h.EngineAmount):F3}");
             }
             // For each damage ID asked for: the log/engine ratio of matched hits with and without each aura of the hero,
             // and by the number of enemies.
@@ -101,12 +101,12 @@ public class MaraReplayTests(ITestOutputHelper output)
                 var matched = result.AllHits.Where(h => h.AbilityId == id && h.Log != null && h.EngineAmount > 0 && h.Log.Overkill <= 0).ToList();
                 double Ratio(IEnumerable<HitPair> hits) => hits.Sum(h => h.Log!.UnblockedAmount) / Math.Max(1e-9, hits.Sum(h => h.EngineAmount));
                 output.WriteLine($"breakdown {id}: {matched.Count} hits, ratio {Ratio(matched):F3} (crit {Ratio(matched.Where(h => h.Crit)):F3}, normal {Ratio(matched.Where(h => !h.Crit)):F3})");
-                foreach (var g in matched.Where(h => h.Crit).GroupBy(h => h.CritChance >= 1.0))
+                foreach (var critGroup in matched.Where(h => h.Crit).GroupBy(h => h.CritChance >= 1.0))
                 {
-                    output.WriteLine($"  crits with engine crit chance {(g.Key ? ">= 100%" : "< 100%")}: {g.Count()} {Ratio(g):F3}");
+                    output.WriteLine($"  crits with engine crit chance {(critGroup.Key ? ">= 100%" : "< 100%")}: {critGroup.Count()} {Ratio(critGroup):F3}");
                 }
-                foreach (var g in matched.GroupBy(h => h.AbilityName)) output.WriteLine($"  as {g.Key}: {g.Count()} {Ratio(g):F3}");
-                foreach (var g in matched.Where(h => h.AbilityName.EndsWith("(shadowy clone)")).GroupBy(h => h.State?.Hero.Auras.Any(a => a.LogId == 1002245) == true)) output.WriteLine($"  clone with Assassin's Guile {g.Key}: {g.Count()} {Ratio(g):F3}");
+                foreach (var abilityGroup in matched.GroupBy(h => h.AbilityName)) output.WriteLine($"  as {abilityGroup.Key}: {abilityGroup.Count()} {Ratio(abilityGroup):F3}");
+                foreach (var cloneGroup in matched.Where(h => h.AbilityName.EndsWith("(shadowy clone)")).GroupBy(h => h.State?.Hero.Auras.Any(a => a.LogId == 1002245) == true)) output.WriteLine($"  clone with Assassin's Guile {cloneGroup.Key}: {cloneGroup.Count()} {Ratio(cloneGroup):F3}");
                 foreach (var aura in matched.SelectMany(h => h.State?.Hero.Auras.Where(a => a.LogId > 0).Select(a => a.LogId) ?? []).Distinct().OrderBy(a => a))
                 {
                     var with = matched.Where(h => h.State!.Hero.Auras.Any(a => a.LogId == aura)).ToList();
@@ -115,9 +115,9 @@ public class MaraReplayTests(ITestOutputHelper output)
                     output.WriteLine($"  aura {aura}: with {with.Count} {Ratio(with):F3}, without {without.Count} {Ratio(without):F3}");
                 }
                 var together = matched.GroupBy(h => Math.Round(h.EngineTime, 3)).ToDictionary(g => g.Key, g => g.Count());
-                foreach (var g in matched.GroupBy(h => together[Math.Round(h.EngineTime, 3)]).OrderBy(g => g.Key))
+                foreach (var togetherGroup in matched.GroupBy(h => together[Math.Round(h.EngineTime, 3)]).OrderBy(g => g.Key))
                 {
-                    output.WriteLine($"  {g.Key} hit together: {g.Count()} {Ratio(g):F3} (crit {Ratio(g.Where(h => h.Crit)):F3}, normal {Ratio(g.Where(h => !h.Crit)):F3})");
+                    output.WriteLine($"  {togetherGroup.Key} hit together: {togetherGroup.Count()} {Ratio(togetherGroup):F3} (crit {Ratio(togetherGroup.Where(h => h.Crit)):F3}, normal {Ratio(togetherGroup.Where(h => !h.Crit)):F3})");
                 }
             }
         }

@@ -39,12 +39,12 @@ public static class GearFit
     public static int Room(EnchantSlot kind, Func<EnchantSlot, int> used, bool weapon)
     {
         var counts = Kinds.Select(used).ToArray();
-        int k = IndexOf(kind);
-        int most = GearLimit(kind) + WeaponLimit(kind, weapon) - counts[k];
+        int kindIndex = IndexOf(kind);
+        int most = GearLimit(kind) + WeaponLimit(kind, weapon) - counts[kindIndex];
         int room = 0;
         while (room < most)
         {
-            counts[k]++;
+            counts[kindIndex]++;
             if (!Fits(counts, weapon)) break;
             room++;
         }

@@ -236,7 +236,7 @@ internal sealed class FightRecorder
         state.Changed = now;
     }
 
-    private static SimTime Earlier(SimTime a, SimTime b) => a < b ? a : b;
+    private static SimTime Earlier(SimTime first, SimTime second) => first < second ? first : second;
 
     private sealed class AuraState(AuraContainer owner, bool onTarget, Aura aura, AuraTally tally)
     {
@@ -409,17 +409,17 @@ internal sealed class FightRecorder
             tally.Band.AddRange(totals.Band.Select(b => (b.Fight, b.Damage)));
             tally.Samples.AddRange(totals.Samples.Select(s => (s.Fight, s.Damage,
                 s.Spans.ToDictionary(a => (a.Name, a.OnTarget), a => a.Spans), s.Casts, s.Spirit)));
-            foreach (var s in totals.Sources)
+            foreach (var source in totals.Sources)
             {
-                tally.Sources[s.Name] = new SourceTally { Damage = s.Damage, Crits = s.Crits, Casts = s.Casts, Hits = s.Hits, Id = s.Id };
+                tally.Sources[source.Name] = new SourceTally { Damage = source.Damage, Crits = source.Crits, Casts = source.Casts, Hits = source.Hits, Id = source.Id };
             }
-            foreach (var a in totals.Auras)
+            foreach (var aura in totals.Auras)
             {
-                tally.Auras[(a.Name, a.OnTarget)] = new AuraTally
+                tally.Auras[(aura.Name, aura.OnTarget)] = new AuraTally
                 {
-                    UpSeconds = a.UpSeconds, StackSeconds = a.StackSeconds, AtMaxSeconds = a.AtMaxSeconds, GapSeconds = a.GapSeconds,
-                    Applications = a.Applications, Refreshes = a.Refreshes, Gaps = a.Gaps, MaxStacks = a.MaxStacks,
-                    StackCap = a.StackCap, LogId = a.LogId,
+                    UpSeconds = aura.UpSeconds, StackSeconds = aura.StackSeconds, AtMaxSeconds = aura.AtMaxSeconds, GapSeconds = aura.GapSeconds,
+                    Applications = aura.Applications, Refreshes = aura.Refreshes, Gaps = aura.Gaps, MaxStacks = aura.MaxStacks,
+                    StackCap = aura.StackCap, LogId = aura.LogId,
                 };
             }
             return tally;
@@ -444,10 +444,10 @@ internal sealed class FightRecorder
             .OrderByDescending(s => s.Value.Damage)
             .Select(s =>
             {
-                var t = s.Value;
+                var tally = s.Value;
                 double fights = Math.Max(1, Fights);
-                return new AbilityReport(s.Key, t.Damage / fights, t.Damage / fights / seconds, t.Casts / fights, t.Hits / fights,
-                    t.Hits > 0 ? t.Crits / t.Hits : 0, t.Hits > 0 ? t.Damage / t.Hits : 0, t.Id);
+                return new AbilityReport(s.Key, tally.Damage / fights, tally.Damage / fights / seconds, tally.Casts / fights, tally.Hits / fights,
+                    tally.Hits > 0 ? tally.Crits / tally.Hits : 0, tally.Hits > 0 ? tally.Damage / tally.Hits : 0, tally.Id);
             })
             .ToList();
 
@@ -463,12 +463,12 @@ internal sealed class FightRecorder
             .Select(a =>
             {
                 var (name, onTarget) = a.Key;
-                var t = a.Value;
+                var tally = a.Value;
                 double fights = Math.Max(1, Fights);
                 double span = fights * seconds * (onTarget ? Math.Max(1, targets) : 1);
-                return new BuffReport(name, onTarget, t.UpSeconds / span, t.Applications / fights, t.Refreshes / fights,
-                    t.Applications > 0 ? t.UpSeconds / t.Applications : 0, t.UpSeconds > 0 ? t.StackSeconds / t.UpSeconds : 0,
-                    t.MaxStacks, t.StackCap > 1 ? t.AtMaxSeconds / span : 0, t.Gaps > 0 ? t.GapSeconds / t.Gaps : 0, t.LogId,
+                return new BuffReport(name, onTarget, tally.UpSeconds / span, tally.Applications / fights, tally.Refreshes / fights,
+                    tally.Applications > 0 ? tally.UpSeconds / tally.Applications : 0, tally.UpSeconds > 0 ? tally.StackSeconds / tally.UpSeconds : 0,
+                    tally.MaxStacks, tally.StackCap > 1 ? tally.AtMaxSeconds / span : 0, tally.Gaps > 0 ? tally.GapSeconds / tally.Gaps : 0, tally.LogId,
                     typical != null && typical.TryGetValue(a.Key, out var spans) ? Union(spans) : []);
             })
             .Where(b => !(b.Uptime >= 0.999 && b.Applications <= 1.0 && b.Refreshes == 0))
@@ -527,12 +527,12 @@ internal sealed class FightRecorder
             return dps;
         }
 
-        private static double[] Percentile(List<double[]> fights, int seconds, double p)
+        private static double[] Percentile(List<double[]> fights, int seconds, double fraction)
         {
             var result = new double[seconds];
             if (fights.Count == 0) return result;
             var values = new double[fights.Count];
-            int rank = (int)Math.Round(p * (fights.Count - 1));
+            int rank = (int)Math.Round(fraction * (fights.Count - 1));
             for (int s = 0; s < seconds; s++)
             {
                 for (int f = 0; f < fights.Count; f++) values[f] = fights[f][s];

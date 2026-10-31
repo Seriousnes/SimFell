@@ -53,9 +53,9 @@ public static class CharacterReader
         };
 
         // Talents: talent ID + 2,000,000.
-        foreach (var t in combatant["talents"]?.AsArray() ?? [])
+        foreach (var talent in combatant["talents"]?.AsArray() ?? [])
         {
-            int id = (int)Num(t?["id"]) - LogIds.TalentOffset;
+            int id = (int)Num(talent?["id"]) - LogIds.TalentOffset;
             if (id > 0) build.Talents.Add(id);
         }
 
@@ -78,24 +78,24 @@ public static class CharacterReader
                 if (build.Relic1ItemId == 0) build.Relic1ItemId = itemId;
                 else build.Relic2ItemId = itemId;
             }
-            foreach (var t in item["traits"]?.AsArray() ?? [])
+            foreach (var trait in item["traits"]?.AsArray() ?? [])
             {
-                int id = (int)Num(t?["id"]) - LogIds.AugmentationOffset;
-                int rank = (int)Num(t?["rank"], 1);
+                int id = (int)Num(trait?["id"]) - LogIds.AugmentationOffset;
+                int rank = (int)Num(trait?["rank"], 1);
                 // A stat enchant's rank is its rating, added to the item's other enchants of the same ID.
                 if (StatEnchant.Find(id) != null)
                 {
-                    AddRank(statEnchants, id, rank, Str(t?["name"]));
+                    AddRank(statEnchants, id, rank, Str(trait?["name"]));
                     statEnchantCounts[id] = statEnchantCounts.GetValueOrDefault(id) + (int)Math.Ceiling(rank / StatEnchantSlotRating);
                 }
-                else AddRank(augmentations, id, rank, Str(t?["name"]));
+                else AddRank(augmentations, id, rank, Str(trait?["name"]));
             }
-            foreach (var b in item["blessings"]?.AsArray() ?? [])
+            foreach (var blessing in item["blessings"]?.AsArray() ?? [])
             {
-                string name = Str(b?["name"]) ?? "";
-                int i = glyphs.FindIndex(x => x.Name == name);
-                if (i < 0) glyphs.Add((Catalog.GlyphIdByName(name), (int)Num(b?["level"], 1), name));
-                else glyphs[i] = (glyphs[i].Id, glyphs[i].Rank + (int)Num(b?["level"], 1), name);
+                string name = Str(blessing?["name"]) ?? "";
+                int index = glyphs.FindIndex(x => x.Name == name);
+                if (index < 0) glyphs.Add((Catalog.GlyphIdByName(name), (int)Num(blessing?["level"], 1), name));
+                else glyphs[index] = (glyphs[index].Id, glyphs[index].Rank + (int)Num(blessing?["level"], 1), name);
             }
             // The gem in the item's socket, and the item's gem power bonuses (each names its colour).
             if (GemItem.Find((int)Num(item["gem"]?["id"])) is { } gem) build.SocketedGemIds.Add(gem.Id);
@@ -107,10 +107,10 @@ public static class CharacterReader
         }
 
         // Weapon and neck trees: augmentation IDs + 3,000,000 with the points spent; the weapon ability is listed by its own ID.
-        foreach (var t in (combatant["weaponTraits"]?.AsArray() ?? []).Concat(combatant["neckTraits"]?.AsArray() ?? []))
+        foreach (var trait in (combatant["weaponTraits"]?.AsArray() ?? []).Concat(combatant["neckTraits"]?.AsArray() ?? []))
         {
-            int id = (int)Num(t?["id"]);
-            int points = (int)Num(t?["points"]);
+            int id = (int)Num(trait?["id"]);
+            int points = (int)Num(trait?["points"]);
             if (points <= 0) continue;
             // The weapon tree has a node per stat enchant (65 to 70); each point is one more slot of that enchant, 6 rating
             // to each of its stats (combat logs: the combatantinfo ratings are the gear's, the enchants' and the gem nodes'
@@ -140,23 +140,23 @@ public static class CharacterReader
     private static void AddRank(List<(int Id, int Rank, string? Name)> list, int id, int rank, string? name, bool cap = false)
     {
         if (id <= 0) return;
-        int i = list.FindIndex(e => e.Id == id);
-        if (i < 0)
+        int index = list.FindIndex(e => e.Id == id);
+        if (index < 0)
         {
             list.Add((id, cap ? Math.Min(MaxAugmentationRank, rank) : rank, name));
             return;
         }
-        int total = list[i].Rank + rank;
-        list[i] = (id, cap ? Math.Min(MaxAugmentationRank, total) : total, list[i].Name ?? name);
+        int total = list[index].Rank + rank;
+        list[index] = (id, cap ? Math.Min(MaxAugmentationRank, total) : total, list[index].Name ?? name);
     }
 
-    private static string? Str(JsonNode? n) => n is JsonValue v && v.TryGetValue<string>(out var s) ? s : null;
+    private static string? Str(JsonNode? node) => node is JsonValue jsonValue && jsonValue.TryGetValue<string>(out var text) ? text : null;
 
-    private static double Num(JsonNode? n, double fallback = 0)
+    private static double Num(JsonNode? node, double fallback = 0)
     {
-        if (n is not JsonValue v) return fallback;
-        if (v.TryGetValue<double>(out var d)) return d;
-        if (v.TryGetValue<long>(out var l)) return l;
+        if (node is not JsonValue jsonValue) return fallback;
+        if (jsonValue.TryGetValue<double>(out var number)) return number;
+        if (jsonValue.TryGetValue<long>(out var integer)) return integer;
         return fallback;
     }
 }

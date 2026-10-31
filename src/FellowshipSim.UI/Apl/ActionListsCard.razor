@@ -8,7 +8,7 @@
 @* Visual action-list editor: one section per action list, each with its actions in priority order. *@
 <Card>
     <div @ref="_root" class="apl-editor">
-        @if (State.Editor.Vocabulary is not { } v)
+        @if (State.Editor.Vocabulary is not { } vocabulary)
         {
             <Message Kind="State.Editor.Status.Kind">@State.Editor.Status.Text</Message>
         }
@@ -24,7 +24,7 @@
                 <div class="row toolbar">
                     <label class="field">
                         Hero
-                        <select @key="_pickerKey" @bind:get="v.Hero" @bind:set="SelectHero">
+                        <select @key="_pickerKey" @bind:get="vocabulary.Hero" @bind:set="SelectHero">
                             @foreach (string hero in State.Heroes)
                             {
                                 <option @key="hero">@hero</option>
@@ -34,7 +34,7 @@
                     <input @ref="_nameInput" aria-label="Action list name" placeholder="Action list name" autocomplete="off" @bind="State.Name" />
                     <select @key="_pickerKey" aria-label="Saved action lists" @bind:get="State.SelectedSaved" @bind:set="PickSavedAsked">
                         <option value="">Load list...</option>
-                        @foreach (var saved in State.Saved.Where(s => s.Hero.Equals(v.Hero, StringComparison.OrdinalIgnoreCase)))
+                        @foreach (var saved in State.Saved.Where(s => s.Hero.Equals(vocabulary.Hero, StringComparison.OrdinalIgnoreCase)))
                         {
                             <option @key="SavedValue(saved)" value="@SavedValue(saved)">@saved.Name@(saved.BuiltIn ? " (built in)" : saved.Shared ? " (shared)" : "")</option>
                         }
@@ -57,7 +57,7 @@
                 <div>
                     @foreach (var list in State.Editor.Lists)
                     {
-                        <ListSection @key="list.Name" Vocabulary="v" Lists="State.Editor.Lists" List="list" Open="State.Editor.Open" DragFrom="State.Editor.DragFrom" />
+                        <ListSection @key="list.Name" Vocabulary="vocabulary" Lists="State.Editor.Lists" List="list" Open="State.Editor.Open" DragFrom="State.Editor.DragFrom" />
                     }
                 </div>
                 <div class="row add-list">
@@ -117,15 +117,15 @@
         try
         {
             State.Heroes = await Engine.GetHeroesAsync();
-            var v = await VocabularyOf(State.Heroes[0]);
+            var vocabulary = await VocabularyOf(State.Heroes[0]);
             State.Saved = await _savedLists.ListAsync();
-            State.Editor.Load(v, []);
+            State.Editor.Load(vocabulary, []);
             State.Loaded = true;
-            await PickDefault(v.Hero);
+            await PickDefault(vocabulary.Hero);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.Editor.SetStatus(MessageState.Error(e.Message));
+            State.Editor.SetStatus(MessageState.Error(exception.Message));
         }
     }
 
@@ -156,7 +156,7 @@
         {
             if (_module != null) await _module.InvokeVoidAsync("writeConditionMode", mode);
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The choice lasts until the page reloads.
         }
@@ -165,22 +165,22 @@
     private async Task<AplVocabulary> VocabularyOf(string hero) =>
         await Engine.GetVocabularyAsync(hero) ?? throw new KeyNotFoundException($"No hero named {hero}.");
 
-    private void Fail(Exception e) => State.Editor.SetStatus(MessageState.Error(e.Message));
+    private void Fail(Exception exception) => State.Editor.SetStatus(MessageState.Error(exception.Message));
 
     // The action-list text follows every change to the actions, 250 ms after the last one.
     private void WriteText()
     {
-        if (State.Editor.Vocabulary is not { } v) return;
+        if (State.Editor.Vocabulary is not { } vocabulary) return;
         var lists = State.Editor.Lists;
-        if (ReferenceEquals(lists, _writtenLists) && ReferenceEquals(v, _writtenVocabulary)) return;
+        if (ReferenceEquals(lists, _writtenLists) && ReferenceEquals(vocabulary, _writtenVocabulary)) return;
         _writtenLists = lists;
-        _writtenVocabulary = v;
+        _writtenVocabulary = vocabulary;
         _write?.Cancel();
         _write = new CancellationTokenSource();
-        _ = Write(v, lists, _write.Token);
+        _ = Write(vocabulary, lists, _write.Token);
     }
 
-    private async Task Write(AplVocabulary v, IReadOnlyList<ActionList> lists, CancellationToken ct)
+    private async Task Write(AplVocabulary vocabulary, IReadOnlyList<ActionList> lists, CancellationToken ct)
     {
         MessageState? status = null;
         string? text = null;
@@ -189,15 +189,15 @@
             await Task.Delay(250, ct);
             var result = await Engine.WriteActionListAsync(ActionListModel.DocumentActions(lists), ct);
             if (result.Text != null) text = result.Text;
-            else status = MessageState.Error(ActionListModel.ErrorText(v, lists, result.Errors));
+            else status = MessageState.Error(ActionListModel.ErrorText(vocabulary, lists, result.Errors));
         }
         catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
             return;
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            status = MessageState.Error(e.Message);
+            status = MessageState.Error(exception.Message);
         }
         await InvokeAsync(() =>
         {
@@ -226,9 +226,9 @@
             State.Editor.SetVocabulary(await VocabularyOf(hero));
             await PickDefault(State.Editor.Vocabulary!.Hero);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Fail(e);
+            Fail(exception);
         }
     }
 
@@ -262,9 +262,9 @@
             State.Editor.Load(State.Editor.Vocabulary!, result.Actions);
             State.Editor.SetStatus(MessageState.Ok($"Loaded {result.Actions.Count} actions."));
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.TextStatus = MessageState.Error(e.Message);
+            State.TextStatus = MessageState.Error(exception.Message);
         }
     }
 
@@ -299,9 +299,9 @@
             State.Editor.Load(heroVocabulary, list.Actions ?? []);
             State.MarkClean();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Fail(e);
+            Fail(exception);
         }
     }
 
@@ -364,15 +364,15 @@
             await LoadSavedLists();
             State.Editor.SetStatus(MessageState.Ok($"Deleted {list.Name}. The editor keeps its actions until you change them."));
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Fail(e);
+            Fail(exception);
         }
     }
 
     private async Task Save()
     {
-        var v = State.Editor.Vocabulary!;
+        var vocabulary = State.Editor.Vocabulary!;
         string listName = State.Name.Trim();
         if (listName.Length == 0)
         {
@@ -383,19 +383,19 @@
         var lists = State.Editor.Lists;
         try
         {
-            var saved = await _savedLists.SaveAsync(v.Hero, listName, ActionListModel.DocumentActions(lists));
+            var saved = await _savedLists.SaveAsync(vocabulary.Hero, listName, ActionListModel.DocumentActions(lists));
             State.MarkClean();
             // No folder in the message: on a stream it would show the user's name.
             State.Editor.SetStatus(MessageState.Ok($"Saved {saved.Name} to your action lists."));
             await LoadSavedLists(SavedValue(saved));
         }
-        catch (ActionListNotSavedException e)
+        catch (ActionListNotSavedException exception)
         {
-            State.Editor.SetStatus(MessageState.Error($"{e.Message} {ActionListModel.ErrorText(v, lists, e.Errors)}".Trim()));
+            State.Editor.SetStatus(MessageState.Error($"{exception.Message} {ActionListModel.ErrorText(vocabulary, lists, exception.Errors)}".Trim()));
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Fail(e);
+            Fail(exception);
         }
     }
 

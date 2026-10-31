@@ -25,11 +25,11 @@
     {
         @switch (job.Status)
         {
-            case SimJobStatus.Done when job.Result is ReviewSummary r:
+            case SimJobStatus.Done when job.Result is ReviewSummary summary:
                 <Message Kind="MessageKind.Ok">
                     Done:
-                    <button type="button" class="link-button" @onclick="() => Views.ShowReview(r.HtmlFile, ReviewTitle.Replay(r))">
-                        open the review of @r.PlayerName in @r.FightName
+                    <button type="button" class="link-button" @onclick="() => Views.ShowReview(summary.HtmlFile, ReviewTitle.Replay(summary))">
+                        open the review of @summary.PlayerName in @summary.FightName
                     </button>
                 </Message>
                 break;
@@ -67,10 +67,10 @@
             State.ReviewJob = ReviewJobs.Start(Jobs.Visitor, target.ReportCode, target.FightId, target.PlayerId);
             Followed.Follow(State.ReviewJob);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
             State.ReviewJob = null;
-            State.StartError = e.Message;
+            State.StartError = exception.Message;
         }
     }
 

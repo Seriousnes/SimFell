@@ -105,15 +105,15 @@ public class IciclesOfAnzhyr : Ability
     {
         enemy.Auras.Apply(Curse, ctx.CurrentTime);
         HastedTimer? timer = null;
-        void Tick(SimulationContext c)
+        void Tick(SimulationContext tickContext)
         {
             if (enemy.IsSleeping || !_curses.TryGetValue(enemy, out var snap))
             {
                 timer!.Cancel();
                 return;
             }
-            var now = c.CurrentTime;
-            c.ApplyDamage(Owner, enemy, snap.Damage * Owner.DamageMultiplierAgainst(enemy, now), _curse.DamageLogId, CurseName, canCrit: true,
+            var now = tickContext.CurrentTime;
+            tickContext.ApplyDamage(Owner, enemy, snap.Damage * Owner.DamageMultiplierAgainst(enemy, now), _curse.DamageLogId, CurseName, canCrit: true,
                 snap.CritChance + Owner.CritChanceAgainst(enemy, now) - Owner.CritChance(now), snap.CritMultiplier, snapshot: true);
         }
         // Effect 2286 is tagged EffectType.Dot with no tickrate exemption, period 3s, Infinite, no tick on application

@@ -146,7 +146,7 @@ public sealed class Elarion : Hero
     public double FocusCostMultiplier(SimTime now)
     {
         double multiplier = 1.0;
-        foreach (var m in FocusCostMultipliers) multiplier *= m(now);
+        foreach (var factor in FocusCostMultipliers) multiplier *= factor(now);
         return multiplier;
     }
 
@@ -167,10 +167,10 @@ public sealed class Elarion : Hero
     {
         _focusRegeneratedAt = ctx.CurrentTime;
         _focusRate = FocusRate(ctx.CurrentTime);
-        void Tick(SimulationContext c)
+        void Tick(SimulationContext tickContext)
         {
-            RegenerateFocus(c.CurrentTime);
-            c.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, "Focus regeneration");
+            RegenerateFocus(tickContext.CurrentTime);
+            tickContext.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, "Focus regeneration");
         }
         ctx.Schedule(SimTime.FromSeconds(FocusTickSeconds), Tick, "Focus regeneration");
     }

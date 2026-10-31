@@ -67,7 +67,7 @@ public sealed class Rend
     {
         if (!_bleeds.TryGetValue(target, out var bleed)) return 0.0;
         double left = 0.0;
-        foreach (var a in bleed.Applications) left += a.PerTick * a.TicksLeft;
+        foreach (var application in bleed.Applications) left += application.PerTick * application.TicksLeft;
         return left;
     }
 
@@ -110,9 +110,9 @@ public sealed class Rend
         var applications = bleed.Applications;
         for (int i = 0; i < applications.Count; i++)
         {
-            var a = applications[i];
-            damage += a.PerTick;
-            applications[i] = a with { TicksLeft = a.TicksLeft - 1 };
+            var application = applications[i];
+            damage += application.PerTick;
+            applications[i] = application with { TicksLeft = application.TicksLeft - 1 };
         }
         applications.RemoveAll(a => a.TicksLeft <= 0);
         if (applications.Count > 0) bleed.NextTick = ctx.Schedule(SimTime.FromSeconds(TickPeriodSeconds), c => Tick(c, target), DamageName);

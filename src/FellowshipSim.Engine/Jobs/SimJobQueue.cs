@@ -136,7 +136,7 @@ public sealed class SimJobQueue
     internal void Report(SimJob job, double? fraction, string? message)
     {
         if (job.IsFinished) return;
-        if (fraction is { } f) job.Progress = Math.Max(job.Progress ?? 0, Math.Clamp(f, 0, 1));
+        if (fraction is { } reported) job.Progress = Math.Max(job.Progress ?? 0, Math.Clamp(reported, 0, 1));
         if (message != null) job.Message = message;
         RaiseThrottled(job);
     }
@@ -176,10 +176,10 @@ public sealed class SimJobQueue
         {
             status = SimJobStatus.Cancelled;
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
             status = SimJobStatus.Failed;
-            error = e is SimEngineException or FellowshipLogsException ? e.Message : $"{e.GetType().Name}: {e.Message}";
+            error = exception is SimEngineException or FellowshipLogsException ? exception.Message : $"{exception.GetType().Name}: {exception.Message}";
         }
 
         lock (_lock)

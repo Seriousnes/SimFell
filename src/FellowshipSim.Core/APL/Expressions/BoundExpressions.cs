@@ -55,45 +55,45 @@ public abstract class BoundExpression
     /// <summary>Binds <paramref name="expression"/> to <paramref name="hero"/>, with its variables read from <paramref name="variables"/>.</summary>
     internal static BoundExpression Bind(IAplExpression expression, Hero hero, BoundVariables? variables) => expression switch
     {
-        ConstantExpression c => new BoundConstant(c.Value),
-        GroupExpression g => Bind(g.Inner, hero, variables),
-        UnaryOpExpression { Operator: UnaryOperator.Not } u => new BoundNot(Bind(u.Operand, hero, variables)),
-        UnaryOpExpression { Operator: UnaryOperator.Minus } u => new BoundMinus(Bind(u.Operand, hero, variables)),
-        BinaryOpExpression b => new BoundBinary(Bind(b.Left, hero, variables), b.Operator, Bind(b.Right, hero, variables)),
-        PropertyExpression p => BindProperty(p, hero, variables),
+        ConstantExpression constant => new BoundConstant(constant.Value),
+        GroupExpression group => Bind(group.Inner, hero, variables),
+        UnaryOpExpression { Operator: UnaryOperator.Not } unary => new BoundNot(Bind(unary.Operand, hero, variables)),
+        UnaryOpExpression { Operator: UnaryOperator.Minus } unary => new BoundMinus(Bind(unary.Operand, hero, variables)),
+        BinaryOpExpression binary => new BoundBinary(Bind(binary.Left, hero, variables), binary.Operator, Bind(binary.Right, hero, variables)),
+        PropertyExpression property => BindProperty(property, hero, variables),
         _ => throw new ArgumentException($"Unsupported APL expression: '{expression}'", nameof(expression)),
     };
 
     // The same order as PropertyExpression.EvaluateNumeric: a named value, then a resource, then a scoped path; else 0.
-    private static BoundExpression BindProperty(PropertyExpression p, Hero hero, BoundVariables? variables)
+    private static BoundExpression BindProperty(PropertyExpression property, Hero hero, BoundVariables? variables)
     {
-        if (p.PropertyPath == "time") return new BoundTime();
-        if (PropertyExpression.Named.TryGetValue(p.PropertyPath, out var named)) return new BoundNamed(hero, named.Value);
-        if (hero.FindResource(p.ResourceName) is { } resource)
+        if (property.PropertyPath == "time") return new BoundTime();
+        if (PropertyExpression.Named.TryGetValue(property.PropertyPath, out var named)) return new BoundNamed(hero, named.Value);
+        if (hero.FindResource(property.ResourceName) is { } resource)
         {
             var state = hero.Resources.Get(resource);
-            return p.IsDeficit ? new BoundResourceDeficit(state) : new BoundResource(state);
+            return property.IsDeficit ? new BoundResourceDeficit(state) : new BoundResource(state);
         }
-        switch (p.Scope)
+        switch (property.Scope)
         {
             case PropertyExpression.BuffScope:
-                return new BoundAura(hero, debuff: false, p.Name!, BoundAura.PropertyOf(p.Property!));
+                return new BoundAura(hero, debuff: false, property.Name!, BoundAura.PropertyOf(property.Property!));
             case PropertyExpression.DebuffScope:
-                return new BoundAura(hero, debuff: true, p.Name!, BoundAura.PropertyOf(p.Property!));
+                return new BoundAura(hero, debuff: true, property.Name!, BoundAura.PropertyOf(property.Property!));
             case PropertyExpression.CooldownScope:
                 // Cooldowns are kept under the ability's own name ("Cold Snap"), not its action-list name.
-                return BoundCooldown.For(hero, AplNames.FindAbility(hero, p.Name!), p.Name!, p.Property!);
+                return BoundCooldown.For(hero, AplNames.FindAbility(hero, property.Name!), property.Name!, property.Property!);
             case PropertyExpression.ActionScope:
-                var ability = AplNames.FindAbility(hero, p.Name!);
-                var read = PropertyExpression.ActionProperty(p.Property!);
+                var ability = AplNames.FindAbility(hero, property.Name!);
+                var read = PropertyExpression.ActionProperty(property.Property!);
                 return new BoundNamed(hero, (_, ctx) => read(ability, ctx.CurrentTime));
             case PropertyExpression.ActiveDotScope:
-                return new BoundActiveDot(hero, p.Name!);
+                return new BoundActiveDot(hero, property.Name!);
             case PropertyExpression.VariableScope:
-                return variables != null ? new BoundVariable(variables.Slot(p.Name!)) : new BoundConstant(0.0);
+                return variables != null ? new BoundVariable(variables.Slot(property.Name!)) : new BoundConstant(0.0);
             case { } scope when PropertyExpression.BuildScopes.TryGetValue(scope, out var has):
                 // The build does not change once the hero is built.
-                return new BoundConstant(has.Value(hero, p.Name!) ? 1.0 : 0.0);
+                return new BoundConstant(has.Value(hero, property.Name!) ? 1.0 : 0.0);
             default:
                 return new BoundConstant(0.0);
         }
@@ -116,19 +116,19 @@ internal readonly struct TimeCurve(double[] numerator, double[] denominator)
 
     public bool IsConstant => Polynomial.Degree(Numerator) <= 0 && Polynomial.Degree(Denominator) <= 0;
 
-    public static TimeCurve operator -(TimeCurve a) => new(Polynomial.Scale(a.Numerator, -1.0), a.Denominator);
+    public static TimeCurve operator -(TimeCurve curve) => new(Polynomial.Scale(curve.Numerator, -1.0), curve.Denominator);
 
-    public static TimeCurve operator +(TimeCurve a, TimeCurve b) => new(
-        Polynomial.Add(Polynomial.Multiply(a.Numerator, b.Denominator), Polynomial.Multiply(b.Numerator, a.Denominator)),
-        Polynomial.Multiply(a.Denominator, b.Denominator));
+    public static TimeCurve operator +(TimeCurve left, TimeCurve right) => new(
+        Polynomial.Add(Polynomial.Multiply(left.Numerator, right.Denominator), Polynomial.Multiply(right.Numerator, left.Denominator)),
+        Polynomial.Multiply(left.Denominator, right.Denominator));
 
-    public static TimeCurve operator -(TimeCurve a, TimeCurve b) => a + -b;
+    public static TimeCurve operator -(TimeCurve left, TimeCurve right) => left + -right;
 
-    public static TimeCurve operator *(TimeCurve a, TimeCurve b) =>
-        new(Polynomial.Multiply(a.Numerator, b.Numerator), Polynomial.Multiply(a.Denominator, b.Denominator));
+    public static TimeCurve operator *(TimeCurve left, TimeCurve right) =>
+        new(Polynomial.Multiply(left.Numerator, right.Numerator), Polynomial.Multiply(left.Denominator, right.Denominator));
 
-    public static TimeCurve operator /(TimeCurve a, TimeCurve b) =>
-        new(Polynomial.Multiply(a.Numerator, b.Denominator), Polynomial.Multiply(a.Denominator, b.Numerator));
+    public static TimeCurve operator /(TimeCurve left, TimeCurve right) =>
+        new(Polynomial.Multiply(left.Numerator, right.Denominator), Polynomial.Multiply(left.Denominator, right.Numerator));
 
     /// <summary>The numerator of this curve less <paramref name="value"/>: 0 where the curve equals the value.</summary>
     public double[] NumeratorLess(double value) => Polynomial.Add(Numerator, Polynomial.Scale(Denominator, -value));
@@ -138,100 +138,100 @@ internal readonly struct TimeCurve(double[] numerator, double[] denominator)
 internal static class Polynomial
 {
     /// <summary>The highest power with a coefficient that is not 0; -1 for the zero polynomial.</summary>
-    public static int Degree(double[] p)
+    public static int Degree(double[] polynomial)
     {
-        int degree = p.Length - 1;
-        while (degree >= 0 && p[degree] == 0.0) degree--;
+        int degree = polynomial.Length - 1;
+        while (degree >= 0 && polynomial[degree] == 0.0) degree--;
         return degree;
     }
 
-    public static double[] Add(double[] a, double[] b)
+    public static double[] Add(double[] left, double[] right)
     {
-        var sum = new double[Math.Max(a.Length, b.Length)];
-        for (int i = 0; i < a.Length; i++) sum[i] += a[i];
-        for (int i = 0; i < b.Length; i++) sum[i] += b[i];
+        var sum = new double[Math.Max(left.Length, right.Length)];
+        for (int i = 0; i < left.Length; i++) sum[i] += left[i];
+        for (int i = 0; i < right.Length; i++) sum[i] += right[i];
         return sum;
     }
 
-    public static double[] Scale(double[] p, double factor)
+    public static double[] Scale(double[] polynomial, double factor)
     {
-        var scaled = new double[p.Length];
-        for (int i = 0; i < p.Length; i++) scaled[i] = p[i] * factor;
+        var scaled = new double[polynomial.Length];
+        for (int i = 0; i < polynomial.Length; i++) scaled[i] = polynomial[i] * factor;
         return scaled;
     }
 
-    public static double[] Multiply(double[] a, double[] b)
+    public static double[] Multiply(double[] left, double[] right)
     {
-        var product = new double[a.Length + b.Length - 1];
-        for (int i = 0; i < a.Length; i++)
+        var product = new double[left.Length + right.Length - 1];
+        for (int i = 0; i < left.Length; i++)
         {
-            for (int j = 0; j < b.Length; j++) product[i + j] += a[i] * b[j];
+            for (int j = 0; j < right.Length; j++) product[i + j] += left[i] * right[j];
         }
         return product;
     }
 
-    public static double Evaluate(double[] p, double x)
+    public static double Evaluate(double[] polynomial, double argument)
     {
         double value = 0.0;
-        for (int i = p.Length - 1; i >= 0; i--) value = value * x + p[i];
+        for (int i = polynomial.Length - 1; i >= 0; i--) value = value * argument + polynomial[i];
         return value;
     }
 
-    private static double[] Derivative(double[] p)
+    private static double[] Derivative(double[] polynomial)
     {
-        if (p.Length <= 1) return [0.0];
-        var derivative = new double[p.Length - 1];
-        for (int i = 1; i < p.Length; i++) derivative[i - 1] = p[i] * i;
+        if (polynomial.Length <= 1) return [0.0];
+        var derivative = new double[polynomial.Length - 1];
+        for (int i = 1; i < polynomial.Length; i++) derivative[i - 1] = polynomial[i] * i;
         return derivative;
     }
 
     /// <summary>
-    /// Adds the real roots of <paramref name="p"/> between <paramref name="low"/> and <paramref name="high"/> to
+    /// Adds the real roots of <paramref name="polynomial"/> between <paramref name="low"/> and <paramref name="high"/> to
     /// <paramref name="roots"/>. Between two turning points a polynomial rises or falls, so each stretch holds at most one
     /// root, found by halving the stretch; the turning points are the roots of the derivative.
     /// </summary>
-    public static void Roots(double[] p, double low, double high, List<double> roots)
+    public static void Roots(double[] polynomial, double low, double high, List<double> roots)
     {
-        int degree = Degree(p);
+        int degree = Degree(polynomial);
         if (degree <= 0) return;
         // Every root lies within Cauchy's bound.
         double bound = 0.0;
-        for (int i = 0; i < degree; i++) bound = Math.Max(bound, Math.Abs(p[i] / p[degree]));
+        for (int i = 0; i < degree; i++) bound = Math.Max(bound, Math.Abs(polynomial[i] / polynomial[degree]));
         high = Math.Min(high, 1.0 + bound);
         low = Math.Max(low, -1.0 - bound);
         if (!(low < high)) return;
         if (degree == 1)
         {
-            double root = -p[0] / p[1];
+            double root = -polynomial[0] / polynomial[1];
             if (root > low && root < high) roots.Add(root);
             return;
         }
         var turns = new List<double>();
-        Roots(Derivative(p), low, high, turns);
+        Roots(Derivative(polynomial), low, high, turns);
         turns.Sort();
         turns.Add(high);
-        double a = low, fa = Evaluate(p, low);
-        foreach (double b in turns)
+        double previous = low, fa = Evaluate(polynomial, low);
+        foreach (double turn in turns)
         {
-            double fb = Evaluate(p, b);
-            if (fb == 0.0) roots.Add(b);
-            else if (fa != 0.0 && (fa < 0.0) != (fb < 0.0)) roots.Add(Halve(p, a, fa, b));
-            (a, fa) = (b, fb);
+            double fb = Evaluate(polynomial, turn);
+            if (fb == 0.0) roots.Add(turn);
+            else if (fa != 0.0 && (fa < 0.0) != (fb < 0.0)) roots.Add(Halve(polynomial, previous, fa, turn));
+            (previous, fa) = (turn, fb);
         }
     }
 
-    // The root of p between a and b, where p(a) and p(b) have opposite signs.
-    private static double Halve(double[] p, double a, double fa, double b)
+    // The root of the polynomial between lower and upper, where its values there have opposite signs.
+    private static double Halve(double[] polynomial, double lower, double fa, double upper)
     {
-        for (int i = 0; i < 200 && b - a > 1e-6; i++)
+        for (int i = 0; i < 200 && upper - lower > 1e-6; i++)
         {
-            double middle = 0.5 * (a + b);
-            double fm = Evaluate(p, middle);
+            double middle = 0.5 * (lower + upper);
+            double fm = Evaluate(polynomial, middle);
             if (fm == 0.0) return middle;
-            if ((fm < 0.0) == (fa < 0.0)) (a, fa) = (middle, fm);
-            else b = middle;
+            if ((fm < 0.0) == (fa < 0.0)) (lower, fa) = (middle, fm);
+            else upper = middle;
         }
-        return 0.5 * (a + b);
+        return 0.5 * (lower + upper);
     }
 }
 
@@ -248,7 +248,7 @@ internal static class Crossing
         var now = ctx.CurrentTime;
         var limit = Later(now, until);
         var roots = new List<double>();
-        foreach (var p in polynomials) Polynomial.Roots(p, -3.0, limit.Milliseconds - (double)now.Milliseconds, roots);
+        foreach (var polynomial in polynomials) Polynomial.Roots(polynomial, -3.0, limit.Milliseconds - (double)now.Milliseconds, roots);
         if (roots.Count == 0) return limit;
         roots.Sort();
         bool current = expression.Evaluate(ctx);
@@ -282,7 +282,7 @@ internal static class Crossing
     /// <summary><paramref name="time"/>, or the first millisecond after <paramref name="now"/> when it is not later.</summary>
     public static SimTime Later(SimTime now, SimTime time) => time > now ? time : Next(now);
 
-    public static SimTime Earlier(SimTime a, SimTime b) => a < b ? a : b;
+    public static SimTime Earlier(SimTime first, SimTime second) => first < second ? first : second;
 }
 
 /// <summary>A value read as a number; it holds when it is not 0.</summary>
@@ -405,9 +405,9 @@ internal sealed class BoundAura(Hero hero, bool debuff, string slug, BoundAura.A
         AuraProperty.Up => aura != null ? 1.0 : 0.0,
         AuraProperty.Down => aura == null ? 1.0 : 0.0,
         AuraProperty.Stack => aura?.Stacks ?? 0,
-        AuraProperty.AtMaxStacks => aura is { } a && a.Stacks >= a.MaxStacks ? 1.0 : 0.0,
+        AuraProperty.AtMaxStacks => aura is { } present && present.Stacks >= present.MaxStacks ? 1.0 : 0.0,
         AuraProperty.Refreshable => PropertyExpression.IsRefreshable(aura, now) ? 1.0 : 0.0,
-        _ => aura is not { } r ? 0.0 : r.ExpiresAt == SimTime.Infinite ? double.MaxValue : (r.ExpiresAt - now).TotalSeconds,
+        _ => aura is not { } present ? 0.0 : present.ExpiresAt == SimTime.Infinite ? double.MaxValue : (present.ExpiresAt - now).TotalSeconds,
     };
 
     // The aura found now runs out at its expiry; another aura of the name appears only in an event. A refreshable read
@@ -436,7 +436,7 @@ internal sealed class BoundAura(Hero hero, bool debuff, string slug, BoundAura.A
     internal override double NumericAt(SimulationContext ctx, SimTime time)
     {
         var aura = Find(ctx, ctx.CurrentTime);
-        return Read(aura is { } a && time >= a.ExpiresAt ? null : aura, time);
+        return Read(aura is { } present && time >= present.ExpiresAt ? null : aura, time);
     }
 }
 
@@ -595,9 +595,9 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
         switch (op)
         {
             case BinaryOperator.Add or BinaryOperator.Subtract or BinaryOperator.Multiply or BinaryOperator.Divide or BinaryOperator.Modulo:
-                double l = left.EvaluateNumeric(ctx);
-                double r = right.EvaluateNumeric(ctx);
-                return Arithmetic(l, r);
+                double leftValue = left.EvaluateNumeric(ctx);
+                double rightValue = right.EvaluateNumeric(ctx);
+                return Arithmetic(leftValue, rightValue);
             default:
                 return Evaluate(ctx) ? 1.0 : 0.0;
         }
@@ -608,13 +608,13 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
     private bool IsComparison => op is BinaryOperator.Less or BinaryOperator.LessEqual or BinaryOperator.Greater
         or BinaryOperator.GreaterEqual or BinaryOperator.Equal or BinaryOperator.NotEqual;
 
-    private double Arithmetic(double l, double r) => op switch
+    private double Arithmetic(double leftValue, double rightValue) => op switch
     {
-        BinaryOperator.Add => l + r,
-        BinaryOperator.Subtract => l - r,
-        BinaryOperator.Multiply => l * r,
-        BinaryOperator.Divide => r == 0.0 ? 0.0 : l / r,
-        _ => r == 0.0 ? 0.0 : l % r
+        BinaryOperator.Add => leftValue + rightValue,
+        BinaryOperator.Subtract => leftValue - rightValue,
+        BinaryOperator.Multiply => leftValue * rightValue,
+        BinaryOperator.Divide => rightValue == 0.0 ? 0.0 : leftValue / rightValue,
+        _ => rightValue == 0.0 ? 0.0 : leftValue % rightValue
     };
 
     internal override SimTime Until(SimulationContext ctx)
@@ -646,17 +646,17 @@ internal sealed class BoundBinary(BoundExpression left, BinaryOperator op, Bound
     internal override TimeCurve Curve(SimulationContext ctx)
     {
         if (!IsArithmetic) return TimeCurve.Constant(EvaluateNumeric(ctx));
-        var l = left.Curve(ctx);
-        var r = right.Curve(ctx);
+        var leftCurve = left.Curve(ctx);
+        var rightCurve = right.Curve(ctx);
         if (op is BinaryOperator.Divide or BinaryOperator.Modulo && right.EvaluateNumeric(ctx) == 0.0) return TimeCurve.Constant(0.0);
         return op switch
         {
-            BinaryOperator.Add => l + r,
-            BinaryOperator.Subtract => l - r,
-            BinaryOperator.Multiply => l * r,
-            BinaryOperator.Divide => l / r,
+            BinaryOperator.Add => leftCurve + rightCurve,
+            BinaryOperator.Subtract => leftCurve - rightCurve,
+            BinaryOperator.Multiply => leftCurve * rightCurve,
+            BinaryOperator.Divide => leftCurve / rightCurve,
             // Until the remainder wraps, it is the dividend less a whole number of divisors.
-            _ => l - TimeCurve.Constant(Math.Truncate(left.EvaluateNumeric(ctx) / right.EvaluateNumeric(ctx))) * r,
+            _ => leftCurve - TimeCurve.Constant(Math.Truncate(left.EvaluateNumeric(ctx) / right.EvaluateNumeric(ctx))) * rightCurve,
         };
     }
 

@@ -90,8 +90,8 @@ public sealed class RemoteSimEngineTests : IAsyncLifetime
     public async Task A_Review_Of_A_Player_Missing_From_The_Fight_Is_Refused()
     {
         using var fight = new MemoryStream("""{"fight":{"id":7}}"""u8.ToArray());
-        var e = await Assert.ThrowsAsync<SimEngineException>(() => _engine.ReviewAsync(fight, 1));
-        Assert.Contains("Player 1", e.Message);
+        var exception = await Assert.ThrowsAsync<SimEngineException>(() => _engine.ReviewAsync(fight, 1));
+        Assert.Contains("Player 1", exception.Message);
     }
 
     [Fact]
@@ -119,8 +119,8 @@ public sealed class RemoteSimEngineTests : IAsyncLifetime
     public async Task An_Action_List_Naming_No_Ability_Of_The_Hero_Is_Refused()
     {
         var profile = SimcProfile.Parse(Profile) with { ActionList = "actions+=/not_an_ability\n" };
-        var e = await Assert.ThrowsAsync<SimEngineException>(() => _engine.SimulateAsync(profile, new SimSettings(1, 10)));
-        Assert.Contains("not_an_ability", e.Message);
+        var exception = await Assert.ThrowsAsync<SimEngineException>(() => _engine.SimulateAsync(profile, new SimSettings(1, 10)));
+        Assert.Contains("not_an_ability", exception.Message);
     }
 
     [Fact]
@@ -135,8 +135,8 @@ public sealed class RemoteSimEngineTests : IAsyncLifetime
     [Fact]
     public async Task A_Request_Without_The_Key_Is_Refused()
     {
-        var e = await Assert.ThrowsAsync<HttpRequestException>(() => Remote("not-the-key").GetHeroesAsync());
-        Assert.Equal(HttpStatusCode.Unauthorized, e.StatusCode);
+        var exception = await Assert.ThrowsAsync<HttpRequestException>(() => Remote("not-the-key").GetHeroesAsync());
+        Assert.Equal(HttpStatusCode.Unauthorized, exception.StatusCode);
     }
 
     private RemoteSimEngine Remote(string key)

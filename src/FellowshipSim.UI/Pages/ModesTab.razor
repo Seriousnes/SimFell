@@ -57,7 +57,7 @@
             </label>
         </div>
         <label class="field @(State.StartWithSpirit ? "" : "off")">
-            Spirit (0 – @N(MaxStartingSpirit))
+            Spirit (0 – @Number(MaxStartingSpirit))
             <input type="number" class="short" min="0" max="@MaxStartingSpirit" step="1" disabled="@(!State.StartWithSpirit)"
                    @bind:get="State.StartingSpirit" @bind:set="v => State.StartingSpirit = Math.Clamp(v, 0, MaxStartingSpirit)" />
         </label>
@@ -83,8 +83,8 @@
     {
         if (!State.VaryLength || State.LengthVariancePercent <= 0) return "Every fight lasts the duration.";
         double share = State.LengthVariancePercent / 100;
-        return $"Each fight lasts {N(State.DurationSeconds * (1 - share))} – {N(State.DurationSeconds * (1 + share))} s, so no build is tuned to one exact length.";
+        return $"Each fight lasts {Number(State.DurationSeconds * (1 - share))} – {Number(State.DurationSeconds * (1 + share))} s, so no build is tuned to one exact length.";
     }
 
-    private static string N(double value) => value.ToString("0.#", CultureInfo.CurrentCulture);
+    private static string Number(double value) => value.ToString("0.#", CultureInfo.CurrentCulture);
 }

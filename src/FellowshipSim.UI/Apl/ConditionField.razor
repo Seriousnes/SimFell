@@ -20,7 +20,7 @@
         @if (Building && ConditionBuilder.Groups(Rows!).ToList() is { Count: > 0 } groups)
         {
             bool allClosed = groups.All(g => g.Collapsed);
-            <button type="button" class="link-button" @onclick="() => Arrange(next => { foreach (var g in ConditionBuilder.Groups(next)) g.Collapsed = !allClosed; })">
+            <button type="button" class="link-button" @onclick="() => Arrange(next => { foreach (var conditionGroup in ConditionBuilder.Groups(next)) conditionGroup.Collapsed = !allClosed; })">
                 @(allClosed ? "Open all groups" : "Close all groups")
             </button>
         }
@@ -218,9 +218,9 @@
             <select @key="@($"{key}:{at}:comparison")" aria-label="Comparison" class="comparison" value="@comparison.Comparison"
                     @onchange="e => update(r => { if (string.IsNullOrEmpty((string?)e.Value)) r.Comparisons.RemoveAt(at); else r.Comparisons[at].Comparison = (string)e.Value!; })">
                 <option value=""></option>
-                @foreach (string c in ConditionBuilder.Comparisons)
+                @foreach (string symbol in ConditionBuilder.Comparisons)
                 {
-                    <option @key="c" value="@c">@c</option>
+                    <option @key="symbol" value="@symbol">@symbol</option>
                 }
             </select>
             RenderTerms(__builder, comparison.Terms, $"{key}:{at}:side", update, r => r.Comparisons[at].Terms, last, last ? addRow : null);
@@ -245,9 +245,9 @@
                 <select @key="@($"{termKey}:operator")" aria-label="Operator" class="operator" value="@(term.Operator ?? "")"
                         @onchange="e => update(r => { if (string.IsNullOrEmpty((string?)e.Value)) locate(r).RemoveAt(at); else locate(r)[at].Operator = (string)e.Value!; })">
                     <option value=""></option>
-                    @foreach (string o in ConditionBuilder.Operators)
+                    @foreach (string symbol in ConditionBuilder.Operators)
                     {
-                        <option @key="o" value="@o">@o</option>
+                        <option @key="symbol" value="@symbol">@symbol</option>
                     }
                 </select>
             }
@@ -257,17 +257,17 @@
                 @onchange="e => PickName(e, picked => AddToSide(picked, update, locate, addRow))">
             <option value=""></option>
             <optgroup label="Arithmetic">
-                @foreach (string o in ConditionBuilder.Operators)
+                @foreach (string symbol in ConditionBuilder.Operators)
                 {
-                    <option @key="o" value="@(OperatorPick + o)">@o</option>
+                    <option @key="symbol" value="@(OperatorPick + symbol)">@symbol</option>
                 }
             </optgroup>
             @if (lastSide)
             {
                 <optgroup label="Comparison">
-                    @foreach (string c in ConditionBuilder.Comparisons)
+                    @foreach (string symbol in ConditionBuilder.Comparisons)
                     {
-                        <option @key="c" value="@(ComparisonPick + c)">@c</option>
+                        <option @key="symbol" value="@(ComparisonPick + symbol)">@symbol</option>
                     }
                 </optgroup>
             }
@@ -312,9 +312,9 @@
                 {
                     <option value="@term.Prefix">@ConditionBuilder.PrefixLabel(term.Prefix)</option>
                 }
-                @foreach (string p in ConditionBuilder.Prefixes)
+                @foreach (string prefix in ConditionBuilder.Prefixes)
                 {
-                    <option @key="p" value="@p">@ConditionBuilder.PrefixLabel(p)</option>
+                    <option @key="prefix" value="@prefix">@ConditionBuilder.PrefixLabel(prefix)</option>
                 }
             </select>
         }
@@ -356,10 +356,10 @@
         </div>
     }
 
-    private Task PickName(ChangeEventArgs e, Func<string, Task> pick)
+    private Task PickName(ChangeEventArgs args, Func<string, Task> pick)
     {
         _picks++;
-        return e.Value is string name && name.Length > 0 ? pick(name) : Task.CompletedTask;
+        return args.Value is string name && name.Length > 0 ? pick(name) : Task.CompletedTask;
     }
 
     // Each group ends with an empty row. A pick in its value picker makes it a row (or a group), and a new empty row follows.

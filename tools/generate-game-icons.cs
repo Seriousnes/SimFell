@@ -73,7 +73,7 @@ lines.AddRange(MaxRanks("GlyphMaxRanks", ["glyph"]));
 
 // The first gem item of each colour ("Small Amethyst"); the gem-type records all have the same icon.
 var colours = new Dictionary<string, string>();
-foreach (var r in Of(["gem"])) colours.TryAdd(Text(r, "name")!.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Last(), Text(r, "icon")!);
+foreach (var gemRecord in Of(["gem"])) colours.TryAdd(Text(gemRecord, "name")!.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Last(), Text(gemRecord, "icon")!);
 lines.Add("    /// <summary>Icons of the gem colours, by name (\"Sapphire\").</summary>");
 lines.Add("    public static IReadOnlyDictionary<string, string> Gems { get; } = new Dictionary<string, string>");
 lines.Add("    {");
@@ -137,9 +137,9 @@ IEnumerable<string> MaxRanks(string name, string[] kinds) =>
 static string Kinds(string[] kinds) =>
     kinds.Length == 1 ? kinds[0] : $"{string.Join(", ", kinds[..^1])} and {kinds[^1]}";
 
-static string? Text(JsonObject row, string key) => row[key] is JsonValue v && v.TryGetValue(out string? s) ? s : null;
+static string? Text(JsonObject row, string key) => row[key] is JsonValue jsonValue && jsonValue.TryGetValue(out string? text) ? text : null;
 
 static int Int(JsonObject row, string key) =>
-    row[key] is JsonValue v && v.TryGetValue(out string? s) ? int.Parse(s) : (int)row[key]!.GetValue<double>();
+    row[key] is JsonValue jsonValue && jsonValue.TryGetValue(out string? text) ? int.Parse(text) : (int)row[key]!.GetValue<double>();
 
 static string Cs(string text) => "\"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";

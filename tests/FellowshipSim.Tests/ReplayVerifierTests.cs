@@ -50,7 +50,7 @@ public class ReplayVerifierTests
         Assert.Equal(high, issue.Expected.High, Precision);
         Assert.Equal(observed, issue.Observed!.Value, Precision);
         Assert.Equal(deviation, issue.Deviation!.Value, Precision);
-        if (relative is { } r) Assert.Equal(r, issue.RelativeDeviation!.Value, Precision);
+        if (relative is { } relativeValue) Assert.Equal(relativeValue, issue.RelativeDeviation!.Value, Precision);
         else Assert.Null(issue.RelativeDeviation);
         Assert.NotNull(issue.State);
     }

@@ -219,9 +219,9 @@ public sealed class AplVocabulary
             var expression = AplParser.ParseExpression(text);
             return new AplExpressionCheck(tokens, null, null, inWords, AplCondition.Rows(expression));
         }
-        catch (ParseException e)
+        catch (ParseException exception)
         {
-            return new AplExpressionCheck(tokens, e.Message, e.ErrorPosition.HasValue ? e.ErrorPosition.Absolute : text.Length, inWords);
+            return new AplExpressionCheck(tokens, exception.Message, exception.ErrorPosition.HasValue ? exception.ErrorPosition.Absolute : text.Length, inWords);
         }
     }
 

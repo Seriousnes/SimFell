@@ -93,8 +93,8 @@ public static class ServiceApp
             // The packaged app tells when a newer build is released.
             builder.Services.AddHttpClient(nameof(AppUpdates), c => c.Timeout = TimeSpan.FromSeconds(10));
             // "--PretendLatestVersion=0.2.0" acts as if that version were released, to see the banner without a release.
-            var pretend = AppUpdates.Parse(builder.Configuration["PretendLatestVersion"]) is { } v
-                ? new AppRelease(v, AppUpdates.TagOf(v), AppUpdates.LatestReleasePage) : null;
+            var pretend = AppUpdates.Parse(builder.Configuration["PretendLatestVersion"]) is { } latestVersion
+                ? new AppRelease(latestVersion, AppUpdates.TagOf(latestVersion), AppUpdates.LatestReleasePage) : null;
             builder.Services.AddSingleton(s => new AppUpdates(s.GetRequiredService<IHttpClientFactory>().CreateClient(nameof(AppUpdates)), AppVersion, pretend));
         }
         else builder.Services.AddScoped(s => VisitorIdentity.Of(s.GetRequiredService<AuthenticationStateProvider>()));

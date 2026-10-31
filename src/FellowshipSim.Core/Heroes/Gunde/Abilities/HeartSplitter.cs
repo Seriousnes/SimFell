@@ -62,7 +62,7 @@ public class HeartSplitter : GundeAbility
     private double CritChanceAgainst(EnemyTarget target)
     {
         double bonus = 0.0;
-        foreach (var b in TargetCritChanceBonuses) bonus += b(target);
+        foreach (var critChanceBonus in TargetCritChanceBonuses) bonus += critChanceBonus(target);
         return bonus;
     }
 

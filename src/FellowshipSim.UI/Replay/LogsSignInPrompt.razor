@@ -42,9 +42,9 @@
         {
             await LogsSignIn.SignInAsync(Navigation.ToBaseRelativePath(Navigation.Uri));
         }
-        catch (Exception e) when (e is FellowshipLogsException or HttpRequestException or InvalidOperationException)
+        catch (Exception exception) when (exception is FellowshipLogsException or HttpRequestException or InvalidOperationException)
         {
-            _error = e.Message;
+            _error = exception.Message;
         }
         finally
         {

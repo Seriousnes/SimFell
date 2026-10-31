@@ -22,9 +22,9 @@ if (!app.Configuration.GetValue<bool>("NoBrowser"))
     {
         Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
-    catch (Exception e)
+    catch (Exception exception)
     {
-        Console.WriteLine($"Open {url} in your browser ({e.Message}).");
+        Console.WriteLine($"Open {url} in your browser ({exception.Message}).");
     }
 }
 await app.WaitForShutdownAsync();

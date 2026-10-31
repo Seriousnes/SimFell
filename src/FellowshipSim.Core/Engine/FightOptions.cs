@@ -16,12 +16,12 @@ public sealed record FightOptions(double LengthVariance = 0, bool HealthFollowsT
     {
         if (LengthVariance <= 0) return duration;
         // SplitMix64 of the seed: a uniform share in [0, 1) that leaves the fight's own dice alone.
-        ulong z = unchecked((ulong)seed * 0x9E3779B97F4A7C15UL + 0x9E3779B97F4A7C15UL);
-        z = unchecked((z ^ (z >> 30)) * 0xBF58476D1CE4E5B9UL);
-        z = unchecked((z ^ (z >> 27)) * 0x94D049BB133111EBUL);
-        z ^= z >> 31;
-        double u = (z >> 11) * (1.0 / (1UL << 53));
-        return SimTime.FromSeconds(Math.Max(1.0, duration.TotalSeconds * (1 + LengthVariance * (2 * u - 1))));
+        ulong mixed = unchecked((ulong)seed * 0x9E3779B97F4A7C15UL + 0x9E3779B97F4A7C15UL);
+        mixed = unchecked((mixed ^ (mixed >> 30)) * 0xBF58476D1CE4E5B9UL);
+        mixed = unchecked((mixed ^ (mixed >> 27)) * 0x94D049BB133111EBUL);
+        mixed ^= mixed >> 31;
+        double share = (mixed >> 11) * (1.0 / (1UL << 53));
+        return SimTime.FromSeconds(Math.Max(1.0, duration.TotalSeconds * (1 + LengthVariance * (2 * share - 1))));
     }
 
     /// <summary>The longest fight of a sim of <paramref name="duration"/>.</summary>

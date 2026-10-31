@@ -83,8 +83,8 @@
 
     private AplExpressionCheck? Check => string.IsNullOrWhiteSpace(Text) ? null : _checked.Result?.Check;
 
-    private string? ListStyle => _completion is { } c
-        ? string.Create(CultureInfo.InvariantCulture, $"left: {c.Left}px; top: {c.Top}px")
+    private string? ListStyle => _completion is { } completion
+        ? string.Create(CultureInfo.InvariantCulture, $"left: {completion.Left}px; top: {completion.Top}px")
         : null;
 
     protected override void OnInitialized()

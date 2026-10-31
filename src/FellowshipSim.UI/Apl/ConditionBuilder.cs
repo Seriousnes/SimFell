@@ -34,30 +34,30 @@ public static class ConditionBuilder
     /// The kinds of value a term reads: each scope of the vocabulary, a resource, a named fight value, the action's own
     /// values, each part of the build, the enemies with a debuff, and the list's variables (<paramref name="variables"/>).
     /// </summary>
-    public static IReadOnlyList<ConditionKind> Kinds(AplVocabulary v, IReadOnlyList<string> variables)
+    public static IReadOnlyList<ConditionKind> Kinds(AplVocabulary vocabulary, IReadOnlyList<string> variables)
     {
-        var scopeNames = v.ScopeNames;
+        var scopeNames = vocabulary.ScopeNames;
         var activeDot = PropertyExpression.ScopeDocs[PropertyExpression.ActiveDotScope];
         var variable = PropertyExpression.ScopeDocs[PropertyExpression.VariableScope];
         return
         [
-            .. v.Scopes.Select(scope => new ConditionKind(scope.Key, PropertyExpression.ScopeDocs[scope.Key].Label, scope.Key switch
+            .. vocabulary.Scopes.Select(scope => new ConditionKind(scope.Key, PropertyExpression.ScopeDocs[scope.Key].Label, scope.Key switch
             {
                 PropertyExpression.BuffScope => AplTokenKind.Buff,
                 PropertyExpression.DebuffScope or PropertyExpression.DotScope => AplTokenKind.Debuff,
                 PropertyExpression.CooldownScope or PropertyExpression.ActionScope => AplTokenKind.Cooldown,
                 _ => AplTokenKind.Named,
             }, scopeNames[scope.Key], scope.Value.ToList(), Description: PropertyExpression.ScopeDocs[scope.Key].Description)),
-            new ConditionKind(ResourceKind, Resource.Label, AplTokenKind.Resource, v.Resources, [CurrentProperty, DeficitProperty], Description: Resource.Description),
+            new ConditionKind(ResourceKind, Resource.Label, AplTokenKind.Resource, vocabulary.Resources, [CurrentProperty, DeficitProperty], Description: Resource.Description),
             new ConditionKind(NamedKind, FightValue.Label, AplTokenKind.Named,
-                v.Named.Select(n => Described(n, PropertyExpression.Named[n].Doc)).ToList(),
+                vocabulary.Named.Select(n => Described(n, PropertyExpression.Named[n].Doc)).ToList(),
                 Description: FightValue.Description),
             new ConditionKind(ActionValueKind, ThisAction.Label, AplTokenKind.Named,
-                v.ActionValues.Select(n => Described(n, PropertyExpression.ActionValueDoc(n)!)).ToList(),
+                vocabulary.ActionValues.Select(n => Described(n, PropertyExpression.ActionValueDoc(n)!)).ToList(),
                 Description: ThisAction.Description),
-            .. v.BuildNames.Select(scope => new ConditionKind(scope.Key, PropertyExpression.BuildScopes[scope.Key].Doc.Label, AplTokenKind.Named, scope.Value,
+            .. vocabulary.BuildNames.Select(scope => new ConditionKind(scope.Key, PropertyExpression.BuildScopes[scope.Key].Doc.Label, AplTokenKind.Named, scope.Value,
                 MatchesStart: scope.Key == PropertyExpression.WeaponScope, Description: PropertyExpression.BuildScopes[scope.Key].Doc.Description)),
-            new ConditionKind(PropertyExpression.ActiveDotScope, activeDot.Label, AplTokenKind.Debuff, v.Auras, Description: activeDot.Description),
+            new ConditionKind(PropertyExpression.ActiveDotScope, activeDot.Label, AplTokenKind.Debuff, vocabulary.Auras, Description: activeDot.Description),
             new ConditionKind(PropertyExpression.VariableScope, variable.Label, AplTokenKind.Named, variables.Select(n => new AplName(n, n)).ToList(),
                 Description: variable.Description),
         ];
@@ -99,30 +99,30 @@ public static class ConditionBuilder
     /// "buff.ice_blitz.up" -> (buff, ice_blitz, up); "talent.slow_burn" -> (talent, slow_burn); "spirit.deficit" ->
     /// (resource, spirit, deficit); an action's own value or a named value is its whole path.
     /// </summary>
-    public static PathParts SplitPath(AplVocabulary v, string path)
+    public static PathParts SplitPath(AplVocabulary vocabulary, string path)
     {
         string[] parts = path.Split('.');
-        if (parts.Length >= 3 && v.Scopes.ContainsKey(parts[0])) return new PathParts(parts[0], parts[1], string.Join(".", parts[2..]));
-        if (parts.Length == 2 && IsNameScope(v, parts[0])) return new PathParts(parts[0], parts[1]);
-        string resource = path.StartsWith(v.ResourcePrefix, StringComparison.Ordinal) ? path[v.ResourcePrefix.Length..] : path;
-        bool deficit = resource.EndsWith(v.DeficitSuffix, StringComparison.Ordinal);
-        if (deficit) resource = resource[..^v.DeficitSuffix.Length];
-        if (v.Resources.Any(r => r.Slug == resource)) return new PathParts(ResourceKind, resource, deficit ? DeficitProperty : CurrentProperty);
-        if (v.ActionValues.Contains(path)) return new PathParts(ActionValueKind, path);
+        if (parts.Length >= 3 && vocabulary.Scopes.ContainsKey(parts[0])) return new PathParts(parts[0], parts[1], string.Join(".", parts[2..]));
+        if (parts.Length == 2 && IsNameScope(vocabulary, parts[0])) return new PathParts(parts[0], parts[1]);
+        string resource = path.StartsWith(vocabulary.ResourcePrefix, StringComparison.Ordinal) ? path[vocabulary.ResourcePrefix.Length..] : path;
+        bool deficit = resource.EndsWith(vocabulary.DeficitSuffix, StringComparison.Ordinal);
+        if (deficit) resource = resource[..^vocabulary.DeficitSuffix.Length];
+        if (vocabulary.Resources.Any(r => r.Slug == resource)) return new PathParts(ResourceKind, resource, deficit ? DeficitProperty : CurrentProperty);
+        if (vocabulary.ActionValues.Contains(path)) return new PathParts(ActionValueKind, path);
         return new PathParts(NamedKind, path);
     }
 
-    public static string JoinPath(AplVocabulary v, PathParts parts) => parts.Kind switch
+    public static string JoinPath(AplVocabulary vocabulary, PathParts parts) => parts.Kind switch
     {
-        _ when v.Scopes.ContainsKey(parts.Kind) => $"{parts.Kind}.{parts.Name}.{parts.Property}",
-        _ when IsNameScope(v, parts.Kind) => $"{parts.Kind}.{parts.Name}",
-        ResourceKind when parts.Property == DeficitProperty => parts.Name + v.DeficitSuffix,
+        _ when vocabulary.Scopes.ContainsKey(parts.Kind) => $"{parts.Kind}.{parts.Name}.{parts.Property}",
+        _ when IsNameScope(vocabulary, parts.Kind) => $"{parts.Kind}.{parts.Name}",
+        ResourceKind when parts.Property == DeficitProperty => parts.Name + vocabulary.DeficitSuffix,
         _ => parts.Name,
     };
 
     /// <summary>Scopes of "&lt;scope&gt;.&lt;name&gt;" paths: the build's parts, the enemies with a debuff, and variables.</summary>
-    private static bool IsNameScope(AplVocabulary v, string scope) =>
-        v.BuildNames.ContainsKey(scope) || scope is PropertyExpression.ActiveDotScope or PropertyExpression.VariableScope;
+    private static bool IsNameScope(AplVocabulary vocabulary, string scope) =>
+        vocabulary.BuildNames.ContainsKey(scope) || scope is PropertyExpression.ActiveDotScope or PropertyExpression.VariableScope;
 
     /// <summary>
     /// A term with no value picked yet, parentheses with no picked term, a row with no picked term on its left, and a group
@@ -137,7 +137,7 @@ public static class ConditionBuilder
     /// Changes <paramref name="term"/> by a pick: a prefix goes before its prefixes, a number starts at 0, parentheses hold the
     /// term as it was, and a name keeps the property when its kind lists it, else takes the kind's first.
     /// </summary>
-    public static void Apply(ConditionTerm term, ValuePick pick, AplVocabulary v, IReadOnlyList<ConditionKind> kinds)
+    public static void Apply(ConditionTerm term, ValuePick pick, AplVocabulary vocabulary, IReadOnlyList<ConditionKind> kinds)
     {
         if (pick.Prefix != null)
         {
@@ -162,24 +162,24 @@ public static class ConditionBuilder
             return;
         }
         var kind = kinds.First(k => k.Id == pick.Kind);
-        string? property = !string.IsNullOrEmpty(term.Path) && SplitPath(v, term.Path) is { } current && current.Kind == kind.Id
+        string? property = !string.IsNullOrEmpty(term.Path) && SplitPath(vocabulary, term.Path) is { } current && current.Kind == kind.Id
                            && kind.Properties?.Contains(current.Property!) == true
             ? current.Property
             : kind.Properties?.FirstOrDefault();
-        term.Path = JoinPath(v, new PathParts(kind.Id, pick.Name ?? "", property));
+        term.Path = JoinPath(vocabulary, new PathParts(kind.Id, pick.Name ?? "", property));
         term.Number = null;
         term.Items = null;
     }
 
     /// <summary>The row a group's empty row becomes by a pick: a group, a number, or a name with its kind's first property.</summary>
-    public static ConditionRow RowFor(ValuePick pick, string join, bool not, AplVocabulary v, IReadOnlyList<ConditionKind> kinds) => pick.Kind switch
+    public static ConditionRow RowFor(ValuePick pick, string join, bool not, AplVocabulary vocabulary, IReadOnlyList<ConditionKind> kinds) => pick.Kind switch
     {
         GroupKind => new ConditionRow { Join = join, Not = not, Items = [] },
         NumberKind => new ConditionRow { Join = join, Not = not, Left = [new ConditionTerm { Number = 0 }] },
         _ => new ConditionRow
         {
             Join = join, Not = not,
-            Left = [new ConditionTerm { Path = JoinPath(v, new PathParts(pick.Kind, pick.Name ?? "", kinds.First(k => k.Id == pick.Kind).Properties?.FirstOrDefault())) }],
+            Left = [new ConditionTerm { Path = JoinPath(vocabulary, new PathParts(pick.Kind, pick.Name ?? "", kinds.First(k => k.Id == pick.Kind).Properties?.FirstOrDefault())) }],
         },
     };
 

@@ -73,29 +73,29 @@ public class HighwindArrow : ElarionAbility
         var struck = new HashSet<EnemyTarget>();
         if (target != null) struck.Add(target);
 
-        void Ricochet(SimulationContext c, int left)
+        void Ricochet(SimulationContext tickContext, int left)
         {
-            var candidates = c.ActiveEnemies.Where(e => !struck.Contains(e)).ToList();
-            var next = candidates.Count == 0 ? null : c.Outcomes.ChooseTarget(DamageLogId, candidates, c);
+            var candidates = tickContext.ActiveEnemies.Where(e => !struck.Contains(e)).ToList();
+            var next = candidates.Count == 0 ? null : tickContext.Outcomes.ChooseTarget(DamageLogId, candidates, tickContext);
             if (next == null || !candidates.Contains(next))
             {
-                RicochetsMissed?.Invoke(c, left);
+                RicochetsMissed?.Invoke(tickContext, left);
                 return;
             }
             struck.Add(next);
-            DealDamage(c, next, damageMultiplier: castDamage * multiplier * RicochetMultiplier, extraCritChance: castCrit,
+            DealDamage(tickContext, next, damageMultiplier: castDamage * multiplier * RicochetMultiplier, extraCritChance: castCrit,
                 onLanded: (cc, _) => After(cc, left - 1));
         }
 
-        void After(SimulationContext c, int left)
+        void After(SimulationContext tickContext, int left)
         {
             if (left <= 0)
             {
-                RicochetsMissed?.Invoke(c, 0);
+                RicochetsMissed?.Invoke(tickContext, 0);
                 return;
             }
             // The ricochet leaves as the hit before it lands; a replay takes its flight from the log.
-            Ricochet(c, left);
+            Ricochet(tickContext, left);
         }
 
         if (target != null) DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: (c, _) => After(c, ricochets));

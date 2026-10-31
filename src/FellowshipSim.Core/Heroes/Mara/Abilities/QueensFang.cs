@@ -26,7 +26,7 @@ public class QueensFang : Finisher
     {
         double multiplier = ComboPointMultiplier(points);
         double own = 1.0;
-        foreach (var m in OwnHitMultipliers) own *= m(ctx);
+        foreach (var factor in OwnHitMultipliers) own *= factor(ctx);
         DealDamage(ctx, target, damageMultiplier: multiplier * own);
         double castDamage = CastDamageMultiplier, castCrit = CurrentCast?.CritChance ?? 0.0;
         Mara.Matriarch.Imitate(ctx, 1, (c, power) =>

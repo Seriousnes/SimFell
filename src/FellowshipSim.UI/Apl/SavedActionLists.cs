@@ -29,9 +29,9 @@ public sealed class SavedActionLists(ActionListStore store, ISimEngine engine, V
         {
             return new SavedActionList(text, (await engine.ParseActionListAsync(text, ct)).Actions, null);
         }
-        catch (SimEngineException e)
+        catch (SimEngineException exception)
         {
-            return new SavedActionList(text, null, e.Message);
+            return new SavedActionList(text, null, exception.Message);
         }
     }
 

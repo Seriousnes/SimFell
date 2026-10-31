@@ -27,9 +27,9 @@ public sealed class AplController(ISimEngine engine) : ControllerBase
         {
             return Ok(await engine.ParseActionListAsync(request.Text ?? "", ct));
         }
-        catch (SimEngineException e)
+        catch (SimEngineException exception)
         {
-            return BadRequest(new { error = e.Message });
+            return BadRequest(new { error = exception.Message });
         }
     }
 

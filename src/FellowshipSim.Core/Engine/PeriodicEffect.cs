@@ -316,57 +316,57 @@ public sealed class PeriodicEffect
         }
 
         // Once the period timer has its next tick, asks its firing time and moves the tick there.
-        void AskPeriodTick(SimulationContext c)
+        void AskPeriodTick(SimulationContext tickContext)
         {
             if (!effect.IsActive || effect._nextHastedTick is not { IsActive: true } timer) return;
             var due = timer.DueTime;
-            var at = effect.AskTick(c, due, 1.0);
+            var at = effect.AskTick(tickContext, due, 1.0);
             if (at == due) return;
             // The tick fires at the time given; a timer from the last tick predicts it (a repeated tick is predicted a
             // server frame after the last).
             tickMoved = true;
-            if (timer.RepeatPending) effect.TickPredicted?.Invoke(c, effect, due);
-            else HastedTimer.Start(c, hero, basePeriodSeconds, predict ??= Predict, name);
+            if (timer.RepeatPending) effect.TickPredicted?.Invoke(tickContext, effect, due);
+            else HastedTimer.Start(tickContext, hero, basePeriodSeconds, predict ??= Predict, name);
             timer.MoveNextTick(at);
         }
 
-        void ScheduleNext(SimulationContext c)
+        void ScheduleNext(SimulationContext tickContext)
         {
             fire ??= Fire;
             if (damageOverTime)
             {
                 if (effect._nextHastedTick is { IsActive: true }) return;
-                effect._nextHastedTick = HastedTimer.StartPeriod(c, hero, basePeriodSeconds, PeriodTick, name, damageLogId, AskPeriodTick);
-                AskPeriodTick(c);
+                effect._nextHastedTick = HastedTimer.StartPeriod(tickContext, hero, basePeriodSeconds, PeriodTick, name, damageLogId, AskPeriodTick);
+                AskPeriodTick(tickContext);
                 return;
             }
             if (retimeOnHasteChange)
             {
-                var timer = HastedTimer.Start(c, hero, basePeriodSeconds, fire, name);
+                var timer = HastedTimer.Start(tickContext, hero, basePeriodSeconds, fire, name);
                 effect._nextHastedTick = timer;
                 if (damageLogId == 0) return;
                 var due = timer.DueTime;
-                var at = effect.AskTick(c, due, 1.0);
+                var at = effect.AskTick(tickContext, due, 1.0);
                 if (at == due) return;
                 // The tick fires at the time given; the timer only predicts.
                 timer.Cancel();
-                effect._nextHastedTick = HastedTimer.Start(c, hero, basePeriodSeconds, predict ??= Predict, name);
-                effect._events.Add(effect._movedTick = c.ScheduleAt(at, fireMoved ??= FireTick, name));
+                effect._nextHastedTick = HastedTimer.Start(tickContext, hero, basePeriodSeconds, predict ??= Predict, name);
+                effect._events.Add(effect._movedTick = tickContext.ScheduleAt(at, fireMoved ??= FireTick, name));
                 return;
             }
             // The period is fixed by the haste when the previous tick fired.
-            var next = c.CurrentTime + SimTime.FromSeconds(basePeriodSeconds / (1.0 + hero.GetHaste(c.CurrentTime)));
+            var next = tickContext.CurrentTime + SimTime.FromSeconds(basePeriodSeconds / (1.0 + hero.GetHaste(tickContext.CurrentTime)));
             if (damageLogId != 0)
             {
-                var at = effect.AskTick(c, next, 1.0);
+                var at = effect.AskTick(tickContext, next, 1.0);
                 if (at != next)
                 {
-                    effect._events.Add(c.Kernel.ScheduleAt(next, predict ??= Predict, name));
-                    effect._events.Add(effect._movedTick = c.ScheduleAt(at, fireMoved ??= FireTick, name));
+                    effect._events.Add(tickContext.Kernel.ScheduleAt(next, predict ??= Predict, name));
+                    effect._events.Add(effect._movedTick = tickContext.ScheduleAt(at, fireMoved ??= FireTick, name));
                     return;
                 }
             }
-            effect._events.Add(c.Kernel.ScheduleAt(next, fire, name));
+            effect._events.Add(tickContext.Kernel.ScheduleAt(next, fire, name));
         }
 
         // The duration runs out at the nominal end (no more ticks; the partial tick is measured there) ...

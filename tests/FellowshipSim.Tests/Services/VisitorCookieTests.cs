@@ -67,20 +67,20 @@ public sealed class VisitorCookieTests : IAsyncLifetime
     [Fact]
     public async Task A_Reviews_Files_Are_Found_Only_For_The_Visitor_Who_Ran_It()
     {
-        string a = await NewVisitorCookieAsync(), b = await NewVisitorCookieAsync();
-        Assert.NotEqual(VisitorId(a), VisitorId(b));
+        string firstCookie = await NewVisitorCookieAsync(), secondCookie = await NewVisitorCookieAsync();
+        Assert.NotEqual(VisitorId(firstCookie), VisitorId(secondCookie));
         var summary = new ReviewSummary(ReplayLibrary.ReviewId("aaaa", 1, 2), "aaaa", 1, "Fight", null, 2, "Player", "Rime",
             1, 1, 1, 1, 100, 100, 0, DateTime.UtcNow);
         _app.Services.GetRequiredService<ReplayLibrary>().Save(new ReviewArtifacts(summary, "{}", "<html>review</html>", "", "hits"));
-        await _app.Services.GetRequiredService<VisitorReviews>().AddAsync(new Visitor(VisitorId(a), OwnsDataFolder: false), summary);
+        await _app.Services.GetRequiredService<VisitorReviews>().AddAsync(new Visitor(VisitorId(firstCookie), OwnsDataFolder: false), summary);
 
-        using (var page = await GetAsync($"/reviews/{summary.HtmlFile}", a))
+        using (var page = await GetAsync($"/reviews/{summary.HtmlFile}", firstCookie))
         {
             Assert.Equal(HttpStatusCode.OK, page.StatusCode);
             Assert.Equal("<html>review</html>", await page.Content.ReadAsStringAsync());
         }
-        using (var hits = await GetAsync($"/reviews/{summary.Id}.hits.csv", a)) Assert.Equal(HttpStatusCode.OK, hits.StatusCode);
-        using (var other = await GetAsync($"/reviews/{summary.HtmlFile}", b)) Assert.Equal(HttpStatusCode.NotFound, other.StatusCode);
+        using (var hits = await GetAsync($"/reviews/{summary.Id}.hits.csv", firstCookie)) Assert.Equal(HttpStatusCode.OK, hits.StatusCode);
+        using (var other = await GetAsync($"/reviews/{summary.HtmlFile}", secondCookie)) Assert.Equal(HttpStatusCode.NotFound, other.StatusCode);
         using (var none = await GetAsync($"/reviews/{summary.HtmlFile}", null)) Assert.Equal(HttpStatusCode.NotFound, none.StatusCode);
     }
 

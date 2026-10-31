@@ -47,7 +47,7 @@
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/FellowshipSim.UI/shell/headerHeight.js");
             _height = await _module.InvokeAsync<IJSObjectReference>("observe", _header);
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The page closed.
         }

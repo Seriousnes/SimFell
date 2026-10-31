@@ -18,7 +18,7 @@ else
     <div class="tiles">
         <div class="tile">
             <span>@BaseName</span>
-            <strong>@N(Base.Result.MeanDps) DPS</strong>
+            <strong>@Number(Base.Result.MeanDps) DPS</strong>
             <em>@(BaseName == "Baseline" ? Base.Label : "what the others are measured against")</em>
         </div>
         <div class="tile">
@@ -77,10 +77,10 @@ else
                                 }
                             </td>
                             <td class="two">
-                                <strong>@N(run.Result.MeanDps)</strong>
+                                <strong>@Number(run.Result.MeanDps)</strong>
                                 @if (Primary && run.Result.PrimaryTargetDps is { } primary)
                                 {
-                                    <span data-tooltip="The DPS to the first target alone">@N(primary) main target</span>
+                                    <span data-tooltip="The DPS to the first target alone">@Number(primary) main target</span>
                                 }
                             </td>
                             <td class="two @(isBase ? "same" : Class(run))">
@@ -97,7 +97,7 @@ else
                             <td class="change">
                                 <div class="track">
                                     <i class="band" style="@Span(-Margin(Base) / Base.Result.MeanDps * 100, Margin(Base) / Base.Result.MeanDps * 100)"></i>
-                                    <i class="zero" style="left: @P(X(0))%"></i>
+                                    <i class="zero" style="left: @CssNumber(Position(0))%"></i>
                                     @if (!isBase)
                                     {
                                         double change = Change(run);
@@ -155,7 +155,7 @@ else
     private SimRun Best => Others.Where(r => Change(r) > 0).MaxBy(r => r.Result.MeanDps) ?? Base;
 
     // A column for the first target's DPS when the runs had more than one target.
-    private bool Primary => Runs.Any(r => r.Result.PrimaryTargetDps is { } p && p < r.Result.MeanDps * 0.999);
+    private bool Primary => Runs.Any(r => r.Result.PrimaryTargetDps is { } primaryDps && primaryDps < r.Result.MeanDps * 0.999);
 
     // The hero on each row when the runs have more than one.
     private bool Heroes => Runs.Select(r => r.Hero).Distinct(StringComparer.OrdinalIgnoreCase).Count() > 1;
@@ -181,8 +181,8 @@ else
 
     // The verdict in plain words: the change against what chance alone could do over this many fights.
     private string VerdictTitle(SimRun run) =>
-        $"{SignedN(run.Result.MeanDps - Base.Result.MeanDps)} DPS; chance alone could move it by up to {N(DifferenceMargin(run))} DPS " +
-        $"over {N(run.Result.Iterations)} fights, so the change is {(Verdict(run) == 0 ? "no bigger than chance" : "bigger than chance (95% sure)")}.";
+        $"{SignedN(run.Result.MeanDps - Base.Result.MeanDps)} DPS; chance alone could move it by up to {Number(DifferenceMargin(run))} DPS " +
+        $"over {Number(run.Result.Iterations)} fights, so the change is {(Verdict(run) == 0 ? "no bigger than chance" : "bigger than chance (95% sure)")}.";
 
     private string Class(SimRun run) => run == Base ? "same" : Verdict(run) switch { > 0 => "gain", < 0 => "loss", _ => "same" };
 
@@ -200,17 +200,17 @@ else
         return (low - pad, high + pad);
     }
 
-    private double X(double change)
+    private double Position(double change)
     {
         var (low, high) = Range();
         return Math.Clamp((change - low) / (high - low) * 100, 0, 100);
     }
 
-    private string Span(double from, double to) => $"left: {P(X(from))}%; width: {P(Math.Max(0, X(to) - X(from)))}%";
+    private string Span(double from, double to) => $"left: {CssNumber(Position(from))}%; width: {CssNumber(Math.Max(0, Position(to) - Position(from)))}%";
 
-    private static string P(double value) => value.ToString("0.###", CultureInfo.InvariantCulture);
+    private static string CssNumber(double value) => value.ToString("0.###", CultureInfo.InvariantCulture);
 
-    private static string N(double value) => value.ToString("N0", CultureInfo.CurrentCulture);
+    private static string Number(double value) => value.ToString("N0", CultureInfo.CurrentCulture);
 
     private static string SignedN(double value) => (value >= 0 ? "+" : "−") + Math.Abs(value).ToString("N0", CultureInfo.CurrentCulture);
 
@@ -233,9 +233,9 @@ else
             Sim.NotifyChanged();
             Views.ShowPage(AppPage.Sim);
         }
-        catch (FormatException e)
+        catch (FormatException exception)
         {
-            _loaded = e.Message;
+            _loaded = exception.Message;
         }
     }
 }

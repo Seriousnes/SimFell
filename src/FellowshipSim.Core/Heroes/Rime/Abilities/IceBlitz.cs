@@ -32,9 +32,9 @@ public class IceBlitz : RimeAbility
     public override void Connect()
     {
         var swallows = new FrostSwallows?[] { Rime.GetAbility<FrostSwallows>(), Rime.GetAbility<FlightOfTheNavir>()?.Swallows };
-        foreach (var s in swallows.OfType<FrostSwallows>())
+        foreach (var swallow in swallows.OfType<FrostSwallows>())
         {
-            s.Hit += (in _) => Rime.Auras.Extend(Buff, SimTime.FromSeconds(ExtensionPerSwallowSeconds));
+            swallow.Hit += (in _) => Rime.Auras.Extend(Buff, SimTime.FromSeconds(ExtensionPerSwallowSeconds));
         }
     }
 }

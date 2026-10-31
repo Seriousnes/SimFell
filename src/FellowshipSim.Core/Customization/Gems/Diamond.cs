@@ -28,18 +28,18 @@ public class Diamond : Gem
 
     public static readonly GemNode[] AllNodes =
     [
-        new(338, 1, "Harmonious Soul", 80, V(("StatBonus", HarmoniousSoulStatPerStack), ("Duration", HarmoniousSoulSeconds), ("MaxStacks", 4), ("StackLoss", 1))),
-        new(298, 2, "Stoic's Teachings", 150, V(("ArmorBonus", 40), ("PrimaryStatBonus", 4))),
-        new(302, 3, "Tranquil Resolve", 220, V(("DamageReduction", 0.08), ("Duration", 6), ("Cooldown", 20))),
-        new(292, 4, "Ancient's Wisdom", 300, V(("PrimaryStatBonus", 1.02)),
+        new(338, 1, "Harmonious Soul", 80, NodeValues(("StatBonus", HarmoniousSoulStatPerStack), ("Duration", HarmoniousSoulSeconds), ("MaxStacks", 4), ("StackLoss", 1))),
+        new(298, 2, "Stoic's Teachings", 150, NodeValues(("ArmorBonus", 40), ("PrimaryStatBonus", 4))),
+        new(302, 3, "Tranquil Resolve", 220, NodeValues(("DamageReduction", 0.08), ("Duration", 6), ("Cooldown", 20))),
+        new(292, 4, "Ancient's Wisdom", 300, NodeValues(("PrimaryStatBonus", 1.02)),
             AuraDef.Effect("Ancient's Wisdom", 1917, modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, 1.02))),
-        new(290, 5, "Blessing of the Artisan", 450, V(("CooldownReduction", 0.08))),
-        new(339, 6, "Harmonious Soul - II", 600, V(("StatBonus", HarmoniousSoulStatPerStack), ("Duration", HarmoniousSoulSeconds), ("MaxStacks", 12), ("StackLoss", 1))),
-        new(299, 7, "Stoic's Teachings - II", 800, V(("ArmorBonus", 120), ("PrimaryStatBonus", 12))),
-        new(303, 8, "Tranquil Resolve - II", 1000, V(("DamageReduction", 0.24), ("Duration", 6), ("Cooldown", 20))),
-        new(293, 9, "Ancient's Wisdom - II", 1250, V(("PrimaryStatBonus", 1.06)),
+        new(290, 5, "Blessing of the Artisan", 450, NodeValues(("CooldownReduction", 0.08))),
+        new(339, 6, "Harmonious Soul - II", 600, NodeValues(("StatBonus", HarmoniousSoulStatPerStack), ("Duration", HarmoniousSoulSeconds), ("MaxStacks", 12), ("StackLoss", 1))),
+        new(299, 7, "Stoic's Teachings - II", 800, NodeValues(("ArmorBonus", 120), ("PrimaryStatBonus", 12))),
+        new(303, 8, "Tranquil Resolve - II", 1000, NodeValues(("DamageReduction", 0.24), ("Duration", 6), ("Cooldown", 20))),
+        new(293, 9, "Ancient's Wisdom - II", 1250, NodeValues(("PrimaryStatBonus", 1.06)),
             AuraDef.Effect("Ancient's Wisdom - II", 1918, modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, 1.06))),
-        new(291, 10, "Blessing of the Artisan - II", 1500, V(("CooldownReduction", 0.24))),
+        new(291, 10, "Blessing of the Artisan - II", 1500, NodeValues(("CooldownReduction", 0.24))),
     ];
 
     public override GemColor Color => GemColor.Diamond;

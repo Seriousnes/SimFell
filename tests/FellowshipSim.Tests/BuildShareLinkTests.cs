@@ -38,17 +38,17 @@ public class BuildShareLinkTests
     /// <summary>The build's profile with every list in ID order: a link keeps a build's lists sorted.</summary>
     private static string Text(CharacterBuild build)
     {
-        var b = SimcProfile.Parse(new SimcProfile(build, "").Format()).Build;
-        b.Talents.Sort();
-        b.Augmentations.Sort((x, y) => x.Id.CompareTo(y.Id));
-        b.Glyphs.Sort((x, y) => x.Id.CompareTo(y.Id));
-        b.SocketedGemIds.Sort();
-        b.StatEnchants.Sort((x, y) => x.Id.CompareTo(y.Id));
-        b.LegendaryItemIds.Sort();
-        b.GemPower = b.GemPower.OrderBy(g => g.Key).ToDictionary();
-        b.GearGemBonuses = b.GearGemBonuses.OrderBy(g => g.Key).ToDictionary();
-        b.StatEnchantCounts = b.StatEnchantCounts.OrderBy(g => g.Key).ToDictionary();
-        return new SimcProfile(b, "").Format();
+        var sortedBuild = SimcProfile.Parse(new SimcProfile(build, "").Format()).Build;
+        sortedBuild.Talents.Sort();
+        sortedBuild.Augmentations.Sort((x, y) => x.Id.CompareTo(y.Id));
+        sortedBuild.Glyphs.Sort((x, y) => x.Id.CompareTo(y.Id));
+        sortedBuild.SocketedGemIds.Sort();
+        sortedBuild.StatEnchants.Sort((x, y) => x.Id.CompareTo(y.Id));
+        sortedBuild.LegendaryItemIds.Sort();
+        sortedBuild.GemPower = sortedBuild.GemPower.OrderBy(g => g.Key).ToDictionary();
+        sortedBuild.GearGemBonuses = sortedBuild.GearGemBonuses.OrderBy(g => g.Key).ToDictionary();
+        sortedBuild.StatEnchantCounts = sortedBuild.StatEnchantCounts.OrderBy(g => g.Key).ToDictionary();
+        return new SimcProfile(sortedBuild, "").Format();
     }
 
     [Fact]

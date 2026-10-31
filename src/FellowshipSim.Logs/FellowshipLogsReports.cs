@@ -101,15 +101,15 @@ public static class FellowshipLogsReports
             .ToDictionary(a => a!["id"]!.GetValue<int>(), a => new ReportPlayer(
                 a!["id"]!.GetValue<int>(), a["name"]?.GetValue<string>() ?? "?", a["subType"]?.GetValue<string>() ?? ""));
         var fights = new List<FightSummary>();
-        foreach (var f in report["fights"]?.AsArray() ?? [])
+        foreach (var fight in report["fights"]?.AsArray() ?? [])
         {
-            if (f == null) continue;
-            var ids = f["friendlyPlayers"]?.AsArray().Select(x => x!.GetValue<int>()) ?? [];
+            if (fight == null) continue;
+            var ids = fight["friendlyPlayers"]?.AsArray().Select(x => x!.GetValue<int>()) ?? [];
             fights.Add(new FightSummary(
-                f["id"]!.GetValue<int>(),
-                f["name"]?.GetValue<string>() ?? "",
-                f["kill"]?.GetValue<bool?>() ?? false,
-                (f["endTime"]!.GetValue<double>() - f["startTime"]!.GetValue<double>()) / 1000.0,
+                fight["id"]!.GetValue<int>(),
+                fight["name"]?.GetValue<string>() ?? "",
+                fight["kill"]?.GetValue<bool?>() ?? false,
+                (fight["endTime"]!.GetValue<double>() - fight["startTime"]!.GetValue<double>()) / 1000.0,
                 ids.Where(players.ContainsKey).Select(id => players[id]).ToList()));
         }
         return new ReportSummary(reportCode, report["title"]?.GetValue<string>() ?? reportCode,
@@ -139,7 +139,7 @@ public static class FellowshipLogsReports
             {
                 var moved = data.ToArray();
                 data.Clear();
-                foreach (var e in moved) events.Add(e);
+                foreach (var logEvent in moved) events.Add(logEvent);
             }
             progress?.Report($"Downloaded {events.Count:N0} events");
             double? next = page["nextPageTimestamp"]?.GetValue<double?>();

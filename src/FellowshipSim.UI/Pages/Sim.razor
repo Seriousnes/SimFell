@@ -127,9 +127,9 @@
             _lists = await _savedLists.ListAsync();
             _heroes = await Engine.GetHeroesAsync();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.Status = MessageState.Error(e.Message);
+            State.Status = MessageState.Error(exception.Message);
         }
     }
 
@@ -150,7 +150,7 @@
                 StateHasChanged();
             }
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The default stays.
         }
@@ -163,7 +163,7 @@
         {
             await JS.InvokeVoidAsync("localStorage.setItem", ThreadsKey, State.Threads.ToString(CultureInfo.InvariantCulture));
         }
-        catch (Exception e) when (e is JSDisconnectedException or JSException or OperationCanceledException)
+        catch (Exception exception) when (exception is JSDisconnectedException or JSException or OperationCanceledException)
         {
             // The choice lasts until the page reloads.
         }
@@ -189,9 +189,9 @@
             State.ActionListText = saved.Text;
             State.Status = saved.Error != null ? MessageState.Error($"{list.Name} does not parse: {saved.Error}") : MessageState.None;
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.Status = MessageState.Error(e.Message);
+            State.Status = MessageState.Error(exception.Message);
         }
     }
 
@@ -235,7 +235,7 @@
 
     private string TargetsText() => State.Mode == SimMode.SingleTarget ? "single target" : $"{State.AoeTargets} targets";
 
-    private static string N(double value) => value.ToString("0.#", CultureInfo.CurrentCulture);
+    private static string Number(double value) => value.ToString("0.#", CultureInfo.CurrentCulture);
 
     private string ProfilePreview()
     {
@@ -243,9 +243,9 @@
         {
             return new SimcProfile(State.Build, ActionListText()).Format();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            return e.Message;
+            return exception.Message;
         }
     }
 
@@ -265,17 +265,17 @@
                     MessageKind.Warning);
             }
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.ImportStatus = MessageState.Error(e.Message);
+            State.ImportStatus = MessageState.Error(exception.Message);
         }
     }
 
-    private async Task LoadFileAsync(InputFileChangeEventArgs e)
+    private async Task LoadFileAsync(InputFileChangeEventArgs args)
     {
         try
         {
-            using var reader = new StreamReader(e.File.OpenReadStream(MaxProfileBytes));
+            using var reader = new StreamReader(args.File.OpenReadStream(MaxProfileBytes));
             State.ProfileText = await reader.ReadToEndAsync();
             await ImportProfileAsync();
         }
@@ -303,9 +303,9 @@
             }
             UseBuild(profile.Build, profile.ActionList.Trim().Length > 0 ? "the profile, with its action list" : "the profile");
         }
-        catch (FormatException e)
+        catch (FormatException exception)
         {
-            State.ImportStatus = MessageState.Error(e.Message);
+            State.ImportStatus = MessageState.Error(exception.Message);
         }
         return Task.CompletedTask;
     }
@@ -342,9 +342,9 @@
                     break;
             }
         }
-        catch (Exception e) when (e is FormatException or InvalidOperationException or IOException)
+        catch (Exception exception) when (exception is FormatException or InvalidOperationException or IOException)
         {
-            State.Status = MessageState.Error(e.Message);
+            State.Status = MessageState.Error(exception.Message);
         }
     }
 
@@ -389,7 +389,7 @@
                 : (await _savedLists.ReadAsync(list)).Text;
             runs.Add(Plan(row.Saved?.Name ?? $"{build.Name} (current)", listName, build, listName, row.ListValue, listText));
         }
-        Enqueue($"Compare: {CompareCard.Runs(runs.Count)}, {TargetsText()}, {N(State.DurationSeconds)} s", runs);
+        Enqueue($"Compare: {CompareCard.Runs(runs.Count)}, {TargetsText()}, {Number(State.DurationSeconds)} s", runs);
     }
 
     private void StartFinder()
@@ -447,9 +447,9 @@
             profileText = new SimcProfile(State.Build, ActionListText()).Format();
             profile = SimcProfile.Parse(profileText);
         }
-        catch (Exception e) when (e is FormatException or InvalidOperationException)
+        catch (Exception exception) when (exception is FormatException or InvalidOperationException)
         {
-            State.Status = MessageState.Error(e.Message);
+            State.Status = MessageState.Error(exception.Message);
             return;
         }
         if (profile.ActionList.Trim().Length == 0)

@@ -15,9 +15,9 @@ public static class Completions
     /// Every path a condition can read, as a tree of its '.'-separated parts: scope, name, property; a resource, with or
     /// without its prefix; a named value; and the words 'and', 'or' and 'not'. Each node has the kind its text is coloured by.
     /// </summary>
-    public static CompletionNode TreeOf(AplVocabulary v) => Trees.GetValue(v, Build);
+    public static CompletionNode TreeOf(AplVocabulary vocabulary) => Trees.GetValue(vocabulary, Build);
 
-    private static CompletionNode Build(AplVocabulary v)
+    private static CompletionNode Build(AplVocabulary vocabulary)
     {
         var root = new CompletionNode(null);
         void Add(IEnumerable<string> parts, AplTokenKind kind, string detail = "")
@@ -36,8 +36,8 @@ public static class Completions
             }
         }
 
-        var scopeNames = v.ScopeNames;
-        foreach (var (scope, properties) in v.Scopes)
+        var scopeNames = vocabulary.ScopeNames;
+        foreach (var (scope, properties) in vocabulary.Scopes)
         {
             var kind = scope switch
             {
@@ -55,13 +55,13 @@ public static class Completions
                 }
             }
         }
-        string[] prefix = v.ResourcePrefix.Split('.', StringSplitOptions.RemoveEmptyEntries);
-        foreach (var resource in v.Resources)
+        string[] prefix = vocabulary.ResourcePrefix.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var resource in vocabulary.Resources)
         {
             Add([resource.Slug], AplTokenKind.Resource, resource.Name);
             Add([.. prefix, resource.Slug], AplTokenKind.Resource, resource.Name);
         }
-        foreach (string named in v.Named) Add(named.Split('.'), AplTokenKind.Named);
+        foreach (string named in vocabulary.Named) Add(named.Split('.'), AplTokenKind.Named);
         foreach (string word in Operators) Add([word], AplTokenKind.Operator);
         return root;
     }
@@ -70,11 +70,11 @@ public static class Completions
     /// The parts after <paramref name="word"/>'s last '.', starting with its text after that '.': those starting with it
     /// first, then those containing it.
     /// </summary>
-    public static IReadOnlyList<Completion> For(AplVocabulary v, string word)
+    public static IReadOnlyList<Completion> For(AplVocabulary vocabulary, string word)
     {
         string[] parts = word.ToLowerInvariant().Split('.');
         string partial = parts[^1];
-        var node = TreeOf(v);
+        var node = TreeOf(vocabulary);
         foreach (string part in parts[..^1])
         {
             if (!node.Children.TryGetValue(part, out var child)) return [];

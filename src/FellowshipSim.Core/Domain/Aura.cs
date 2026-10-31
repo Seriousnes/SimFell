@@ -453,14 +453,14 @@ public class AuraContainer
     public double Fold(StatType type, double baseValue, SimTime now = default)
     {
         CleanExpired(now);
-        int t = (int)type;
-        if (_foldVersions[t] != _statVersions[t]) Refold(type);
-        return _folds[t].Apply(baseValue);
+        int statIndex = (int)type;
+        if (_foldVersions[statIndex] != _statVersions[statIndex]) Refold(type);
+        return _folds[statIndex].Apply(baseValue);
     }
 
     private void Refold(StatType type)
     {
-        int t = (int)type;
+        int statIndex = (int)type;
         int stat = AuraDef.MaskOf(type);
         var fold = new ModifierFold();
         foreach (var aura in _auras.Values)
@@ -473,8 +473,8 @@ public class AuraContainer
                 if (mods[i].Type == type) fold.Accept(mods[i], aura.Stacks);
             }
         }
-        _folds[t] = fold;
-        _foldVersions[t] = _statVersions[t];
+        _folds[statIndex] = fold;
+        _foldVersions[statIndex] = _statVersions[statIndex];
     }
 
     /// <summary>
@@ -485,14 +485,14 @@ public class AuraContainer
     public double SumBonuses(StatType type, SimTime now = default)
     {
         CleanExpired(now);
-        int t = (int)type;
-        if (_bonusVersions[t] != _statVersions[t]) Resum(type);
-        return _bonuses[t];
+        int statIndex = (int)type;
+        if (_bonusVersions[statIndex] != _statVersions[statIndex]) Resum(type);
+        return _bonuses[statIndex];
     }
 
     private void Resum(StatType type)
     {
-        int t = (int)type;
+        int statIndex = (int)type;
         int stat = AuraDef.MaskOf(type);
         double sum = 0.0;
         foreach (var aura in _auras.Values)
@@ -504,8 +504,8 @@ public class AuraContainer
                 if (mods[i].Type == type) sum += mods[i].Value - 1.0;
             }
         }
-        _bonuses[t] = sum;
-        _bonusVersions[t] = _statVersions[t];
+        _bonuses[statIndex] = sum;
+        _bonusVersions[statIndex] = _statVersions[statIndex];
     }
 
     /// <summary>Sum of additive modifiers of <paramref name="type"/>.</summary>

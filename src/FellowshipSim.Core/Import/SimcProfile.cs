@@ -78,9 +78,9 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
                 }
                 Read(build, hero, key, value, percents);
             }
-            catch (FormatException e)
+            catch (FormatException exception)
             {
-                throw Error(lineNumber, line, e.Message);
+                throw Error(lineNumber, line, exception.Message);
             }
         }
         if (hero == null) throw new FormatException("The profile has no hero line.");
@@ -195,19 +195,19 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     public string Format()
     {
         var build = Build;
-        var s = new StringBuilder();
-        s.AppendLine($"{AplNames.Slug(build.Hero)}=\"{build.Name}\"");
-        s.AppendLine($"primary_stat={Text(build.PrimaryStat)}");
-        if (build.Stamina > 0) s.AppendLine($"stamina={Text(build.Stamina)}");
-        if (build.Armor > 0) s.AppendLine($"armor={Text(build.Armor)}");
-        s.AppendLine($"crit_rating={Text(build.CritRating)}");
-        s.AppendLine($"haste_rating={Text(build.HasteRating)}");
-        s.AppendLine($"expertise_rating={Text(build.ExpertiseRating)}");
-        s.AppendLine($"spirit_rating={Text(build.SpiritRating)}");
-        if (build.StatsFromOldProfile) s.AppendLine("stats_from_old_profile=true");
+        var builder = new StringBuilder();
+        builder.AppendLine($"{AplNames.Slug(build.Hero)}=\"{build.Name}\"");
+        builder.AppendLine($"primary_stat={Text(build.PrimaryStat)}");
+        if (build.Stamina > 0) builder.AppendLine($"stamina={Text(build.Stamina)}");
+        if (build.Armor > 0) builder.AppendLine($"armor={Text(build.Armor)}");
+        builder.AppendLine($"crit_rating={Text(build.CritRating)}");
+        builder.AppendLine($"haste_rating={Text(build.HasteRating)}");
+        builder.AppendLine($"expertise_rating={Text(build.ExpertiseRating)}");
+        builder.AppendLine($"spirit_rating={Text(build.SpiritRating)}");
+        if (build.StatsFromOldProfile) builder.AppendLine("stats_from_old_profile=true");
         if (build.Talents.Count > 0)
         {
-            s.AppendLine($"talents={string.Join('/', build.Talents.Select(id => AplNames.Slug(Catalog.CreateTalent(id)?.Name ?? throw new InvalidOperationException($"Talent {id} is not modeled"))))}");
+            builder.AppendLine($"talents={string.Join('/', build.Talents.Select(id => AplNames.Slug(Catalog.CreateTalent(id)?.Name ?? throw new InvalidOperationException($"Talent {id} is not modeled"))))}");
         }
         var augmentations = build.Augmentations
             .Select(a => (Entry: a, Augmentation: Catalog.CreateAugmentation(a.Id, a.Rank) ?? throw new InvalidOperationException($"Augmentation {a.Id} is not in the catalog")))
@@ -215,53 +215,53 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         void AppendAugmentations<T>(string key) where T : Augmentation
         {
             var ofKind = augmentations.Where(a => a.Augmentation is T).ToList();
-            if (ofKind.Count > 0) s.AppendLine($"{key}={string.Join('/', ofKind.Select(a => $"{AplNames.Slug(a.Augmentation.Name)}:{a.Entry.Rank}"))}");
+            if (ofKind.Count > 0) builder.AppendLine($"{key}={string.Join('/', ofKind.Select(a => $"{AplNames.Slug(a.Augmentation.Name)}:{a.Entry.Rank}"))}");
         }
         AppendAugmentations<Aspect>("aspects");
         AppendAugmentations<Sigil>("sigils");
         AppendAugmentations<ProtectiveEnchant>("protective_enchant");
         if (build.Glyphs.Count > 0)
         {
-            s.AppendLine($"glyphs={string.Join('/', build.Glyphs.Select(g => $"{AplNames.Slug(Catalog.CreateGlyph(g.Id, g.Rank)?.Name ?? throw new InvalidOperationException($"Glyph {g.Id} is not in the catalog"))}:{g.Rank}"))}");
+            builder.AppendLine($"glyphs={string.Join('/', build.Glyphs.Select(g => $"{AplNames.Slug(Catalog.CreateGlyph(g.Id, g.Rank)?.Name ?? throw new InvalidOperationException($"Glyph {g.Id} is not in the catalog"))}:{g.Rank}"))}");
         }
         if (build.GemPower.Count > 0)
         {
-            s.AppendLine($"gems={string.Join('/', build.GemPower.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{Text(g.Value)}"))}");
+            builder.AppendLine($"gems={string.Join('/', build.GemPower.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{Text(g.Value)}"))}");
         }
         if (build.SocketedGemIds.Count > 0)
         {
-            s.AppendLine($"gem_sockets={string.Join('/', build.SocketedGemIds.Select(id => AplNames.Slug((GemItem.Find(id) ?? throw new InvalidOperationException($"Gem {id} is not known")).Name)))}");
+            builder.AppendLine($"gem_sockets={string.Join('/', build.SocketedGemIds.Select(id => AplNames.Slug((GemItem.Find(id) ?? throw new InvalidOperationException($"Gem {id} is not known")).Name)))}");
         }
         if (build.GearGemBonuses.Count > 0)
         {
-            s.AppendLine($"gear_gem_bonuses={string.Join('/', build.GearGemBonuses.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{g.Value}"))}");
+            builder.AppendLine($"gear_gem_bonuses={string.Join('/', build.GearGemBonuses.Select(g => $"{AplNames.Slug(g.Key.ToString())}:{g.Value}"))}");
         }
         if (build.StatEnchants.Count > 0)
         {
-            s.AppendLine($"stat_enchants={string.Join('/', build.StatEnchants.Select(e => $"{(StatEnchant.Find(e.Id) ?? throw new InvalidOperationException($"Stat enchant {e.Id} is not known")).Key}:{Text(e.Rank)}"))}");
+            builder.AppendLine($"stat_enchants={string.Join('/', build.StatEnchants.Select(e => $"{(StatEnchant.Find(e.Id) ?? throw new InvalidOperationException($"Stat enchant {e.Id} is not known")).Key}:{Text(e.Rank)}"))}");
         }
         if (build.StatEnchantCounts.Count > 0)
         {
-            s.AppendLine($"stat_enchant_counts={string.Join('/', build.StatEnchantCounts.Select(e => $"{(StatEnchant.Find(e.Key) ?? throw new InvalidOperationException($"Stat enchant {e.Key} is not known")).Key}:{e.Value}"))}");
+            builder.AppendLine($"stat_enchant_counts={string.Join('/', build.StatEnchantCounts.Select(e => $"{(StatEnchant.Find(e.Key) ?? throw new InvalidOperationException($"Stat enchant {e.Key} is not known")).Key}:{e.Value}"))}");
         }
-        RelicLine(s, "relic1", build.Relic1ItemId);
-        RelicLine(s, "relic2", build.Relic2ItemId);
+        RelicLine(builder, "relic1", build.Relic1ItemId);
+        RelicLine(builder, "relic2", build.Relic2ItemId);
         foreach (int itemId in build.LegendaryItemIds)
         {
             var legendary = Catalog.CreateLegendary(build.Hero, itemId) ?? throw new InvalidOperationException($"Legendary item {itemId} is not in the catalog");
-            s.AppendLine($"legendary={AplNames.Slug(legendary.Name)},id={itemId}");
+            builder.AppendLine($"legendary={AplNames.Slug(legendary.Name)},id={itemId}");
         }
         if (build.WeaponAbilityId != 0)
         {
             var weapon = Catalog.CreateWeapon(build.WeaponAbilityId) ?? throw new InvalidOperationException($"Weapon ability {build.WeaponAbilityId} is not in the catalog");
-            s.AppendLine($"weapon={AplNames.Slug(weapon.Name)}");
+            builder.AppendLine($"weapon={AplNames.Slug(weapon.Name)}");
         }
         if (ActionList.Length > 0)
         {
-            s.AppendLine();
-            s.Append(ActionList);
+            builder.AppendLine();
+            builder.Append(ActionList);
         }
-        return s.ToString();
+        return builder.ToString();
     }
 
     private static FormatException Error(int lineNumber, string line, string problem) =>
@@ -297,11 +297,11 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         return itemId;
     }
 
-    private static void RelicLine(StringBuilder s, string key, int itemId)
+    private static void RelicLine(StringBuilder builder, string key, int itemId)
     {
         if (itemId == 0) return;
         var relic = Catalog.RelicItemOf(itemId) ?? throw new InvalidOperationException($"Relic item {itemId} is not in the catalog");
-        s.AppendLine($"{key}={AplNames.Slug(relic.Name)},id={itemId}");
+        builder.AppendLine($"{key}={AplNames.Slug(relic.Name)},id={itemId}");
     }
 
     /// <summary>"name,key=value,...": the name under the empty key.</summary>

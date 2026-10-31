@@ -92,10 +92,10 @@ public sealed class RemoteSimEngine : ISimEngine
             }
             throw new HttpRequestException("The engine server ended the sim's stream with no result.");
         }
-        catch (Exception e) when (ct.IsCancellationRequested && e is not OperationCanceledException)
+        catch (Exception exception) when (ct.IsCancellationRequested && exception is not OperationCanceledException)
         {
             // A read that the closed connection broke, not a failure of the sim.
-            throw new OperationCanceledException(null, e, ct);
+            throw new OperationCanceledException(null, exception, ct);
         }
     }
 
@@ -118,9 +118,9 @@ public sealed class RemoteSimEngine : ISimEngine
             return await response.Content.ReadFromJsonAsync<T>(Json, timeout.Token)
                 ?? throw new HttpRequestException($"The engine server sent an empty reply to {path}.");
         }
-        catch (OperationCanceledException e) when (!ct.IsCancellationRequested)
+        catch (OperationCanceledException exception) when (!ct.IsCancellationRequested)
         {
-            throw new TimeoutException($"The engine server sent no reply to {path} in {RequestTimeout.TotalMinutes} minutes.", e);
+            throw new TimeoutException($"The engine server sent no reply to {path} in {RequestTimeout.TotalMinutes} minutes.", exception);
         }
     }
 
@@ -142,7 +142,7 @@ public sealed class RemoteSimEngine : ISimEngine
         {
             return JsonNode.Parse(text)?["error"]?.GetValue<string>();
         }
-        catch (Exception e) when (e is JsonException or InvalidOperationException)
+        catch (Exception exception) when (exception is JsonException or InvalidOperationException)
         {
             return null;
         }

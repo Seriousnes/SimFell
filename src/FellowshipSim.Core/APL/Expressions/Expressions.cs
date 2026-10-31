@@ -94,16 +94,16 @@ public class PropertyExpression : IAplExpression
         // SimulationCraft's react is the stacks the player has seen; the sim reacts at once.
         ["react"] = new(new("Stacks (react)", "The same value as stack: the number of stacks of the aura. 0 if the aura is down."), (aura, _) => aura?.Stacks ?? 0),
         ["at_max_stacks"] = new(new("At max stacks", "1 if the aura has its maximum number of stacks. Otherwise 0."),
-            (aura, _) => aura is { } a && a.Stacks >= a.MaxStacks ? 1.0 : 0.0),
+            (aura, _) => aura is { } present && present.Stacks >= present.MaxStacks ? 1.0 : 0.0),
         ["remains"] = new(new("Time remaining", "Seconds until the aura expires. 0 if the aura is down. For an aura that does not expire, the value is a very large number."),
-            (aura, now) => aura is not { } a ? 0.0 : a.ExpiresAt == SimTime.Infinite ? double.MaxValue : (a.ExpiresAt - now).TotalSeconds),
+            (aura, now) => aura is not { } present ? 0.0 : present.ExpiresAt == SimTime.Infinite ? double.MaxValue : (present.ExpiresAt - now).TotalSeconds),
         ["refreshable"] = new(new("Refreshable", $"1 if the aura is down or in the last {RefreshableFraction * 100}% of its duration. Otherwise 0."),
             (aura, now) => IsRefreshable(aura, now) ? 1.0 : 0.0),
     };
 
     /// <summary>True when <paramref name="aura"/> is down or in the last <see cref="RefreshableFraction"/> of its duration.</summary>
     public static bool IsRefreshable(TargetEffect? aura, SimTime now) =>
-        aura is not { } a || (a.ExpiresAt != SimTime.Infinite && (a.ExpiresAt - now).TotalSeconds < RefreshableFraction * a.Duration.TotalSeconds);
+        aura is not { } present || (present.ExpiresAt != SimTime.Infinite && (present.ExpiresAt - now).TotalSeconds < RefreshableFraction * present.Duration.TotalSeconds);
 
     /// <summary>Properties of an ability's cooldown, by the ability's name.</summary>
     private static readonly Dictionary<string, AplDescribed<Func<Hero, Ability?, string, SimTime, double>>> CooldownProperties = new()

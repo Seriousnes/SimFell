@@ -91,7 +91,7 @@ public sealed class FellowshipLogsClient
         return _token;
     }
 
-    private static string Truncate(string s) => s.Length > 500 ? s[..500] + "..." : s;
+    private static string Truncate(string text) => text.Length > 500 ? text[..500] + "..." : text;
 }
 
 public sealed class FellowshipLogsException(string message) : Exception(message);

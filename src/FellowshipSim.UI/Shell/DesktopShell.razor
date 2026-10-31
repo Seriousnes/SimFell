@@ -154,9 +154,9 @@
         Tabs.CloseResults();
     }
 
-    private void OnListKeyDown(KeyboardEventArgs e)
+    private void OnListKeyDown(KeyboardEventArgs keyboard)
     {
-        if (e.Key == "Escape") _listOpen = false;
+        if (keyboard.Key == "Escape") _listOpen = false;
     }
 
     public async ValueTask DisposeAsync()

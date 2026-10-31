@@ -21,9 +21,9 @@ public class BurstingSwallows : Talent
         if (burstingIce == null) return;
         // Every Frost Swallow hit, Flight of the Navir's too.
         var swallows = new FrostSwallows?[] { hero.GetAbility<FrostSwallows>(), hero.GetAbility<FlightOfTheNavir>()?.Swallows };
-        foreach (var s in swallows.OfType<FrostSwallows>())
+        foreach (var swallow in swallows.OfType<FrostSwallows>())
         {
-            s.Hit += (in hit) =>
+            swallow.Hit += (in hit) =>
             {
                 var ctx = hit.SimContext;
                 if (ctx == null || hit.Target == null) return;

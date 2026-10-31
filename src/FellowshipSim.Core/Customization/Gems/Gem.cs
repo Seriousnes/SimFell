@@ -19,7 +19,7 @@ public sealed record GemNode(int Id, int Node, string Name, double RequiredPower
     /// <summary>The node's slot in its row (1-5), shared by its rank I and rank II versions.</summary>
     public int Slot => (Node - 1) % 5 + 1;
     public bool IsRankTwo => Node > 5;
-    public double Value(string key) => Values.TryGetValue(key, out var v) ? v : throw new KeyNotFoundException($"Gem node {Name} has no value {key}");
+    public double Value(string key) => Values.TryGetValue(key, out var value) ? value : throw new KeyNotFoundException($"Gem node {Name} has no value {key}");
 }
 
 /// <summary>
@@ -156,11 +156,11 @@ public abstract class Gem
         if (before != _baseNodes) NodesChanged(_hero, before, null);
     }
 
-    private static StatModifier Inverse(StatModifier m) => m.Op switch
+    private static StatModifier Inverse(StatModifier modifier) => modifier.Op switch
     {
-        ModifierOp.Additive => m with { Value = -m.Value },
-        ModifierOp.MultiplyAdditive => m with { Value = 2.0 - m.Value },
-        _ => m with { Value = 1.0 / m.Value },
+        ModifierOp.Additive => modifier with { Value = -modifier.Value },
+        ModifierOp.MultiplyAdditive => modifier with { Value = 2.0 - modifier.Value },
+        _ => modifier with { Value = 1.0 / modifier.Value },
     };
 
     /// <summary>An aura the old node of a slot granted passes, with its stacks, to the new node's.</summary>
@@ -192,5 +192,5 @@ public abstract class Gem
 
     public GemNode? NodeInSlot(int slot) => Nodes.FirstOrDefault(n => n.Slot == slot);
 
-    protected static Dictionary<string, double> V(params (string Key, double Value)[] values) => values.ToDictionary(v => v.Key, v => v.Value);
+    protected static Dictionary<string, double> NodeValues(params (string Key, double Value)[] values) => values.ToDictionary(v => v.Key, v => v.Value);
 }

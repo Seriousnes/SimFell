@@ -199,16 +199,16 @@
                 {
                     <div @key="row.Key" class="tree-row">
                         <span class="tier">@Roman(row.Key) <span class="meta">- @row.First().Slot.Cost pt</span></span>
-                        @foreach (var t in row)
+                        @foreach (var talentOption in row)
                         {
-                            bool picked = Editor.HasTalent(t.Slot.TalentId);
-                            bool affordable = picked || t.Slot.Cost <= Editor.PointsLeft;
-                            <button @key="t.Slot.TalentId" type="button" class="talent @(picked ? "picked" : "")" aria-pressed="@picked"
-                                    disabled="@(!affordable)" data-tooltip="@TalentTitle(t)"
-                                    @onclick="() => ToggleTalent(t)">
-                                <GameIcon Url="@t.Talent.IconUrl" Size="36" />
-                                <span class="name">@t.Talent.Name</span>
-                                @if (!t.Talent.Modeled)
+                            bool picked = Editor.HasTalent(talentOption.Slot.TalentId);
+                            bool affordable = picked || talentOption.Slot.Cost <= Editor.PointsLeft;
+                            <button @key="talentOption.Slot.TalentId" type="button" class="talent @(picked ? "picked" : "")" aria-pressed="@picked"
+                                    disabled="@(!affordable)" data-tooltip="@TalentTitle(talentOption)"
+                                    @onclick="() => ToggleTalent(talentOption)">
+                                <GameIcon Url="@talentOption.Talent.IconUrl" Size="36" />
+                                <span class="name">@talentOption.Talent.Name</span>
+                                @if (!talentOption.Talent.Modeled)
                                 {
                                     <span class="badge">not modeled</span>
                                 }
@@ -222,26 +222,26 @@
         <Card Title="Gear">
                 <h3 class="section">Weapon</h3>
                 <div class="chips">
-                    @foreach (var w in Catalog.Weapons)
+                    @foreach (var weapon in Catalog.Weapons)
                     {
-                        bool picked = Editor.Weapon == w.Id;
-                        <button @key="w.Id" type="button" class="chip @(picked ? "picked" : "")" aria-pressed="@picked"
-                                @onclick="() => Set(() => Editor.Weapon = picked ? null : w.Id)">
-                            <GameIcon Url="@w.IconUrl" Size="24" />
-                            @w.Name
+                        bool picked = Editor.Weapon == weapon.Id;
+                        <button @key="weapon.Id" type="button" class="chip @(picked ? "picked" : "")" aria-pressed="@picked"
+                                @onclick="() => Set(() => Editor.Weapon = picked ? null : weapon.Id)">
+                            <GameIcon Url="@weapon.IconUrl" Size="24" />
+                            @weapon.Name
                         </button>
                     }
                 </div>
                 <h3 class="section">Legendary</h3>
                 <div class="chips">
-                    @foreach (var l in Catalog.Legendaries)
+                    @foreach (var legendary in Catalog.Legendaries)
                     {
-                        bool picked = Editor.Legendary == l.Id;
-                        <button @key="l.Id" type="button" class="chip @(picked ? "picked" : "")" aria-pressed="@picked"
-                                data-tooltip="@(l.Modeled ? null : "Not modeled yet")" @onclick="() => Set(() => Editor.Legendary = picked ? null : l.Id)">
-                            <GameIcon Url="@l.IconUrl" Size="24" />
-                            @l.Name
-                            @if (!l.Modeled)
+                        bool picked = Editor.Legendary == legendary.Id;
+                        <button @key="legendary.Id" type="button" class="chip @(picked ? "picked" : "")" aria-pressed="@picked"
+                                data-tooltip="@(legendary.Modeled ? null : "Not modeled yet")" @onclick="() => Set(() => Editor.Legendary = picked ? null : legendary.Id)">
+                            <GameIcon Url="@legendary.IconUrl" Size="24" />
+                            @legendary.Name
+                            @if (!legendary.Modeled)
                             {
                                 <span class="badge">not modeled</span>
                             }
@@ -250,14 +250,14 @@
                 </div>
             <h3 class="section counted">Relics <span class="count" data-tooltip="Relics worn">@Editor.RelicCount / @BuildEditor.RelicSlots</span></h3>
                 <div class="chips">
-                    @foreach (var r in Catalog.Relics)
+                    @foreach (var relic in Catalog.Relics)
                     {
-                        bool worn = Editor.HasRelic(r.ItemId);
+                        bool worn = Editor.HasRelic(relic.ItemId);
                         bool full = !worn && Editor.RelicCount >= BuildEditor.RelicSlots;
-                        <button @key="r.ItemId" type="button" class="chip @(worn ? "picked" : "")" aria-pressed="@worn" disabled="@full"
-                                data-tooltip="@(full ? $"Take off one of the {BuildEditor.RelicSlots} first" : r.Name)" @onclick="() => Set(() => Editor.ToggleRelic(r.ItemId))">
-                            <GameIcon Url="@r.IconUrl" Size="24" />
-                            @r.PassiveName
+                        <button @key="relic.ItemId" type="button" class="chip @(worn ? "picked" : "")" aria-pressed="@worn" disabled="@full"
+                                data-tooltip="@(full ? $"Take off one of the {BuildEditor.RelicSlots} first" : relic.Name)" @onclick="() => Set(() => Editor.ToggleRelic(relic.ItemId))">
+                            <GameIcon Url="@relic.IconUrl" Size="24" />
+                            @relic.PassiveName
                         </button>
                     }
                 </div>
@@ -266,23 +266,23 @@
         <div class="pair even">
             <Card Title="Stat enchants" CountContent="@GearCount(EnchantSlot.StatEnchants)" CountTitle="@GearTitle(EnchantSlot.StatEnchants)" Over="@GearOver(EnchantSlot.StatEnchants)">
                 <div class="enchants">
-                    @foreach (var e in Catalog.StatEnchants)
+                    @foreach (var statEnchant in Catalog.StatEnchants)
                     {
-                        double rating = Editor.StatEnchantRating(e.Enchant.Id);
-                        int count = Editor.StatEnchantCount(e.Enchant.Id);
+                        double rating = Editor.StatEnchantRating(statEnchant.Enchant.Id);
+                        int count = Editor.StatEnchantCount(statEnchant.Enchant.Id);
                         bool full = Editor.Room(EnchantSlot.StatEnchants) <= 0;
-                        <div @key="e.Enchant.Id" class="enchant @(rating > 0 ? "taken" : "")">
-                            <GameIcon Url="@e.IconUrl" Size="34" />
+                        <div @key="statEnchant.Enchant.Id" class="enchant @(rating > 0 ? "taken" : "")">
+                            <GameIcon Url="@statEnchant.IconUrl" Size="34" />
                             <span class="enchant-name">
-                                @e.Name
-                                <span class="enchant-stats">@e.StatsText@(rating > 0 ? $" · {rating.ToString("0.#", CultureInfo.CurrentCulture)} rating" : "")</span>
+                                @statEnchant.Name
+                                <span class="enchant-stats">@statEnchant.StatsText@(rating > 0 ? $" · {rating.ToString("0.#", CultureInfo.CurrentCulture)} rating" : "")</span>
                             </span>
                             <span class="stepper">
-                                <button type="button" class="icon-button" aria-label="@($"One fewer {e.Name}")" disabled="@(count <= 0)"
-                                        @onclick="() => Set(() => Editor.SetStatEnchantCount(e.Enchant, count - 1))">−</button>
-                                <input type="number" min="0" step="1" aria-label="@EnchantLabel(e)" @bind:get="count" @bind:set="v => Set(() => Editor.SetStatEnchantCount(e.Enchant, v))" />
-                                <button type="button" class="icon-button" aria-label="@($"One more {e.Name}")" disabled="@full" data-tooltip="@(full ? FullText(EnchantSlot.StatEnchants) : null)"
-                                        @onclick="() => Set(() => Editor.SetStatEnchantCount(e.Enchant, count + 1))">+</button>
+                                <button type="button" class="icon-button" aria-label="@($"One fewer {statEnchant.Name}")" disabled="@(count <= 0)"
+                                        @onclick="() => Set(() => Editor.SetStatEnchantCount(statEnchant.Enchant, count - 1))">−</button>
+                                <input type="number" min="0" step="1" aria-label="@EnchantLabel(statEnchant)" @bind:get="count" @bind:set="v => Set(() => Editor.SetStatEnchantCount(statEnchant.Enchant, v))" />
+                                <button type="button" class="icon-button" aria-label="@($"One more {statEnchant.Name}")" disabled="@full" data-tooltip="@(full ? FullText(EnchantSlot.StatEnchants) : null)"
+                                        @onclick="() => Set(() => Editor.SetStatEnchantCount(statEnchant.Enchant, count + 1))">+</button>
                             </span>
                         </div>
                     }
@@ -315,14 +315,14 @@
                         <div @key="color" class="gem-row @(Editor.Gem(color) > 0 ? "taken" : "")">
                             <span class="gem-name">@color</span>
                             <span class="gem-picks">
-                                @foreach (var g in GemItem.All.Where(g => g.Color == color))
+                                @foreach (var gemItem in GemItem.All.Where(g => g.Color == color))
                                 {
-                                    int count = Editor.SocketedCount(g.Id);
-                                    <button @key="g.Id" type="button" class="gem-pick @(count > 0 ? "picked" : "")" disabled="@socketsFull"
-                                            data-tooltip="@(socketsFull ? "Every socket is filled: take a gem out first" : $"Socket a {g.Name} (+{g.Power})")"
-                                            @onclick="() => Set(() => Editor.AddGem(g.Id))">
-                                        <GameIcon Url="@BuildCatalog.GemIconUrl(g)" Size="26" />
-                                        <span class="gem-pick-power">@g.Power</span>
+                                    int count = Editor.SocketedCount(gemItem.Id);
+                                    <button @key="gemItem.Id" type="button" class="gem-pick @(count > 0 ? "picked" : "")" disabled="@socketsFull"
+                                            data-tooltip="@(socketsFull ? "Every socket is filled: take a gem out first" : $"Socket a {gemItem.Name} (+{gemItem.Power})")"
+                                            @onclick="() => Set(() => Editor.AddGem(gemItem.Id))">
+                                        <GameIcon Url="@BuildCatalog.GemIconUrl(gemItem)" Size="26" />
+                                        <span class="gem-pick-power">@gemItem.Power</span>
                                         @if (count > 0)
                                         {
                                             <span class="gem-count">×@count</span>
@@ -364,14 +364,14 @@
             </Card>
             <Card Title="Protective enchants" Count="@SlotCount(EnchantSlot.Protective)" CountTitle="@SlotTitle(EnchantSlot.Protective)" Over="@SlotOver(EnchantSlot.Protective)">
                 <div class="chips">
-                    @foreach (var p in Catalog.ProtectiveEnchants)
+                    @foreach (var protectiveEnchant in Catalog.ProtectiveEnchants)
                     {
-                        bool taken = Editor.AugmentationRank(p.Id) > 0;
+                        bool taken = Editor.AugmentationRank(protectiveEnchant.Id) > 0;
                         bool full = !taken && Editor.Room(EnchantSlot.Protective) <= 0;
-                        <button @key="p.Id" type="button" class="chip @(taken ? "picked" : "")" aria-pressed="@taken" disabled="@full"
-                                data-tooltip="@(full ? FullText(EnchantSlot.Protective) : null)" @onclick="() => Set(() => Editor.ToggleProtectiveEnchant(p))">
-                            <GameIcon Url="@p.IconUrl" Size="24" />
-                            @p.Name
+                        <button @key="protectiveEnchant.Id" type="button" class="chip @(taken ? "picked" : "")" aria-pressed="@taken" disabled="@full"
+                                data-tooltip="@(full ? FullText(EnchantSlot.Protective) : null)" @onclick="() => Set(() => Editor.ToggleProtectiveEnchant(protectiveEnchant))">
+                            <GameIcon Url="@protectiveEnchant.IconUrl" Size="24" />
+                            @protectiveEnchant.Name
                         </button>
                     }
                 </div>
@@ -425,9 +425,9 @@
             _heroes = await Engine.GetHeroesAsync();
             await LoadSavedListAsync(force: true);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.BuildStatus = MessageState.Error(e.Message);
+            State.BuildStatus = MessageState.Error(exception.Message);
         }
     }
 
@@ -439,16 +439,16 @@
             await LoadSavedListAsync();
             StateHasChanged();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.BuildStatus = MessageState.Error(e.Message);
+            State.BuildStatus = MessageState.Error(exception.Message);
             StateHasChanged();
         }
     });
 
     public void Dispose() => State.Changed -= OnStateChanged;
 
-    private static string EnchantLabel(StatEnchantOption e) => $"{e.Name} count";
+    private static string EnchantLabel(StatEnchantOption statEnchant) => $"{statEnchant.Name} count";
 
     // A card's count against its limit ("4 / 12"), what it counts, and whether it is over.
     private string SlotCount(EnchantSlot slot) => $"{Editor.Used(slot)} / {Editor.Limit(slot)}";
@@ -487,7 +487,7 @@
             ? $"No slot left that takes {EnchantSlots.Name(slot)}: take off another enchant to make room"
             : $"No armor slot left for {EnchantSlots.Name(slot)}: stat enchants and gems fill the other pieces first, then armor";
 
-    private static string TalentTitle(TalentOption t) => $"{t.Slot.Code}: {t.Talent.Name}" + (t.Talent.Modeled ? "" : " (not modeled)");
+    private static string TalentTitle(TalentOption talentOption) => $"{talentOption.Slot.Code}: {talentOption.Talent.Name}" + (talentOption.Talent.Modeled ? "" : " (not modeled)");
 
     private static string Roman(int row) => row switch { 1 => "I", 2 => "II", 3 => "III", 4 => "IV", 5 => "V", 6 => "VI", _ => row.ToString() };
 
@@ -516,9 +516,9 @@
 
     private bool IsSupported(string hero) => _heroes.Contains(hero, StringComparer.OrdinalIgnoreCase);
 
-    private void OnHeroKeyDown(KeyboardEventArgs e)
+    private void OnHeroKeyDown(KeyboardEventArgs keyboard)
     {
-        if (e.Key == "Escape") _heroMenuOpen = false;
+        if (keyboard.Key == "Escape") _heroMenuOpen = false;
     }
 
     private Task PickHeroFromMenu(string hero)
@@ -543,9 +543,9 @@
         {
             await LoadSavedListAsync(force: true);
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.BuildStatus = MessageState.Error(e.Message);
+            State.BuildStatus = MessageState.Error(exception.Message);
         }
         await Changed();
     }
@@ -626,7 +626,7 @@
             await JS.InvokeVoidAsync("navigator.clipboard.writeText", ShareLink);
             State.BuildStatus = MessageState.Ok("Copied the build's share link. Opening it, or pasting it into Import, loads the build.");
         }
-        catch (Exception e) when (e is JSException or TaskCanceledException or InvalidOperationException)
+        catch (Exception exception) when (exception is JSException or TaskCanceledException or InvalidOperationException)
         {
             State.BuildStatus = new MessageState("Select the link below and copy it. Opening it, or pasting it into Import, loads the build.");
         }
@@ -641,7 +641,7 @@
             await JS.InvokeVoidAsync("navigator.clipboard.writeText", ExportText);
             State.BuildStatus = MessageState.Ok("Copied the build to the clipboard. Import takes it as a profile.");
         }
-        catch (Exception e) when (e is JSException or TaskCanceledException or InvalidOperationException)
+        catch (Exception exception) when (exception is JSException or TaskCanceledException or InvalidOperationException)
         {
             State.BuildStatus = new MessageState("Select the build's text below and copy it. Import takes it as a profile.");
         }
@@ -702,9 +702,9 @@
             State.BuildStatus = MessageState.Ok($"Loaded {name}.");
             await Changed();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.BuildStatus = MessageState.Error(e.Message);
+            State.BuildStatus = MessageState.Error(exception.Message);
         }
     }
 
@@ -725,9 +725,9 @@
             State.MarkBuildClean();
             State.BuildStatus = MessageState.Ok($"Saved {name} to your builds.");
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.BuildStatus = MessageState.Error(e.Message);
+            State.BuildStatus = MessageState.Error(exception.Message);
         }
     }
 
@@ -741,9 +741,9 @@
             State.SavedName = "";
             State.BuildStatus = MessageState.Ok($"Deleted {name}. The editor keeps the build until you change it.");
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            State.BuildStatus = MessageState.Error(e.Message);
+            State.BuildStatus = MessageState.Error(exception.Message);
         }
     }
 }

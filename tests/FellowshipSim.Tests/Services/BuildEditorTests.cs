@@ -68,7 +68,7 @@ public sealed class BuildEditorTests : IDisposable
         Assert.Equal(Hero.TalentPoints, editor.PointsLeft);
 
         // Every talent of rows 5 (3 points each) and 1 (2 each) is 15 points: the last one is refused.
-        foreach (var t in talents.Where(t => t.Slot.Row == 5).Concat(talents.Where(t => t.Slot.Row == 1).Take(2))) Assert.True(editor.ToggleTalent(t));
+        foreach (var talent in talents.Where(t => t.Slot.Row == 5).Concat(talents.Where(t => t.Slot.Row == 1).Take(2))) Assert.True(editor.ToggleTalent(talent));
         Assert.Equal(1, editor.PointsLeft);
         Assert.False(editor.ToggleTalent(talents.Where(t => t.Slot.Row == 1).Last()));
     }
@@ -149,17 +149,17 @@ public sealed class BuildEditorTests : IDisposable
     public async Task Saved_Builds_Belong_To_Their_Visitor()
     {
         var profiles = new ProfileStore(new DiskBlobStore(_data));
-        var a = new Visitor("a1b2", OwnsDataFolder: false);
-        var b = new Visitor("c3d4", OwnsDataFolder: false);
-        await profiles.SaveAsync(a, new ProfileEntry("Rime", "talons"), "rime=\"talons\"");
+        var firstVisitor = new Visitor("a1b2", OwnsDataFolder: false);
+        var secondVisitor = new Visitor("c3d4", OwnsDataFolder: false);
+        await profiles.SaveAsync(firstVisitor, new ProfileEntry("Rime", "talons"), "rime=\"talons\"");
 
-        Assert.Equal([new ProfileEntry("Rime", "talons")], await profiles.ListAsync(a, ["Rime"]));
-        Assert.Empty(await profiles.ListAsync(b, ["Rime"]));
-        Assert.Equal("rime=\"talons\"", await profiles.ReadAsync(a, new ProfileEntry("Rime", "talons")));
-        await Assert.ThrowsAsync<ArgumentException>(() => profiles.SaveAsync(a, new ProfileEntry("Rime", "../x"), ""));
+        Assert.Equal([new ProfileEntry("Rime", "talons")], await profiles.ListAsync(firstVisitor, ["Rime"]));
+        Assert.Empty(await profiles.ListAsync(secondVisitor, ["Rime"]));
+        Assert.Equal("rime=\"talons\"", await profiles.ReadAsync(firstVisitor, new ProfileEntry("Rime", "talons")));
+        await Assert.ThrowsAsync<ArgumentException>(() => profiles.SaveAsync(firstVisitor, new ProfileEntry("Rime", "../x"), ""));
 
-        await profiles.DeleteAsync(a, new ProfileEntry("Rime", "talons"));
-        Assert.Empty(await profiles.ListAsync(a, ["Rime"]));
+        await profiles.DeleteAsync(firstVisitor, new ProfileEntry("Rime", "talons"));
+        Assert.Empty(await profiles.ListAsync(firstVisitor, ["Rime"]));
     }
 
     public void Dispose()

@@ -36,9 +36,9 @@
             }
             _error = "This link has no build in it.";
         }
-        catch (FormatException e)
+        catch (FormatException exception)
         {
-            _error = e.Message;
+            _error = exception.Message;
         }
         StateHasChanged();
     }

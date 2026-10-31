@@ -181,20 +181,20 @@ public class SimJobQueueTests
     {
         var queue = new SimJobQueue(new SimJobQueueOptions { MaxConcurrentJobs = 1 });
         var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var a = queue.Enqueue("a", SimJobKind.Sim, "a's sim", _ => gate.Task);
-        var b = queue.Enqueue("b", SimJobKind.Sim, "b's sim", _ => Task.FromResult(2));
+        var firstJob = queue.Enqueue("a", SimJobKind.Sim, "a's sim", _ => gate.Task);
+        var secondJob = queue.Enqueue("b", SimJobKind.Sim, "b's sim", _ => Task.FromResult(2));
 
-        Assert.Equal([a.Id], queue.List("a").Select(j => j.Id));
-        Assert.Equal([b.Id], queue.List("b").Select(j => j.Id));
-        Assert.Null(queue.Get("b", a.Id));
-        Assert.False(queue.Cancel("b", a.Id));
-        Assert.False(queue.Remove("b", a.Id));
-        Assert.Equal(SimJobStatus.Running, a.Status);
+        Assert.Equal([firstJob.Id], queue.List("a").Select(j => j.Id));
+        Assert.Equal([secondJob.Id], queue.List("b").Select(j => j.Id));
+        Assert.Null(queue.Get("b", firstJob.Id));
+        Assert.False(queue.Cancel("b", firstJob.Id));
+        Assert.False(queue.Remove("b", firstJob.Id));
+        Assert.Equal(SimJobStatus.Running, firstJob.Status);
 
         gate.SetResult(1);
-        await Until(queue, b, j => j.IsFinished);
-        Assert.Equal(SimJobStatus.Done, a.Status);
-        Assert.Equal(SimJobStatus.Done, b.Status);
+        await Until(queue, secondJob, j => j.IsFinished);
+        Assert.Equal(SimJobStatus.Done, firstJob.Status);
+        Assert.Equal(SimJobStatus.Done, secondJob.Status);
     }
 
     [Fact]

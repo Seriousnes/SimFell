@@ -72,12 +72,12 @@ public class AmethystSplinters : Aspect
                 fight = ctx;
                 splinters.Clear();
             }
-            if (!splinters.TryGetValue(dmg.Target, out var s)) splinters[dmg.Target] = s = new Splinter(hero, dmg.Target, logId);
+            if (!splinters.TryGetValue(dmg.Target, out var splinter)) splinters[dmg.Target] = splinter = new Splinter(hero, dmg.Target, logId);
             // The damage not yet dealt (the time left in unhasted ticks) carries over into the new 8 seconds.
-            double left = s.EndsAt > now ? s.TickValue * (s.EndsAt - now).TotalSeconds / TickPeriodSeconds : 0.0;
-            s.TickValue = (left + dmg.Amount * share) / BaseTicks;
-            s.EndsAt = now + SimTime.FromSeconds(DurationSeconds);
-            s.NextTick ??= HastedTimer.StartPeriod(ctx, hero, TickPeriodSeconds, s.Tick, DotName, logId);
+            double left = splinter.EndsAt > now ? splinter.TickValue * (splinter.EndsAt - now).TotalSeconds / TickPeriodSeconds : 0.0;
+            splinter.TickValue = (left + dmg.Amount * share) / BaseTicks;
+            splinter.EndsAt = now + SimTime.FromSeconds(DurationSeconds);
+            splinter.NextTick ??= HastedTimer.StartPeriod(ctx, hero, TickPeriodSeconds, splinter.Tick, DotName, logId);
         };
     }
 }

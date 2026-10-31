@@ -58,9 +58,9 @@ public static class AplDocument
             {
                 syntax = AplParser.ParseActionSyntax(line);
             }
-            catch (ParseException e)
+            catch (ParseException exception)
             {
-                throw new ParseException($"APL line {i + 1}: {e.Message}", e.ErrorPosition, e);
+                throw new ParseException($"APL line {i + 1}: {exception.Message}", exception.ErrorPosition, exception);
             }
             bool listAction = AplListActions.Parse(syntax.Name) != null;
             var arguments = syntax.Arguments
@@ -150,9 +150,9 @@ public static class AplDocument
             if (syntax.Condition == null && syntax.TargetIf == null) return syntax.Arguments;
             errors.Add(new AplDocumentError(action, "arguments", $"Write `{AplActionLine.ConditionKey}` in Condition and `{AplActionLine.TargetIfKey}` in Target."));
         }
-        catch (ParseException e)
+        catch (ParseException exception)
         {
-            errors.Add(new AplDocumentError(action, "arguments", e.Message));
+            errors.Add(new AplDocumentError(action, "arguments", exception.Message));
         }
         return [];
     }
@@ -164,9 +164,9 @@ public static class AplDocument
         {
             return AplParser.ParseExpression(text);
         }
-        catch (ParseException e)
+        catch (ParseException exception)
         {
-            errors.Add(new AplDocumentError(action, field, e.Message));
+            errors.Add(new AplDocumentError(action, field, exception.Message));
             return null;
         }
     }

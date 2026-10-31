@@ -196,10 +196,10 @@ public sealed class Mara : Hero
     {
         _energyRegeneratedAt = ctx.CurrentTime;
         _energyRate = EnergyRate(ctx.CurrentTime);
-        void Tick(SimulationContext c)
+        void Tick(SimulationContext tickContext)
         {
-            RegenerateEnergy(c.CurrentTime);
-            c.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, "Energy regeneration");
+            RegenerateEnergy(tickContext.CurrentTime);
+            tickContext.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, "Energy regeneration");
         }
         ctx.Schedule(SimTime.FromSeconds(EnergyTickSeconds), Tick, "Energy regeneration");
     }

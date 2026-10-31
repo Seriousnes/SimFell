@@ -35,17 +35,17 @@ public sealed record EngineState(double Time, EngineHero Hero, EngineTarget? Tar
             target.Auras.Fold(StatType.IncomingDamageMultiplier, 1.0, now));
 
         EngineHit? hitState = null;
-        if (hit is { } h)
+        if (hit is { } hitRequest)
         {
             // The pending hit is the one being released or landed (a hit check runs inside ResolveHit or Land).
-            var pending = ctx.CurrentHit is { } current && current.AbilityId == h.AbilityId && current.Target == h.Target ? current : null;
+            var pending = ctx.CurrentHit is { } current && current.AbilityId == hitRequest.AbilityId && current.Target == hitRequest.Target ? current : null;
             hitState = new EngineHit(
-                h.AbilityName, h.AbilityId, h.BaseDamage,
+                hitRequest.AbilityName, hitRequest.AbilityId, hitRequest.BaseDamage,
                 pending?.Ability != null ? pending.DamageMultiplier : null,
                 pending?.Ability is { } ability ? hero.AbilityDamageMultiplier(ability, now) : null,
-                hero.DamageMultiplierAgainst(h.Target, now),
-                h.CritChance, pending?.CastCritChance, pending?.ExtraCritChance, h.CritMultiplier, h.TickFraction, pending?.Snapshot,
-                releasedAt ?? h.Time.TotalSeconds, landedAt);
+                hero.DamageMultiplierAgainst(hitRequest.Target, now),
+                hitRequest.CritChance, pending?.CastCritChance, pending?.ExtraCritChance, hitRequest.CritMultiplier, hitRequest.TickFraction, pending?.Snapshot,
+                releasedAt ?? hitRequest.Time.TotalSeconds, landedAt);
         }
 
         EngineCast? castState = null;

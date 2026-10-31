@@ -73,12 +73,12 @@ public sealed record CliOptions(string ProfilePath, SimSettings Settings, CliOut
     }
 
     private static int Integer(string name, string value, int min) =>
-        int.TryParse(value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int n) && n >= min
-            ? n
+        int.TryParse(value, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out int number) && number >= min
+            ? number
             : throw new CliUsageException(min == int.MinValue ? $"{name} is a whole number, not '{value}'." : $"{name} is a whole number of at least {min}, not '{value}'.");
 
     private static double Seconds(string name, string value) =>
-        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double s) && s > 0 && double.IsFinite(s)
-            ? s
+        double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double seconds) && seconds > 0 && double.IsFinite(seconds)
+            ? seconds
             : throw new CliUsageException($"{name} is a number of seconds above 0, not '{value}'.");
 }
