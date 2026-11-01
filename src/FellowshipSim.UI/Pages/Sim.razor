@@ -9,6 +9,7 @@
 @inject ActionListStore Store
 @inject Visitor Visitor
 @inject CharacterImport Characters
+@inject IDungeonImport Dungeons
 @inject IAppViews Views
 @inject SimResultLibrary Results
 @inject ProfileStore Profiles
@@ -43,8 +44,9 @@
     @switch (State.Tab)
     {
         case SimTab.Import:
-            <LogsSignInPrompt Purpose="to import a hero from a log" />
-            <ImportCard Title="Import Hero" PickHint="Pick a player, then Import to use their build." BuildOnlyHeroes="true" OnPlayer="ImportPlayerAsync" />
+            <LogsSignInPrompt Purpose="to import a hero or a dungeon from a log" />
+            <ImportCard Title="Import from a log" PickHint="Pick a player, switch on their build, the fight's dungeon with their hero share, or both, then Import."
+                        BuildOnlyHeroes="true" OnImport="ImportFromLogAsync" />
             <Card Title="Import a .simc profile or share link">
                 <p class="hint">Load a <code>.simc</code> file, or paste its text or a build's share link. Its build goes to the Hero tab, and a profile's action list, if it has one, to Advanced.</p>
                 <InputFile class="file" accept=".simc,.txt" OnChange="LoadFileAsync" />
@@ -217,7 +219,7 @@
         SimExtra.Finder => string.Format(CultureInfo.CurrentCulture, "{0} · {1} finder · {2} × {3:N0} fights",
             Capital(TargetsText()), FinderCard.Title(State.Finder), CompareCard.Runs(FinderRuns()), State.Iterations),
         _ => string.Format(CultureInfo.CurrentCulture, "{0} ({1}) · {2} · {3} s · {4:N0} fights · {5} APL",
-            State.Build.Name, State.Build.Hero, TargetsText(), State.DurationSeconds, State.Iterations, ActionListName()),
+            State.Build.Name, State.Build.Hero, TargetsText(), State.FightSeconds, State.Iterations, ActionListName()),
     };
 
     private int FinderRuns()
@@ -234,7 +236,8 @@
 
     private static string Capital(string text) => text.Length == 0 ? text : char.ToUpperInvariant(text[0]) + text[1..];
 
-    private string TargetsText() => State.Mode == SimMode.SingleTarget ? "single target" : $"{State.AoeTargets} targets";
+    private string TargetsText() => State.Mode == SimMode.Dungeon ? $"dungeon {State.Dungeon.Name}"
+        : State.TrainingDummies == 1 ? "1 training dummy" : $"{State.TrainingDummies} training dummies";
 
     private static string N(double value) => value.ToString("0.#", CultureInfo.CurrentCulture);
 
@@ -250,25 +253,44 @@
         }
     }
 
-    private async Task ImportPlayerAsync(PickedPlayer picked)
+    // The build, then the dungeon, of the player picked; the build's tab shows when it is imported, else the dungeon's.
+    private async Task ImportFromLogAsync(LogImport import)
     {
-        State.ImportStatus = new MessageState($"Reading {picked.Player.Name}'s character...");
-        StateHasChanged();
+        var picked = import.Picked;
+        var progress = new Progress<string>(m => { State.ImportStatus = new MessageState($"{m}..."); InvokeAsync(StateHasChanged); });
+        bool built = false;
         try
         {
-            var progress = new Progress<string>(m => { State.ImportStatus = new MessageState($"{m}..."); InvokeAsync(StateHasChanged); });
-            var build = await Characters.ReadAsync(picked.ReportCode, picked.Fight.Id, picked.Player, progress);
-            UseBuild(build, $"{picked.Player.Name}'s {picked.Player.Hero} in {picked.Fight.Name}");
-            if (!picked.CurrentPatch)
+            if (import.Build)
             {
-                State.ImportStatus = State.BuildStatus = new MessageState(
-                    $"{State.ImportStatus.Text} This log is from before patch {FellowshipSim.Logs.GamePatch.Current.Name}: check its talents, traits and blessings.",
-                    MessageKind.Warning);
+                State.ImportStatus = new MessageState($"Reading {picked.Player.Name}'s character...");
+                StateHasChanged();
+                var build = await Characters.ReadAsync(picked.ReportCode, picked.Fight.Id, picked.Player, progress);
+                UseBuild(build);
+                if (!picked.CurrentPatch)
+                {
+                    string oldPatch = $"This log is from before patch {FellowshipSim.Logs.GamePatch.Current.Name}: check its talents, traits and blessings.";
+                    State.BuildStatus = new MessageState(State.BuildStatus.Text.Length > 0 ? $"{State.BuildStatus.Text} {oldPatch}" : oldPatch, MessageKind.Warning);
+                }
+                built = true;
             }
+            if (import.Dungeon)
+            {
+                State.ImportStatus = new MessageState($"Reading the dungeon of {picked.Fight.Name}...");
+                StateHasChanged();
+                var dungeon = await Dungeons.ReadAsync(picked.ReportCode, picked.Fight.Id, picked.Player.Id, progress);
+                // A saved dungeon's name is a file name.
+                State.Dungeon = dungeon with { Name = ActionListStore.ValidName(dungeon.Name, "Imported dungeon") };
+                State.DungeonEditor.CloseAll();
+                State.DungeonValue = "";
+                State.Mode = SimMode.Dungeon;
+                State.Tab = import.Build ? SimTab.Hero : SimTab.Modes;
+            }
+            State.ImportStatus = MessageState.None;
         }
         catch (Exception e)
         {
-            State.ImportStatus = MessageState.Error(e.Message);
+            State.ImportStatus = MessageState.Error(built ? $"The build is imported. The dungeon: {e.Message}" : e.Message);
         }
     }
 
@@ -292,17 +314,19 @@
         {
             if (BuildShareLink.TryRead(State.ProfileText) is { } shared)
             {
-                UseBuild(shared, "the share link");
+                UseBuild(shared);
                 return Task.CompletedTask;
             }
             var profile = SimcProfile.Parse(State.ProfileText);
+            // The build first: a build of another hero puts in that hero's list, and the profile's own list replaces it.
+            UseBuild(profile.Build);
             if (profile.ActionList.Trim().Length > 0)
             {
                 State.ActionListText = profile.ActionList;
                 State.ActionListName = "the profile's list";
                 State.ActionListValue = "";
             }
-            UseBuild(profile.Build, profile.ActionList.Trim().Length > 0 ? "the profile, with its action list" : "the profile");
+            State.ImportStatus = MessageState.None;
         }
         catch (FormatException e)
         {
@@ -311,15 +335,17 @@
         return Task.CompletedTask;
     }
 
-    private void UseBuild(CharacterBuild build, string from) => State.UseBuild(build, from);
+    private void UseBuild(CharacterBuild build) => State.UseBuild(build);
 
     // The fights every run of a sim has.
-    private SimSettings Settings() => new(State.Iterations, State.DurationSeconds, State.Targets,
+    private SimSettings Settings() => new(State.Iterations, State.FightSeconds, State.Targets,
         DegreeOfParallelism: Math.Clamp(State.Threads, 1, MaxThreads),
         LengthVariance: State.VaryLength ? State.LengthVariancePercent / 100 : 0,
         HealthFollowsTime: true,
         StartingSpirit: State.StartWithSpirit ? State.StartingSpirit : 0,
-        Boss: State.Boss);
+        Boss: State.Boss,
+        Dungeon: State.Mode == SimMode.Dungeon ? State.Dungeon : null,
+        HeroShareVariance: State.VaryHeroShare ? State.HeroShareVariancePercent / 100 : 0);
 
     private async Task StartAsync()
     {
@@ -328,9 +354,14 @@
             State.Status = MessageState.Error($"{State.Build.Hero} is not in the engine yet: their builds can be made, saved and shared, but not simmed.");
             return;
         }
-        if (State.Iterations < 1 || State.DurationSeconds <= 0 || State.Targets < 1)
+        if (State.Iterations < 1 || State.FightSeconds <= 0 || State.Targets < 1)
         {
-            State.Status = MessageState.Error("Iterations and targets are at least 1, and the duration is above 0 seconds.");
+            State.Status = MessageState.Error("Iterations and training dummies are at least 1, and the duration is above 0 seconds.");
+            return;
+        }
+        if (State.Mode == SimMode.Dungeon && State.Dungeon.Problem() is { } problem)
+        {
+            State.Status = MessageState.Error(problem);
             return;
         }
         try
@@ -395,7 +426,7 @@
                 : (await _savedLists.ReadAsync(list)).Text;
             runs.Add(Plan(row.Saved?.Name ?? $"{build.Name} (current)", listName, build, listName, row.ListValue, listText));
         }
-        Enqueue($"Compare: {CompareCard.Runs(runs.Count)}, {TargetsText()}, {N(State.DurationSeconds)} s", runs);
+        Enqueue($"Compare: {CompareCard.Runs(runs.Count)}, {TargetsText()}, {N(State.FightSeconds)} s", runs);
     }
 
     private void StartFinder()
@@ -464,8 +495,8 @@
             return;
         }
         var settings = Settings();
-        string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4} {5}",
-            profile.Build.Name, profile.Build.Hero, State.Iterations, State.DurationSeconds, State.Targets, State.Targets == 1 ? "target" : "targets");
+        string title = string.Format(CultureInfo.CurrentCulture, "{0} ({1}): {2:N0} iterations, {3} s, {4}",
+            profile.Build.Name, profile.Build.Hero, State.Iterations, N(State.FightSeconds), TargetsText());
         // The job outlives this page's circuit, so the work captures the engine, the results library and values alone.
         var (engine, results, visitor) = (Engine, Results, Jobs.Visitor);
         var job = Jobs.Enqueue(SimJobKind.Sim, title, async c =>
