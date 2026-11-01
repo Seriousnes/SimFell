@@ -74,7 +74,8 @@ public class MonteCarloSeedTests
 
     /// <summary>
     /// Totals of fights 1-4 of each hero's default action list, captured again when sims began rolling crits and damage
-    /// spread (before, each hit dealt its average and counted as a crit only above a 50% chance).
+    /// spread (before, each hit dealt its average and counted as a crit only above a 50% chance). Tariq's again once
+    /// Schism had bad luck protection.
     /// </summary>
     [Theory]
     [InlineData("Rime", 120, 3, new[] { 2984198.1661979645, 3145794.8408500189, 2661851.3885713113, 2836533.0049490873 })]
@@ -85,8 +86,8 @@ public class MonteCarloSeedTests
     [InlineData("Gunde", 300, 1, new[] { 7534076.4861704214, 7726959.867296705, 7001681.2487769658, 7386692.3111115517 })]
     [InlineData("Mara", 120, 3, new[] { 2467303.3938331231, 2427106.282543866, 2020983.4777073066, 2580733.0113486159 })]
     [InlineData("Mara", 300, 1, new[] { 5869212.4974295124, 5782715.2858590968, 5252603.5871274015, 5469205.2517229859 })]
-    [InlineData("Tariq", 120, 3, new[] { 1680399.6067695082, 1935728.7544160078, 1814822.1365464132, 2076233.9495677575 })]
-    [InlineData("Tariq", 300, 1, new[] { 3970282.6353668072, 3525534.3047797303, 3373171.0288342424, 3631064.6202769317 })]
+    [InlineData("Tariq", 120, 3, new[] { 1871704.7378057118, 1982296.8520820616, 1800090.5274220684, 2190499.1747951428 })]
+    [InlineData("Tariq", 300, 1, new[] { 3633673.9892262942, 3697553.3553862288, 3459574.8320228425, 4050223.3304713112 })]
     public void Each_Seed_Gives_Its_Pinned_Totals(string hero, int seconds, int targets, double[] totals)
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(

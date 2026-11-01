@@ -37,6 +37,11 @@ YC861NTRgLbmw4Qa fight 31 Cithrel's Fall) unless noted. Game values are from gam
   on another (26 of 34). Bounces land on the server frame at or after each 0.05s from the first hit, 2 and 1 frames
   apart in turn (q3y7pWgXrjN2dftw fight 12).
 - **Them Bones:** grievous Skull Crusher crits come with the thunder bolt as well as the physical hit.
+- **Schism:** each direction (Skull Crusher's roll for Hammer Storm, Hammer Storm's for Skull Crusher) has bad luck
+  protection of its own. After 0, 1 and 2 misses in a row the proc rate is 16-19%, 31-35% and 44-46%: 15.8% a step,
+  whose average is the tooltip's 35% (17 fights, 5265 rolls). Log-likelihood: a counter for each -3246, one counter for
+  both -3610, a flat 35% -3388. Past 3 misses the rate climbs slower (56%, 60%, 63-73%), and 19 rolls miss after 7 or
+  more, where the chance is 100%: a proc the replay does not find in the log leaves the count high.
 - **Wild Swing:** never crits. Enemies avoid 27 of its 388 hits (3-10% a fight; 22 misses, log hit type 0, and 5
   dodges, type 7; no damage), and no other Tariq hit.
 

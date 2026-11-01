@@ -692,9 +692,25 @@ public abstract class Hero : Actor
         Talents.OfType<T>().FirstOrDefault();
 
 
+    /// <summary>The rolls since each bad luck protected proc last procced (<see cref="RollBadLuckProc"/>), by its key.</summary>
+    private readonly Dictionary<string, int> _badLuckMisses = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Rolls the proc <paramref name="procKey"/> with bad luck protection (<see cref="BadLuckProtection"/>): its chance is
+    /// <paramref name="step"/> times the rolls since it last procced, counted for this key alone and from each fight's start.
+    /// </summary>
+    public bool RollBadLuckProc(SimulationContext ctx, string procKey, double step, EnemyTarget? target = null)
+    {
+        int misses = _badLuckMisses.GetValueOrDefault(procKey);
+        bool procced = ctx.Outcomes.RollProc(procKey, Math.Min(1.0, (misses + 1) * step), ctx, target);
+        _badLuckMisses[procKey] = procced ? 0 : misses + 1;
+        return procced;
+    }
+
     protected void ResetCombatState()
     {
         Resources.Reset();
+        _badLuckMisses.Clear();
         foreach (var gem in Gems) gem.ResetLive();
         Auras.ClearAll();
         Auras.ClearTimers();
