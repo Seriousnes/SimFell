@@ -147,6 +147,9 @@ public sealed class SimPageState
 
     public double StartingSpirit { get; set; } = 100;
 
+    /// <summary>True when the hero takes a player's time to cast once the global cooldown, a cast or a channel lets them.</summary>
+    public bool ReactionDelays { get; set; } = true;
+
     /// <summary>
     /// The settings of <paramref name="iterations"/> fights of this fight on <paramref name="threads"/> threads, the first
     /// with seed <paramref name="firstSeed"/>.
@@ -158,7 +161,8 @@ public sealed class SimPageState
         StartingSpirit: StartWithSpirit ? StartingSpirit : 0,
         Boss: Boss,
         Dungeon: Mode == SimMode.Dungeon ? Dungeon : null,
-        HeroShareVariance: VaryHeroShare ? HeroShareVariancePercent / 100 : 0);
+        HeroShareVariance: VaryHeroShare ? HeroShareVariancePercent / 100 : 0,
+        ReactionDelays: ReactionDelays);
 
     public SimExtra Extra { get; set; } = SimExtra.None;
 
