@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace FellowshipSim.Core.Engine;
@@ -12,6 +13,10 @@ public class SimulationContext
     private readonly List<(string Name, double Damage)> _damageByName = new();
     private readonly Dictionary<string, int> _damageSlotByName = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, int> _damageSlotByInstance = new(ReferenceEqualityComparer.Instance);
+    // Speed: the slots of recent name instances, one per bits of the instance's hash code, ahead of the dictionary.
+    private const int RecentDamageNames = 64;
+    private readonly string?[] _recentDamageNames = new string?[RecentDamageNames];
+    private readonly int[] _recentDamageSlots = new int[RecentDamageNames];
 
     public Hero Player { get; }
     public SimTime CurrentTime { get; private set; } = SimTime.Zero;
@@ -102,6 +107,12 @@ public class SimulationContext
     /// </summary>
     public ReactionDelays? Reactions { get; set; }
 
+    /// <summary>
+    /// How long a proc's gain takes to reach the action lists (<see cref="Aura.Seen"/>); zero for none, as in a replay,
+    /// which casts at the log's times.
+    /// </summary>
+    public SimTime ProcReactionTime { get; set; }
+
     /// <summary>Until this time the hero is still reacting to the last hold's end, and casts nothing on the global cooldown.</summary>
     public SimTime ReactionEndTime { get; private set; }
     private SimTime _lastHoldEnd;
@@ -159,6 +170,13 @@ public class SimulationContext
 
     public ScheduledEvent ScheduleAt(SimTime time, Action<SimulationContext> action, string label = "") =>
         Kernel.ScheduleAt(time < CurrentTime ? CurrentTime : time, action, label);
+
+    /// <summary>
+    /// Moves the queued <paramref name="ev"/> to <paramref name="time"/> with <paramref name="action"/>, as cancelling it and
+    /// scheduling a new event would. False when it is no longer queued.
+    /// </summary>
+    internal bool Reschedule(ScheduledEvent ev, SimTime time, Action<SimulationContext> action) =>
+        Kernel.Reschedule(ev, time < CurrentTime ? CurrentTime : time, action);
 
     /// <summary>
     /// Advances the clock to <paramref name="time"/>, firing every queued event due on the way in time order (the hero's
@@ -305,6 +323,15 @@ public class SimulationContext
         if (hero.CurrentCast != null && !ability.IgnoresGcd)
         {
             return CastAttempt.Rejected($"already casting {hero.CurrentCast.Ability.Name}");
+        }
+
+        // An ability off the global cooldown goes during a cast or a channel when it is instant: one with a cast time or a
+        // channel of its own waits for the running one to end.
+        var running = hero.CurrentCast?.Ability ?? hero.CurrentChannel?.Ability;
+        if (running != null && ability.IgnoresGcd && !force
+            && (ability.IsChanneled || ability.GetAdjustedCastTime(CurrentTime) > SimTime.Zero))
+        {
+            return CastAttempt.Rejected($"already casting {running.Name}");
         }
 
         if (!ability.IgnoresGcd)
@@ -581,7 +608,15 @@ public class SimulationContext
         string? abilityGroup = null)
     {
         TotalDamage += dealt;
-        if (!_damageSlotByInstance.TryGetValue(abilityName, out int slot)) slot = DamageSlot(abilityName);
+        int recent = RuntimeHelpers.GetHashCode(abilityName) & (RecentDamageNames - 1);
+        int slot;
+        if (ReferenceEquals(_recentDamageNames[recent], abilityName)) slot = _recentDamageSlots[recent];
+        else
+        {
+            if (!_damageSlotByInstance.TryGetValue(abilityName, out slot)) slot = DamageSlot(abilityName);
+            _recentDamageNames[recent] = abilityName;
+            _recentDamageSlots[recent] = slot;
+        }
         CollectionsMarshal.AsSpan(_damageByName)[slot].Damage += dealt;
         if (target != null && target.MaxHealth > 0)
         {
@@ -635,6 +670,7 @@ public class SimulationContext
         _damageByName.Clear();
         _damageSlotByName.Clear();
         _damageSlotByInstance.Clear();
+        Array.Clear(_recentDamageNames);
         foreach (var enemy in _enemies)
         {
             enemy.Auras.ClearAll();

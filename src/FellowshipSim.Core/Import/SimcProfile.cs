@@ -20,6 +20,7 @@ namespace FellowshipSim.Core.Import;
 /// until its stats are edited.
 /// <code>
 /// rime="sww"
+/// source=https://www.fellowshiplogs.com/reports/CODE?fight=7&amp;source=2
 /// primary_stat=161
 /// stamina=306
 /// crit_rating=89
@@ -41,9 +42,10 @@ namespace FellowshipSim.Core.Import;
 /// actions+=/frost_bolt
 /// </code>
 /// Lines starting with '#' are comments. <c>actions</c> lines are the profile's action list, with the comments directly
-/// above them and the comments after the last line when it is an <c>actions</c> line. A gear slot's line
-/// (<see cref="GearSlots.Key"/>) names the item worn there, its ID and its tempers; a relic or weapon line with an
-/// <c>id</c> and <c>tempers</c> is its slot's item too (a weapon line's name is its weapon's).
+/// above them, and the comments right after an <c>actions</c> line that end at a blank line or at the end of the text. A
+/// gear slot's line (<see cref="GearSlots.Key"/>) names the item worn there, its ID and its tempers; a relic or weapon
+/// line with an <c>id</c> and <c>tempers</c> is its slot's item too (a weapon line's name is its weapon's). <c>source</c>
+/// is the FellowshipLogs link of a build read from a log (<see cref="CharacterBuild.LogSource"/>).
 /// </summary>
 public sealed record SimcProfile(CharacterBuild Build, string ActionList)
 {
@@ -63,7 +65,16 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         {
             lineNumber++;
             string line = raw.Trim();
-            if (line.Length == 0) continue;
+            if (line.Length == 0)
+            {
+                // Comments after an actions line with a blank line under them are the action list's.
+                if (afterActions)
+                {
+                    foreach (string comment in comments) actions.AppendLine(comment);
+                    comments.Clear();
+                }
+                continue;
+            }
             if (line.StartsWith('#'))
             {
                 comments.Add(line);
@@ -119,6 +130,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
     {
         switch (key)
         {
+            case "source": build.LogSource = value; break;
             case "primary_stat": build.PrimaryStat = Number(value); break;
             case "stamina": build.Stamina = Number(value); break;
             case "armor": build.Armor = Number(value); break;
@@ -237,6 +249,7 @@ public sealed record SimcProfile(CharacterBuild Build, string ActionList)
         var build = Build;
         var s = new StringBuilder();
         s.AppendLine($"{AplNames.Slug(build.Hero)}=\"{build.Name}\"");
+        if (build.LogSource.Length > 0) s.AppendLine($"source={build.LogSource}");
         s.AppendLine($"primary_stat={Text(build.PrimaryStat)}");
         if (build.Stamina > 0) s.AppendLine($"stamina={Text(build.Stamina)}");
         if (build.Armor > 0) s.AppendLine($"armor={Text(build.Armor)}");

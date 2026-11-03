@@ -113,9 +113,17 @@ fine-grained token with "Contents: Read and write" on that repository alone.
 A profile is a `.simc` file: the hero, stats, talents, traits, blessings, gear and its `actions` lines, which are the
 action list. Keep profiles in `data/profiles/<Hero>/`.
 
+A sim's profile also has the sim settings: `iterations`, `threads`, `seed`, `duration` and `targets` (training
+dummies), `length_variance` and `hero_share_variance` (fractions), `health_follows_time`, `boss`, `starting_spirit`,
+`reaction_delays` and `proc_reaction` (seconds). A dungeon fight has a dungeon's lines in place of `duration` and `targets`. The lines are in any
+order. The last line of a setting is the setting, and a `dungeon=` line starts a dungeon that replaces the one before.
+Every option of the **Sim** page is a line of this text, and a sim's job is the text alone.
+
 The **Sim** page loads a profile file or pasted text, sets iterations and the fight, and starts the sim.
 The sim's page (a tab in the desktop app) shows its progress, then its result: mean, minimum and maximum DPS, the
-standard deviation, and DPS for each ability. **Save as HTML** saves the result as an HTML file.
+standard deviation, and DPS for each ability. **Save as HTML** saves the result as an HTML file. **Advanced**, at the
+end, has the sim's profile. **Load** puts its build, action list and settings in the Sim page, as a compare run's
+**Load** does.
 
 ### Fights
 
@@ -129,6 +137,11 @@ The **Modes** tab has two kinds of fight:
   enemies and no actions. The fight's DPS is over its whole length, downtime included, and the result adds the DPS to
   bosses. The Dungeon card starts with the built-in `Default` dungeon: Cithrel's Fall's creatures in four trash pulls and
   two bosses, Cithrel the final boss.
+
+**Proc reaction (ms)** in the **Fight settings** card is the time a proc's gain takes to reach the action list: 300 ms by
+default, as SimulationCraft's player `reaction_mean`. Until it passes, `buff.<proc>` reads the proc as it was before the gain:
+down for a new proc, the stacks before a new stack, and the time left before a refresh. 0 shows each gain at once. The
+command line's `--proc-reaction <ms>` is the same setting.
 
 The **Dungeon** card has a comment, the hero share, the time limit, the difficulty and the pulls. **Vary
 the hero share** gives each fight a hero share in a range: ± 20% by default, so 37.5% is 30 – 45%. Each pull has a
@@ -240,10 +253,11 @@ dotnet run --project src/FellowshipSim.Cli -c Release -- --profile data/profiles
 Replace `PROFILE` with the name of your profile file.
 
 `simfell` writes the result to stdout and its progress to stderr. Ctrl+C cancels the sim. You can run several at once.
-Its options are the following:
+Each option is a line added at the end of the profile, so it replaces the profile's own line for that setting. The
+options are the following:
 
 - `--profile <file>`: the profile to sim (required)
-- `--iterations <n>`: fights (default 100)
+- `--iterations <n>`: fights (default 100 for a profile with no sim settings)
 - `--dungeon <name|file>`: fights of a dungeon, built in (`Default`) or a dungeon `.simc` file; its pulls set the enemies and its time limit the longest fight. Without it, the fights are training dummies
 - `--duration <seconds>`: length of each fight of training dummies (default 300)
 - `--targets <n>`: training dummies in each fight (default 1)
@@ -254,7 +268,12 @@ Its options are the following:
 ## Edit action lists
 
 The **Action lists** page edits an action list without writing its text. Each action has an
-ability, a condition, a target and a comment; drag the handle or use the arrows to change the order. Each name in a
+ability, a condition, a target and a comment; drag the handle or use the arrows to change the order. An action's **Type**
+is an ability to cast, **Run action list** or **Call action list** with the list to run, or **Set a variable** with the
+variable's name, its op (set, add to, subtract from or reset), its value and its default at the start of each fight;
+conditions read the variable as `variable.<name>`. An ability's **Timing** switches are **Use off the global cooldown**
+(`use_off_gcd=1`) and **Use while casting** (`use_while_casting=1`). The condition, a target's **Target by** and a
+variable's value each have **Builder** and **Text**. Each name in a
 condition has a colour for its kind (buff, debuff, cooldown, resource), and a wavy underline marks a name the hero
 does not have. Conditions in the editor chain with `and`, `or` and `not`; the text has `&`, `|` and `!`. A `&`, `|`
 or `!` typed in the editor becomes its word when you leave the field. Parentheses stay as written. **Builder** shows a
@@ -262,7 +281,8 @@ condition as rows: each row has its `and` or `or`, its `not`, and a value compar
 **Group** is a box of rows in parentheses; its chevron closes it to one line of its text, and **Close all groups** closes
 every group. Each value is terms joined by `+`, `-`, `*`, `%` or `%%`. Each term's picker lists the names by kind (buff,
 debuff, dot, cooldown, action, resource, fight value, value of the action itself, talent, blessing, legendary, weapon
-trait, weapon, enemies with a debuff, variable, previous action), then **Number** and **Group** for a condition in
+trait, weapon, enemies with a debuff, variable, previous action; a debuff's and a dot's properties include the shortest and
+longest time remaining on any enemy, `min:` and `max:`), then **Number** and **Group** for a condition in
 parentheses, then each **Function**, then `not` or `-` before the term; typing filters the list. A function takes the term
 as its first argument and shows each argument in its own box. The empty select after a value adds a term, a comparison, or inside
 parentheses an `and` or `or` row; an emptied operator or comparison removes its term or value. **Text** shows the
@@ -279,6 +299,15 @@ A target picks the enemy for the cast, written `target_if=` in the text:
 
 `target.*` and `debuff.*` in the action's `if` read the enemy picked.
 
+A decision runs whenever the hero is free to cast. Two options of an ability action add decisions while a hold runs, as
+in SimulationCraft:
+
+- `use_off_gcd=1`: the action is a candidate while the global cooldown runs (Ardeos's `incinerate,use_off_gcd=1`)
+- `use_while_casting=1`: the action is a candidate while a cast or a channel runs, for an ability off the global cooldown
+  (Rime's `ice_blitz,use_while_casting=1`)
+
+Without them, the action waits for the global cooldown, the cast or the channel to end.
+
 Conditions also have these values and functions:
 
 - `prev.<ability>`: 1 when the last cast the hero started is that ability (`prev.frost_bolt`)
@@ -286,6 +315,9 @@ Conditions also have these values and functions:
   cooldown (Ice Blitz) leaves it as it is (`prev_gcd.frost_bolt`)
 - `debuff.<name>.oldest.remains` and `debuff.<name>.newest.remains` (and `.refreshable`): the application applied first or
   last, for a debuff whose every application runs on its own (`debuff.engulfing_flames.oldest.remains`)
+- `min:debuff.<name>.remains` and `max:debuff.<name>.remains`: the shortest or longest remaining time of any application on
+  any enemy in combat. Enemies without the debuff are left out. With no application anywhere, `min:` is a very large
+  number and `max:` is 0 (`incinerate,if=min:dot.engulfing_flames.remains<gcd`)
 - `abs(x)`, `ceil(x)`, `floor(x)`, `round(x)`, `min(a, b, ...)` and `max(a, b, ...)`
 - decimal numbers (`1.5`, `.25`)
 
@@ -317,7 +349,7 @@ each list entered. Each line has its outcome: **Cast**, **Condition false**, **N
 cast already running), **No target**, **Cast refused**, a variable's value, or a list **Entered**. A line opens to show
 its condition as a tree of expressions with each one's value, and its `target_if` value at each enemy. A side of
 `&` or `|` the decision never read shows as not read. A **Cast refused** line opens to the engine's reason, such as the
-global cooldown. Beside the lines are the hero's resources, buffs, the global cooldown left, cooldowns and variables, and
+global cooldown, or to each proc gained inside the proc reaction time. Beside the lines are the hero's resources, buffs, the global cooldown left, cooldowns and variables, and
 each enemy's health and debuffs, before the cast. **Previous** and **Next** (or the arrow keys) step one decision;
 **Previous cast** and **Next cast** step to the next decision that cast, and **Go to** (seconds or `m:ss`, then Enter) shows the last decision at or before that time.
 ## The two checks
