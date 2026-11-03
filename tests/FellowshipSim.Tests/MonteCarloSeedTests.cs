@@ -79,6 +79,7 @@ public class MonteCarloSeedTests
     /// Schism had bad luck protection, and again once Bloodline was unhasted, Ride the Lightning snapshotted and Kill Em All
     /// left Heavy Strike out. Rime's, Ardeos's, Mara's and Tariq's again for the engine fixes of the functional tests branch
     /// (cooldown rates, Detonate's global cooldown, Event Horizon, Skylit Grace, Brave Machinations, weapon cooldowns, gems).
+    /// Tariq's again for his new default list.
     /// </summary>
     [Theory]
     [InlineData("Rime", 120, 3, new[] { 3103846.9857844426, 3146941.0664216764, 2661851.3885713113, 2817501.47229399 })]
@@ -89,8 +90,8 @@ public class MonteCarloSeedTests
     [InlineData("Gunde", 300, 1, new[] { 7589315.0879662065, 7860490.4554016367, 7145894.9954196177, 7482946.3632446928 })]
     [InlineData("Mara", 120, 3, new[] { 2440956.3761566584, 2523958.1828004178, 2016531.8647401505, 2580733.011348616 })]
     [InlineData("Mara", 300, 1, new[] { 4698165.2098863395, 6431641.410211125, 5304913.496761604, 5296672.2168469215 })]
-    [InlineData("Tariq", 120, 3, new[] { 1967584.2099560164, 2090697.5341359354, 1728839.191903656, 1977654.0835166338 })]
-    [InlineData("Tariq", 300, 1, new[] { 3840313.4565217663, 3364470.6032848917, 3454543.6249362486, 3971030.5181241543 })]
+    [InlineData("Tariq", 120, 3, new[] { 1693530.682890242, 2424288.0936405938, 2202817.0745414351, 1898456.3845911967 })]
+    [InlineData("Tariq", 300, 1, new[] { 3583787.245763781, 3830425.3795905053, 3372158.792518341, 3295629.6778827147 })]
     public void Each_Seed_Gives_Its_Pinned_Totals(string hero, int seconds, int targets, double[] totals)
     {
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(
