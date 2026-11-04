@@ -10,6 +10,10 @@ game content.
 ## Commands
 
 ```
+# the Codex's data export into codex-export/ (git-ignored), from which FellowshipSim.Codex.Generators writes each
+# creature's <Name>GameCreature class; once after cloning, and after a new datamine
+tools/download-codex-export.sh
+
 # the solution (the desktop app needs the maui workload)
 dotnet build -c Release
 
@@ -39,6 +43,9 @@ dotnet run tools/fetch-fights.cs -- --hero Rime --count 15
 
 # one hero's accuracy over those fights, saved as data/accuracy/<Hero>/<label>.txt (docs/REPLAY_ACCURACY.md)
 ACCURACY_HERO=Rime ACCURACY_LABEL=baseline dotnet test tests/FellowshipSim.Tests -c Release --filter HeroAccuracyTests
+
+# one browser worker's memory and time in Node, from an AOT publish (benchmarks/README.md)
+node benchmarks/wasm/worker-memory.mjs publish sim:1000 review:data/fights/<fight>.raw.json:<player>
 
 # free dice over downloaded fights (FREEDICE_REVIEW=all or one review ID; FREEDICE_SEED, default 1)
 FREEDICE_REVIEW=all FREEDICE_ITERATIONS=1000 dotnet test tests/FellowshipSim.Tests -c Release --filter FreeDice
@@ -118,7 +125,10 @@ or the desktop app).
   sims and replays on web workers (`wwwroot/sim/`), each a .NET runtime of its own calling `SimWorker`'s `[JSExport]`
   methods: a sim's chunks (`SimChunks`, `MonteCarloSimulator.RunChunk`) spread over them and combine to the same result
   as `LocalSimEngine`'s. A replay downloads its fight and replays it on a worker (`WorkerFightReviewer`, the
-  browser's `IFightReviewer`), so no fight sits in the page. The data folder is in the runtime's in-memory file system,
+  browser's `IFightReviewer`), so no fight sits in the page. A runtime's memory never shrinks, so a worker that replayed a
+  fight stops once its calls are done (`simPool.js`), and the review comes back as bytes (`ReviewReply.ToBytes`). A kept
+  fight comes in a call of its own (`SimWorker.HoldFight`), and the script's build empties its `RawFightHolder`, so the
+  replay runs without the raw fight. The data folder is in the runtime's in-memory file system,
   copied to IndexedDB (`BrowserDataFolder`).
 - **FellowshipSim.Cli** is `simfell`: one `LocalSimEngine.SimulateAsync` of a `.simc` profile, result on stdout,
   progress on stderr.

@@ -175,8 +175,8 @@ public class SimulationContext
     /// Moves the queued <paramref name="ev"/> to <paramref name="time"/> with <paramref name="action"/>, as cancelling it and
     /// scheduling a new event would. False when it is no longer queued.
     /// </summary>
-    internal bool Reschedule(ScheduledEvent ev, SimTime time, Action<SimulationContext> action) =>
-        Kernel.Reschedule(ev, time < CurrentTime ? CurrentTime : time, action);
+    internal bool Reschedule(ref ScheduledEvent ev, SimTime time, Action<SimulationContext> action) =>
+        Kernel.Reschedule(ref ev, time < CurrentTime ? CurrentTime : time, action);
 
     /// <summary>
     /// Advances the clock to <paramref name="time"/>, firing every queued event due on the way in time order (the hero's
@@ -190,10 +190,9 @@ public class SimulationContext
     /// </summary>
     public bool RunUntil(SimTime time, Func<bool>? stop)
     {
-        while (Kernel.TryDequeueDue(time, out var ev))
+        while (Kernel.TryDequeueNode(time) is { } ev)
         {
             if (ev.Time > CurrentTime) CurrentTime = ev.Time;
-            ev.HasFired = true;
             if (ev.Hit is { } hit) Land(hit);
             else ev.Action!(this);
             if (stop != null && stop()) return true;
@@ -209,7 +208,12 @@ public class SimulationContext
         var key = (id, instanceId);
         if (!_enemyLookup.TryGetValue(key, out var enemy))
         {
-            enemy = new EnemyTarget(id, instanceId, name) { SpiritPointValue = Enemies.CreatureSpiritPoints.For(name) };
+            // A log names an enemy but has no game ID for it. Where several creatures have the name, the highest Spirit
+            // Points count.
+            enemy = new EnemyTarget(id, instanceId, name)
+            {
+                SpiritPointValue = GameCreatures.Named(name).Select(c => c.SpiritPoints).DefaultIfEmpty().Max(),
+            };
             _enemyLookup[key] = enemy;
             _enemies.Add(enemy);
             enemy.SleepChanged = () => _activeEnemies = null;
@@ -237,12 +241,6 @@ public class SimulationContext
 
     /// <summary>Raised as an enemy dies or leaves combat, before it is removed (effects on it can still resolve).</summary>
     public event Action<SimulationContext, EnemyTarget>? EnemyDemising;
-
-    /// <summary>
-    /// Raised as damage takes health from an enemy dying from damage (<see cref="EnemyTarget.HeroShare"/>), with the
-    /// health lost, the party's damage included.
-    /// </summary>
-    public event Action<SimulationContext, EnemyTarget, double>? EnemyHurt;
 
     /// <summary>
     /// The hero interrupts <paramref name="enemy"/>'s cast: it ends with no effect, and <see cref="Hero.OnInterrupt"/> is
@@ -362,10 +360,17 @@ public class SimulationContext
             return CastAttempt.Resolved(castTime);
         }
 
+        BeginCast(hero, ability, target, castTime);
+        return CastAttempt.Casting(castTime);
+    }
+
+    // A method of its own, so Activate allocates the closure only for a cast with a cast time: a closure's captures are
+    // allocated where their scope begins.
+    private void BeginCast(Hero hero, Ability ability, EnemyTarget? target, SimTime castTime)
+    {
         var cast = new ActiveCast(ability, target, CurrentTime, CurrentTime + castTime);
         cast.CompletionEvent = ScheduleAt(cast.EndTime, c => c.CompleteCast(hero), ability.Name);
         hero.CurrentCast = cast;
-        return CastAttempt.Casting(castTime);
     }
 
     /// <summary>
@@ -564,12 +569,7 @@ public class SimulationContext
         if (hit.Tick is { } tick)
         {
             hit.Tick = null;
-            if (tick.IsActive && tick.LastTick == hit.Released.Time)
-            {
-                double inTick = 0.0;
-                tick.RunInLastTick(() => inTick = Land(hit));
-                return inTick;
-            }
+            if (tick.IsActive && tick.LastTick == hit.Released.Time) return LandInLastTick(tick, hit);
         }
         var outcome = hit.Outcome;
         var onLanded = hit.OnLanded;
@@ -596,6 +596,15 @@ public class SimulationContext
         return dealt;
     }
 
+    // A method of its own, so Land allocates the closure only for a hit in a tick's last execution: a closure's captures
+    // are allocated where their scope begins.
+    private double LandInLastTick(HastedTimer tick, PendingHit hit)
+    {
+        double inTick = 0.0;
+        tick.RunInLastTick(() => inTick = Land(hit));
+        return inTick;
+    }
+
     /// <summary>
     /// Deals a fixed amount with no <see cref="IOutcomeSource"/> call: a replay deals each logged hit no engine hit matched
     /// this way.
@@ -618,21 +627,10 @@ public class SimulationContext
             _recentDamageSlots[recent] = slot;
         }
         CollectionsMarshal.AsSpan(_damageByName)[slot].Damage += dealt;
-        if (target != null && target.MaxHealth > 0)
+        if (target != null)
         {
-            if (target.HeroShare is { } share)
-            {
-                // The party deals the rest: the enemy loses the hit over the hero's share.
-                double before = target.CurrentHealth;
-                target.CurrentHealth = Math.Max(0.0, before - dealt / share);
-                if (target.CurrentHealth <= 0 && !target.DeathScheduled && !target.IsSleeping)
-                {
-                    target.DeathScheduled = true;
-                    Kernel.ScheduleAt(CurrentTime, c => c.RemoveEnemy(target, defeated: true), "Death");
-                }
-                if (before > target.CurrentHealth) EnemyHurt?.Invoke(this, target, before - target.CurrentHealth);
-            }
-            else target.CurrentHealth = Math.Max(0.0, target.CurrentHealth - dealt);
+            target.HeroDamage += dealt;
+            if (target.MaxHealth > 0) target.CurrentHealth = Math.Max(0.0, target.CurrentHealth - dealt);
         }
         source.TriggerDamageDealt(new DamageContext(source, target, abilityId, abilityName, dealt, isCrit, CurrentTime, this, critChance, abilityGroup));
     }

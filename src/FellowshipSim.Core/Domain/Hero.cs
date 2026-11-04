@@ -12,11 +12,13 @@ public abstract class Hero : Actor
     protected Hero()
     {
         AddResource(SpiritPoints);
-        // Spirit Points from damage: a hit earns its share of the enemy's health times the enemy's Spirit Point value.
+        // Spirit Points from damage: a hit earns its share of the enemy's health times the enemy's Spirit Point value, up to
+        // the enemy's whole value over the hero's damage to it (the hit is already in HeroDamage).
         OnDamageDealt += (in dmg) =>
         {
             if (dmg.Target is not { SpiritPointValue: > 0, MaxHealth: > 0 } enemy || dmg.Amount <= 0) return;
-            GainResource(SpiritPoints, Math.Min(dmg.Amount, enemy.MaxHealth) / enemy.MaxHealth * enemy.SpiritPointValue, dmg.SimContext);
+            double counted = Math.Clamp(enemy.MaxHealth - (enemy.HeroDamage - dmg.Amount), 0, dmg.Amount);
+            if (counted > 0) GainResource(SpiritPoints, counted / enemy.MaxHealth * enemy.SpiritPointValue, dmg.SimContext);
         };
         // Spirit of Heroism is applied by every hero's Spirit ability; register it up front so a replay compares it from the start.
         // Cooldown recovery depends on haste and cooldown acceleration: progress every recharge at the old rate when they change.
@@ -303,11 +305,7 @@ public abstract class Hero : Actor
         if (_recentDamageIds[recent] == id) subscribers = _recentSubscribers[recent];
         else
         {
-            if (!_damageDealtById.TryGetValue(id, out subscribers!))
-            {
-                subscribers = _damageDealt.Where(s => s.Receives(id)).ToArray();
-                _damageDealtById[id] = subscribers;
-            }
+            if (!_damageDealtById.TryGetValue(id, out subscribers!)) subscribers = DamageDealtSubscribers(id);
             _recentDamageIds[recent] = id;
             _recentSubscribers[recent] = subscribers;
         }
@@ -317,6 +315,15 @@ public abstract class Hero : Actor
             else subscriber.Handler!(in hit);
         }
     }
+    // A method of its own, so TriggerDamageDealt allocates the closure only for an ability ID new to the hero: a closure's
+    // captures are allocated where their scope begins.
+    private DamageDealtSubscriber[] DamageDealtSubscribers(int id)
+    {
+        var subscribers = _damageDealt.Where(s => s.Receives(id)).ToArray();
+        _damageDealtById[id] = subscribers;
+        return subscribers;
+    }
+
     public void TriggerCastStarted(Ability a, EnemyTarget? t, SimTime now = default) => OnCastStarted?.Invoke(a, t, now);
     public void TriggerCastCompleted(Ability a, EnemyTarget? t, SimTime now = default) => OnCastCompleted?.Invoke(a, t, now);
     public void TriggerCastCancelled(Ability a, EnemyTarget? t, SimTime now = default) => OnCastCancelled?.Invoke(a, t, now);
@@ -350,12 +357,14 @@ public abstract class Hero : Actor
     /// <summary>Starts what runs for the whole fight on its own: the Spirit Point regeneration.</summary>
     public void BeginFight(SimulationContext ctx)
     {
+        Action<SimulationContext>? regen = null;
         void Regen(SimulationContext c)
         {
             GainResource(SpiritPoints, SpiritPointRegenAmount, c);
-            c.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
+            c.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), regen, "Spirit Point regeneration");
         }
-        ctx.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), Regen, "Spirit Point regeneration");
+        regen = Regen;
+        ctx.Schedule(SimTime.FromSeconds(SpiritPointRegenSeconds), regen, "Spirit Point regeneration");
         OnFightBegins(ctx);
     }
 

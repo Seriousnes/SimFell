@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 namespace FellowshipSim.Logs;
 
@@ -37,7 +36,7 @@ public sealed record FreeDiceSummary(
 /// damage calibration per ability), and every engine hit with the log hit it matched, for checking damage formulas in a
 /// spreadsheet.
 /// </summary>
-public sealed record ReviewArtifacts(ReviewSummary Summary, string ScriptJson, string Html, string SummaryText, string HitsCsv);
+public sealed record ReviewArtifacts(ReviewSummary Summary, byte[] ScriptJson, string Html, string SummaryText, string HitsCsv);
 
 /// <summary>
 /// The local library of fights and replay reviews, kept in a data folder:
@@ -68,13 +67,22 @@ public sealed class ReplayLibrary
     /// <summary>True when the fight's raw events are already downloaded.</summary>
     public bool HasRawFight(string reportCode, int fightId) => File.Exists(RawFightPath(reportCode, fightId));
 
-    /// <summary>The fight's raw events, downloaded from FellowshipLogs the first time and read from disk after that.</summary>
-    public async Task<JsonObject> GetRawFightAsync(FellowshipLogsClient? client, string reportCode, int fightId,
+    /// <summary>
+    /// The fight's raw events as a <see cref="JsonDocument"/> over the file's bytes, downloaded from FellowshipLogs the first
+    /// time.
+    /// </summary>
+    public async Task<JsonDocument> GetRawFightDocumentAsync(FellowshipLogsClient? client, string reportCode, int fightId,
         IProgress<string>? progress = null, CancellationToken ct = default)
     {
         string path = await GetRawFightFileAsync(client, reportCode, fightId, progress, ct);
-        return JsonNode.Parse(await File.ReadAllTextAsync(path, ct))!.AsObject();
+        // Read in place: a document parsed from a stream copies the text into buffers it rents, doubling as it reads.
+        return JsonDocument.Parse(await File.ReadAllBytesAsync(path, ct));
     }
+
+    /// <summary>The fight's raw events as UTF-8 JSON, downloaded from FellowshipLogs the first time.</summary>
+    public async Task<byte[]> GetRawFightBytesAsync(FellowshipLogsClient? client, string reportCode, int fightId,
+        IProgress<string>? progress = null, CancellationToken ct = default) =>
+        await File.ReadAllBytesAsync(await GetRawFightFileAsync(client, reportCode, fightId, progress, ct), ct);
 
     /// <summary>
     /// The path of the fight's raw events, downloaded from FellowshipLogs the first time. One download runs at a time, so
@@ -94,8 +102,20 @@ public sealed class ReplayLibrary
             }
             if (client == null) throw new FellowshipLogsException("Sign in with FellowshipLogs to download fights.");
             progress?.Report("Downloading the fight from FellowshipLogs");
-            var raw = await client.DownloadFightAsync(reportCode, fightId, progress, ct);
-            await File.WriteAllTextAsync(path, raw.ToJsonString(), ct);
+            // Written to a file of its own and moved into place once whole, so a failed download leaves no fight.
+            string part = path + ".part";
+            try
+            {
+                await using (var file = File.Create(part))
+                {
+                    await client.DownloadFightAsync(reportCode, fightId, file, progress, ct);
+                }
+                File.Move(part, path, overwrite: true);
+            }
+            finally
+            {
+                File.Delete(part);
+            }
             return path;
         }
         finally
@@ -106,25 +126,11 @@ public sealed class ReplayLibrary
 
     private readonly SemaphoreSlim _oneDownloadAtATime = new(1, 1);
 
-    /// <summary>Writes a downloaded fight's raw events back, as <see cref="GetRawFightAsync"/> reads them.</summary>
-    public async Task SaveRawFightAsync(string reportCode, int fightId, JsonObject raw, CancellationToken ct = default)
-    {
-        await _oneDownloadAtATime.WaitAsync(ct);
-        try
-        {
-            await File.WriteAllTextAsync(RawFightPath(reportCode, fightId), raw.ToJsonString(), ct);
-        }
-        finally
-        {
-            _oneDownloadAtATime.Release();
-        }
-    }
-
     /// <summary>Writes a review's replay script, page, summary, text and hits.</summary>
     public void Save(ReviewArtifacts review)
     {
         string id = review.Summary.Id;
-        File.WriteAllText(Path.Combine(ScriptsDirectory, $"{id}.replay.json"), review.ScriptJson);
+        File.WriteAllBytes(Path.Combine(ScriptsDirectory, $"{id}.replay.json"), review.ScriptJson);
         File.WriteAllText(Path.Combine(ReviewsDirectory, review.Summary.HtmlFile), review.Html);
         File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.json"), JsonSerializer.Serialize(review.Summary, Indented));
         File.WriteAllText(Path.Combine(ReviewsDirectory, $"{id}.summary.txt"), review.SummaryText);
