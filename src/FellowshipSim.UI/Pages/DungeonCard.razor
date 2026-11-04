@@ -255,7 +255,9 @@
         }
         catch (Exception e) when (e is FormatException or KeyNotFoundException)
         {
-            _status = MessageState.Error(e.Message);
+            // The editor keeps its dungeon; the picker keeps the one that did not open, so it can be deleted.
+            State.DungeonValue = ValueOf(entry);
+            _status = MessageState.Error(entry.BuiltIn ? e.Message : $"{e.Message} Delete it, or fix its file.");
         }
         await OnChanged.InvokeAsync();
     }
