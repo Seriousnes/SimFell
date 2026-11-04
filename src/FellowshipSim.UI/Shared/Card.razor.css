@@ -40,9 +40,26 @@
   color: var(--bad);
 }
 
+/* A phone: a section edge to edge, past the page's 16px gutter, with no side borders or corners; sections are 8px apart.
+   A card inside a card or a dialog keeps its frame, inside the outer one's padding. */
 @media (max-width: 600px) {
   .card {
+    margin: 8px -16px;
     padding: 14px 16px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .title {
+    font-size: 13px;
+  }
+
+  .card .card,
+  .modal .card {
+    margin: 8px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
   }
 }
 
