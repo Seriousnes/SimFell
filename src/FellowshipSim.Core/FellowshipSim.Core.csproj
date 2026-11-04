@@ -24,7 +24,7 @@
     <ProjectReference Include="..\FellowshipSim.Codex.Generators\FellowshipSim.Codex.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  <!-- The Codex's data export (tools/download-codex-export.sh): each creature's class (CreatureGenerator). -->
+  <!-- The Codex's data export (tools/download-codex-export.sh): each creature's class (CreatureGenerator) and each dungeon's creature placements (DungeonGenerator). -->
   <PropertyGroup>
     <CodexExportFolder>$(MSBuildThisFileDirectory)..\..\codex-export\</CodexExportFolder>
   </PropertyGroup>

@@ -6,7 +6,7 @@ using FellowshipSim.Logs;
 namespace FellowshipSim.UI.Services;
 
 /// <summary>
-/// The dungeon of a logged run: one FellowshipLogs query for the fight's pulls and enemy deaths, without its events
+/// The dungeon of a logged run: the fight's enemy deaths and one player's damage events, without the fight's other events
 /// (<see cref="FellowshipLogsReports.GetDungeonFightAsync"/>), read by <see cref="DungeonReader"/>.
 /// </summary>
 public sealed class DungeonImport(LogsSettingsStore settings)

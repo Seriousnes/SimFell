@@ -157,15 +157,20 @@ time. Empty Spirit Points and hit points are the game data values of the creatur
 the web app.
 
 The Dungeon card's toolbar has **Revert**, **Save**, **Duplicate**, **Import**, **Export** and **Delete**. **Import** takes a
-FellowshipLogs fight link, a `.simc` file (the upload icon) or pasted dungeon text. A fight link's import is one
-FellowshipLogs query for the fight's pulls and enemy deaths, without the fight's events (`Engine/Replay/DungeonReader`):
+FellowshipLogs fight link, a `.simc` file (the upload icon) or pasted dungeon text. A fight link's import reads the
+fight's enemy deaths and one player's damage events, dealt and taken: the fight's tank's, or with no tank, a damage
+dealer's (`Engine/Replay/DungeonReader`):
 
-- The enemies are the fight's enemy deaths. Each enemy's name, hit points, Spirit Points and boss rank are its
-  creature's in the game data; an enemy of no creature is left out and named in the dungeon's comment.
-- The pulls are FellowshipLogs' pulls of the fight, numbered by their start. Each enemy is in the pull it died in, or
-  the pull nearest its death, and a pull in which no enemy died is left out.
-- A pull's duration is its length in the log. Its downtime is the time since the pull before it ended; a pull starting
-  before that end joins it through `pull_with` at its log offset.
+- The difficulty is the Eternal level of the fight's `difficultyLevel` (50 is Eternal 30).
+- The enemies are the enemies that player hit or was hit by, and the enemies dying without either. Each enemy's name, hit
+  points, Spirit Points and boss rank are its creature's in the game data; an enemy of no creature is left out and named
+  in the dungeon's comment.
+- The pulls are the dungeon's packs: its creature placements in the Codex's data export, a patrol's placements together
+  and every other placement with those within 1,200 units of it. Each enemy is in the pack of the nearest placement of its
+  creature to its first contact, or of a pack met in the 30 seconds before. An enemy with neither is a spawn, a pull of
+  its own with the spawns of its creature met within 3 seconds of it.
+- A pull's duration runs from its first contact to its last death. Its downtime is the time since the pulls before it
+  ended; a pull starting before that end joins the pull before it through `pull_with` at its log offset.
 
 **Export** shows the dungeon as text, with **Copy** and **Download**:
 

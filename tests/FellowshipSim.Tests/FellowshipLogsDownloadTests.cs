@@ -28,6 +28,8 @@ public class FellowshipLogsDownloadTests
     {
         private readonly Queue<string> _events = new(eventsAnswers);
         public int EventsQueries;
+        /// <summary>The answer to every query that is no events query.</summary>
+        public string Answer = Meta;
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
@@ -38,7 +40,7 @@ public class FellowshipLogsDownloadTests
                 EventsQueries++;
                 body = _events.Count > 1 ? _events.Dequeue() : _events.Peek();
             }
-            else body = Meta;
+            else body = Answer;
             return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body, Encoding.UTF8, "application/json") };
         }
     }
@@ -82,6 +84,46 @@ public class FellowshipLogsDownloadTests
 
         var e = await Assert.ThrowsAsync<FellowshipLogsException>(() => client.GetDungeonFightAsync("rf7qpV3tATCx86hN", 6));
         Assert.Equal("FellowshipLogs returned no enemy deaths for fight 6 of report 'rf7qpV3tATCx86hN'.", e.Message);
+    }
+
+    // A dungeon fight with enemy 5 and its deaths table; Arck (3) is its tank and sbt (2) a damage dealer.
+    private const string DungeonFight = """
+        { "data": { "reportData": { "report": { "startTime": 1000, "masterData": { "logVersion": 4 },
+          "fights": [ { "id": 6, "startTime": 100, "endTime": 900, "name": "Cithrel's Fall", "difficultyLevel": 50,
+                        "gameZone": { "id": 7, "name": "Cithrel's Fall" }, "enemyNPCs": [ { "id": 5, "gameID": 164 } ] } ],
+          "table": { "data": { "entries": [ { "id": 5, "instance": 1, "guid": 164, "name": "Icewyrm Sentinel", "timestamp": 800 } ] } },
+          "playerDetails": { "data": { "playerDetails": {
+            "dps": [ { "id": 2, "name": "sbt", "type": "Mara" } ], "tanks": [ { "id": 3, "name": "Arck", "type": "Xavian" } ] } } } } } } }
+        """;
+
+    // The tank's damage done: enemy 5 hit at 300 and 500; its damage taken: enemy 5 hits it at 200, and party member 4 at 250.
+    private const string TankDamageDone = """
+        { "data": { "reportData": { "report": { "events": { "data": [
+          { "timestamp": 300, "type": "damage", "sourceID": 3, "targetID": 5, "targetInstance": 1, "targetResources": { "x": 10, "y": 20 } },
+          { "timestamp": 500, "type": "damage", "sourceID": 3, "targetID": 5, "targetInstance": 1, "targetResources": { "x": 90, "y": 90 } } ],
+          "nextPageTimestamp": null } } } } }
+        """;
+
+    private const string TankDamageTaken = """
+        { "data": { "reportData": { "report": { "events": { "data": [
+          { "timestamp": 200, "type": "damage", "sourceID": 5, "sourceInstance": 1, "targetID": 3, "sourceResources": { "x": -7, "y": -8 } },
+          { "timestamp": 250, "type": "damage", "sourceID": 4, "targetID": 3, "sourceResources": { "x": 1, "y": 1 } } ],
+          "nextPageTimestamp": null } } } } }
+        """;
+
+    [Fact]
+    public async Task A_Dungeon_Fight_Has_Its_Tanks_First_And_Last_Contact_With_Each_Enemy()
+    {
+        var logs = new FellowshipLogs(TankDamageDone, TankDamageTaken) { Answer = DungeonFight };
+        var fight = await new FellowshipLogsClient(new HttpClient(logs), "id", "secret").GetDungeonFightAsync("T2qLPpmMkrAtJ9B1", 6);
+
+        Assert.Equal(2, logs.EventsQueries);
+        Assert.Equal(3, fight["contact_player"]!["id"]!.GetValue<int>());
+        var contact = Assert.Single(fight["enemy_contacts"]!.AsArray())!;
+        // The first contact is enemy 5 hitting the tank at 200, where it stood at (-7, -8); the last is the tank's hit at 500.
+        Assert.Equal((5, 1, 200.0, -7.0, -8.0, 500.0), (contact["id"]!.GetValue<int>(), contact["instance"]!.GetValue<int>(),
+            contact["first"]!.GetValue<double>(), contact["x"]!.GetValue<double>(), contact["y"]!.GetValue<double>(), contact["last"]!.GetValue<double>()));
+        Assert.Equal(800, Assert.Single(fight["enemy_deaths"]!.AsArray())!["timestamp"]!.GetValue<double>());
     }
 
     [Fact]
