@@ -85,10 +85,23 @@ public static class FellowshipLogsReports
               startTime
               masterData { logVersion }
               fights(fightIDs: $fightIDs) {
-                id name startTime endTime difficulty gameZone { name } enemyNPCs { id }
-                dungeonPulls { id name startTime endTime enemyNPCs { id gameID minimumInstanceID maximumInstanceID } }
+                id name startTime endTime difficultyLevel gameZone { id name } enemyNPCs { id gameID }
               }
               table(fightIDs: $fightIDs, dataType: Deaths, hostilityType: Enemies)
+              playerDetails(fightIDs: $fightIDs)
+            }
+          }
+        }
+        """;
+
+    private const string PlayerDamageQuery = """
+        query($code: String!, $fightIDs: [Int]!, $sourceID: Int!, $dataType: EventDataType!, $startTime: Float!, $endTime: Float!) {
+          reportData {
+            report(code: $code) {
+              events(fightIDs: $fightIDs, dataType: $dataType, sourceID: $sourceID, startTime: $startTime, endTime: $endTime,
+                limit: 10000, includeResources: true) {
+                data nextPageTimestamp
+              }
             }
           }
         }
@@ -129,17 +142,22 @@ public static class FellowshipLogsReports
     }
 
     /// <summary>
-    /// One dungeon fight without its events: <c>report_code</c>; <c>report_start_time</c> and <c>log_version</c>, the
-    /// report's start and combat-log format version (null when FellowshipLogs returns none); <c>fight</c> (id, name, startTime, endTime, difficulty,
-    /// gameZone, enemyNPCs and dungeonPulls, each pull's enemyNPCs with their instance ranges); and <c>enemy_deaths</c>, each enemy death's
-    /// actor <c>id</c>, <c>instance</c>, <c>gameID</c>, <c>name</c> and <c>timestamp</c>.
+    /// One dungeon fight, with one player's damage events in place of its every event: <c>report_code</c>;
+    /// <c>report_start_time</c> and <c>log_version</c>, the report's start and combat-log format version (null when
+    /// FellowshipLogs returns none); <c>fight</c> (id, name, startTime, endTime, difficultyLevel, gameZone with its id and
+    /// name, and enemyNPCs with their id and gameID); <c>enemy_deaths</c>, each enemy death's actor <c>id</c>,
+    /// <c>instance</c>, <c>gameID</c>, <c>name</c> and <c>timestamp</c>; <c>contact_player</c>, the player whose damage
+    /// events are read (<see cref="ContactPlayer"/>); and <c>enemy_contacts</c>, each enemy instance that player hit or was
+    /// hit by: actor <c>id</c>, <c>instance</c>, the <c>first</c> such event's timestamp with the enemy's <c>x</c> and
+    /// <c>y</c> there, and the <c>last</c> event's timestamp.
     /// </summary>
     public static async Task<JsonObject> GetDungeonFightAsync(this FellowshipLogsClient client, string reportCode, int fightId,
         CancellationToken ct = default)
     {
         var report = await ReportPartAsync(client, DungeonFightQuery, new { code = reportCode, fightIDs = new[] { fightId } },
-            r => r["fights"]?.AsArray().FirstOrDefault() is { } f && f["dungeonPulls"] is JsonArray ? r : null,
-            $"pulls for fight {fightId} of report '{reportCode}'", ct);
+            r => r["fights"]?.AsArray().FirstOrDefault() is { } f && f["startTime"] is JsonValue && f["endTime"] is JsonValue ? r : null,
+            $"fight {fightId} of report '{reportCode}'", ct);
+        var fight = report["fights"]!.AsArray()[0]!;
         var entries = report["table"]?["data"]?["entries"] as JsonArray
             ?? throw new FellowshipLogsException($"FellowshipLogs returned no enemy deaths for fight {fightId} of report '{reportCode}'.");
         // Each death's actor, instance, creature, name and time alone: an entry also has the damage and events before the death.
@@ -154,14 +172,96 @@ public static class FellowshipLogsReports
                 ["timestamp"] = e["timestamp"]?.GetValue<double>() ?? 0,
             })
             .ToArray());
+        var player = ContactPlayer(report["playerDetails"]?["data"]?["playerDetails"])
+            ?? throw new FellowshipLogsException($"FellowshipLogs returned no players for fight {fightId} of report '{reportCode}'.");
+        var enemies = (fight["enemyNPCs"]?.AsArray() ?? []).Select(n => n?["id"]?.GetValue<int>() ?? -1).ToHashSet();
+        var contacts = await EnemyContactsAsync(client, reportCode, fightId, player.Id, fight["startTime"]!.GetValue<double>(),
+            fight["endTime"]!.GetValue<double>(), enemies, ct);
         return new JsonObject
         {
             ["report_code"] = reportCode,
             ["report_start_time"] = report["startTime"]?.DeepClone(),
             ["log_version"] = report["masterData"]?["logVersion"]?.DeepClone(),
-            ["fight"] = report["fights"]!.AsArray()[0]!.DeepClone(),
+            ["fight"] = fight.DeepClone(),
             ["enemy_deaths"] = deaths,
+            ["contact_player"] = new JsonObject { ["id"] = player.Id, ["name"] = player.Name, ["hero"] = player.Hero },
+            ["enemy_contacts"] = contacts,
         };
+    }
+
+    /// <summary>
+    /// The player whose damage events show each enemy's first contact: the fight's first tank, who reaches each pack first;
+    /// with no tank, its first damage dealer, then its first healer. <paramref name="details"/> is FellowshipLogs'
+    /// <c>playerDetails</c> (<c>tanks</c>, <c>healers</c> and <c>dps</c>). Null for a fight without players.
+    /// </summary>
+    public static ReportPlayer? ContactPlayer(JsonNode? details) =>
+        new[] { "tanks", "dps", "healers" }
+            .SelectMany(role => details?[role]?.AsArray() ?? [])
+            .Where(p => p?["id"] is JsonValue)
+            .Select(p => new ReportPlayer(p!["id"]!.GetValue<int>(), p["name"]?.GetValue<string>() ?? "?", p["type"]?.GetValue<string>() ?? ""))
+            .FirstOrDefault();
+
+    // Each enemy instance's first and last damage event with player playerId, dealt or taken, and the enemy's position at
+    // the first.
+    private static async Task<JsonArray> EnemyContactsAsync(FellowshipLogsClient client, string reportCode, int fightId, int playerId,
+        double start, double end, HashSet<int> enemies, CancellationToken ct)
+    {
+        var contacts = new Dictionary<(int Id, int Instance), (double First, double X, double Y, double Last)>();
+        foreach (var (dataType, enemySide) in new[] { ("DamageDone", "target"), ("DamageTaken", "source") })
+        {
+            double? cursor = start;
+            while (cursor is { } from && from < end)
+            {
+                byte[] answer = await client.QueryUtf8Async(PlayerDamageQuery, new
+                {
+                    code = reportCode,
+                    fightIDs = new[] { fightId },
+                    sourceID = playerId,
+                    dataType,
+                    startTime = from,
+                    endTime = end,
+                }, ct);
+                using var document = JsonDocument.Parse(answer);
+                if (!(document.RootElement.TryGetProperty("data", out var data) && data.TryGetProperty("reportData", out var reportData)
+                    && reportData.TryGetProperty("report", out var report) && report.TryGetProperty("events", out var events)
+                    && events.ValueKind == JsonValueKind.Object))
+                {
+                    throw new FellowshipLogsException($"FellowshipLogs returned no damage events of player {playerId} in fight {fightId} of report '{reportCode}'.");
+                }
+                foreach (var e in events.GetProperty("data").EnumerateArray())
+                {
+                    if (!e.TryGetProperty($"{enemySide}ID", out var idValue) || !enemies.Contains(idValue.GetInt32())) continue;
+                    int instance = e.TryGetProperty($"{enemySide}Instance", out var i) ? i.GetInt32() : 1;
+                    double t = e.GetProperty("timestamp").GetDouble();
+                    var key = (idValue.GetInt32(), instance);
+                    if (contacts.TryGetValue(key, out var known))
+                    {
+                        if (t >= known.First)
+                        {
+                            contacts[key] = known with { Last = Math.Max(known.Last, t) };
+                            continue;
+                        }
+                    }
+                    if (!e.TryGetProperty($"{enemySide}Resources", out var resources) || !resources.TryGetProperty("x", out var x)) continue;
+                    contacts[key] = (t, x.GetDouble(), resources.GetProperty("y").GetDouble(), Math.Max(known.Last, t));
+                }
+                double? next = events.TryGetProperty("nextPageTimestamp", out var n) && n.ValueKind == JsonValueKind.Number ? n.GetDouble() : null;
+                if (next is not { } after || after <= from) break;
+                cursor = after;
+            }
+        }
+        return new JsonArray(contacts
+            .OrderBy(c => c.Value.First)
+            .Select(c => (JsonNode)new JsonObject
+            {
+                ["id"] = c.Key.Id,
+                ["instance"] = c.Key.Instance,
+                ["first"] = c.Value.First,
+                ["x"] = c.Value.X,
+                ["y"] = c.Value.Y,
+                ["last"] = c.Value.Last,
+            })
+            .ToArray());
     }
 
     public static async Task<ReportSummary> GetSummaryAsync(this FellowshipLogsClient client, string reportCode, CancellationToken ct = default)

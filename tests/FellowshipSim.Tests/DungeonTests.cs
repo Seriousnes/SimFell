@@ -469,6 +469,18 @@ public class DungeonTests
     }
 
     [Fact]
+    public void A_Join_Offset_Varies_With_The_Length_Variance()
+    {
+        // Pull 2 joins 28 s into pull 1's 30 s; in a fight 10% shorter both scale, so pull 2 still joins before pull 1 ends.
+        var dungeon = Dungeon(Trash(1, 1, 30) with { Join = new PullJoin("2", OffsetMs: 28_000) }, Trash(2, 1, 10));
+        var fight = new FightOptions(LengthVariance: 0.2, Dungeon: dungeon);
+        int seed = Enumerable.Range(1, 100).First(s => fight.VarianceScale(s) < 0.9);
+        var result = new MonteCarloSimulator(Build(), AplParser.ParseScript(FrostBolts))
+            .Run(SimTime.FromSeconds(600), iterations: 1, firstSeed: seed, degreeOfParallelism: 1, fight: fight);
+        Assert.Equal(38 * fight.VarianceScale(seed), result.DurationSeconds, 2);
+    }
+
+    [Fact]
     public void The_Fight_Ends_At_Its_Time_Limit()
     {
         var dungeon = Dungeon(Boss(1, 1000, final: true)) with { TimeLimitSeconds = 40 };
