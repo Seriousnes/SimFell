@@ -24,7 +24,7 @@ public sealed class LogPlayerLookup(ReportLookup reports, LogsSettingsStore sett
             if (fights.Count == 0) throw new InvalidOperationException($"{character.Name}'s recent fights have no {hero}.");
             return new LogPlayers(fights.Select(f => new PickedPlayer(
                 f.ReportCode,
-                new ReportFight(f.FightId, f.FightName, f.Kill, f.DurationSeconds, false, [Player(f.Player)]),
+                new ReportFight(f.FightId, f.FightName, f.Kill, f.DurationSeconds, [Player(f.Player)]),
                 Player(f.Player),
                 GamePatch.Current.Covers(DateTimeOffset.FromUnixTimeMilliseconds(f.ReportStartTime).UtcDateTime, f.LogVersion))).ToList(), page);
         }
@@ -45,7 +45,7 @@ public sealed class LogPlayerLookup(ReportLookup reports, LogsSettingsStore sett
         return new LogPlayers(players, null);
     }
 
-    private static FightPlayer Player(ReportPlayer player) => new(player.Id, player.Name, player.Hero, true);
+    private static FightPlayer Player(ReportPlayer player) => new(player.Id, player.Name, player.Hero, true, false);
 
     // The log's hero name, as the build editor names it.
     private static bool IsHero(string logged, string hero) => (BuildHeroes.Find(logged) ?? logged).Equals(hero, StringComparison.OrdinalIgnoreCase);

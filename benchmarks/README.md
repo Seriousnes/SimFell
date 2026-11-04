@@ -152,8 +152,8 @@ dotnet publish src/FellowshipSim.Web -c Release -p:RunAOTCompilation=true -o pub
 node benchmarks/wasm/worker-memory.mjs publish sim:1000 sim:1000:8 dungeon:100
 
 # a replay of a fight the browser keeps, and a first replay with the fight downloaded
-node benchmarks/wasm/worker-memory.mjs publish review:data/fights/rf7qpV3tATCx86hN_fight6.raw.json:83
-node benchmarks/wasm/worker-memory.mjs publish download:data/fights/rf7qpV3tATCx86hN_fight6.raw.json:83
+node benchmarks/wasm/worker-memory.mjs publish review:data/fights/rf7qpV3tATCx86hN_fight6_p83.raw.json:83
+node benchmarks/wasm/worker-memory.mjs publish download:data/fights/rf7qpV3tATCx86hN_fight6_p83.raw.json:83
 ```
 
 After the start and after each workload it prints the worker's WebAssembly memory, the process's resident memory, the
@@ -163,9 +163,9 @@ fails with "Out of memory". The memory grows in steps of 20%.
 
 A `build` workload builds the player's replay script alone (`WorkerMeasures.BuildScript`), without the replay.
 
-A `download` workload has FellowshipLogs' answers from the raw fight, in pages of 10,000 events, through
-`WorkerMeasures.ReviewFight`. `WorkerMeasures` is the harness's part of the app: its calls force a full collection, and
-the app never makes them. `MONO_GC_PARAMS` in the environment reaches the worker's GC.
+A `download` workload has FellowshipLogs' answers to the player's six events queries from the raw fight, in pages of
+10,000 events, through `WorkerMeasures.ReviewFight`. `WorkerMeasures` is the harness's part of the app: its calls force a
+full collection, and the app never makes them. `MONO_GC_PARAMS` in the environment reaches the worker's GC.
 
 Run each workload in a process of its own for its peak: a review after another workload starts from that workload's
 memory.

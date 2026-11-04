@@ -33,7 +33,7 @@ runtime.setModuleImports('simWorker', {
   progress: () => { },
   bytes: bytes => bytes,
   // As worker.js: the view is copied before the save.
-  saveFight: async (reportCode, fightId, view) => {
+  saveFight: async (reportCode, fightId, playerId, view) => {
     view.slice();
     view.dispose();
   },
@@ -59,15 +59,18 @@ const actionList = readFileSync(join(repo, 'benchmarks/FellowshipSim.Benchmarks/
 const profileJson = JSON.stringify({ build, actionList });
 let run = 0;
 
-// FellowshipLogs for one raw fight: its report and fight, and its events from a time in pages of 10,000, each page's
-// next timestamp that of the event after it (so events at that time are in both pages, as FellowshipLogs has them).
+// FellowshipLogs for one raw fight: its report and fight, and each events query's events from a time in pages of 10,000,
+// each page's next timestamp that of the event after it (so events at that time are in both pages, as FellowshipLogs has
+// them).
 function serve(raw) {
   const fight = JSON.parse(raw);
-  const events = fight.events;
+  const enemies = new Set(fight.master_data.actors.filter(a => a.type === 'NPC').map(a => a.id));
+  const attacks = new Set(fight.master_data.abilities.filter(a => a.name === 'Attack').map(a => a.gameID));
   fellowshipLogs = body => {
     let report;
     if (body.query.includes('events(')) {
       const from = body.variables.startTime;
+      const events = fight.events.filter(selects(enemies, attacks, body.variables));
       let first = events.findIndex(e => e.timestamp >= from);
       if (first < 0) first = events.length;
       const page = events.slice(first, first + 10000);
@@ -78,6 +81,27 @@ function serve(raw) {
     return JSON.stringify({ data: { reportData: { report } } });
   };
   return { reportCode: fight.report_code, fightId: fight.fight.id };
+}
+
+// The events of a fight an events query with these variables returns (FellowshipLogsFromFight in the tests): with a
+// sourceID, the events with that actor as source or as target; Debuffs or Buffs of Enemies, those auras on enemies;
+// Deaths of Enemies, enemies' deaths; Casts of Enemies, enemies' casts and begincasts except their melee swings (the
+// ability Attack); a filterExpression of types (type = "a" or type = "b"), the events of those types;
+// and otherwise every event.
+function selects(enemies, attacks, { sourceID = 0, dataType = 'All', hostilityType = 'Friendlies', filterExpression = '' }) {
+  const types = [...filterExpression.matchAll(/type = "([^"]+)"/g)].map(m => m[1]);
+  return e => {
+    const onEnemy = enemies.has(e.targetID);
+    if (sourceID !== 0) return e.sourceID === sourceID || e.targetID === sourceID;
+    if (types.length > 0) return types.includes(e.type);
+    if (hostilityType === 'Enemies' && dataType === 'Debuffs') return /debuff/.test(e.type) && onEnemy;
+    if (hostilityType === 'Enemies' && dataType === 'Buffs') return /buff/.test(e.type) && !/debuff/.test(e.type) && onEnemy;
+    if (hostilityType === 'Enemies' && dataType === 'Deaths') return e.type === 'death' && onEnemy;
+    if (hostilityType === 'Enemies' && dataType === 'Casts') {
+      return (e.type === 'cast' || e.type === 'begincast') && enemies.has(e.sourceID) && !attacks.has(e.abilityGameID);
+    }
+    return true;
+  };
 }
 
 // A replay's reply (ReviewReply.ToBytes): its head's JSON after the head's length. A refused replay throws its reason.

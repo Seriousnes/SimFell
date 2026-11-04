@@ -90,7 +90,7 @@ public static partial class SimWorker
         ReviewReply reply;
         try
         {
-            var fight = await Download(client, reportCode, fightId, progress);
+            var fight = await Download(client, reportCode, fightId, playerId, progress);
             // The replay runs on a stack of its own: inline, it would run under the download's resumed frame, which holds
             // the fight's bytes.
             reply = new ReviewReply(await Task.Run(() => ReplayReview.Run(fight, playerId, progress: progress)), null);
@@ -103,16 +103,17 @@ public static partial class SimWorker
     }
 
     /// <summary>
-    /// Downloads a fight and keeps it in the browser's storage. The fight is in the holder alone once this method returns,
-    /// so no frame of the replay holds it.
+    /// Downloads a player's fight and keeps it in the browser's storage. The fight is in the holder alone once this method
+    /// returns, so no frame of the replay holds it.
     /// </summary>
-    private static async Task<RawFightHolder> Download(FellowshipLogsClient client, string reportCode, int fightId, IProgress<string> progress)
+    private static async Task<RawFightHolder> Download(FellowshipLogsClient client, string reportCode, int fightId, int playerId,
+        IProgress<string> progress)
     {
         progress.Report("Downloading the fight from FellowshipLogs");
         var download = new FightDownload();
-        await client.DownloadFightAsync(reportCode, fightId, download, progress);
+        await client.DownloadFightAsync(reportCode, fightId, playerId, download, progress);
         byte[] text = download.ToArray();
-        await SaveFight(reportCode, fightId, text);
+        await SaveFight(reportCode, fightId, playerId, text);
         return new RawFightHolder(text);
     }
 
@@ -140,7 +141,8 @@ public static partial class SimWorker
     /// script copies the bytes before it returns.
     /// </summary>
     [JSImport("saveFight", "simWorker")]
-    private static partial Task SaveFight(string reportCode, int fightId, [JSMarshalAs<JSType.MemoryView>] ArraySegment<byte> text);
+    private static partial Task SaveFight(string reportCode, int fightId, int playerId,
+        [JSMarshalAs<JSType.MemoryView>] ArraySegment<byte> text);
 
     /// <summary>The bytes as a Uint8Array of the script's own.</summary>
     [JSImport("bytes", "simWorker")]

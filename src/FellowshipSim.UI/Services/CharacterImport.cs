@@ -8,7 +8,7 @@ namespace FellowshipSim.UI.Services;
 
 /// <summary>
 /// A player's character as a logged fight shows it: the fight's <c>combatantinfo</c> event read by
-/// <see cref="CharacterReader"/>. A fight already downloaded for a replay (<see cref="ReplayLibrary"/>) is read from disk;
+/// <see cref="CharacterReader"/>. A player's fight already downloaded for a replay (<see cref="ReplayLibrary"/>) is read from disk;
 /// otherwise FellowshipLogs is asked for that one event alone, not the fight's every event.
 /// </summary>
 public sealed class CharacterImport(ReplayLibrary library, LogsSettingsStore settings)
@@ -29,10 +29,10 @@ public sealed class CharacterImport(ReplayLibrary library, LogsSettingsStore set
     private async Task<JsonObject?> CombatantInfoAsync(string reportCode, int fightId, int playerId,
         IProgress<string>? progress, CancellationToken ct)
     {
-        if (library.HasRawFight(reportCode, fightId))
+        if (library.HasRawFight(reportCode, fightId, playerId))
         {
             // The fight's JsonDocument, read in place: its events as a JsonNode tree are over a GB for a long fight.
-            using var fight = await library.GetRawFightDocumentAsync(null, reportCode, fightId, progress, ct);
+            using var fight = await library.GetRawFightDocumentAsync(null, reportCode, fightId, playerId, progress, ct);
             if (!fight.RootElement.TryGetProperty("events", out var events) || events.ValueKind != JsonValueKind.Array) return null;
             foreach (var e in events.EnumerateArray())
             {

@@ -73,8 +73,8 @@ Without either, the app reads the repository's `settings.json` (see above).
 To download and replay a fight:
 
 1. On **Import**, paste a FellowshipLogs report link and load it.
-2. Click a player. The fight is downloaded and replayed as a job. When the job is done, its review page opens. The
-   **Reviews** page lists your reviews.
+2. Click a player. The fight is downloaded for that player and replayed as a job. When the job is done, its review
+   page opens. The **Reviews** page lists your reviews.
 
 ## Run the desktop app
 
@@ -404,7 +404,7 @@ Runs the engine tests and replays every downloaded fight, rewriting its review p
 | `src/FellowshipSim.Cli` | `simfell`, the command-line sim |
 | `tests/FellowshipSim.Tests` | Tests, including the free-dice runner |
 | `docs/` | [Adding a hero](docs/ADDING_A_HERO.md) |
-| `data/` | Your local data, not committed: `fights/` downloaded fights, `scripts/` replay scripts, `reviews/` all pages and results, `results/` finished sims, `apls/` saved action lists, `dungeons/` saved dungeons, `profiles/` `.simc` profiles, `settings.json`; for the web app, `visitors/` each visitor's sims, reviews, action lists and dungeons, and `keys/` the visitor cookie keys |
+| `data/` | Your local data, not committed: `fights/` downloaded fights (one file per player), `scripts/` replay scripts, `reviews/` all pages and results, `results/` finished sims, `apls/` saved action lists, `dungeons/` saved dungeons, `profiles/` `.simc` profiles, `settings.json`; for the web app, `visitors/` each visitor's sims, reviews, action lists and dungeons, and `keys/` the visitor cookie keys |
 
 Game values are constants at the top of each class. Rime (`src/FellowshipSim.Core/Heroes/Rime`) is the complete
 example; its `NOTES.md` lists what the combat logs showed.

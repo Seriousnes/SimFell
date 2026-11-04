@@ -37,32 +37,60 @@ internal readonly record struct EventsPage(int DataStart, int DataLength, double
         return dataStart < 0 ? null : new EventsPage(dataStart, dataLength, next);
     }
 
-    /// <summary>
-    /// Writes each event of the page to <paramref name="writer"/> as the answer has it, and returns their count. A page
-    /// with line breaks between its tokens (an answer formatted for reading) has each event written compact.
-    /// </summary>
-    public int WriteEvents(ReadOnlySpan<byte> answer, Utf8JsonWriter writer)
+    /// <summary>Each event of the page in the answer's order: its place in the answer, time, source and target.</summary>
+    public List<PageEvent> Events(ReadOnlySpan<byte> answer)
     {
         var data = answer.Slice(DataStart, DataLength);
-        // JSON strings have no raw line breaks, so a line break in the array is between tokens.
-        bool compact = data.IndexOfAny((byte)'\n', (byte)'\r') < 0;
         var reader = new Utf8JsonReader(data);
         reader.Read();
-        int count = 0;
+        var events = new List<PageEvent>();
         while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
         {
-            count++;
             int start = (int)reader.TokenStartIndex;
             reader.Skip();
-            var value = data[start..(int)reader.BytesConsumed];
-            if (compact) writer.WriteRawValue(value, skipInputValidation: true);
-            else
-            {
-                using var document = JsonDocument.Parse(value.ToArray());
-                document.RootElement.WriteTo(writer);
-            }
+            int length = (int)reader.BytesConsumed - start;
+            var (timestamp, source, target) = Actors(data.Slice(start, length));
+            events.Add(new PageEvent(DataStart + start, length, timestamp, source, target));
         }
-        return count;
+        return events;
+    }
+
+    /// <summary>
+    /// Writes one event to <paramref name="writer"/> as the answer has it. An event with line breaks between its tokens
+    /// (an answer formatted for reading) is written compact.
+    /// </summary>
+    public static void WriteEvent(ReadOnlySpan<byte> value, Utf8JsonWriter writer)
+    {
+        // JSON strings have no raw line breaks, so a line break in the event is between tokens.
+        if (value.IndexOfAny((byte)'\n', (byte)'\r') < 0) writer.WriteRawValue(value, skipInputValidation: true);
+        else
+        {
+            using var document = JsonDocument.Parse(value.ToArray());
+            document.RootElement.WriteTo(writer);
+        }
+    }
+
+    // An event's timestamp, sourceID and targetID; null for each one the event lacks.
+    private static (double? Timestamp, int? Source, int? Target) Actors(ReadOnlySpan<byte> value)
+    {
+        var reader = new Utf8JsonReader(value);
+        if (!reader.Read() || reader.TokenType != JsonTokenType.StartObject) return (null, null, null);
+        double? timestamp = null;
+        int? source = null, target = null;
+        while (reader.Read() && reader.TokenType == JsonTokenType.PropertyName)
+        {
+            bool isTimestamp = reader.ValueTextEquals("timestamp"u8), isSource = reader.ValueTextEquals("sourceID"u8),
+                isTarget = reader.ValueTextEquals("targetID"u8);
+            reader.Read();
+            if (reader.TokenType == JsonTokenType.Number)
+            {
+                if (isTimestamp) timestamp = reader.GetDouble();
+                else if (isSource) source = reader.GetInt32();
+                else if (isTarget) target = reader.GetInt32();
+            }
+            reader.Skip();
+        }
+        return (timestamp, source, target);
     }
 
     // Moves the reader from an object's start to the start of its property's value; false when the property is missing

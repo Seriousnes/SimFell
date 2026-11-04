@@ -21,12 +21,12 @@ public class RawFightMemoryTests(ITestOutputHelper output)
     public async Task A_Long_Fight_Is_Read_In_Place(string reportCode, int fightId, int playerId)
     {
         var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
-        if (!library.HasRawFight(reportCode, fightId))
+        if (!library.HasRawFight(reportCode, fightId, playerId))
         {
-            output.WriteLine($"Fight {fightId} of {reportCode} is not in {library.FightsDirectory}.");
+            output.WriteLine($"Player {playerId}'s fight {fightId} of {reportCode} is not in {library.FightsDirectory}.");
             return;
         }
-        byte[] fight = await library.GetRawFightBytesAsync(null, reportCode, fightId);
+        byte[] fight = await library.GetRawFightBytesAsync(null, reportCode, fightId, playerId);
 
         long before = GC.GetAllocatedBytesForCurrentThread();
         byte[] script = ReplayScriptBuilder.Build(fight, playerId);

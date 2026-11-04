@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 namespace FellowshipSim.Tests;
 
 /// <summary>
-/// Every downloaded fight (data/fights) against the replay scripts built from it at commit 080bdfb (the JsonNode builder):
+/// Every downloaded player's fight (data/fights) against the replay scripts built from it at commit 080bdfb (the JsonNode builder):
 /// data/script-baseline/scripts.tsv has, for each player of each fight, the report code, fight ID and player ID, then the
 /// script's UTF-8 length and SHA-256, or <c>error</c> and the exception's type and message. Without fights or the file
 /// the tests do nothing.
@@ -29,10 +29,10 @@ public class ReplayScriptBaselineTests(ITestOutputHelper output)
             .ToDictionary(p => (p[0], int.Parse(p[1]), int.Parse(p[2])), p => string.Join('\t', p[3..]));
         var differences = new List<string>();
         int compared = 0;
-        foreach (var (reportCode, fightId) in library.ListDownloadedFights())
+        foreach (var (reportCode, fightId, playerId) in library.ListDownloadedFights())
         {
-            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId);
-            foreach (var player in ReplayScriptBuilder.Players(raw))
+            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId, playerId);
+            foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Id == playerId))
             {
                 if (!expected.Remove((reportCode, fightId, player.Id), out var want)) continue;
                 string got;
@@ -53,7 +53,7 @@ public class ReplayScriptBaselineTests(ITestOutputHelper output)
         Assert.Empty(differences);
         // A baseline player of a downloaded fight that Players no longer finds.
         var fights = library.ListDownloadedFights().ToHashSet();
-        Assert.Empty(expected.Keys.Where(k => fights.Contains((k.Item1, k.Item2))));
+        Assert.Empty(expected.Keys.Where(fights.Contains));
     }
 
     [Fact]
@@ -61,10 +61,10 @@ public class ReplayScriptBaselineTests(ITestOutputHelper output)
     {
         var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
         var outOfOrder = new List<string>();
-        foreach (var (reportCode, fightId) in library.ListDownloadedFights())
+        foreach (var (reportCode, fightId, playerId) in library.ListDownloadedFights())
         {
-            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId);
-            if (FirstOutOfOrder(raw) is { } timestamp) outOfOrder.Add($"{reportCode} fight {fightId} at {timestamp}");
+            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId, playerId);
+            if (FirstOutOfOrder(raw) is { } timestamp) outOfOrder.Add($"{reportCode} fight {fightId} player {playerId} at {timestamp}");
         }
         Assert.Empty(outOfOrder);
     }

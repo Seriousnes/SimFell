@@ -41,7 +41,7 @@
                         <div class="fight-head">
                             <span class="fight-name">@f.Name</span>
                             <span class="meta">
-                                Fight @f.Id · @FormatDuration(f.DurationSeconds) · @(f.Kill ? "kill" : "wipe/ongoing")@(f.Downloaded ? " · downloaded" : "")
+                                Fight @f.Id · @FormatDuration(f.DurationSeconds) · @(f.Kill ? "kill" : "wipe/ongoing")
                             </span>
                         </div>
                         <div class="players">
@@ -52,7 +52,7 @@
                                 string kind = !pickable ? "player unsupported" : picked ? "player picked" : "player";
                                 <button @key="p.Id" type="button" class="@kind" aria-pressed="@picked"
                                         disabled="@(!pickable || Busy)"
-                                        data-tooltip="@(pickable ? $"Pick {p.Name}'s {p.Hero}" : $"{p.Hero} is not supported yet")"
+                                        data-tooltip="@(pickable ? $"Pick {p.Name}'s {p.Hero}{(p.Downloaded ? " (downloaded)" : "")}" : $"{p.Hero} is not supported yet")"
                                         @onclick="() => State.Picked = (f.Id, p.Id)">
                                     <span class="player-name">@p.Name</span>
                                     <span class="player-hero">@p.Hero</span>

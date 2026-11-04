@@ -34,10 +34,10 @@ public class ReactionTimeTests(ITestOutputHelper output)
         var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
         var delays = new List<Delay>();
         int fights = 0;
-        foreach (var (reportCode, fightId) in library.ListDownloadedFights())
+        foreach (var (reportCode, fightId, playerId) in library.ListDownloadedFights())
         {
-            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId);
-            foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Hero.Equals(heroName, StringComparison.OrdinalIgnoreCase)))
+            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId, playerId);
+            foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Id == playerId && p.Hero.Equals(heroName, StringComparison.OrdinalIgnoreCase)))
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id));
                 // A fight without the player's character (no combatantinfo) has no hero to replay.

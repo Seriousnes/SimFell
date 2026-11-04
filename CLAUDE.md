@@ -45,7 +45,7 @@ dotnet run tools/fetch-fights.cs -- --hero Rime --count 15
 ACCURACY_HERO=Rime ACCURACY_LABEL=baseline dotnet test tests/FellowshipSim.Tests -c Release --filter HeroAccuracyTests
 
 # one browser worker's memory and time in Node, from an AOT publish (benchmarks/README.md)
-node benchmarks/wasm/worker-memory.mjs publish sim:1000 review:data/fights/<fight>.raw.json:<player>
+node benchmarks/wasm/worker-memory.mjs publish sim:1000 review:data/fights/<fight>_p<player>.raw.json:<player>
 
 # free dice over downloaded fights (FREEDICE_REVIEW=all or one review ID; FREEDICE_SEED, default 1)
 FREEDICE_REVIEW=all FREEDICE_ITERATIONS=1000 dotnet test tests/FellowshipSim.Tests -c Release --filter FreeDice

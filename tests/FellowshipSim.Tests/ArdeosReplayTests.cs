@@ -15,10 +15,10 @@ public class ArdeosReplayTests(ITestOutputHelper output)
     public async Task Ardeos_Fights_Replay()
     {
         var library = new ReplayLibrary(Path.Combine(TestPaths.RepositoryRoot, "data"));
-        foreach (var (reportCode, fightId) in library.ListDownloadedFights())
+        foreach (var (reportCode, fightId, playerId) in library.ListDownloadedFights())
         {
-            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId);
-            foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Hero == "Ardeos"))
+            byte[] raw = await library.GetRawFightBytesAsync(null, reportCode, fightId, playerId);
+            foreach (var player in ReplayScriptBuilder.Players(raw).Where(p => p.Id == playerId && p.Hero == "Ardeos"))
             {
                 var script = ReplayScript.FromJson(ReplayScriptBuilder.Build(raw, player.Id));
                 if (Environment.GetEnvironmentVariable("ARDEOS_CHARACTER_JSON") is { } characterFile)

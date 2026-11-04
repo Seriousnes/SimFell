@@ -11,7 +11,7 @@ public sealed record FightSummary(int Id, string Name, bool Kill, double Duratio
 /// <summary>A player in a report: <see cref="Id"/> is the report's actor ID (the "source" in a FellowshipLogs link).</summary>
 public sealed record ReportPlayer(int Id, string Name, string Hero);
 
-/// <summary>Report queries: the fight list of a report, and every event of one fight.</summary>
+/// <summary>Report queries: the fight list of a report, and the events of one fight that a player's replay reads.</summary>
 public static class FellowshipLogsReports
 {
     private const string SummaryQuery = """
@@ -44,17 +44,33 @@ public static class FellowshipLogsReports
         }
         """;
 
+    // sourceID 0 is every source, and an empty filterExpression is every event. With a player's sourceID, the events are
+    // those with the player as source or as target.
     private const string EventsQuery = """
-        query($code: String!, $fightIDs: [Int]!, $startTime: Float!, $endTime: Float!) {
+        query($code: String!, $fightIDs: [Int]!, $startTime: Float!, $endTime: Float!, $sourceID: Int!, $dataType: EventDataType!,
+              $hostilityType: HostilityType!, $filterExpression: String!) {
           reportData {
             report(code: $code) {
-              events(fightIDs: $fightIDs, dataType: All, startTime: $startTime, endTime: $endTime, limit: 10000, includeResources: true) {
+              events(fightIDs: $fightIDs, startTime: $startTime, endTime: $endTime, sourceID: $sourceID, dataType: $dataType,
+                     hostilityType: $hostilityType, filterExpression: $filterExpression, limit: 10000, includeResources: true) {
                 data nextPageTimestamp
               }
             }
           }
         }
         """;
+
+    // The events of a fight a player's replay reads besides the player's own: buffs and debuffs on enemies (external auras,
+    // and each enemy's health and lifetime), enemies' deaths, enemies' casts (each enemy's arrival), the dungeon start
+    // (the affixes) and every player's combatantinfo (a buff another player gives scales with the giver's ranks).
+    private static readonly EventStream[] FightStreams =
+    [
+        new(0, "Debuffs", "Enemies", ""),
+        new(0, "Buffs", "Enemies", ""),
+        new(0, "Deaths", "Enemies", ""),
+        new(0, "Casts", "Enemies", ""),
+        new(0, "All", "Friendlies", "type = \"dungeonstart\" or type = \"combatantinfo\""),
+    ];
 
     private const string FightTimesQuery = """
         query($code: String!, $fightIDs: [Int]!) {
@@ -173,18 +189,38 @@ public static class FellowshipLogsReports
     }
 
     /// <summary>
-    /// Downloads every event of one fight, with the report's actors and abilities, as a raw fight (the input of the
-    /// engine's <c>ReplayScriptBuilder</c>), and writes it to <paramref name="output"/> as UTF-8 JSON. Each page of events
-    /// is written as it arrives: a long fight's events as one tree are over a GB, more than the browser app's worker has.
+    /// Downloads the events of one fight that player <paramref name="playerId"/>'s replay reads, with the report's actors
+    /// and abilities, as a raw fight (the input of the engine's <c>ReplayScriptBuilder</c>), and writes it to
+    /// <paramref name="output"/> as UTF-8 JSON. The events are the player's (as source or as target), then every buff and
+    /// debuff on an enemy, every enemy's death and cast, the dungeon start and every player's combatantinfo, in time order;
+    /// the player's events come first at one time. Each page of the player's events is written as it arrives: a long fight's events as one tree are over a GB,
+    /// more than the browser app's worker has.
     /// </summary>
-    public static async Task DownloadFightAsync(this FellowshipLogsClient client, string reportCode, int fightId, Stream output,
-        IProgress<string>? progress = null, CancellationToken ct = default)
+    public static async Task DownloadFightAsync(this FellowshipLogsClient client, string reportCode, int fightId, int playerId,
+        Stream output, IProgress<string>? progress = null, CancellationToken ct = default)
     {
         var report = await ReportPartAsync(client, FightMetaQuery, new { code = reportCode, fightIDs = new[] { fightId } },
             r => r["fights"]?.AsArray().FirstOrDefault() is { } f && f["startTime"] is JsonValue && f["endTime"] is JsonValue ? r : null,
             $"fight {fightId} of report '{reportCode}'", ct);
         var fight = report["fights"]!.AsArray()[0]!;
         double start = fight["startTime"]!.GetValue<double>(), end = fight["endTime"]!.GetValue<double>();
+
+        // The other streams' events without the player's, which the player's stream has: held until the player's events
+        // reach their time.
+        var held = new List<(double Timestamp, byte[] Value)>();
+        foreach (var stream in FightStreams)
+        {
+            await ReadEventsAsync(client, reportCode, fightId, stream, start, end, (answer, events) =>
+            {
+                foreach (var e in events)
+                {
+                    if (e.SourceId == playerId || e.TargetId == playerId) continue;
+                    held.Add((e.Timestamp ?? start, answer.AsSpan(e.Start, e.Length).ToArray()));
+                }
+                return Task.CompletedTask;
+            }, ct);
+        }
+        held = held.OrderBy(h => h.Timestamp).ToList();
 
         await using var writer = new Utf8JsonWriter(output);
         writer.WriteStartObject();
@@ -194,23 +230,53 @@ public static class FellowshipLogsReports
         Write(writer, "master_data", report["masterData"]);
         writer.WriteNull("character");
         writer.WriteStartArray("events");
-        int events = 0;
-        double? cursor = start;
-        while (cursor is { } from && from < end)
-        {
-            byte[] answer = await client.QueryUtf8Async(EventsQuery,
-                new { code = reportCode, fightIDs = new[] { fightId }, startTime = from, endTime = end }, ct);
-            var page = EventsPage.Read(answer)
-                ?? throw new FellowshipLogsException($"FellowshipLogs returned no events for fight {fightId} of report '{reportCode}' from {(from - start) / 1000:F0}s.");
-            events += page.WriteEvents(answer, writer);
-            await writer.FlushAsync(ct);
-            progress?.Report($"Downloaded {events:N0} events");
-            if (page.NextPageTimestamp is not { } next || next <= from) break;
-            cursor = next;
-        }
+        int written = 0, next = 0;
+        await ReadEventsAsync(client, reportCode, fightId, new EventStream(playerId, "All", "Friendlies", ""), start, end,
+            async (answer, events) =>
+            {
+                foreach (var e in events)
+                {
+                    while (e.Timestamp is { } t && next < held.Count && held[next].Timestamp < t)
+                    {
+                        EventsPage.WriteEvent(held[next++].Value, writer);
+                        written++;
+                    }
+                    EventsPage.WriteEvent(answer.AsSpan(e.Start, e.Length), writer);
+                    written++;
+                }
+                await writer.FlushAsync(ct);
+                progress?.Report($"Downloaded {written:N0} events");
+            }, ct);
+        for (; next < held.Count; next++, written++) EventsPage.WriteEvent(held[next].Value, writer);
         writer.WriteEndArray();
         writer.WriteEndObject();
         await writer.FlushAsync(ct);
+    }
+
+    // Each page of a stream's events from the fight's start to its end, in turn.
+    private static async Task ReadEventsAsync(FellowshipLogsClient client, string reportCode, int fightId, EventStream stream,
+        double start, double end, Func<byte[], List<PageEvent>, Task> page, CancellationToken ct)
+    {
+        double? cursor = start;
+        while (cursor is { } from && from < end)
+        {
+            byte[] answer = await client.QueryUtf8Async(EventsQuery, new
+            {
+                code = reportCode,
+                fightIDs = new[] { fightId },
+                startTime = from,
+                endTime = end,
+                sourceID = stream.SourceId,
+                dataType = stream.DataType,
+                hostilityType = stream.HostilityType,
+                filterExpression = stream.FilterExpression,
+            }, ct);
+            var read = EventsPage.Read(answer)
+                ?? throw new FellowshipLogsException($"FellowshipLogs returned no events for fight {fightId} of report '{reportCode}' from {(from - start) / 1000:F0}s.");
+            await page(answer, read.Events(answer));
+            if (read.NextPageTimestamp is not { } next || next <= from) break;
+            cursor = next;
+        }
     }
 
     // A property with a node's value, or JSON null for none.
