@@ -235,3 +235,11 @@
     font-size: 12px;
   }
 }
+
+/* A phone: the Import dialog's cards are sections of one sheet (Card.razor.css), on its surface. */
+@media (max-width: 600px) {
+  .import-body {
+    padding: 16px;
+    background: var(--surface);
+  }
+}
