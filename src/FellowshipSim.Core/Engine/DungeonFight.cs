@@ -7,7 +7,8 @@ namespace FellowshipSim.Core.Engine;
 /// starts as the fight starts, as the pull its <c>chain_with</c> names ends, or its downtime after the pull before it ends.
 /// Downtime has no enemies and no actions. Each enemy's health falls from full to none over its pull's
 /// <see cref="DungeonPull.DurationSeconds"/> (times the fight's variance scale), whatever the hero does, and the enemy dies
-/// as it reaches none. A pull ends as its enemies, joined ones included, are all dead. The hero's boss auras are on while a
+/// as it reaches none. A <c>pull_with</c> offset in milliseconds scales with the duration. A pull ends as its enemies, joined
+/// ones included, are all dead. The hero's boss auras are on while a
 /// boss is in combat.
 /// </summary>
 internal sealed class DungeonFight
@@ -117,7 +118,8 @@ internal sealed class DungeonFight
 
         if (pull.Join is not { } join) return;
         if (join.Triggers == 0) JoinNow(state);
-        else if (join.OffsetMs is { } ms) _ctx.Schedule(SimTime.FromMilliseconds((long)Math.Round(ms)), _ => JoinNow(state), "Pull with");
+        // The offset scales with the pull's duration.
+        else if (join.OffsetMs is { } ms) _ctx.Schedule(SimTime.FromMilliseconds((long)Math.Round(ms * _varianceScale)), _ => JoinNow(state), "Pull with");
         else if (join.OffsetPct is { } pct)
         {
             // The pull's health falls to the percent at that share of its duration.
