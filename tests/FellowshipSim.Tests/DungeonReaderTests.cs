@@ -19,7 +19,7 @@ public class DungeonReaderTests
         {
           "report_code": "abc",
           "fight": {
-            "id": 7, "name": "Cithrel's Fall", "startTime": 100000, "endTime": 400000, "difficulty": 10,
+            "id": 7, "name": "Cithrel's Fall", "startTime": 100000, "endTime": 400000, "difficulty": 10, "difficultyLevel": 50,
             "gameZone": { "name": "Cithrel's Fall" },
             "enemyNPCs": [ { "id": 10 }, { "id": 11 }, { "id": 12 }, { "id": 13 }, { "id": 14 } ],
             "dungeonPulls": [
@@ -57,7 +57,8 @@ public class DungeonReaderTests
         Assert.Null(dungeon.Problem());
         Assert.Equal(dungeon.Format(), DungeonProfile.Parse(dungeon.Format()).Format());
         Assert.Equal("Cithrel's Fall", dungeon.Name);
-        Assert.Equal(10, dungeon.Difficulty);
+        // The fight's difficultyLevel 50 is Eternal 30.
+        Assert.Equal(30, dungeon.Difficulty);
         Assert.Equal(["1", "2", "3"], dungeon.Pulls.Select(p => p.Name));
         Assert.Equal([40, 50, 100], dungeon.Pulls.Select(p => p.DurationSeconds));
         // 30 s from pull 1's end to pull 2's start; pull 3 starts 40 s into pull 2, before it ends.

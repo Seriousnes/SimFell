@@ -69,7 +69,7 @@ public static class FellowshipLogsReports
               startTime
               masterData { logVersion }
               fights(fightIDs: $fightIDs) {
-                id name startTime endTime difficulty gameZone { name } enemyNPCs { id }
+                id name startTime endTime difficultyLevel gameZone { name } enemyNPCs { id }
                 dungeonPulls { id name startTime endTime enemyNPCs { id gameID minimumInstanceID maximumInstanceID } }
               }
               table(fightIDs: $fightIDs, dataType: Deaths, hostilityType: Enemies)
@@ -114,7 +114,7 @@ public static class FellowshipLogsReports
 
     /// <summary>
     /// One dungeon fight without its events: <c>report_code</c>; <c>report_start_time</c> and <c>log_version</c>, the
-    /// report's start and combat-log format version (null when FellowshipLogs returns none); <c>fight</c> (id, name, startTime, endTime, difficulty,
+    /// report's start and combat-log format version (null when FellowshipLogs returns none); <c>fight</c> (id, name, startTime, endTime, difficultyLevel,
     /// gameZone, enemyNPCs and dungeonPulls, each pull's enemyNPCs with their instance ranges); and <c>enemy_deaths</c>, each enemy death's
     /// actor <c>id</c>, <c>instance</c>, <c>gameID</c>, <c>name</c> and <c>timestamp</c>.
     /// </summary>

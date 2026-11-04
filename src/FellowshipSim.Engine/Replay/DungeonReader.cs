@@ -20,7 +20,8 @@ namespace FellowshipSim.Engine.Replay;
 /// (<see cref="GameCreatures.ById"/>): its name, base health, Spirit Points and rank. A boss is a creature of rank Boss,
 /// and the last pull with a boss is final. An enemy whose gameID has no creature is left out and named in the dungeon's
 /// comment.</item>
-/// <item>The difficulty is the fight's <c>difficulty</c>, and the name its <c>gameZone</c>'s.</item>
+/// <item>The difficulty is the Eternal level of the fight's <c>difficultyLevel</c>, the game's difficulty number
+/// (<see cref="DifficultyScaling.WithDifficulty"/>; 50 is Eternal 30), and the name is its <c>gameZone</c>'s.</item>
 /// <item>The time limit is <see cref="TimeLimitShare"/> of the run's length, and at least
 /// <see cref="DungeonProfile.DefaultTimeLimitSeconds"/>.</item>
 /// </list>
@@ -37,8 +38,9 @@ public static class DungeonReader
         var fight = raw["fight"];
         if (fight.Element.ValueKind != JsonValueKind.Object) throw new ArgumentException("The fight is missing.");
         double start = Num(fight["startTime"]), end = Num(fight["endTime"]);
-        int difficulty = Int(fight["difficulty"]) ?? throw new ArgumentException("The fight has no difficulty.");
-        if (DifficultyScaling.At(difficulty) == null) throw new ArgumentException($"The run's difficulty {difficulty} is no Eternal level.");
+        int gameDifficulty = Int(fight["difficultyLevel"]) ?? throw new ArgumentException("The fight has no difficulty level.");
+        int difficulty = DifficultyScaling.WithDifficulty(gameDifficulty)?.Eternal
+            ?? throw new ArgumentException($"The run's difficulty level {gameDifficulty} is no Eternal level.");
 
         var logPulls = fight["dungeonPulls"].Items
             .Select(p => new LogPull(Str(p["name"]), (Num(p["startTime"]) - start) / 1000, (Num(p["endTime"]) - start) / 1000,
