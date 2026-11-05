@@ -3,7 +3,7 @@
 A combat simulator for *Fellowship* (C#, .NET 10). It models heroes' abilities, talents and gear, and checks itself
 against real combat logs from [FellowshipLogs](https://www.fellowshiplogs.com).
 
-Supported heroes: **Rime**.
+Supported heroes: **Ardeos**, **Elarion**, **Rime**, **Gunde**, **Mara**, and **Tariq**.
 
 SimFell runs in three ways. They share the same engine:
 
