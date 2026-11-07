@@ -161,6 +161,7 @@ public class AplLanguageTests
     [InlineData("Elarion")]
     [InlineData("Xavian")]
     [InlineData("Meiko")]
+    [InlineData("Helena")]
     public void Each_Heros_Lists_Bind_And_Cast(string heroName)
     {
         var names = DefaultActionLists.Names(heroName);
@@ -181,6 +182,7 @@ public class AplLanguageTests
     [InlineData("Elarion")]
     [InlineData("Xavian")]
     [InlineData("Meiko")]
+    [InlineData("Helena")]
     public void Every_Aura_Gear_Gives_Is_In_The_Vocabulary(string heroName)
     {
         var auras = AplVocabulary.For(heroName).Auras.Select(a => a.Slug).ToHashSet();
