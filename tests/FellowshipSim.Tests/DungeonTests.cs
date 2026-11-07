@@ -230,18 +230,42 @@ public class DungeonTests
     }
 
     [Fact]
-    public void The_Heros_Spirit_From_An_Enemy_Is_At_Most_Its_Worth()
+    public void The_Heros_Spirit_From_An_Enemy_Is_Its_Share_Of_The_Enemys_Worth()
     {
         var ctx = new SimulationContext(HeroImporter.Import(Build()));
         var hero = (Hero)ctx.Player;
         var enemy = ctx.AddEnemy(1001, 1, "Trash Mob", maxHealth: 1000);
-        enemy.SpiritPointValue = 3;
+        enemy.SpiritPointValue = 8;
         enemy.FollowTime(ctx, SimTime.Zero, SimTime.FromSeconds(100));
         double before = hero.ResourceAmount(Hero.SpiritPoints);
-        // Three times the enemy's health: Spirit Points for its health alone.
+        // The party has taken half of the enemy's health by the hero's first hit, and the hero's own damage counts for nothing.
+        ctx.RunUntil(SimTime.FromSeconds(50));
         for (int i = 0; i < 6; i++) ctx.DealLoggedHit(hero, enemy, 1, "Hit", 500, false);
-        Assert.Equal(3, hero.ResourceAmount(Hero.SpiritPoints) - before, 6);
-        Assert.Equal(3000, enemy.HeroDamage);
+        Assert.Equal(1, hero.ResourceAmount(Hero.SpiritPoints) - before, 6);
+        // The rest comes with the enemy's death, with no hit of the hero's.
+        ctx.RunUntil(SimTime.FromSeconds(100));
+        ctx.RemoveEnemy(enemy, defeated: true);
+        Assert.Equal(2, hero.ResourceAmount(Hero.SpiritPoints) - before, 6);
+        Assert.True(enemy.HeroDamage >= 3000);
+    }
+
+    [Fact]
+    public void Spirit_From_An_Enemy_Counts_Each_Share_Of_Its_Health_Once()
+    {
+        var ctx = new SimulationContext(HeroImporter.Import(Build()));
+        var hero = (Hero)ctx.Player;
+        var enemy = ctx.AddEnemy(1001, 1, "Trash Mob", maxHealth: 1000);
+        enemy.SpiritPointValue = 8;
+        double before = hero.ResourceAmount(Hero.SpiritPoints);
+        hero.EarnSpiritPoints(enemy, 0.5, ctx);
+        hero.EarnSpiritPoints(enemy, 0.75, ctx);
+        hero.EarnSpiritPoints(enemy, 0.5, ctx);
+        Assert.Equal(1, hero.ResourceAmount(Hero.SpiritPoints) - before, 6);
+        // A heal gives nothing, and the health lost after it gives Spirit Points again.
+        enemy.HealedTo(0.75);
+        Assert.Equal(1, hero.ResourceAmount(Hero.SpiritPoints) - before, 6);
+        hero.EarnSpiritPoints(enemy, 0.5, ctx);
+        Assert.Equal(1.5, hero.ResourceAmount(Hero.SpiritPoints) - before, 6);
     }
 
     [Fact]
@@ -428,7 +452,7 @@ public class DungeonTests
     [Fact]
     public void An_Enemy_Has_Its_Hit_Points_Times_The_Difficulty_Health_Scale()
     {
-        // Deathless Katrine: game data health 29,075.305, logged with 6,581,643 health at Eternal 27.
+        // Deathless Katrine: the logged health at Eternal 27 is the game data health times the health scale.
         var dungeon = Dungeon(new DungeonPull("1", [new EnemyGroup(1, "Deathless Katrine", HitPoints: 29_075.305, Boss: true)], 60, Final: true))
             with { Difficulty = 27 };
         Assert.Equal(226.36, dungeon.HealthScale);
@@ -542,6 +566,7 @@ public class DungeonTests
     [Theory]
     [InlineData("Rime", "brain_freeze", "Brain Freeze", "frost_bolt")]
     [InlineData("Gunde", "jawbreaker", "Jawbreaker", "attack")]
+    [InlineData("Mara", "kick", "Kick", "backstab")]
     public void An_Interrupt_Ends_A_Casting_Target(string heroName, string interrupt, string interruptName, string filler)
     {
         var dungeon = Dungeon(new DungeonPull("1", [new EnemyGroup(1, "Caster", HitPoints: 1e12, Cast: new EnemyCast("Big Cast", 30, 2))], 1000))

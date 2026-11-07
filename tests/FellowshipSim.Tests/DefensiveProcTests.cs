@@ -37,15 +37,15 @@ public class DefensiveProcTests
         Assert.Equal(0, fired);
     }
 
-    private static ReplayScript Script(ReplayObservations observations) => new()
+    private static ReplayScript Script(ReplayObservations observations, CharacterBuild? character = null) => new()
     {
         Schema = ReplayScript.SchemaVersion,
         ReportCode = "test",
         FightId = 1,
         FightName = "Test",
         DurationSeconds = 10,
-        Player = new ReplayPlayer { Id = Player.Id, Name = "Tester", Hero = "Rime" },
-        Character = Character(),
+        Player = new ReplayPlayer { Id = Player.Id, Name = "Tester", Hero = character?.Hero ?? "Rime" },
+        Character = character ?? Character(),
         Commands =
         [
             new ReplayCommand { Time = 0.5, Kind = CommandKind.EnemyArise, Enemy = Dummy, Name = "Dummy", MaxHp = 1e9, Hp = 1e9 },
@@ -115,7 +115,8 @@ public class DefensiveProcTests
             Time = time, Event = "damage",
             Resources = new() { ["2"] = new LogResourceValue { Amount = energy * 100, Max = Mara.MaxEnergy * 100 } },
         };
-        var script = Script(new ReplayObservations { Resources = [Energy(4.96, 50), Energy(5.0, 61), Energy(7.0, 110)] });
+        var script = Script(new ReplayObservations { Resources = [Energy(4.96, 50), Energy(5.0, 61), Energy(7.0, 110)] },
+            new CharacterBuild { Hero = "Mara", PrimaryStat = 1000 });
         Assert.Equal([4.96], Fired(script, VenomousDelight.ProcKey).Select(f => f.Time));
     }
 
@@ -162,8 +163,9 @@ public class DefensiveProcTests
         var script = Script(new ReplayObservations { Damage = [Hit(5.0, Dummy), Hit(5.01, Other), Hit(8.0, Other)] });
         var grouped = new ProcEvidence.Evidence("test", ProofId);
         var each = grouped with { EachHitProves = true };
-        Assert.Equal([(5.0, (UnitRef?)Dummy), (8.0, Other)], ProcEvidence.Times(script, grouped));
-        Assert.Equal([(5.0, (UnitRef?)Dummy), (5.01, Other), (8.0, Other)], ProcEvidence.Times(script, each));
+        var hero = HeroImporter.Import(new CharacterBuild { Hero = "Rime", PrimaryStat = 1000 });
+        Assert.Equal([(5.0, (UnitRef?)Dummy), (8.0, Other)], ProcEvidence.Times(script, grouped, hero));
+        Assert.Equal([(5.0, (UnitRef?)Dummy), (5.01, Other), (8.0, Other)], ProcEvidence.Times(script, each, hero));
     }
 
     private static LogDamage Hit(double time, UnitRef target, double amount = 1000) =>

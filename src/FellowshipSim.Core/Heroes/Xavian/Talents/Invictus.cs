@@ -32,8 +32,8 @@ public class Invictus : Talent
         var xavian = (Xavian)hero;
         var burst = new SolarBurst(xavian);
         xavian.SolarShield.Shielded += burst.Strike;
-        hero.CooldownAccelerationMultiplierSources.Add((_, now) =>
-            hero.Auras.HasAura(SolarShield.Buff, now) ? 1.0 + CooldownRecoveryPerHaste * hero.GetHaste(now) : 1.0);
+        hero.CooldownRecoveryBonuses.Add(now =>
+            hero.Auras.HasAura(SolarShield.Buff, now) ? CooldownRecoveryPerHaste * hero.GetHaste(now) : 0.0);
         hero.CooldownAccelerationAuraKeys.Add(SolarShield.Buff.Key);
         hero.OnSpiritRefund += (_, _, ctx) =>
             hero.ReduceCooldown<SolarShield>(SimTime.FromSeconds(SpiritRefundCooldownSeconds), ctx.CurrentTime);

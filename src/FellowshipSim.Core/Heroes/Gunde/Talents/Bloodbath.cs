@@ -3,8 +3,8 @@ using FellowshipSim.Core.Heroes.Gunde.Abilities;
 namespace FellowshipSim.Core.Heroes.Gunde.Talents;
 
 /// <summary>
-/// Talent 764 / effect 3216 (3s): "Your Grim Carve grants you Bloodbath for 3 seconds, causing your Reign in Blood ability
-/// to gain +200% Cooldown Acceleration for the duration." Combat logs: it comes as Grim Carve is cast.
+/// Talent 764 / effect 3216: "Your Grim Carve grants you Bloodbath for a time, causing your Reign in Blood ability
+/// to gain Cooldown Acceleration for the duration." Combat logs: it comes as Grim Carve is cast.
 /// </summary>
 public class Bloodbath : Talent
 {
@@ -26,7 +26,7 @@ public class Bloodbath : Talent
         {
             if (ability is GrimCarve) hero.Auras.Apply(Buff, now);
         };
-        hero.CooldownAccelerationTargetedSources.Add((ability, now) => ability is ReignInBlood && hero.Auras.HasAura(Buff, now) ? Acceleration : 0.0);
+        hero.CooldownAccelerations.Add((ability, now) => ability is ReignInBlood && hero.Auras.HasAura(Buff, now) ? Acceleration : 0.0);
         hero.CooldownAccelerationAuraKeys.Add(Buff.Key);
     }
 }

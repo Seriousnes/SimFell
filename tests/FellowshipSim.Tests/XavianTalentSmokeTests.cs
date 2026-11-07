@@ -120,7 +120,7 @@ public class XavianTalentSmokeTests(ITestOutputHelper output)
     }
 
     private static (MonteCarloResult Result, Hero Hero, Dictionary<string, int> Gained) Run(IEnumerable<int> talentIds, int targets,
-        int iterations = 10, int? legendaryItemId = null)
+        int iterations = 200, int? legendaryItemId = null)
     {
         // The Xavian from XyGpcHjNaAzgk7mW fight 20 (Urrak Markets), as the replay imported it.
         var build = System.Text.Json.JsonSerializer.Deserialize<CharacterBuild>(

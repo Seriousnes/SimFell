@@ -40,7 +40,7 @@ public sealed class PeriodicEffect
     public string Name { get; }
     public SimTime Start { get; }
     public SimTime End { get; private set; }
-    public double Period { get; }
+    public double Period { get; private set; }
     public int TicksFired { get; private set; }
     public bool IsActive { get; private set; } = true;
 
@@ -70,16 +70,15 @@ public sealed class PeriodicEffect
 
     /// <summary>
     /// The game runs on server frames; a partial final tick shorter than one frame never happens
-    /// (combat logs: Bursting Ice @ 29.587 in yMAZVJL9hTpFjqbC fight 7 ends 20ms after its last full pulse, with no partial pulse).
+    /// (combat logs: Bursting Ice @ 29.587 in yMAZVJL9hTpFjqbC fight 7 ends shortly after its last full pulse, with no partial pulse).
     /// </summary>
     public const double ServerFrameSeconds = 1.0 / 30.0;
 
     /// <summary>
-    /// DefaultGame.ini [/Script/fellowship.CRAbilitySystemGlobals] MinimumPartialTickTime (UCRAbilitySystemGlobals +0x32C),
-    /// seconds: when a damage over time's duration runs out (CheckDuration 0x144A6E990), its partial final tick
-    /// (0x1452D0C70, Dot and Hot effects alone) is skipped when elapsed = GetTimerRate - GetTimerRemaining of its period
-    /// timer, the time since the last tick was due at the hasted rate, is under this (strict: equal runs; 0x1452D0E13),
-    /// and its factor is elapsed / rate (game-data-authority answer 10, game-data-binary).
+    /// The game setting for the shortest partial tick, seconds: when a damage over
+    /// time's duration runs out, its partial final tick (Dot and Hot effects alone) is skipped when elapsed =
+    /// the time its period timer has run, the time since the last tick was due at the hasted rate, is
+    /// under this (strict: equal runs), and its factor is elapsed / rate.
     /// </summary>
     public const double MinHastedPartialTickSeconds = 0.1;
 
@@ -287,8 +286,9 @@ public sealed class PeriodicEffect
         // Like any timed aura, the effect ends on the server frame after its duration runs out (see AuraContainer.ExpiryLagSeconds).
         var nominalEnd = start + SimTime.FromSeconds(durationSeconds);
         var end = nominalEnd + SimTime.FromSeconds(AuraContainer.ExpiryLagSeconds);
-        // The ends and a moved tick; a fixed period also has its ticks, counted at no haste.
-        int events = 4 + (retimeOnHasteChange || damageOverTime ? 0 : (int)Math.Ceiling(durationSeconds / basePeriodSeconds));
+        // A refresh moves both ends.
+        // A moved tick; a fixed period also has its ticks, counted at no haste.
+        int events = 2 + (retimeOnHasteChange || damageOverTime ? 0 : (int)Math.Ceiling(durationSeconds / basePeriodSeconds));
         var effect = new PeriodicEffect(name, start, end, basePeriodSeconds, onTick, onEnd, hero, damageLogId, target, hastedBy: hero,
             events);
         var lastTick = start;
@@ -322,6 +322,7 @@ public sealed class PeriodicEffect
 
         // A damage over time ticks on its period timer, a repeated tick included.
         bool tickMoved = false;
+        HastedTimer? predictor = null;
         void PeriodTick(SimulationContext cc)
         {
             if (cc.CurrentTime > nominalEnd || !effect.IsActive) return;
@@ -343,7 +344,7 @@ public sealed class PeriodicEffect
             // server frame after the last).
             tickMoved = true;
             if (timer.RepeatPending) effect.TickPredicted?.Invoke(c, effect, due);
-            else HastedTimer.Start(c, hero, basePeriodSeconds, predict ??= Predict, name);
+            else predictor = HastedTimer.Start(c, hero, basePeriodSeconds, predict ??= Predict, name);
             timer.MoveNextTick(at);
         }
 
@@ -394,7 +395,7 @@ public sealed class PeriodicEffect
             if (!effect.IsActive) return;
             var timer = effect._nextHastedTick;
             double fraction = timer is { IsActive: true } ? timer.ElapsedBaseSeconds / basePeriodSeconds : 0.0;
-            // A damage over time's partial tick reads how long its period has run (period - remaining, 0x1452D0C70) as the
+            // A damage over time's partial tick reads how long its period has run (period - remaining) as the
             // duration runs out: a re-arm since the last tick shortens it.
             double elapsed = damageOverTime && timer is { IsActive: true }
                 ? timer.ElapsedBaseSeconds / (1.0 + hero.GetHaste(c.CurrentTime))
@@ -462,6 +463,13 @@ public sealed class PeriodicEffect
             effect.End = end;
             ScheduleEnd(c);
         };
+        effect._changePeriod = seconds =>
+        {
+            basePeriodSeconds = seconds;
+            effect.Period = seconds;
+            effect._nextHastedTick?.ChangeBaseSeconds(seconds);
+            predictor?.ChangeBaseSeconds(seconds);
+        };
 
         if (tickOnStart)
         {
@@ -484,6 +492,13 @@ public sealed class PeriodicEffect
     }
 
     private Action<SimulationContext, double>? _refresh;
+    private Action<double>? _changePeriod;
+
+    /// <summary>
+    /// A new unhasted period for a running <see cref="BeginHasted"/> effect: the time left to the next tick keeps its fraction
+    /// of the period.
+    /// </summary>
+    public void ChangePeriod(double basePeriodSeconds) => _changePeriod?.Invoke(basePeriodSeconds);
 
     /// <summary>
     /// Restarts the duration of a <see cref="BeginHasted"/> effect: it now runs out <paramref name="durationSeconds"/> from now.
