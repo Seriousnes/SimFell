@@ -61,7 +61,7 @@ public class CooldownStateTests
     public void A_Reduction_Takes_Cooldown_Seconds_Not_Real_Seconds()
     {
         var hero = HeroImporter.Import(new CharacterBuild { Hero = "Rime" });
-        hero.CooldownAccelerations.Add((_, _) => 1.0); // recovers twice as fast
+        hero.CooldownAccelerationMultiplierSources.Add((_, _) => 2.0); // recovers twice as fast
         var iceBlitz = hero.Abilities.OfType<IceBlitz>().Single();
         var cooldown = hero.CooldownOf(iceBlitz);
         cooldown.Spend(At(0), rechargeSeconds: 60); // ready at 30s
