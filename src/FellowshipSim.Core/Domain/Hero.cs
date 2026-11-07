@@ -115,6 +115,40 @@ public abstract class Hero : Actor
     /// </summary>
     public List<AuraDef> SituationalAuras { get; } = new();
 
+    private readonly List<DefensiveProc> _defensiveProcs = new();
+
+    /// <summary>Procs the log proves: they fire in a replay only, at each proof in the log.</summary>
+    public IReadOnlyList<DefensiveProc> DefensiveProcs => _defensiveProcs;
+
+    /// <summary>
+    /// Declares a proc the log proves. It fires in a replay only: <paramref name="fire"/> runs at each proof of
+    /// <paramref name="procKey"/> in the log (its proc evidence entry, of any kind a proc roll reads), with the proof's
+    /// enemy, or the current target for a proof without one. <paramref name="fire"/> deals the proc's damage (Xavian's
+    /// Solaris, through <see cref="DealDefensiveProcHit"/>) or does what else the proc does (Helena's Second Wind buff).
+    /// </summary>
+    public void AddDefensiveProc(string procKey, Action<SimulationContext, EnemyTarget?> fire) =>
+        _defensiveProcs.Add(new DefensiveProc(procKey, fire));
+
+    /// <summary>
+    /// Deals one hit of a defensive proc whose amount the log gives: the log's hit
+    /// (<see cref="IOutcomeSource.LoggedHitAmount"/>), in an exact replay and in free dice.
+    /// </summary>
+    public double DealDefensiveProcHit(SimulationContext ctx, EnemyTarget enemy, int damageLogId, string abilityName) =>
+        ctx.ApplyDamage(this, enemy, ctx.Outcomes.LoggedHitAmount(damageLogId, enemy, ctx), damageLogId, abilityName, canCrit: false, 0.0, 1.0);
+
+    /// <summary>
+    /// True in a replay (exact or free dice), where every logged pulse (<see cref="AddLoggedPulse"/>) fires at its log hits;
+    /// hero code runs the pulse's own periodic chain while it is false, in a sim.
+    /// </summary>
+    public bool PulsesFollowLog { get; set; }
+
+    /// <summary>
+    /// Declares a pulse whose timing the log gives (Xavian's Aura of Solace). A replay calls <paramref name="pulse"/> at
+    /// each group of its log hits (the hit evidence of <paramref name="procKey"/>, as for <see cref="AddDefensiveProc"/>),
+    /// with <see cref="PulsesFollowLog"/> true. In a sim the hero code's own periodic chain deals the pulses.
+    /// </summary>
+    public void AddLoggedPulse(string procKey, Action<SimulationContext, EnemyTarget?> pulse) => AddDefensiveProc(procKey, pulse);
+
     /// <summary>
     /// The <see cref="SituationalAuras"/> up only in combat with a boss (Ruby's Blessing of the Conqueror): a sim without a
     /// boss (<see cref="Engine.FightOptions.Boss"/>) takes them off as each fight starts. A replay follows the log for them.
@@ -190,6 +224,12 @@ public abstract class Hero : Actor
     /// </summary>
     public static readonly AuraDef SpiritOfHeroism = AuraDef.Effect("Spirit of Heroism", SpiritOfHeroismEffectId, SpiritOfHeroismSeconds,
         modifiers: StatModifier.Add(StatType.Haste, SpiritOfHeroismHaste)) with { KeepsOnDeath = true };
+
+    /// <summary>
+    /// Spirit of Heroism aura of this hero's Spirit ability: <see cref="SpiritOfHeroism"/>, or the hero's own where its
+    /// Spirit ability grants another effect.
+    /// </summary>
+    public virtual AuraDef SpiritOfHeroismAura => SpiritOfHeroism;
 
     /// <summary>A hit of the hero landed. Handlers run in the order they subscribed, with those of <see cref="OnDamageDealtBy"/> and <see cref="Ability.Hit"/>.</summary>
     public event DamageDealtHandler? OnDamageDealt
@@ -464,10 +504,15 @@ public abstract class Hero : Actor
     public const double RisingSpiritPrimaryStatPerStack = 0.05;
     /// <summary>Combat logs (10 Rime logs): each further Spirit Refund adds 2s to the time left instead of restarting it.</summary>
     public const double RisingSpiritReapplySeconds = 2.0;
+    /// <summary>
+    /// Combat logs: the refunds add 10s at most, so Rising Spirit lasts at most 20s from its first stack. The removal of
+    /// 191 of Rime's 193 chains of 2 or more stacks and 939 of Helena's 940 fits this, against 180 and 446 with no limit.
+    /// </summary>
+    public const double RisingSpiritReapplyUpToSeconds = 10.0;
 
     public static readonly AuraDef RisingSpirit = AuraDef.Effect("Rising Spirit", RisingSpiritEffectId, RisingSpiritSeconds,
         RisingSpiritMaxStacks, StatModifier.Add(StatType.PrimaryAttributeMultiplier, RisingSpiritPrimaryStatPerStack))
-        with { ReapplyExtendsSeconds = RisingSpiritReapplySeconds };
+        with { ReapplyExtendsSeconds = RisingSpiritReapplySeconds, ReapplyExtendsUpToSeconds = RisingSpiritReapplyUpToSeconds };
 
     /// <summary>Effects that make a Spirit Refund certain (e.g. Undulating Spirit): each returns true if it guaranteed this one.</summary>
     public List<Func<SimTime, bool>> GuaranteedSpiritRefunds { get; } = new();
@@ -498,7 +543,7 @@ public abstract class Hero : Actor
     /// <summary>Activates Spirit of Heroism and the auras that last while it does.</summary>
     public void ActivateSpiritOfHeroism(SimulationContext ctx)
     {
-        var heroism = SpiritOfHeroism.WithDuration(SpiritOfHeroismSeconds + SpiritOfHeroismDurationBonus);
+        var heroism = SpiritOfHeroismAura.WithDuration(SpiritOfHeroismAura.Duration.TotalSeconds + SpiritOfHeroismDurationBonus);
         var applied = Auras.Apply(heroism, ctx.CurrentTime);
         foreach (var aura in SpiritOfHeroismAuras) Auras.Apply(aura, ctx.CurrentTime);
         SpiritOfHeroismStarted?.Invoke(ctx);
