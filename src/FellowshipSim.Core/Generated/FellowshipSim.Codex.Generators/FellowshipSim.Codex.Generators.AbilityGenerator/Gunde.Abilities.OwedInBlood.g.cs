@@ -28,9 +28,6 @@ partial class OwedInBlood
     /// <summary>Game data: tuning <c>InstantAoeWithBuff.DamageAndOrbs.Duration</c> of ability 2298; ability 2306.</summary>
     public const int Duration = 12;
 
-    /// <summary>Game data: tuning <c>MaxStacks</c> of ability 2298; MaxResourcesTertiary Override.</summary>
-    public const int MaxStacks = 150;
-
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2298.</summary>
     public const double VisualDelay = 0.25;
 }
