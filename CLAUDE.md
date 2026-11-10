@@ -10,6 +10,10 @@ game content.
 ## Commands
 
 ```
+# the Codex's data export into codex-export/ (git-ignored); once after cloning, and after a new datamine. Then delete
+# src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators, build, and commit that folder
+tools/download-codex-export.sh
+
 # the solution (the desktop app needs the maui workload)
 dotnet build -c Release
 
@@ -140,8 +144,13 @@ or the desktop app).
   them).
 - **FellowshipSim.Logs** is the FellowshipLogs client and the data folder's fights and reviews. It has no reference to
   the engine.
-- `FellowshipSim.Core`'s build keeps the Codex's data export in `codex-export/` (git-ignored) at the Codex's game build.
-  `FellowshipSim.Codex.Generators` writes each creature's `<Name>GameCreature` class from it. Its `DungeonGenerator`
+- `FellowshipSim.Core`'s build reads the Codex's data export in `codex-export/` (git-ignored, from
+  `tools/download-codex-export.sh`). Every generated class is in
+  `src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators/<generator>/` (committed, not compiled from disk): read
+  it there for a class's game data half. Its `<hash>.sha256` is named after the hash of the folder's files, and CI fails
+  when its own build's hash differs (`tools/check-codex-generated.sh`). Tests check game data values as numbers, never
+  as generated constants. A generated constant left out (CODEX008, CODEX009 and the like) is accepted with
+  `[CodexAccepted("<name>")]` on the partial class. `FellowshipSim.Codex.Generators` writes each creature's `<Name>GameCreature` class from it. Its `DungeonGenerator`
   writes a `partial` `<Name>GameDungeon` class for each dungeon record, with or without a hand-written half for the
   dungeon's mechanics: `DungeonId`, `DungeonName`, the record's fields as `Dungeon<Field>` (`DungeonLevelType`,
   `DungeonQualifierTime`, `DungeonDifficulties`...), the tuning values, `DungeonPlacements` with each creature by its

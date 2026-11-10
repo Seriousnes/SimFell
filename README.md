@@ -26,12 +26,31 @@ SimFell runs in three ways. They share the same engine:
 
 ## Build
 
-The engine's creatures are generated from the Codex's data export. The build downloads it into `codex-export/`, which git
-ignores, and downloads it again after a new datamine.
+The engine's game data (heroes, abilities, talents, gear powers, creatures and dungeons) is generated from the Codex's
+data export in `codex-export/`, which git ignores. Download it once after cloning, and again after a new datamine:
 
 ```
+tools/download-codex-export.sh
 dotnet build -c Release
 ```
+
+On Windows, run the script in Git Bash.
+
+The build writes the generated classes to `src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators/`, one
+folder per generator, and the build compiles them from memory. The folder is committed, so a review shows every game
+data value a change touches. Its `<hash>.sha256` file is named after the hash of every file in it and lists each file's
+own hash. CI downloads the latest export, builds, and fails when its hash is not the committed one: a new Codex export
+fails CI until its files are committed. After a new download, delete the folder, build, and commit the folder:
+
+```
+tools/download-codex-export.sh
+rm -rf src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators
+dotnet build -c Release
+dotnet test tests/FellowshipSim.Tests -c Release
+```
+
+A test that checks a game data value has the value as a number. A new export with a different value fails that test,
+and the test's new number is part of the commit.
 
 On Windows the solution builds the desktop app for Windows; on macOS it builds it for Mac Catalyst.
 

@@ -26,8 +26,16 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
+      - name: Download the Codex export
+        run: tools/download-codex-export.sh
+      # The build writes every Codex generator file again, so a committed file no generator writes shows as deleted.
+      - name: Clear the committed generated files
+        run: tools/check-codex-generated.sh clear
       - name: Test
         run: dotnet test tests/FellowshipSim.Tests -c Release --logger "trx;LogFileName=results.trx" --results-directory TestResults
+      - name: Check the committed generated files
+        if: ${{ !cancelled() }}
+        run: tools/check-codex-generated.sh check
       - name: Summary
         if: always()
         run: |
