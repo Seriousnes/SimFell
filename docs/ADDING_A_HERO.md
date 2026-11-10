@@ -40,8 +40,17 @@ Three rules hold everywhere:
 - **The game data (datamine):** the Codex SDK exports `entities.jsonl` with every ability, effect, talent, aspect,
   sigil, protective enchant, glyph, gem ability and relic passive: cooldowns, cast times, coefficients, effect durations, stacks and stat modifiers. Use it as
   the reference when writing constants, and compare against it when the game is patched.
+  `tools/download-codex-export.sh` downloads it into `codex-export/`. Each generator's half of a class is in
+  `src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators/<generator>/`, committed with its `<hash>.sha256`.
+  Read a class's game data constants there.
 - **Combat logs:** what really happens (timings, procs, partial ticks). The replay review shows where the engine and a
   log disagree.
+
+A generator warning for a left-out constant (CODEX008, CODEX009 and the other "share a name" and "is a member"
+warnings) is accepted with `[CodexAccepted("<name>", ...)]` on the partial class, once the class has its own value or
+none is needed. A name the class accepts that the generator writes after all is warning CODEX038. A test checks a game
+data value as a number with a `// Game data:` comment, never as the generated constant, so a new export with another
+value fails it.
 
 **IDs in combat logs** are game IDs plus an offset: abilities as-is, effects (auras and effect damage) + 1,000,000,
 talents + 2,000,000, augmentations + 3,000,000 (see `Domain/LogIds.cs`). Glyphs are the exception: logs give them per-item

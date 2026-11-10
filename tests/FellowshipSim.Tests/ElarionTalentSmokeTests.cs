@@ -90,7 +90,8 @@ public class ElarionTalentSmokeTests(ITestOutputHelper output)
         var (_, hero, _) = Run(BaseTalents, 1, iterations: 1);
         var low = new EnemyTarget(1) { MaxHealth = 100, CurrentHealth = 29 };
         var high = new EnemyTarget(2) { MaxHealth = 100, CurrentHealth = 31 };
-        Assert.Equal(hero.CritChance(SimTime.Zero) + LastLights.AdditionalCritChance, hero.CritChanceAgainst(low, SimTime.Zero), 6);
+        // Game data: Last Lights adds 20% crit chance.
+        Assert.Equal(hero.CritChance(SimTime.Zero) + 0.2, hero.CritChanceAgainst(low, SimTime.Zero), 6);
         Assert.Equal(hero.CritChance(SimTime.Zero), hero.CritChanceAgainst(high, SimTime.Zero), 6);
     }
 
