@@ -12,6 +12,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// A cast in Stealth ends it and does nothing else: the ability has no cooldown node and no application there.
 /// Combat logs (the 23 Mara fights of data/fights): all 12 casts in Stealth log the removal in the cast's frame.
 /// </summary>
+[CodexAccepted("AgilityCoefficient")]
 public partial class BroodingShadows : MaraAbility
 {
     public const int StealthEffectId = 1591;

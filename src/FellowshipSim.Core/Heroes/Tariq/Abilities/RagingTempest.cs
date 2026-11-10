@@ -6,6 +6,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Abilities;
 /// Raging Currents at enemies over time." Grants Spirit of Heroism (a Haste bonus). Effect 1766 is the Enhanced
 /// Thunder Call: Expertise per stack, up to <see cref="MaxStacks"/>.
 /// </summary>
+[CodexAccepted("Duration", "StrengthCoefficient")]
 public partial class RagingTempest : TariqAbility
 {
     /// <summary>Share of Strength.</summary>

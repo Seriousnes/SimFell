@@ -34,6 +34,9 @@ partial class CelestialShot
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1301.</summary>
     public const double AgilityCoefficient = 3.4548;
 
+    /// <summary>Game data: tuning <c>Cost</c> of ability 1301.</summary>
+    public const int Cost = 15;
+
     /// <summary>Game data: tuning <c>Enhanced.DamageScaler, Elarion.CastedProjectileDamage.Talent.Enhanced.DamageScaler</c> of ability 1301; Focused Shot (ability 1315), talent Deadly Focus (talent 679), DamageScale MultiplyCompound.</summary>
     public const int DamageScaler = 2;
 

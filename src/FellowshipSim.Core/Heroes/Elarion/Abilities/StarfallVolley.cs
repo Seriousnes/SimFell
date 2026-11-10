@@ -11,7 +11,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// </summary>
 public partial class StarfallVolley : ElarionAbility
 {
-    public const double Cost = 30.0;
     /// <summary>Combat logs: an arrow lands shortly after it is released; the engine releases none in the last <c>FallSeconds</c> of the volley.</summary>
     public const double FallSeconds = 0.3;
 

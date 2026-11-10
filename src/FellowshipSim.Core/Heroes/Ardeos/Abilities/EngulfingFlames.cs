@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// (<see cref="EngulfingFlamesDot"/>). REKINDLED FLAME: each stack of Engulfing Flames active on an enemy as it dies
 /// reduces the cooldown of Engulfing Flames.
 /// </summary>
+[CodexAccepted("CastTime")]
 public partial class EngulfingFlames : ArdeosAbility
 {
     public EngulfingFlamesDot Dot { get; }

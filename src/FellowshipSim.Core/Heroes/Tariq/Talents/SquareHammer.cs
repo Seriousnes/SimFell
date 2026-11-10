@@ -8,6 +8,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Talents;
 /// Each time you consume Square Hammer you are granted Expertise." Effects 3158 (the stacks) and 3159
 /// (the Expertise).
 /// </summary>
+[CodexAccepted("Duration")]
 public partial class SquareHammer : Talent
 {
     public const int StackEffectId = 3158;

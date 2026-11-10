@@ -7,6 +7,7 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// during Global Cooldown". Logged under 1106. Its damage falls off beyond <see cref="TargetThresholdForDamageScale"/>
 /// enemies (game data targetCountFalloff of effect 1537).
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class LashingStormkick : MeikoFinisher
 {
     /// <summary>"+100% increased damage when it can consume a stack of Stormfall."</summary>

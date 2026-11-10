@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// reduces the cooldown of your Shield Slam and Shield Throw abilities by 2 seconds." Cooldown 6s, shortened by Haste at
 /// the cast.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class PowerStrike : HelenaAbility
 {
     public const double ReductionSeconds = 2.0;

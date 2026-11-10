@@ -12,6 +12,7 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// Focused Shot, Chronoshift and the augmentations' hits (Amethyst Splinters, Emerald Judgement, Ruby Storm), but not
 /// from Shoot (603 hits on a marked enemy, a few in the same frame as another hit).
 /// </summary>
+[CodexAccepted("DamageScale")]
 public sealed partial class LunarlightSalvo : Ability
 {
     public const int DamageEffectId = 1877;

@@ -7,6 +7,7 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 /// all Winter Orbs. It is an Ice Comet for talents (Avalanche, the spender crit buffs), so it builds on
 /// <see cref="IceComet"/> and changes only the cost and the waves of spikes.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class RisingTalons : IceComet
 {
     /// <summary>Per ice spike (a fraction of Ice Comet's).</summary>

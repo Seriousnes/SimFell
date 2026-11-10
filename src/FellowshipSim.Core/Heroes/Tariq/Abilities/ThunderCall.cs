@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Abilities;
 /// be used during Global Cooldown." Effect 1772: "Your attacks are enhanced by lightning and you have access to your Chain
 /// Lightning ability."
 /// </summary>
+[CodexAccepted("Duration")]
 public partial class ThunderCall : TariqAbility
 {
     public const int BuffEffectId = 1772;

@@ -9,6 +9,7 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// land later keep it); the hits crit on their own; the effects keep ticking. On many enemies the hits queue up and land
 /// late.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class Detonate : ArdeosAbility
 {
     public const double CinderCost = Ardeos.CindersPerBurningEmber;

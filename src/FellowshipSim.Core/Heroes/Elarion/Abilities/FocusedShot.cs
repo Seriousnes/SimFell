@@ -6,9 +6,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// </summary>
 public partial class FocusedShot : ElarionAbility
 {
-    /// <summary>Focus gained per cast, from game data.</summary>
-    public const double FocusGain = 20.0;
-
     /// <summary>Multiplier on the Focus gained (Deadly Focus).</summary>
     public double FocusGainMultiplier { get; set; } = 1.0;
 

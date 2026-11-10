@@ -8,6 +8,7 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// each bounce a fixed time after the one before; a bounce can strike an enemy already hit. UNVERIFIED: no Rime log has it; the
 /// game's damage spread for it differs from the engine's usual one, which is used.
 /// </summary>
+[CodexAccepted("PrimaryAttributeCoefficient")]
 public partial class NaturesFury : Ability
 {
     /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 356.</summary>

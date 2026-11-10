@@ -40,6 +40,9 @@ partial class FocusedShot
     /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
     public const double ResourceGenerationScaler = 0.5;
 
+    /// <summary>Game data: tuning <c>FocusGain</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
+    public const int FocusGain = 20;
+
     /// <summary>Game data: tuning <c>Talent.Enhanced.DamageScaler</c> of ability 1315; talent Deadly Focus (talent 679), DamageScale MultiplyCompound.</summary>
     public const int DamageScaler = 2;
 }

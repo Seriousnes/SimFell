@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Xavian.Abilities;
 /// other enemies within a 700 radius. The main target takes 100% more damage from Solar Blades. Can be used during Global
 /// Cooldown. Solar Blades has a 100% chance to grant you 1 stack of Swift Reprieval."
 /// </summary>
+[CodexAccepted("ManaCost")]
 public partial class SolarBlades : XavianAbility
 {
     /// <summary>Raised once per cast, with the main target and the damage dealt to it (Solar Burn).</summary>

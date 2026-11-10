@@ -6,6 +6,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// during Global Cooldown. Combat logs apply effect 2194 at every cast (1,174 casts, 45 logs in the
 /// FellowshipAnalyzer Mara corpus); effect 1714 never appears.
 /// </summary>
+[CodexAccepted("DamageMultiplier", "MaxCharges")]
 public partial class MaidenOfDeath : MaraAbility
 {
     public const int BuffEffectId = 2194;

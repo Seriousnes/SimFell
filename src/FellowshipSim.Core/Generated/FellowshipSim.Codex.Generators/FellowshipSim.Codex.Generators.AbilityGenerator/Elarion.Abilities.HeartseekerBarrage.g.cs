@@ -49,6 +49,9 @@ partial class HeartseekerBarrage
     /// <summary>Game data: tuning <c>CastDuration</c> of ability 1312.</summary>
     public const int CastDuration = 0;
 
+    /// <summary>Game data: tuning <c>Cost</c> of ability 1312.</summary>
+    public const int Cost = 30;
+
     /// <summary>Game data: tuning <c>Elarion.InstantMarkTarget.AdditionalHit.Aoe.AgilityCoefficient</c> of ability 1312; Lunarlight Salvo (ability 1309).</summary>
     public const double AoeAgilityCoefficient = 2.19;
 

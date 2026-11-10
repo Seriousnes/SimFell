@@ -43,6 +43,9 @@ partial class Multishot
     /// <summary>Game data: tuning <c>CleaveAngel</c> of ability 1318.</summary>
     public const int CleaveAngel = 100;
 
+    /// <summary>Game data: tuning <c>Cost</c> of ability 1318.</summary>
+    public const int Cost = 20;
+
     /// <summary>Game data: tuning <c>DamageBounceSelfBuff.CooldownReductionInSeconds</c> of ability 1318.</summary>
     public const int DamageBounceSelfBuffCooldownReductionInSeconds = 3;
 

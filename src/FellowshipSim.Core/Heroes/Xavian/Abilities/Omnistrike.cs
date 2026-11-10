@@ -8,9 +8,6 @@ namespace FellowshipSim.Core.Heroes.Xavian.Abilities;
 /// </summary>
 public partial class Omnistrike : XavianAbility
 {
-    /// <summary>Sune.AoeMelee.SpiritPointGain 4.</summary>
-    public const double SpiritPointGain = 4;
-
     public const string ProcKey = "omnistrike_swift_reprieval";
 
     /// <summary>

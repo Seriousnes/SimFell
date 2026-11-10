@@ -77,10 +77,10 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
     /// A partial augmentation class: its namespace, name, record type (empty for a class of no listed base), the member
     /// names of the class and its base classes, and where it is declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, string Type, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, string Type, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Type == other.Type
-            && Members.Equals(other.Members);
+            && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -128,7 +128,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!augmentation) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, kind, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, kind, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -335,6 +335,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             string owner = $"{Words(record.Type)} {record.Id}";
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Member>
@@ -348,12 +349,12 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             {
                 if (member.Type.Length == 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SharedName, d.Location, owner, member.Summary, member.Name));
+                    leftOut.Report(SharedName, member.Name, owner, member.Summary, member.Name);
                     continue;
                 }
                 if (!names.Add(member.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, member.Name, owner));
+                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, owner);
                     continue;
                 }
                 all.Add(member);
@@ -370,7 +371,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             {
                 if (members.Contains(member.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, member.Name, owner));
+                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, owner);
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -386,6 +387,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 }
             }
             source.Append("}\n");
+            leftOut.Finish();
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

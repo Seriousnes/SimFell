@@ -42,3 +42,4 @@ CODEX034 | Codex | Error | DungeonGenerator: a partial dungeon class names no du
 CODEX035 | Codex | Warning | DungeonGenerator: two tuning values of a dungeon share a name
 CODEX036 | Codex | Warning | DungeonGenerator: a dungeon constant's name is a member of the class or a base class
 CODEX037 | Codex | Warning | DungeonGenerator: a dungeon placement names no creature record
+CODEX038 | Codex | Warning | Every generator: a constant the class accepts as left out is in the game data's half

@@ -6,6 +6,7 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// standing in in the effect." 45 second cooldown, on the global cooldown. The slam is effect 1557, logged under 1115;
 /// the quake is <see cref="ShatterEarthQuake"/>.
 /// </summary>
+[CodexAccepted("AgilityCoefficient", "DamageMultiplier")]
 public partial class ShatterEarth : MeikoAbility
 {
     /// <summary>Placeholder ShatterEarthAoeDmg: 746% of Agility.</summary>

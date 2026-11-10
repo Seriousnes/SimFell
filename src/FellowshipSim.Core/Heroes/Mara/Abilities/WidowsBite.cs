@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// equal to your Haste, generates Combo Points with each strike (more on a Critical Strike) and generates Energy. Used in
 /// Stealth it applies Seething Poison (<see cref="SeethingPoison"/>); both strikes are logged as 1207.
 /// </summary>
+[CodexAccepted("AgilityCoefficient")]
 public partial class WidowsBite : MaraAbility
 {
     public const double RightHandCoefficient = 1.452;

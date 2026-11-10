@@ -8,6 +8,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// registry, and the ability has no cooldown effect class. Both take their defaults, a value of zero and null.
 /// The evaluator returns that value and leaves the row's own value unread, and the cooldown application makes no spec.
 /// </summary>
+[CodexAccepted("AgilityCoefficient")]
 public partial class HemorrhagingStrike : Finisher
 {
     public const double Coefficient = 2.8665;

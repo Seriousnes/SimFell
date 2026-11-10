@@ -8,6 +8,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Talents;
 /// Creeping Death adds damage per Haste. The damage is logged as effect 2310. UNVERIFIED: no combat log has
 /// this talent; a sim puts every enemy in the spill and ticks it every <see cref="TickInterval"/> shortened by Haste.
 /// </summary>
+[CodexAccepted("Duration")]
 public partial class CorrosiveSpill : Talent
 {
     public const int DamageEffectId = 2310;

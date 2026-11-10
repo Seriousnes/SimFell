@@ -3,6 +3,7 @@ using FellowshipSim.Core.Heroes.Rime.Talents;
 namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 
 /// <summary>Ability 1028. Costs Winter Orbs. Talon Strike (Icy Talons) is built on it.</summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class GlacialBlast : RimeAbility
 {
     /// <summary>Talent 38 Glacial Assault: the cast deals more damage at full stacks.</summary>

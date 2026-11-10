@@ -8,10 +8,9 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// A barrage cast with Impending Heartseeker (Impending Heartseeker, Starstriker's Ascent) uses it up, and each arrow deals
 /// more than the one before.
 /// </summary>
+[CodexAccepted("ChannelDuration")]
 public partial class HeartseekerBarrage : ElarionAbility
 {
-    public const double Cost = 30.0;
-
     /// <summary>Crit chance added to the arrows (Fusillade).</summary>
     public double ArrowCritChance { get; set; }
 

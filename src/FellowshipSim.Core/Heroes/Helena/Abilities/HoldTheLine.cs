@@ -7,6 +7,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// your Shield Slam, Shield Throw, Shields Up, and Shockwave abilities by 10 seconds." Cooldown 30s. Empowered Shield Slam
 /// is effect 2435 (up to 2 stacks) and its barrier effect 2229.
 /// </summary>
+[CodexAccepted("Cooldown")]
 public partial class HoldTheLine : HelenaAbility
 {
     public const double ReductionSeconds = 10.0;

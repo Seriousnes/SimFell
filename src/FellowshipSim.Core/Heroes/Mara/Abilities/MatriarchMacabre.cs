@@ -14,6 +14,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// re-snapshots in the cast's frame. In the Agility damage calculation, source attributes are
 /// snapshots, target attributes are read at the strike, and each application rolls its own crit.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class MatriarchMacabre : MaraAbility
 {
     public const int BuffEffectId = 2039;

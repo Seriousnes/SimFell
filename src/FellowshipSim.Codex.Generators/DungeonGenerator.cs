@@ -75,9 +75,9 @@ public sealed class DungeonGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A hand-written partial dungeon class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -116,7 +116,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
         {
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -302,6 +302,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
         {
             parts.TryGetValue(record.ClassName, out var part);
             var location = part?.Location ?? Location.None;
+            var leftOut = new LeftOut(context, record.ClassName, part?.Accepted ?? new EquatableArray<string>([]), location);
             var members = new HashSet<string>(part?.Members ?? new EquatableArray<string>([]), StringComparer.Ordinal);
             if (record.UnknownCreatures.Any())
             {
@@ -320,12 +321,12 @@ public sealed class DungeonGenerator : IIncrementalGenerator
             {
                 if (tuning.Type.Length == 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SharedTuningName, location, record.Id, tuning.Summary, tuning.Name));
+                    leftOut.Report(SharedTuningName, tuning.Name, record.Id, tuning.Summary, tuning.Name);
                     continue;
                 }
                 if (!names.Add(tuning.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, location, record.ClassName, tuning.Name, record.Id));
+                    leftOut.Report(DeclaredName, tuning.Name, record.ClassName, tuning.Name, record.Id);
                     continue;
                 }
                 constants.Add(tuning);
@@ -342,7 +343,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, location, record.ClassName, constant.Name, record.Id));
+                    leftOut.Report(DeclaredName, constant.Name, record.ClassName, constant.Name, record.Id);
                     continue;
                 }
                 source.Append("    /// <summary>").Append(constant.Summary).Append("</summary>\n")
@@ -351,7 +352,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
             }
             if (members.Contains("DungeonPlacements"))
             {
-                context.ReportDiagnostic(Diagnostic.Create(DeclaredName, location, record.ClassName, "DungeonPlacements", record.Id));
+                leftOut.Report(DeclaredName, "DungeonPlacements", record.ClassName, "DungeonPlacements", record.Id);
             }
             else
             {
@@ -368,6 +369,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
                 .Append("    public override string Name => DungeonName;\n\n")
                 .Append("    public override IReadOnlyList<CodexPlacement> Placements => DungeonPlacements;\n")
                 .Append("}\n");
+            leftOut.Finish();
             context.AddSource($"Dungeons.{record.ClassName}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
         WriteList(context, export);

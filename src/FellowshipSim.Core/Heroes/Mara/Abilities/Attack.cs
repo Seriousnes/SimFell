@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// cast; an action list uses it as soon as the swing timer allows. Combat logs (Fc8v6yWxD14GQMnV fight 19):
 /// the swing of <see cref="SwingTimer"/> is shortened by Haste, and more during Spirit of Heroism; no swing in Stealth.
 /// </summary>
+[CodexAccepted("AgilityCoefficient")]
 public partial class Attack : MaraAbility
 {
     public const double Coefficient = 0.3;

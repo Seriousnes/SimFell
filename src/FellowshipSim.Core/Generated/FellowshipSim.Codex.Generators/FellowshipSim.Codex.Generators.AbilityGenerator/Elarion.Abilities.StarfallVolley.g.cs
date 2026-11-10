@@ -46,6 +46,9 @@ partial class StarfallVolley
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 126.</summary>
     public const int AgilityCoefficient = 1;
 
+    /// <summary>Game data: tuning <c>Cost</c> of ability 126.</summary>
+    public const int Cost = 30;
+
     /// <summary>Game data: tuning <c>Talent.IncreasedDamage</c> of ability 126; talent Astronomer's Hail (legendary power 516), DamageScale MultiplyCompound.</summary>
     public const int IncreasedDamage = 1;
 

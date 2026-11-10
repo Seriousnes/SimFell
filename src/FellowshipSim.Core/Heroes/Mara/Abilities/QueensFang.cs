@@ -4,6 +4,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// Ability 1201: Agility damage to the target enemy, increased for each combo point spent. Costs
 /// Energy. During Matriarch Macabre shadowy clones repeat it (<see cref="MatriarchMacabre"/>).
 /// </summary>
+[CodexAccepted("DamageMultiplier", "Duration")]
 public partial class QueensFang : Finisher
 {
     public QueensFang(Mara owner) : base(owner, AbilityId, AbilityName)

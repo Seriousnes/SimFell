@@ -8,6 +8,7 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// the strike's travel; the hits land shortly after the cast), the cleave hits are logged as 160 too, and each
 /// cleave hit on 26 other enemies is a fraction of the hit on the target, as the coefficients and the falloff give.
 /// </summary>
+[CodexAccepted("PrimaryAttributeCoefficient")]
 public partial class FatedStrike : Ability
 {
     /// <summary>Game data: tuning <c>PrimaryAttributeCoefficient</c> of weapon power 354.</summary>

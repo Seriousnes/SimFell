@@ -63,9 +63,9 @@ public sealed class HeroGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A partial hero class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -107,7 +107,7 @@ public sealed class HeroGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!hero) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -269,6 +269,7 @@ public sealed class HeroGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var constants = new List<Constant>
             {
@@ -281,12 +282,12 @@ public sealed class HeroGenerator : IIncrementalGenerator
             {
                 if (tuning.Type.Length == 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SharedTuningName, d.Location, record.Id, tuning.Summary, tuning.Name));
+                    leftOut.Report(SharedTuningName, tuning.Name, record.Id, tuning.Summary, tuning.Name);
                     continue;
                 }
                 if (!fieldNames.Add(tuning.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, tuning.Name, record.Id));
+                    leftOut.Report(DeclaredName, tuning.Name, d.Name, tuning.Name, record.Id);
                     continue;
                 }
                 constants.Add(tuning);
@@ -303,7 +304,7 @@ public sealed class HeroGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, record.Id));
+                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, record.Id);
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -312,6 +313,7 @@ public sealed class HeroGenerator : IIncrementalGenerator
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
             source.Append("}\n");
+            leftOut.Finish();
             context.AddSource($"Heroes.{d.Namespace.Substring(HeroesNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

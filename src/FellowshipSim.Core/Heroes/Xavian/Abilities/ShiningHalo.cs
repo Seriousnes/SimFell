@@ -6,6 +6,7 @@ namespace FellowshipSim.Core.Heroes.Xavian.Abilities;
 /// Cooldown. BRILLIANCE: While Shining Halo is active, each Brilliant Flash you cast extends the duration of it by 2
 /// seconds." Cooldown 30s, 218 Mana.
 /// </summary>
+[CodexAccepted("ManaCost")]
 public partial class ShiningHalo : XavianAbility
 {
     /// <summary>BRILLIANCE: seconds each Brilliant Flash adds while the halo is active.</summary>

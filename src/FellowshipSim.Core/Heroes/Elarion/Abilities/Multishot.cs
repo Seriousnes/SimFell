@@ -11,9 +11,9 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// to enough enemies grants a charge of Multishot holds no limit: no log shows a Multishot charge (effect 1898), and Multishot is cast
 /// with none.
 /// </summary>
+[CodexAccepted("DamageBonus", "DamageMultiplier")]
 public partial class Multishot : ElarionAbility
 {
-    public const double Cost = 20.0;
     public const double EmpoweredCostMultiplier = 0.5;
     public const int EmpoweredMinimumArrows = 3;
 

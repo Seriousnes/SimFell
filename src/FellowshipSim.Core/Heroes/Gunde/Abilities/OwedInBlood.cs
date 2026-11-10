@@ -11,6 +11,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// casts): casts of up to <see cref="ExactStacks"/> stacks add exactly as many Rend stacks; larger casts add fewer per stack.
 /// The 18 larger casts fit <see cref="ExactStacks"/> stacks one each, then <see cref="LargeCastRendPerStack"/> per stack.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class OwedInBlood : GundeAbility
 {
     public const int BuffEffectId = 3245;

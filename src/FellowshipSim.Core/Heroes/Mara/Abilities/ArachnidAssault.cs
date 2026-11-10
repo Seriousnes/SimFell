@@ -11,6 +11,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// cast's target data to the clone spawner. Each
 /// clone shuffles that list and has no target query of its own, so a clone's hit takes the falloff of the cast's target count.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class ArachnidAssault : Finisher
 {
     public ArachnidAssault(Mara owner) : base(owner, AbilityId, AbilityName)

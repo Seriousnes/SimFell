@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Abilities;
 /// dealt damage a total number of times. Chain Lightning does not deal damage to you. Thunder Call: You can only cast Chain
 /// Lightning while Thunder Call is active. Generates Fury per hit." Its hits are effect 1774.
 /// </summary>
+[CodexAccepted("DamageMultiplier", "MaxCharges")]
 public partial class ChainLightning : TariqAbility
 {
     /// <summary>Game data: a share of maximum Fury per hit.</summary>

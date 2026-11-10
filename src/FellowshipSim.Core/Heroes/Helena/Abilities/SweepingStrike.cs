@@ -6,6 +6,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// 60% of Strength physical damage every 1.5 seconds for 12 seconds." Cooldown 30s; the hits lose damage as sqrt(1/N)
 /// beyond one enemy (effect 1274). Blood Rally is effect 3098 and the bleed <see cref="SweepingStrikeBleed"/>.
 /// </summary>
+[CodexAccepted("Duration", "PercentOfMaxHealth", "Period", "StrengthCoefficient")]
 public partial class SweepingStrike : HelenaAbility
 {
     public const double Coefficient = 3.756;

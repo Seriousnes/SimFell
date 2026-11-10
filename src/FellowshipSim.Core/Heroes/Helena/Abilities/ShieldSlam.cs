@@ -7,6 +7,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// stacks. "VETERAN OF WAR: Shield Slam reduces the cooldown of your Shockwave ability by 3.0 seconds." 2 charges, 7.5s
 /// each; the other enemies' hits lose damage as sqrt(8/N) beyond 8 enemies (effect 1264). Every hit is logged as 977.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class ShieldSlam : HelenaAbility
 {
     /// <summary>

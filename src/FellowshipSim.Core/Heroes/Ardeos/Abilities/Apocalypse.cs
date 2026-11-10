@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// applying Searing Blaze to all enemies in a large radius. Damage falls off with the target count (game data
 /// targetCountFalloff, effect 1833).
 /// </summary>
+[CodexAccepted("CastTime")]
 public partial class Apocalypse : ArdeosAbility
 {
     /// <summary>Seconds taken off the cast time (Apocalyptic Surge).</summary>

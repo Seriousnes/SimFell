@@ -10,9 +10,9 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// it, for a share of the first hit (<see cref="BounceDamageMultiplierAfterFirstHit"/>), with the cast's bonuses and
 /// crit chance (a Lethal Shots cast's ricochets are grievous crits too).
 /// </summary>
+[CodexAccepted("DamageMultiplier", "MaxCharges")]
 public partial class HighwindArrow : ElarionAbility
 {
-    public const double Cost = 30.0;
     public const int BaseRicochets = 2;
 
     /// <summary>Talent 126 Resurgent Winds: the buffed Highwind Arrow deals more damage.</summary>

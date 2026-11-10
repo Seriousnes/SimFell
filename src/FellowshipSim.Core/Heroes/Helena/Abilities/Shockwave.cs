@@ -7,6 +7,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// seconds." Cooldown 30s, shortened by Haste at the cast; up to 20 enemies, losing damage as sqrt(5/N) beyond 5. The hits
 /// are effect 1272 and the slow is effect 1270.
 /// </summary>
+[CodexAccepted("DamageMultiplier", "Duration")]
 public partial class Shockwave : HelenaAbility
 {
     public const int DamageEffectId = 1272;

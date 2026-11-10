@@ -52,6 +52,9 @@ partial class Omnistrike
     /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1863.</summary>
     public const double ResourceProcChance = 0.3;
 
+    /// <summary>Game data: tuning <c>SpiritPointGain</c> of ability 1863.</summary>
+    public const int SpiritPointGain = 4;
+
     /// <summary>Game data: tuning <c>Talent.CooldownProc.Buff.CritChanceIncrease</c> of ability 1863; ability 1913, CritChance Additive.</summary>
     public const int BuffCritChanceIncrease = 0;
 }

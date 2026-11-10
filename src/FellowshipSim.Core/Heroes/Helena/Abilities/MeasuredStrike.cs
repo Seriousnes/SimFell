@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// VETERAN OF WAR: Measured Strike reduces the cooldown of your Shield Slam and Shield Throw abilities by 2 seconds." No
 /// cooldown; damage falls off as sqrt(3/N) beyond 3 enemies (effect 1273).
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class MeasuredStrike : HelenaAbility
 {
     public const double ReductionSeconds = 2.0;

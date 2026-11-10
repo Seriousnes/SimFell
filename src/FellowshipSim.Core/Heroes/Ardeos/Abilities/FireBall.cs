@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// enemies in the radius and setting them on fire (<see cref="FireBallDot"/>). The hero's Haste is also applied as
 /// Cooldown Acceleration on Fire Ball. Damage falls off with the target count (game data targetCountFalloff).
 /// </summary>
+[CodexAccepted("CritChanceIncrease")]
 public partial class FireBall : ArdeosAbility
 {
     /// <summary>The additional share of the initial damage dealt over the effect's duration.</summary>

@@ -7,6 +7,7 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// Haste at the cast. Combat logs (HrNZ6wQfFKGxybDR fight 1 @ 16.027): the first hit lands 0.33s after the cast and the
 /// bounces 0.03-0.2s apart, each bounce dealing what the first hit deals.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class ShieldThrow : HelenaAbility
 {
     /// <summary>Combat logs (HrNZ6wQfFKGxybDR fight 1, v8rhNxVc3PwDqzBA fight 4): the first hit lands 0.27-0.37s after the cast.</summary>

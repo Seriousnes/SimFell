@@ -8,6 +8,7 @@ namespace FellowshipSim.Core.Heroes.Elarion.Talents;
 /// and deals more damage. Resurgent Winds is timed and stacks. Effect 2074. UNVERIFIED: which casts count as Offensive Abilities
 /// (the engine rolls on every cast of a damaging ability but Shoot).
 /// </summary>
+[CodexAccepted("ProcChance")]
 public partial class ResurgentWinds : Talent
 {
     public const double ProcChance = 0.05;

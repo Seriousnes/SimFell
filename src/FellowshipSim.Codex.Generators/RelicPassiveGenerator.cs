@@ -68,9 +68,9 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A partial relic passive class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -112,7 +112,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!relicPassive) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -296,6 +296,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Constant>
             {
@@ -308,12 +309,12 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             {
                 if (constant.Type.Length == 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SharedName, d.Location, record.Id, constant.Summary, constant.Name));
+                    leftOut.Report(SharedName, constant.Name, record.Id, constant.Summary, constant.Name);
                     continue;
                 }
                 if (!names.Add(constant.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, record.Id));
+                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, record.Id);
                     continue;
                 }
                 all.Add(constant);
@@ -330,7 +331,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, record.Id));
+                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, record.Id);
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -340,7 +341,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             }
             if (members.Contains("RelicPassiveItems"))
             {
-                context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "RelicPassiveItems", record.Id));
+                leftOut.Report(DeclaredName, "RelicPassiveItems", d.Name, "RelicPassiveItems", record.Id);
             }
             else
             {
@@ -354,6 +355,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
                 source.Append("    ];\n");
             }
             source.Append("}\n");
+            leftOut.Finish();
             context.AddSource($"RelicPassives.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

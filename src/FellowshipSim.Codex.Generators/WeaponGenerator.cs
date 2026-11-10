@@ -82,10 +82,10 @@ public sealed class WeaponGenerator : IIncrementalGenerator
     /// A partial weapon or weapon ability class: its namespace, name, whether it is a weapon ability, the member names of
     /// the class and its base classes, and where it is declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, bool IsAbility, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, bool IsAbility, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && IsAbility == other.IsAbility
-            && Members.Equals(other.Members);
+            && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -136,7 +136,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!weapon && !ability) return null;
-        return new Declared(ns, type.Name, ability, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(ns, type.Name, ability, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -340,6 +340,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 context.ReportDiagnostic(Diagnostic.Create(NoRecord, d.Location, d.Name, $"ability granted by weapon power {power.Id} under its name"));
                 continue;
             }
+            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             string owner = $"weapon power {power.Id}";
             var matched = power.Items.Where(i => i.ClassName == d.Name).ToList();
             string granted = matched.Count > 0
@@ -361,12 +362,12 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 {
                     if (tuning.Type.Length == 0)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(SharedName, d.Location, power.Id, tuning.Summary, tuning.Name));
+                        leftOut.Report(SharedName, tuning.Name, power.Id, tuning.Summary, tuning.Name);
                         continue;
                     }
                     if (!names.Add(tuning.Name))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, tuning.Name, power.Id));
+                        leftOut.Report(DeclaredName, tuning.Name, d.Name, tuning.Name, power.Id);
                         continue;
                     }
                     all.Add(tuning);
@@ -390,7 +391,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, power.Id));
+                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, power.Id);
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -399,6 +400,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
             source.Append("}\n");
+            leftOut.Finish();
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

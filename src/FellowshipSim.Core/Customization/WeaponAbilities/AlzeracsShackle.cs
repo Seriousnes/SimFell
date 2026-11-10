@@ -27,6 +27,7 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 ///   after its logged death. An enemy that dies frozen gives no explosion (60 of 74 such Freezes; in the other 14 the
 ///   enemy died in the server frame of the explosion).
 /// </summary>
+[CodexAccepted("PrimaryAttributeCoefficient", "TickInterval")]
 public partial class AlzeracsShackle : Ability
 {
     /// <summary>The explosion, of the primary stat. Game data: tuning <c>Aoe.PrimaryAttributeCoefficient</c> of weapon power 348.</summary>

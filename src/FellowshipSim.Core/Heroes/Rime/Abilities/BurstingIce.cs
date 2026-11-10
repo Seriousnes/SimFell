@@ -6,6 +6,7 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 /// Ability 1031. Applies debuff effect 1395 (pulsing on a hasted period) whose pulses deal damage effect 1396
 /// to the target and nearby enemies and generate Anima. While it is active Rime has Winter's Embrace (effect 2303).
 /// </summary>
+[CodexAccepted("Duration")]
 public partial class BurstingIce : RimeAbility
 {
     public const int DebuffEffectId = 1395;

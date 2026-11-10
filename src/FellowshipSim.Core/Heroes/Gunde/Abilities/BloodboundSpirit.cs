@@ -12,6 +12,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// <see cref="Customization.RelicPassives.AccursedTrophy"/>, before it by a set bonus; gpfHLmTBrqcd3Zn4 fight 37,
 /// n7zxK8harZT2wjDB fight 9: all pulses come out above the engine's without it).
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class BloodboundSpirit : GundeAbility
 {
     public const double RendShareOfDamage = 1.0;

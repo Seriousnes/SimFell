@@ -64,6 +64,9 @@ partial class HighwindArrow
     /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.ProcChance</c> of ability 1313; talent Lethal Shots (talent 202).</summary>
     public const double ProcChance = 0.4;
 
+    /// <summary>Game data: tuning <c>Cost</c> of ability 1313.</summary>
+    public const int Cost = 30;
+
     /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.IncomingDamageMultiplier</c> of ability 1313; Shimmer (effect 2362), talent Shimmer (legendary power 429).</summary>
     public const double IncomingDamageMultiplier = 1.08;
 

@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Xavian.Abilities;
 /// seconds. All damage dealt to Solar Shield is reduced by 50%. Can be used during Global Cooldown." Cooldown 15s, its
 /// duration scaled by Haste; 182 Mana. The engine casts it on Xavian.
 /// </summary>
+[CodexAccepted("IncomingDamageMultiplier", "ManaCost")]
 public partial class SolarShield : XavianAbility
 {
     /// <summary>Effect 2551: the shield, 8 seconds.</summary>

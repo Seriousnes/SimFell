@@ -9,6 +9,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Talents;
 /// Carve cast before the Blood Arc uses it up too, without the bonus (that fight's 330 such spins are well below the
 /// engine's with the bonus, while the other spins are close to it).
 /// </summary>
+[CodexAccepted("TalentName")]
 public partial class CrimsonStrikes : Talent
 {
     public const string TalentName = "Crimson Strikes";

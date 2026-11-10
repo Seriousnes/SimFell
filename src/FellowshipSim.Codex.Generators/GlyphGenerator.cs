@@ -62,9 +62,9 @@ public sealed class GlyphGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A partial glyph class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -106,7 +106,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!glyph) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -262,6 +262,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Member>
             {
@@ -274,12 +275,12 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             {
                 if (member.Type.Length == 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SharedName, d.Location, record.Id, member.Summary, member.Name));
+                    leftOut.Report(SharedName, member.Name, record.Id, member.Summary, member.Name);
                     continue;
                 }
                 if (!names.Add(member.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, member.Name, record.Id));
+                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, record.Id);
                     continue;
                 }
                 all.Add(member);
@@ -296,7 +297,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             {
                 if (members.Contains(member.Name))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, member.Name, record.Id));
+                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, record.Id);
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -312,6 +313,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 }
             }
             source.Append("}\n");
+            leftOut.Finish();
             context.AddSource($"Glyphs.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

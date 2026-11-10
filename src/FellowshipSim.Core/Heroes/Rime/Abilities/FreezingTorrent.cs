@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 /// <summary>
 /// Ability 1027. Effect 2315, its time rate on Bursting Ice, is unapplied: the ability holds it as its channel buff.
 /// </summary>
+[CodexAccepted("BuffDuration", "DamageMultiplier")]
 public partial class FreezingTorrent : RimeAbility
 {
     public FreezingTorrent(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)

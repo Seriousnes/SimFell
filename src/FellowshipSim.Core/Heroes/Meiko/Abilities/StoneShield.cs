@@ -5,6 +5,7 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// damage 4 times to all nearby enemies. ... Stone Shield gains Cooldown Acceleration equal to your Haste. Can be used
 /// during Global Cooldown". 30 second cooldown, 2 charges. The stones' damage is ability 1121, logged as effect 1572.
 /// </summary>
+[CodexAccepted("DamageMultiplier")]
 public partial class StoneShield : MeikoAbility
 {
     public const int DamageEffectId = 1572;

@@ -9,6 +9,7 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// (7Zmfx9gq6HjvThzc fight 2) have it cast 2.4-11 seconds apart (237.301, 239.672, 242.543, 250.895), against the game
 /// data's 45 second cooldown.
 /// </summary>
+[CodexAccepted("DamageMultiplier", "Duration")]
 public partial class EarthfistBarrage : MeikoFinisher
 {
     public const int Punches = 4;

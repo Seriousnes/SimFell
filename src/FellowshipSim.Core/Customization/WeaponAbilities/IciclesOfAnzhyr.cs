@@ -9,6 +9,7 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// damage, crit chance and crit power of the cast; damage falls off beyond a target cap (every wave on 16-22
 /// enemies fits one cap; all 12 casts then match). The curse (effect 2286) ticks on a hasted period.
 /// </summary>
+[CodexAccepted("PrimaryAttributeCoefficient")]
 public partial class IciclesOfAnzhyr : Ability
 {
     /// <summary>Game data: tuning <c>Aoe.Damage.PrimaryAttributeCoefficient</c> of weapon power 357.</summary>

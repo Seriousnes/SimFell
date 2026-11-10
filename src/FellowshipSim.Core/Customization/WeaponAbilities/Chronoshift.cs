@@ -4,6 +4,7 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// Weapon ability of Asha's Chronoshift Spire (ability 1558): a cast, then a channel pulsing on a hasted period
 /// at all nearby enemies. While channeling, Asha's Arcane Embrace (effect 2279) gives increased cooldown recovery.
 /// </summary>
+[CodexAccepted("ChannelDuration")]
 public partial class Chronoshift : Ability
 {
     public const int BarrierEffectId = 2279;
