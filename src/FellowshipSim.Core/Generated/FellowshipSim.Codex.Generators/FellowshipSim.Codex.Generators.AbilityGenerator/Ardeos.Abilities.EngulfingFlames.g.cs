@@ -41,35 +41,38 @@ partial class EngulfingFlames
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>IncreasedDamage.DamageScaler, Ardeos.CastedSingleDot.Talent.IncreasedDamage.DamageScaler</c> of ability 1586; Engulfing Flames (effect 1832), DamageScale MultiplyCompound.</summary>
-    public const double IncreasedDamageDamageScaler = 1.15;
+    public const double INCREASED_DAMAGE_DAMAGE_SCALER = 1.15;
 
     /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Ardeos.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of ability 1586; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
-    public const double CritChanceIncrease = 0.2;
+    public const double CRIT_CHANCE_INCREASE = 0.2;
+
+    /// <summary>Game data: tuning <c>CastTime</c> of ability 1586.</summary>
+    public const double CAST_TIME = 1.5;
 
     /// <summary>Game data: tuning <c>Charges.NumCharges</c> of ability 1586.</summary>
-    public const int ChargesNumCharges = 3;
+    public const int CHARGES_NUM_CHARGES = 3;
 
     /// <summary>Game data: tuning <c>CooldownReductionInSecondsOnTargetDeath</c> of ability 1586.</summary>
-    public const int CooldownReductionInSecondsOnTargetDeath = 10;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS_ON_TARGET_DEATH = 10;
 
     /// <summary>Game data: tuning <c>DamageIntellectCoefficient</c> of ability 1586.</summary>
-    public const double DamageIntellectCoefficient = 1.8886;
+    public const double DAMAGE_INTELLECT_COEFFICIENT = 1.8886;
 
     /// <summary>Game data: tuning <c>GMMC_Firemage_CastedSingleHeavyDot_Duration_C</c> of ability 1586.</summary>
-    public const int GMMC_Firemage_CastedSingleHeavyDot_Duration_C = 9;
+    public const int GMMC_FIREMAGE_CASTED_SINGLE_HEAVY_DOT_DURATION_C = 9;
 
     /// <summary>Game data: tuning <c>GMMC_Firemage_InstantSingleTargetDot_Duration_C</c> of ability 1586.</summary>
-    public const int GMMC_Firemage_InstantSingleTargetDot_Duration_C = 30;
+    public const int GMMC_FIREMAGE_INSTANT_SINGLE_TARGET_DOT_DURATION_C = 30;
 
     /// <summary>Game data: tuning <c>InstantCastedSingleDot.MainTargetBonus.BombReward</c> of ability 1586; Engulfing Flames (effect 1832).</summary>
-    public const double InstantCastedSingleDotMainTargetBonusBombReward = 0.45;
+    public const double INSTANT_CASTED_SINGLE_DOT_MAIN_TARGET_BONUS_BOMB_REWARD = 0.45;
 
     /// <summary>Game data: tuning <c>Period</c> of ability 1586.</summary>
-    public const double Period = 1.5;
+    public const double PERIOD = 1.5;
 
     /// <summary>Game data: tuning <c>TickChanceToAddResource</c> of ability 1586.</summary>
-    public const int TickChanceToAddResource = 1;
+    public const int TICK_CHANCE_TO_ADD_RESOURCE = 1;
 
     /// <summary>Game data: tuning <c>TickResourceRewardFractionOfBomb</c> of ability 1586.</summary>
-    public const double TickResourceRewardFractionOfBomb = 0.05;
+    public const double TICK_RESOURCE_REWARD_FRACTION_OF_BOMB = 0.05;
 }

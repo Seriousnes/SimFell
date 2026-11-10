@@ -32,11 +32,11 @@ partial class Taunt
     public const int AbilityRadius = 4000;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 1095.</summary>
-    public const int Duration = 6;
+    public const int DURATION = 6;
 
     /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1095.</summary>
-    public const int GEC_CooldownStatic_C = 1;
+    public const int GEC_COOLDOWN_STATIC_C = 1;
 
     /// <summary>Game data: tuning <c>NumOfAdditionalTargets</c> of ability 1095.</summary>
-    public const int NumOfAdditionalTargets = 0;
+    public const int NUM_OF_ADDITIONAL_TARGETS = 0;
 }

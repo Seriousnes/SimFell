@@ -11,5 +11,5 @@ partial class Earthwell
     public const string TalentName = "Earthwell";
 
     /// <summary>Game data: tuning <c>InstantSelfDefensiveCharge.DamageSoakBuff.InvinsibilityDurationPerStack, Meiko.ChanneledHeavyDamage.Talent.InstantSelfDefensiveCharge.DamageSoakBuff.InvinsibilityDurationPerStack</c> of talent 96; Earthfist Barrage (ability 1112).</summary>
-    public const double InstantSelfDefensiveChargeDamageSoakBuffInvinsibilityDurationPerStack = 0.1;
+    public const double INSTANT_SELF_DEFENSIVE_CHARGE_DAMAGE_SOAK_BUFF_INVINSIBILITY_DURATION_PER_STACK = 0.1;
 }

@@ -11,13 +11,13 @@ partial class UndulatingSpirit
     public const int ChestItemId = 5898;
 
     /// <summary>Game data: tuning <c>AdditionalFlatSpiritPointsFromSpiritRefunds, Hero.Talent.AbilityCommitToSpiritRefund.AdditionalFlatSpiritPointsFromSpiritRefunds</c> of legendary power 398; ability 2226.</summary>
-    public const int AdditionalFlatSpiritPointsFromSpiritRefunds = 1;
+    public const int ADDITIONAL_FLAT_SPIRIT_POINTS_FROM_SPIRIT_REFUNDS = 1;
 
     /// <summary>Game data: tuning <c>AdditionalSpiritRefundChance, Hero.Talent.AbilityCommitToSpiritRefund.AdditionalSpiritRefundChance</c> of legendary power 398; ability 2226, SpiritRefundChanceFlatIncrease Additive.</summary>
-    public const int AdditionalSpiritRefundChance = 1;
+    public const int ADDITIONAL_SPIRIT_REFUND_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>ProcChance, Hero.Talent.AbilityCommitToSpiritRefund.ProcChance</c> of legendary power 398; ability 2226.</summary>
-    public const double ProcChance = 0.05;
+    public const double PROC_CHANCE = 0.05;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Undulating Spirit";

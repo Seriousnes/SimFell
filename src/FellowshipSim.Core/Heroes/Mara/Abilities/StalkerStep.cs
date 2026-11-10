@@ -25,7 +25,6 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// Emerald and Ultimatum and sped by Strand of Eternity, the factor of <see cref="ShadowWard.AbilityCooldown"/>.
 /// The maximum charges have no talent test.
 /// </summary>
-[CodexAccepted("Duration", "MaxCharges")]
 public partial class StalkerStep : MaraAbility
 {
     public const int BuffEffectId = 2190;

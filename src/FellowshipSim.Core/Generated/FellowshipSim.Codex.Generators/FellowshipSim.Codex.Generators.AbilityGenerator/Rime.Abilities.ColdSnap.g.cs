@@ -32,44 +32,47 @@ partial class ColdSnap
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>AdditionalWavesOfAutoProjectiles.NumWaves</c> of ability 1020.</summary>
-    public const int AdditionalWavesOfAutoProjectilesNumWaves = 1;
+    public const int ADDITIONAL_WAVES_OF_AUTO_PROJECTILES_NUM_WAVES = 1;
 
     /// <summary>Game data: tuning <c>AdditionalWavesOfAutoProjectiles.WavePeriod</c> of ability 1020.</summary>
-    public const double AdditionalWavesOfAutoProjectilesWavePeriod = 0.2;
+    public const double ADDITIONAL_WAVES_OF_AUTO_PROJECTILES_WAVE_PERIOD = 0.2;
 
     /// <summary>Game data: tuning <c>DamageIntellectCoefficient</c> of ability 1020.</summary>
-    public const double DamageIntellectCoefficient = 3.145;
+    public const double DAMAGE_INTELLECT_COEFFICIENT = 3.145;
 
     /// <summary>Game data: tuning <c>DamageSpread</c> of ability 1020.</summary>
-    public const double DamageSpread = 0.2;
+    public const double DAMAGE_SPREAD = 0.2;
 
     /// <summary>Game data: tuning <c>InstantAndBonusDamage.MaxStacks</c> of ability 1020; Glacial Assault (effect 1377), talent Glacial Assault (talent 38).</summary>
-    public const int MaxStacks = 4;
+    public const int MAX_STACKS = 4;
+
+    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1020.</summary>
+    public const int MAX_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>OrbGain</c> of ability 1020.</summary>
-    public const int OrbGain = 1;
+    public const int ORB_GAIN = 1;
 
     /// <summary>Game data: tuning <c>ReduceCooldownOnChanneledBeam.ReductionInSeconds</c> of ability 1020.</summary>
-    public const double ReduceCooldownOnChanneledBeamReductionInSeconds = 1.5;
+    public const double REDUCE_COOLDOWN_ON_CHANNELED_BEAM_REDUCTION_IN_SECONDS = 1.5;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.BuffDuration</c> of ability 1020; Icy Flow (effect 2308), talent Icy Flow (talent 44).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 
     /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1020.</summary>
-    public const int ResourceGain = 0;
+    public const int RESOURCE_GAIN = 0;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.AoeDamageMaxRange</c> of ability 1020; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
-    public const int AoeDamageMaxRange = 800;
+    public const int AOE_DAMAGE_MAX_RANGE = 800;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.InstantSingleDamageDamagePerStack</c> of ability 1020; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
-    public const double InstantSingleDamageDamagePerStack = 0.3;
+    public const double INSTANT_SINGLE_DAMAGE_DAMAGE_PER_STACK = 0.3;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.TargetCountThreshold</c> of ability 1020; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
-    public const int TargetCountThreshold = 3;
+    public const int TARGET_COUNT_THRESHOLD = 3;
 
     /// <summary>Game data: tuning <c>TriggerAnimaSpikeVolley.Chance</c> of ability 1020; ability 1577.</summary>
-    public const double Chance = 0.15;
+    public const double CHANCE = 0.15;
 
     /// <summary>Game data: tuning <c>TriggerAnimaSpikeVolley.NumProjectiles</c> of ability 1020; ability 1577.</summary>
-    public const int NumProjectiles = 1;
+    public const int NUM_PROJECTILES = 1;
 }

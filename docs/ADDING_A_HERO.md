@@ -46,11 +46,12 @@ Three rules hold everywhere:
 - **Combat logs:** what really happens (timings, procs, partial ticks). The replay review shows where the engine and a
   log disagree.
 
-A generator warning for a left-out constant (CODEX008, CODEX009 and the other "share a name" and "is a member"
-warnings) is accepted with `[CodexAccepted("<name>", ...)]` on the partial class, once the class has its own value or
-none is needed. A name the class accepts that the generator writes after all is warning CODEX038. A test checks a game
-data value as a number with a `// Game data:` comment, never as the generated constant, so a new export with another
-value fails it.
+A tuning value's constant is its name in upper case with an underscore between words: `MaxCharges` is `MAX_CHARGES`,
+so it never has the name of a member such as `Ability.MaxCharges`. A name with several values has a constant per value,
+numbered from 1 in the order of their tuning keys (`MAX_STACKS_1`, `MAX_STACKS_2`), and each constant's summary names
+its keys. A hand-written member with a generated constant's name is a build error (CODEX009, CODEX013 and the other "is
+a member" errors): rename the member. A test checks a game data value as a number with a `// Game data:` comment, never
+as the generated constant, so a new export with another value fails it.
 
 **IDs in combat logs** are game IDs plus an offset: abilities as-is, effects (auras and effect damage) + 1,000,000,
 talents + 2,000,000, augmentations + 3,000,000 (see `Domain/LogIds.cs`). Glyphs are the exception: logs give them per-item
@@ -68,10 +69,9 @@ record is the hero of that name in the game data. `HeroGenerator` writes the cla
   `HeroControl`;
 - one constant per base attribute of the record, named `Hero` and the attribute's name: `HeroBalancingDamageAura`,
   `HeroMaxResources`, `HeroResources`, `HeroMaxResourcesSecond`, `HeroMaxMana`, `HeroManaRegenRate`, `HeroBaseHealth`...;
-- one constant per tuning value of the record with no owner or the hero as its owner, under the tuning value's name.
+- one constant per tuning value of the record with no owner or the hero as its owner, under its upper case name.
 
-A number is an `int` when it is whole and a `double` otherwise. The generator leaves out a tuning name with two different
-values (warning CODEX032) and a name the class or a base class already has (warning CODEX033). The class's own part has
+A number is an `int` when it is whole and a `double` otherwise. The class's own part has
 the behaviour and the values the record does not have: Focus and Energy regeneration per second, Spirit Points per Spirit
 Refund, log timings and proc keys.
 
@@ -118,10 +118,9 @@ the class's game data half:
   `AbilityCastTime`, `AbilityCastTimeScalesWithHaste`, `AbilityChannelTime`, `AbilityChannelTick`, `AbilityCost`,
   `AbilityResource`, `AbilityDuration`, `AbilityPeriod`, `AbilityRange`, `AbilityMinRange`, `AbilityRadius` and
   `AbilityMaxTargets` (range, minimum range and radius in centimetres);
-- one constant per tuning value of the record, under the tuning value's name.
+- one constant per tuning value of the record, under its upper case name (`AGILITY_COEFFICIENT`, `FOCUS_GAIN`).
 
-A number is an `int` when it is whole and a `double` otherwise. The generator leaves out a tuning name with two different
-values (warning CODEX008) and a name the class or a base class already has (warning CODEX009). The class's own part has
+A number is an `int` when it is whole and a `double` otherwise. The class's own part has
 the behaviour and the values the record does not have: log timings, proc keys, other records' effect IDs. Constants
 first, then auras, then the constructor and what the ability does:
 
@@ -129,18 +128,16 @@ first, then auras, then the constructor and what the ability does:
 /// <summary>Focused Shot: ... (tooltip text)</summary>
 public partial class FocusedShot : ElarionAbility
 {
-    public const double FocusGain = 20;
-
     public FocusedShot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = AGILITY_COEFFICIENT;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         // SetCooldown(seconds, charges, scalesWithHaste) and SetChannel(duration, tickPeriod) as the game data says.
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
-        Owner.GainResource(Elarion.Focus, FocusGain, ctx.CurrentTime);
+        Owner.GainResource(Elarion.Focus, FOCUS_GAIN, ctx.CurrentTime);
         DealDamage(ctx, target);
     }
 }
@@ -177,11 +174,9 @@ game data half:
 - `TalentId` and `TalentName`;
 - one constant per scalar field of the record, named `Talent` and the field's name: `TalentCooldown`, `TalentCost`,
   `TalentDuration`, `TalentRange` and `TalentRadius`;
-- one constant per tuning value of the record, under the tuning value's name.
+- one constant per tuning value of the record, under its upper case name.
 
-As for abilities, a number is an `int` when it is whole and a `double` otherwise. The generator leaves out a tuning name
-with two different values (warning CODEX012) and a name the class or a base class already has (warning CODEX013). The
-class's own part has the `Name` and `Id` overrides, the behaviour and the values the record does not have. A talent hooks
+As for abilities, a number is an `int` when it is whole and a `double` otherwise. The class's own part has the `Name` and `Id` overrides, the behaviour and the values the record does not have. A talent hooks
 its effect into the hero in `Bind`, so abilities never check which talents are taken:
 
 ```csharp
@@ -249,12 +244,12 @@ All found by the catalog through their ID constants; add the file and it is used
 
 | Content | Folder | Identified by |
 |---|---|---|
-| Aspect, sigil, protective enchant | `Customization/Aspects`, `Sigils`, `ProtectiveEnchants` | a `partial` class deriving from `Aspect`, `Sigil` or `ProtectiveEnchant`, named after the record of that type (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `AugmentationGenerator` writes its `<Type>Id` and `<Type>Name`, a constant per scalar field of the record (`<Type>MaxRank`, `<Type>RandomChance`, `<Type>Cooldown`, `<Type>Duration`, and `<Type>ProcsPerMinute` from its one proc roll), a constant per tuning value under the tuning value's name, and each rank run as `public static readonly double[] <Key>ByRank` (the run's key without `Trait.<Row>.`, its segments joined) read with `ForRank(...)`. A `delta` run's values are multipliers (1.072 for 7.2%), and a `ticks` run's values are per tick |
+| Aspect, sigil, protective enchant | `Customization/Aspects`, `Sigils`, `ProtectiveEnchants` | a `partial` class deriving from `Aspect`, `Sigil` or `ProtectiveEnchant`, named after the record of that type (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `AugmentationGenerator` writes its `<Type>Id` and `<Type>Name`, a constant per scalar field of the record (`<Type>MaxRank`, `<Type>RandomChance`, `<Type>Cooldown`, `<Type>Duration`, and `<Type>ProcsPerMinute` from its one proc roll), a constant per tuning value under its upper case name, and each rank run as `public static readonly double[] <Key>ByRank` (the run's key without `Trait.<Row>.`, its segments joined) read with `ForRank(...)`. A `delta` run's values are multipliers (1.072 for 7.2%), and a `ticks` run's values are per tick |
 | Glyph | `Customization/Glyphs` | a `partial` class deriving from `Glyph`, named after the glyph record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `GlyphGenerator` writes its `GlyphId` and `GlyphName` (logs match glyphs by name), `GlyphMaxRank` and `GlyphAbilityRank`, and each tuning value under its name: a constant when the value is the same at every rank, otherwise `public static readonly double[] <Name>ByRank` read with `ForRank(...)` |
 | Gem colour | `Customization/Gems` | its `AllNodes` table (node ID, slot, required power, values) |
-| Relic passive | `Customization/RelicPassives` | a `partial` class deriving from `RelicPassive`, named after the relic passive record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id`, `Name` and `Items` overrides (`Items` returns `RelicPassiveItems`); `RelicPassiveGenerator` writes its `RelicPassiveId` and `RelicPassiveName`, `RelicPassiveCooldown` and `RelicPassiveProcsPerMinute` (from its one proc roll), a constant per tuning value under the tuning value's name, each granting item's `<Slot>ItemId` and `<Slot>ItemName` (`RelicItemId`, `RelicItemName`), and `public static readonly RelicItem[] RelicPassiveItems` |
-| Legendary | `Customization/Legendaries` | a `partial` class deriving from `Legendary`, named after the legendary power (Pascal case, letters and digits only), with `Bind`; `LegendaryGenerator` writes its `PowerId`, its items' `<Slot>ItemId`, a constant per tuning value under the tuning value's name, and its `LegendaryPowerId`, `Name`, `HeroName` and `ItemIds` |
-| Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | a `partial` class deriving from `Weapon`, named after the weapon power or an item granting it (Pascal case, letters and digits only, an apostrophe inside its word), with its `Name`, `Equip` and a `WeaponAbilityId` override returning `WeaponPowerAbilityId`; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName` and `WeaponPowerAbilityId`. Its ability is a `partial` class deriving from `Ability` in `WeaponAbilities`, named after the weapon power; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName`, the granted ability's `AbilityId`, `AbilityName` and fields as `Ability<Field>` (`AbilityCategory`, `AbilityCooldown`, `AbilityCastTime`...), and a constant per tuning value of the power under the tuning value's name |
+| Relic passive | `Customization/RelicPassives` | a `partial` class deriving from `RelicPassive`, named after the relic passive record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id`, `Name` and `Items` overrides (`Items` returns `RelicPassiveItems`); `RelicPassiveGenerator` writes its `RelicPassiveId` and `RelicPassiveName`, `RelicPassiveCooldown` and `RelicPassiveProcsPerMinute` (from its one proc roll), a constant per tuning value under its upper case name, each granting item's `<Slot>ItemId` and `<Slot>ItemName` (`RelicItemId`, `RelicItemName`), and `public static readonly RelicItem[] RelicPassiveItems` |
+| Legendary | `Customization/Legendaries` | a `partial` class deriving from `Legendary`, named after the legendary power (Pascal case, letters and digits only), with `Bind`; `LegendaryGenerator` writes its `PowerId`, its items' `<Slot>ItemId`, a constant per tuning value under its upper case name, and its `LegendaryPowerId`, `Name`, `HeroName` and `ItemIds` |
+| Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | a `partial` class deriving from `Weapon`, named after the weapon power or an item granting it (Pascal case, letters and digits only, an apostrophe inside its word), with its `Name`, `Equip` and a `WeaponAbilityId` override returning `WeaponPowerAbilityId`; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName` and `WeaponPowerAbilityId`. Its ability is a `partial` class deriving from `Ability` in `WeaponAbilities`, named after the weapon power; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName`, the granted ability's `AbilityId`, `AbilityName` and fields as `Ability<Field>` (`AbilityCategory`, `AbilityCooldown`, `AbilityCastTime`...), and a constant per tuning value of the power under its upper case name |
 | Gear items (the editor's slots and their stats) | `Import/GameGearData.cs`, written by `tools/generate-gear.cs`, not by hand | the item ID, per hero |
 | Buff from another player | `FellowshipSim.Engine/Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's sigil rank) |
 

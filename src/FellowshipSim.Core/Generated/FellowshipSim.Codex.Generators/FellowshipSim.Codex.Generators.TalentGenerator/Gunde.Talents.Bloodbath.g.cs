@@ -11,8 +11,8 @@ partial class Bloodbath
     public const string TalentName = "Bloodbath";
 
     /// <summary>Game data: tuning <c>CooldownAcceleration.Duration, Gunde.TargetedAoeProjectile.Talent.CooldownAcceleration.Duration</c> of talent 764; Bloodbath (effect 3216).</summary>
-    public const int Duration = 3;
+    public const int DURATION = 3;
 
     /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Talent.CooldownAcceleration.AdditionalCooldownRecovery</c> of talent 764; Bloodbath (effect 3216).</summary>
-    public const int AdditionalCooldownRecovery = 2;
+    public const int ADDITIONAL_COOLDOWN_RECOVERY = 2;
 }

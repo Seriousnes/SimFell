@@ -11,7 +11,7 @@ partial class IronSentinel
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>Charges.NumCharges, Warmaster.MoveSpeedBuff.Talent.Charges.NumCharges</c> of legendary power 625; Hold the Line (ability 975).</summary>
-    public const int ChargesNumCharges = 2;
+    public const int CHARGES_NUM_CHARGES = 2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Iron Sentinel";

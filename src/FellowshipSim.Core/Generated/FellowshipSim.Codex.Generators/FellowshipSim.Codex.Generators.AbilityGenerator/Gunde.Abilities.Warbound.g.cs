@@ -20,23 +20,26 @@ partial class Warbound
     public const int AbilityCharges = 2;
 
     /// <summary>Game data: tuning <c>DamageRadius</c> of ability 2299.</summary>
-    public const int DamageRadius = 250;
+    public const int DAMAGE_RADIUS = 250;
 
     /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2299; Rend (effect 3231).</summary>
-    public const double DamageToDotScaler = 0.5;
+    public const double DAMAGE_TO_DOT_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 2299.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
 
     /// <summary>Game data: tuning <c>InAirExitSpeed</c> of ability 2299.</summary>
-    public const int InAirExitSpeed = 1000;
+    public const int IN_AIR_EXIT_SPEED = 1000;
+
+    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 2299.</summary>
+    public const int MAX_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>MaxDistance</c> of ability 2299.</summary>
-    public const int MaxDistance = 1000;
+    public const int MAX_DISTANCE = 1000;
 
     /// <summary>Game data: tuning <c>Speed</c> of ability 2299.</summary>
-    public const int Speed = 2500;
+    public const int SPEED = 2500;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 2299.</summary>
-    public const double StrengthCoefficient = 0.2;
+    public const double STRENGTH_COEFFICIENT = 0.2;
 }

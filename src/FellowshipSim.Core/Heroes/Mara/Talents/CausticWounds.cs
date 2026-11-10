@@ -20,7 +20,7 @@ public partial class CausticWounds : Talent
         if (backstab == null) return;
         backstab.Struck += (ctx, target) =>
         {
-            if (mara.Hemorrhage.IsOn(target, ctx) && ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx, target)) mara.CausticPoison.Strike(ctx, target);
+            if (mara.Hemorrhage.IsOn(target, ctx) && ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE, ctx, target)) mara.CausticPoison.Strike(ctx, target);
         };
     }
 }

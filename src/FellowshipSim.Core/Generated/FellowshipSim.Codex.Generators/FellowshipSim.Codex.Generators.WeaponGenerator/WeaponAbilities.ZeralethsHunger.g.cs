@@ -41,35 +41,38 @@ partial class ZeralethsHunger
     public const double AbilityChannelTick = 0.5;
 
     /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const double CastDuration = 0.5;
+    public const double CAST_DURATION = 0.5;
+
+    /// <summary>Game data: tuning <c>ChannelDuration</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
+    public const int CHANNEL_DURATION = 3;
 
     /// <summary>Game data: tuning <c>DamageAoeRadius</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int DamageAoeRadius = 700;
+    public const int DAMAGE_AOE_RADIUS = 700;
 
     /// <summary>Game data: tuning <c>DamageFalloffTargetCountThreshold</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int DamageFalloffTargetCountThreshold = 3;
+    public const int DAMAGE_FALLOFF_TARGET_COUNT_THRESHOLD = 3;
 
     /// <summary>Game data: tuning <c>DamageToHealMultiplier</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int DamageToHealMultiplier = 1;
+    public const int DAMAGE_TO_HEAL_MULTIPLIER = 1;
 
     /// <summary>Game data: tuning <c>FirstOverhealDelay</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const double FirstOverhealDelay = 0.2;
+    public const double FIRST_OVERHEAL_DELAY = 0.2;
 
     /// <summary>Game data: tuning <c>HealAoeRadius</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int HealAoeRadius = 3000;
+    public const int HEAL_AOE_RADIUS = 3000;
 
     /// <summary>Game data: tuning <c>MaxFriendlyTargets</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int MaxFriendlyTargets = 3;
+    public const int MAX_FRIENDLY_TARGETS = 3;
 
     /// <summary>Game data: tuning <c>PrimaryAttributeCoefficient</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const double PrimaryAttributeCoefficient = 6.07;
+    public const double PRIMARY_ATTRIBUTE_COEFFICIENT = 6.07;
 
     /// <summary>Game data: tuning <c>SecondOverhealDelay</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int SecondOverhealDelay = 0;
+    public const int SECOND_OVERHEAL_DELAY = 0;
 
     /// <summary>Game data: tuning <c>TargetMaxRange</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const int TargetMaxRange = 3000;
+    public const int TARGET_MAX_RANGE = 3000;
 
     /// <summary>Game data: tuning <c>TickInterval</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-    public const double TickInterval = 0.5;
+    public const double TICK_INTERVAL = 0.5;
 }

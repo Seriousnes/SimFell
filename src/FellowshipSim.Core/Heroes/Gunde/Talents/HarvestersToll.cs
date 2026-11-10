@@ -7,13 +7,12 @@ namespace FellowshipSim.Core.Heroes.Gunde.Talents;
 /// time." The effect's own text gives a different value from the talent's; the talent's is used. Combat logs
 /// (Y4wpb2f3gc8LqJDX fight 25 @ 26.616): it comes with the Rupture before its hit.
 /// </summary>
-[CodexAccepted("IncreasedDamageOnSelfMaxStacks")]
 public partial class HarvestersToll : Talent
 {
     public const int EffectId = 3218;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Harvesters Toll", EffectId, IncreasedDamageOnSelfDuration,
-        modifiers: StatModifier.More(StatType.DamageScale, 1.0 + IncreasedDamageOnSelfDamageScale));
+    public static readonly AuraDef Buff = AuraDef.Effect("Harvesters Toll", EffectId, INCREASED_DAMAGE_ON_SELF_DURATION,
+        modifiers: StatModifier.More(StatType.DamageScale, 1.0 + INCREASED_DAMAGE_ON_SELF_DAMAGE_SCALE));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

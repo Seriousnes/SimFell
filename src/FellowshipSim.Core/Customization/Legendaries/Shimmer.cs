@@ -12,13 +12,13 @@ public partial class Shimmer : Legendary
 {
     public const int DebuffEffectId = 2362;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect("Shimmer", DebuffEffectId, Duration, MaxStacks);
+    public static readonly AuraDef Debuff = AuraDef.Effect("Shimmer", DebuffEffectId, DURATION, MAX_STACKS);
 
     public override void Bind(Hero hero)
     {
         if (hero is not Elarion || hero.GetAbility<HighwindArrow>() is not { } highwind) return;
         hero.Register(Debuff);
         highwind.Hit += (in DamageContext hit) => hit.Target?.Auras.Apply(Debuff, hit.Timestamp);
-        hero.TargetDamageMultipliers.Add((target, now) => 1.0 + (IncomingDamageMultiplier - 1.0) * target.Auras.GetStacks(Debuff, now));
+        hero.TargetDamageMultipliers.Add((target, now) => 1.0 + (INCOMING_DAMAGE_MULTIPLIER - 1.0) * target.Auras.GetStacks(Debuff, now));
     }
 }

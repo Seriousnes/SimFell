@@ -22,7 +22,7 @@ public partial class SapphireAurastone : Aspect
 
     public override void Bind(Hero hero)
     {
-        double share = ForRank(DamageAccumulationPercentageByRank);
+        double share = ForRank(DAMAGE_ACCUMULATION_PERCENTAGE_BY_RANK);
         int logId = LogIds.Effect(DamageEffectId);
         double stored = 0.0;
         int stone = 0;

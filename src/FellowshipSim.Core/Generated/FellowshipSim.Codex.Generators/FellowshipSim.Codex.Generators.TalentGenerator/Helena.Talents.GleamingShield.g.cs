@@ -14,14 +14,14 @@ partial class GleamingShield
     public const int TalentDuration = 3;
 
     /// <summary>Game data: tuning <c>AdditionalArmorPerStack, IncreasedArmorFromAbilities.AdditionalArmorPerStack, Warmaster.Talent.IncreasedArmorFromAbilities.AdditionalArmorPerStack</c> of talent 641; ability 2216.</summary>
-    public const double AdditionalArmorPerStack = 0.03;
+    public const double ADDITIONAL_ARMOR_PER_STACK = 0.03;
 
     /// <summary>Game data: tuning <c>Duration, IncreasedArmorFromAbilities.Duration, Warmaster.Talent.IncreasedArmorFromAbilities.Duration</c> of talent 641; ability 2216.</summary>
-    public const int Duration = 3;
+    public const int DURATION = 3;
 
     /// <summary>Game data: tuning <c>MaxStacks, IncreasedArmorFromAbilities.MaxStacks, Warmaster.Talent.IncreasedArmorFromAbilities.MaxStacks</c> of talent 641; ability 2216.</summary>
-    public const int MaxStacks = 10;
+    public const int MAX_STACKS = 10;
 
     /// <summary>Game data: tuning <c>IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor, Warmaster.Talent.IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor</c> of talent 641; ability 2216.</summary>
-    public const double MeleeCleaveAdditionalDamageBasedOnArmor = 0.1;
+    public const double MELEE_CLEAVE_ADDITIONAL_DAMAGE_BASED_ON_ARMOR = 0.1;
 }

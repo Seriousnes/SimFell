@@ -11,8 +11,8 @@ partial class MagicWard
     public const string TalentName = "Magic Ward";
 
     /// <summary>Game data: tuning <c>MagicDamageReductionBuff.Duration, Sune.SingleTargetAbsorb.Talent.MagicDamageReductionBuff.Duration</c> of talent 584; Magic Ward (effect 2650).</summary>
-    public const int Duration = 4;
+    public const int DURATION = 4;
 
     /// <summary>Game data: tuning <c>MagicDamageReductionBuff.IncomingMagicDamageMultiplier, Sune.SingleTargetAbsorb.Talent.MagicDamageReductionBuff.IncomingMagicDamageMultiplier</c> of talent 584; Magic Ward (effect 2650), MagicalIncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingMagicDamageMultiplier = 0.7;
+    public const double INCOMING_MAGIC_DAMAGE_MULTIPLIER = 0.7;
 }

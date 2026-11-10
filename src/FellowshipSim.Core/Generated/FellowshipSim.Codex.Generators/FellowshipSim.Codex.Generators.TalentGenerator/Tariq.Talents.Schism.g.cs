@@ -11,14 +11,14 @@ partial class Schism
     public const string TalentName = "Schism";
 
     /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.AoeAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
-    public const double AoeAttackDamageMultiplier = 2.5;
+    public const double AOE_ATTACK_DAMAGE_MULTIPLIER = 2.5;
 
     /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
-    public const double HeavySingleTargetAttackDamageMultiplier = 2.5;
+    public const double HEAVY_SINGLE_TARGET_ATTACK_DAMAGE_MULTIPLIER = 2.5;
 
     /// <summary>Game data: tuning <c>PPM, Ink.Talent.ChanceIncreasedSpenderDamage.PPM</c> of talent 85; ability 1215.</summary>
     public const double PPM = 3.2;
 
     /// <summary>Game data: tuning <c>ProcChance, Ink.Talent.ChanceIncreasedSpenderDamage.ProcChance</c> of talent 85; ability 1215.</summary>
-    public const double ProcChance = 0.35;
+    public const double PROC_CHANCE = 0.35;
 }

@@ -15,6 +15,6 @@ public partial class ZenithTechnique : Talent
     public override void Bind(Hero hero)
     {
         var halo = ((Xavian)hero).ShiningHalo;
-        hero.GetAbility<SkyCrash>()!.Crashed += ctx => halo.Extend(ctx, TargetedLeapAoeReplacesPulseAoeDurationExtension);
+        hero.GetAbility<SkyCrash>()!.Crashed += ctx => halo.Extend(ctx, TARGETED_LEAP_AOE_REPLACES_PULSE_AOE_DURATION_EXTENSION);
     }
 }

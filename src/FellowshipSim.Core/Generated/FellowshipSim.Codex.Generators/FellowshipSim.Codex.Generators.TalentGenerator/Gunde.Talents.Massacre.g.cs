@@ -11,11 +11,11 @@ partial class Massacre
     public const string TalentName = "Massacre";
 
     /// <summary>Game data: tuning <c>StacksToHaste.AdditionalHastePerStack, Gunde.InstantAoeDot.Talent.StacksToHaste.AdditionalHastePerStack</c> of talent 772; Massacre (effect 3211), Spirit Additive.</summary>
-    public const double AdditionalHastePerStack = 0.0025;
+    public const double ADDITIONAL_HASTE_PER_STACK = 0.0025;
 
     /// <summary>Game data: tuning <c>StacksToHaste.Duration, Gunde.InstantAoeDot.Talent.StacksToHaste.Duration</c> of talent 772; Massacre (effect 3211).</summary>
-    public const int Duration = 8;
+    public const int DURATION = 8;
 
     /// <summary>Game data: tuning <c>StacksToHaste.MaxStacks, Gunde.InstantAoeDot.Talent.StacksToHaste.MaxStacks</c> of talent 772; Massacre (effect 3211).</summary>
-    public const int MaxStacks = 100;
+    public const int MAX_STACKS = 100;
 }

@@ -11,13 +11,13 @@ partial class StarstrikersAscent
     public const int ChestItemId = 5898;
 
     /// <summary>Game data: tuning <c>Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.AdditionalDamagePerProjectile</c> of legendary power 430; Impending Heartseeker (effect 2317).</summary>
-    public const double AdditionalDamagePerProjectile = 0.1;
+    public const double ADDITIONAL_DAMAGE_PER_PROJECTILE = 0.1;
 
     /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration, Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.BuffDuration</c> of legendary power 430; Impending Heartseeker (effect 2317).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 
     /// <summary>Game data: tuning <c>SpiritProcResetAndBuff, Bowguy.ChanneledMultiProjectileDebuff.Talent.SpiritProcResetAndBuff</c> of legendary power 430; ability 1553.</summary>
-    public const double SpiritProcResetAndBuff = 0.5;
+    public const double SPIRIT_PROC_RESET_AND_BUFF = 0.5;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Starstriker's Ascent";

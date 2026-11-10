@@ -11,11 +11,11 @@ partial class UnscarredSoul
     public const string TalentName = "Unscarred Soul";
 
     /// <summary>Game data: tuning <c>MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.IncomingDamageDivider, Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.IncomingDamageDivider</c> of talent 390; Unscarred Soul (effect 2339), IncomingDamageMultiplier Division.</summary>
-    public const double IncomingDamageDivider = 1.25;
+    public const double INCOMING_DAMAGE_DIVIDER = 1.25;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient, Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.ReflectedDamage.StrengthCoefficient</c> of talent 390; Unscarred Soul (ability 1591).</summary>
-    public const int StrengthCoefficient = 1;
+    public const int STRENGTH_COEFFICIENT = 1;
 
     /// <summary>Game data: tuning <c>Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of talent 390; Unscarred Soul (effect 2339).</summary>
-    public const double AbsorbDamageMultiplier = 0.8;
+    public const double ABSORB_DAMAGE_MULTIPLIER = 0.8;
 }

@@ -11,11 +11,11 @@ partial class DeathsArc
     public const string TalentName = "Death's Arc";
 
     /// <summary>Game data: tuning <c>Chance, Gunde.InstantAoeWithBuff.Talent.ChanceCooldownReset.Chance</c> of talent 748; ability 2266.</summary>
-    public const double Chance = 0.3;
+    public const double CHANCE = 0.3;
 
     /// <summary>Game data: tuning <c>Empowered.Duration, Gunde.InstantAoeWithBuff.Talent.Empowered.Duration</c> of talent 748; Death's Arc (effect 3208).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>Gunde.InstantAoeWithBuff.Talent.Empowered.AddedCriticalStrikeChance</c> of talent 748; Death's Arc (effect 3208).</summary>
-    public const int AddedCriticalStrikeChance = 1;
+    public const int ADDED_CRITICAL_STRIKE_CHANCE = 1;
 }

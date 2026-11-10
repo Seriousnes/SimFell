@@ -11,5 +11,5 @@ partial class GrandHalo
     public const string TalentName = "Grand Halo";
 
     /// <summary>Game data: tuning <c>DamageIncrease.Multiplier, Sune.DroppedPulseAoe.Talent.DamageIncrease.Multiplier</c> of talent 571; Shining Halo (ability 1859), DamageScale MultiplyCompound.</summary>
-    public const double DamageIncreaseMultiplier = 1.25;
+    public const double DAMAGE_INCREASE_MULTIPLIER = 1.25;
 }

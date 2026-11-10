@@ -17,47 +17,47 @@ partial class SlowBurn
     public const int TalentRadius = 500;
 
     /// <summary>Game data: tuning <c>AoeAddedDotStackAmount</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int AoeAddedDotStackAmount = 1;
+    public const int AOE_ADDED_DOT_STACK_AMOUNT = 1;
 
     /// <summary>Game data: tuning <c>AoeDamageIntellectCoefficient</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const double AoeDamageIntellectCoefficient = 5.8482;
+    public const double AOE_DAMAGE_INTELLECT_COEFFICIENT = 5.8482;
 
     /// <summary>Game data: tuning <c>DamageDoneToDotDamageScaler</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const double DamageDoneToDotDamageScaler = 0.2;
+    public const double DAMAGE_DONE_TO_DOT_DAMAGE_SCALER = 0.2;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int DamageScalingTargetCountThreshold = 5;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 5;
 
     /// <summary>Game data: tuning <c>DotDuration</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int DotDuration = 12;
+    public const int DOT_DURATION = 12;
 
     /// <summary>Game data: tuning <c>DotIntellectCoefficientPerTick</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const double DotIntellectCoefficientPerTick = 0.35;
+    public const double DOT_INTELLECT_COEFFICIENT_PER_TICK = 0.35;
 
     /// <summary>Game data: tuning <c>DotPeriod</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int DotPeriod = 2;
+    public const int DOT_PERIOD = 2;
 
     /// <summary>Game data: tuning <c>DotTickChanceToAddResource</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const double DotTickChanceToAddResource = 0.5;
+    public const double DOT_TICK_CHANCE_TO_ADD_RESOURCE = 0.5;
 
     /// <summary>Game data: tuning <c>DotTickResourceRewardFractionOfBomb</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const double DotTickResourceRewardFractionOfBomb = 0.02;
+    public const double DOT_TICK_RESOURCE_REWARD_FRACTION_OF_BOMB = 0.02;
 
     /// <summary>Game data: tuning <c>TicksExtendDurationOfDots.ExtensionInSeconds, Firemage.PlacedProjectileAoe.Talent.TicksExtendDurationOfDots.ExtensionInSeconds</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const double TicksExtendDurationOfDotsExtensionInSeconds = 0.5;
+    public const double TICKS_EXTEND_DURATION_OF_DOTS_EXTENSION_IN_SECONDS = 0.5;
 
     /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 162; Ardeos (hero 7).</summary>
-    public const double CritChanceIncrease = 0.2;
+    public const double CRIT_CHANCE_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>MaxRangeDown</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int MaxRangeDown = 3000;
+    public const int MAX_RANGE_DOWN = 3000;
 
     /// <summary>Game data: tuning <c>MaxRangeHorizontal</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int MaxRangeHorizontal = 3000;
+    public const int MAX_RANGE_HORIZONTAL = 3000;
 
     /// <summary>Game data: tuning <c>MaxRangeUp</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int MaxRangeUp = 1500;
+    public const int MAX_RANGE_UP = 1500;
 
     /// <summary>Game data: tuning <c>ProjectileDuration</c> of talent 162; Fire Ball (ability 1260).</summary>
-    public const int ProjectileDuration = 1;
+    public const int PROJECTILE_DURATION = 1;
 }

@@ -6,7 +6,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Talents;
 /// Talent 761 / buff effect 3222, damage effect 3221: "Your Owed in Blood causes you to pulsate damage equal to a share of
 /// Strength in a radius around you at a regular interval for a time. The damage of Bloodcraze is increased per stack of
 /// Owed in Blood that was consumed. (Damage reduced beyond a target threshold)" The pulses come at
-/// <see cref="Period"/> intervals after the cast (<see cref="Pulses"/> of them).
+/// <see cref="PERIOD"/> intervals after the cast (<see cref="Pulses"/> of them).
 /// UNVERIFIED: no combat log has this talent.
 /// </summary>
 public partial class Bloodcraze : Talent
@@ -15,7 +15,7 @@ public partial class Bloodcraze : Talent
     public const int DamageEffectId = 3221;
     public const int Pulses = 2;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Duration);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DURATION);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -27,10 +27,10 @@ public partial class Bloodcraze : Talent
         gunde.GetAbility<OwedInBlood>()!.Spent += (ctx, _, stacks) =>
         {
             hero.Auras.Apply(Buff, ctx.CurrentTime);
-            double multiplier = 1.0 + DamageIncreasePerStack * stacks;
+            double multiplier = 1.0 + DAMAGE_INCREASE_PER_STACK * stacks;
             for (int i = 1; i <= Pulses; i++)
             {
-                ctx.Schedule(SimTime.FromSeconds(Period * i), c =>
+                ctx.Schedule(SimTime.FromSeconds(PERIOD * i), c =>
                 {
                     var targets = c.Outcomes.SelectTargets(pulse.DamageLogId, c.ActiveEnemies, c);
                     if (targets.Count > 0) pulse.DealAoeDamage(c, targets, damageMultiplier: multiplier);
@@ -39,13 +39,13 @@ public partial class Bloodcraze : Talent
         };
     }
 
-    /// <summary>The pulse's damage: a share of Strength (<see cref="BaseStrengthCoefficient"/>), logged under effect 3221, falling off beyond <see cref="TargetThresholdScaling"/> targets.</summary>
+    /// <summary>The pulse's damage: a share of Strength (<see cref="BASE_STRENGTH_COEFFICIENT"/>), logged under effect 3221, falling off beyond <see cref="TARGET_THRESHOLD_SCALING"/> targets.</summary>
     private sealed class Pulse : Ability
     {
         public Pulse(Gunde owner) : base(owner, LogIds.Effect(DamageEffectId), TalentName)
         {
-            BaseCoefficient = BaseStrengthCoefficient;
-            AoeTargetThreshold = TargetThresholdScaling;
+            BaseCoefficient = BASE_STRENGTH_COEFFICIENT;
+            AoeTargetThreshold = TARGET_THRESHOLD_SCALING;
         }
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }

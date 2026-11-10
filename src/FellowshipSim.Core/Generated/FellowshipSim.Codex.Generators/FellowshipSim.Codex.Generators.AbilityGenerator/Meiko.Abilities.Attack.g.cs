@@ -17,17 +17,17 @@ partial class Attack
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1118.</summary>
-    public const double AgilityCoefficient = 0.46;
+    public const double AGILITY_COEFFICIENT = 0.46;
 
     /// <summary>Game data: tuning <c>GreenEnergyGain</c> of ability 1118.</summary>
-    public const double GreenEnergyGain = 0.5;
+    public const double GREEN_ENERGY_GAIN = 0.5;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1118.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1118.</summary>
-    public const double SwingTimer = 1.9;
+    public const double SWING_TIMER = 1.9;
 
     /// <summary>Game data: tuning <c>YellowEnergyGain</c> of ability 1118.</summary>
-    public const double YellowEnergyGain = 0.5;
+    public const double YELLOW_ENERGY_GAIN = 0.5;
 }

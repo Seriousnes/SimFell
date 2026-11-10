@@ -20,7 +20,7 @@ public partial class IntensifyingInferno : Talent
         {
             if (cast.Ability != wave || cast.Target == null) return;
             int unique = ardeos.Dots.On(cast.Target).Select(d => d.Effect).Distinct().Count();
-            cast.DamageMultiplier *= 1.0 + DamageIncreaseFromDotsDamageIncreasePerDot * unique;
+            cast.DamageMultiplier *= 1.0 + DAMAGE_INCREASE_FROM_DOTS_DAMAGE_INCREASE_PER_DOT * unique;
         };
     }
 }

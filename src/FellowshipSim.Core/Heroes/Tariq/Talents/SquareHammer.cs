@@ -8,7 +8,6 @@ namespace FellowshipSim.Core.Heroes.Tariq.Talents;
 /// Each time you consume Square Hammer you are granted Expertise." Effects 3158 (the stacks) and 3159
 /// (the Expertise).
 /// </summary>
-[CodexAccepted("Duration")]
 public partial class SquareHammer : Talent
 {
     public const int StackEffectId = 3158;
@@ -16,10 +15,10 @@ public partial class SquareHammer : Talent
     public const double CooldownPerStackSeconds = 1.0;
     public const int ActiveEffectId = 3159;
 
-    public static readonly AuraDef Stacks = AuraDef.Effect("Square Hammer", StackEffectId, StackSeconds, MaxStacks);
+    public static readonly AuraDef Stacks = AuraDef.Effect("Square Hammer", StackEffectId, StackSeconds, MAX_STACKS);
 
     public static readonly AuraDef Active = AuraDef.Effect("Square Hammer: Active", ActiveEffectId, TalentDuration,
-        modifiers: StatModifier.Add(StatType.Expertise, AddedExpertisePerStack));
+        modifiers: StatModifier.Add(StatType.Expertise, ADDED_EXPERTISE_PER_STACK));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

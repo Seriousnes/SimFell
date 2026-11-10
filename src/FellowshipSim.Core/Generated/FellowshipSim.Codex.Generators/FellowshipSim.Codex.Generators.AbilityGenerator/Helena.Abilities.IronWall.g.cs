@@ -23,5 +23,5 @@ partial class IronWall
     public const int AbilityDuration = 12;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 973.</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 }

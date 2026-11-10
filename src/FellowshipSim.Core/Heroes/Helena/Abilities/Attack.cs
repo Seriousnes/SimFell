@@ -18,7 +18,7 @@ public partial class Attack : HelenaAbility
 
     public Attack(Helena owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(SwingSeconds, scalesWithHaste: true);
         IgnoresGcd = true;
     }

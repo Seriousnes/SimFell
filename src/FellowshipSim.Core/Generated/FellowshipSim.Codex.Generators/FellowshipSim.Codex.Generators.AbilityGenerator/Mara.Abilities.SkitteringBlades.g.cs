@@ -35,20 +35,20 @@ partial class SkitteringBlades
     public const int AbilityRadius = 800;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1213.</summary>
-    public const double AgilityCoefficient = 0.806;
+    public const double AGILITY_COEFFICIENT = 0.806;
 
     /// <summary>Game data: tuning <c>ComboPointGainAtCrit</c> of ability 1213.</summary>
-    public const int ComboPointGainAtCrit = 2;
+    public const int COMBO_POINT_GAIN_AT_CRIT = 2;
 
     /// <summary>Game data: tuning <c>ComboPointGainPerHit</c> of ability 1213.</summary>
-    public const int ComboPointGainPerHit = 1;
+    public const int COMBO_POINT_GAIN_PER_HIT = 1;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 1213; Resources Additive.</summary>
-    public const int Cost = 35;
+    public const int COST = 35;
 
     /// <summary>Game data: tuning <c>NumTargetsDamageFalloffThreshold</c> of ability 1213.</summary>
-    public const int NumTargetsDamageFalloffThreshold = 8;
+    public const int NUM_TARGETS_DAMAGE_FALLOFF_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>Poison.MaxTicks</c> of ability 1213; Volatile Poison (effect 1731).</summary>
-    public const int MaxTicks = 6;
+    public const int MAX_TICKS = 6;
 }

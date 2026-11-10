@@ -23,20 +23,20 @@ partial class SkystridersSupremacy
     public const int AbilityDuration = 4;
 
     /// <summary>Game data: tuning <c>ChargesCooldownAndDuration.CooldownReductionInSeconds</c> of ability 1398; talent Fervent Supremacy (talent 136).</summary>
-    public const int CooldownReductionInSeconds = 10;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS = 10;
 
     /// <summary>Game data: tuning <c>CostMultiplier</c> of ability 1398.</summary>
-    public const double CostMultiplier = 0.5;
+    public const double COST_MULTIPLIER = 0.5;
 
     /// <summary>Game data: tuning <c>GMMC_Bowguy_SelfBuffForAoeProjectile_Duration_C</c> of ability 1398.</summary>
-    public const int GMMC_Bowguy_SelfBuffForAoeProjectile_Duration_C = 4;
+    public const int GMMC_BOWGUY_SELF_BUFF_FOR_AOE_PROJECTILE_DURATION_C = 4;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1398.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
 
     /// <summary>Game data: tuning <c>MaxStacks</c> of ability 1398; talent Fervent Supremacy (talent 136).</summary>
-    public const int MaxStacks = 4;
+    public const int MAX_STACKS = 4;
 
     /// <summary>Game data: tuning <c>MinProjectiles</c> of ability 1398.</summary>
-    public const int MinProjectiles = 3;
+    public const int MIN_PROJECTILES = 3;
 }

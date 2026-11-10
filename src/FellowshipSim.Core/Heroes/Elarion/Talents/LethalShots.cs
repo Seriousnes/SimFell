@@ -19,7 +19,7 @@ public partial class LethalShots : Talent
         hero.OnCastResolving += cast =>
         {
             if (cast.Ability is not HighwindArrow || hero.SimContext is not { } ctx) return;
-            if (ctx.Outcomes.RollProc(ProcKey, ChanceToHaveIncreasedCritChanceProcChance, ctx)) cast.CritChance += ChanceToHaveIncreasedCritChanceAddedCritChance;
+            if (ctx.Outcomes.RollProc(ProcKey, CHANCE_TO_HAVE_INCREASED_CRIT_CHANCE_PROC_CHANCE, ctx)) cast.CritChance += CHANCE_TO_HAVE_INCREASED_CRIT_CHANCE_ADDED_CRIT_CHANCE;
         };
     }
 }

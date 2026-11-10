@@ -23,29 +23,29 @@ partial class CullingStrike
     public const int AbilityRange = 550;
 
     /// <summary>Game data: tuning <c>DamageIncreasePerResource</c> of ability 1228.</summary>
-    public const double DamageIncreasePerResource = 0.4;
+    public const double DAMAGE_INCREASE_PER_RESOURCE = 0.4;
 
     /// <summary>Game data: tuning <c>MaxResourceToSpend</c> of ability 1228.</summary>
-    public const double MaxResourceToSpend = 0.1;
+    public const double MAX_RESOURCE_TO_SPEND = 0.1;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1228.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1228.</summary>
-    public const double StrengthCoefficient = 3.182025;
+    public const double STRENGTH_COEFFICIENT = 3.182025;
 
     /// <summary>Game data: tuning <c>Talent.AddedCritChance</c> of ability 1228; ability 1556, CritChance Additive.</summary>
-    public const double AddedCritChance = 0.5;
+    public const double ADDED_CRIT_CHANCE = 0.5;
 
     /// <summary>Game data: tuning <c>Talent.ResourceAmountToDamage</c> of ability 1228; ability 1556, talent Executioner's Grin (legendary power 423).</summary>
-    public const double ResourceAmountToDamage = 0.3;
+    public const double RESOURCE_AMOUNT_TO_DAMAGE = 0.3;
 
     /// <summary>Game data: tuning <c>Tariq.CostReductionBuff.DamageIncrease</c> of ability 1228; Focused Wrath (ability 1233).</summary>
-    public const double DamageIncrease = 1.1;
+    public const double DAMAGE_INCREASE = 1.1;
 
     /// <summary>Game data: tuning <c>Tariq.DodgeChanceIncreaseForMeleeAttacks</c> of ability 1228; ability 1221, DodgeChance Additive.</summary>
-    public const double DodgeChanceIncreaseForMeleeAttacks = 0.03;
+    public const double DODGE_CHANCE_INCREASE_FOR_MELEE_ATTACKS = 0.03;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1228.</summary>
-    public const double VisualHitDelay = 0.23;
+    public const double VISUAL_HIT_DELAY = 0.23;
 }

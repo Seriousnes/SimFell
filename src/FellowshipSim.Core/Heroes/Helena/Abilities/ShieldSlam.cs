@@ -7,7 +7,6 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// stacks. "VETERAN OF WAR: Shield Slam reduces the cooldown of your Shockwave ability by 3.0 seconds." 2 charges, 7.5s
 /// each; the other enemies' hits lose damage as sqrt(8/N) beyond 8 enemies (effect 1264). Every hit is logged as 977.
 /// </summary>
-[CodexAccepted("DamageMultiplier")]
 public partial class ShieldSlam : HelenaAbility
 {
     /// <summary>
@@ -20,7 +19,7 @@ public partial class ShieldSlam : HelenaAbility
 
     /// <summary>Lingering Concussion on the main target, up to 5 stacks.</summary>
     public static readonly AuraDef LingeringConcussion = AuraDef.Effect("Lingering Concussion", LingeringConcussionEffectId,
-        Duration, MaxStackCount);
+        DURATION, MAX_STACK_COUNT);
 
     /// <summary>Share of Armor (<see cref="Helena.Armor"/>) every hit adds to its damage (Gleaming Shield).</summary>
     public double ArmorDamageShare { get; set; }
@@ -30,9 +29,9 @@ public partial class ShieldSlam : HelenaAbility
 
     public ShieldSlam(Helena owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown, AbilityCharges, scalesWithHaste: true);
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
         VeteranOfWarReductions.Add((typeof(Shockwave), ShockwaveReductionSeconds));
     }
 
@@ -50,11 +49,11 @@ public partial class ShieldSlam : HelenaAbility
         TriggerCooldown(ctx);
         var now = ctx.CurrentTime;
         var targets = ctx.Outcomes.SelectTargets(DamageLogId, Enemies(ctx, target), ctx);
-        double falloff = targets.Count > TargetCountThreshold ? Math.Sqrt((double)TargetCountThreshold / targets.Count) : 1.0;
+        double falloff = targets.Count > TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)TARGET_COUNT_THRESHOLD / targets.Count) : 1.0;
         // Another enemy's hit is its 75.8% with the same flat Armor part as the main target's.
         double strength = Owner.PrimaryAttribute(now);
         double armorPart = ArmorDamageShare * Helena.Armor(now);
-        double otherShare = (CleaveDamageStrengthCoefficient * strength + armorPart) / (StrengthCoefficient * strength + armorPart);
+        double otherShare = (CLEAVE_DAMAGE_STRENGTH_COEFFICIENT * strength + armorPart) / (STRENGTH_COEFFICIENT * strength + armorPart);
         for (int i = 0; i < targets.Count; i++)
         {
             var enemy = targets[i];

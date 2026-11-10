@@ -11,11 +11,11 @@ partial class FeedTheQueen
     public const string TalentName = "Feed the Queen";
 
     /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.Duration, Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.Duration</c> of talent 121; Feed the Queen (effect 2195).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.MaxStacks, Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.MaxStacks</c> of talent 121; Feed the Queen (effect 2195).</summary>
-    public const int MaxStacks = 6;
+    public const int MAX_STACKS = 6;
 
     /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.DamageMultiplierPerStack</c> of talent 121; Feed the Queen (effect 2195).</summary>
-    public const double DamageMultiplierPerStack = 0.12;
+    public const double DAMAGE_MULTIPLIER_PER_STACK = 0.12;
 }

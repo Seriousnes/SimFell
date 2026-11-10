@@ -11,14 +11,14 @@ partial class FerventSupremacy
     public const string TalentName = "Fervent Supremacy";
 
     /// <summary>Game data: tuning <c>Bowguy.SelfBuffForAoeProjectile.MaxStacks</c> of talent 136; Skystrider's Supremacy (ability 1398).</summary>
-    public const int MaxStacks = 4;
+    public const int MAX_STACKS = 4;
 
     /// <summary>Game data: tuning <c>ChargesCooldownAndDuration.CooldownReductionInSeconds, Bowguy.SelfBuffForAoeProjectile.Talent.ChargesCooldownAndDuration.CooldownReductionInSeconds</c> of talent 136; Skystrider's Supremacy (ability 1398).</summary>
-    public const int ChargesCooldownAndDurationCooldownReductionInSeconds = 10;
+    public const int CHARGES_COOLDOWN_AND_DURATION_COOLDOWN_REDUCTION_IN_SECONDS = 10;
 
     /// <summary>Game data: tuning <c>ChargesCooldownAndDuration.DamageBonus, Bowguy.SelfBuffForAoeProjectile.Talent.ChargesCooldownAndDuration.DamageBonus</c> of talent 136; Skystrider's Supremacy (ability 1398), DamageScale MultiplyCompound.</summary>
-    public const double ChargesCooldownAndDurationDamageBonus = 1.5;
+    public const double CHARGES_COOLDOWN_AND_DURATION_DAMAGE_BONUS = 1.5;
 
     /// <summary>Game data: tuning <c>ChargesCooldownAndDuration.DurationOverride, Bowguy.SelfBuffForAoeProjectile.Talent.ChargesCooldownAndDuration.DurationOverride</c> of talent 136; Skystrider's Supremacy (ability 1398).</summary>
-    public const int ChargesCooldownAndDurationDurationOverride = 4;
+    public const int CHARGES_COOLDOWN_AND_DURATION_DURATION_OVERRIDE = 4;
 }

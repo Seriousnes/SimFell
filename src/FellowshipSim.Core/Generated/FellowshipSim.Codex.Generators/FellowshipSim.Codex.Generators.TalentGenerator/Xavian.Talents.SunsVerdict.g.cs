@@ -11,32 +11,32 @@ partial class SunsVerdict
     public const string TalentName = "Sun's Verdict";
 
     /// <summary>Game data: tuning <c>BuffDuration, Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Proc.BuffDuration</c> of talent 583; ability 1907.</summary>
-    public const int BuffDuration = 12;
+    public const int BUFF_DURATION = 12;
 
     /// <summary>Game data: tuning <c>BuffStackGain, Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Proc.BuffStackGain</c> of talent 583; ability 1907.</summary>
-    public const int BuffStackGain = 1;
+    public const int BUFF_STACK_GAIN = 1;
 
     /// <summary>Game data: tuning <c>ProcChance, Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Proc.ProcChance</c> of talent 583; ability 1907.</summary>
-    public const double ProcChance = 0.2;
+    public const double PROC_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>StackCap, Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Proc.StackCap</c> of talent 583; ability 1907.</summary>
-    public const int StackCap = 2;
+    public const int STACK_CAP = 2;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Aoe.DamageScalingTargetCountThreshold</c> of talent 583; Sun Strike (ability 1845).</summary>
-    public const int AoeProcBuffAoeDamageScalingTargetCountThreshold = 8;
+    public const int AOE_PROC_BUFF_AOE_DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Aoe.DamageStrengthCoefficient</c> of talent 583; Sun Strike (ability 1845).</summary>
-    public const double AoeProcBuffAoeDamageStrengthCoefficient = 1.24;
+    public const double AOE_PROC_BUFF_AOE_DAMAGE_STRENGTH_COEFFICIENT = 1.24;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Aoe.MaxNumTargets</c> of talent 583; Sun Strike (ability 1845).</summary>
-    public const int AoeProcBuffAoeMaxNumTargets = 20;
+    public const int AOE_PROC_BUFF_AOE_MAX_NUM_TARGETS = 20;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Aoe.MaxRange</c> of talent 583; Sun Strike (ability 1845).</summary>
-    public const int AoeProcBuffAoeMaxRange = 700;
+    public const int AOE_PROC_BUFF_AOE_MAX_RANGE = 700;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Aoe.StackCost</c> of talent 583; Sun Strike (ability 1845).</summary>
-    public const int AoeProcBuffAoeStackCost = 1;
+    public const int AOE_PROC_BUFF_AOE_STACK_COST = 1;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetFillerMelee.Talent.AoeProcBuff.Aoe.VisualDelay</c> of talent 583; Sun Strike (ability 1845).</summary>
-    public const double AoeProcBuffAoeVisualDelay = 0.5;
+    public const double AOE_PROC_BUFF_AOE_VISUAL_DELAY = 0.5;
 }

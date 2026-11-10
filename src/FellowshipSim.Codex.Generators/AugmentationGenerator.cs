@@ -21,10 +21,10 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>ProtectiveEnchant</c>) whose name in Pascal case (letters and digits only, an apostrophe inside its word) is the class
 /// name. The constants are <c>&lt;Type&gt;Id</c>, <c>&lt;Type&gt;Name</c>, one per scalar field of the record under the type
 /// and the field's name (<c>SigilMaxRank</c>, <c>ProtectiveEnchantDuration</c>, <c>AspectProcsPerMinute</c>...), and one per
-/// tuning value of the record under the tuning value's name. Each rank run of the record is a
+/// tuning value of the record under its <see cref="TuningNames"/> name. Each rank run of the record is a
 /// <c>public static readonly double[]</c> of its values by rank, named after its key without the <c>Trait.&lt;Row&gt;.</c>
-/// prefix, its segments joined, and <c>ByRank</c>. The class's own part has the augmentation's behaviour and its
-/// <c>Name</c> and <c>Id</c> overrides. A constant whose name the class or a base class already has is left out. The game
+/// prefix, its segments joined, and <c>_BY_RANK</c>. The class's own part has the augmentation's behaviour and its
+/// <c>Name</c> and <c>Id</c> overrides. A member of the class or a base class with a constant's name is CODEX017. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -52,17 +52,13 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         "CODEX015", "A partial augmentation class names several augmentation records",
         "The partial class {0} names the {1} records {2} in the game data", "Codex", DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor SharedName = new(
-        "CODEX016", "Two values of an augmentation share a name",
-        "Augmentation {0} has values {1} with different values under the name {2}; the class has no member {2}", "Codex", DiagnosticSeverity.Warning, true);
-
     private static readonly DiagnosticDescriptor DeclaredName = new(
         "CODEX017", "An augmentation constant's name is a member of the class",
-        "The class {0} or a base class has a member {1}, so the member {1} of augmentation {2} is left out", "Codex", DiagnosticSeverity.Warning, true);
+        "The class {0} or a base class has a member {1}, and {1} is a member of {2}; rename the class's member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>
     /// A member of an augmentation record: its name, C# type and value (a literal, or an array's elements), its summary, and
-    /// whether it is a per-rank array. A member with no type has several values under its name, and its summary names them.
+    /// whether it is a per-rank array.
     /// </summary>
     private sealed record Member(string Name, string Type, string Literal, string Summary, bool ByRank = false);
 
@@ -77,10 +73,10 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
     /// A partial augmentation class: its namespace, name, record type (empty for a class of no listed base), the member
     /// names of the class and its base classes, and where it is declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, string Type, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
+    private sealed record Declared(string Namespace, string Name, string Type, EquatableArray<string> Members, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Type == other.Type
-            && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
+            && Members.Equals(other.Members);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -128,7 +124,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!augmentation) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, kind, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, kind, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -217,27 +213,14 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         fields.Add(new Member(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary));
     }
 
-    /// <summary>The record's tuning values, one per name, in the order of the game data.</summary>
-    private static List<Member> TuningsOf(AugmentationDocument a, string type)
-    {
-        var tunings = new List<Member>();
-        foreach (var group in (a.Tuning ?? new Dictionary<string, TuningReference>()).GroupBy(t => t.Value.Name ?? ""))
+    /// <summary>The record's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
+    private static List<Member> TuningsOf(AugmentationDocument a, string type) =>
+        [.. TuningNames.Of(a.Tuning, ValueOf).Select(t =>
         {
-            if (group.Key.Length == 0) continue;
-            var values = group.Select(t => ValueOf(t.Value.Value)).Distinct().ToList();
-            string keys = string.Join(", ", group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal));
-            if (values.Count != 1 || values[0] is not { } value)
-            {
-                // Two values under one name: no constant, and the diagnostic names the keys.
-                tunings.Add(new Member(group.Key, "", "", keys));
-                continue;
-            }
-            string source = SourceOf(group.First().Value);
-            tunings.Add(new Member(group.Key, value.Type, value.Literal,
-                $"Game data: tuning <c>{Escape(keys)}</c> of {Words(type)} {a.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}."));
-        }
-        return tunings;
-    }
+            string source = SourceOf(t.Source);
+            return new Member(t.Name, t.Value.Type, t.Value.Literal,
+                $"Game data: tuning <c>{Escape(t.Keys)}</c> of {Words(type)} {a.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
+        })];
 
     /// <summary>
     /// The record's rank runs, each an array of its values by rank (rank 1 first). The summary names the run's key, its
@@ -249,33 +232,41 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         var ranks = new List<Member>();
         foreach (var group in (a.RankRuns ?? []).Where(r => r.Key is { Length: > 0 }).GroupBy(r => RankName(r.Key!)))
         {
-            var runs = group.ToList();
-            string keys = string.Join(", ", runs.Select(r => r.Key));
-            var values = runs.Select(r => r.Values is { Count: > 0 } v && v.All(x => x != null) ? string.Join(", ", v.Select(x => Number(x!.Value))) : null)
-                .Distinct().ToList();
-            if (values.Count != 1 || values[0] is not { } literal)
+            // A run with a rank of no value has no array. Runs with different values under one name are numbered from 1
+            // in the order of their keys.
+            var byValue = group
+                .Select(r => (Run: r, Literal: r.Values is { Count: > 0 } v && v.All(x => x != null) ? string.Join(", ", v.Select(x => Number(x!.Value))) : null))
+                .Where(r => r.Literal != null)
+                .GroupBy(r => r.Literal!)
+                .Select(g => (Literal: g.Key, Runs: g.Select(r => r.Run).OrderBy(r => r.Key!.Length).ThenBy(r => r.Key, StringComparer.Ordinal).ToList()))
+                .OrderBy(g => g.Runs[0].Key!.Length).ThenBy(g => g.Runs[0].Key, StringComparer.Ordinal)
+                .ToList();
+            for (int i = 0; i < byValue.Count; i++)
             {
-                // Two runs under one name, or a run with a rank of no value: no array, and the diagnostic names the keys.
-                ranks.Add(new Member(group.Key, "", "", keys, ByRank: true));
-                continue;
+                var (literal, runs) = byValue[i];
+                var run = runs[0];
+                string keys = string.Join(", ", runs.Select(r => r.Key));
+                string transform = run.Transform is { Length: > 0 } t
+                    ? $", transform <c>{Escape(t)}</c>{(run.Ticks is { } ticks ? $" over {ticks} ticks" : "")}"
+                    : "";
+                string printed = run.Printed is { Count: > 0 } p ? $"; the tooltip has {Escape(string.Join(" / ", p.Select(Untagged)))}" : "";
+                string name = (byValue.Count == 1 ? group.Key : $"{group.Key}_{i + 1}") + "_BY_RANK";
+                ranks.Add(new Member(name, "double[]", literal,
+                    $"Game data: rank run <c>{Escape(keys)}</c> of {Words(type)} {a.Id}{transform}{printed}.", ByRank: true));
             }
-            var run = runs[0];
-            string transform = run.Transform is { Length: > 0 } t
-                ? $", transform <c>{Escape(t)}</c>{(run.Ticks is { } ticks ? $" over {ticks} ticks" : "")}"
-                : "";
-            string printed = run.Printed is { Count: > 0 } p ? $"; the tooltip has {Escape(string.Join(" / ", p.Select(Untagged)))}" : "";
-            ranks.Add(new Member(group.Key, "double[]", literal,
-                $"Game data: rank run <c>{Escape(keys)}</c> of {Words(type)} {a.Id}{transform}{printed}.", ByRank: true));
         }
         return ranks;
     }
 
-    /// <summary>A rank run's array name: its key without <c>Trait.&lt;Row&gt;.</c>, its segments joined, and <c>ByRank</c>.</summary>
+    /// <summary>
+    /// A rank run's name before <c>_BY_RANK</c>: its key without <c>Trait.&lt;Row&gt;.</c>, its segments joined, as a
+    /// <see cref="TuningNames"/> name.
+    /// </summary>
     private static string RankName(string key)
     {
         var segments = key.Split('.');
         int skip = segments.Length > 2 && segments[0] == "Trait" ? 2 : 0;
-        return string.Concat(segments.Skip(skip).Select(PascalCase)) + "ByRank";
+        return TuningNames.ConstantName(string.Concat(segments.Skip(skip).Select(PascalCase)));
     }
 
     /// <summary>A tooltip number without its markup tags.</summary>
@@ -335,7 +326,6 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
-            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             string owner = $"{Words(record.Type)} {record.Id}";
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Member>
@@ -344,21 +334,8 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 new(record.Type + "Name", "string", Literal(record.Name), $"Game data: <c>name</c> of {owner}."),
             };
             all.AddRange(record.Fields);
-            var names = new HashSet<string>(all.Select(c => c.Name), StringComparer.Ordinal);
-            foreach (var member in record.Tunings.Concat(record.Ranks))
-            {
-                if (member.Type.Length == 0)
-                {
-                    leftOut.Report(SharedName, member.Name, owner, member.Summary, member.Name);
-                    continue;
-                }
-                if (!names.Add(member.Name))
-                {
-                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, owner);
-                    continue;
-                }
-                all.Add(member);
-            }
+            all.AddRange(record.Tunings);
+            all.AddRange(record.Ranks);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -371,7 +348,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             {
                 if (members.Contains(member.Name))
                 {
-                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, owner);
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, member.Name, owner));
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -387,7 +364,6 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 }
             }
             source.Append("}\n");
-            leftOut.Finish();
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

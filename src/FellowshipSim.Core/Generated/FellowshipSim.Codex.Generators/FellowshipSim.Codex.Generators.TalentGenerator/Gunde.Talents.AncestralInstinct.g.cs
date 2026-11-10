@@ -14,11 +14,11 @@ partial class AncestralInstinct
     public const int TalentDuration = 6;
 
     /// <summary>Game data: tuning <c>Duration, Gunde.Talent.AbilityToBuffChance.Duration</c> of talent 756; ability 2282.</summary>
-    public const int Duration = 6;
+    public const int DURATION = 6;
 
     /// <summary>Game data: tuning <c>ProcChance, Gunde.Talent.AbilityToBuffChance.ProcChance</c> of talent 756; ability 2282.</summary>
-    public const double ProcChance = 0.4;
+    public const double PROC_CHANCE = 0.4;
 
     /// <summary>Game data: tuning <c>StrengthMultiplier, Gunde.Talent.AbilityToBuffChance.StrengthMultiplier</c> of talent 756; ability 2282, Strength Multiplicitive.</summary>
-    public const double StrengthMultiplier = 1.06;
+    public const double STRENGTH_MULTIPLIER = 1.06;
 }

@@ -29,17 +29,17 @@ partial class FaceBreaker
     public const int AbilityRange = 550;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 2239.</summary>
-    public const int Cost = 0;
+    public const int COST = 0;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.Increase, Tariq.SecondChanceSingleTargetAttack.Talent.IncreasedCritChance.Increase</c> of ability 2239; Face Breaker (old) (ability 1219), talent Left Hand Path (talent 72), CritChance Additive.</summary>
-    public const double Increase = 0.4;
+    public const double INCREASE = 0.4;
 
     /// <summary>Game data: tuning <c>ResourceGain</c> of ability 2239.</summary>
-    public const double ResourceGain = 0.07;
+    public const double RESOURCE_GAIN = 0.07;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 2239.</summary>
-    public const double StrengthCoefficient = 6.18426;
+    public const double STRENGTH_COEFFICIENT = 6.18426;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 2239.</summary>
-    public const double VisualHitDelay = 0.23;
+    public const double VISUAL_HIT_DELAY = 0.23;
 }

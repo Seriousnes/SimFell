@@ -11,8 +11,8 @@ partial class TheMotherload
     public const string TalentName = "The Motherload";
 
     /// <summary>Game data: tuning <c>DamagePerUniqueTarget.Scaler, Ink.BouncyProjectile.Talent.DamagePerUniqueTarget.Scaler</c> of talent 672; Chain Lightning (ability 1237).</summary>
-    public const double DamagePerUniqueTargetScaler = 0.5;
+    public const double DAMAGE_PER_UNIQUE_TARGET_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>IncreasedDamage.DamageMultiplier, Ink.BouncyProjectile.Talent.IncreasedDamage.DamageMultiplier</c> of talent 672; Chain Lightning (ability 1237), DamageScale MultiplyCompound.</summary>
-    public const int IncreasedDamageDamageMultiplier = 1;
+    public const int INCREASED_DAMAGE_DAMAGE_MULTIPLIER = 1;
 }

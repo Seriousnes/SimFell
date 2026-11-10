@@ -14,11 +14,11 @@ partial class Peacefield
     public const int TalentDuration = 9;
 
     /// <summary>Game data: tuning <c>Duration, Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.Duration</c> of talent 174; Peacefield (ability 1547).</summary>
-    public const int Duration = 9;
+    public const int DURATION = 9;
 
     /// <summary>Game data: tuning <c>PercentageOfTotalHeal, Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.PercentageOfTotalHeal</c> of talent 174; Peacefield (ability 1547).</summary>
-    public const double PercentageOfTotalHeal = 0.8;
+    public const double PERCENTAGE_OF_TOTAL_HEAL = 0.8;
 
     /// <summary>Game data: tuning <c>TickInterval, Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.TickInterval</c> of talent 174; Peacefield (ability 1547).</summary>
-    public const double TickInterval = 1.5;
+    public const double TICK_INTERVAL = 1.5;
 }

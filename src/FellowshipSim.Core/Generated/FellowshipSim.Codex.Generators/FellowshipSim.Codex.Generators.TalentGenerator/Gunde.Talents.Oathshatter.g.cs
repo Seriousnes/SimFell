@@ -14,17 +14,17 @@ partial class Oathshatter
     public const int TalentRadius = 700;
 
     /// <summary>Game data: tuning <c>AdditionalTargets, Gunde.HeavyMeleeDotBased.Talent.CritToAoe.AdditionalTargets</c> of talent 762; ability 2274.</summary>
-    public const int AdditionalTargets = 4;
+    public const int ADDITIONAL_TARGETS = 4;
 
     /// <summary>Game data: tuning <c>AoeDamageScaler, Gunde.HeavyMeleeDotBased.Talent.CritToAoe.AoeDamageScaler</c> of talent 762; ability 2274.</summary>
-    public const double AoeDamageScaler = 0.5;
+    public const double AOE_DAMAGE_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBased.Talent.CritToAoe.Radius</c> of talent 762; ability 2274.</summary>
-    public const int Radius = 700;
+    public const int RADIUS = 700;
 
     /// <summary>Game data: tuning <c>TargetThresholdScaling, Gunde.HeavyMeleeDotBased.Talent.CritToAoe.TargetThresholdScaling</c> of talent 762; ability 2274.</summary>
-    public const int TargetThresholdScaling = 10;
+    public const int TARGET_THRESHOLD_SCALING = 10;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Gunde.HeavyMeleeDotBased.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 762; Oathshatter (effect 3215), CritChance Additive.</summary>
-    public const double AdditionalCritChance = 0.3;
+    public const double ADDITIONAL_CRIT_CHANCE = 0.3;
 }

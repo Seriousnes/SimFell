@@ -11,8 +11,8 @@ partial class ImposingPresence
     public const string TalentName = "Imposing Presence";
 
     /// <summary>Game data: tuning <c>Sune.DroppedPulseAoe.Talent.DroppedPulseAoeDebuffsTargets.AttackSpeedScaler</c> of talent 569; effect 3113, AttackSpeed MultiplyCompound.</summary>
-    public const double AttackSpeedScaler = 0.8;
+    public const double ATTACK_SPEED_SCALER = 0.8;
 
     /// <summary>Game data: tuning <c>Sune.DroppedPulseAoe.Talent.DroppedPulseAoeDebuffsTargets.MoveSpeedScaler</c> of talent 569; effect 3113, MoveSpeed MultiplyCompound.</summary>
-    public const double MoveSpeedScaler = 0.65;
+    public const double MOVE_SPEED_SCALER = 0.65;
 }

@@ -11,5 +11,5 @@ partial class StoneGuard
     public const string TalentName = "Stone Guard";
 
     /// <summary>Game data: tuning <c>HealMultiplier, SelfHealToStoneHealth.HealMultiplier, Meiko.Talent.SelfHealToStoneHealth.HealMultiplier</c> of talent 446; ability 1767.</summary>
-    public const double HealMultiplier = 0.1;
+    public const double HEAL_MULTIPLIER = 0.1;
 }

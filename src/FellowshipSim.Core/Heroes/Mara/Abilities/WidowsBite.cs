@@ -5,7 +5,6 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// equal to your Haste, generates Combo Points with each strike (more on a Critical Strike) and generates Energy. Used in
 /// Stealth it applies Seething Poison (<see cref="SeethingPoison"/>); both strikes are logged as 1207.
 /// </summary>
-[CodexAccepted("AgilityCoefficient")]
 public partial class WidowsBite : MaraAbility
 {
     public const double RightHandCoefficient = 1.452;
@@ -14,7 +13,7 @@ public partial class WidowsBite : MaraAbility
     /// <summary>Widow's Bite hit an enemy (Hemotoxin).</summary>
     public event Action<SimulationContext, EnemyTarget>? Struck;
 
-    public override double NetEnergyCost => EnergyCost - EnergyGain;
+    public override double NetEnergyCost => EnergyCost - ENERGY_GAIN;
 
     public WidowsBite(Mara owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
@@ -23,7 +22,7 @@ public partial class WidowsBite : MaraAbility
         BreaksStealth = true;
         Hit += (in hit) =>
         {
-            if (hit.SimContext is { } ctx) GenerateComboPoints(ctx, hit.IsCrit ? ComboPointGainAtCrit : ComboPointGain, hit.Target);
+            if (hit.SimContext is { } ctx) GenerateComboPoints(ctx, hit.IsCrit ? COMBO_POINT_GAIN_AT_CRIT : COMBO_POINT_GAIN, hit.Target);
         };
     }
 
@@ -32,7 +31,7 @@ public partial class WidowsBite : MaraAbility
         bool stealthed = Mara.IsStealthed(ctx.CurrentTime);
         TriggerCooldown(ctx);
         Pay(ctx);
-        Mara.GainEnergy(EnergyGain, ctx);
+        Mara.GainEnergy(ENERGY_GAIN, ctx);
         DealDamage(ctx, target);
         DealDamage(ctx, target, damageMultiplier: LeftHandCoefficient / RightHandCoefficient);
         Struck?.Invoke(ctx, target);

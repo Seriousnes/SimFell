@@ -11,5 +11,5 @@ partial class LunarlightAffinity
     public const string TalentName = "Lunarlight Affinity";
 
     /// <summary>Game data: tuning <c>IncreasedInstantMarkTriggerChance.AddedCritChance, Bowguy.TargetedAoeDamage.Talent.IncreasedInstantMarkTriggerChance.AddedCritChance</c> of talent 203; Starfall Volley (ability 126).</summary>
-    public const double IncreasedInstantMarkTriggerChanceAddedCritChance = 0.2;
+    public const double INCREASED_INSTANT_MARK_TRIGGER_CHANCE_ADDED_CRIT_CHANCE = 0.2;
 }

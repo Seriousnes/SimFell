@@ -78,20 +78,20 @@ public partial class CoalescingFrost : Talent
         {
             if (struck[i] != target) around++;
         }
-        double falloff = around > DelayedAoeTargetCountThreshold ? Math.Sqrt((double)DelayedAoeTargetCountThreshold / around) : 1.0;
+        double falloff = around > DELAYED_AOE_TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)DELAYED_AOE_TARGET_COUNT_THRESHOLD / around) : 1.0;
         for (int i = 0; i < struck.Count; i++)
         {
             eruption.DealDamage(ctx, struck[i], damageMultiplier: state.Stacks * (struck[i] == target ? 1.0 : falloff));
         }
     }
 
-    /// <summary>The eruption's damage: <see cref="DelayedAoeDamageDividerToInt"/> Intellect per stack, logged under effect 2300, with the falloff beyond <see cref="DelayedAoeTargetCountThreshold"/> targets.</summary>
+    /// <summary>The eruption's damage: <see cref="DELAYED_AOE_DAMAGE_DIVIDER_TO_INT"/> Intellect per stack, logged under effect 2300, with the falloff beyond <see cref="DELAYED_AOE_TARGET_COUNT_THRESHOLD"/> targets.</summary>
     private sealed class Eruption : Ability
     {
         public Eruption(Rime owner) : base(owner, LogIds.Effect(DamageEffectId), TalentName)
         {
-            BaseCoefficient = DelayedAoeDamageDividerToInt;
-            AoeTargetThreshold = DelayedAoeTargetCountThreshold;
+            BaseCoefficient = DELAYED_AOE_DAMAGE_DIVIDER_TO_INT;
+            AoeTargetThreshold = DELAYED_AOE_TARGET_COUNT_THRESHOLD;
         }
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }

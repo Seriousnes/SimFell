@@ -23,10 +23,10 @@ partial class UndyingHeart
     public const string RelicItemName = "Orb of Gathering Storms";
 
     /// <summary>Game data: tuning <c>BuffDuration</c> of relic passive 779; ability 1389.</summary>
-    public const int BuffDuration = 20;
+    public const int BUFF_DURATION = 20;
 
     /// <summary>Game data: tuning <c>HasteBonus</c> of relic passive 779; ability 1389, Haste Additive.</summary>
-    public const double HasteBonus = 0.25;
+    public const double HASTE_BONUS = 0.25;
 
     /// <summary>Game data: tuning <c>PPM</c> of relic passive 779; ability 1389.</summary>
     public const double PPM = 0.8;

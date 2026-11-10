@@ -32,35 +32,35 @@ partial class BrilliantFlash
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>ActiveCooldownReduction.CooldownReduction</c> of ability 1855; Omega Reprieval (ability 1861), talent Celestial Favor (talent 575).</summary>
-    public const int CooldownReduction = 3;
+    public const int COOLDOWN_REDUCTION = 3;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1855.</summary>
-    public const double DamageStrengthCoefficient = 2.55;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 2.55;
 
     /// <summary>Game data: tuning <c>DotHot.DirectValueToPeriodicValueScaler</c> of ability 1855; Sun's Touch (effect 2724), talent Sun's Touch (talent 607).</summary>
-    public const double DirectValueToPeriodicValueScaler = 0.3;
+    public const double DIRECT_VALUE_TO_PERIODIC_VALUE_SCALER = 0.3;
 
     /// <summary>Game data: tuning <c>DotHot.Duration</c> of ability 1855; Sun's Touch (effect 2724), talent Sun's Touch (talent 607).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>DotHot.Period</c> of ability 1855; Sun's Touch (effect 2724), talent Sun's Touch (talent 607).</summary>
-    public const double Period = 1.5;
+    public const double PERIOD = 1.5;
 
     /// <summary>Game data: tuning <c>DroppedPulseAoeImprovesHeal.Scaler</c> of ability 1855; Shining Halo (ability 1859).</summary>
-    public const double DroppedPulseAoeImprovesHealScaler = 1.2;
+    public const double DROPPED_PULSE_AOE_IMPROVES_HEAL_SCALER = 1.2;
 
     /// <summary>Game data: tuning <c>HealStrengthCoefficient</c> of ability 1855.</summary>
-    public const double HealStrengthCoefficient = 7.52;
+    public const double HEAL_STRENGTH_COEFFICIENT = 7.52;
 
     /// <summary>Game data: tuning <c>ResourceCost</c> of ability 1855.</summary>
-    public const int ResourceCost = 1;
+    public const int RESOURCE_COST = 1;
 
     /// <summary>Game data: tuning <c>SelfTargetHealScaler</c> of ability 1855.</summary>
-    public const double SelfTargetHealScaler = 1.2;
+    public const double SELF_TARGET_HEAL_SCALER = 1.2;
 
     /// <summary>Game data: tuning <c>Talent.PowerScaler</c> of ability 1855; talent Golden Hour (talent 578), DamageScale MultiplyCompound.</summary>
-    public const double PowerScaler = 1.5;
+    public const double POWER_SCALER = 1.5;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1855.</summary>
-    public const double VisualDelay = 0.2;
+    public const double VISUAL_DELAY = 0.2;
 }

@@ -11,14 +11,14 @@ partial class IcyFlow
     public const string TalentName = "Icy Flow";
 
     /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.AddedCritChance</c> of talent 44; Icy Flow (effect 2308).</summary>
-    public const double AddedCritChance = 0.2;
+    public const double ADDED_CRIT_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.AddedHasteWhileCastingOrbSpender</c> of talent 44; Icy Flow (effect 2308), Haste Additive.</summary>
-    public const double AddedHasteWhileCastingOrbSpender = 0.5;
+    public const double ADDED_HASTE_WHILE_CASTING_ORB_SPENDER = 0.5;
 
     /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.BuffDuration</c> of talent 44; Icy Flow (effect 2308).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 
     /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.OnTargetPulsatingAoe.InitialDelayReductionInSeconds</c> of talent 44; Icy Flow (effect 2308).</summary>
-    public const double OnTargetPulsatingAoeInitialDelayReductionInSeconds = 0.5;
+    public const double ON_TARGET_PULSATING_AOE_INITIAL_DELAY_REDUCTION_IN_SECONDS = 0.5;
 }

@@ -11,8 +11,8 @@ partial class GleamingStrikes
     public const string TalentName = "Gleaming Strikes";
 
     /// <summary>Game data: tuning <c>ExtraDebuffFromCrit.ExtraDebuffStack, Sune.SingleTargetFillerMelee.Talent.ExtraDebuffFromCrit.ExtraDebuffStack</c> of talent 581; Sun Strike (ability 1845).</summary>
-    public const int ExtraDebuffFromCritExtraDebuffStack = 1;
+    public const int EXTRA_DEBUFF_FROM_CRIT_EXTRA_DEBUFF_STACK = 1;
 
     /// <summary>Game data: tuning <c>Sune.AoeMeleeDamageBoostAndManaRefundDebuff.AoeMeleeBonusDamagePerStack</c> of talent 581; Sunstruck (effect 2664).</summary>
-    public const double AoeMeleeBonusDamagePerStack = 0.25;
+    public const double AOE_MELEE_BONUS_DAMAGE_PER_STACK = 0.25;
 }

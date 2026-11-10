@@ -11,8 +11,8 @@ partial class FrogSquad
     public const string TalentName = "Frog Squad";
 
     /// <summary>Game data: tuning <c>DirectDamageIncrease.DamageScale, Firemage.FireFrogs.Ability.Talent.DirectDamageIncrease.DamageScale</c> of talent 158; Fire Frogs (ability 1268), DamageScale MultiplyCompound.</summary>
-    public const double AbilityDirectDamageIncreaseDamageScale = 1.2;
+    public const double ABILITY_DIRECT_DAMAGE_INCREASE_DAMAGE_SCALE = 1.2;
 
     /// <summary>Game data: tuning <c>Firemage.FireFrog.Ability.Talent.ExtraFrogs.NumExtraFrogs</c> of talent 158.</summary>
-    public const int ExtraFrogsNumExtraFrogs = 2;
+    public const int EXTRA_FROGS_NUM_EXTRA_FROGS = 2;
 }

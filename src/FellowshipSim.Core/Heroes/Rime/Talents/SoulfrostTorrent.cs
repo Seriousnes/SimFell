@@ -22,7 +22,7 @@ public partial class SoulfrostTorrent : Talent
     public static double TickDamageScale(Hero hero, SimTime now) => DamageScaleBase + hero.CritChance(now);
     public const string ProcKey = "soulfrost_torrent";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Soulfrost Torrent", EffectId, BuffDuration) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Soulfrost Torrent", EffectId, BUFF_DURATION) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -30,7 +30,7 @@ public partial class SoulfrostTorrent : Talent
     public override void Bind(Hero hero)
     {
         var rime = (Rime)hero;
-        var rppm = new RealPpm(ProcKey, Ppm);
+        var rppm = new RealPpm(ProcKey, PPM);
         hero.OnCastCompleted += (_, _, now) =>
         {
             if (hero.SimContext is { } ctx && !rime.Auras.HasAura(Buff, now)

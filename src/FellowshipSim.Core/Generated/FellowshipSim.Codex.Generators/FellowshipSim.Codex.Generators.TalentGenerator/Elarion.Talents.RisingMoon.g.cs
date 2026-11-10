@@ -11,5 +11,5 @@ partial class RisingMoon
     public const string TalentName = "Rising Moon";
 
     /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Bowguy.InstantMarkTarget.Talent.CooldownReductionOnHeavyProjectileCast.CooldownReductionInSeconds</c> of talent 681; ability 2065.</summary>
-    public const int CooldownReductionInSeconds = 2;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS = 2;
 }

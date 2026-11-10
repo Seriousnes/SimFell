@@ -16,7 +16,7 @@ public partial class VoidbringersTouch : Ability
     public const double CritChance = 1.0;
 
     /// <summary>The debuff on the touched enemy while it stores damage (effect 68, "Voidbringer's Touch").</summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, Duration);
+    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, DURATION);
 
     private EnemyTarget? _target;
     private double _stored;
@@ -25,21 +25,21 @@ public partial class VoidbringersTouch : Ability
 
     public VoidbringersTouch(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = MaxDamageCoefficient;
+        BaseCoefficient = MAX_DAMAGE_COEFFICIENT;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
         owner.OnDamageDealt += (in dmg) =>
         {
             // A touch from an earlier fight stores nothing in this one.
             if (_target == null || dmg.AbilityId == DamageLogId || dmg.SimContext is not { } ctx || ctx != _fight) return;
-            _stored += AccumulativeDamageFactor * dmg.Amount;
+            _stored += ACCUMULATIVE_DAMAGE_FACTOR * dmg.Amount;
             // It erupts on reaching the cap, or as soon as it holds more than the enemy's remaining health.
             if (_stored >= Cap(ctx) || (_target.MaxHealth > 0 && _stored >= _target.CurrentHealth)) Erupt(ctx);
         };
     }
 
     private double Cap(SimulationContext ctx) =>
-        MaxDamageCoefficient * Owner.PrimaryAttribute(ctx.CurrentTime);
+        MAX_DAMAGE_COEFFICIENT * Owner.PrimaryAttribute(ctx.CurrentTime);
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
@@ -55,7 +55,7 @@ public partial class VoidbringersTouch : Ability
         target.Auras.Apply(Debuff, ctx.CurrentTime);
         _stored = 0.0;
         int touch = ++_touch;
-        ctx.Schedule(SimTime.FromSeconds(Duration), c => { if (touch == _touch) Erupt(c); }, Name);
+        ctx.Schedule(SimTime.FromSeconds(DURATION), c => { if (touch == _touch) Erupt(c); }, Name);
     }
 
     /// <summary>

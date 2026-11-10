@@ -23,14 +23,14 @@ partial class SkystridersGrace
     public const int AbilityDuration = 20;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 1304.</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 
     /// <summary>Game data: tuning <c>HasteIncrease</c> of ability 1304; Haste Additive.</summary>
-    public const double HasteIncrease = 0.3;
+    public const double HASTE_INCREASE = 0.3;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1304.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
 
     /// <summary>Game data: tuning <c>Passive.ReducedCooldown.CooldownScaler</c> of ability 1304.</summary>
-    public const double PassiveReducedCooldownCooldownScaler = 0.8;
+    public const double PASSIVE_REDUCED_COOLDOWN_COOLDOWN_SCALER = 0.8;
 }

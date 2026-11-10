@@ -14,8 +14,14 @@ partial class SquareHammer
     public const int TalentDuration = 4;
 
     /// <summary>Game data: tuning <c>AddedExpertisePerStack, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Buff.AddedExpertisePerStack</c> of talent 673; ability 2062, Expertise Additive.</summary>
-    public const double AddedExpertisePerStack = 0.08;
+    public const double ADDED_EXPERTISE_PER_STACK = 0.08;
+
+    /// <summary>Game data: tuning <c>Duration, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Buff.Duration</c> of talent 673; ability 2062.</summary>
+    public const int DURATION_1 = 4;
+
+    /// <summary>Game data: tuning <c>StackingBuffConsumedByNextSpender.Stacker.Duration, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Stacker.Duration</c> of talent 673; Square Hammer (effect 3158).</summary>
+    public const int DURATION_2 = 20;
 
     /// <summary>Game data: tuning <c>StackingBuffConsumedByNextSpender.Stacker.MaxStacks, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Stacker.MaxStacks</c> of talent 673; Square Hammer (effect 3158).</summary>
-    public const int MaxStacks = 5;
+    public const int MAX_STACKS = 5;
 }

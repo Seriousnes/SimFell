@@ -17,8 +17,8 @@ partial class Attack
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 978.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 978.</summary>
-    public const double StrengthCoefficient = 0.4;
+    public const double STRENGTH_COEFFICIENT = 0.4;
 }

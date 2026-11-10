@@ -12,7 +12,7 @@ public partial class Incinerate : ArdeosAbility
 
     public Incinerate(Ardeos owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = IntellectCoefficient;
+        BaseCoefficient = INTELLECT_COEFFICIENT;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         GlobalCooldownSeconds = AbilityGlobalCooldown;
         // UNVERIFIED: castable while the global cooldown runs (in-game play); the game data record has no flag for it.
@@ -21,7 +21,7 @@ public partial class Incinerate : ArdeosAbility
         // Combat logs: the first hits come one server frame after the channel starts (yMAZVJL9hTpFjqbC fight 7).
         ChannelTicksOnStart = true;
         ChannelPartialFinalTick = true;
-        AoeTargetThreshold = TargetCountDamageScalingThreshold;
+        AoeTargetThreshold = TARGET_COUNT_DAMAGE_SCALING_THRESHOLD;
         Dot = new IncinerateDot(owner);
         Hit += (in DamageContext hit) =>
         {
@@ -31,7 +31,7 @@ public partial class Incinerate : ArdeosAbility
             // full duration after the last one; an effect never has more than its full duration left.
             foreach (var dot in dots.On(hit.Target).Where(d => d.Effect != Dot).ToList())
             {
-                dots.Extend(ctx, dot, DotDurationIncrease, maxRemainingSeconds: dot.Effect.Duration);
+                dots.Extend(ctx, dot, DOT_DURATION_INCREASE, maxRemainingSeconds: dot.Effect.Duration);
             }
             dots.Apply(ctx, Dot, hit.Target);
         };

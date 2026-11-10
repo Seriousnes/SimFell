@@ -11,20 +11,20 @@ partial class ShatteringObelisk
     public const string TalentName = "Shattering Obelisk";
 
     /// <summary>Game data: tuning <c>IncomingDamageToDamage.HealthThresholdDifference, Meiko.TauntTotem.Talent.IncomingDamageToDamage.HealthThresholdDifference</c> of talent 415; ability 1551.</summary>
-    public const double HealthThresholdDifference = 0.35;
+    public const double HEALTH_THRESHOLD_DIFFERENCE = 0.35;
 
     /// <summary>Game data: tuning <c>IncomingDamageToDamage.PercentageOfDamageTaken, Meiko.TauntTotem.Talent.IncomingDamageToDamage.PercentageOfDamageTaken</c> of talent 415; ability 1551.</summary>
-    public const double PercentageOfDamageTaken = 0.15;
+    public const double PERCENTAGE_OF_DAMAGE_TAKEN = 0.15;
 
     /// <summary>Game data: tuning <c>IncomingDamageToDamage.TargetCountDamageScalingThreshold, Meiko.TauntTotem.Talent.IncomingDamageToDamage.TargetCountDamageScalingThreshold</c> of talent 415; ability 1551.</summary>
-    public const int TargetCountDamageScalingThreshold = 1;
+    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 1;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.IncreasedHealthAndDuration.DurationMultiplier</c> of talent 415; ability 1083.</summary>
-    public const double DurationMultiplier = 1.5;
+    public const double DURATION_MULTIPLIER = 1.5;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.IncreasedHealthAndDuration.MaxHealthMultiplier</c> of talent 415; ability 1083.</summary>
-    public const double MaxHealthMultiplier = 1.5;
+    public const double MAX_HEALTH_MULTIPLIER = 1.5;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.WindMode.Duration</c> of talent 415; Twin Souls: Bulwark (ability 1082).</summary>
-    public const int WindModeDuration = 20;
+    public const int WIND_MODE_DURATION = 20;
 }

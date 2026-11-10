@@ -10,6 +10,6 @@ public partial class LeftHandPath : Talent
 
     public override void Bind(Hero hero)
     {
-        if (hero.GetAbility<FaceBreaker>() is { } faceBreaker) faceBreaker.CritChanceBonus += IncreasedCritChanceIncrease;
+        if (hero.GetAbility<FaceBreaker>() is { } faceBreaker) faceBreaker.CritChanceBonus += INCREASED_CRIT_CHANCE_INCREASE;
     }
 }

@@ -15,6 +15,6 @@ public partial class SharpenedBlade : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<PowerStrike>() is not { } powerStrike || hero.GetAbility<SweepingStrikeBleed>() is not { } bleed) return;
-        powerStrike.TargetMultipliers.Add((ctx, target) => bleed.IsOn(target, ctx) ? DamageMultiplier : 1.0);
+        powerStrike.TargetMultipliers.Add((ctx, target) => bleed.IsOn(target, ctx) ? DAMAGE_MULTIPLIER : 1.0);
     }
 }

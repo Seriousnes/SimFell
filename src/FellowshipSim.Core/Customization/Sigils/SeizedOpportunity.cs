@@ -20,7 +20,7 @@ public partial class SeizedOpportunity : Sigil
     public override void Bind(Hero hero)
     {
         var buff = hero.Register(AuraDef.Effect("Seized Opportunity", BuffEffectId, DurationSeconds,
-            modifiers: StatModifier.Add(StatType.CritRating, ForRank(BuffAdditionalCritRatingByRank))) with { KeepsOnDeath = true });
+            modifiers: StatModifier.Add(StatType.CritRating, ForRank(BUFF_ADDITIONAL_CRIT_RATING_BY_RANK))) with { KeepsOnDeath = true });
         hero.OnDamageDealt += (in dmg) =>
         {
             if (!dmg.IsCrit || hero.Auras.HasAura(buff, dmg.Timestamp)) return;

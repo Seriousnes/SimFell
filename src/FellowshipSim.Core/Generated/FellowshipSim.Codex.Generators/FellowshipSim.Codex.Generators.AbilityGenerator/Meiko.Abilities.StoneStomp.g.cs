@@ -29,35 +29,38 @@ partial class StoneStomp
     public const int AbilityMaxTargets = 40;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1107.</summary>
-    public const double AgilityCoefficient = 1.064;
+    public const double AGILITY_COEFFICIENT = 1.064;
 
     /// <summary>Game data: tuning <c>GreenResourceGain</c> of ability 1107.</summary>
-    public const int GreenResourceGain = 0;
+    public const int GREEN_RESOURCE_GAIN = 0;
 
     /// <summary>Game data: tuning <c>HeightActivationLimit</c> of ability 1107.</summary>
-    public const int HeightActivationLimit = 500;
+    public const int HEIGHT_ACTIVATION_LIMIT = 500;
 
     /// <summary>Game data: tuning <c>MaxNumOfTargets</c> of ability 1107.</summary>
-    public const int MaxNumOfTargets = 40;
+    public const int MAX_NUM_OF_TARGETS = 40;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1107; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TargetDebuffIncreasedDamage = 1.1;
+    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
+
+    /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of ability 1107; talent Rumbling Stone (talent 95), DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>ProcChance</c> of ability 1107.</summary>
-    public const double ProcChance = 0.04;
+    public const double PROC_CHANCE = 0.04;
 
     /// <summary>Game data: tuning <c>PushDownTime</c> of ability 1107.</summary>
-    public const double PushDownTime = 0.02;
+    public const double PUSH_DOWN_TIME = 0.02;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1107.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>Stun.Duration</c> of ability 1107; Stunned (effect 1538).</summary>
-    public const int Duration = 3;
+    public const int DURATION = 3;
 
     /// <summary>Game data: tuning <c>Width</c> of ability 1107.</summary>
-    public const int Width = 200;
+    public const int WIDTH = 200;
 
     /// <summary>Game data: tuning <c>YellowResourceCost</c> of ability 1107.</summary>
-    public const int YellowResourceCost = 2;
+    public const int YELLOW_RESOURCE_COST = 2;
 }

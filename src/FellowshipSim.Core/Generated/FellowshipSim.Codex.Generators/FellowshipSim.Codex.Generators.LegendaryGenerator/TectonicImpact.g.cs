@@ -11,7 +11,7 @@ partial class TectonicImpact
     public const int ChestItemId = 5898;
 
     /// <summary>Game data: tuning <c>FinalHitSpendCharge.DamageMultiplier, Meiko.ChanneledHeavyDamage.Talent.FinalHitSpendCharge.DamageMultiplier</c> of legendary power 416; Earthfist Barrage (ability 1112).</summary>
-    public const double FinalHitSpendChargeDamageMultiplier = 1.35;
+    public const double FINAL_HIT_SPEND_CHARGE_DAMAGE_MULTIPLIER = 1.35;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Tectonic Impact";

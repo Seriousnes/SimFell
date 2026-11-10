@@ -11,7 +11,7 @@ public partial class FeedTheQueen : Talent
 {
     public const int EffectId = 2195;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Duration, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, DURATION, MAX_STACKS);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -29,7 +29,7 @@ public partial class FeedTheQueen : Talent
             int stacks = hero.Auras.GetStacks(Buff, ctx.CurrentTime);
             if (stacks == 0) return 1.0;
             hero.Auras.Remove(Buff, ctx.CurrentTime);
-            return 1.0 + DamageMultiplierPerStack * stacks;
+            return 1.0 + DAMAGE_MULTIPLIER_PER_STACK * stacks;
         });
     }
 }

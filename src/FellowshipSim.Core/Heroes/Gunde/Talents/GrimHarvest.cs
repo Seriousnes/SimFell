@@ -12,7 +12,7 @@ public partial class GrimHarvest : Talent
     public const int EffectId = 3206;
     public const string ProcKey = "grim_harvest";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Duration) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, DURATION) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -25,12 +25,12 @@ public partial class GrimHarvest : Talent
         {
             if (!hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 0.0;
             hero.Auras.Remove(Buff, ctx.CurrentTime);
-            return AddedCritChance;
+            return ADDED_CRIT_CHANCE;
         });
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is not (ReaversEdge or BloodArc or HeartSplitter or Rupture) || hero.SimContext is not { } ctx) return;
-            if (!ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) return;
+            if (!ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE, ctx)) return;
             hero.CooldownOf(grimCarve).ResetAll();
             hero.Auras.Apply(Buff, now);
         };

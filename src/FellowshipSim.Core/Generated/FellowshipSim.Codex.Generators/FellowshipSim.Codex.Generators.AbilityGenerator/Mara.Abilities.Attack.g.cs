@@ -16,12 +16,18 @@ partial class Attack
     /// <summary>Game data: <c>range</c> of ability 1209.</summary>
     public const int AbilityRange = 500;
 
+    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1209.</summary>
+    public const double AGILITY_COEFFICIENT_1 = 0.3;
+
+    /// <summary>Game data: tuning <c>EnergyGainProc.AgilityCoefficient</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
+    public const double AGILITY_COEFFICIENT_2 = 0.9;
+
     /// <summary>Game data: tuning <c>EnergyGainProc.Chance</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
-    public const double Chance = 0.15;
+    public const double CHANCE = 0.15;
 
     /// <summary>Game data: tuning <c>EnergyGainProc.EnergyGain</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
-    public const int EnergyGain = 20;
+    public const int ENERGY_GAIN = 20;
 
     /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1209.</summary>
-    public const double SwingTimer = 1.5;
+    public const double SWING_TIMER = 1.5;
 }

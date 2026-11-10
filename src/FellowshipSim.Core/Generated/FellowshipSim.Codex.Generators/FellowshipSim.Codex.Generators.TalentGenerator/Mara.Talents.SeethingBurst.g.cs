@@ -11,17 +11,17 @@ partial class SeethingBurst
     public const string TalentName = "Seething Burst";
 
     /// <summary>Game data: tuning <c>AoeDamage.AgilityCoefficient, Mara.ChargedDoubleAttackBuilder.Talent.AoeDamage.AgilityCoefficient</c> of talent 668; Seeting Burst (ability 1131).</summary>
-    public const double AgilityCoefficient = 1.5;
+    public const double AGILITY_COEFFICIENT = 1.5;
 
     /// <summary>Game data: tuning <c>AoeDamage.NumTargetsDamageFalloffThreshold, Mara.ChargedDoubleAttackBuilder.Talent.AoeDamage.NumTargetsDamageFalloffThreshold</c> of talent 668; Seeting Burst (ability 1131).</summary>
-    public const int NumTargetsDamageFalloffThreshold = 10;
+    public const int NUM_TARGETS_DAMAGE_FALLOFF_THRESHOLD = 10;
 
     /// <summary>Game data: tuning <c>AoeDamage.ProcChance, Mara.ChargedDoubleAttackBuilder.Talent.AoeDamage.ProcChance</c> of talent 668; Seeting Burst (ability 1131).</summary>
-    public const double ProcChance = 0.2;
+    public const double PROC_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>AoeDamage.Radius, Mara.ChargedDoubleAttackBuilder.Talent.AoeDamage.Radius</c> of talent 668; Seeting Burst (ability 1131).</summary>
-    public const int Radius = 700;
+    public const int RADIUS = 700;
 
     /// <summary>Game data: tuning <c>Mara.HasteToPoisonAndBleedDamageBonus.Scaler</c> of talent 668; ability 1158, DamageScale MultiplyCompound.</summary>
-    public const double HasteToPoisonAndBleedDamageBonusScaler = 0.5;
+    public const double HASTE_TO_POISON_AND_BLEED_DAMAGE_BONUS_SCALER = 0.5;
 }

@@ -17,11 +17,11 @@ partial class TheWayfarer
     public const int GlyphAbilityRank = 192;
 
     /// <summary>Game data: tuning <c>Buff.AdditionalHaste</c> of glyph 703; The Wayfarer (effect 3184), by rank.</summary>
-    public static readonly double[] AdditionalHasteByRank = [0.06, 0.1, 0.16, 0.25];
+    public static readonly double[] ADDITIONAL_HASTE_BY_RANK = [0.06, 0.1, 0.16, 0.25];
 
     /// <summary>Game data: tuning <c>Buff.Duration</c> of glyph 703; The Wayfarer (effect 3184).</summary>
-    public const int Duration = 14;
+    public const int DURATION = 14;
 
     /// <summary>Game data: tuning <c>Cooldown</c> of glyph 703; The Wayfarer: On Cooldown (effect 3183).</summary>
-    public const int Cooldown = 60;
+    public const int COOLDOWN = 60;
 }

@@ -38,17 +38,41 @@ partial class SweepingStrike
     public const int AbilityMaxTargets = 9999;
 
     /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 981.</summary>
-    public const int ComboPointCost = 2;
+    public const int COMBO_POINT_COST = 2;
 
     /// <summary>Game data: tuning <c>Damage.CleaveRadius</c> of ability 981; Sweeping Strike (effect 1274).</summary>
-    public const int CleaveRadius = 800;
+    public const int CLEAVE_RADIUS = 800;
 
     /// <summary>Game data: tuning <c>Damage.DamageScalingTargetCountThreshold</c> of ability 981; Sweeping Strike (effect 1274).</summary>
-    public const int DamageScalingTargetCountThreshold = 1;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 1;
+
+    /// <summary>Game data: tuning <c>Damage.StrengthCoefficient</c> of ability 981; Sweeping Strike (effect 1274).</summary>
+    public const double STRENGTH_COEFFICIENT_1 = 3.756;
+
+    /// <summary>Game data: tuning <c>Debuff.StrengthCoefficient</c> of ability 981; Sweeping Strike (effect 1276).</summary>
+    public const double STRENGTH_COEFFICIENT_2 = 0.6;
+
+    /// <summary>Game data: tuning <c>Debuff.Duration, ImprovedHeal.Duration</c> of ability 981; Sweeping Strike (effect 1276), talent Sharpened Blade (talent 215).</summary>
+    public const int DURATION_1 = 12;
+
+    /// <summary>Game data: tuning <c>HealthRegen.Duration</c> of ability 981; Sweeping Strike: Blood Rally (effect 3098).</summary>
+    public const int DURATION_2 = 6;
+
+    /// <summary>Game data: tuning <c>Debuff.Period</c> of ability 981; Sweeping Strike (effect 1276).</summary>
+    public const double PERIOD_1 = 1.5;
+
+    /// <summary>Game data: tuning <c>HealthRegen.Period</c> of ability 981; Sweeping Strike: Blood Rally (effect 3098).</summary>
+    public const int PERIOD_2 = 1;
 
     /// <summary>Game data: tuning <c>Enfeeble.TargetDamageScaleMultiplier</c> of ability 981; DamageScale MultiplyCompound.</summary>
-    public const double EnfeebleTargetDamageScaleMultiplier = 0.9;
+    public const double ENFEEBLE_TARGET_DAMAGE_SCALE_MULTIPLIER = 0.9;
+
+    /// <summary>Game data: tuning <c>HealthRegen.PercentOfMaxHealth</c> of ability 981; Sweeping Strike: Blood Rally (effect 3098).</summary>
+    public const double PERCENT_OF_MAX_HEALTH_1 = 0.05;
+
+    /// <summary>Game data: tuning <c>ImprovedHeal.PercentOfMaxHealth</c> of ability 981; talent Lingering Rush (talent 649).</summary>
+    public const double PERCENT_OF_MAX_HEALTH_2 = 0.04;
 
     /// <summary>Game data: tuning <c>ReducedAttackSpeed.AttackSpeedMultiplier</c> of ability 981; Harsh Winds (effect 1511), talent Sharpened Blade (talent 215), AttackSpeed MultiplyCompound.</summary>
-    public const double AttackSpeedMultiplier = 0.8;
+    public const double ATTACK_SPEED_MULTIPLIER = 0.8;
 }

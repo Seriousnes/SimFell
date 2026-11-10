@@ -20,16 +20,16 @@ partial class GildedBroach
     public const string RelicItemName = "Orb of Sanguine Restoration";
 
     /// <summary>Game data: tuning <c>Cooldown</c> of relic passive 782; Torment of Bael'Aurum (ability 1388).</summary>
-    public const int Cooldown = 180;
+    public const int COOLDOWN = 180;
 
     /// <summary>Game data: tuning <c>HealMaxHealthFraction</c> of relic passive 782; Torment of Bael'Aurum (ability 1388).</summary>
-    public const double HealMaxHealthFraction = 0.4;
+    public const double HEAL_MAX_HEALTH_FRACTION = 0.4;
 
     /// <summary>Game data: tuning <c>HealthThreshold</c> of relic passive 782; Torment of Bael'Aurum (ability 1388).</summary>
-    public const double HealthThreshold = 0.2;
+    public const double HEALTH_THRESHOLD = 0.2;
 
     /// <summary>Game data: tuning <c>PowerScaler</c> of relic passive 782; Torment of Bael'Aurum (ability 1388).</summary>
-    public const double PowerScaler = 1.05;
+    public const double POWER_SCALER = 1.05;
 
     /// <summary>Game data: the items granting relic passive 782.</summary>
     public static readonly global::FellowshipSim.Core.Customization.RelicPassives.RelicItem[] RelicPassiveItems =

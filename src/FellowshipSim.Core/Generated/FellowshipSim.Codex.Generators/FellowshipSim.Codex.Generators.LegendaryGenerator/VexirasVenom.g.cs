@@ -11,13 +11,13 @@ partial class VexirasVenom
     public const int LegsItemId = 5900;
 
     /// <summary>Game data: tuning <c>DamageToDotDamageMultiplier, Mara.AoeAttackSpender.Talent.DamageToPoisonDot.DamageToDotDamageMultiplier</c> of legendary power 420; Vexira's Venom (ability 1616).</summary>
-    public const double DamageToDotDamageMultiplier = 0.28;
+    public const double DAMAGE_TO_DOT_DAMAGE_MULTIPLIER = 0.28;
 
     /// <summary>Game data: tuning <c>Duration, Mara.AoeAttackSpender.Talent.DamageToPoisonDot.Duration</c> of legendary power 420; Vexira's Venom (ability 1616).</summary>
-    public const int Duration = 6;
+    public const int DURATION = 6;
 
     /// <summary>Game data: tuning <c>TickInterval, Mara.AoeAttackSpender.Talent.DamageToPoisonDot.TickInterval</c> of legendary power 420; Vexira's Venom (ability 1616).</summary>
-    public const int TickInterval = 2;
+    public const int TICK_INTERVAL = 2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Vexira's Venom";

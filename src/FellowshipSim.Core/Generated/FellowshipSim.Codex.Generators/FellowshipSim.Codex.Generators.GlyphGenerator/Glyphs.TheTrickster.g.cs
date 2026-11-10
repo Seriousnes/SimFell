@@ -17,8 +17,8 @@ partial class TheTrickster
     public const int GlyphAbilityRank = 182;
 
     /// <summary>Game data: tuning <c>AdditionalCritChance</c> of glyph 700; The Trickster (effect 3181), CritChance Additive, by rank.</summary>
-    public static readonly double[] AdditionalCritChanceByRank = [0.025, 0.04, 0.064, 0.1];
+    public static readonly double[] ADDITIONAL_CRIT_CHANCE_BY_RANK = [0.025, 0.04, 0.064, 0.1];
 
     /// <summary>Game data: tuning <c>Duration</c> of glyph 700; The Trickster (effect 3181).</summary>
-    public const int Duration = 4;
+    public const int DURATION = 4;
 }

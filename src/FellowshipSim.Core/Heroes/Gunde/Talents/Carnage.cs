@@ -15,9 +15,9 @@ public partial class Carnage : Talent
     {
         var grimCarve = hero.GetAbility<GrimCarve>();
         if (grimCarve == null) return;
-        grimCarve.AddDamageMultiplier(DamageMultiplier);
+        grimCarve.AddDamageMultiplier(DAMAGE_MULTIPLIER);
         Ability?[] reduced = [hero.GetAbility<ReaversEdge>(), hero.GetAbility<BloodArc>(), hero.GetAbility<HeartSplitter>(), hero.GetAbility<Rupture>()];
-        var amount = SimTime.FromSeconds(CooldownReductionInSecondsPerHit);
+        var amount = SimTime.FromSeconds(COOLDOWN_REDUCTION_IN_SECONDS_PER_HIT);
         grimCarve.Pulsed += ctx =>
         {
             foreach (var ability in reduced)

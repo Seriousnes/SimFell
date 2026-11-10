@@ -26,11 +26,11 @@ partial class Jawbreaker
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 1244.</summary>
-    public const int Duration = 4;
+    public const int DURATION = 4;
 
     /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1244.</summary>
-    public const int GEC_CooldownStatic_C = 1;
+    public const int GEC_COOLDOWN_STATIC_C = 1;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1244.</summary>
-    public const double VisualDelay = 0.21;
+    public const double VISUAL_DELAY = 0.21;
 }

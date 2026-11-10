@@ -26,17 +26,17 @@ partial class IceDash
     public const double AbilityChannelTick = 0.5;
 
     /// <summary>Game data: tuning <c>DashAirExitSpeed</c> of ability 1024.</summary>
-    public const int DashAirExitSpeed = 1000;
+    public const int DASH_AIR_EXIT_SPEED = 1000;
 
     /// <summary>Game data: tuning <c>DashDistance</c> of ability 1024.</summary>
-    public const int DashDistance = 1000;
+    public const int DASH_DISTANCE = 1000;
 
     /// <summary>Game data: tuning <c>DashSpeed</c> of ability 1024.</summary>
-    public const int DashSpeed = 5000;
+    public const int DASH_SPEED = 5000;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1024.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
 
     /// <summary>Game data: tuning <c>NumCharges</c> of ability 1024.</summary>
-    public const int NumCharges = 2;
+    public const int NUM_CHARGES = 2;
 }

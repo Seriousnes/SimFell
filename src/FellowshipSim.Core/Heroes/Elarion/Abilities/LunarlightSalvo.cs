@@ -12,7 +12,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// Focused Shot, Chronoshift and the augmentations' hits (Amethyst Splinters, Emerald Judgement, Ruby Storm), but not
 /// from Shoot (603 hits on a marked enemy, a few in the same frame as another hit).
 /// </summary>
-[CodexAccepted("DamageScale")]
 public sealed partial class LunarlightSalvo : Ability
 {
     public const int DamageEffectId = 1877;
@@ -37,7 +36,7 @@ public sealed partial class LunarlightSalvo : Ability
 
     public LunarlightSalvo(Elarion owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = AGILITY_COEFFICIENT;
         DamageLogId = LogIds.Effect(DamageEffectId);
         _erupt = new Erupt(owner);
         _noSalvo = [Shoot.AbilityId, DamageLogId, _erupt.DamageLogId];
@@ -54,13 +53,13 @@ public sealed partial class LunarlightSalvo : Ability
         if (hit.Target is not { } enemy || hit.SimContext is not { } ctx || hit.Amount <= 0 || _noSalvo.Contains(hit.AbilityId)) return;
         var now = hit.Timestamp;
         if (!enemy.Auras.HasAura(LunarlightMark.Debuff, now)) return;
-        double chance = hit.IsCrit ? ChanceToProcIfCrit : ChanceToProc;
+        double chance = hit.IsCrit ? CHANCE_TO_PROC_IF_CRIT : CHANCE_TO_PROC;
         foreach (var m in ChanceMultipliers) chance *= m(hit.AbilityId);
         bool keepsMark = KeepsMarkFor.Contains(hit.AbilityId);
         if (!ctx.Outcomes.RollProc(keepsMark ? KeptMarkProcKey : ProcKey, Math.Min(1.0, chance), ctx, enemy)) return;
         if (!keepsMark) enemy.Auras.ConsumeStack(LunarlightMark.Debuff, now);
         DealDamage(ctx, enemy);
-        if (hit.AbilityId == HeartseekerBarrage.AbilityId && ctx.Outcomes.RollProc(EruptProcKey, ChanneledMultiProjectileDebuffTriggerAoeHitChanceToProc, ctx))
+        if (hit.AbilityId == HeartseekerBarrage.AbilityId && ctx.Outcomes.RollProc(EruptProcKey, CHANNELED_MULTI_PROJECTILE_DEBUFF_TRIGGER_AOE_HIT_CHANCE_TO_PROC, ctx))
         {
             _erupt.Strike(ctx, enemy);
         }
@@ -71,9 +70,9 @@ public sealed partial class LunarlightSalvo : Ability
     {
         public Erupt(Elarion owner) : base(owner, AbilityId, EruptName)
         {
-            BaseCoefficient = AoeAgilityCoefficient;
+            BaseCoefficient = AOE_AGILITY_COEFFICIENT;
             DamageLogId = LogIds.Effect(EruptEffectId);
-            AoeTargetThreshold = AoeTargetCountThreshold;
+            AoeTargetThreshold = AOE_TARGET_COUNT_THRESHOLD;
         }
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }

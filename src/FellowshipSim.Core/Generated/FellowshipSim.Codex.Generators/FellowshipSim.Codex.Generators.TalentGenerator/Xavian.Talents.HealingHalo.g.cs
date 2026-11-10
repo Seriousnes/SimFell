@@ -11,5 +11,5 @@ partial class HealingHalo
     public const string TalentName = "Healing Halo";
 
     /// <summary>Game data: tuning <c>HealsAlly.DamageToHealingScaler, Sune.DroppedPulseAoe.Talent.HealsAlly.DamageToHealingScaler</c> of talent 574; Shining Halo (ability 1859).</summary>
-    public const double HealsAllyDamageToHealingScaler = 0.3;
+    public const double HEALS_ALLY_DAMAGE_TO_HEALING_SCALER = 0.3;
 }

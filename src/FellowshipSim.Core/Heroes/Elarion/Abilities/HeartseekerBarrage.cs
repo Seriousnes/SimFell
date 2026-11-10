@@ -8,7 +8,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// A barrage cast with Impending Heartseeker (Impending Heartseeker, Starstriker's Ascent) uses it up, and each arrow deals
 /// more than the one before.
 /// </summary>
-[CodexAccepted("ChannelDuration")]
 public partial class HeartseekerBarrage : ElarionAbility
 {
     /// <summary>Crit chance added to the arrows (Fusillade).</summary>
@@ -24,8 +23,8 @@ public partial class HeartseekerBarrage : ElarionAbility
 
     public HeartseekerBarrage(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AgilityCoefficient;
-        FocusCost = Cost;
+        BaseCoefficient = AGILITY_COEFFICIENT;
+        FocusCost = COST;
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);
         // Combat logs (pWmcV42K39GHTLQX fight 23 @ 81.335): a hasted channel fires its arrows on its target, all
@@ -58,7 +57,7 @@ public partial class HeartseekerBarrage : ElarionAbility
         if (target is not { IsSleeping: false }) return;
         _arrow++;
         // Impending Heartseeker: each arrow deals more than the one before. UNVERIFIED: the first arrow's increase.
-        double multiplier = _cast.Damage * (_impending ? 1.0 + AdditionalDamagePerProjectile * _arrow : 1.0);
+        double multiplier = _cast.Damage * (_impending ? 1.0 + ADDITIONAL_DAMAGE_PER_PROJECTILE * _arrow : 1.0);
         double crit = _cast.Crit + ArrowCritChance;
         DealDamage(ctx, target, damageMultiplier: multiplier, extraCritChance: crit, onLanded: (c, dealt) =>
         {

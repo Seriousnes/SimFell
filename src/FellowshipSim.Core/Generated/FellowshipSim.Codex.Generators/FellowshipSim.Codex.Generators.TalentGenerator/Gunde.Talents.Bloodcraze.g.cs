@@ -17,20 +17,20 @@ partial class Bloodcraze
     public const int TalentRadius = 700;
 
     /// <summary>Game data: tuning <c>BaseStrengthCoefficient, Gunde.DotTransfer.Talent.AoeBasedOnStacks.BaseStrengthCoefficient</c> of talent 761; ability 2279.</summary>
-    public const double BaseStrengthCoefficient = 0.25;
+    public const double BASE_STRENGTH_COEFFICIENT = 0.25;
 
     /// <summary>Game data: tuning <c>DamageIncreasePerStack, Gunde.DotTransfer.Talent.AoeBasedOnStacks.DamageIncreasePerStack</c> of talent 761; ability 2279.</summary>
-    public const double DamageIncreasePerStack = 1.5;
+    public const double DAMAGE_INCREASE_PER_STACK = 1.5;
 
     /// <summary>Game data: tuning <c>Duration, Gunde.DotTransfer.Talent.AoeBasedOnStacks.Duration</c> of talent 761; ability 2279.</summary>
-    public const double Duration = 6.15;
+    public const double DURATION = 6.15;
 
     /// <summary>Game data: tuning <c>Period, Gunde.DotTransfer.Talent.AoeBasedOnStacks.Period</c> of talent 761; ability 2279.</summary>
-    public const int Period = 3;
+    public const int PERIOD = 3;
 
     /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.AoeBasedOnStacks.Radius</c> of talent 761; ability 2279.</summary>
-    public const int Radius = 700;
+    public const int RADIUS = 700;
 
     /// <summary>Game data: tuning <c>TargetThresholdScaling, Gunde.DotTransfer.Talent.AoeBasedOnStacks.TargetThresholdScaling</c> of talent 761; ability 2279.</summary>
-    public const int TargetThresholdScaling = 1;
+    public const int TARGET_THRESHOLD_SCALING = 1;
 }

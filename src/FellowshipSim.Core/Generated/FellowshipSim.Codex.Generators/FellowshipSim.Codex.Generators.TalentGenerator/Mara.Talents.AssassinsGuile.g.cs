@@ -11,8 +11,8 @@ partial class AssassinsGuile
     public const string TalentName = "Assassin's Guile";
 
     /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of talent 422; Assassin's Guile (effect 2245), DamageScale MultiplyCompound.</summary>
-    public const double DamageMultiplier = 1.4;
+    public const double DAMAGE_MULTIPLIER = 1.4;
 
     /// <summary>Game data: tuning <c>SpenderIncreasedDamage.Duration, Mara.Stealth.Talent.SpenderIncreasedDamage.Duration</c> of talent 422; Assassin's Guile (effect 2245).</summary>
-    public const int Duration = 5;
+    public const int DURATION = 5;
 }

@@ -23,11 +23,11 @@ partial class Cyclone
     public const int AbilityRadius = 1400;
 
     /// <summary>Game data: tuning <c>ForwardDistanceToPullLocation</c> of ability 1125.</summary>
-    public const int ForwardDistanceToPullLocation = 300;
+    public const int FORWARD_DISTANCE_TO_PULL_LOCATION = 300;
 
     /// <summary>Game data: tuning <c>PullDuration</c> of ability 1125.</summary>
-    public const double PullDuration = 0.25;
+    public const double PULL_DURATION = 0.25;
 
     /// <summary>Game data: tuning <c>PullHeight</c> of ability 1125.</summary>
-    public const int PullHeight = 350;
+    public const int PULL_HEIGHT = 350;
 }

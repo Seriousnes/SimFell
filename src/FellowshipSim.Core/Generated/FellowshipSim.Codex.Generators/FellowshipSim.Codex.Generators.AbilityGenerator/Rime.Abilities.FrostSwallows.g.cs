@@ -11,20 +11,20 @@ partial class FrostSwallows
     public const string AbilityName = "Frost Swallows";
 
     /// <summary>Game data: tuning <c>BonusDamageFromSpiritCoefficient</c> of ability 1033; DamageScale MultiplyCompound.</summary>
-    public const double BonusDamageFromSpiritCoefficient = 1.5;
+    public const double BONUS_DAMAGE_FROM_SPIRIT_COEFFICIENT = 1.5;
 
     /// <summary>Game data: tuning <c>IntellectCoefficient</c> of ability 1033.</summary>
-    public const double IntellectCoefficient = 0.469;
+    public const double INTELLECT_COEFFICIENT = 0.469;
 
     /// <summary>Game data: tuning <c>MaxSpreadRange</c> of ability 1033.</summary>
-    public const int MaxSpreadRange = 500;
+    public const int MAX_SPREAD_RANGE = 500;
 
     /// <summary>Game data: tuning <c>NumProjectiles</c> of ability 1033.</summary>
-    public const int NumProjectiles = 3;
+    public const int NUM_PROJECTILES = 3;
 
     /// <summary>Game data: tuning <c>OrbReward</c> of ability 1033.</summary>
-    public const int OrbReward = 1;
+    public const int ORB_REWARD = 1;
 
     /// <summary>Game data: tuning <c>ProcChance</c> of ability 1033.</summary>
-    public const double ProcChance = 0.5;
+    public const double PROC_CHANCE = 0.5;
 }

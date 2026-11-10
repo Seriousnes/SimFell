@@ -11,5 +11,5 @@ partial class KillingInTheName
     public const string TalentName = "Killing in the Name";
 
     /// <summary>Game data: tuning <c>Ink.LowHealthSingleTargetResourceDamage.Talent.AddedCritChance</c> of talent 82; ability 1556, CritChance Additive.</summary>
-    public const double AddedCritChance = 0.5;
+    public const double ADDED_CRIT_CHANCE = 0.5;
 }

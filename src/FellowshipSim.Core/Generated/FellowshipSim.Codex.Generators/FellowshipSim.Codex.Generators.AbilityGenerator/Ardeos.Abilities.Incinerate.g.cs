@@ -47,41 +47,41 @@ partial class Incinerate
     public const int AbilityRadius = 300;
 
     /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Ardeos.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of ability 1270; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
-    public const double CritChanceIncrease = 0.2;
+    public const double CRIT_CHANCE_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>DamageScalePerStack</c> of ability 1270.</summary>
-    public const double DamageScalePerStack = 0.3;
+    public const double DAMAGE_SCALE_PER_STACK = 0.3;
 
     /// <summary>Game data: tuning <c>DotDuration</c> of ability 1270.</summary>
-    public const int DotDuration = 12;
+    public const int DOT_DURATION = 12;
 
     /// <summary>Game data: tuning <c>DotDurationIncrease</c> of ability 1270.</summary>
-    public const double DotDurationIncrease = 1.5;
+    public const double DOT_DURATION_INCREASE = 1.5;
 
     /// <summary>Game data: tuning <c>DotIntellectCoefficientPerTick</c> of ability 1270.</summary>
-    public const double DotIntellectCoefficientPerTick = 0.3895;
+    public const double DOT_INTELLECT_COEFFICIENT_PER_TICK = 0.3895;
 
     /// <summary>Game data: tuning <c>DotPeriod</c> of ability 1270.</summary>
-    public const int DotPeriod = 3;
+    public const int DOT_PERIOD = 3;
 
     /// <summary>Game data: tuning <c>DotTickChanceToAddResource</c> of ability 1270.</summary>
-    public const int DotTickChanceToAddResource = 0;
+    public const int DOT_TICK_CHANCE_TO_ADD_RESOURCE = 0;
 
     /// <summary>Game data: tuning <c>DotTickResourceRewardFractionOfBomb</c> of ability 1270.</summary>
-    public const int DotTickResourceRewardFractionOfBomb = 0;
+    public const int DOT_TICK_RESOURCE_REWARD_FRACTION_OF_BOMB = 0;
 
     /// <summary>Game data: tuning <c>IntellectCoefficient</c> of ability 1270.</summary>
-    public const double IntellectCoefficient = 3.2015;
+    public const double INTELLECT_COEFFICIENT = 3.2015;
 
     /// <summary>Game data: tuning <c>Length</c> of ability 1270.</summary>
-    public const int Length = 1200;
+    public const int LENGTH = 1200;
 
     /// <summary>Game data: tuning <c>ResourceGainPerTickInBombFractions</c> of ability 1270.</summary>
-    public const int ResourceGainPerTickInBombFractions = 0;
+    public const int RESOURCE_GAIN_PER_TICK_IN_BOMB_FRACTIONS = 0;
 
     /// <summary>Game data: tuning <c>SpiritCost</c> of ability 1270.</summary>
-    public const int SpiritCost = 100;
+    public const int SPIRIT_COST = 100;
 
     /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of ability 1270.</summary>
-    public const int TargetCountDamageScalingThreshold = 8;
+    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 8;
 }

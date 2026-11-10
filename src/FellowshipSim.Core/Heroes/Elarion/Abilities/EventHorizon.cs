@@ -5,7 +5,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// Haste and has reduced Focus costs. Highwind Arrow reduces the cooldown of Heartseeker Barrage, and every hit from
 /// Heartseeker Barrage reduces the cooldown of Starfall Volley. Has a cast time; effect 2312 (DamageScale); grants Spirit of Heroism.
 /// </summary>
-[CodexAccepted("CastTime", "DamageMultiplier")]
 public partial class EventHorizon : ElarionAbility
 {
     public const int BuffEffectId = 2312;
@@ -22,7 +21,7 @@ public partial class EventHorizon : ElarionAbility
         // On the global cooldown, which lasts as long as its cast (and so cannot start inside another cast).
         GlobalCooldownSeconds = AbilityCastTime;
         GlobalCooldownScalesWithHaste = true;
-        owner.FocusCostMultipliers.Add(now => owner.Auras.HasAura(Buff, now) ? ResourceCostMultiplier : 1.0);
+        owner.FocusCostMultipliers.Add(now => owner.Auras.HasAura(Buff, now) ? RESOURCE_COST_MULTIPLIER : 1.0);
         // Effect 2314: MultiplyCompound on CooldownRecovery, by the Haste attribute.
         owner.CooldownRecoveryCompounds.Add(now => owner.Auras.HasAura(Buff, now) ? 1.0 + owner.GetHaste(now) : 1.0);
         owner.CooldownAccelerationAuraKeys.Add(Buff.Key);

@@ -11,14 +11,14 @@ partial class Bloodline
     public const string TalentName = "Bloodline";
 
     /// <summary>Game data: tuning <c>IncreasedMovementSpeed.SpeedMultiplier, Ink.Talent.IncreasedMovementSpeed.SpeedMultiplier</c> of talent 76; effect 1738, MoveSpeed MultiplyCompound.</summary>
-    public const double SpeedMultiplier = 1.2;
+    public const double SPEED_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.MovementSpeedBuff.Duration, Ink.MoveToLocationAoeDamage.Talent.ReducedCooldownIfNoHit.MovementSpeedBuff.Duration</c> of talent 76; Leap Smash (ability 1225).</summary>
-    public const int MovementSpeedBuffDuration = 4;
+    public const int MOVEMENT_SPEED_BUFF_DURATION = 4;
 
     /// <summary>Game data: tuning <c>PassiveResourceGeneration.FuryPerTick, Ink.Talent.PassiveResourceGeneration.FuryPerTick</c> of talent 76; effect 2424, Resources Additive.</summary>
-    public const double FuryPerTick = 0.01;
+    public const double FURY_PER_TICK = 0.01;
 
     /// <summary>Game data: tuning <c>PassiveResourceGeneration.Period, Ink.Talent.PassiveResourceGeneration.Period</c> of talent 76; effect 2424.</summary>
-    public const int Period = 1;
+    public const int PERIOD = 1;
 }

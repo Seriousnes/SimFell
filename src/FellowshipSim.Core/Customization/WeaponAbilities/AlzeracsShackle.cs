@@ -27,7 +27,6 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 ///   after its logged death. An enemy that dies frozen gives no explosion (60 of 74 such Freezes; in the other 14 the
 ///   enemy died in the server frame of the explosion).
 /// </summary>
-[CodexAccepted("PrimaryAttributeCoefficient", "TickInterval")]
 public partial class AlzeracsShackle : Ability
 {
     /// <summary>The explosion, of the primary stat. Game data: tuning <c>Aoe.PrimaryAttributeCoefficient</c> of weapon power 348.</summary>
@@ -53,7 +52,7 @@ public partial class AlzeracsShackle : Ability
     public const double SlowTickSeconds = 2.0;
 
     /// <summary>Freeze on the target.</summary>
-    public static readonly AuraDef Freeze = AuraDef.Effect(FreezeName, FreezeEffectId, Duration);
+    public static readonly AuraDef Freeze = AuraDef.Effect(FreezeName, FreezeEffectId, DURATION);
 
     /// <summary>Slow on each enemy the explosion hit.</summary>
     public static readonly AuraDef Slow = AuraDef.Effect(SlowName, SlowEffectId, SlowSeconds);
@@ -98,7 +97,7 @@ public partial class AlzeracsShackle : Ability
         target.Auras.Apply(Freeze, ctx.CurrentTime);
         var numbers = _freezeTick.Take(ctx, CritChanceBonus);
         PeriodicEffect? freeze = null;
-        freeze = PeriodicEffect.BeginHasted(ctx, Owner, FreezeName, Duration, FreezeTickSeconds, tickOnStart: false, partialFinalTick: true,
+        freeze = PeriodicEffect.BeginHasted(ctx, Owner, FreezeName, DURATION, FreezeTickSeconds, tickOnStart: false, partialFinalTick: true,
             onTick: (c, fraction) => _freezeTick.Deal(c, target, numbers, fraction),
             onEnd: (c, clipped) =>
             {

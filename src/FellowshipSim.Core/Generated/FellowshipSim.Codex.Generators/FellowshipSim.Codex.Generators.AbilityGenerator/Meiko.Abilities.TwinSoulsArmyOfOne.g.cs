@@ -23,14 +23,14 @@ partial class TwinSoulsArmyOfOne
     public const double AbilityDuration = 0.3;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.AgilityCoefficient</c> of ability 1110; ability 1109.</summary>
-    public const double AgilityCoefficient = 1.316;
+    public const double AGILITY_COEFFICIENT = 1.316;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.IncreasedDamage</c> of ability 1110; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double IncreasedDamage = 1.15;
+    public const double INCREASED_DAMAGE = 1.15;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1110; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TargetDebuffIncreasedDamage = 1.1;
+    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1110; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
-    public const double WindDamageIncrease = 1.2;
+    public const double WIND_DAMAGE_INCREASE = 1.2;
 }

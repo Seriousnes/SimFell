@@ -23,5 +23,5 @@ partial class Stagger
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1116.</summary>
-    public const int GEC_CooldownStatic_C = 1;
+    public const int GEC_COOLDOWN_STATIC_C = 1;
 }

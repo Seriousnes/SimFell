@@ -11,7 +11,7 @@ partial class SkandisDecree
     public const int LegsItemId = 5900;
 
     /// <summary>Game data: tuning <c>IncreasedDuration.DurationInSeconds, Rime.CastedDebuffAoeDamage.Talent.IncreasedDuration.DurationInSeconds</c> of legendary power 396; Bursting Ice (ability 1031).</summary>
-    public const int IncreasedDurationDurationInSeconds = 2;
+    public const int INCREASED_DURATION_DURATION_IN_SECONDS = 2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Skandi's Decree";

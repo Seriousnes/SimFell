@@ -11,14 +11,14 @@ partial class RideTheLightning
     public const string TalentName = "Ride the Lightning";
 
     /// <summary>Game data: tuning <c>Ink.ChargedBuff.Talent.AddedHaste</c> of talent 87; Ride the Lightning (effect 2753), Haste Additive.</summary>
-    public const double AddedHaste = 0.05;
+    public const double ADDED_HASTE = 0.05;
 
     /// <summary>Game data: tuning <c>RageIncrease.Duration, Ink.ChargedBuff.Talent.RageIncrease.Duration</c> of talent 87; effect 1745.</summary>
-    public const int Duration = 21;
+    public const int DURATION = 21;
 
     /// <summary>Game data: tuning <c>RageIncrease.RagePerTick, Ink.ChargedBuff.Talent.RageIncrease.RagePerTick</c> of talent 87; effect 1745, Resources Additive.</summary>
-    public const double RagePerTick = 0.00143;
+    public const double RAGE_PER_TICK = 0.00143;
 
     /// <summary>Game data: tuning <c>RageIncrease.TickInterval, Ink.ChargedBuff.Talent.RageIncrease.TickInterval</c> of talent 87; effect 1745.</summary>
-    public const double TickInterval = 0.1;
+    public const double TICK_INTERVAL = 0.1;
 }

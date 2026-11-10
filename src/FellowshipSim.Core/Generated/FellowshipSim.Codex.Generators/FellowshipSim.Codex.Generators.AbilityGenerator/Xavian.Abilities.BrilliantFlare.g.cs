@@ -35,11 +35,14 @@ partial class BrilliantFlare
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1860.</summary>
-    public const double CastingDuration = 1.5;
+    public const double CASTING_DURATION = 1.5;
 
     /// <summary>Game data: tuning <c>DroppedPulseAoeImprovesHeal.Scaler</c> of ability 1860; Shining Halo (ability 1859).</summary>
-    public const double DroppedPulseAoeImprovesHealScaler = 1.2;
+    public const double DROPPED_PULSE_AOE_IMPROVES_HEAL_SCALER = 1.2;
 
     /// <summary>Game data: tuning <c>HealStrengthCoefficient</c> of ability 1860.</summary>
-    public const double HealStrengthCoefficient = 7.52;
+    public const double HEAL_STRENGTH_COEFFICIENT = 7.52;
+
+    /// <summary>Game data: tuning <c>ManaCost</c> of ability 1860; Mana Additive.</summary>
+    public const int MANA_COST = 132;
 }

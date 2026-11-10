@@ -17,14 +17,14 @@ partial class RavensPrecision
     public const int TalentRadius = 700;
 
     /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.Radius</c> of talent 760; ability 2278.</summary>
-    public const int Radius = 700;
+    public const int RADIUS = 700;
 
     /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.StrengthCoefficient</c> of talent 760; ability 2278.</summary>
-    public const double StrengthCoefficient = 0.374;
+    public const double STRENGTH_COEFFICIENT = 0.374;
 
     /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.TargetThresholdScaling</c> of talent 760; ability 2278.</summary>
-    public const int TargetThresholdScaling = 5;
+    public const int TARGET_THRESHOLD_SCALING = 5;
 
     /// <summary>Game data: tuning <c>Gunde.InstantWhirlwindAoe.Talent.GatherOrbs.MaxRange</c> of talent 760; ability 2265.</summary>
-    public const int MaxRange = 1000;
+    public const int MAX_RANGE = 1000;
 }

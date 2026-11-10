@@ -18,7 +18,7 @@ public partial class MartialInitiative : Aspect
 
     public override void Bind(Hero hero)
     {
-        double fraction = ForRank(BuffWeaponCooldownToDurationByRank);
+        double fraction = ForRank(BUFF_WEAPON_COOLDOWN_TO_DURATION_BY_RANK);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability != hero.WeaponAbility) return;

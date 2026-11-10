@@ -29,20 +29,20 @@ partial class FocusedShot
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1315.</summary>
-    public const double AgilityCoefficient = 1.6164;
+    public const double AGILITY_COEFFICIENT = 1.6164;
 
     /// <summary>Game data: tuning <c>Buff.MaxStacks</c> of ability 1315; Steady Hands (effect 1892).</summary>
-    public const int MaxStacks = 3;
+    public const int MAX_STACKS = 3;
 
     /// <summary>Game data: tuning <c>CastDuration</c> of ability 1315.</summary>
-    public const double CastDuration = 1.5;
+    public const double CAST_DURATION = 1.5;
 
     /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
-    public const double ResourceGenerationScaler = 0.5;
+    public const double RESOURCE_GENERATION_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>FocusGain</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
-    public const int FocusGain = 20;
+    public const int FOCUS_GAIN = 20;
 
     /// <summary>Game data: tuning <c>Talent.Enhanced.DamageScaler</c> of ability 1315; talent Deadly Focus (talent 679), DamageScale MultiplyCompound.</summary>
-    public const int DamageScaler = 2;
+    public const int DAMAGE_SCALER = 2;
 }

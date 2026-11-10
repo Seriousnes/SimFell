@@ -13,7 +13,7 @@ public partial class HarrowingIce : Talent
 {
     public const int EffectId = 2839;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Harrowing Ice", EffectId, Duration, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect("Harrowing Ice", EffectId, DURATION, MAX_STACKS);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -27,7 +27,7 @@ public partial class HarrowingIce : Talent
         var burstingIce = hero.GetAbility<BurstingIce>();
         if (burstingIce == null) return;
         var flightOfTheNavir = hero.GetAbility<FlightOfTheNavir>();
-        burstingIce.PulseDamageMultipliers.Add(ctx => 1.0 + DamageScalerPerStack * hero.Auras.GetStacks(Buff, ctx.CurrentTime));
+        burstingIce.PulseDamageMultipliers.Add(ctx => 1.0 + DAMAGE_SCALER_PER_STACK * hero.Auras.GetStacks(Buff, ctx.CurrentTime));
         burstingIce.Pulsed += ctx =>
         {
             var now = ctx.CurrentTime;
@@ -35,7 +35,7 @@ public partial class HarrowingIce : Talent
             if (hero.Auras.GetStacks(Buff, now) >= Buff.MaxStacks)
             {
                 hero.Auras.Remove(Buff, now);
-                if (flightOfTheNavir != null) hero.ReduceCooldown(flightOfTheNavir.Name, SimTime.FromSeconds(CooldownReductionToFlightOfNavirSeconds), now);
+                if (flightOfTheNavir != null) hero.ReduceCooldown(flightOfTheNavir.Name, SimTime.FromSeconds(COOLDOWN_REDUCTION_TO_FLIGHT_OF_NAVIR_SECONDS), now);
             }
         };
     }

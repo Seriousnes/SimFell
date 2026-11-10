@@ -17,8 +17,8 @@ partial class TheSubduer
     public const int GlyphAbilityRank = 183;
 
     /// <summary>Game data: tuning <c>CooldownValueReduction</c> of glyph 704; ability 2252, by rank.</summary>
-    public static readonly double[] CooldownValueReductionByRank = [1, 2, 3, 4];
+    public static readonly double[] COOLDOWN_VALUE_REDUCTION_BY_RANK = [1, 2, 3, 4];
 
     /// <summary>Game data: tuning <c>DamageBonusAgainstLowHealthEnemies</c> of glyph 704; ability 2252, DamageScale MultiplyCompound, by rank.</summary>
-    public static readonly double[] DamageBonusAgainstLowHealthEnemiesByRank = [1.05, 1.1, 1.15, 1.2];
+    public static readonly double[] DAMAGE_BONUS_AGAINST_LOW_HEALTH_ENEMIES_BY_RANK = [1.05, 1.1, 1.15, 1.2];
 }

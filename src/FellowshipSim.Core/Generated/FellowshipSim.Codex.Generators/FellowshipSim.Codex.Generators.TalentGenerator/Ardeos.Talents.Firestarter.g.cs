@@ -11,5 +11,5 @@ partial class Firestarter
     public const string TalentName = "Firestarter";
 
     /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 149; Ardeos (hero 7).</summary>
-    public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
+    public const double INCREASED_DOT_CRIT_CHANCE_CRIT_CHANCE_INCREASE = 0.2;
 }

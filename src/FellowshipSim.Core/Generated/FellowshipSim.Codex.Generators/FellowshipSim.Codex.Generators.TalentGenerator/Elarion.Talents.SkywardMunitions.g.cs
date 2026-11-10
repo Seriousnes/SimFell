@@ -11,5 +11,5 @@ partial class SkywardMunitions
     public const string TalentName = "Skyward Munitions";
 
     /// <summary>Game data: tuning <c>ReductionInSeconds, Bowguy.SingleProjectileDamage.Talent.CooldownReduction.ReductionInSeconds</c> of talent 132; ability 1508.</summary>
-    public const int ReductionInSeconds = 1;
+    public const int REDUCTION_IN_SECONDS = 1;
 }

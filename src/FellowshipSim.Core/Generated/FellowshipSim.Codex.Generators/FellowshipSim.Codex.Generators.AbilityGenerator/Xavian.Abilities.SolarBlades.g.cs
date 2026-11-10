@@ -32,38 +32,41 @@ partial class SolarBlades
     public const int AbilityRadius = 800;
 
     /// <summary>Game data: tuning <c>AddsDot.DotDamageScaler</c> of ability 1862; Solar Burn (effect 2659), talent Solar Burn (talent 570).</summary>
-    public const int DotDamageScaler = 1;
+    public const int DOT_DAMAGE_SCALER = 1;
 
     /// <summary>Game data: tuning <c>AddsDot.DotDuration</c> of ability 1862; Solar Burn (effect 2659), talent Solar Burn (talent 570).</summary>
-    public const int DotDuration = 9;
+    public const int DOT_DURATION = 9;
 
     /// <summary>Game data: tuning <c>AddsDot.DotPeriod</c> of ability 1862; Solar Burn (effect 2659), talent Solar Burn (talent 570).</summary>
-    public const double DotPeriod = 1.5;
+    public const double DOT_PERIOD = 1.5;
 
     /// <summary>Game data: tuning <c>AoeHitDelay</c> of ability 1862.</summary>
-    public const double AoeHitDelay = 0.6;
+    public const double AOE_HIT_DELAY = 0.6;
 
     /// <summary>Game data: tuning <c>AoeVfxDelay</c> of ability 1862.</summary>
-    public const double AoeVfxDelay = 0.4;
+    public const double AOE_VFX_DELAY = 0.4;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1862.</summary>
-    public const int DamageScalingTargetCountThreshold = 5;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 5;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1862.</summary>
-    public const double DamageStrengthCoefficient = 1.61;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 1.61;
 
     /// <summary>Game data: tuning <c>GrievousCritChance.CritChanceIncrease</c> of ability 1862; talent Solar Glare (legendary power 605).</summary>
-    public const int CritChanceIncrease = 1;
+    public const int CRIT_CHANCE_INCREASE = 1;
 
     /// <summary>Game data: tuning <c>GrievousCritChance.ProcChance</c> of ability 1862; talent Solar Glare (legendary power 605).</summary>
-    public const double ProcChance = 0.3;
+    public const double PROC_CHANCE = 0.3;
 
     /// <summary>Game data: tuning <c>MainTargetDamageScaler</c> of ability 1862.</summary>
-    public const int MainTargetDamageScaler = 2;
+    public const int MAIN_TARGET_DAMAGE_SCALER = 2;
+
+    /// <summary>Game data: tuning <c>ManaCost</c> of ability 1862; Mana Additive.</summary>
+    public const int MANA_COST = 55;
 
     /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 1862.</summary>
-    public const int MaxNumTargets = 20;
+    public const int MAX_NUM_TARGETS = 20;
 
     /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1862.</summary>
-    public const int ResourceProcChance = 1;
+    public const int RESOURCE_PROC_CHANCE = 1;
 }

@@ -29,11 +29,11 @@ partial class Taunt
     public const int AbilityRange = 4000;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 1843.</summary>
-    public const int Duration = 6;
+    public const int DURATION = 6;
 
     /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1843.</summary>
-    public const int GEC_CooldownStatic_C = 1;
+    public const int GEC_COOLDOWN_STATIC_C = 1;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1843.</summary>
-    public const double VisualDelay = 0.25;
+    public const double VISUAL_DELAY = 0.25;
 }

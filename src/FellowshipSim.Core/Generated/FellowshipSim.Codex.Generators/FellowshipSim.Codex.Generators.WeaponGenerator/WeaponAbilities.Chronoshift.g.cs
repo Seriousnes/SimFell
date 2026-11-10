@@ -44,23 +44,26 @@ partial class Chronoshift
     public const int AbilityRange = 1500;
 
     /// <summary>Game data: tuning <c>Buff.IncomingDamageMultiplier</c> of weapon power 355; Asha's Arcane Embrace (effect 2279), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageMultiplier = 0.5;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 0.5;
 
     /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 355; Chronoshift (ability 1558).</summary>
-    public const int CastDuration = 1;
+    public const int CAST_DURATION = 1;
+
+    /// <summary>Game data: tuning <c>Channel.Duration</c> of weapon power 355; Chronoshift (ability 1558).</summary>
+    public const int CHANNEL_DURATION = 3;
 
     /// <summary>Game data: tuning <c>Channel.ReduceCooldownsPerTickPercentage</c> of weapon power 355; Chronoshift (ability 1558).</summary>
-    public const double ChannelReduceCooldownsPerTickPercentage = 0.05;
+    public const double CHANNEL_REDUCE_COOLDOWNS_PER_TICK_PERCENTAGE = 0.05;
 
     /// <summary>Game data: tuning <c>Channel.Tick</c> of weapon power 355; Chronoshift (ability 1558).</summary>
-    public const double ChannelTick = 1.5;
+    public const double CHANNEL_TICK = 1.5;
 
     /// <summary>Game data: tuning <c>Channel.WhileActiveAddedCooldownRecovery</c> of weapon power 355; Chronoshift (ability 1558), CooldownRecovery Multiplicitive.</summary>
-    public const int ChannelWhileActiveAddedCooldownRecovery = 8;
+    public const int CHANNEL_WHILE_ACTIVE_ADDED_COOLDOWN_RECOVERY = 8;
 
     /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 355; Chronoshift (effect 2280).</summary>
-    public const double PrimaryAttributeCoefficient = 5.769;
+    public const double PRIMARY_ATTRIBUTE_COEFFICIENT = 5.769;
 
     /// <summary>Game data: tuning <c>Damage.TargetCountThreshold</c> of weapon power 355; Chronoshift (effect 2280).</summary>
-    public const int TargetCountThreshold = 5;
+    public const int TARGET_COUNT_THRESHOLD = 5;
 }

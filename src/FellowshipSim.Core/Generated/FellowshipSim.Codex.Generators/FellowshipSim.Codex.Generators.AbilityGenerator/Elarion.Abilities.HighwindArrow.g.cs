@@ -41,47 +41,53 @@ partial class HighwindArrow
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1313.</summary>
-    public const double AgilityCoefficient = 13.6673;
+    public const double AGILITY_COEFFICIENT = 13.6673;
 
     /// <summary>Game data: tuning <c>BounceDamageMultiplierAfterFirstHit</c> of ability 1313.</summary>
-    public const double BounceDamageMultiplierAfterFirstHit = 0.5;
+    public const double BOUNCE_DAMAGE_MULTIPLIER_AFTER_FIRST_HIT = 0.5;
 
     /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.Bounce.HitsForProc</c> of ability 1313.</summary>
-    public const int BowguyDamageBounceSelfBuffBounceHitsForProc = 3;
+    public const int BOWGUY_DAMAGE_BOUNCE_SELF_BUFF_BOUNCE_HITS_FOR_PROC = 3;
 
     /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.Bounce.MaxRadiusBetweenTargets</c> of ability 1313.</summary>
-    public const int BowguyDamageBounceSelfBuffBounceMaxRadiusBetweenTargets = 1000;
+    public const int BOWGUY_DAMAGE_BOUNCE_SELF_BUFF_BOUNCE_MAX_RADIUS_BETWEEN_TARGETS = 1000;
 
     /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.Bounce.MaxTargets</c> of ability 1313.</summary>
-    public const int BowguyDamageBounceSelfBuffBounceMaxTargets = 3;
+    public const int BOWGUY_DAMAGE_BOUNCE_SELF_BUFF_BOUNCE_MAX_TARGETS = 3;
 
     /// <summary>Game data: tuning <c>CastDuration</c> of ability 1313.</summary>
-    public const int CastDuration = 2;
+    public const int CAST_DURATION = 2;
 
     /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.AddedCritChance</c> of ability 1313; talent Lethal Shots (talent 202).</summary>
-    public const int AddedCritChance = 1;
+    public const int ADDED_CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.ProcChance</c> of ability 1313; talent Lethal Shots (talent 202).</summary>
-    public const double ProcChance = 0.4;
+    public const double PROC_CHANCE = 0.4;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 1313.</summary>
-    public const int Cost = 30;
+    public const int COST = 30;
 
     /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.IncomingDamageMultiplier</c> of ability 1313; Shimmer (effect 2362), talent Shimmer (legendary power 429).</summary>
-    public const double IncomingDamageMultiplier = 1.08;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 1.08;
 
     /// <summary>Game data: tuning <c>InstantNoCooldownProc.DamageScaleWhenHittingInsantMarkTarget</c> of ability 1313; Resurgent Winds (effect 2074), talent Resurgent Winds (talent 126).</summary>
-    public const double DamageScaleWhenHittingInsantMarkTarget = 1.5;
+    public const double DAMAGE_SCALE_WHEN_HITTING_INSANT_MARK_TARGET = 1.5;
+
+    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1313.</summary>
+    public const int MAX_CHARGES = 3;
 
     /// <summary>Game data: tuning <c>NoBounceBuff.BuffDuration</c> of ability 1313; Striker's Aim (effect 3179), talent Striker's Aim (talent 680).</summary>
-    public const int BuffDuration = 2;
+    public const int BUFF_DURATION = 2;
 
     /// <summary>Game data: tuning <c>NoBounceBuff.ExpertiseAdded</c> of ability 1313; Striker's Aim (effect 3179), talent Striker's Aim (talent 680), Expertise Additive.</summary>
-    public const double ExpertiseAdded = 0.02;
+    public const double EXPERTISE_ADDED = 0.02;
 
     /// <summary>Game data: tuning <c>NoBounceBuff.MaxStacks</c> of ability 1313; Striker's Aim (effect 3179), talent Striker's Aim (talent 680).</summary>
-    public const int MaxStacks = 3;
+    public const int MAX_STACKS = 3;
 
     /// <summary>Game data: tuning <c>StacksMoreDamageAndBounces.MaxBounces</c> of ability 1313; Final Cresendo (effect 2222), talent Final Crescendo (talent 169).</summary>
-    public const int MaxBounces = 9;
+    public const int MAX_BOUNCES = 9;
+
+    /// <summary>Game data: tuning <c>Talent.StacksMoreDamageAndBounces.DamageMultiplier</c> of ability 1313; Final Cresendo (effect 2222), talent Final Crescendo (talent 169), DamageScale Multiplicitive.</summary>
+    public const int DAMAGE_MULTIPLIER = 2;
 }

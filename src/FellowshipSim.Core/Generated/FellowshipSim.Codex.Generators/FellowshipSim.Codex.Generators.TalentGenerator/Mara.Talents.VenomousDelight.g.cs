@@ -11,11 +11,11 @@ partial class VenomousDelight
     public const string TalentName = "Venomous Delight";
 
     /// <summary>Game data: tuning <c>Chance, Mara.Talent.PoisonDamageProcEnergyGain.Chance</c> of talent 112; ability 1656.</summary>
-    public const double Chance = 0.1;
+    public const double CHANCE = 0.1;
 
     /// <summary>Game data: tuning <c>DamageToPoisonDot.DamageToDotDamageMultiplier, Mara.AoeAttackSpender.Talent.DamageToPoisonDot.DamageToDotDamageMultiplier</c> of talent 112; Vexira's Venom (ability 1616).</summary>
-    public const double DamageToDotDamageMultiplier = 0.28;
+    public const double DAMAGE_TO_DOT_DAMAGE_MULTIPLIER = 0.28;
 
     /// <summary>Game data: tuning <c>EnergyAdded, Mara.Talent.PoisonDamageProcEnergyGain.EnergyAdded</c> of talent 112; ability 1656.</summary>
-    public const int EnergyAdded = 10;
+    public const int ENERGY_ADDED = 10;
 }

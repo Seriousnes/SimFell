@@ -11,17 +11,17 @@ partial class FrostweaversWrath
     public const string TalentName = "Frostweaver's Wrath";
 
     /// <summary>Game data: tuning <c>Buff.Duration, ChanceOnOrbGain.NextSpenderCritIncrease.Buff.Duration, Rime.Talent.ChanceOnOrbGain.NextSpenderCritIncrease.Buff.Duration</c> of talent 191; Frostweaver's Wrath (effect 2305).</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 
     /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.AdditionalDamage, Rime.CastedProjectileDamageOrbSpender.Talent.DamageIncreaseAndCastTimeIncrease.AdditionalDamage</c> of talent 191; Glacial Blast (ability 1028).</summary>
-    public const double AdditionalDamage = 1.4;
+    public const double ADDITIONAL_DAMAGE = 1.4;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.CritChanceIncrease, Rime.CastedProjectileDamageOrbSpender.Talent.IncreasedCritChance.CritChanceIncrease</c> of talent 191; Glacial Blast (ability 1028), CritChance Additive.</summary>
-    public const double IncreasedCritChanceCritChanceIncrease = 0.2;
+    public const double INCREASED_CRIT_CHANCE_CRIT_CHANCE_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>ProcChance, Rime.Talent.ChanceOnOrbGain.NextSpenderCritIncrease.ProcChance</c> of talent 191; ability 1570.</summary>
-    public const double ProcChance = 0.2;
+    public const double PROC_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>Rime.Talent.ChanceOnOrbGain.NextSpenderCritIncrease.Buff.CritChance</c> of talent 191; Frostweaver's Wrath (effect 2305).</summary>
-    public const int CritChance = 1;
+    public const int CRIT_CHANCE = 1;
 }

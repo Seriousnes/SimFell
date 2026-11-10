@@ -35,17 +35,17 @@ partial class ReaversEdge
     public const int AbilityMaxTargets = 9999;
 
     /// <summary>Game data: tuning <c>AoeRadius</c> of ability 2290.</summary>
-    public const int AoeRadius = 700;
+    public const int AOE_RADIUS = 700;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2290.</summary>
-    public const int DamageScalingTargetCountThreshold = 8;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 2290.</summary>
-    public const double DamageStrengthCoefficient = 2.0317;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 2.0317;
 
     /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2290; Rend (effect 3231).</summary>
-    public const double DamageToDotScaler = 0.5;
+    public const double DAMAGE_TO_DOT_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 2290.</summary>
-    public const double VisualHitDelay = 0.45;
+    public const double VISUAL_HIT_DELAY = 0.45;
 }

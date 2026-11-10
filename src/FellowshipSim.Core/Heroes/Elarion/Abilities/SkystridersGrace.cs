@@ -9,7 +9,7 @@ public partial class SkystridersGrace : ElarionAbility
     public const int BuffEffectId = 1869;
 
     public static readonly AuraDef Buff = AuraDef.Effect("Skystrider's Grace", BuffEffectId, AbilityDuration,
-        modifiers: StatModifier.Add(StatType.Haste, HasteIncrease));
+        modifiers: StatModifier.Add(StatType.Haste, HASTE_INCREASE));
 
     public SkystridersGrace(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {

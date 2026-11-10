@@ -9,7 +9,7 @@ public partial class IceBlitz : RimeAbility
     public const double BuffDamage = 1.2;
     public const double ExtensionPerSwallowSeconds = 0.1;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Ice Blitz", BuffEffectId, Duration,
+    public static readonly AuraDef Buff = AuraDef.Effect("Ice Blitz", BuffEffectId, DURATION,
         modifiers: StatModifier.More(StatType.DamageScale, BuffDamage));
 
     public IceBlitz(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)

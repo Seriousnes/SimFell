@@ -13,7 +13,7 @@ public partial class ReignOfFire : Talent
     public const int MaxStacks = 2;
     public const string ProcKey = "reign_of_fire";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Reign of Fire", EffectId, BuffDuration, MaxStacks) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Reign of Fire", EffectId, BUFF_DURATION, MaxStacks) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -33,7 +33,7 @@ public partial class ReignOfFire : Talent
         {
             if (cast.Ability != fireBall || !hero.Auras.HasAura(Buff, cast.Time)) return;
             hero.Auras.ConsumeStack(Buff, cast.Time);
-            cast.CritChance += CritChanceIncrease;
+            cast.CritChance += CRIT_CHANCE_INCREASE;
         };
     }
 }

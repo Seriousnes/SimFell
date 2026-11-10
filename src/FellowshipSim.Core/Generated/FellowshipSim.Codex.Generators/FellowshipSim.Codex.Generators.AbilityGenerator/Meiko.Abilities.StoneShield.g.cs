@@ -26,59 +26,62 @@ partial class StoneShield
     public const int AbilityRadius = 70;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double AgilityCoefficient = 8.624;
+    public const double AGILITY_COEFFICIENT = 8.624;
 
     /// <summary>Game data: tuning <c>ArmorIncrease</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double ArmorIncrease = 0.2;
+    public const double ARMOR_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>DamageAgilityCoefficient</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double DamageAgilityCoefficient = 1.352;
+    public const double DAMAGE_AGILITY_COEFFICIENT = 1.352;
 
     /// <summary>Game data: tuning <c>DamageDuration</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double DamageDuration = 1.1;
+    public const double DAMAGE_DURATION = 1.1;
 
     /// <summary>Game data: tuning <c>DamageRadius</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int DamageRadius = 800;
+    public const int DAMAGE_RADIUS = 800;
 
     /// <summary>Game data: tuning <c>DamageRotationSpeed</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int DamageRotationSpeed = 2;
+    public const int DAMAGE_ROTATION_SPEED = 2;
 
     /// <summary>Game data: tuning <c>DamageShieldSizeRadius</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double DamageShieldSizeRadius = 1.7;
+    public const double DAMAGE_SHIELD_SIZE_RADIUS = 1.7;
 
     /// <summary>Game data: tuning <c>DamageSpread</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double DamageSpread = 0.1;
+    public const double DAMAGE_SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>DamageTickInterval</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double DamageTickInterval = 0.25;
+    public const double DAMAGE_TICK_INTERVAL = 0.25;
 
     /// <summary>Game data: tuning <c>IncomnigDamageMultiplier</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double IncomnigDamageMultiplier = 0.65;
+    public const double INCOMNIG_DAMAGE_MULTIPLIER = 0.65;
 
     /// <summary>Game data: tuning <c>MaxHealthIncrease</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int MaxHealthIncrease = 0;
+    public const int MAX_HEALTH_INCREASE = 0;
 
     /// <summary>Game data: tuning <c>MaxNumStones</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int MaxNumStones = 3;
+    public const int MAX_NUM_STONES = 3;
+
+    /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of ability 1122; talent Rumbling Stone (talent 95), DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.AbilityDamageIncrease</c> of ability 1122; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665), DamageScale MultiplyCompound.</summary>
-    public const double AbilityDamageIncrease = 1.2;
+    public const double ABILITY_DAMAGE_INCREASE = 1.2;
 
     /// <summary>Game data: tuning <c>NumOfCharges</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int NumOfCharges = 2;
+    public const int NUM_OF_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>RotationSpeed</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double RotationSpeed = 0.6;
+    public const double ROTATION_SPEED = 0.6;
 
     /// <summary>Game data: tuning <c>ShieldSizeRadius</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const double ShieldSizeRadius = 0.9;
+    public const double SHIELD_SIZE_RADIUS = 0.9;
 
     /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageMultiplier</c> of ability 1122; Stone Shield (ability 1121), DamageScale MultiplyCompound.</summary>
-    public const double IncreasedDamageDamageMultiplier = 1.2;
+    public const double INCREASED_DAMAGE_DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int TargetCountThreshold = 5;
+    public const int TARGET_COUNT_THRESHOLD = 5;
 
     /// <summary>Game data: tuning <c>TotalSecondaryStatModifier</c> of ability 1122; Stone Shield (ability 1121).</summary>
-    public const int TotalSecondaryStatModifier = 2;
+    public const int TOTAL_SECONDARY_STAT_MODIFIER = 2;
 }

@@ -23,35 +23,35 @@ partial class RupturedDawn
     public const int AbilityMaxTargets = 40;
 
     /// <summary>Game data: tuning <c>AoeHeight</c> of ability 1857.</summary>
-    public const int AoeHeight = 800;
+    public const int AOE_HEIGHT = 800;
 
     /// <summary>Game data: tuning <c>ChargedUpConeRange</c> of ability 1857.</summary>
-    public const int ChargedUpConeRange = 2000;
+    public const int CHARGED_UP_CONE_RANGE = 2000;
 
     /// <summary>Game data: tuning <c>ConeAngle</c> of ability 1857.</summary>
-    public const int ConeAngle = 90;
+    public const int CONE_ANGLE = 90;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1857.</summary>
-    public const int DamageScalingTargetCountThreshold = 8;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1857.</summary>
-    public const double DamageStrengthCoefficient = 0.9;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 0.9;
 
     /// <summary>Game data: tuning <c>ForwardDistanceToPullLocation</c> of ability 1857.</summary>
-    public const int ForwardDistanceToPullLocation = 300;
+    public const int FORWARD_DISTANCE_TO_PULL_LOCATION = 300;
 
     /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 1857.</summary>
-    public const int MaxNumTargets = 40;
+    public const int MAX_NUM_TARGETS = 40;
 
     /// <summary>Game data: tuning <c>PullDuration</c> of ability 1857.</summary>
-    public const double PullDuration = 0.25;
+    public const double PULL_DURATION = 0.25;
 
     /// <summary>Game data: tuning <c>PullHeight</c> of ability 1857.</summary>
-    public const int PullHeight = 350;
+    public const int PULL_HEIGHT = 350;
 
     /// <summary>Game data: tuning <c>Stun.Duration</c> of ability 1857; Stunned (effect 2566).</summary>
-    public const int Duration = 2;
+    public const int DURATION = 2;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1857.</summary>
-    public const double VisualDelay = 0.13;
+    public const double VISUAL_DELAY = 0.13;
 }

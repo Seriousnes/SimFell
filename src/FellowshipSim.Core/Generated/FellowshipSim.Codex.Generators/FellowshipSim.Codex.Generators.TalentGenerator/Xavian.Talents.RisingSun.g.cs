@@ -11,5 +11,5 @@ partial class RisingSun
     public const string TalentName = "Rising Sun";
 
     /// <summary>Game data: tuning <c>Sune.AoeMelee.Talent.ResetCdAtTargetInstantAoe.ProcChance</c> of talent 573; Omnistrike (ability 1863).</summary>
-    public const double ResetCdAtTargetInstantAoeProcChance = 0.5;
+    public const double RESET_CD_AT_TARGET_INSTANT_AOE_PROC_CHANCE = 0.5;
 }

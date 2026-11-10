@@ -2,7 +2,8 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 
 /// <summary>
 /// Ability 2298 / effect 3245: "Each time Rend deals damage there is a chance a Blood Feather is spawned near the enemy on
-/// the ground that you can pick up to gain a stack of Owed in Blood, up to a maximum number of stacks. Enemies
+/// the ground that you can pick up to gain a stack of Owed in Blood, up to a maximum number of stacks
+/// (<see cref="MAX_STACKS"/>). Enemies
 /// that die with your Rend active on them have a chance to create a Blood Feather. When you use your Owed in Blood
 /// ability, all stacks of Owed in Blood you have accumulated from Blood Feathers are applied to the targeted enemy as
 /// Rend stacks." The stack duration is <see cref="BuffSeconds"/> (combat logs, patch 0.4.5.0; logs from before
@@ -11,18 +12,16 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// casts): casts of up to <see cref="ExactStacks"/> stacks add exactly as many Rend stacks; larger casts add fewer per stack.
 /// The 18 larger casts fit <see cref="ExactStacks"/> stacks one each, then <see cref="LargeCastRendPerStack"/> per stack.
 /// </summary>
-[CodexAccepted("DamageMultiplier", "MaxStacks")]
 public partial class OwedInBlood : GundeAbility
 {
     public const int BuffEffectId = 3245;
     public const double BuffSeconds = 90.0;
-    public const int MaxStacks = 150;
     /// <summary>Stacks that each add one Rend stack; every stack beyond adds <see cref="LargeCastRendPerStack"/>.</summary>
     public const int ExactStacks = 15;
     public const double LargeCastRendPerStack = 0.85;
 
     /// <summary>"Holding on to Rend damage." A stack per Blood Feather picked up.</summary>
-    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffSeconds, MAX_STACKS);
 
     /// <summary>Owed in Blood applied its stacks to an enemy (Bloodcraze).</summary>
     public event Action<SimulationContext, EnemyTarget, int>? Spent;

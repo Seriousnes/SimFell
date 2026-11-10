@@ -11,5 +11,5 @@ partial class HighCommand
     public const string TalentName = "High Command";
 
     /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Warmaster.DefenceBuff.Talent.MoveSpeedBuffCooldownReduction.CooldownReductionInSeconds</c> of talent 210; ability 1606.</summary>
-    public const int CooldownReductionInSeconds = 6;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS = 6;
 }

@@ -11,8 +11,8 @@ partial class Defiance
     public const string TalentName = "Defiance";
 
     /// <summary>Game data: tuning <c>LowHealthBuff.AdditionalBlockChance, Warmaster.Talent.LowHealthBuff.AdditionalBlockChance</c> of talent 648; Defiance (effect 3094), BlockChance Additive.</summary>
-    public const double AdditionalBlockChance = 0.05;
+    public const double ADDITIONAL_BLOCK_CHANCE = 0.05;
 
     /// <summary>Game data: tuning <c>LowHealthBuff.IncomingHealMultiplier, Warmaster.Talent.LowHealthBuff.IncomingHealMultiplier</c> of talent 648; Defiance (effect 3094), IncomingHealMultiplier Multiplicitive.</summary>
-    public const double IncomingHealMultiplier = 1.2;
+    public const double INCOMING_HEAL_MULTIPLIER = 1.2;
 }

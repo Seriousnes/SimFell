@@ -13,7 +13,7 @@ public partial class WisdomOfTheNorth : Talent
         Ability?[] reduced = [hero.GetAbility<IceBlitz>(), hero.GetAbility<FlightOfTheNavir>(), hero.GetAbility<WintersBlessing>()];
         void ReduceCooldowns(int orbs, SimTime now)
         {
-            var amount = SimTime.FromSeconds(CooldownReductionPerOrbSpent * orbs);
+            var amount = SimTime.FromSeconds(COOLDOWN_REDUCTION_PER_ORB_SPENT * orbs);
             foreach (var ability in reduced)
             {
                 if (ability != null) hero.ReduceCooldown(ability.Name, amount, now);

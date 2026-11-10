@@ -11,5 +11,5 @@ partial class SwiftReload
     public const string TalentName = "Swift Reload";
 
     /// <summary>Game data: tuning <c>HitReducesCooldown.CooldownReductionInSeconds, Bowguy.CastedProjectileHeavyDamage.Talent.HitReducesCooldown.CooldownReductionInSeconds</c> of talent 682; Highwind Arrow (ability 1313).</summary>
-    public const double HitReducesCooldownCooldownReductionInSeconds = 0.5;
+    public const double HIT_REDUCES_COOLDOWN_COOLDOWN_REDUCTION_IN_SECONDS = 0.5;
 }

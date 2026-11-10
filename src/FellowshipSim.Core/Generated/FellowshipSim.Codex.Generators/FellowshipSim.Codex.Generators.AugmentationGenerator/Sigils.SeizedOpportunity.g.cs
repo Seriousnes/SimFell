@@ -17,5 +17,5 @@ partial class SeizedOpportunity
     public const int SigilRandomChance = 2;
 
     /// <summary>Game data: rank run <c>Trait.CritsToIncreasedCritRating.Buff.AdditionalCritRating</c> of sigil 4, transform <c>plain</c>; the tooltip has 21 / 39 / 57 / 75.</summary>
-    public static readonly double[] BuffAdditionalCritRatingByRank = [21, 39, 57, 75];
+    public static readonly double[] BUFF_ADDITIONAL_CRIT_RATING_BY_RANK = [21, 39, 57, 75];
 }

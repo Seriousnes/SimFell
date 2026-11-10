@@ -3,7 +3,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// <summary>
 /// Ability 2296 (Spirit ability) / effect 3242: calls forth the Bloodbound Spirit, which damages all nearby enemies as it
 /// emerges and at a regular interval, and applies Rend to the targets. For a time afterwards Heart Splitter and Grim
-/// Carve deal increased damage. Grants Spirit of Heroism. Damage falls off beyond <see cref="DamageScalingTargetCountThreshold"/> enemies
+/// Carve deal increased damage. Grants Spirit of Heroism. Damage falls off beyond <see cref="DAMAGE_SCALING_TARGET_COUNT_THRESHOLD"/> enemies
 /// (game data). Combat logs (Y4wpb2f3gc8LqJDX fight 25, 5 casts): the cast is instant (patch 0.4.5.0, 16 September 2026;
 /// the game data still has a cast time); the pulses come at <see cref="FirstPulseSeconds"/> after the cast and then at
 /// <see cref="AbilityPeriod"/>, not hasted. Every pulse keeps the damage of the first: with the Strength at each
@@ -12,7 +12,6 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// <see cref="Customization.RelicPassives.AccursedTrophy"/>, before it by a set bonus; gpfHLmTBrqcd3Zn4 fight 37,
 /// n7zxK8harZT2wjDB fight 9: all pulses come out above the engine's without it).
 /// </summary>
-[CodexAccepted("DamageMultiplier")]
 public partial class BloodboundSpirit : GundeAbility
 {
     public const double RendShareOfDamage = 1.0;
@@ -22,12 +21,12 @@ public partial class BloodboundSpirit : GundeAbility
     public const double BuffDamage = 1.25;
 
     /// <summary>"The damage of your Heart Splitter and Grim Carve is increased."</summary>
-    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, Duration);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, DURATION);
 
     public BloodboundSpirit(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
-        AoeTargetThreshold = DamageScalingTargetCountThreshold;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
+        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
         RendShare = RendShareOfDamage;
         owner.AbilityDamageMultipliers.Add((ability, now) =>
             ability is HeartSplitter or GrimCarve && owner.Auras.HasAura(Buff, now) ? BuffDamage : 1.0);

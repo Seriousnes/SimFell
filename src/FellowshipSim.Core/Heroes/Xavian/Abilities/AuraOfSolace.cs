@@ -27,7 +27,7 @@ public partial class AuraOfSolace : XavianAbility
 
     public AuraOfSolace(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
         AoeTargetThreshold = TargetThreshold;
@@ -61,7 +61,7 @@ public partial class AuraOfSolace : XavianAbility
     /// <summary>One pulse: its Mana and its damage to every enemy within the radius.</summary>
     public void Pulse(SimulationContext ctx)
     {
-        Xavian.DrainMana(ManaCostPerPeriod, ctx);
+        Xavian.DrainMana(MANA_COST_PER_PERIOD, ctx);
         if (ctx.ActiveEnemies.Count > 0) DealAoeDamage(ctx, ctx.ActiveEnemies);
     }
 

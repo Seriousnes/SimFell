@@ -14,11 +14,11 @@ partial class Sledgehammer
     public const int TalentRadius = 500;
 
     /// <summary>Game data: tuning <c>DamageScaler, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.DamageScaler</c> of talent 78; Sledgehammer (ability 2061).</summary>
-    public const double DamageScaler = 0.1;
+    public const double DAMAGE_SCALER = 0.1;
 
     /// <summary>Game data: tuning <c>Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.Radius</c> of talent 78; Sledgehammer (ability 2061).</summary>
-    public const int Radius = 500;
+    public const int RADIUS = 500;
 
     /// <summary>Game data: tuning <c>TargetThresholdForDamageScale, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.TargetThresholdForDamageScale</c> of talent 78; Sledgehammer (ability 2061).</summary>
-    public const int TargetThresholdForDamageScale = 8;
+    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 8;
 }

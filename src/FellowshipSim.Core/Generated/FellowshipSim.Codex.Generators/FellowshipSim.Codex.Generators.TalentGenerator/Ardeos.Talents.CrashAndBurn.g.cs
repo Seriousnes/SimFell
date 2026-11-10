@@ -11,14 +11,14 @@ partial class CrashAndBurn
     public const string TalentName = "Crash and Burn";
 
     /// <summary>Game data: tuning <c>Firemage.InstantDoubleDotSelfBuff.Talent.AdditionalHitDamageIncreased</c> of talent 184; Rolling Flames (effect 2298), DamageScale MultiplyCompound.</summary>
-    public const double AdditionalHitDamageIncreased = 1.4;
+    public const double ADDITIONAL_HIT_DAMAGE_INCREASED = 1.4;
 
     /// <summary>Game data: tuning <c>OnCritReductionInSeconds, Firemage.InstantDoubleDotSelfBuff.Talent.CastedSingleDotDamageReducesCooldown.OnCritReductionInSeconds</c> of talent 184; ability 1566.</summary>
-    public const double OnCritReductionInSeconds = 0.05;
+    public const double ON_CRIT_REDUCTION_IN_SECONDS = 0.05;
 
     /// <summary>Game data: tuning <c>ReductionInSeconds, Firemage.InstantDoubleDotSelfBuff.Talent.CastedSingleDotDamageReducesCooldown.ReductionInSeconds</c> of talent 184; ability 1566.</summary>
-    public const double ReductionInSeconds = 0.05;
+    public const double REDUCTION_IN_SECONDS = 0.05;
 
     /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 184; Ardeos (hero 7).</summary>
-    public const double CritChanceIncrease = 0.2;
+    public const double CRIT_CHANCE_INCREASE = 0.2;
 }

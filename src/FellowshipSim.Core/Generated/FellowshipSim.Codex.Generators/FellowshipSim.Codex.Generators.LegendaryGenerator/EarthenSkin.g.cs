@@ -11,16 +11,16 @@ partial class EarthenSkin
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>BuffAfterDestroyed.AbilityDamageIncrease, Meiko.TauntTotem.Talent.BuffAfterDestroyed.AbilityDamageIncrease</c> of legendary power 665; Earthen Skin (effect 3139), DamageScale MultiplyCompound.</summary>
-    public const double AbilityDamageIncrease = 1.2;
+    public const double ABILITY_DAMAGE_INCREASE = 1.2;
 
     /// <summary>Game data: tuning <c>BuffAfterDestroyed.ArmorMultiplier, Meiko.TauntTotem.Talent.BuffAfterDestroyed.ArmorMultiplier</c> of legendary power 665; Earthen Skin (effect 3139), Armor MultiplyCompound.</summary>
-    public const double ArmorMultiplier = 1.8;
+    public const double ARMOR_MULTIPLIER = 1.8;
 
     /// <summary>Game data: tuning <c>BuffAfterDestroyed.Duration, Meiko.TauntTotem.Talent.BuffAfterDestroyed.Duration</c> of legendary power 665; Earthen Skin (effect 3139).</summary>
-    public const int Duration = 60;
+    public const int DURATION = 60;
 
     /// <summary>Game data: tuning <c>BuffAfterDestroyed.WindDamageIncrease, Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of legendary power 665; Earthen Skin (effect 3139).</summary>
-    public const double WindDamageIncrease = 1.2;
+    public const double WIND_DAMAGE_INCREASE = 1.2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Earthen Skin";

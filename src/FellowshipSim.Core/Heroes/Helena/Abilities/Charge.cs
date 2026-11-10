@@ -11,7 +11,7 @@ public partial class Charge : HelenaAbility
 
     public Charge(Helena owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
     }

@@ -17,26 +17,26 @@ partial class WillOfStone
     public const int TalentRadius = 800;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of talent 92; Spirited Vortex (ability 1120).</summary>
-    public const double AgilityCoefficient = 1.0556;
+    public const double AGILITY_COEFFICIENT = 1.0556;
 
     /// <summary>Game data: tuning <c>DodgeChanceIncrease</c> of talent 92; Spirited Vortex (ability 1120).</summary>
-    public const double DodgeChanceIncrease = 0.15;
+    public const double DODGE_CHANCE_INCREASE = 0.15;
 
     /// <summary>Game data: tuning <c>Enfeeble.Duration</c> of talent 92; Enfeebled (effect 2487).</summary>
-    public const int Duration = 5;
+    public const int DURATION = 5;
 
     /// <summary>Game data: tuning <c>Enfeeble.TargetDamageScaleMultiplier</c> of talent 92; Enfeebled (effect 2487), DamageScale MultiplyCompound.</summary>
-    public const double TargetDamageScaleMultiplier = 0.9;
+    public const double TARGET_DAMAGE_SCALE_MULTIPLIER = 0.9;
 
     /// <summary>Game data: tuning <c>MaxTargets</c> of talent 92; Spirited Vortex (ability 1120).</summary>
-    public const int MaxTargets = 40;
+    public const int MAX_TARGETS = 40;
 
     /// <summary>Game data: tuning <c>SelfHealPerTarget</c> of talent 92; Spirited Vortex (ability 1120).</summary>
-    public const double SelfHealPerTarget = 0.75;
+    public const double SELF_HEAL_PER_TARGET = 0.75;
 
     /// <summary>Game data: tuning <c>Spread</c> of talent 92; Spirited Vortex (ability 1120).</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of talent 92; Spirited Vortex (ability 1120).</summary>
-    public const int TargetCountDamageScalingThreshold = 8;
+    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 8;
 }

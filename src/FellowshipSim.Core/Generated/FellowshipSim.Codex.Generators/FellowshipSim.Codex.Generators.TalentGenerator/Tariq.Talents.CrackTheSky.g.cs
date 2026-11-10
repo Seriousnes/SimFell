@@ -11,5 +11,5 @@ partial class CrackTheSky
     public const string TalentName = "Crack the Sky";
 
     /// <summary>Game data: tuning <c>Ink.Talent.PassiveLightningCritChanceIncrease</c> of talent 77; ability 1221, CritChance Additive.</summary>
-    public const double PassiveLightningCritChanceIncrease = 0.2;
+    public const double PASSIVE_LIGHTNING_CRIT_CHANCE_INCREASE = 0.2;
 }

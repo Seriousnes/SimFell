@@ -16,9 +16,9 @@ public partial class Rupture : GundeAbility
 
     public Rupture(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown);
-        RendShare = DamageToDotScaler;
+        RendShare = DAMAGE_TO_DOT_SCALER;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

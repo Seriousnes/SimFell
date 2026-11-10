@@ -11,5 +11,5 @@ partial class BitingCold
     public const string TalentName = "Biting Cold";
 
     /// <summary>Game data: tuning <c>Multistrike.Passive.CritStrikePowerIncrease, Rime.OnTargetPulsatingAoe.Talent.Multistrike.Passive.CritStrikePowerIncrease</c> of talent 51; Biting Cold (effect 1372), CritMultiplier MultiplyCompound.</summary>
-    public const double CritStrikePowerIncrease = 1.1;
+    public const double CRIT_STRIKE_POWER_INCREASE = 1.1;
 }

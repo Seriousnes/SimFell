@@ -20,14 +20,14 @@ partial class GrandMelee
     public const int AbilityRadius = 1500;
 
     /// <summary>Game data: tuning <c>AoeDuration</c> of ability 1465.</summary>
-    public const int AoeDuration = 10;
+    public const int AOE_DURATION = 10;
 
     /// <summary>Game data: tuning <c>FriendlyAura.IncomingMagicDamageScaler</c> of ability 1465; Grand Melee (effect 2205), MagicalIncomingDamageMultiplier Multiplicitive.</summary>
-    public const double IncomingMagicDamageScaler = 0.8;
+    public const double INCOMING_MAGIC_DAMAGE_SCALER = 0.8;
 
     /// <summary>Game data: tuning <c>Talent.ReducedCooldown</c> of ability 1465.</summary>
-    public const double ReducedCooldown = 0.8;
+    public const double REDUCED_COOLDOWN = 0.8;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1465.</summary>
-    public const double VisualDelay = 0.22;
+    public const double VISUAL_DELAY = 0.22;
 }

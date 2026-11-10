@@ -12,7 +12,7 @@ public partial class SolarGlare : Legendary
     public const string ProcKey = "solar_glare";
     public const int DebuffEffectId = 2727;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect("Blinding Horizon", DebuffEffectId, Duration);
+    public static readonly AuraDef Debuff = AuraDef.Effect("Blinding Horizon", DebuffEffectId, DURATION);
 
     public override void Bind(Hero hero)
     {
@@ -21,7 +21,7 @@ public partial class SolarGlare : Legendary
         hero.OnCastResolving += cast =>
         {
             if (cast.Ability != solarBlades || hero.SimContext is not { } ctx) return;
-            if (ctx.Outcomes.RollProc(ProcKey, GrievousCritChanceProcChance, ctx)) cast.CritChance += GrievousCritChanceCritChanceIncrease;
+            if (ctx.Outcomes.RollProc(ProcKey, GRIEVOUS_CRIT_CHANCE_PROC_CHANCE, ctx)) cast.CritChance += GRIEVOUS_CRIT_CHANCE_CRIT_CHANCE_INCREASE;
         };
         solarBlades.Struck += (ctx, struck) =>
         {

@@ -23,8 +23,8 @@ partial class ShadowWard
     public const int AbilityDuration = 4;
 
     /// <summary>Game data: tuning <c>GMMC_Mara_SelfDefenceBuff_Duration_C</c> of ability 1133.</summary>
-    public const int GMMC_Mara_SelfDefenceBuff_Duration_C = 4;
+    public const int GMMC_MARA_SELF_DEFENCE_BUFF_DURATION_C = 4;
 
     /// <summary>Game data: tuning <c>IncomingDamageReduction</c> of ability 1133; IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageReduction = 0.6;
+    public const double INCOMING_DAMAGE_REDUCTION = 0.6;
 }

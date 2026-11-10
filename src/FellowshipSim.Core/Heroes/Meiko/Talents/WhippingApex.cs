@@ -16,7 +16,7 @@ public partial class WhippingApex : Talent
         if (hero.GetAbility<LashingStormkick>() is not { } lashing) return;
         lashing.Kicked += (ctx, _, _, struck, stormfall) =>
         {
-            int stacks = Math.Min(struck, InstantSelfDefensiveMaxStacks);
+            int stacks = Math.Min(struck, INSTANT_SELF_DEFENSIVE_MAX_STACKS);
             if (stormfall && stacks > 0) hero.Auras.Apply(Serenity.Stacks, ctx.CurrentTime, stacks);
         };
     }

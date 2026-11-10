@@ -11,5 +11,5 @@ partial class GuardiansFluidity
     public const string TalentName = "Guardian's Fluidity";
 
     /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Meiko.DamageSoakBuff.Talent.FinisherToReducedCooldown.CooldownReductionInSeconds</c> of talent 514; ability 1769.</summary>
-    public const int CooldownReductionInSeconds = 1;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS = 1;
 }

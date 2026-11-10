@@ -11,11 +11,11 @@ partial class WhippingApex
     public const string TalentName = "Whipping Apex";
 
     /// <summary>Game data: tuning <c>Firemage.SelfDefenceBuff.Duration</c> of talent 626; Flame Ward (ability 1258).</summary>
-    public const int Duration = 4;
+    public const int DURATION = 4;
 
     /// <summary>Game data: tuning <c>InstantSelfDefensive.MaxStacks, Meiko.HighDamageCleave.Talent.InstantSelfDefensive.MaxStacks</c> of talent 626; Lashing Stormkick (ability 1106).</summary>
-    public const int InstantSelfDefensiveMaxStacks = 5;
+    public const int INSTANT_SELF_DEFENSIVE_MAX_STACKS = 5;
 
     /// <summary>Game data: tuning <c>Meiko.InstantSelfDefensive.Heal.MaxStacks</c> of talent 626; Serenity (ability 1119).</summary>
-    public const int HealMaxStacks = 50;
+    public const int HEAL_MAX_STACKS = 50;
 }

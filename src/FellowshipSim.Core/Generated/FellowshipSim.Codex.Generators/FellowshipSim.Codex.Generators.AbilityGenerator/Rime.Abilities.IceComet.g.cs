@@ -35,35 +35,35 @@ partial class IceComet
     public const int AbilityRadius = 700;
 
     /// <summary>Game data: tuning <c>AoePeriod</c> of ability 1018.</summary>
-    public const double AoePeriod = 0.2;
+    public const double AOE_PERIOD = 0.2;
 
     /// <summary>Game data: tuning <c>ChanceOnOrbGain.NextSpenderCritIncrease.Buff.CritChance</c> of ability 1018; Frostweaver's Wrath (effect 2305).</summary>
-    public const int CritChance = 1;
+    public const int CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>DamageIntellectCoefficient</c> of ability 1018.</summary>
-    public const double DamageIntellectCoefficient = 5.285;
+    public const double DAMAGE_INTELLECT_COEFFICIENT = 5.285;
 
     /// <summary>Game data: tuning <c>DamageSpread</c> of ability 1018.</summary>
-    public const double DamageSpread = 0.2;
+    public const double DAMAGE_SPREAD = 0.2;
 
     /// <summary>Game data: tuning <c>MultiStrike.ChanceToStrikeTrice</c> of ability 1018; talent Avalanche (talent 48).</summary>
-    public const double ChanceToStrikeTrice = 0.09;
+    public const double CHANCE_TO_STRIKE_TRICE = 0.09;
 
     /// <summary>Game data: tuning <c>MultiStrike.ChanceToStrikeTwice</c> of ability 1018; talent Avalanche (talent 48).</summary>
-    public const double ChanceToStrikeTwice = 0.18;
+    public const double CHANCE_TO_STRIKE_TWICE = 0.18;
 
     /// <summary>Game data: tuning <c>NumPulses</c> of ability 1018.</summary>
-    public const int NumPulses = 1;
+    public const int NUM_PULSES = 1;
 
     /// <summary>Game data: tuning <c>OrbCost</c> of ability 1018; ResourcesTertiary Additive.</summary>
-    public const int OrbCost = 2;
+    public const int ORB_COST = 2;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.AddedCritChance</c> of ability 1018; Icy Flow (effect 2308).</summary>
-    public const double AddedCritChance = 0.2;
+    public const double ADDED_CRIT_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.OnTargetPulsatingAoe.InitialDelayReductionInSeconds</c> of ability 1018; Icy Flow (effect 2308), talent Icy Flow (talent 44).</summary>
-    public const double OnTargetPulsatingAoeInitialDelayReductionInSeconds = 0.5;
+    public const double ON_TARGET_PULSATING_AOE_INITIAL_DELAY_REDUCTION_IN_SECONDS = 0.5;
 
     /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 1018.</summary>
-    public const int TargetCountThreshold = 12;
+    public const int TARGET_COUNT_THRESHOLD = 12;
 }

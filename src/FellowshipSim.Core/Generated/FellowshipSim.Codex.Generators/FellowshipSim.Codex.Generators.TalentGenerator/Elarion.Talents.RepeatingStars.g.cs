@@ -11,11 +11,11 @@ partial class RepeatingStars
     public const string TalentName = "Repeating Stars";
 
     /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Bowguy.AoeProjectileDamage.Talent.CooldownReduction.CooldownReductionInSeconds</c> of talent 124; ability 1439.</summary>
-    public const double CooldownReductionInSeconds = 1.5;
+    public const double COOLDOWN_REDUCTION_IN_SECONDS = 1.5;
 
     /// <summary>Game data: tuning <c>MaxCooldownReductionPerActivation, Bowguy.AoeProjectileDamage.Talent.CooldownReduction.MaxCooldownReductionPerActivation</c> of talent 124; ability 1439.</summary>
-    public const int MaxCooldownReductionPerActivation = 3;
+    public const int MAX_COOLDOWN_REDUCTION_PER_ACTIVATION = 3;
 
     /// <summary>Game data: tuning <c>CooldownReductionEmpowered.CooldownReductionInSeconds, Bowguy.AoeProjectileDamage.Talent.CooldownReductionEmpowered.CooldownReductionInSeconds</c> of talent 124; Multishot (ability 1318).</summary>
-    public const int CooldownReductionEmpoweredCooldownReductionInSeconds = 3;
+    public const int COOLDOWN_REDUCTION_EMPOWERED_COOLDOWN_REDUCTION_IN_SECONDS = 3;
 }

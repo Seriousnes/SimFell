@@ -11,6 +11,6 @@ public partial class HighCommand : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<ShieldsUp>() is not { } shieldsUp || hero.GetAbility<HoldTheLine>() is not { } holdTheLine) return;
-        shieldsUp.Raised += ctx => hero.CooldownOf(holdTheLine).Reduce(SimTime.FromSeconds(CooldownReductionInSeconds), ctx.CurrentTime);
+        shieldsUp.Raised += ctx => hero.CooldownOf(holdTheLine).Reduce(SimTime.FromSeconds(COOLDOWN_REDUCTION_IN_SECONDS), ctx.CurrentTime);
     }
 }

@@ -11,5 +11,5 @@ partial class Fusillade
     public const string TalentName = "Fusillade";
 
     /// <summary>Game data: tuning <c>Bowguy.ChanneledMultiProjectileDebuff.Talent.IncreasedChannelDuration.Amount</c> of talent 128; ability 1553.</summary>
-    public const double IncreasedChannelDurationAmount = 0.5;
+    public const double INCREASED_CHANNEL_DURATION_AMOUNT = 0.5;
 }

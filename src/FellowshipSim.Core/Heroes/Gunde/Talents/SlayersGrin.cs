@@ -11,6 +11,6 @@ public partial class SlayersGrin : Talent
     public override void Bind(Hero hero)
     {
         var gunde = (Gunde)hero;
-        gunde.FeatherCollected += ctx => hero.ReduceCooldown<Rupture>(SimTime.FromSeconds(ReductionInSeconds), ctx.CurrentTime);
+        gunde.FeatherCollected += ctx => hero.ReduceCooldown<Rupture>(SimTime.FromSeconds(REDUCTION_IN_SECONDS), ctx.CurrentTime);
     }
 }

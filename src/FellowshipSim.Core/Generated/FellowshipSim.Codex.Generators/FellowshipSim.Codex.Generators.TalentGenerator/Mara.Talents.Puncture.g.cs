@@ -11,5 +11,5 @@ partial class Puncture
     public const string TalentName = "Puncture";
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Mara.ChargedDoubleAttackBuilder.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 123; Widow's Bite (ability 1207), CritChance Additive.</summary>
-    public const int IncreasedCritChanceAdditionalCritChance = 1;
+    public const int INCREASED_CRIT_CHANCE_ADDITIONAL_CRIT_CHANCE = 1;
 }

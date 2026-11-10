@@ -11,5 +11,5 @@ partial class SlayersGrin
     public const string TalentName = "Slayer's Grin";
 
     /// <summary>Game data: tuning <c>ReductionInSeconds, Gunde.HeavyMeleeDotBoost.Talent.ReducedCooldownPerOrb.ReductionInSeconds</c> of talent 763; ability 2269.</summary>
-    public const double ReductionInSeconds = 0.4;
+    public const double REDUCTION_IN_SECONDS = 0.4;
 }

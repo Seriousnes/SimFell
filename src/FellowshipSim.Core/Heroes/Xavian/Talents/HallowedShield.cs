@@ -11,7 +11,7 @@ public partial class HallowedShield : Talent
     public const int BuffEffectId = 2649;
     public const string ProcKey = "hallowed_shield_parry";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Duration, StackCap);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DURATION, STACK_CAP);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -20,7 +20,7 @@ public partial class HallowedShield : Talent
     {
         var shield = ((Xavian)hero).SolarShield;
         hero.AddDefensiveProc(ProcKey, (ctx, _) => hero.Auras.Apply(Buff, ctx.CurrentTime));
-        shield.AbsorbMultipliers.Add(ctx => 1.0 + ExtraAbsorbPerStack * hero.Auras.GetStacks(Buff, ctx.CurrentTime));
+        shield.AbsorbMultipliers.Add(ctx => 1.0 + EXTRA_ABSORB_PER_STACK * hero.Auras.GetStacks(Buff, ctx.CurrentTime));
         shield.Shielded += (ctx, _) => hero.Auras.Remove(Buff, ctx.CurrentTime);
     }
 }

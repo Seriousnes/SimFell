@@ -23,8 +23,8 @@ partial class FrostWard
     public const int AbilityDuration = 4;
 
     /// <summary>Game data: tuning <c>GMMC_Rime_SelfDefenceBuff_Duration_C</c> of ability 1015.</summary>
-    public const int GMMC_Rime_SelfDefenceBuff_Duration_C = 4;
+    public const int GMMC_RIME_SELF_DEFENCE_BUFF_DURATION_C = 4;
 
     /// <summary>Game data: tuning <c>IncomingDamageScaler</c> of ability 1015; IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageScaler = 0.6;
+    public const double INCOMING_DAMAGE_SCALER = 0.6;
 }

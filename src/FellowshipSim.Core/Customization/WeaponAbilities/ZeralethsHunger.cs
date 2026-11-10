@@ -7,12 +7,11 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// UNVERIFIED: the ticks' damage ID is taken to be 162, and the tick count six; the downloaded combat logs have this
 /// ability in none of their fights.
 /// </summary>
-[CodexAccepted("ChannelDuration")]
 public partial class ZeralethsHunger : Ability
 {
     public ZeralethsHunger(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = PrimaryAttributeCoefficient;
+        BaseCoefficient = PRIMARY_ATTRIBUTE_COEFFICIENT;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);

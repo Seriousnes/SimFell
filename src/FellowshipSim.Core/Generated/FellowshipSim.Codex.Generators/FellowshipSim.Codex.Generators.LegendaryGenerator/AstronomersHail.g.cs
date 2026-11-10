@@ -11,16 +11,16 @@ partial class AstronomersHail
     public const int LegsItemId = 5900;
 
     /// <summary>Game data: tuning <c>Bowguy.TargetedAoeDamage.Talent.IncreasedDamage</c> of legendary power 516; Starfall Volley (ability 126), DamageScale MultiplyCompound.</summary>
-    public const int IncreasedDamage = 1;
+    public const int INCREASED_DAMAGE = 1;
 
     /// <summary>Game data: tuning <c>DurationExtensionPerUse, IncreasedDurationAndExtension.AoeProjectileDamage.DurationExtensionPerUse, Bowguy.TargetedAoeDamage.Talent.IncreasedDurationAndExtension.AoeProjectileDamage.DurationExtensionPerUse</c> of legendary power 516; ability 1773.</summary>
-    public const double DurationExtensionPerUse = 0.25;
+    public const double DURATION_EXTENSION_PER_USE = 0.25;
 
     /// <summary>Game data: tuning <c>IncreasedDurationAndExtension.DurationIncreaseInSeconds, Bowguy.TargetedAoeDamage.Talent.IncreasedDurationAndExtension.DurationIncreaseInSeconds</c> of legendary power 516; Starfall Volley (ability 126).</summary>
-    public const int IncreasedDurationAndExtensionDurationIncreaseInSeconds = 3;
+    public const int INCREASED_DURATION_AND_EXTENSION_DURATION_INCREASE_IN_SECONDS = 3;
 
     /// <summary>Game data: tuning <c>IncreasedDurationAndExtension.MainTargetDamageBonus.DamageScaler, Bowguy.TargetedAoeDamage.Talent.IncreasedDurationAndExtension.MainTargetDamageBonus.DamageScaler</c> of legendary power 516; Starfall Volley (ability 126), DamageScale MultiplyCompound.</summary>
-    public const int IncreasedDurationAndExtensionMainTargetDamageBonusDamageScaler = 2;
+    public const int INCREASED_DURATION_AND_EXTENSION_MAIN_TARGET_DAMAGE_BONUS_DAMAGE_SCALER = 2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Astronomer's Hail";

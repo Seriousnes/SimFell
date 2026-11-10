@@ -8,15 +8,13 @@ namespace FellowshipSim.Core.Heroes.Elarion.Talents;
 /// and deals more damage. Resurgent Winds is timed and stacks. Effect 2074. UNVERIFIED: which casts count as Offensive Abilities
 /// (the engine rolls on every cast of a damaging ability but Shoot).
 /// </summary>
-[CodexAccepted("ProcChance")]
 public partial class ResurgentWinds : Talent
 {
-    public const double ProcChance = 0.05;
     public const int BuffEffectId = 2074;
     public const int MaxStacks = 2;
     public const string ProcKey = "resurgent_winds";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Resurgent Winds", BuffEffectId, Duration, MaxStacks) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Resurgent Winds", BuffEffectId, DURATION, MaxStacks) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -37,7 +35,8 @@ public partial class ResurgentWinds : Talent
         hero.OnCastCompleted += (ability, _, _) =>
         {
             if (hero.SimContext is not { } ctx || !IsOffensive(ability)) return;
-            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) Grant(ctx);
+            // The Offensive Ability proc chance (InstantNoCooldownProc.OffensiveAbility.ProcChance).
+            if (ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE_1, ctx)) Grant(ctx);
         };
     }
 

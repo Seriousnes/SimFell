@@ -12,6 +12,6 @@ public partial class KillingInTheName : Talent
 
     public override void Bind(Hero hero)
     {
-        if (hero.GetAbility<CullingStrike>() is { } cullingStrike) cullingStrike.CritChanceBonus += AddedCritChance;
+        if (hero.GetAbility<CullingStrike>() is { } cullingStrike) cullingStrike.CritChanceBonus += ADDED_CRIT_CHANCE;
     }
 }

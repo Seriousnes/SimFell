@@ -11,5 +11,5 @@ partial class NavirsKeeper
     public const string TalentName = "Navir's Keeper";
 
     /// <summary>Game data: tuning <c>GrantInstantSingleDamageCharge.NumCharges, Rime.TargetedPeriodicProjectileAoe.Talent.GrantInstantSingleDamageCharge.NumCharges</c> of talent 189; Flight of the Navir (ability 1009).</summary>
-    public const int GrantInstantSingleDamageChargeNumCharges = 2;
+    public const int GRANT_INSTANT_SINGLE_DAMAGE_CHARGE_NUM_CHARGES = 2;
 }

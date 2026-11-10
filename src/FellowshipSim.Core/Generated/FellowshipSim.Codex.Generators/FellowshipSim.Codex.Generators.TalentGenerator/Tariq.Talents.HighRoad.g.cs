@@ -11,14 +11,14 @@ partial class HighRoad
     public const string TalentName = "High Road";
 
     /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.IncreasedCriticalChance.AddedCrit</c> of talent 441; Leap Smash (ability 1225), CritChance Additive.</summary>
-    public const double IncreasedCriticalChanceAddedCrit = 0.4;
+    public const double INCREASED_CRITICAL_CHANCE_ADDED_CRIT = 0.4;
 
     /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.CooldownReductionInSeconds, Ink.MoveToLocationAoeDamage.Talent.ReducedCooldownIfNoHit.CooldownReductionInSeconds</c> of talent 441; Leap Smash (ability 1225).</summary>
-    public const int ReducedCooldownIfNoHitCooldownReductionInSeconds = 10;
+    public const int REDUCED_COOLDOWN_IF_NO_HIT_COOLDOWN_REDUCTION_IN_SECONDS = 10;
 
     /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.MovementSpeedBuff.Duration, Ink.MoveToLocationAoeDamage.Talent.ReducedCooldownIfNoHit.MovementSpeedBuff.Duration</c> of talent 441; Leap Smash (ability 1225).</summary>
-    public const int ReducedCooldownIfNoHitMovementSpeedBuffDuration = 4;
+    public const int REDUCED_COOLDOWN_IF_NO_HIT_MOVEMENT_SPEED_BUFF_DURATION = 4;
 
     /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.MovementSpeedBuff.MovementSpeedScaler, Ink.MoveToLocationAoeDamage.Talent.ReducedCooldownIfNoHit.MovementSpeedBuff.MovementSpeedScaler</c> of talent 441; Leap Smash (ability 1225).</summary>
-    public const double ReducedCooldownIfNoHitMovementSpeedBuffMovementSpeedScaler = 1.5;
+    public const double REDUCED_COOLDOWN_IF_NO_HIT_MOVEMENT_SPEED_BUFF_MOVEMENT_SPEED_SCALER = 1.5;
 }

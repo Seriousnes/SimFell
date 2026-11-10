@@ -17,5 +17,5 @@ partial class TheShadow
     public const int ProtectiveEnchantRandomChance = 0;
 
     /// <summary>Game data: tuning <c>Perk.Passive.IncreasedIncomingMagicDamage.AdditionalReduction</c> of protective enchant 54; The Shadow (effect 2851), MagicDamageReduction Additive.</summary>
-    public const double AdditionalReduction = 0.1;
+    public const double ADDITIONAL_REDUCTION = 0.1;
 }

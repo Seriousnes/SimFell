@@ -11,8 +11,8 @@ partial class ShiftingSpectrum
     public const string TalentName = "Shifting Spectrum";
 
     /// <summary>Game data: tuning <c>HealthThreshold, Sune.Talent.LowHealthDamageReduction.HealthThreshold</c> of talent 576; ability 1910.</summary>
-    public const double HealthThreshold = 0.4;
+    public const double HEALTH_THRESHOLD = 0.4;
 
     /// <summary>Game data: tuning <c>IncomingDamageMultiplier, Sune.Talent.LowHealthDamageReduction.IncomingDamageMultiplier</c> of talent 576; ability 1910, IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageMultiplier = 0.8;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 0.8;
 }

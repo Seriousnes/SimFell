@@ -6,7 +6,6 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// 60% of Strength physical damage every 1.5 seconds for 12 seconds." Cooldown 30s; the hits lose damage as sqrt(1/N)
 /// beyond one enemy (effect 1274). Blood Rally is effect 3098 and the bleed <see cref="SweepingStrikeBleed"/>.
 /// </summary>
-[CodexAccepted("Duration", "PercentOfMaxHealth", "Period", "StrengthCoefficient")]
 public partial class SweepingStrike : HelenaAbility
 {
     public const double Coefficient = 3.756;
@@ -25,7 +24,7 @@ public partial class SweepingStrike : HelenaAbility
     {
         BaseCoefficient = Coefficient;
         SetCooldown(AbilityCooldown);
-        AoeTargetThreshold = DamageScalingTargetCountThreshold;
+        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
     }
 
     public override void Connect() => _bleed = Helena.GetAbility<SweepingStrikeBleed>();
@@ -34,8 +33,8 @@ public partial class SweepingStrike : HelenaAbility
     {
         TriggerCooldown(ctx);
         var targets = ctx.Outcomes.SelectTargets(DamageLogId, Enemies(ctx, target), ctx);
-        double falloff = targets.Count > DamageScalingTargetCountThreshold
-            ? Math.Sqrt((double)DamageScalingTargetCountThreshold / targets.Count)
+        double falloff = targets.Count > DAMAGE_SCALING_TARGET_COUNT_THRESHOLD
+            ? Math.Sqrt((double)DAMAGE_SCALING_TARGET_COUNT_THRESHOLD / targets.Count)
             : 1.0;
         for (int i = 0; i < targets.Count; i++)
         {

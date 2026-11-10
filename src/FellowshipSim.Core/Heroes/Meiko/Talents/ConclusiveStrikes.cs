@@ -19,7 +19,7 @@ public partial class ConclusiveStrikes : Talent
     {
         foreach (var finisher in hero.Abilities.OfType<MeikoFinisher>())
         {
-            if (finisher is not EarthfistBarrage) finisher.AddDamageMultiplier(IncreasedDamageScaler);
+            if (finisher is not EarthfistBarrage) finisher.AddDamageMultiplier(INCREASED_DAMAGE_SCALER);
         }
     }
 }

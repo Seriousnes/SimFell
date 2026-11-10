@@ -18,7 +18,7 @@ public partial class ForbiddenTechnique : Talent
     public const int DebuffEffectId = 1508;
     public const int EruptionEffectId = 1509;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect(TalentName, DebuffEffectId, Duration, MaxStackCount);
+    public static readonly AuraDef Debuff = AuraDef.Effect(TalentName, DebuffEffectId, DURATION, MAX_STACK_COUNT);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -51,7 +51,7 @@ public partial class ForbiddenTechnique : Talent
         {
             if (hit.SimContext is not { } ctx) return;
             Follow(ctx);
-            if (hit.Target != null && hit.Target == _marked && hit.AbilityId != eruptionId) _accumulated += hit.Amount * DamageDealtMultiplier;
+            if (hit.Target != null && hit.Target == _marked && hit.AbilityId != eruptionId) _accumulated += hit.Amount * DAMAGE_DEALT_MULTIPLIER;
         };
         if (hero.GetAbility<EarthfistBarrage>() is { } barrage)
         {
@@ -82,7 +82,7 @@ public partial class ForbiddenTechnique : Talent
         _marked = target;
         _accumulated = 0.0;
         target.Auras.Apply(Debuff, ctx.CurrentTime);
-        _eruptions = PeriodicEffect.Begin(ctx, TalentName, Duration, Period, tickOnStart: false, partialFinalTick: false,
+        _eruptions = PeriodicEffect.Begin(ctx, TalentName, DURATION, PERIOD, tickOnStart: false, partialFinalTick: false,
             onTick: (c, _) => Erupt(c, hero, target, eruptionId),
             onEnd: (c, _) =>
             {
@@ -100,7 +100,7 @@ public partial class ForbiddenTechnique : Talent
         if (amount <= 0) return;
         IReadOnlyList<EnemyTarget> nearby = ctx.ActiveEnemies.Count == 0 ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(eruptionId, nearby, ctx);
-        double falloff = struck.Count > TargetCountThreshold ? Math.Sqrt((double)TargetCountThreshold / struck.Count) : 1.0;
+        double falloff = struck.Count > TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)TARGET_COUNT_THRESHOLD / struck.Count) : 1.0;
         for (int i = 0; i < struck.Count; i++)
         {
             ctx.ApplyDamage(hero, struck[i], amount * falloff, eruptionId, TalentName, canCrit: false, 0.0, 1.0);

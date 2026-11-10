@@ -8,7 +8,6 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// each bounce a fixed time after the one before; a bounce can strike an enemy already hit. UNVERIFIED: no Rime log has it; the
 /// game's damage spread for it differs from the engine's usual one, which is used.
 /// </summary>
-[CodexAccepted("PrimaryAttributeCoefficient")]
 public partial class NaturesFury : Ability
 {
     /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 356.</summary>
@@ -23,14 +22,14 @@ public partial class NaturesFury : Ability
         BaseCoefficient = Coefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
-        CritChanceBonus = AbilityAddedCritChance;
+        CritChanceBonus = ABILITY_ADDED_CRIT_CHANCE;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
         // The first hit lands right after the cast completes (not inside it), then each bounce.
-        ctx.Schedule(SimTime.Zero, c => DealDamage(c, target, InitialHitPowerScaler), Name);
+        ctx.Schedule(SimTime.Zero, c => DealDamage(c, target, INITIAL_HIT_POWER_SCALER), Name);
         for (int i = 1; i < Hits; i++)
         {
             ctx.Schedule(SimTime.FromSeconds(i * BounceSeconds), c =>

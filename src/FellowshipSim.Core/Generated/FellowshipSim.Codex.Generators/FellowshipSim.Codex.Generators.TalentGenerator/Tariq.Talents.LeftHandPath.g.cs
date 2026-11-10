@@ -11,5 +11,5 @@ partial class LeftHandPath
     public const string TalentName = "Left Hand Path";
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.Increase, Ink.SecondChanceSingleTargetAttack.Talent.IncreasedCritChance.Increase</c> of talent 72; Face Breaker (old) (ability 1219), CritChance Additive.</summary>
-    public const double IncreasedCritChanceIncrease = 0.4;
+    public const double INCREASED_CRIT_CHANCE_INCREASE = 0.4;
 }

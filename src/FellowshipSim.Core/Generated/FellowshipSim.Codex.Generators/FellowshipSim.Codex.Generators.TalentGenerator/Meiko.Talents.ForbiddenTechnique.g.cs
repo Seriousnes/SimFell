@@ -11,29 +11,29 @@ partial class ForbiddenTechnique
     public const string TalentName = "Forbidden Technique";
 
     /// <summary>Game data: tuning <c>DamageBuilder.Duration, Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.Duration</c> of talent 104; ability 1089.</summary>
-    public const int Duration = 30;
+    public const int DURATION = 30;
 
     /// <summary>Game data: tuning <c>DamageBuilder.MaxStackCount, Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.MaxStackCount</c> of talent 104; ability 1089.</summary>
-    public const int MaxStackCount = 50;
+    public const int MAX_STACK_COUNT = 50;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.DamageDealtMultiplier</c> of talent 104; ability 1089.</summary>
-    public const double DamageDealtMultiplier = 0.18;
+    public const double DAMAGE_DEALT_MULTIPLIER = 0.18;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.DamageRadius</c> of talent 104; ability 1089.</summary>
-    public const int DamageRadius = 800;
+    public const int DAMAGE_RADIUS = 800;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.DamageReductionDuration</c> of talent 104; ability 1089.</summary>
-    public const int DamageReductionDuration = 18;
+    public const int DAMAGE_REDUCTION_DURATION = 18;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.DamageReductionPerStack</c> of talent 104; ability 1089.</summary>
-    public const double DamageReductionPerStack = 0.012;
+    public const double DAMAGE_REDUCTION_PER_STACK = 0.012;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.DamageToHealingScaler</c> of talent 104; ability 1089.</summary>
-    public const double DamageToHealingScaler = 0.25;
+    public const double DAMAGE_TO_HEALING_SCALER = 0.25;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.Period</c> of talent 104; ability 1089.</summary>
-    public const int Period = 6;
+    public const int PERIOD = 6;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageImmediateSelfBuff.Talent.DamageBuilder.TargetCountThreshold</c> of talent 104; ability 1089.</summary>
-    public const int TargetCountThreshold = 5;
+    public const int TARGET_COUNT_THRESHOLD = 5;
 }

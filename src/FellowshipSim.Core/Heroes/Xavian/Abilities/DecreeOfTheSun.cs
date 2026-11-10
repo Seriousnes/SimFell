@@ -5,7 +5,6 @@ namespace FellowshipSim.Core.Heroes.Xavian.Abilities;
 /// with an explosion of light that deals magical damage to nearby enemies. Once the immunity fades, you take 50% reduced
 /// damage for another 5 seconds. ... Can be used during Global Cooldown." Grants Spirit of Heroism.
 /// </summary>
-[CodexAccepted("Duration")]
 public partial class DecreeOfTheSun : XavianAbility
 {
     /// <summary>Game data targetCountFalloff: effect 2561, threshold 8; maxTargets 20.</summary>
@@ -19,7 +18,7 @@ public partial class DecreeOfTheSun : XavianAbility
 
     public DecreeOfTheSun(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
         AoeTargetThreshold = TargetThreshold;
         IgnoresGcd = true;
     }

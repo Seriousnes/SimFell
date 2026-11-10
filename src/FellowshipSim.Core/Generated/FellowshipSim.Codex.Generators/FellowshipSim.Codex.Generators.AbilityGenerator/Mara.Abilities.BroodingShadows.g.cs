@@ -20,14 +20,26 @@ partial class BroodingShadows
     public const int AbilityCharges = 2;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1130.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+
+    /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Volatile Poison (effect 1731).</summary>
+    public const double AGILITY_COEFFICIENT_1 = 0.312;
+
+    /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Poison.Aoe.AgilityCoefficient</c> of ability 1130; ability 122.</summary>
+    public const double AGILITY_COEFFICIENT_2 = 1.248;
+
+    /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Predator's Rush (effect 1715).</summary>
+    public const double AGILITY_COEFFICIENT_3 = 1.2276;
+
+    /// <summary>Game data: tuning <c>Mara.StrongerBehindAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Caustic Poison (effect 1585).</summary>
+    public const double AGILITY_COEFFICIENT_4 = 4.7893;
 
     /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.TickInterval</c> of ability 1130; Predator's Rush (effect 1715).</summary>
-    public const int TickInterval = 2;
+    public const int TICK_INTERVAL = 2;
 
     /// <summary>Game data: tuning <c>Mara.StrongerBehindAttackBuilder.Poison.AddedCritChance</c> of ability 1130; Caustic Poison (effect 1585), CritChance Additive.</summary>
-    public const int AddedCritChance = 1;
+    public const int ADDED_CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>PaddingCooldown</c> of ability 1130.</summary>
-    public const double PaddingCooldown = 0.7;
+    public const double PADDING_COOLDOWN = 0.7;
 }

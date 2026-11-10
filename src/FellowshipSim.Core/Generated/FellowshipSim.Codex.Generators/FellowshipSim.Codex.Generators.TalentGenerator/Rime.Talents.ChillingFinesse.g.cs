@@ -11,8 +11,8 @@ partial class ChillingFinesse
     public const string TalentName = "Chilling Finesse";
 
     /// <summary>Game data: tuning <c>CastedDebuffAoeDamageCooldownReduction.CooldownReductionPerTick, Rime.ChanneledBeamSingleDamage.Talent.CastedDebuffAoeDamageCooldownReduction.CooldownReductionPerTick</c> of talent 43; Freezing Torrent (ability 1027).</summary>
-    public const double CastedDebuffAoeDamageCooldownReductionCooldownReductionPerTick = 0.2;
+    public const double CASTED_DEBUFF_AOE_DAMAGE_COOLDOWN_REDUCTION_COOLDOWN_REDUCTION_PER_TICK = 0.2;
 
     /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReduceCooldownOnChanneledBeam.ReductionInSeconds</c> of talent 43; Cold Snap (ability 1020).</summary>
-    public const double ReduceCooldownOnChanneledBeamReductionInSeconds = 1.5;
+    public const double REDUCE_COOLDOWN_ON_CHANNELED_BEAM_REDUCTION_IN_SECONDS = 1.5;
 }

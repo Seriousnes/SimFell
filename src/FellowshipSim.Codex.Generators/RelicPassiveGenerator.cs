@@ -18,11 +18,11 @@ namespace FellowshipSim.Codex.Generators;
 /// its relic passive record. The record is the relic passive whose name in Pascal case (letters and digits only, an
 /// apostrophe inside its word) is the class name. The constants are <c>RelicPassiveId</c>, <c>RelicPassiveName</c>, one per
 /// scalar field of the record under <c>RelicPassive</c> and the field's name (<c>RelicPassiveCooldown</c>, and
-/// <c>RelicPassiveProcsPerMinute</c> from its one proc roll), one per tuning value of the record under the tuning value's
-/// name, and <c>&lt;Slot&gt;ItemId</c> and <c>&lt;Slot&gt;ItemName</c> for each item granting the passive (one item line
+/// <c>RelicPassiveProcsPerMinute</c> from its one proc roll), one per tuning value of the record under its
+/// <see cref="TuningNames"/> name, and <c>&lt;Slot&gt;ItemId</c> and <c>&lt;Slot&gt;ItemName</c> for each item granting the passive (one item line
 /// per hero, one constant pair per item ID). <c>RelicPassiveItems</c> is a <c>public static readonly RelicItem[]</c> of
 /// those items. The class's own part has the passive's behaviour and its <c>Id</c>, <c>Name</c> and <c>Items</c> overrides.
-/// A constant whose name the class or a base class already has is left out. The game data is the AdditionalFiles
+/// A member of the class or a base class with a constant's name is CODEX029. The game data is the AdditionalFiles
 /// <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/>
 /// reports missing game data.
 /// </summary>
@@ -44,16 +44,16 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
         "The partial class {0} names the relic passive records {1} in the game data", "Codex", DiagnosticSeverity.Error, true);
 
     private static readonly DiagnosticDescriptor SharedName = new(
-        "CODEX028", "Two values of a relic passive share a name",
-        "Relic passive {0} has values {1} that differ under the name {2}; the class has no constant {2}", "Codex", DiagnosticSeverity.Warning, true);
+        "CODEX028", "A relic passive's slot has several items",
+        "Relic passive {0} has items {1} in one slot; the class has no constant {2}", "Codex", DiagnosticSeverity.Warning, true);
 
     private static readonly DiagnosticDescriptor DeclaredName = new(
         "CODEX029", "A relic passive constant's name is a member of the class",
-        "The class {0} or a base class has a member {1}, so the constant {1} of relic passive {2} is left out", "Codex", DiagnosticSeverity.Warning, true);
+        "The class {0} or a base class has a member {1}, and {1} is a constant of relic passive {2}; rename the member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>
-    /// A constant of a relic passive record: its name, C# type and literal, and its summary. A constant with no type has
-    /// several values under its name, and its summary names them.
+    /// A constant of a relic passive record: its name, C# type and literal, and its summary. An item constant with no type
+    /// has several items under its name, and its summary names them.
     /// </summary>
     private sealed record Constant(string Name, string Type, string Literal, string Summary);
 
@@ -68,9 +68,9 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A partial relic passive class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -112,7 +112,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!relicPassive) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -195,27 +195,14 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
         fields.Add(new Constant(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary));
     }
 
-    /// <summary>The record's tuning values, one per name, in the order of the game data.</summary>
-    private static List<Constant> TuningsOf(RelicPassiveDocument p)
-    {
-        var tunings = new List<Constant>();
-        foreach (var group in (p.Tuning ?? new Dictionary<string, TuningReference>()).GroupBy(t => t.Value.Name ?? ""))
+    /// <summary>The record's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
+    private static List<Constant> TuningsOf(RelicPassiveDocument p) =>
+        [.. TuningNames.Of(p.Tuning, ValueOf).Select(t =>
         {
-            if (group.Key.Length == 0) continue;
-            var values = group.Select(t => ValueOf(t.Value.Value)).Distinct().ToList();
-            string keys = string.Join(", ", group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal));
-            if (values.Count != 1 || values[0] is not { } value)
-            {
-                // Two values under one name: no constant, and the diagnostic names the keys.
-                tunings.Add(new Constant(group.Key, "", "", "tuning " + keys));
-                continue;
-            }
-            string source = SourceOf(group.First().Value);
-            tunings.Add(new Constant(group.Key, value.Type, value.Literal,
-                $"Game data: tuning <c>{Escape(keys)}</c> of relic passive {p.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}."));
-        }
-        return tunings;
-    }
+            string source = SourceOf(t.Source);
+            return new Constant(t.Name, t.Value.Type, t.Value.Literal,
+                $"Game data: tuning <c>{Escape(t.Keys)}</c> of relic passive {p.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
+        })];
 
     /// <summary>The C# type and literal of a tuning value; null for a value of no constant type.</summary>
     private static (string Type, string Literal)? ValueOf(object? value)
@@ -296,7 +283,6 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
-            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Constant>
             {
@@ -304,21 +290,16 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
                 new("RelicPassiveName", "string", Literal(record.Name), $"Game data: <c>name</c> of relic passive {record.Id}."),
             };
             all.AddRange(record.Fields);
-            var names = new HashSet<string>(all.Select(c => c.Name), StringComparer.Ordinal);
-            foreach (var constant in ItemsOf(record).Concat(record.Tunings))
+            foreach (var constant in ItemsOf(record))
             {
                 if (constant.Type.Length == 0)
                 {
-                    leftOut.Report(SharedName, constant.Name, record.Id, constant.Summary, constant.Name);
-                    continue;
-                }
-                if (!names.Add(constant.Name))
-                {
-                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, record.Id);
+                    context.ReportDiagnostic(Diagnostic.Create(SharedName, d.Location, record.Id, constant.Summary, constant.Name));
                     continue;
                 }
                 all.Add(constant);
             }
+            all.AddRange(record.Tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -331,7 +312,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, record.Id);
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, record.Id));
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -341,7 +322,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             }
             if (members.Contains("RelicPassiveItems"))
             {
-                leftOut.Report(DeclaredName, "RelicPassiveItems", d.Name, "RelicPassiveItems", record.Id);
+                context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "RelicPassiveItems", record.Id));
             }
             else
             {
@@ -355,7 +336,6 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
                 source.Append("    ];\n");
             }
             source.Append("}\n");
-            leftOut.Finish();
             context.AddSource($"RelicPassives.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

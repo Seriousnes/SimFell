@@ -11,14 +11,14 @@ partial class PyrophibianFrenzy
     public const string TalentName = "Pyrophibian Frenzy";
 
     /// <summary>Game data: tuning <c>DirectDamageIncrease.DamageScale, Firemage.FireFrogs.Ability.Talent.DirectDamageIncrease.DamageScale</c> of talent 146; Fire Frogs (ability 1268), DamageScale MultiplyCompound.</summary>
-    public const double AbilityDamageScale = 1.2;
+    public const double ABILITY_DAMAGE_SCALE = 1.2;
 
     /// <summary>Game data: tuning <c>NumFrogs, Firemage.Talent.FireFrogOnDotCrit.NumFrogs</c> of talent 146; Frog Squad (ability 1254).</summary>
-    public const int NumFrogs = 1;
+    public const int NUM_FROGS = 1;
 
     /// <summary>Game data: tuning <c>ProcChanceNotCrit, Firemage.Talent.FireFrogOnDotCrit.ProcChanceNotCrit</c> of talent 146; Frog Squad (ability 1254).</summary>
-    public const double ProcChanceNotCrit = 0.025;
+    public const double PROC_CHANCE_NOT_CRIT = 0.025;
 
     /// <summary>Game data: tuning <c>ProcChanceOnCrit, Firemage.Talent.FireFrogOnDotCrit.ProcChanceOnCrit</c> of talent 146; Frog Squad (ability 1254).</summary>
-    public const double ProcChanceOnCrit = 0.05;
+    public const double PROC_CHANCE_ON_CRIT = 0.05;
 }

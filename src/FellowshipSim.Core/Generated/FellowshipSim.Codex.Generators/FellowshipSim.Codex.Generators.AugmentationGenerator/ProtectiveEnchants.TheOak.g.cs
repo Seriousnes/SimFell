@@ -17,5 +17,5 @@ partial class TheOak
     public const int ProtectiveEnchantRandomChance = 0;
 
     /// <summary>Game data: tuning <c>ArmorMultiplier</c> of protective enchant 62.</summary>
-    public const double ArmorMultiplier = 1.25;
+    public const double ARMOR_MULTIPLIER = 1.25;
 }

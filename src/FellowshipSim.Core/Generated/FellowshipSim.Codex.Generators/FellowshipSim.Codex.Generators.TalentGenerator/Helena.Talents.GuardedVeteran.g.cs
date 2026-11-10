@@ -11,8 +11,8 @@ partial class GuardedVeteran
     public const string TalentName = "Guarded Veteran";
 
     /// <summary>Game data: tuning <c>IncreasedBlockChance.AdditionalBlockChance, Warmaster.DefenceBuff.Talent.IncreasedBlockChance.AdditionalBlockChance</c> of talent 645; Shields Up (ability 984).</summary>
-    public const double IncreasedBlockChanceAdditionalBlockChance = 0.05;
+    public const double INCREASED_BLOCK_CHANCE_ADDITIONAL_BLOCK_CHANCE = 0.05;
 
     /// <summary>Game data: tuning <c>Warmaster.Talent.IncreasedBlockChance.AdditionalBlockChance</c> of talent 645; effect 3090, BlockChance Additive.</summary>
-    public const double AdditionalBlockChance = 0.05;
+    public const double ADDITIONAL_BLOCK_CHANCE = 0.05;
 }

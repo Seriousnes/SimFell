@@ -32,29 +32,29 @@ partial class GrimCarve
     public const int AbilityRadius = 850;
 
     /// <summary>Game data: tuning <c>AdditionalTicks.Amount</c> of ability 2262; talent Bloody Mess (legendary power 697).</summary>
-    public const int Amount = 2;
+    public const int AMOUNT = 2;
 
     /// <summary>Game data: tuning <c>Aoe.Duration</c> of ability 2262.</summary>
-    public const double AoeDuration = 1.15;
+    public const double AOE_DURATION = 1.15;
 
     /// <summary>Game data: tuning <c>Aoe.Period</c> of ability 2262; talent Bloody Mess (legendary power 697).</summary>
-    public const double AoePeriod = 0.5;
+    public const double AOE_PERIOD = 0.5;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2262.</summary>
-    public const int DamageScalingTargetCountThreshold = 5;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 5;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficientPerHit</c> of ability 2262.</summary>
-    public const double DamageStrengthCoefficientPerHit = 2.076;
+    public const double DAMAGE_STRENGTH_COEFFICIENT_PER_HIT = 2.076;
 
     /// <summary>Game data: tuning <c>Empowered.AddedCritChance</c> of ability 2262; ability 2263, talent Grim Harvest (talent 766).</summary>
-    public const int AddedCritChance = 1;
+    public const int ADDED_CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2262; Rend (effect 3231).</summary>
-    public const double DamageToDotScaler = 0.5;
+    public const double DAMAGE_TO_DOT_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>ProjectileSpawnDelay</c> of ability 2262.</summary>
-    public const double ProjectileSpawnDelay = 0.14;
+    public const double PROJECTILE_SPAWN_DELAY = 0.14;
 
     /// <summary>Game data: tuning <c>Speed</c> of ability 2262.</summary>
-    public const int Speed = 5000;
+    public const int SPEED = 5000;
 }

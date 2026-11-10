@@ -11,5 +11,5 @@ partial class LastLights
     public const string TalentName = "Last Lights";
 
     /// <summary>Game data: tuning <c>IncreasedCritChanceAtLowHealth.AdditionalCritChance, Bowguy.Talent.IncreasedCritChanceAtLowHealth.AdditionalCritChance</c> of talent 164; Last Lights (effect 2204), CritChance Additive.</summary>
-    public const double AdditionalCritChance = 0.2;
+    public const double ADDITIONAL_CRIT_CHANCE = 0.2;
 }

@@ -11,19 +11,19 @@ partial class ThunderingVortex
     public const int ChestItemId = 5898;
 
     /// <summary>Game data: tuning <c>GainToIncreasedDamage.ConsumeStacks.CooldownReduction, Ink.AutoAttackBuff.Talent.GainToIncreasedDamage.ConsumeStacks.CooldownReduction</c> of legendary power 86; Square Hammer (effect 1748).</summary>
-    public const double ConsumeStacksCooldownReduction = 0.4;
+    public const double CONSUME_STACKS_COOLDOWN_REDUCTION = 0.4;
 
     /// <summary>Game data: tuning <c>GainToIncreasedDamage.DamageIncreasePerStack, Ink.AutoAttackBuff.Talent.GainToIncreasedDamage.DamageIncreasePerStack</c> of legendary power 86; Square Hammer (effect 1748).</summary>
-    public const double DamageIncreasePerStack = 0.08;
+    public const double DAMAGE_INCREASE_PER_STACK = 0.08;
 
     /// <summary>Game data: tuning <c>GainToIncreasedDamage.MaxStacks, Ink.AutoAttackBuff.Talent.GainToIncreasedDamage.MaxStacks</c> of legendary power 86; Square Hammer (effect 1748).</summary>
-    public const int MaxStacks = 3;
+    public const int MAX_STACKS = 3;
 
     /// <summary>Game data: tuning <c>GainToIncreasedDamage.PassiveCritStrikePowerScaler, Ink.AutoAttackBuff.Talent.GainToIncreasedDamage.PassiveCritStrikePowerScaler</c> of legendary power 86; Square Hammer (effect 1748), CritMultiplier MultiplyCompound.</summary>
-    public const double PassiveCritStrikePowerScaler = 1.1;
+    public const double PASSIVE_CRIT_STRIKE_POWER_SCALER = 1.1;
 
     /// <summary>Game data: tuning <c>Ink.BouncyProjectile.Talent.BouncyProjectile.IncreasedFuryGeneration.FuryScaler</c> of legendary power 86; Chain Lightning (ability 1237).</summary>
-    public const double BouncyProjectileIncreasedFuryGenerationFuryScaler = 1.5;
+    public const double BOUNCY_PROJECTILE_INCREASED_FURY_GENERATION_FURY_SCALER = 1.5;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Thundering Vortex";

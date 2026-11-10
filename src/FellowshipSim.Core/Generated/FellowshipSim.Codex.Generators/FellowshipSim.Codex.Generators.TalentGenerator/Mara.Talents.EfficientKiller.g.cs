@@ -11,14 +11,14 @@ partial class EfficientKiller
     public const string TalentName = "Efficient Killer";
 
     /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient</c> of talent 113; Corrosive Spill (effect 2310).</summary>
-    public const double AgilityCoefficient = 1.58;
+    public const double AGILITY_COEFFICIENT = 1.58;
 
     /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.Duration, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.Duration</c> of talent 113; Corrosive Spill (effect 2310).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 113; Corrosive Spill (effect 2310).</summary>
-    public const double TickInterval = 1.5;
+    public const double TICK_INTERVAL = 1.5;
 
     /// <summary>Game data: tuning <c>EnergyGainPerComboPoint, Mara.Talent.ComboPointsRefundEnergy.EnergyGainPerComboPoint</c> of talent 113; ability 1785.</summary>
-    public const int EnergyGainPerComboPoint = 1;
+    public const int ENERGY_GAIN_PER_COMBO_POINT = 1;
 }

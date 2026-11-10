@@ -11,14 +11,14 @@ partial class SolarBurn
     public const string TalentName = "Solar Burn";
 
     /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotDamageScaler</c> of talent 570; Solar Burn (effect 2659).</summary>
-    public const int DotDamageScaler = 1;
+    public const int DOT_DAMAGE_SCALER = 1;
 
     /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotDuration</c> of talent 570; Solar Burn (effect 2659).</summary>
-    public const int DotDuration = 9;
+    public const int DOT_DURATION = 9;
 
     /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotOutgoingDamageMultiplier</c> of talent 570; Solar Burn (effect 2659), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double DotOutgoingDamageMultiplier = 0.9;
+    public const double DOT_OUTGOING_DAMAGE_MULTIPLIER = 0.9;
 
     /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotPeriod</c> of talent 570; Solar Burn (effect 2659).</summary>
-    public const double DotPeriod = 1.5;
+    public const double DOT_PERIOD = 1.5;
 }

@@ -38,32 +38,35 @@ partial class Apocalypse
     public const int AbilityMaxTargets = 999999;
 
     /// <summary>Game data: tuning <c>AddedCharges.MaxCharges</c> of ability 1273.</summary>
-    public const int AddedChargesMaxCharges = 2;
+    public const int ADDED_CHARGES_MAX_CHARGES = 2;
+
+    /// <summary>Game data: tuning <c>CastTime</c> of ability 1273.</summary>
+    public const int CAST_TIME = 3;
 
     /// <summary>Game data: tuning <c>CooldownReductionFromCastedDotDetonate</c> of ability 1273.</summary>
-    public const int CooldownReductionFromCastedDotDetonate = 0;
+    public const int COOLDOWN_REDUCTION_FROM_CASTED_DOT_DETONATE = 0;
 
     /// <summary>Game data: tuning <c>Damage.DamageScalingTargetCountThreshold</c> of ability 1273; Apocalypse (effect 1833).</summary>
-    public const int DamageScalingTargetCountThreshold = 1;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 1;
 
     /// <summary>Game data: tuning <c>Damage.IntellectCoefficient</c> of ability 1273; Apocalypse (effect 1833).</summary>
-    public const double IntellectCoefficient = 24.07;
+    public const double INTELLECT_COEFFICIENT = 24.07;
 
     /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1273.</summary>
-    public const int MaxRangeDown = 3000;
+    public const int MAX_RANGE_DOWN = 3000;
 
     /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1273.</summary>
-    public const int MaxRangeUp = 2000;
+    public const int MAX_RANGE_UP = 2000;
 
     /// <summary>Game data: tuning <c>ReducedCastTime.CastTimeReductionInSeconds</c> of ability 1273; talent Apocalyptic Surge (talent 678).</summary>
-    public const double CastTimeReductionInSeconds = 1.5;
+    public const double CAST_TIME_REDUCTION_IN_SECONDS = 1.5;
 
     /// <summary>Game data: tuning <c>StunAndCooldownReduction.MaxCooldownReduction</c> of ability 1273; Stunned (effect 2270).</summary>
-    public const int MaxCooldownReduction = 30;
+    public const int MAX_COOLDOWN_REDUCTION = 30;
 
     /// <summary>Game data: tuning <c>StunAndCooldownReduction.PerHitCooldownReduction</c> of ability 1273; Stunned (effect 2270).</summary>
-    public const int PerHitCooldownReduction = 2;
+    public const int PER_HIT_COOLDOWN_REDUCTION = 2;
 
     /// <summary>Game data: tuning <c>StunAndCooldownReduction.StunDuration</c> of ability 1273; Stunned (effect 2270).</summary>
-    public const int StunDuration = 3;
+    public const int STUN_DURATION = 3;
 }

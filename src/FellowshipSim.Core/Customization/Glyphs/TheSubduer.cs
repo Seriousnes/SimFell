@@ -10,7 +10,7 @@ public partial class TheSubduer : Glyph
     public const double LowHealthThreshold = 0.30;
     /// <summary>
     /// Tooltip: "5% / 10% / 15% / 20% more damage to Low Health Enemies" (the game data's
-    /// <see cref="DamageBonusAgainstLowHealthEnemiesByRank"/> has the multipliers, 1.05 for 5%).
+    /// <see cref="DAMAGE_BONUS_AGAINST_LOW_HEALTH_ENEMIES_BY_RANK"/> has the multipliers, 1.05 for 5%).
     /// </summary>
     public static readonly double[] DamageByRank = [0.05, 0.10, 0.15, 0.20];
 

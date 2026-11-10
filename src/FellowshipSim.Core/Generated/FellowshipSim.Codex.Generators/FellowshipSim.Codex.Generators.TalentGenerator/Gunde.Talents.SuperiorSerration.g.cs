@@ -11,5 +11,5 @@ partial class SuperiorSerration
     public const string TalentName = "Superior Serration";
 
     /// <summary>Game data: tuning <c>AddedTransfer.DotTransferBonus, Gunde.InstantAoeWithBuff.Talent.AddedTransfer.DotTransferBonus</c> of talent 749; Blood Arc (ability 2291).</summary>
-    public const double AddedTransferDotTransferBonus = 0.1;
+    public const double ADDED_TRANSFER_DOT_TRANSFER_BONUS = 0.1;
 }

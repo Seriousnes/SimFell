@@ -17,5 +17,5 @@ partial class IceBlitz
     public const int AbilityCooldown = 60;
 
     /// <summary>Game data: tuning <c>Buff.Duration</c> of ability 1032; Ice Blitz (effect 1397).</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 }

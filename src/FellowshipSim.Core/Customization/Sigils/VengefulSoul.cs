@@ -18,7 +18,7 @@ public partial class VengefulSoul : Sigil
 
     public override void Bind(Hero hero)
     {
-        var buff = Buff.WithModifiers(StatModifier.Increased(StatType.PrimaryAttributeMultiplier, ForRank(BuffAdditionalPrimaryStatByRank)));
+        var buff = Buff.WithModifiers(StatModifier.Increased(StatType.PrimaryAttributeMultiplier, ForRank(BUFF_ADDITIONAL_PRIMARY_STAT_BY_RANK)));
         var rppm = new RealPpm(ProcKey, SigilProcsPerMinute);
         hero.OnDamageDealt += (in dmg) =>
         {

@@ -7,6 +7,9 @@ partial class CrimsonStrikes
     /// <summary>Crimson strikes, talent 768 of the game data.</summary>
     public const int TalentId = 768;
 
+    /// <summary>Game data: <c>name</c> of talent 768.</summary>
+    public const string TalentName = "Crimson strikes";
+
     /// <summary>Game data: tuning <c>Gunde.DashAttack.Talent.DamageMultiplier</c> of talent 768; Crimson Strikes (effect 3224), DamageScale MultiplyCompound.</summary>
-    public const double DamageMultiplier = 1.15;
+    public const double DAMAGE_MULTIPLIER = 1.15;
 }

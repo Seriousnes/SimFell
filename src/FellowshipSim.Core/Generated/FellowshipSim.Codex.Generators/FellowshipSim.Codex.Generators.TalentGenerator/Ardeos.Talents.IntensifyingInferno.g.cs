@@ -11,8 +11,8 @@ partial class IntensifyingInferno
     public const string TalentName = "Intensifying Inferno";
 
     /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreaseMax, Firemage.CastedDotBoostProjectile.Talent.DamageIncreaseFromDots.DamageIncreaseMax</c> of talent 151; Infernal Wave (ability 1276).</summary>
-    public const double DamageIncreaseFromDotsDamageIncreaseMax = 2.2;
+    public const double DAMAGE_INCREASE_FROM_DOTS_DAMAGE_INCREASE_MAX = 2.2;
 
     /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreasePerDot, Firemage.CastedDotBoostProjectile.Talent.DamageIncreaseFromDots.DamageIncreasePerDot</c> of talent 151; Infernal Wave (ability 1276).</summary>
-    public const double DamageIncreaseFromDotsDamageIncreasePerDot = 0.15;
+    public const double DAMAGE_INCREASE_FROM_DOTS_DAMAGE_INCREASE_PER_DOT = 0.15;
 }

@@ -11,7 +11,7 @@ public partial class Bloodbath : Talent
     public const int EffectId = 3216;
 
     // Combat logs: the buff stays through the hero's death (1 death).
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Duration) with { KeepsOnDeath = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, DURATION) with { KeepsOnDeath = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -22,7 +22,7 @@ public partial class Bloodbath : Talent
         {
             if (ability is GrimCarve) hero.Auras.Apply(Buff, now);
         };
-        hero.CooldownAccelerations.Add((ability, now) => ability is ReignInBlood && hero.Auras.HasAura(Buff, now) ? AdditionalCooldownRecovery : 0.0);
+        hero.CooldownAccelerations.Add((ability, now) => ability is ReignInBlood && hero.Auras.HasAura(Buff, now) ? ADDITIONAL_COOLDOWN_RECOVERY : 0.0);
         hero.CooldownAccelerationAuraKeys.Add(Buff.Key);
     }
 }

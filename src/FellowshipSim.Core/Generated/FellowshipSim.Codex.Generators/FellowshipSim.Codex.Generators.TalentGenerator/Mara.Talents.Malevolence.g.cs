@@ -11,11 +11,11 @@ partial class Malevolence
     public const string TalentName = "Malevolence";
 
     /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of talent 443; Malevolence: Queen's Fang (effect 2430), DamageScale MultiplyCompound.</summary>
-    public const int DamageScaler = 2;
+    public const int DAMAGE_SCALER = 2;
 
     /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.Duration</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 
     /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
-    public const int MaxNumberOfStacks = 2;
+    public const int MAX_NUMBER_OF_STACKS = 2;
 }

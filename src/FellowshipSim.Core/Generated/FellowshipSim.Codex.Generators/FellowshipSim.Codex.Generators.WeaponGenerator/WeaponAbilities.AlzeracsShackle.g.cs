@@ -28,6 +28,21 @@ partial class AlzeracsShackle
     /// <summary>Game data: <c>range</c> of ability 152.</summary>
     public const int AbilityRange = 3000;
 
+    /// <summary>Game data: tuning <c>Aoe.PrimaryAttributeCoefficient</c> of weapon power 348; ability 153.</summary>
+    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_1 = 0.63;
+
+    /// <summary>Game data: tuning <c>Stun.Dot.PrimaryAttributeCoefficient</c> of weapon power 348; Al'zerac's Shackle: Freeze (effect 63).</summary>
+    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_2 = 1.74;
+
+    /// <summary>Game data: tuning <c>Debuff.Dot.PrimaryAttributeCoefficient</c> of weapon power 348; Al'zerac's Shackle: Slow (effect 65).</summary>
+    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_3 = 0.252;
+
+    /// <summary>Game data: tuning <c>Stun.Dot.TickInterval</c> of weapon power 348; Al'zerac's Shackle: Freeze (effect 63).</summary>
+    public const double TICK_INTERVAL_1 = 1.5;
+
+    /// <summary>Game data: tuning <c>Debuff.Dot.TickInterval</c> of weapon power 348; Al'zerac's Shackle: Slow (effect 65).</summary>
+    public const int TICK_INTERVAL_2 = 2;
+
     /// <summary>Game data: tuning <c>Stun.Duration</c> of weapon power 348; Al'zerac's Shackle: Freeze (effect 64).</summary>
-    public const int Duration = 3;
+    public const int DURATION = 3;
 }

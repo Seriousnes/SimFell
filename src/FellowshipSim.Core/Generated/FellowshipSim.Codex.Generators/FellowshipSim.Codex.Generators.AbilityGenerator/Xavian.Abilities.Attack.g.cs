@@ -17,11 +17,11 @@ partial class Attack
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1854.</summary>
-    public const double HitVisualDelay = 0.5;
+    public const double HIT_VISUAL_DELAY = 0.5;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1854.</summary>
-    public const double StrengthCoefficient = 0.98;
+    public const double STRENGTH_COEFFICIENT = 0.98;
 
     /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1854.</summary>
-    public const int SwingTimer = 3;
+    public const int SWING_TIMER = 3;
 }

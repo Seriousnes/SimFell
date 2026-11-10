@@ -11,8 +11,8 @@ partial class AgonizingBlaze
     public const string TalentName = "Agonizing Blaze";
 
     /// <summary>Game data: tuning <c>StackingBoost.PerStackDamageIncrease, Firemage.InstantSingleTargetDot.Talent.StackingBoost.PerStackDamageIncrease</c> of talent 145; Searing Blaze (ability 1587).</summary>
-    public const double StackingBoostPerStackDamageIncrease = 0.04;
+    public const double STACKING_BOOST_PER_STACK_DAMAGE_INCREASE = 0.04;
 
     /// <summary>Game data: tuning <c>StackingBoost.StackGainPeriod, Firemage.InstantSingleTargetDot.Talent.StackingBoost.StackGainPeriod</c> of talent 145; Searing Blaze (ability 1587).</summary>
-    public const int StackingBoostStackGainPeriod = 1;
+    public const int STACKING_BOOST_STACK_GAIN_PERIOD = 1;
 }

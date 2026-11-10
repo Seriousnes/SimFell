@@ -35,41 +35,44 @@ partial class GlacialBlast
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1028.</summary>
-    public const double CastingDuration = 1.5;
+    public const double CASTING_DURATION = 1.5;
 
     /// <summary>Game data: tuning <c>ChanceOnOrbGain.NextSpenderCritIncrease.Buff.CritChance</c> of ability 1028; Frostweaver's Wrath (effect 2305).</summary>
-    public const int CritChance = 1;
+    public const int CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.AdditionalDamage</c> of ability 1028; talent Greater Glacial Blast (talent 190).</summary>
-    public const double AdditionalDamage = 1.4;
+    public const double ADDITIONAL_DAMAGE = 1.4;
 
     /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.CastTimeIncreaseDuration</c> of ability 1028; talent Greater Glacial Blast (talent 190).</summary>
-    public const double CastTimeIncreaseDuration = 0.5;
+    public const double CAST_TIME_INCREASE_DURATION = 0.5;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.CritChanceIncrease</c> of ability 1028; CritChance Additive.</summary>
-    public const double IncreasedCritChanceCritChanceIncrease = 0.2;
+    public const double INCREASED_CRIT_CHANCE_CRIT_CHANCE_INCREASE = 0.2;
+
+    /// <summary>Game data: tuning <c>InstantAndBonusDamage.DamageMultiplier</c> of ability 1028; Glacial Assault (effect 1377), talent Glacial Assault (talent 38).</summary>
+    public const double DAMAGE_MULTIPLIER = 1.4;
 
     /// <summary>Game data: tuning <c>InstantAndBonusDamage.MaxStacks</c> of ability 1028; Glacial Assault (effect 1377), talent Glacial Assault (talent 38).</summary>
-    public const int MaxStacks = 4;
+    public const int MAX_STACKS = 4;
 
     /// <summary>Game data: tuning <c>IntellectCoefficient</c> of ability 1028.</summary>
-    public const double IntellectCoefficient = 10.24;
+    public const double INTELLECT_COEFFICIENT = 10.24;
 
     /// <summary>Game data: tuning <c>OrbCost</c> of ability 1028; talent Greater Glacial Blast (talent 190).</summary>
-    public const int OrbCost = 2;
+    public const int ORB_COST = 2;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.AddedCritChance</c> of ability 1028; Icy Flow (effect 2308).</summary>
-    public const double AddedCritChance = 0.2;
+    public const double ADDED_CRIT_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.AddedHasteWhileCastingOrbSpender</c> of ability 1028; Icy Flow (effect 2308), talent Icy Flow (talent 44), Haste Additive.</summary>
-    public const double AddedHasteWhileCastingOrbSpender = 0.5;
+    public const double ADDED_HASTE_WHILE_CASTING_ORB_SPENDER = 0.5;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.BuffDuration</c> of ability 1028; Icy Flow (effect 2308), talent Icy Flow (talent 44).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 
     /// <summary>Game data: tuning <c>ReducesCastTimeOnOrbSpender.ReductionInSeconds</c> of ability 1028; Icy Flow (effect 2308).</summary>
-    public const double ReductionInSeconds = 0.5;
+    public const double REDUCTION_IN_SECONDS = 0.5;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1028.</summary>
-    public const double Spread = 0.2;
+    public const double SPREAD = 0.2;
 }

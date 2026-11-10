@@ -11,14 +11,14 @@ partial class KillEmAll
     public const string TalentName = "Kill Em All";
 
     /// <summary>Game data: tuning <c>AlwaysHitWindowBuff.Buff.Duration, Ink.AutoAttackBuff.Talent.AlwaysHitWindowBuff.Buff.Duration</c> of talent 671; Kill Em All (effect 3160).</summary>
-    public const int Duration = 8;
+    public const int DURATION = 8;
 
     /// <summary>Game data: tuning <c>AlwaysHitWindowBuff.Buff.MaxStacks, Ink.AutoAttackBuff.Talent.AlwaysHitWindowBuff.Buff.MaxStacks</c> of talent 671; Kill Em All (effect 3160).</summary>
-    public const int MaxStacks = 2;
+    public const int MAX_STACKS = 2;
 
     /// <summary>Game data: tuning <c>AlwaysHitWindowBuff.ProcChance, Ink.AutoAttackBuff.Talent.AlwaysHitWindowBuff.ProcChance</c> of talent 671; Heavy Strike (ability 1240).</summary>
-    public const double AlwaysHitWindowBuffProcChance = 0.1;
+    public const double ALWAYS_HIT_WINDOW_BUFF_PROC_CHANCE = 0.1;
 
     /// <summary>Game data: tuning <c>Ink.AutoAttackBuff.Talent.AlwaysHitWindowBuff.Buff.AutoAttackBuffDamageScaler</c> of talent 671; Kill Em All (effect 3160), DamageScale MultiplyCompound.</summary>
-    public const double AutoAttackBuffDamageScaler = 2.5;
+    public const double AUTO_ATTACK_BUFF_DAMAGE_SCALER = 2.5;
 }

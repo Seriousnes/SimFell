@@ -18,11 +18,11 @@ public partial class RollingFlames : Talent
         if (engulfing == null) return;
         if (searing != null)
         {
-            searing.Hit += (in DamageContext hit) => hero.ReduceCooldown(engulfing.Name, SimTime.FromSeconds(InstantSingleDotReducesCooldownReductionInSeconds), hit.Timestamp);
+            searing.Hit += (in DamageContext hit) => hero.ReduceCooldown(engulfing.Name, SimTime.FromSeconds(INSTANT_SINGLE_DOT_REDUCES_COOLDOWN_REDUCTION_IN_SECONDS), hit.Timestamp);
         }
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (ability is InfernalWave) hero.ReduceCooldown(engulfing.Name, SimTime.FromSeconds(ReductionInSeconds), now);
+            if (ability is InfernalWave) hero.ReduceCooldown(engulfing.Name, SimTime.FromSeconds(REDUCTION_IN_SECONDS), now);
         };
     }
 }

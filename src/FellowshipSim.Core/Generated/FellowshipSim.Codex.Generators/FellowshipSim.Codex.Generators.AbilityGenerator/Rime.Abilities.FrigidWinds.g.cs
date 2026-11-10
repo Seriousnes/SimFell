@@ -20,17 +20,17 @@ partial class FrigidWinds
     public const bool AbilityCastTimeScalesWithHaste = true;
 
     /// <summary>Game data: tuning <c>ConeRange</c> of ability 1021.</summary>
-    public const int ConeRange = 1200;
+    public const int CONE_RANGE = 1200;
 
     /// <summary>Game data: tuning <c>DebuffDuration</c> of ability 1021.</summary>
-    public const int DebuffDuration = 12;
+    public const int DEBUFF_DURATION = 12;
 
     /// <summary>Game data: tuning <c>KnockbackDistance</c> of ability 1021.</summary>
-    public const int KnockbackDistance = 600;
+    public const int KNOCKBACK_DISTANCE = 600;
 
     /// <summary>Game data: tuning <c>KnockbackDuration</c> of ability 1021.</summary>
-    public const double KnockbackDuration = 0.5;
+    public const double KNOCKBACK_DURATION = 0.5;
 
     /// <summary>Game data: tuning <c>MovementSpeedReductionScale</c> of ability 1021; MoveSpeed Multiplicitive.</summary>
-    public const double MovementSpeedReductionScale = 0.5;
+    public const double MOVEMENT_SPEED_REDUCTION_SCALE = 0.5;
 }

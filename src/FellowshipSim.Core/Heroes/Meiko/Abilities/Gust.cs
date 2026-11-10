@@ -4,7 +4,6 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// Ability 1123: "Quickly travel forward a short distance. Can be used during Global Cooldown". 20 second cooldown, 2
 /// charges.
 /// </summary>
-[CodexAccepted("MaxCharges")]
 public partial class Gust : MeikoAbility
 {
     public Gust(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory)

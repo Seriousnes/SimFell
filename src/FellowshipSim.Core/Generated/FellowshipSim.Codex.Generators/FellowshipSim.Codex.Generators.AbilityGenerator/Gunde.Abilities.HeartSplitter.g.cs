@@ -29,26 +29,26 @@ partial class HeartSplitter
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>Charges.DoubleStrike.Chance</c> of ability 2294; talent Bleeding Hearts (legendary power 698).</summary>
-    public const double DoubleStrikeChance = 0.25;
+    public const double DOUBLE_STRIKE_CHANCE = 0.25;
 
     /// <summary>Game data: tuning <c>Charges.DoubleStrike.DelayBetweenStrikes</c> of ability 2294; talent Bleeding Hearts (legendary power 698).</summary>
-    public const double DoubleStrikeDelayBetweenStrikes = 0.4;
+    public const double DOUBLE_STRIKE_DELAY_BETWEEN_STRIKES = 0.4;
 
     /// <summary>Game data: tuning <c>Charges.NumOfCharges</c> of ability 2294; talent Bleeding Hearts (legendary power 698).</summary>
-    public const int NumOfCharges = 2;
+    public const int NUM_OF_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>Damage.DotCoefficient</c> of ability 2294; Heart Splitter (effect 3240).</summary>
-    public const double DotCoefficient = 0.3;
+    public const double DOT_COEFFICIENT = 0.3;
 
     /// <summary>Game data: tuning <c>Damage.StrengthCoefficient</c> of ability 2294; Heart Splitter (effect 3240).</summary>
-    public const double StrengthCoefficient = 4.7;
+    public const double STRENGTH_COEFFICIENT = 4.7;
 
     /// <summary>Game data: tuning <c>IncreasedDirectDamage.DamageScale</c> of ability 2294; talent Darkening Hearts (talent 757), DamageScale MultiplyCompound.</summary>
-    public const double DamageScale = 1.1;
+    public const double DAMAGE_SCALE = 1.1;
 
     /// <summary>Game data: tuning <c>ReducedTickSpeed.PeriodFrequencyIncrease</c> of ability 2294; Rend (effect 3231), talent Deep Rend (talent 751).</summary>
-    public const double PeriodFrequencyIncrease = 1.1;
+    public const double PERIOD_FREQUENCY_INCREASE = 1.1;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2294.</summary>
-    public const double VisualDelay = 0.35;
+    public const double VISUAL_DELAY = 0.35;
 }

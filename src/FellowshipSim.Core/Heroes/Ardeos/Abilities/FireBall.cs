@@ -5,7 +5,6 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// enemies in the radius and setting them on fire (<see cref="FireBallDot"/>). The hero's Haste is also applied as
 /// Cooldown Acceleration on Fire Ball. Damage falls off with the target count (game data targetCountFalloff).
 /// </summary>
-[CodexAccepted("CritChanceIncrease")]
 public partial class FireBall : ArdeosAbility
 {
     /// <summary>The additional share of the initial damage dealt over the effect's duration.</summary>
@@ -20,9 +19,9 @@ public partial class FireBall : ArdeosAbility
 
     public FireBall(Ardeos owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AoeDamageIntellectCoefficient;
+        BaseCoefficient = AOE_DAMAGE_INTELLECT_COEFFICIENT;
         SetCooldown(AbilityCooldown, AbilityCharges, scalesWithHaste: true);
-        AoeTargetThreshold = DamageScalingTargetCountThreshold;
+        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
         Dot = new FireBallDot(owner);
     }
 
@@ -41,7 +40,7 @@ public partial class FireBall : ArdeosAbility
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         if (struck.Count == 0) return;
-        double falloff = struck.Count > DamageScalingTargetCountThreshold ? Math.Sqrt((double)DamageScalingTargetCountThreshold / struck.Count) : 1.0;
+        double falloff = struck.Count > DAMAGE_SCALING_TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)DAMAGE_SCALING_TARGET_COUNT_THRESHOLD / struck.Count) : 1.0;
         foreach (var enemy in struck)
         {
             DealDamage(ctx, enemy, damageMultiplier: falloff * castDamage, extraCritChance: castCrit, onLanded: (c, dealt) =>

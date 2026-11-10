@@ -14,11 +14,11 @@ partial class GrimHarvest
     public const int TalentDuration = 8;
 
     /// <summary>Game data: tuning <c>AddedCritChance, Gunde.TargetedAoeProjectile.Talent.Empowered.AddedCritChance</c> of talent 766; ability 2263.</summary>
-    public const int AddedCritChance = 1;
+    public const int ADDED_CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>Duration, Gunde.TargetedAoeProjectile.Talent.Empowered.Duration</c> of talent 766; ability 2263.</summary>
-    public const int Duration = 8;
+    public const int DURATION = 8;
 
     /// <summary>Game data: tuning <c>ProcChance, Gunde.TargetedAoeProjectile.Talent.Empowered.ProcChance</c> of talent 766; ability 2263.</summary>
-    public const double ProcChance = 0.06;
+    public const double PROC_CHANCE = 0.06;
 }

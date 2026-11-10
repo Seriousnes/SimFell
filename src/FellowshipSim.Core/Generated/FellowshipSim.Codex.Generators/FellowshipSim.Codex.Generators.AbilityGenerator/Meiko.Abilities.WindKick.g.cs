@@ -29,23 +29,23 @@ partial class WindKick
     public const int AbilityRadius = 500;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1102.</summary>
-    public const double AgilityCoefficient = 0.8775;
+    public const double AGILITY_COEFFICIENT = 0.8775;
 
     /// <summary>Game data: tuning <c>EnergyCost</c> of ability 1102.</summary>
-    public const int EnergyCost = 30;
+    public const int ENERGY_COST = 30;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1102; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TargetDebuffIncreasedDamage = 1.1;
+    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1102; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
-    public const double WindDamageIncrease = 1.2;
+    public const double WIND_DAMAGE_INCREASE = 1.2;
 
     /// <summary>Game data: tuning <c>NumOfTargetsToCleave</c> of ability 1102.</summary>
-    public const int NumOfTargetsToCleave = 19;
+    public const int NUM_OF_TARGETS_TO_CLEAVE = 19;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1102.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1102.</summary>
-    public const int TargetThresholdForDamageScale = 3;
+    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 3;
 }

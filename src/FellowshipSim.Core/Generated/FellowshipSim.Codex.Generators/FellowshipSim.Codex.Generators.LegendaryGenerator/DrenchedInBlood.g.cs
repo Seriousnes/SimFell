@@ -11,13 +11,13 @@ partial class DrenchedInBlood
     public const int ChestItemId = 5898;
 
     /// <summary>Game data: tuning <c>Buff.AdditionalExpertise, Mara.Talent.SpiritProcToExpertise.Buff.AdditionalExpertise</c> of legendary power 421; Drenched in Blood (effect 2262), Expertise Additive.</summary>
-    public const double AdditionalExpertise = 0.24;
+    public const double ADDITIONAL_EXPERTISE = 0.24;
 
     /// <summary>Game data: tuning <c>Buff.Duration, Mara.Talent.SpiritProcToExpertise.Buff.Duration</c> of legendary power 421; Drenched in Blood (effect 2262).</summary>
-    public const int Duration = 8;
+    public const int DURATION = 8;
 
     /// <summary>Game data: tuning <c>Mara.Talent.SpiritProcToExpertise.Cooldown</c> of legendary power 421; ability 1552.</summary>
-    public const int Cooldown = 0;
+    public const int COOLDOWN = 0;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Drenched in Blood";

@@ -4,12 +4,11 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// Ability 1100: "Deals 140.4% of Agility damage to target enemy. Grants access to Fist Technique finishers. Combo
 /// Builder". Logged under 1100.
 /// </summary>
-[CodexAccepted("DamageMultiplier")]
 public partial class EarthFist : ComboBuilder
 {
     public EarthFist(Meiko owner) : base(owner, AbilityId, AbilityName, Technique.Fist)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = AGILITY_COEFFICIENT;
     }
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target) => DealDamage(ctx, target);

@@ -28,7 +28,7 @@ public partial class UnscarredSoul : Talent
     {
         public Reflect(Helena owner) : base(owner, LogIds.Effect(ReflectEffectId), TalentName)
         {
-            BaseCoefficient = StrengthCoefficient;
+            BaseCoefficient = STRENGTH_COEFFICIENT;
             DamageLogId = LogIds.Effect(ReflectEffectId);
         }
 

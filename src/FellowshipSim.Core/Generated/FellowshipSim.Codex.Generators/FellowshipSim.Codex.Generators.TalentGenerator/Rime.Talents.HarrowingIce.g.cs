@@ -11,14 +11,14 @@ partial class HarrowingIce
     public const string TalentName = "Harrowing Ice";
 
     /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.CooldownReductionToFlightOfNavir.Seconds</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const int CooldownReductionToFlightOfNavirSeconds = 5;
+    public const int COOLDOWN_REDUCTION_TO_FLIGHT_OF_NAVIR_SECONDS = 5;
 
     /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.DamageScalerPerStack</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const double DamageScalerPerStack = 0.03;
+    public const double DAMAGE_SCALER_PER_STACK = 0.03;
 
     /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.Duration</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.MaxStacks</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const int MaxStacks = 31;
+    public const int MAX_STACKS = 31;
 }

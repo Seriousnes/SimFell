@@ -11,8 +11,8 @@ partial class Aftershock
     public const string TalentName = "Aftershock";
 
     /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.Duration, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.Duration, Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.Duration</c> of talent 213; Vanguard's Advance (effect 2429).</summary>
-    public const int Duration = 5;
+    public const int DURATION = 5;
 
     /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.IncomingDamageDivider, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.IncomingDamageDivider</c> of talent 213; Vanguard's Advance (effect 2429), PhysicalIncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageDivider = 0.95;
+    public const double INCOMING_DAMAGE_DIVIDER = 0.95;
 }

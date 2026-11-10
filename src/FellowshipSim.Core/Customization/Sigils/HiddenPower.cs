@@ -25,7 +25,7 @@ public partial class HiddenPower : Sigil
     public override void Bind(Hero hero)
     {
         var revealed = hero.Register(AuraDef.Effect("Power Revealed", BuffEffectId, BuffSeconds,
-            modifiers: StatModifier.Increased(StatType.PrimaryAttributeMultiplier, ForRank(BuffAdditionalMainStatByRank))) with { KeepsOnDeath = true, IsProc = true });
+            modifiers: StatModifier.Increased(StatType.PrimaryAttributeMultiplier, ForRank(BUFF_ADDITIONAL_MAIN_STAT_BY_RANK))) with { KeepsOnDeath = true, IsProc = true });
         var rppm = new RealPpm(ProcKey, SigilProcsPerMinute);
         hero.OnCastCompleted += (_, _, now) =>
         {

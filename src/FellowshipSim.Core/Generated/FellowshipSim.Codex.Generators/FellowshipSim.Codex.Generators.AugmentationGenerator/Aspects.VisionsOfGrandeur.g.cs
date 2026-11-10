@@ -17,5 +17,5 @@ partial class VisionsOfGrandeur
     public const int AspectRandomChance = 1;
 
     /// <summary>Game data: rank run <c>Trait.WeaponAndSpiritPoints.SpiritPointsGain.WeaponCooldownFraction</c> of aspect 47, transform <c>raw</c>; the tooltip has 25% / 50% / 75% / 100%.</summary>
-    public static readonly double[] SpiritPointsGainWeaponCooldownFractionByRank = [0.25, 0.5, 0.75, 1];
+    public static readonly double[] SPIRIT_POINTS_GAIN_WEAPON_COOLDOWN_FRACTION_BY_RANK = [0.25, 0.5, 0.75, 1];
 }

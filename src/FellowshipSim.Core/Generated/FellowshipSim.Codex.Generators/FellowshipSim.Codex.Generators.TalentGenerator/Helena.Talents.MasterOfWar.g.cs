@@ -11,5 +11,5 @@ partial class MasterOfWar
     public const string TalentName = "Master of War";
 
     /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Warmaster.AoeIncite.Talent.ReducedCooldownPerBlock.CooldownReductionInSeconds</c> of talent 647; ability 2217.</summary>
-    public const double CooldownReductionInSeconds = 0.2;
+    public const double COOLDOWN_REDUCTION_IN_SECONDS = 0.2;
 }

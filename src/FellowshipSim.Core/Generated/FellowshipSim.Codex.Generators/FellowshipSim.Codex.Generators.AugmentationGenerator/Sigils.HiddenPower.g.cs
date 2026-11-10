@@ -20,5 +20,5 @@ partial class HiddenPower
     public const double SigilProcsPerMinute = 2.6;
 
     /// <summary>Game data: rank run <c>Trait.AbilityToIncreasedMainStat.Buff.AdditionalMainStat</c> of sigil 1, transform <c>delta</c>; the tooltip has 7.2% / 12.8% / 18.4% / 24%.</summary>
-    public static readonly double[] BuffAdditionalMainStatByRank = [1.072, 1.128, 1.184, 1.24];
+    public static readonly double[] BUFF_ADDITIONAL_MAIN_STAT_BY_RANK = [1.072, 1.128, 1.184, 1.24];
 }

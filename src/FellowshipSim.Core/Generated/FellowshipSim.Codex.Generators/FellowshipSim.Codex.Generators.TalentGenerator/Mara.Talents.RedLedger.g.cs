@@ -11,11 +11,11 @@ partial class RedLedger
     public const string TalentName = "Red Ledger";
 
     /// <summary>Game data: tuning <c>AdditionalHaste, Mara.BleedAttackSpender.Talent.HasteIncrease.AdditionalHaste</c> of talent 108; ability 1434.</summary>
-    public const double AdditionalHaste = 0.05;
+    public const double ADDITIONAL_HASTE = 0.05;
 
     /// <summary>Game data: tuning <c>AdditionalHastePerAdditionalTarget, Mara.BleedAttackSpender.Talent.HasteIncrease.AdditionalHastePerAdditionalTarget</c> of talent 108; ability 1434.</summary>
-    public const double AdditionalHastePerAdditionalTarget = 0.01;
+    public const double ADDITIONAL_HASTE_PER_ADDITIONAL_TARGET = 0.01;
 
     /// <summary>Game data: tuning <c>MaxThreshold, Mara.BleedAttackSpender.Talent.HasteIncrease.MaxThreshold</c> of talent 108; ability 1434.</summary>
-    public const double MaxThreshold = 0.1;
+    public const double MAX_THRESHOLD = 0.1;
 }

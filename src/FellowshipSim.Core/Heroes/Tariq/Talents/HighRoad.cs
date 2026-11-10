@@ -20,7 +20,7 @@ public partial class HighRoad : Talent
         leapSmash.Smashed += (ctx, struck) =>
         {
             if (struck.Count > 0) tariq.GainFury(FuryGain, ctx, struck[0]);
-            else hero.ReduceCooldown(leapSmash.Name, SimTime.FromSeconds(ReducedCooldownIfNoHitCooldownReductionInSeconds), ctx.CurrentTime);
+            else hero.ReduceCooldown(leapSmash.Name, SimTime.FromSeconds(REDUCED_COOLDOWN_IF_NO_HIT_COOLDOWN_REDUCTION_IN_SECONDS), ctx.CurrentTime);
         };
     }
 }

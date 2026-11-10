@@ -11,8 +11,8 @@ partial class HarmonicResidual
     public const string TalentName = "Harmonic Residual";
 
     /// <summary>Game data: tuning <c>DamageReductionLessHeal.Duration, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.Duration</c> of talent 106; Everlasting Spirit (effect 1510).</summary>
-    public const int Duration = 9;
+    public const int DURATION = 9;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.DamageReductionWhileOnCooldown.StoneShieldReductionScaler</c> of talent 106; Twin Souls: Bulwark (ability 1082).</summary>
-    public const double DamageReductionWhileOnCooldownStoneShieldReductionScaler = 0.85;
+    public const double DAMAGE_REDUCTION_WHILE_ON_COOLDOWN_STONE_SHIELD_REDUCTION_SCALER = 0.85;
 }

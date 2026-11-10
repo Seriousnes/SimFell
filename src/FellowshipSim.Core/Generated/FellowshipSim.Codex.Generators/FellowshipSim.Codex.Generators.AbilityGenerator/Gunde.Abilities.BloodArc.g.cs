@@ -35,38 +35,38 @@ partial class BloodArc
     public const int AbilityMaxTargets = 9999;
 
     /// <summary>Game data: tuning <c>AdditionalStack.MaxStacks</c> of ability 2291; Blood Arc (effect 3210).</summary>
-    public const int MaxStacks = 2;
+    public const int MAX_STACKS = 2;
 
     /// <summary>Game data: tuning <c>AoeRadius</c> of ability 2291.</summary>
-    public const int AoeRadius = 700;
+    public const int AOE_RADIUS = 700;
 
     /// <summary>Game data: tuning <c>ConePieAngleWidth</c> of ability 2291.</summary>
-    public const int ConePieAngleWidth = 120;
+    public const int CONE_PIE_ANGLE_WIDTH = 120;
 
     /// <summary>Game data: tuning <c>ConePieMinRadius</c> of ability 2291.</summary>
-    public const int ConePieMinRadius = 0;
+    public const int CONE_PIE_MIN_RADIUS = 0;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2291.</summary>
-    public const int DamageScalingTargetCountThreshold = 8;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 2291.</summary>
-    public const double DamageStrengthCoefficient = 2.7092;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 2.7092;
 
     /// <summary>Game data: tuning <c>Empowered.AddedCriticalStrikeChance</c> of ability 2291; Death's Arc (effect 3208), talent Death's Arc (talent 748).</summary>
-    public const int EmpoweredAddedCriticalStrikeChance = 1;
+    public const int EMPOWERED_ADDED_CRITICAL_STRIKE_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2291; Rend (effect 3231).</summary>
-    public const double DamageToDotScaler = 0.5;
+    public const double DAMAGE_TO_DOT_SCALER = 0.5;
 
     /// <summary>Game data: tuning <c>InstantAoeWithBuff.DamageAndOrbs.Duration</c> of ability 2291; ability 2306.</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>InstantAoeWithBuff.DamageAndOrbs.Period</c> of ability 2291; ability 2306.</summary>
-    public const int Period = 2;
+    public const int PERIOD = 2;
 
     /// <summary>Game data: tuning <c>InstantAoeWithBuff.DamageAndOrbs.StacksPerOrb</c> of ability 2291; ability 2306.</summary>
-    public const int StacksPerOrb = 3;
+    public const int STACKS_PER_ORB = 3;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 2291.</summary>
-    public const double VisualHitDelay = 0.2;
+    public const double VISUAL_HIT_DELAY = 0.2;
 }

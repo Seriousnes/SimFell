@@ -19,7 +19,7 @@ public partial class ThemBones : Talent
         hero.OnCastResolving += cast =>
         {
             if (cast.Ability is not SkullCrusher || hero.SimContext is not { } ctx) return;
-            if (ctx.Outcomes.RollProc(ProcKey, ProcAddedCritChanceChance, ctx, cast.Target)) cast.CritChance += ProcAddedCritChanceAddedCritChance;
+            if (ctx.Outcomes.RollProc(ProcKey, PROC_ADDED_CRIT_CHANCE_CHANCE, ctx, cast.Target)) cast.CritChance += PROC_ADDED_CRIT_CHANCE_ADDED_CRIT_CHANCE;
         };
     }
 }

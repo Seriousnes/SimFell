@@ -11,11 +11,11 @@ partial class SunsTouch
     public const string TalentName = "Sun's Touch";
 
     /// <summary>Game data: tuning <c>DotHot.DirectValueToPeriodicValueScaler, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.DirectValueToPeriodicValueScaler</c> of talent 607; Sun's Touch (effect 2724).</summary>
-    public const double DirectValueToPeriodicValueScaler = 0.3;
+    public const double DIRECT_VALUE_TO_PERIODIC_VALUE_SCALER = 0.3;
 
     /// <summary>Game data: tuning <c>DotHot.Duration, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Duration</c> of talent 607; Sun's Touch (effect 2724).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>DotHot.Period, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Period</c> of talent 607; Sun's Touch (effect 2724).</summary>
-    public const double Period = 1.5;
+    public const double PERIOD = 1.5;
 }

@@ -23,14 +23,20 @@ partial class MaidenOfDeath
     public const int AbilityDuration = 10;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 1206.</summary>
-    public const int Duration = 10;
+    public const int DURATION = 10;
 
     /// <summary>Game data: tuning <c>EnergyGainMultiplier</c> of ability 1206.</summary>
-    public const double EnergyGainMultiplier = 1.2;
+    public const double ENERGY_GAIN_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1206.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+
+    /// <summary>Game data: tuning <c>IncreasedDamage.DamageMultiplier</c> of ability 1206; Maiden of Death (effect 2194), talent Maiden's Doom (talent 442), DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>IncreasedDamage.DamageMultiplierAtLowHealth</c> of ability 1206; Maiden of Death (effect 2194), talent Maiden's Doom (talent 442), DamageScale MultiplyCompound.</summary>
-    public const double DamageMultiplierAtLowHealth = 1.4;
+    public const double DAMAGE_MULTIPLIER_AT_LOW_HEALTH = 1.4;
+
+    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1206.</summary>
+    public const int MAX_CHARGES = 1;
 }

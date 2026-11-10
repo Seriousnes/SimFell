@@ -29,38 +29,41 @@ partial class ShiningHalo
     public const int AbilityRadius = 800;
 
     /// <summary>Game data: tuning <c>AdditionalMaxDuration.AddedSeconds</c> of ability 1859.</summary>
-    public const int AdditionalMaxDurationAddedSeconds = 6;
+    public const int ADDITIONAL_MAX_DURATION_ADDED_SECONDS = 6;
 
     /// <summary>Game data: tuning <c>AoeDuration</c> of ability 1859.</summary>
-    public const int AoeDuration = 12;
+    public const int AOE_DURATION = 12;
 
     /// <summary>Game data: tuning <c>AoeEffectVisualDelay</c> of ability 1859.</summary>
-    public const double AoeEffectVisualDelay = 0.3;
+    public const double AOE_EFFECT_VISUAL_DELAY = 0.3;
 
     /// <summary>Game data: tuning <c>AoeHalfHeight</c> of ability 1859.</summary>
-    public const int AoeHalfHeight = 200;
+    public const int AOE_HALF_HEIGHT = 200;
 
     /// <summary>Game data: tuning <c>AoePeriod</c> of ability 1859.</summary>
-    public const double AoePeriod = 1.5;
+    public const double AOE_PERIOD = 1.5;
 
     /// <summary>Game data: tuning <c>CooldownReductionPerResourceConsumed</c> of ability 1859.</summary>
-    public const int CooldownReductionPerResourceConsumed = 5;
+    public const int COOLDOWN_REDUCTION_PER_RESOURCE_CONSUMED = 5;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1859.</summary>
-    public const int DamageScalingTargetCountThreshold = 12;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 12;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1859.</summary>
-    public const double DamageStrengthCoefficient = 0.27;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 0.27;
+
+    /// <summary>Game data: tuning <c>ManaCost</c> of ability 1859; Mana Additive.</summary>
+    public const int MANA_COST = 218;
 
     /// <summary>Game data: tuning <c>SelfIncomingDamageMultiplier</c> of ability 1859; IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double SelfIncomingDamageMultiplier = 0.8;
+    public const double SELF_INCOMING_DAMAGE_MULTIPLIER = 0.8;
 
     /// <summary>Game data: tuning <c>StackingBoostBuff.DamageScaler</c> of ability 1859; ability 1911, talent Light's Oath (talent 568).</summary>
-    public const int DamageScaler = 2;
+    public const int DAMAGE_SCALER = 2;
 
     /// <summary>Game data: tuning <c>StackingBoostBuff.ProcStackCost</c> of ability 1859; ability 1911, talent Light's Oath (talent 568).</summary>
-    public const int ProcStackCost = 8;
+    public const int PROC_STACK_COST = 8;
 
     /// <summary>Game data: tuning <c>Talent.DamageIncrease.Multiplier</c> of ability 1859; talent Grand Halo (talent 571), DamageScale MultiplyCompound.</summary>
-    public const double Multiplier = 1.25;
+    public const double MULTIPLIER = 1.25;
 }

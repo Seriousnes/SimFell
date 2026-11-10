@@ -35,26 +35,35 @@ partial class Multishot
     public const int AbilityRadius = 600;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1318.</summary>
-    public const double AgilityCoefficient = 3.7191;
+    public const double AGILITY_COEFFICIENT = 3.7191;
+
+    /// <summary>Game data: tuning <c>ChargesCooldownAndDuration.DamageBonus</c> of ability 1318; Skystrider's Supremacy (ability 1398), talent Fervent Supremacy (talent 136), DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_BONUS_1 = 1.5;
+
+    /// <summary>Game data: tuning <c>AoeProjectileDamageEmpowered.DamageBonus</c> of ability 1318; ability 1524, talent Focused Expanse (talent 167), DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_BONUS_2 = 1.2;
 
     /// <summary>Game data: tuning <c>AoeProjectileDamageEmpowered.MinNumOfProjectiles</c> of ability 1318; ability 1524, talent Focused Expanse (talent 167).</summary>
-    public const int MinNumOfProjectiles = 3;
+    public const int MIN_NUM_OF_PROJECTILES = 3;
 
     /// <summary>Game data: tuning <c>CleaveAngel</c> of ability 1318.</summary>
-    public const int CleaveAngel = 100;
+    public const int CLEAVE_ANGEL = 100;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 1318.</summary>
-    public const int Cost = 20;
+    public const int COST = 20;
 
     /// <summary>Game data: tuning <c>DamageBounceSelfBuff.CooldownReductionInSeconds</c> of ability 1318.</summary>
-    public const int DamageBounceSelfBuffCooldownReductionInSeconds = 3;
+    public const int DAMAGE_BOUNCE_SELF_BUFF_COOLDOWN_REDUCTION_IN_SECONDS = 3;
 
     /// <summary>Game data: tuning <c>DamageBounceSelfBuff.MinTargetsForCooldownReduction</c> of ability 1318.</summary>
-    public const int DamageBounceSelfBuffMinTargetsForCooldownReduction = 3;
+    public const int DAMAGE_BOUNCE_SELF_BUFF_MIN_TARGETS_FOR_COOLDOWN_REDUCTION = 3;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1318.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+
+    /// <summary>Game data: tuning <c>Proc.DamageMultiplier</c> of ability 1318; effect 1898.</summary>
+    public const int DAMAGE_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 1318.</summary>
-    public const int TargetCountThreshold = 12;
+    public const int TARGET_COUNT_THRESHOLD = 12;
 }

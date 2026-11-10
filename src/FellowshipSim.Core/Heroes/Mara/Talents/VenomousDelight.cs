@@ -16,7 +16,7 @@ public partial class VenomousDelight : Talent
         hero.OnDamageDealt += (in hit) =>
         {
             if (hit.Amount <= 0 || hit.SimContext is not { } ctx || !mara.PoisonDamageIds.Contains(hit.AbilityId)) return;
-            if (ctx.Outcomes.RollProc(ProcKey, Chance, ctx, hit.Target)) mara.GainEnergy(EnergyAdded, ctx);
+            if (ctx.Outcomes.RollProc(ProcKey, CHANCE, ctx, hit.Target)) mara.GainEnergy(ENERGY_ADDED, ctx);
         };
     }
 }

@@ -11,19 +11,19 @@ partial class FrostwyrmsSpite
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.AoeDamageMaxRange, Rime.ChanneledBeamSingleDamage.Talent.StackBuffForInstantSingleDamage.AoeDamageMaxRange</c> of legendary power 397; Frostwyrm's Spite (effect 2264).</summary>
-    public const int AoeDamageMaxRange = 800;
+    public const int AOE_DAMAGE_MAX_RANGE = 800;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.BuffDuration, Rime.ChanneledBeamSingleDamage.Talent.StackBuffForInstantSingleDamage.BuffDuration</c> of legendary power 397; Frostwyrm's Spite (effect 2264).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.InstantSingleDamageDamagePerStack, Rime.ChanneledBeamSingleDamage.Talent.StackBuffForInstantSingleDamage.InstantSingleDamageDamagePerStack</c> of legendary power 397; Frostwyrm's Spite (effect 2264).</summary>
-    public const double InstantSingleDamageDamagePerStack = 0.3;
+    public const double INSTANT_SINGLE_DAMAGE_DAMAGE_PER_STACK = 0.3;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.MaxNumStacks, Rime.ChanneledBeamSingleDamage.Talent.StackBuffForInstantSingleDamage.MaxNumStacks</c> of legendary power 397; Frostwyrm's Spite (effect 2264).</summary>
-    public const int MaxNumStacks = 30;
+    public const int MAX_NUM_STACKS = 30;
 
     /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.TargetCountThreshold, Rime.ChanneledBeamSingleDamage.Talent.StackBuffForInstantSingleDamage.TargetCountThreshold</c> of legendary power 397; Frostwyrm's Spite (effect 2264).</summary>
-    public const int TargetCountThreshold = 3;
+    public const int TARGET_COUNT_THRESHOLD = 3;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Frostwyrm's Spite";

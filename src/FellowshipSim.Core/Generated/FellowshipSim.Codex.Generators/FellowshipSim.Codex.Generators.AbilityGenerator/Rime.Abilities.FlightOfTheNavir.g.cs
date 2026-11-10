@@ -32,20 +32,20 @@ partial class FlightOfTheNavir
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>Aoe.Damage.IntellectCoefficient</c> of ability 1009; ability 1675.</summary>
-    public const double DamageIntellectCoefficient = 0.469;
+    public const double DAMAGE_INTELLECT_COEFFICIENT = 0.469;
 
     /// <summary>Game data: tuning <c>Aoe.Duration</c> of ability 1009; ability 1675.</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 
     /// <summary>Game data: tuning <c>GrantInstantSingleDamageCharge.NumCharges</c> of ability 1009; talent Navir's Keeper (talent 189).</summary>
-    public const int NumCharges = 2;
+    public const int NUM_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>OrbCost</c> of ability 1009.</summary>
-    public const int OrbCost = 0;
+    public const int ORB_COST = 0;
 
     /// <summary>Game data: tuning <c>Rime.AutoDamageProjectile.Talent.CritChanceAndCritDamage.CritChanceIncrease</c> of ability 1009; Frost Swallows (ability 1033), CritChance Additive.</summary>
-    public const double CritChanceAndCritDamageCritChanceIncrease = 0.1;
+    public const double CRIT_CHANCE_AND_CRIT_DAMAGE_CRIT_CHANCE_INCREASE = 0.1;
 
     /// <summary>Game data: tuning <c>Talent.ExtendedDurationInSeconds</c> of ability 1009.</summary>
-    public const int ExtendedDurationInSeconds = 0;
+    public const int EXTENDED_DURATION_IN_SECONDS = 0;
 }

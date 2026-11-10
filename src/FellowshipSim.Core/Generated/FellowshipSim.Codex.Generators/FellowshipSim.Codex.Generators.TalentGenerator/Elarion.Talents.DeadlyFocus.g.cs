@@ -11,11 +11,11 @@ partial class DeadlyFocus
     public const string TalentName = "Deadly Focus";
 
     /// <summary>Game data: tuning <c>Bowguy.CastedProjectileDamage.FocusGain</c> of talent 679; Focused Shot (ability 1315).</summary>
-    public const int FocusGain = 20;
+    public const int FOCUS_GAIN = 20;
 
     /// <summary>Game data: tuning <c>Enhanced.DamageScaler, Bowguy.CastedProjectileDamage.Talent.Enhanced.DamageScaler</c> of talent 679; Focused Shot (ability 1315), DamageScale MultiplyCompound.</summary>
-    public const int EnhancedDamageScaler = 2;
+    public const int ENHANCED_DAMAGE_SCALER = 2;
 
     /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler, Bowguy.CastedProjectileDamage.Talent.Enhanced.ResourceGenerationScaler</c> of talent 679; Focused Shot (ability 1315).</summary>
-    public const double EnhancedResourceGenerationScaler = 0.5;
+    public const double ENHANCED_RESOURCE_GENERATION_SCALER = 0.5;
 }

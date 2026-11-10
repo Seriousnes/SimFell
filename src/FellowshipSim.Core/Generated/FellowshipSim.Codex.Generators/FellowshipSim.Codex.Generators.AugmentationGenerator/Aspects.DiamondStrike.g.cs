@@ -20,8 +20,8 @@ partial class DiamondStrike
     public const double AspectProcsPerMinute = 6.7;
 
     /// <summary>Game data: rank run <c>Trait.GemSingleTargetProcOnDamageHeal.Damage.PrimaryAttributeCoefficient</c> of aspect 33, transform <c>raw</c>; the tooltip has 72% / 127% / 182% / 237%.</summary>
-    public static readonly double[] DamagePrimaryAttributeCoefficientByRank = [0.72, 1.27, 1.82, 2.37];
+    public static readonly double[] DAMAGE_PRIMARY_ATTRIBUTE_COEFFICIENT_BY_RANK = [0.72, 1.27, 1.82, 2.37];
 
     /// <summary>Game data: rank run <c>Trait.GemSingleTargetProcOnDamageHeal.Heal.PrimaryAttributeCoefficient</c> of aspect 33, transform <c>raw</c>; the tooltip has 72% / 127% / 182% / 237%.</summary>
-    public static readonly double[] HealPrimaryAttributeCoefficientByRank = [0.72, 1.27, 1.82, 2.37];
+    public static readonly double[] HEAL_PRIMARY_ATTRIBUTE_COEFFICIENT_BY_RANK = [0.72, 1.27, 1.82, 2.37];
 }

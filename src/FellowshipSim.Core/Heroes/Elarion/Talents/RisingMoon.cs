@@ -11,6 +11,6 @@ public partial class RisingMoon : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<HighwindArrow>() is not { } highwind) return;
-        highwind.Cast += ctx => hero.ReduceCooldown<LunarlightMark>(SimTime.FromSeconds(CooldownReductionInSeconds), ctx.CurrentTime);
+        highwind.Cast += ctx => hero.ReduceCooldown<LunarlightMark>(SimTime.FromSeconds(COOLDOWN_REDUCTION_IN_SECONDS), ctx.CurrentTime);
     }
 }

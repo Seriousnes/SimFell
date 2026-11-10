@@ -11,5 +11,5 @@ partial class CelestialFavor
     public const string TalentName = "Celestial Favor";
 
     /// <summary>Game data: tuning <c>ActiveCooldownReduction.CooldownReduction, Sune.BuffedTargetedCastedHealOrDamage.Talent.ActiveCooldownReduction.CooldownReduction</c> of talent 575; Omega Reprieval (ability 1861).</summary>
-    public const int ActiveCooldownReductionCooldownReduction = 3;
+    public const int ACTIVE_COOLDOWN_REDUCTION_COOLDOWN_REDUCTION = 3;
 }

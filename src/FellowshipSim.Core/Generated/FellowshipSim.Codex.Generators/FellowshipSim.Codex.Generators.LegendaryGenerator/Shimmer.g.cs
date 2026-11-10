@@ -11,13 +11,13 @@ partial class Shimmer
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.Duration, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.Duration</c> of legendary power 429; Shimmer (effect 2362).</summary>
-    public const int Duration = 9;
+    public const int DURATION = 9;
 
     /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.IncomingDamageMultiplier, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.IncomingDamageMultiplier</c> of legendary power 429; Shimmer (effect 2362).</summary>
-    public const double IncomingDamageMultiplier = 1.08;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 1.08;
 
     /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.MaxStacks</c> of legendary power 429; Shimmer (effect 2362).</summary>
-    public const int MaxStacks = 3;
+    public const int MAX_STACKS = 3;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Shimmer";

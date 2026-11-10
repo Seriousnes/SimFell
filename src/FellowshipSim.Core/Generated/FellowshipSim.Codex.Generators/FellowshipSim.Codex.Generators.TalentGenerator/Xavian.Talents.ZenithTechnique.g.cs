@@ -11,5 +11,5 @@ partial class ZenithTechnique
     public const string TalentName = "Zenith Technique";
 
     /// <summary>Game data: tuning <c>TargetedLeapAoeReplacesPulseAoe.DurationExtension, Sune.DroppedPulseAoe.Talent.TargetedLeapAoeReplacesPulseAoe.DurationExtension</c> of talent 608; Shining Halo (ability 1859).</summary>
-    public const int TargetedLeapAoeReplacesPulseAoeDurationExtension = 6;
+    public const int TARGETED_LEAP_AOE_REPLACES_PULSE_AOE_DURATION_EXTENSION = 6;
 }

@@ -9,7 +9,7 @@ public partial class OmegaReprieval : XavianAbility
     /// <summary>Effect 2574: 12 seconds, up to 99 stacks.</summary>
     public const int BuffEffectId = 2574;
     public const int BuffMaxStacks = 99;
-    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffDuration, BuffMaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BUFF_DURATION, BuffMaxStacks);
 
     public OmegaReprieval(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
@@ -20,6 +20,6 @@ public partial class OmegaReprieval : XavianAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
-        Xavian.Auras.Apply(Buff, ctx.CurrentTime, Stacks);
+        Xavian.Auras.Apply(Buff, ctx.CurrentTime, STACKS);
     }
 }

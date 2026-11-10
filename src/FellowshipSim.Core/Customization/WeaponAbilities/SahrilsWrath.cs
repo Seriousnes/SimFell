@@ -11,14 +11,14 @@ public partial class SahrilsWrath : Ability
 {
     public const int SunderingWrathEffectId = 75;
 
-    public static readonly AuraDef SunderingWrath = AuraDef.Effect("Sundering Wrath", SunderingWrathEffectId, Duration,
-        MaxStacks, StatModifier.Add(StatType.CritChance, CriticalStrikeBonusPerStack));
+    public static readonly AuraDef SunderingWrath = AuraDef.Effect("Sundering Wrath", SunderingWrathEffectId, DURATION,
+        MAX_STACKS, StatModifier.Add(StatType.CritChance, CRITICAL_STRIKE_BONUS_PER_STACK));
 
     public SahrilsWrath(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = PrimaryAttributeCoefficient;
+        BaseCoefficient = PRIMARY_ATTRIBUTE_COEFFICIENT;
         SetCooldown(AbilityCooldown);
-        AoeTargetThreshold = DamageFalloffTargetCountThreshold;
+        AoeTargetThreshold = DAMAGE_FALLOFF_TARGET_COUNT_THRESHOLD;
         IgnoresGcd = true;
     }
 
@@ -28,8 +28,8 @@ public partial class SahrilsWrath : Ability
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         if (struck.Count == 0) return;
-        double falloff = struck.Count > DamageFalloffTargetCountThreshold ? Math.Sqrt((double)DamageFalloffTargetCountThreshold / struck.Count) : 1.0;
+        double falloff = struck.Count > DAMAGE_FALLOFF_TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)DAMAGE_FALLOFF_TARGET_COUNT_THRESHOLD / struck.Count) : 1.0;
         for (int i = 0; i < struck.Count; i++) DealDamage(ctx, struck[i], damageMultiplier: falloff);
-        Owner.Auras.Apply(SunderingWrath, ctx.CurrentTime, stacks: Math.Min(struck.Count, MaxStacks));
+        Owner.Auras.Apply(SunderingWrath, ctx.CurrentTime, stacks: Math.Min(struck.Count, MAX_STACKS));
     }
 }

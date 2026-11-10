@@ -11,8 +11,8 @@ partial class Carnage
     public const string TalentName = "Carnage";
 
     /// <summary>Game data: tuning <c>DamageCooldownReduction.DamageMultiplier, Gunde.TargetedAoeProjectile.Talent.DamageCooldownReduction.DamageMultiplier</c> of talent 754; Carnage (effect 3207), DamageScale Multiplicitive.</summary>
-    public const double DamageMultiplier = 1.25;
+    public const double DAMAGE_MULTIPLIER = 1.25;
 
     /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Talent.DamageCooldownReduction.CooldownReductionInSecondsPerHit</c> of talent 754; Carnage (effect 3207).</summary>
-    public const int CooldownReductionInSecondsPerHit = 1;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS_PER_HIT = 1;
 }

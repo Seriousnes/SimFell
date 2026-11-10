@@ -11,11 +11,11 @@ partial class FinalCrescendo
     public const string TalentName = "Final Crescendo";
 
     /// <summary>Game data: tuning <c>Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.DamageMultiplier</c> of talent 169; Final Cresendo (effect 2222), DamageScale Multiplicitive.</summary>
-    public const int DamageMultiplier = 2;
+    public const int DAMAGE_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.MaxBounces</c> of talent 169; Final Cresendo (effect 2222).</summary>
-    public const int MaxBounces = 9;
+    public const int MAX_BOUNCES = 9;
 
     /// <summary>Game data: tuning <c>StacksMoreDamageAndBounces.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.MaxStacks</c> of talent 169; Final Cresendo (effect 2222).</summary>
-    public const int MaxStacks = 2;
+    public const int MAX_STACKS = 2;
 }

@@ -11,8 +11,8 @@ partial class DebilitatingVortex
     public const string TalentName = "Debilitating Vortex";
 
     /// <summary>Game data: tuning <c>ReducedAttackSpeed.AttackSpeedMultiplier, Meiko.DurationalAoeDamageBuff.Talent.ReducedAttackSpeed.AttackSpeedMultiplier</c> of talent 97; Harsh Winds (effect 1511), AttackSpeed MultiplyCompound.</summary>
-    public const double AttackSpeedMultiplier = 0.8;
+    public const double ATTACK_SPEED_MULTIPLIER = 0.8;
 
     /// <summary>Game data: tuning <c>ReducedAttackSpeed.Duration, Meiko.DurationalAoeDamageBuff.Talent.ReducedAttackSpeed.Duration</c> of talent 97; Harsh Winds (effect 1511).</summary>
-    public const int Duration = 5;
+    public const int DURATION = 5;
 }

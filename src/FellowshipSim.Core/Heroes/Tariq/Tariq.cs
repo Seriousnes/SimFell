@@ -76,7 +76,7 @@ public sealed partial class Tariq : Hero
     {
         if (FuryPerSecond <= 0) return;
         // Bloodline (talent 76, effect 2424): a share of maximum Fury per period in combat, not hasted (see Bloodline).
-        var period = SimTime.FromSeconds(Bloodline.Period);
+        var period = SimTime.FromSeconds(Bloodline.PERIOD);
         void Regen(SimulationContext c)
         {
             if (c.ActiveEnemies.Count > 0) GainFury(FuryPerSecond, c);

@@ -26,44 +26,44 @@ partial class SunStrike
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.DamageScalingTargetCountThreshold</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const int AoeDamageScalingTargetCountThreshold = 8;
+    public const int AOE_DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.DamageStrengthCoefficient</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const double AoeDamageStrengthCoefficient = 1.24;
+    public const double AOE_DAMAGE_STRENGTH_COEFFICIENT = 1.24;
 
     /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.MaxRange</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const int AoeMaxRange = 700;
+    public const int AOE_MAX_RANGE = 700;
 
     /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.StackCost</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const int AoeStackCost = 1;
+    public const int AOE_STACK_COST = 1;
 
     /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.VisualDelay</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const double AoeVisualDelay = 0.5;
+    public const double AOE_VISUAL_DELAY = 0.5;
 
     /// <summary>Game data: tuning <c>Cleave.DamageScaler</c> of ability 1845.</summary>
-    public const double CleaveDamageScaler = 0.15;
+    public const double CLEAVE_DAMAGE_SCALER = 0.15;
 
     /// <summary>Game data: tuning <c>Cleave.MaxNumTargets</c> of ability 1845.</summary>
-    public const int CleaveMaxNumTargets = 20;
+    public const int CLEAVE_MAX_NUM_TARGETS = 20;
 
     /// <summary>Game data: tuning <c>Cleave.Radius</c> of ability 1845.</summary>
-    public const int CleaveRadius = 700;
+    public const int CLEAVE_RADIUS = 700;
 
     /// <summary>Game data: tuning <c>Cleave.TargetCountThreshold</c> of ability 1845.</summary>
-    public const int CleaveTargetCountThreshold = 3;
+    public const int CLEAVE_TARGET_COUNT_THRESHOLD = 3;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1845.</summary>
-    public const double DamageStrengthCoefficient = 1.47;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 1.47;
 
     /// <summary>Game data: tuning <c>ExtraDebuffFromCrit.ExtraDebuffStack</c> of ability 1845; talent Gleaming Strikes (talent 581).</summary>
-    public const int ExtraDebuffStack = 1;
+    public const int EXTRA_DEBUFF_STACK = 1;
 
     /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1845.</summary>
-    public const double HitVisualDelay = 0.15;
+    public const double HIT_VISUAL_DELAY = 0.15;
 
     /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1845.</summary>
-    public const double ResourceProcChance = 0.15;
+    public const double RESOURCE_PROC_CHANCE = 0.15;
 
     /// <summary>Game data: tuning <c>Talent.CritChanceIncrease</c> of ability 1845; CritChance Additive.</summary>
-    public const int CritChanceIncrease = 0;
+    public const int CRIT_CHANCE_INCREASE = 0;
 }

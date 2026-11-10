@@ -11,7 +11,7 @@ partial class GrosslyIncandescent
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>NumberOfStacks, Sune.Talent.StackingBuffToProc.NumberOfStacks</c> of legendary power 606; ability 1940.</summary>
-    public const int NumberOfStacks = 5;
+    public const int NUMBER_OF_STACKS = 5;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Grossly Incandescent";

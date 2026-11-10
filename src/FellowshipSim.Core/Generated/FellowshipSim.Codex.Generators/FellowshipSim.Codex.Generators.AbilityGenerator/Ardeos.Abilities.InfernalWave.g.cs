@@ -28,36 +28,39 @@ partial class InfernalWave
     /// <summary>Game data: <c>range</c> of ability 1276.</summary>
     public const int AbilityRange = 3000;
 
+    /// <summary>Game data: tuning <c>CastTime</c> of ability 1276.</summary>
+    public const double CAST_TIME = 1.5;
+
     /// <summary>Game data: tuning <c>CastedDotBoostProjectileBonusBuff.BuffDuration</c> of ability 1276; Infernal Doom (effect 1808), talent Flare up (talent 159).</summary>
-    public const int CastedDotBoostProjectileBonusBuffBuffDuration = 12;
+    public const int CASTED_DOT_BOOST_PROJECTILE_BONUS_BUFF_BUFF_DURATION = 12;
 
     /// <summary>Game data: tuning <c>CastedDotBoostProjectileBonusBuff.DamageScaler</c> of ability 1276; Infernal Doom (effect 1808), talent Flare up (talent 159).</summary>
-    public const int CastedDotBoostProjectileBonusBuffDamageScaler = 1;
+    public const int CASTED_DOT_BOOST_PROJECTILE_BONUS_BUFF_DAMAGE_SCALER = 1;
 
     /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreaseMax</c> of ability 1276; talent Intensifying Inferno (talent 151).</summary>
-    public const double DamageIncreaseMax = 2.2;
+    public const double DAMAGE_INCREASE_MAX = 2.2;
 
     /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreasePerDot</c> of ability 1276; talent Intensifying Inferno (talent 151).</summary>
-    public const double DamageIncreasePerDot = 0.15;
+    public const double DAMAGE_INCREASE_PER_DOT = 0.15;
 
     /// <summary>Game data: tuning <c>DirectDamage.IntellectCoefficient</c> of ability 1276.</summary>
-    public const int DirectDamageIntellectCoefficient = 2;
+    public const int DIRECT_DAMAGE_INTELLECT_COEFFICIENT = 2;
 
     /// <summary>Game data: tuning <c>DotDurationIncrease</c> of ability 1276.</summary>
-    public const int DotDurationIncrease = 1;
+    public const int DOT_DURATION_INCREASE = 1;
 
     /// <summary>Game data: tuning <c>Firemage.FreeCastedSingleDot.FromCastedDotBoostProjectile.ProcChance</c> of ability 1276.</summary>
-    public const double FiremageFreeCastedSingleDotFromCastedDotBoostProjectileProcChance = 0.15;
+    public const double FIREMAGE_FREE_CASTED_SINGLE_DOT_FROM_CASTED_DOT_BOOST_PROJECTILE_PROC_CHANCE = 0.15;
 
     /// <summary>Game data: tuning <c>ReducedCastTime.Reduction</c> of ability 1276; talent Apocalyptic Surge (talent 678).</summary>
-    public const double Reduction = 0.5;
+    public const double REDUCTION = 0.5;
 
     /// <summary>Game data: tuning <c>ResourceRewardFractionOfBomb</c> of ability 1276.</summary>
-    public const double ResourceRewardFractionOfBomb = 0.4;
+    public const double RESOURCE_REWARD_FRACTION_OF_BOMB = 0.4;
 
     /// <summary>Game data: tuning <c>Talent.IncreasedCritChance</c> of ability 1276; CritChance Additive.</summary>
-    public const double IncreasedCritChance = 0.2;
+    public const double INCREASED_CRIT_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1276; ability 2246, talent Crackling Inferno (talent 183), CritChance Additive.</summary>
-    public const int AdditionalCritChance = 1;
+    public const int ADDITIONAL_CRIT_CHANCE = 1;
 }

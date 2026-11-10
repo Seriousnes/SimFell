@@ -11,10 +11,10 @@ partial class SlayersMosh
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.TargetExtraInkDamage.Duration</c> of legendary power 424; Slayer's Mosh (effect 2250).</summary>
-    public const int Duration = 6;
+    public const int DURATION = 6;
 
     /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.TargetExtraInkDamage.IncomingDamageScaler</c> of legendary power 424; Slayer's Mosh (effect 2250), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageScaler = 1.2;
+    public const double INCOMING_DAMAGE_SCALER = 1.2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Slayer's Mosh";

@@ -32,17 +32,20 @@ partial class CelestialShot
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1301.</summary>
-    public const double AgilityCoefficient = 3.4548;
+    public const double AGILITY_COEFFICIENT = 3.4548;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 1301.</summary>
-    public const int Cost = 15;
+    public const int COST = 15;
 
     /// <summary>Game data: tuning <c>Enhanced.DamageScaler, Elarion.CastedProjectileDamage.Talent.Enhanced.DamageScaler</c> of ability 1301; Focused Shot (ability 1315), talent Deadly Focus (talent 679), DamageScale MultiplyCompound.</summary>
-    public const int DamageScaler = 2;
+    public const int DAMAGE_SCALER = 2;
 
     /// <summary>Game data: tuning <c>Elarion.RangedAutoAttack.Proc.CritChanceModifier</c> of ability 1301; Celestial Shot (effect 1864), CritChance Additive.</summary>
-    public const int CritChanceModifier = 1;
+    public const int CRIT_CHANCE_MODIFIER = 1;
+
+    /// <summary>Game data: tuning <c>Elarion.RangedAutoAttack.Proc.DamageMultiplier</c> of ability 1301; Celestial Shot (effect 1864), DamageScale MultiplyCompound.</summary>
+    public const int DAMAGE_MULTIPLIER = 1;
 
     /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration</c> of ability 1301; Impending Heartseeker (effect 2317), talent Impending Heartseeker (talent 168).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 }

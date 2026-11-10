@@ -11,8 +11,8 @@ partial class Burstbolter
     public const string TalentName = "Burstbolter";
 
     /// <summary>Game data: tuning <c>Chance, Rime.CastedProjectileDamageFiller.Talent.TriggerRandomTickOfCastedDebuffAoeDamage.Chance</c> of talent 193; Burstbolter (ability 1576).</summary>
-    public const int Chance = 1;
+    public const int CHANCE = 1;
 
     /// <summary>Game data: tuning <c>IncreasedCastedDebuffAoeDamageDamage.DamageScaler, Rime.CastedDebuffAoeDamage.Talent.IncreasedCastedDebuffAoeDamageDamage.DamageScaler</c> of talent 193; Bursting Ice (ability 1031), DamageScale Multiplicitive.</summary>
-    public const double IncreasedCastedDebuffAoeDamageDamageDamageScaler = 1.3;
+    public const double INCREASED_CASTED_DEBUFF_AOE_DAMAGE_DAMAGE_DAMAGE_SCALER = 1.3;
 }

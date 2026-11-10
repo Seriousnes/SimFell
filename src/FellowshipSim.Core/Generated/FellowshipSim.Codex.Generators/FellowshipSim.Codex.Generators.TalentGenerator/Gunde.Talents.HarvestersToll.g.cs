@@ -11,17 +11,23 @@ partial class HarvestersToll
     public const string TalentName = "Harvester's Toll";
 
     /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.DamageScalePerStack, Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.DamageScalePerStack</c> of talent 767; Owed in Blood (ability 2298).</summary>
-    public const double IncreasedDamageOnSelfDamageScalePerStack = 0.0025;
+    public const double INCREASED_DAMAGE_ON_SELF_DAMAGE_SCALE_PER_STACK = 0.0025;
 
     /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.Duration, Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.Duration, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.Duration</c> of talent 767; Owed in Blood (ability 2298).</summary>
-    public const int IncreasedDamageOnSelfDuration = 10;
+    public const int INCREASED_DAMAGE_ON_SELF_DURATION = 10;
+
+    /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.MaxStacks, Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.MaxStacks</c> of talent 767; Owed in Blood (ability 2298).</summary>
+    public const int INCREASED_DAMAGE_ON_SELF_MAX_STACKS_1 = 30;
+
+    /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.MaxStacks</c> of talent 767; Rupture (ability 2293).</summary>
+    public const int INCREASED_DAMAGE_ON_SELF_MAX_STACKS_2 = 1;
 
     /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.DamageScale, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.DamageScale</c> of talent 767; Rupture (ability 2293).</summary>
-    public const double IncreasedDamageOnSelfDamageScale = 0.075;
+    public const double INCREASED_DAMAGE_ON_SELF_DAMAGE_SCALE = 0.075;
 
     /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBoost.Talent.IncreasedDotDamage.DamageMultiplier</c> of talent 767; Sever (effect 3213).</summary>
-    public const double DamageMultiplier = 1.12;
+    public const double DAMAGE_MULTIPLIER = 1.12;
 
     /// <summary>Game data: tuning <c>IncreasedDotDamage.Duration, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDotDamage.Duration</c> of talent 767; Sever (effect 3213).</summary>
-    public const int Duration = 10;
+    public const int DURATION = 10;
 }

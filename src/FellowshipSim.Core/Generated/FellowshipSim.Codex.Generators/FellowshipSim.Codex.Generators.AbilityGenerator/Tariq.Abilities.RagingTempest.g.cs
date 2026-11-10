@@ -17,59 +17,71 @@ partial class RagingTempest
     public const int AbilityCost = 100;
 
     /// <summary>Game data: tuning <c>AoeImpact.DamageRadius</c> of ability 1231; Raging Tempest (effect 2173).</summary>
-    public const int DamageRadius = 500;
+    public const int DAMAGE_RADIUS = 500;
+
+    /// <summary>Game data: tuning <c>AoeImpact.StrengthCoefficient</c> of ability 1231; Raging Tempest (effect 2173).</summary>
+    public const double STRENGTH_COEFFICIENT_1 = 10.06;
+
+    /// <summary>Game data: tuning <c>PulsatingSingleDamage.Damage.StrengthCoefficient</c> of ability 1231; Raging Currents (effect 1767).</summary>
+    public const double STRENGTH_COEFFICIENT_2 = 1.54;
 
     /// <summary>Game data: tuning <c>AoeImpact.TargetThresholdForDamageScale</c> of ability 1231; Raging Tempest (effect 2173).</summary>
-    public const int TargetThresholdForDamageScale = 5;
+    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 5;
 
     /// <summary>Game data: tuning <c>BuffDuration</c> of ability 1231.</summary>
-    public const int BuffDuration = 21;
+    public const int BUFF_DURATION = 21;
+
+    /// <summary>Game data: tuning <c>RageIncrease.Duration</c> of ability 1231; effect 1745, talent Ride the Lightning (talent 87).</summary>
+    public const int DURATION_1 = 21;
+
+    /// <summary>Game data: tuning <c>LifestealAndStatboost.Duration, PulsatingSingleDamage.SelfBuff.Duration</c> of ability 1231; ability 1797.</summary>
+    public const int DURATION_2 = 20;
 
     /// <summary>Game data: tuning <c>LifestealAndStatboost.IncomingDamageMultiplier</c> of ability 1231; ability 1797, IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageMultiplier = 0.9;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 0.9;
 
     /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1231.</summary>
-    public const int MaxRangeDown = 5000;
+    public const int MAX_RANGE_DOWN = 5000;
 
     /// <summary>Game data: tuning <c>MaxRangeHorizontal</c> of ability 1231.</summary>
-    public const int MaxRangeHorizontal = 3000;
+    public const int MAX_RANGE_HORIZONTAL = 3000;
 
     /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1231.</summary>
-    public const int MaxRangeUp = 1000;
+    public const int MAX_RANGE_UP = 1000;
 
     /// <summary>Game data: tuning <c>MoveDuration</c> of ability 1231.</summary>
-    public const double MoveDuration = 0.3;
+    public const double MOVE_DURATION = 0.3;
 
     /// <summary>Game data: tuning <c>PulsatingSingleDamage.Damage.Spread</c> of ability 1231; Raging Currents (effect 1767).</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>PulsatingSingleDamage.PulsePeriod</c> of ability 1231; ability 1230.</summary>
-    public const int PulsePeriod = 1;
+    public const int PULSE_PERIOD = 1;
 
     /// <summary>Game data: tuning <c>PulsatingSingleDamage.SelfBuff.CritChanceIncreasePerStack</c> of ability 1231; Raging Tempest (effect 1766), Expertise Additive.</summary>
-    public const double CritChanceIncreasePerStack = 0.01;
+    public const double CRIT_CHANCE_INCREASE_PER_STACK = 0.01;
 
     /// <summary>Game data: tuning <c>PulsatingSingleDamage.TargetingRange</c> of ability 1231; ability 1230.</summary>
-    public const int TargetingRange = 800;
+    public const int TARGETING_RANGE = 800;
 
     /// <summary>Game data: tuning <c>PulsatingSingleDamage.VisualDelay</c> of ability 1231; ability 1230.</summary>
-    public const double VisualDelay = 0.05;
+    public const double VISUAL_DELAY = 0.05;
 
     /// <summary>Game data: tuning <c>RageIncrease.RagePerTick</c> of ability 1231; effect 1745, talent Ride the Lightning (talent 87), Resources Additive.</summary>
-    public const double RagePerTick = 0.00143;
+    public const double RAGE_PER_TICK = 0.00143;
 
     /// <summary>Game data: tuning <c>RageIncrease.TickInterval</c> of ability 1231; effect 1745, talent Ride the Lightning (talent 87).</summary>
-    public const double TickInterval = 0.1;
+    public const double TICK_INTERVAL = 0.1;
 
     /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1231.</summary>
-    public const int ResourceGain = 0;
+    public const int RESOURCE_GAIN = 0;
 
     /// <summary>Game data: tuning <c>SpiritPointCost</c> of ability 1231.</summary>
-    public const int SpiritPointCost = 100;
+    public const int SPIRIT_POINT_COST = 100;
 
     /// <summary>Game data: tuning <c>Tariq.Talent.PassiveLightningCritChanceIncrease</c> of ability 1231; ability 1221, talent Crack the Sky (talent 77), CritChance Additive.</summary>
-    public const double PassiveLightningCritChanceIncrease = 0.2;
+    public const double PASSIVE_LIGHTNING_CRIT_CHANCE_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1231.</summary>
-    public const double VisualHitDelay = 0.2;
+    public const double VISUAL_HIT_DELAY = 0.2;
 }

@@ -11,11 +11,11 @@ partial class TemperedDescent
     public const string TalentName = "Tempered Descent";
 
     /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ArmorScaler, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.ArmorScaler</c> of talent 572; Tempered Descent (effect 2646), Armor MultiplyCompound.</summary>
-    public const double ArmorScaler = 1.4;
+    public const double ARMOR_SCALER = 1.4;
 
     /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.MoveSpeedScaler, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.MoveSpeedScaler</c> of talent 572; Tempered Descent (effect 2646), MoveSpeed MultiplyCompound.</summary>
-    public const double MoveSpeedScaler = 1.2;
+    public const double MOVE_SPEED_SCALER = 1.2;
 
     /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ProcDuration, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.ProcDuration</c> of talent 572; Tempered Descent (effect 2646).</summary>
-    public const int ProcDuration = 18;
+    public const int PROC_DURATION = 18;
 }

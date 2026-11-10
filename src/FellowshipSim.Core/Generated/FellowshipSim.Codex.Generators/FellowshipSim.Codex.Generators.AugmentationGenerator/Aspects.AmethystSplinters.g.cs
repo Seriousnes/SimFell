@@ -17,8 +17,8 @@ partial class AmethystSplinters
     public const int AspectRandomChance = 1;
 
     /// <summary>Game data: rank run <c>Trait.GemDotHotOnCrit.Debuff.DamagePercentage</c> of aspect 31, transform <c>raw</c>; the tooltip has 4% / 6% / 8% / 11%.</summary>
-    public static readonly double[] DebuffDamagePercentageByRank = [0.04, 0.06, 0.08, 0.11];
+    public static readonly double[] DEBUFF_DAMAGE_PERCENTAGE_BY_RANK = [0.04, 0.06, 0.08, 0.11];
 
     /// <summary>Game data: rank run <c>Trait.GemDotHotOnCrit.Buff.HealPercentage</c> of aspect 31, transform <c>raw</c>; the tooltip has 4% / 6% / 8% / 11%.</summary>
-    public static readonly double[] BuffHealPercentageByRank = [0.04, 0.06, 0.08, 0.11];
+    public static readonly double[] BUFF_HEAL_PERCENTAGE_BY_RANK = [0.04, 0.06, 0.08, 0.11];
 }

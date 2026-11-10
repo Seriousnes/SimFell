@@ -14,14 +14,14 @@ partial class LightsOath
     public const int TalentCost = 8;
 
     /// <summary>Game data: tuning <c>DamageScaler, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.DamageScaler</c> of talent 568; ability 1911.</summary>
-    public const int DamageScaler = 2;
+    public const int DAMAGE_SCALER = 2;
 
     /// <summary>Game data: tuning <c>ProcDuration, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcDuration</c> of talent 568; ability 1911.</summary>
-    public const int ProcDuration = 30;
+    public const int PROC_DURATION = 30;
 
     /// <summary>Game data: tuning <c>ProcStackCap, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCap</c> of talent 568; ability 1911.</summary>
-    public const int ProcStackCap = 8;
+    public const int PROC_STACK_CAP = 8;
 
     /// <summary>Game data: tuning <c>ProcStackCost, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCost</c> of talent 568; ability 1911.</summary>
-    public const int ProcStackCost = 8;
+    public const int PROC_STACK_COST = 8;
 }

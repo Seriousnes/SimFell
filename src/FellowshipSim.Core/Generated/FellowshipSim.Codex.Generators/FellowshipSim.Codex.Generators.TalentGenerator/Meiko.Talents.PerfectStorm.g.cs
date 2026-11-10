@@ -11,29 +11,29 @@ partial class PerfectStorm
     public const string TalentName = "Perfect Storm";
 
     /// <summary>Game data: tuning <c>Chance, DoubleStrike.Chance, Meiko.HighDamageCleave.Talent.DoubleStrike.Chance</c> of talent 91; Lashing Stormkick (ability 1106).</summary>
-    public const double Chance = 0.25;
+    public const double CHANCE = 0.25;
 
     /// <summary>Game data: tuning <c>DamageMultiplier, DoubleStrike.DamageMultiplier, Meiko.HighDamageCleave.Talent.DoubleStrike.DamageMultiplier</c> of talent 91; Lashing Stormkick (ability 1106).</summary>
-    public const int DamageMultiplier = 1;
+    public const int DAMAGE_MULTIPLIER = 1;
 
     /// <summary>Game data: tuning <c>DelayBetweenStrikes, DoubleStrike.DelayBetweenStrikes, Meiko.HighDamageCleave.Talent.DoubleStrike.DelayBetweenStrikes</c> of talent 91; Lashing Stormkick (ability 1106).</summary>
-    public const double DelayBetweenStrikes = 0.4;
+    public const double DELAY_BETWEEN_STRIKES = 0.4;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of talent 91; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TargetDebuffIncreasedDamage = 1.1;
+    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
 
     /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of talent 91.</summary>
-    public const double IncreasedDamageScaler = 1.1;
+    public const double INCREASED_DAMAGE_SCALER = 1.1;
 
     /// <summary>Game data: tuning <c>Meiko.HighDamageCleave.AgilityCoefficient</c> of talent 91; Lashing Stormkick (ability 1106).</summary>
-    public const double AgilityCoefficient = 2.3205;
+    public const double AGILITY_COEFFICIENT = 2.3205;
 
     /// <summary>Game data: tuning <c>Meiko.HighDamageCleave.Talent.IncreasedCriticalChance.ChanceMultiplier</c> of talent 91; Lashing Stormkick (ability 1106), CritChance Additive.</summary>
-    public const double IncreasedCriticalChanceChanceMultiplier = 0.2;
+    public const double INCREASED_CRITICAL_CHANCE_CHANCE_MULTIPLIER = 0.2;
 
     /// <summary>Game data: tuning <c>Meiko.MeleeDamageSelfBuff.Spread</c> of talent 91; Rising Storm (ability 1103).</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of talent 91; Earthen Skin (effect 3139).</summary>
-    public const double WindDamageIncrease = 1.2;
+    public const double WIND_DAMAGE_INCREASE = 1.2;
 }

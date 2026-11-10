@@ -11,5 +11,5 @@ partial class ConclusiveStrikes
     public const string TalentName = "Conclusive Strikes";
 
     /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of talent 107.</summary>
-    public const double IncreasedDamageScaler = 1.1;
+    public const double INCREASED_DAMAGE_SCALER = 1.1;
 }

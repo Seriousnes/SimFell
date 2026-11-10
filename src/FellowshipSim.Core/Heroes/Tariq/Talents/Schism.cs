@@ -13,7 +13,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Talents;
 /// </summary>
 public partial class Schism : Talent
 {
-    public static readonly double ProcStep = BadLuckProtection.StepFor(ProcChance);
+    public static readonly double ProcStep = BadLuckProtection.StepFor(PROC_CHANCE);
     public const int MaxStacks = 2;
     public const int SkullCrusherEffectId = 1746;
     public const int HammerStormEffectId = 1747;
@@ -39,7 +39,7 @@ public partial class Schism : Talent
             };
             if (buff == null || !hero.Auras.HasAura(buff, cast.Time)) return;
             hero.Auras.ConsumeStack(buff, cast.Time);
-            cast.DamageMultiplier *= buff == SkullCrusherBuff ? HeavySingleTargetAttackDamageMultiplier : AoeAttackDamageMultiplier;
+            cast.DamageMultiplier *= buff == SkullCrusherBuff ? HEAVY_SINGLE_TARGET_ATTACK_DAMAGE_MULTIPLIER : AOE_ATTACK_DAMAGE_MULTIPLIER;
         };
         // ...and may make the other one's.
         hero.OnCastCompleted += (ability, _, now) =>

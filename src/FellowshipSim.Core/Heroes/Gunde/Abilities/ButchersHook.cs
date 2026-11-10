@@ -10,7 +10,7 @@ public partial class ButchersHook : GundeAbility
 
     public ButchersHook(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
     }

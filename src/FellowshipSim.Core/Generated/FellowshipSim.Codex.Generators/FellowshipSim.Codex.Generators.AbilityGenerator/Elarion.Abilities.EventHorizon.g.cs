@@ -28,15 +28,21 @@ partial class EventHorizon
     /// <summary>Game data: <c>duration</c> of ability 1584.</summary>
     public const int AbilityDuration = 20;
 
+    /// <summary>Game data: tuning <c>CastTime</c> of ability 1584.</summary>
+    public const double CAST_TIME = 0.7;
+
     /// <summary>Game data: tuning <c>Cost</c> of ability 1584.</summary>
-    public const int Cost = 100;
+    public const int COST = 100;
+
+    /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1584; DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 1584.</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 
     /// <summary>Game data: tuning <c>HasteToCooldownRecovery</c> of ability 1584.</summary>
-    public const int HasteToCooldownRecovery = 1;
+    public const int HASTE_TO_COOLDOWN_RECOVERY = 1;
 
     /// <summary>Game data: tuning <c>ResourceCostMultiplier</c> of ability 1584.</summary>
-    public const double ResourceCostMultiplier = 0.5;
+    public const double RESOURCE_COST_MULTIPLIER = 0.5;
 }

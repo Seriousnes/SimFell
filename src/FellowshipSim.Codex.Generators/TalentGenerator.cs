@@ -19,8 +19,8 @@ namespace FellowshipSim.Codex.Generators;
 /// its talent slot, or one of its origins) whose name in Pascal case (letters and digits only, an apostrophe inside its word)
 /// is the class name. The constants are <c>TalentId</c>, <c>TalentName</c>, one per scalar field of the record under
 /// <c>Talent</c> and the field's name (<c>TalentCooldown</c>, <c>TalentDuration</c>, <c>TalentRadius</c>...), and one per
-/// tuning value of the record under the tuning value's name. The class's own part has the talent's behaviour and its
-/// <c>Name</c> and <c>Id</c> overrides. A constant whose name the class or a base class already has is left out. The game
+/// tuning value of the record under its <see cref="TuningNames"/> name. The class's own part has the talent's behaviour and
+/// its <c>Name</c> and <c>Id</c> overrides. A member of the class or a base class with a constant's name is CODEX013. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -40,20 +40,15 @@ public sealed class TalentGenerator : IIncrementalGenerator
         "CODEX011", "A partial talent class names several talent records",
         "The partial class {0} names the talent records {1} of hero {2} in the game data", "Codex", DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor SharedTuningName = new(
-        "CODEX012", "Two tuning values of a talent share a name",
-        "Talent {0} has tuning values {1} with different values under the name {2}; the class has no constant {2}", "Codex", DiagnosticSeverity.Warning, true);
-
     private static readonly DiagnosticDescriptor DeclaredName = new(
         "CODEX013", "A talent constant's name is a member of the class",
-        "The class {0} or a base class has a member {1}, so the constant {1} of talent {2} is left out", "Codex", DiagnosticSeverity.Warning, true);
+        "The class {0} or a base class has a member {1}, and {1} is a constant of talent {2}; rename the member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>A constant of a talent record: its name, C# type and literal, and its summary.</summary>
     private sealed record Constant(string Name, string Type, string Literal, string Summary);
 
     /// <summary>
-    /// A talent record: its ID, name, class name, heroes, its field constants and its tuning values (a tuning value with no
-    /// type has several values under its name, and its summary names the tuning keys).
+    /// A talent record: its ID, name, class name, heroes, its field constants and its tuning values.
     /// </summary>
     private sealed record Record(int Id, string Name, string ClassName, EquatableArray<string> Heroes,
         EquatableArray<Constant> Fields, EquatableArray<Constant> Tunings);
@@ -62,10 +57,10 @@ public sealed class TalentGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A partial talent class: its namespace, name and hero, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, string Hero, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
+    private sealed record Declared(string Namespace, string Name, string Hero, EquatableArray<string> Members, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Hero == other.Hero
-            && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
+            && Members.Equals(other.Members);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -109,7 +104,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
         if (!talent) return null;
         string ns = NamespaceOf(node)!;
         string hero = ns.Substring(HeroesNamespace.Length).Split('.')[0];
-        return new Declared(ns, type.Name, hero, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
+        return new Declared(ns, type.Name, hero, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -187,27 +182,14 @@ public sealed class TalentGenerator : IIncrementalGenerator
             whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), $"Game data: <c>{field}</c> of talent {id}."));
     }
 
-    /// <summary>The record's tuning values, one per name, in the order of the game data.</summary>
-    private static List<Constant> TuningsOf(TalentDocument talent)
-    {
-        var tunings = new List<Constant>();
-        foreach (var group in (talent.Tuning ?? new Dictionary<string, TuningReference>()).GroupBy(t => t.Value.Name ?? ""))
+    /// <summary>The record's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
+    private static List<Constant> TuningsOf(TalentDocument talent) =>
+        [.. TuningNames.Of(talent.Tuning, ValueOf).Select(t =>
         {
-            if (group.Key.Length == 0) continue;
-            var values = group.Select(t => ValueOf(t.Value.Value)).Distinct().ToList();
-            string keys = string.Join(", ", group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal));
-            if (values.Count != 1 || values[0] is not { } value)
-            {
-                // Two values under one name: no constant, and the diagnostic names the keys.
-                tunings.Add(new Constant(group.Key, "", "", keys));
-                continue;
-            }
-            string source = SourceOf(group.First().Value);
-            tunings.Add(new Constant(group.Key, value.Type, value.Literal,
-                $"Game data: tuning <c>{Escape(keys)}</c> of talent {talent.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}."));
-        }
-        return tunings;
-    }
+            string source = SourceOf(t.Source);
+            return new Constant(t.Name, t.Value.Type, t.Value.Literal,
+                $"Game data: tuning <c>{Escape(t.Keys)}</c> of talent {talent.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
+        })];
 
     /// <summary>The C# type and literal of a tuning value; null for a value of no constant type.</summary>
     private static (string Type, string Literal)? ValueOf(object? value)
@@ -278,7 +260,6 @@ public sealed class TalentGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
-            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var constants = new List<Constant>
             {
@@ -286,21 +267,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
                 new("TalentName", "string", Literal(record.Name), $"Game data: <c>name</c> of talent {record.Id}."),
             };
             constants.AddRange(record.Fields);
-            var fieldNames = new HashSet<string>(constants.Select(c => c.Name), StringComparer.Ordinal);
-            foreach (var tuning in record.Tunings)
-            {
-                if (tuning.Type.Length == 0)
-                {
-                    leftOut.Report(SharedTuningName, tuning.Name, record.Id, tuning.Summary, tuning.Name);
-                    continue;
-                }
-                if (fieldNames.Contains(tuning.Name))
-                {
-                    leftOut.Report(DeclaredName, tuning.Name, d.Name, tuning.Name, record.Id);
-                    continue;
-                }
-                constants.Add(tuning);
-            }
+            constants.AddRange(record.Tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -313,7 +280,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, record.Id);
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, record.Id));
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -322,7 +289,6 @@ public sealed class TalentGenerator : IIncrementalGenerator
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
             source.Append("}\n");
-            leftOut.Finish();
             context.AddSource($"{d.Namespace.Substring(HeroesNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

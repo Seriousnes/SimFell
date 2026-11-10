@@ -18,8 +18,8 @@ public partial class AceOfSpades : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<ChainLightning>() is not { } chainLightning) return;
-        chainLightning.SetCharges(ChargedMaxCharges);
-        var ppm = new RealPpm(ProcKey, PPMChance);
+        chainLightning.SetCharges(CHARGED_MAX_CHARGES);
+        var ppm = new RealPpm(ProcKey, PPM_CHANCE);
         Ability?[] spenders = [hero.GetAbility<SkullCrusher>(), hero.GetAbility<HammerStorm>()];
         foreach (var spender in spenders.OfType<Ability>())
         {

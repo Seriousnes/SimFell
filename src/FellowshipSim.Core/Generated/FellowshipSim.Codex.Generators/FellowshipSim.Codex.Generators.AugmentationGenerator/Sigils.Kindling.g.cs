@@ -20,8 +20,8 @@ partial class Kindling
     public const double SigilProcsPerMinute = 2.1;
 
     /// <summary>Game data: rank run <c>Trait.ExtraDotHotOnEffectApplicationProc.Dot.FlatDamageValue</c> of sigil 28, transform <c>ticks</c> over 7 ticks; the tooltip has 483% / 882% / 1281% / 1680%.</summary>
-    public static readonly double[] DotFlatDamageValueByRank = [0.69, 1.26, 1.83, 2.4];
+    public static readonly double[] DOT_FLAT_DAMAGE_VALUE_BY_RANK = [0.69, 1.26, 1.83, 2.4];
 
     /// <summary>Game data: rank run <c>Trait.ExtraDotHotOnEffectApplicationProc.Hot.FlatHealValue</c> of sigil 28, transform <c>ticks</c> over 7 ticks; the tooltip has 483% / 882% / 1281% / 1680%.</summary>
-    public static readonly double[] HotFlatHealValueByRank = [0.69, 1.26, 1.83, 2.4];
+    public static readonly double[] HOT_FLAT_HEAL_VALUE_BY_RANK = [0.69, 1.26, 1.83, 2.4];
 }

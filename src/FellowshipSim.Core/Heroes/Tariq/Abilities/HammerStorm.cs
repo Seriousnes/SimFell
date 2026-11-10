@@ -26,7 +26,7 @@ public partial class HammerStorm : TariqAbility
 
     public HammerStorm(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetChannel(AbilityChannelTime, AbilityChannelTick);
         // Combat logs (3 Tariq fights, 229 channels): the first spin one server frame after the cast, MaxSpins spins in all (see
         // OnChannelTick).
@@ -34,7 +34,7 @@ public partial class HammerStorm : TariqAbility
         // Combat logs (tests/ReactionTimeTests, 16 Tariq fights, 378 channels): the next cast comes shortly after
         // the channel ends, mostly within a server frame, as after a cast time; Rime's Freezing Torrent comes later.
         ChannelQueuesNextCast = true;
-        AoeTargetThreshold = TargetThresholdForDamageScale;
+        AoeTargetThreshold = TARGET_THRESHOLD_FOR_DAMAGE_SCALE;
     }
 
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason) =>
@@ -82,11 +82,11 @@ public partial class HammerStorm : TariqAbility
         double multiplier = _castMultiplier * ramp;
         var area = WildSwing.AreaAround(ctx, target);
         // Combat logs: every enemy's physical hit, then every enemy's lightning, all under the ability's ID.
-        DealToEach(ctx, ctx.Outcomes.SelectTargets(DamageLogId, area, ctx), TargetThresholdForDamageScale, multiplier, extraCritChance: _castCritChance);
+        DealToEach(ctx, ctx.Outcomes.SelectTargets(DamageLogId, area, ctx), TARGET_THRESHOLD_FOR_DAMAGE_SCALE, multiplier, extraCritChance: _castCritChance);
         var hero = Tariq;
         if (!hero.IsCharged(ctx.CurrentTime)) return;
-        DealToEach(ctx, ctx.Outcomes.SelectTargets(DamageLogId, area, ctx), LightningTargetThresholdForDamageScale,
-            multiplier * LightningStrengthCoefficient / StrengthCoefficient,
+        DealToEach(ctx, ctx.Outcomes.SelectTargets(DamageLogId, area, ctx), LIGHTNING_TARGET_THRESHOLD_FOR_DAMAGE_SCALE,
+            multiplier * LIGHTNING_STRENGTH_COEFFICIENT / STRENGTH_COEFFICIENT,
             overrideName: LightningName, extraCritChance: _castCritChance + hero.LightningCritChance);
     }
 }

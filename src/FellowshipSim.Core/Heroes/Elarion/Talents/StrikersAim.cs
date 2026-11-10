@@ -12,8 +12,8 @@ public partial class StrikersAim : Talent
 {
     public const int BuffEffectId = 3179;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Striker's Aim", BuffEffectId, BuffDuration, MaxStacks,
-        StatModifier.Add(StatType.Expertise, ExpertiseAdded));
+    public static readonly AuraDef Buff = AuraDef.Effect("Striker's Aim", BuffEffectId, BUFF_DURATION, MAX_STACKS,
+        StatModifier.Add(StatType.Expertise, EXPERTISE_ADDED));
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -23,7 +23,7 @@ public partial class StrikersAim : Talent
         if (hero.GetAbility<HighwindArrow>() is not { } highwind) return;
         highwind.RicochetsMissed += (ctx, missed) =>
         {
-            int stacks = Math.Min(MaxStacks, missed);
+            int stacks = Math.Min(MAX_STACKS, missed);
             if (stacks <= hero.Auras.GetStacks(Buff, ctx.CurrentTime)) return;
             hero.Auras.Apply(Buff, ctx.CurrentTime, setStacks: stacks);
             Decay(ctx, hero.Auras.Get(Buff, ctx.CurrentTime)!);

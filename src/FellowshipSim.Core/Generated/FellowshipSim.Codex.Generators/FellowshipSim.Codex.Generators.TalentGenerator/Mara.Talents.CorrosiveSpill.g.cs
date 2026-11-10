@@ -17,14 +17,20 @@ partial class CorrosiveSpill
     public const int TalentRadius = 500;
 
     /// <summary>Game data: tuning <c>Chance, Mara.Talent.ComboPointsChanceAoeDamage.Chance</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-    public const double Chance = 0.03;
+    public const double CHANCE = 0.03;
 
     /// <summary>Game data: tuning <c>Debuff.AgilityCoefficient, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient</c> of talent 206; Corrosive Spill (effect 2310).</summary>
-    public const double AgilityCoefficient = 1.58;
+    public const double AGILITY_COEFFICIENT = 1.58;
+
+    /// <summary>Game data: tuning <c>Debuff.Duration, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.Duration</c> of talent 206; Corrosive Spill (effect 2310).</summary>
+    public const int DURATION_1 = 12;
+
+    /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Duration</c> of talent 206; Corrosive Spill (ability 1583).</summary>
+    public const int DURATION_2 = 3;
 
     /// <summary>Game data: tuning <c>Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 206; Corrosive Spill (effect 2310).</summary>
-    public const double TickInterval = 1.5;
+    public const double TICK_INTERVAL = 1.5;
 
     /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Radius</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-    public const int Radius = 500;
+    public const int RADIUS = 500;
 }

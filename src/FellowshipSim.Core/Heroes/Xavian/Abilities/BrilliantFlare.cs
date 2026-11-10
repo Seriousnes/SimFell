@@ -4,7 +4,6 @@ namespace FellowshipSim.Core.Heroes.Xavian.Abilities;
 /// Ability 1860: "Heal target ally for (752% of Strength) health. When you have a charge of Swift Reprieval or Omega
 /// Reprieval your Brilliant Flare turns into Brilliant Flash." Cast time 1.5s (hasted), 132 Mana.
 /// </summary>
-[CodexAccepted("ManaCost")]
 public partial class BrilliantFlare : XavianAbility
 {
     /// <summary>Raised as the cast resolves (Sun's Verdict).</summary>

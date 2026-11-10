@@ -41,65 +41,65 @@ partial class HammerStorm
     public const int AbilityRadius = 700;
 
     /// <summary>Game data: tuning <c>ChanceIncreasedSpenderDamage.AoeAttack.DamageMultiplier</c> of ability 1242; ability 1215, talent Schism (talent 85).</summary>
-    public const double AoeAttackDamageMultiplier = 2.5;
+    public const double AOE_ATTACK_DAMAGE_MULTIPLIER = 2.5;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 1242.</summary>
-    public const double Cost = 0.5;
+    public const double COST = 0.5;
 
     /// <summary>Game data: tuning <c>CostPerTick</c> of ability 1242.</summary>
-    public const double CostPerTick = 0.04;
+    public const double COST_PER_TICK = 0.04;
 
     /// <summary>Game data: tuning <c>Lightning.Spread</c> of ability 1242.</summary>
-    public const double LightningSpread = 0.2;
+    public const double LIGHTNING_SPREAD = 0.2;
 
     /// <summary>Game data: tuning <c>Lightning.StrengthCoefficient</c> of ability 1242.</summary>
-    public const double LightningStrengthCoefficient = 0.78;
+    public const double LIGHTNING_STRENGTH_COEFFICIENT = 0.78;
 
     /// <summary>Game data: tuning <c>Lightning.TargetThresholdForDamageScale</c> of ability 1242.</summary>
-    public const int LightningTargetThresholdForDamageScale = 15;
+    public const int LIGHTNING_TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 15;
 
     /// <summary>Game data: tuning <c>Lightning.VisualDelay</c> of ability 1242.</summary>
-    public const double LightningVisualDelay = 0.08;
+    public const double LIGHTNING_VISUAL_DELAY = 0.08;
 
     /// <summary>Game data: tuning <c>MaxAttacks</c> of ability 1242.</summary>
-    public const int MaxAttacks = 4;
+    public const int MAX_ATTACKS = 4;
 
     /// <summary>Game data: tuning <c>MaxRageToSpend</c> of ability 1242.</summary>
-    public const double MaxRageToSpend = 0.25;
+    public const double MAX_RAGE_TO_SPEND = 0.25;
 
     /// <summary>Game data: tuning <c>ReducedDurationIncreasedDamageCost.CostMultiplier</c> of ability 1242.</summary>
-    public const int ReducedDurationIncreasedDamageCostCostMultiplier = 2;
+    public const int REDUCED_DURATION_INCREASED_DAMAGE_COST_COST_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>ReducedDurationIncreasedDamageCost.DamageExponential</c> of ability 1242.</summary>
-    public const double ReducedDurationIncreasedDamageCostDamageExponential = 1.35;
+    public const double REDUCED_DURATION_INCREASED_DAMAGE_COST_DAMAGE_EXPONENTIAL = 1.35;
 
     /// <summary>Game data: tuning <c>ReducedDurationIncreasedDamageCost.DurationMultiplier</c> of ability 1242.</summary>
-    public const double ReducedDurationIncreasedDamageCostDurationMultiplier = 0.5;
+    public const double REDUCED_DURATION_INCREASED_DAMAGE_COST_DURATION_MULTIPLIER = 0.5;
 
     /// <summary>Game data: tuning <c>ReducedDurationIncreasedDamageCost.MaxNumberOfTicks</c> of ability 1242.</summary>
-    public const double ReducedDurationIncreasedDamageCostMaxNumberOfTicks = 3.15;
+    public const double REDUCED_DURATION_INCREASED_DAMAGE_COST_MAX_NUMBER_OF_TICKS = 3.15;
 
     /// <summary>Game data: tuning <c>ReducedIncomingDamage.IncomingDamageMultiplier</c> of ability 1242; Hammer Storm (effect 1750), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageMultiplier = 0.8;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 0.8;
 
     /// <summary>Game data: tuning <c>ReducedIncomingDamage.IncreasedStatBonus</c> of ability 1242; Hammer Storm (effect 1750), Expertise Additive.</summary>
-    public const double IncreasedStatBonus = 0.2;
+    public const double INCREASED_STAT_BONUS = 0.2;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1242.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1242.</summary>
-    public const double StrengthCoefficient = 2.23;
+    public const double STRENGTH_COEFFICIENT = 2.23;
 
     /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1242.</summary>
-    public const int TargetThresholdForDamageScale = 12;
+    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 12;
 
     /// <summary>Game data: tuning <c>Tariq.Talent.PassiveLightningCritChanceIncrease</c> of ability 1242; ability 1221, talent Crack the Sky (talent 77), CritChance Additive.</summary>
-    public const double PassiveLightningCritChanceIncrease = 0.2;
+    public const double PASSIVE_LIGHTNING_CRIT_CHANCE_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>VisualEndDelay</c> of ability 1242.</summary>
-    public const double VisualEndDelay = 0.3;
+    public const double VISUAL_END_DELAY = 0.3;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1242.</summary>
-    public const int VisualHitDelay = 0;
+    public const int VISUAL_HIT_DELAY = 0;
 }

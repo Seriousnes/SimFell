@@ -32,89 +32,89 @@ partial class ShieldsUp
     public const int AbilityDuration = 12;
 
     /// <summary>Game data: tuning <c>AbsorbMaxHealthFactor</c> of ability 984.</summary>
-    public const double AbsorbMaxHealthFactor = 0.12;
+    public const double ABSORB_MAX_HEALTH_FACTOR = 0.12;
 
     /// <summary>Game data: tuning <c>BlockChanceScale</c> of ability 984; BlockChance Additive.</summary>
-    public const double BlockChanceScale = 0.25;
+    public const double BLOCK_CHANCE_SCALE = 0.25;
 
     /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 984.</summary>
-    public const int ComboPointCost = 3;
+    public const int COMBO_POINT_COST = 3;
 
     /// <summary>Game data: tuning <c>Duration</c> of ability 984.</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>Helena.BouncyProjectile.ToughnessFromDamageDealtScaler</c> of ability 984; Shield Throw (ability 985).</summary>
-    public const double ToughnessFromDamageDealtScaler = 0.2;
+    public const double TOUGHNESS_FROM_DAMAGE_DEALT_SCALER = 0.2;
 
     /// <summary>Game data: tuning <c>Helena.MeleeAoeSlow.Talent.IncreasedToughnessAndDamage.AdditionalToughnessBasedOnMax</c> of ability 984; Shockwave (ability 979), talent Greater Shockwave (talent 643).</summary>
-    public const double AdditionalToughnessBasedOnMax = 0.1;
+    public const double ADDITIONAL_TOUGHNESS_BASED_ON_MAX = 0.1;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus</c> of ability 984; ability 960.</summary>
-    public const int BlockFlatBonus = 0;
+    public const int BLOCK_FLAT_BONUS = 0;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.Block.StrengthScaler</c> of ability 984; ability 960.</summary>
-    public const double BlockStrengthScaler = 0.24;
+    public const double BLOCK_STRENGTH_SCALER = 0.24;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 984; ability 960.</summary>
-    public const int DefenceBuffFlatBonus = 0;
+    public const int DEFENCE_BUFF_FLAT_BONUS = 0;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.StrengthScaler</c> of ability 984; ability 960.</summary>
-    public const double DefenceBuffStrengthScaler = 2.31;
+    public const double DEFENCE_BUFF_STRENGTH_SCALER = 2.31;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.DepleteReductionFromArmorScaler</c> of ability 984; ability 960.</summary>
-    public const double DepleteReductionFromArmorScaler = 0.2;
+    public const double DEPLETE_REDUCTION_FROM_ARMOR_SCALER = 0.2;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel1</c> of ability 984; ability 960.</summary>
-    public const double LowerThresholdLevel1 = 0.001;
+    public const double LOWER_THRESHOLD_LEVEL1 = 0.001;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel2</c> of ability 984; ability 960.</summary>
-    public const double LowerThresholdLevel2 = 0.25;
+    public const double LOWER_THRESHOLD_LEVEL2 = 0.25;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel3</c> of ability 984; ability 960.</summary>
-    public const double LowerThresholdLevel3 = 0.5;
+    public const double LOWER_THRESHOLD_LEVEL3 = 0.5;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel4</c> of ability 984; ability 960.</summary>
-    public const double LowerThresholdLevel4 = 0.75;
+    public const double LOWER_THRESHOLD_LEVEL4 = 0.75;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessStrengthScaler</c> of ability 984; ability 960.</summary>
-    public const double MaxToughnessStrengthScaler = 7.7;
+    public const double MAX_TOUGHNESS_STRENGTH_SCALER = 7.7;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessTotalSecondaryStatModifier</c> of ability 984; ability 960.</summary>
-    public const int MaxToughnessTotalSecondaryStatModifier = 2;
+    public const int MAX_TOUGHNESS_TOTAL_SECONDARY_STAT_MODIFIER = 2;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 984; ability 960.</summary>
-    public const int MeleeAoeSlowFlatBonusPerHit = 0;
+    public const int MELEE_AOE_SLOW_FLAT_BONUS_PER_HIT = 0;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.StrengthScalerPerHit</c> of ability 984; ability 960.</summary>
-    public const double MeleeAoeSlowStrengthScalerPerHit = 1.925;
+    public const double MELEE_AOE_SLOW_STRENGTH_SCALER_PER_HIT = 1.925;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit</c> of ability 984; ability 960.</summary>
-    public const int MeleeCleaveFlatBonusPerHit = 0;
+    public const int MELEE_CLEAVE_FLAT_BONUS_PER_HIT = 0;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.StrengthScalerPerHit</c> of ability 984; ability 960.</summary>
-    public const double MeleeCleaveStrengthScalerPerHit = 1.155;
+    public const double MELEE_CLEAVE_STRENGTH_SCALER_PER_HIT = 1.155;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.Factor</c> of ability 984; ability 960, talent Shield Mastery (talent 208).</summary>
-    public const double Factor = 0.1;
+    public const double FACTOR = 0.1;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.ToughnessDecayFactor</c> of ability 984; ability 960.</summary>
-    public const double ToughnessDecayFactor = 0.01;
+    public const double TOUGHNESS_DECAY_FACTOR = 0.01;
 
     /// <summary>Game data: tuning <c>Helena.Toughness.ToughnessDecayPeriod</c> of ability 984; ability 960.</summary>
-    public const int ToughnessDecayPeriod = 10;
+    public const int TOUGHNESS_DECAY_PERIOD = 10;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 984.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
 
     /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 984.</summary>
-    public const int IncomingDamageMultiplier = 1;
+    public const int INCOMING_DAMAGE_MULTIPLIER = 1;
 
     /// <summary>Game data: tuning <c>IncreasedBlockChance.AdditionalBlockChance</c> of ability 984; talent Guarded Veteran (talent 645).</summary>
-    public const double AdditionalBlockChance = 0.05;
+    public const double ADDITIONAL_BLOCK_CHANCE = 0.05;
 
     /// <summary>Game data: tuning <c>NumCharges</c> of ability 984.</summary>
-    public const int NumCharges = 2;
+    public const int NUM_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>TemporaryTougnessLossProtection.DurationInSeconds</c> of ability 984; Shields Up (effect 2475).</summary>
-    public const double DurationInSeconds = 1.1;
+    public const double DURATION_IN_SECONDS = 1.1;
 }

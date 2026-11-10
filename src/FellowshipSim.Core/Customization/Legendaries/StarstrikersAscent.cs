@@ -17,7 +17,7 @@ public partial class StarstrikersAscent : Legendary
         if (hero is not Elarion) return;
         hero.OnSpiritRefund += (_, _, ctx) =>
         {
-            if (ctx.Outcomes.RollProc(ProcKey, SpiritProcResetAndBuff, ctx)) ImpendingHeartseeker.Grant(hero, ctx);
+            if (ctx.Outcomes.RollProc(ProcKey, SPIRIT_PROC_RESET_AND_BUFF, ctx)) ImpendingHeartseeker.Grant(hero, ctx);
         };
     }
 }

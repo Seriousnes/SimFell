@@ -11,10 +11,10 @@ partial class FortressInTheSands
     public const int LegsItemId = 5900;
 
     /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier, Sune.SingleTargetAbsorb.Talent.DamageReduction.IncomingDamageMultiplier</c> of legendary power 579; Solar Shield (ability 1848).</summary>
-    public const double DamageReductionIncomingDamageMultiplier = 0.3;
+    public const double DAMAGE_REDUCTION_INCOMING_DAMAGE_MULTIPLIER = 0.3;
 
     /// <summary>Game data: tuning <c>DeathPrevention.Cooldown, Sune.Talent.DeathPrevention.Cooldown</c> of legendary power 579; Fortress in the Sands: Exhausted (effect 2658).</summary>
-    public const int Cooldown = 30;
+    public const int COOLDOWN = 30;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Fortress in the Sands";

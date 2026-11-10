@@ -23,8 +23,8 @@ partial class Kick
     public const int AbilityRange = 500;
 
     /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1200.</summary>
-    public const int GEC_CooldownStatic_C = 1;
+    public const int GEC_COOLDOWN_STATIC_C = 1;
 
     /// <summary>Game data: tuning <c>LockoutDuration</c> of ability 1200.</summary>
-    public const int LockoutDuration = 4;
+    public const int LOCKOUT_DURATION = 4;
 }

@@ -11,17 +11,17 @@ partial class PunishingStrikes
     public const string TalentName = "Punishing Strikes";
 
     /// <summary>Game data: tuning <c>CooldownReducementMultiplier, Warmaster.LightMelee.Talent.BlockToIncreasedPower.CooldownReducementMultiplier</c> of talent 644; ability 2215.</summary>
-    public const int CooldownReducementMultiplier = 2;
+    public const int COOLDOWN_REDUCEMENT_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>DamageMultiplier, Warmaster.LightMelee.Talent.BlockToIncreasedPower.DamageMultiplier</c> of talent 644; ability 2215.</summary>
-    public const int DamageMultiplier = 2;
+    public const int DAMAGE_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>MaxStacks, Warmaster.LightMelee.Talent.BlockToIncreasedPower.MaxStacks</c> of talent 644; ability 2215.</summary>
-    public const int MaxStacks = 2;
+    public const int MAX_STACKS = 2;
 
     /// <summary>Game data: tuning <c>ProcChance, Warmaster.LightMelee.Talent.BlockToIncreasedPower.ProcChance</c> of talent 644; ability 2215.</summary>
-    public const double ProcChance = 0.06;
+    public const double PROC_CHANCE = 0.06;
 
     /// <summary>Game data: tuning <c>StacksAtProc, Warmaster.LightMelee.Talent.BlockToIncreasedPower.StacksAtProc</c> of talent 644; ability 2215.</summary>
-    public const int StacksAtProc = 2;
+    public const int STACKS_AT_PROC = 2;
 }

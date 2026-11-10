@@ -11,7 +11,7 @@ partial class DevouringFlame
     public const int LegsItemId = 5900;
 
     /// <summary>Game data: tuning <c>BoostsIncomingDamage.DamageMultiplier, Firemage.CastedSingleHeavyDot.Talent.BoostsIncomingDamage.DamageMultiplier</c> of legendary power 616; effect 3174.</summary>
-    public const double DamageMultiplier = 1.07;
+    public const double DAMAGE_MULTIPLIER = 1.07;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Devouring Flame";

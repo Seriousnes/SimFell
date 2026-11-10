@@ -32,41 +32,47 @@ partial class SpiritedVortex
     public const int AbilityMaxTargets = 40;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1120.</summary>
-    public const double AgilityCoefficient = 1.0556;
+    public const double AGILITY_COEFFICIENT = 1.0556;
 
     /// <summary>Game data: tuning <c>ConsumedBuffsToDefensiveBuff.DurationalAoeDamageBuff.DamageMultiplier</c> of ability 1120; Warden of the Temple (effect 2447), talent Warden of the Temple (talent 102).</summary>
-    public const double DurationalAoeDamageBuffDamageMultiplier = 1.5;
+    public const double DURATIONAL_AOE_DAMAGE_BUFF_DAMAGE_MULTIPLIER = 1.5;
 
     /// <summary>Game data: tuning <c>ConsumedBuffsToDefensiveBuff.DurationalAoeDamageBuff.DodgeChanceMultiplier</c> of ability 1120; Warden of the Temple (effect 2447), talent Warden of the Temple (talent 102).</summary>
-    public const int DurationalAoeDamageBuffDodgeChanceMultiplier = 2;
+    public const int DURATIONAL_AOE_DAMAGE_BUFF_DODGE_CHANCE_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>DodgeChanceIncrease</c> of ability 1120.</summary>
-    public const double DodgeChanceIncrease = 0.15;
+    public const double DODGE_CHANCE_INCREASE = 0.15;
+
+    /// <summary>Game data: tuning <c>Duration</c> of ability 1120.</summary>
+    public const int DURATION_1 = 30;
+
+    /// <summary>Game data: tuning <c>Enfeeble.Duration</c> of ability 1120; Enfeebled (effect 2487).</summary>
+    public const int DURATION_2 = 5;
 
     /// <summary>Game data: tuning <c>Enfeeble.TargetDamageScaleMultiplier</c> of ability 1120; Enfeebled (effect 2487), DamageScale MultiplyCompound.</summary>
-    public const double TargetDamageScaleMultiplier = 0.9;
+    public const double TARGET_DAMAGE_SCALE_MULTIPLIER = 0.9;
 
     /// <summary>Game data: tuning <c>MaxTargets</c> of ability 1120.</summary>
-    public const int MaxTargets = 40;
+    public const int MAX_TARGETS = 40;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1120; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TargetDebuffIncreasedDamage = 1.1;
+    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
 
     /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of ability 1120; talent Conclusive Strikes (talent 107).</summary>
-    public const double IncreasedDamageScaler = 1.1;
+    public const double INCREASED_DAMAGE_SCALER = 1.1;
 
     /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1120; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
-    public const double WindDamageIncrease = 1.2;
+    public const double WIND_DAMAGE_INCREASE = 1.2;
 
     /// <summary>Game data: tuning <c>SelfHealPerTarget</c> of ability 1120.</summary>
-    public const double SelfHealPerTarget = 0.75;
+    public const double SELF_HEAL_PER_TARGET = 0.75;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1120.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageMultiplier</c> of ability 1120; talent Harsh Winds (talent 98), DamageScale MultiplyCompound.</summary>
-    public const double IncreasedDamageDamageMultiplier = 1.2;
+    public const double INCREASED_DAMAGE_DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of ability 1120.</summary>
-    public const int TargetCountDamageScalingThreshold = 8;
+    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 8;
 }

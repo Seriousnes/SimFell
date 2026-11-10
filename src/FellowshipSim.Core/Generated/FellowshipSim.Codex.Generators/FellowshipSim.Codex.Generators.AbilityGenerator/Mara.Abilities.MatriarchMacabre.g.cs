@@ -26,14 +26,17 @@ partial class MatriarchMacabre
     public const int AbilityDuration = 20;
 
     /// <summary>Game data: tuning <c>ActivationDelay</c> of ability 1420.</summary>
-    public const double ActivationDelay = 0.3;
+    public const double ACTIVATION_DELAY = 0.3;
 
     /// <summary>Game data: tuning <c>Cost</c> of ability 1420.</summary>
-    public const int Cost = 100;
+    public const int COST = 100;
 
     /// <summary>Game data: tuning <c>DamageIncreaseBuff.DamageScaler</c> of ability 1420; Matriarch Macabre (effect 2039), DamageScale MultiplyCompound.</summary>
-    public const double DamageScaler = 1.2;
+    public const double DAMAGE_SCALER = 1.2;
+
+    /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1420; DamageScale MultiplyCompound.</summary>
+    public const double DAMAGE_MULTIPLIER = 0.5;
 
     /// <summary>Game data: tuning <c>SpawnDistance</c> of ability 1420.</summary>
-    public const int SpawnDistance = 100;
+    public const int SPAWN_DISTANCE = 100;
 }

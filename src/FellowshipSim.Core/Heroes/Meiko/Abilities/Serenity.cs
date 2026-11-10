@@ -11,7 +11,7 @@ public partial class Serenity : MeikoAbility
     /// Serenity's stacks: auto attacks, Earthwell, Whipping Apex and Warden of the Temple add to them. In the game they are
     /// effect 1566 (HealBonusTracker, maxStacks 50); combat logs never show it.
     /// </summary>
-    public static readonly AuraDef Stacks = AuraDef.Internal("Serenity Stacks", 0, HealMaxStacks);
+    public static readonly AuraDef Stacks = AuraDef.Internal("Serenity Stacks", 0, HEAL_MAX_STACKS);
 
     /// <summary>Serenity was cast, with the stacks it consumed (Everlasting Spirit).</summary>
     public event Action<SimulationContext, int>? Soothed;

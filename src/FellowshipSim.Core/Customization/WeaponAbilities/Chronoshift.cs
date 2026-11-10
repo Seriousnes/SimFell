@@ -4,27 +4,26 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// Weapon ability of Asha's Chronoshift Spire (ability 1558): a cast, then a channel pulsing on a hasted period
 /// at all nearby enemies. While channeling, Asha's Arcane Embrace (effect 2279) gives increased cooldown recovery.
 /// </summary>
-[CodexAccepted("ChannelDuration")]
 public partial class Chronoshift : Ability
 {
     public const int BarrierEffectId = 2279;
 
     /// <summary>Asha's Arcane Embrace: the temporal barrier while channeling.</summary>
     public static readonly AuraDef Barrier = AuraDef.Effect("Asha's Arcane Embrace", BarrierEffectId,
-        modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, IncomingDamageMultiplier), StatModifier.Increased(StatType.CooldownRecovery, ChannelWhileActiveAddedCooldownRecovery)]);
+        modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, INCOMING_DAMAGE_MULTIPLIER), StatModifier.Increased(StatType.CooldownRecovery, CHANNEL_WHILE_ACTIVE_ADDED_COOLDOWN_RECOVERY)]);
 
     private readonly AuraDef _barrier = Barrier;
 
     public Chronoshift(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = PrimaryAttributeCoefficient;
+        BaseCoefficient = PRIMARY_ATTRIBUTE_COEFFICIENT;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);
         // Logs: a pulse lands as the channel starts, then every hasted period, plus a partial final pulse.
         ChannelTicksOnStart = true;
         ChannelPartialFinalTick = true;
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
         // The barrier's CooldownRecovery joins the hero's recovery pool while channeling and leaves it when
         // the channel ends or is stopped. Chronoshift's own cooldown is fixed (a weapon ability's cooldown runs at normal speed).
     }

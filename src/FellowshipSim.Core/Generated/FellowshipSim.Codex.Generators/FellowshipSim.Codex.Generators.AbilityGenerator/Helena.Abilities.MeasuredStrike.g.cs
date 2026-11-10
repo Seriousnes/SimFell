@@ -25,78 +25,81 @@ partial class MeasuredStrike
     /// <summary>Game data: <c>range</c> of ability 980.</summary>
     public const int AbilityRange = 500;
 
+    /// <summary>Game data: tuning <c>BlockToIncreasedPower.DamageMultiplier</c> of ability 980; ability 2215, talent Punishing Strikes (talent 644).</summary>
+    public const int DAMAGE_MULTIPLIER = 2;
+
     /// <summary>Game data: tuning <c>CleaveDamageFraction</c> of ability 980.</summary>
-    public const int CleaveDamageFraction = 1;
+    public const int CLEAVE_DAMAGE_FRACTION = 1;
 
     /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 980.</summary>
-    public const int CleaveRadius = 500;
+    public const int CLEAVE_RADIUS = 500;
 
     /// <summary>Game data: tuning <c>ComboPointReward</c> of ability 980.</summary>
-    public const int ComboPointReward = 1;
+    public const int COMBO_POINT_REWARD = 1;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 980.</summary>
-    public const int DamageScalingTargetCountThreshold = 3;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 3;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 980.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 980.</summary>
-    public const double StrengthCoefficient = 0.71;
+    public const double STRENGTH_COEFFICIENT = 0.71;
 
     /// <summary>Game data: tuning <c>Tier1.Level1.CritChanceIncrease</c> of ability 980; CritChance Additive.</summary>
-    public const double Tier1Level1CritChanceIncrease = 0.05;
+    public const double TIER1_LEVEL1_CRIT_CHANCE_INCREASE = 0.05;
 
     /// <summary>Game data: tuning <c>Tier1.Level2.CritChanceIncrease</c> of ability 980; CritChance Additive.</summary>
-    public const double Tier1Level2CritChanceIncrease = 0.1;
+    public const double TIER1_LEVEL2_CRIT_CHANCE_INCREASE = 0.1;
 
     /// <summary>Game data: tuning <c>Tier1.Level3.CritChanceIncrease</c> of ability 980; CritChance Additive.</summary>
-    public const double Tier1Level3CritChanceIncrease = 0.3;
+    public const double TIER1_LEVEL3_CRIT_CHANCE_INCREASE = 0.3;
 
     /// <summary>Game data: tuning <c>Tier3b.LightMeleeProc.DamageIncrease</c> of ability 980; DamageScale Multiplicitive.</summary>
-    public const int Tier3bLightMeleeProcDamageIncrease = 2;
+    public const int TIER3B_LIGHT_MELEE_PROC_DAMAGE_INCREASE = 2;
 
     /// <summary>Game data: tuning <c>Tier3b.LightMeleeProc.Duration</c> of ability 980.</summary>
-    public const int Tier3bLightMeleeProcDuration = 6;
+    public const int TIER3B_LIGHT_MELEE_PROC_DURATION = 6;
 
     /// <summary>Game data: tuning <c>Tier3b.LightMeleeProc.MaxAdditionalTargets</c> of ability 980.</summary>
-    public const int Tier3bLightMeleeProcMaxAdditionalTargets = 2;
+    public const int TIER3B_LIGHT_MELEE_PROC_MAX_ADDITIONAL_TARGETS = 2;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOFfensiveSuperBuff.SpiritPointCost</c> of ability 980.</summary>
-    public const int WarmasterSelfOFfensiveSuperBuffSpiritPointCost = 100;
+    public const int WARMASTER_SELF_O_FFENSIVE_SUPER_BUFF_SPIRIT_POINT_COST = 100;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOFfensiveSuperBuff.TauntDuration</c> of ability 980.</summary>
-    public const int WarmasterSelfOFfensiveSuperBuffTauntDuration = 6;
+    public const int WARMASTER_SELF_O_FFENSIVE_SUPER_BUFF_TAUNT_DURATION = 6;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.CleaveAdditionalTargets</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffCleaveAdditionalTargets = 6;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_CLEAVE_ADDITIONAL_TARGETS = 6;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.CleaveRadius</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffCleaveRadius = 300;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_CLEAVE_RADIUS = 300;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.Cooldown</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffCooldown = 0;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_COOLDOWN = 0;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.Duration</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffDuration = 12;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_DURATION = 12;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.ExtraGeneratedComboPointHeavyMelee</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffExtraGeneratedComboPointHeavyMelee = 1;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_EXTRA_GENERATED_COMBO_POINT_HEAVY_MELEE = 1;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.ExtraGeneratedComboPointLightMelee</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffExtraGeneratedComboPointLightMelee = 1;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_EXTRA_GENERATED_COMBO_POINT_LIGHT_MELEE = 1;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.HasteBuff</c> of ability 980.</summary>
-    public const double WarmasterSelfOffensiveSuperBuffHasteBuff = 0.2;
+    public const double WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_HASTE_BUFF = 0.2;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.HasteScale</c> of ability 980.</summary>
-    public const double WarmasterSelfOffensiveSuperBuffHasteScale = 1.2;
+    public const double WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_HASTE_SCALE = 1.2;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.IncomingDamageScale</c> of ability 980.</summary>
-    public const double WarmasterSelfOffensiveSuperBuffIncomingDamageScale = 1.2;
+    public const double WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_INCOMING_DAMAGE_SCALE = 1.2;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.OutgoingDamageScale</c> of ability 980.</summary>
-    public const double WarmasterSelfOffensiveSuperBuffOutgoingDamageScale = 1.1;
+    public const double WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_OUTGOING_DAMAGE_SCALE = 1.1;
 
     /// <summary>Game data: tuning <c>Warmaster.SelfOffensiveSuperBuff.TauntRadius</c> of ability 980.</summary>
-    public const int WarmasterSelfOffensiveSuperBuffTauntRadius = 4000;
+    public const int WARMASTER_SELF_OFFENSIVE_SUPER_BUFF_TAUNT_RADIUS = 4000;
 }

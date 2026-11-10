@@ -17,5 +17,5 @@ partial class PatientSoul
     public const int SigilRandomChance = 2;
 
     /// <summary>Game data: rank run <c>Trait.StandingStillStaminaExpertiseRatingIncrease.Buff.AdditionalExpertiseRating</c> of sigil 46, transform <c>plain</c>; the tooltip has 12 / 22 / 32 / 42.</summary>
-    public static readonly double[] BuffAdditionalExpertiseRatingByRank = [12, 22, 32, 42];
+    public static readonly double[] BUFF_ADDITIONAL_EXPERTISE_RATING_BY_RANK = [12, 22, 32, 42];
 }

@@ -8,7 +8,7 @@ public partial class MagicWard : Talent
 {
     public const int BuffEffectId = 2650;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Duration);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DURATION);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

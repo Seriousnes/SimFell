@@ -15,7 +15,7 @@ public partial class RisingSun : Talent
         var xavian = (Xavian)hero;
         xavian.GetAbility<Omnistrike>()!.Struck += ctx =>
         {
-            if (ctx.Outcomes.RollProc(ProcKey, ResetCdAtTargetInstantAoeProcChance, ctx)) xavian.CooldownOf(xavian.SolarBlades).ResetAll();
+            if (ctx.Outcomes.RollProc(ProcKey, RESET_CD_AT_TARGET_INSTANT_AOE_PROC_CHANCE, ctx)) xavian.CooldownOf(xavian.SolarBlades).ResetAll();
         };
     }
 }

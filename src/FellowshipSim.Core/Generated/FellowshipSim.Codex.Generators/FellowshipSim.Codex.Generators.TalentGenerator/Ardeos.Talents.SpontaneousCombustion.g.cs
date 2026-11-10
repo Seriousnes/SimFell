@@ -11,17 +11,17 @@ partial class SpontaneousCombustion
     public const string TalentName = "Spontaneous Combustion";
 
     /// <summary>Game data: tuning <c>Chance, Firemage.Talent.DotDoubleDamageAndHeal.Chance</c> of talent 153; Spontaneous Combustion (ability 1255).</summary>
-    public const double Chance = 0.1;
+    public const double CHANCE = 0.1;
 
     /// <summary>Game data: tuning <c>CritChanceAdded, Firemage.Talent.DotDoubleDamageAndHeal.CritChanceAdded</c> of talent 153; Spontaneous Combustion (ability 1255).</summary>
-    public const int CritChanceAdded = 1;
+    public const int CRIT_CHANCE_ADDED = 1;
 
     /// <summary>Game data: tuning <c>DamageToHealRatio, Firemage.Talent.DotDoubleDamageAndHeal.DamageToHealRatio</c> of talent 153; Spontaneous Combustion (ability 1255).</summary>
-    public const double DamageToHealRatio = 0.5;
+    public const double DAMAGE_TO_HEAL_RATIO = 0.5;
 
     /// <summary>Game data: tuning <c>ExtraPerCritPercentage, Firemage.Talent.DotDoubleDamageAndHeal.ExtraPerCritPercentage</c> of talent 153; Spontaneous Combustion (ability 1255).</summary>
-    public const double ExtraPerCritPercentage = 0.05;
+    public const double EXTRA_PER_CRIT_PERCENTAGE = 0.05;
 
     /// <summary>Game data: tuning <c>HealTargetingRadius, Firemage.Talent.DotDoubleDamageAndHeal.HealTargetingRadius</c> of talent 153; Spontaneous Combustion (ability 1255).</summary>
-    public const int HealTargetingRadius = 3000;
+    public const int HEAL_TARGETING_RADIUS = 3000;
 }

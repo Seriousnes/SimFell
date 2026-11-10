@@ -25,10 +25,10 @@ namespace FellowshipSim.Codex.Generators;
 /// name, and the ability that power grants under its name. Its constants are <c>WeaponPowerId</c>,
 /// <c>WeaponPowerName</c>, <c>AbilityId</c>, <c>AbilityName</c>, one per scalar field of the ability record under
 /// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and one
-/// per tuning value of the weapon power under the tuning value's name. The class's own part has the ability's
+/// per tuning value of the weapon power under its <see cref="TuningNames"/> name. The class's own part has the ability's
 /// behaviour.</item>
 /// </list>
-/// A constant whose name the class or a base class already has is left out. The game data is the AdditionalFiles
+/// A member of the class or a base class with a constant's name is CODEX025. The game data is the AdditionalFiles
 /// <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/>
 /// reports missing game data.
 /// </summary>
@@ -51,18 +51,11 @@ public sealed class WeaponGenerator : IIncrementalGenerator
         "CODEX023", "A partial weapon or weapon ability class names several weapon power records",
         "The partial class {0} names the weapon power records {1} in the game data", "Codex", DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor SharedName = new(
-        "CODEX024", "Two tuning values of a weapon power share a name",
-        "Weapon power {0} has tuning values {1} with different values under the name {2}; the class has no constant {2}", "Codex", DiagnosticSeverity.Warning, true);
-
     private static readonly DiagnosticDescriptor DeclaredName = new(
         "CODEX025", "A weapon constant's name is a member of the class",
-        "The class {0} or a base class has a member {1}, so the constant {1} of weapon power {2} is left out", "Codex", DiagnosticSeverity.Warning, true);
+        "The class {0} or a base class has a member {1}, and {1} is a constant of weapon power {2}; rename the member", "Codex", DiagnosticSeverity.Error, true);
 
-    /// <summary>
-    /// A constant of a weapon power record: its name, C# type and literal, and its summary. A constant with no type has
-    /// several values under its name, and its summary names the tuning keys.
-    /// </summary>
+    /// <summary>A constant of a weapon power record: its name, C# type and literal, and its summary.</summary>
     private sealed record Constant(string Name, string Type, string Literal, string Summary);
 
     /// <summary>An item granting a weapon power: its ID, name, hero and class name.</summary>
@@ -82,10 +75,10 @@ public sealed class WeaponGenerator : IIncrementalGenerator
     /// A partial weapon or weapon ability class: its namespace, name, whether it is a weapon ability, the member names of
     /// the class and its base classes, and where it is declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, bool IsAbility, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
+    private sealed record Declared(string Namespace, string Name, bool IsAbility, EquatableArray<string> Members, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && IsAbility == other.IsAbility
-            && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
+            && Members.Equals(other.Members);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -136,7 +129,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!weapon && !ability) return null;
-        return new Declared(ns, type.Name, ability, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
+        return new Declared(ns, type.Name, ability, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -248,27 +241,14 @@ public sealed class WeaponGenerator : IIncrementalGenerator
         fields.Add(new Constant("Ability" + name, "bool", v ? "true" : "false", Field(field, id)));
     }
 
-    /// <summary>The weapon power's tuning values, one per name, in the order of the game data.</summary>
-    private static List<Constant> TuningsOf(WeaponPowerDocument power)
-    {
-        var tunings = new List<Constant>();
-        foreach (var group in (power.Tuning ?? new Dictionary<string, TuningReference>()).GroupBy(t => t.Value.Name ?? ""))
+    /// <summary>The weapon power's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
+    private static List<Constant> TuningsOf(WeaponPowerDocument power) =>
+        [.. TuningNames.Of(power.Tuning, ValueOf).Select(t =>
         {
-            if (group.Key.Length == 0) continue;
-            var values = group.Select(t => ValueOf(t.Value.Value)).Distinct().ToList();
-            string keys = string.Join(", ", group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal));
-            if (values.Count != 1 || values[0] is not { } value)
-            {
-                // Two values under one name: no constant, and the diagnostic names the keys.
-                tunings.Add(new Constant(group.Key, "", "", keys));
-                continue;
-            }
-            string source = SourceOf(group.First().Value);
-            tunings.Add(new Constant(group.Key, value.Type, value.Literal,
-                $"Game data: tuning <c>{Escape(keys)}</c> of weapon power {power.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}."));
-        }
-        return tunings;
-    }
+            string source = SourceOf(t.Source);
+            return new Constant(t.Name, t.Value.Type, t.Value.Literal,
+                $"Game data: tuning <c>{Escape(t.Keys)}</c> of weapon power {power.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
+        })];
 
     /// <summary>The C# type and literal of a tuning value; null for a value of no constant type.</summary>
     private static (string Type, string Literal)? ValueOf(object? value)
@@ -340,7 +320,6 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 context.ReportDiagnostic(Diagnostic.Create(NoRecord, d.Location, d.Name, $"ability granted by weapon power {power.Id} under its name"));
                 continue;
             }
-            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             string owner = $"weapon power {power.Id}";
             var matched = power.Items.Where(i => i.ClassName == d.Name).ToList();
             string granted = matched.Count > 0
@@ -357,21 +336,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                     $"{Escape(power.AbilityName)}, ability {power.AbilityId} of the game data, in <c>grants</c> of {owner}."));
                 all.Add(new("AbilityName", "string", Literal(power.AbilityName), $"Game data: <c>name</c> of ability {power.AbilityId}."));
                 all.AddRange(power.AbilityFields);
-                var names = new HashSet<string>(all.Select(c => c.Name), StringComparer.Ordinal);
-                foreach (var tuning in power.Tunings)
-                {
-                    if (tuning.Type.Length == 0)
-                    {
-                        leftOut.Report(SharedName, tuning.Name, power.Id, tuning.Summary, tuning.Name);
-                        continue;
-                    }
-                    if (!names.Add(tuning.Name))
-                    {
-                        leftOut.Report(DeclaredName, tuning.Name, d.Name, tuning.Name, power.Id);
-                        continue;
-                    }
-                    all.Add(tuning);
-                }
+                all.AddRange(power.Tunings);
             }
             else
             {
@@ -391,7 +356,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             {
                 if (members.Contains(constant.Name))
                 {
-                    leftOut.Report(DeclaredName, constant.Name, d.Name, constant.Name, power.Id);
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, constant.Name, power.Id));
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -400,7 +365,6 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
             source.Append("}\n");
-            leftOut.Finish();
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

@@ -18,10 +18,10 @@ namespace FellowshipSim.Codex.Generators;
 /// record. The record is the glyph whose name in Pascal case (letters and digits only, an apostrophe inside its word) is
 /// the class name. The constants are <c>GlyphId</c>, <c>GlyphName</c>, one per scalar field of the record under
 /// <c>Glyph</c> and the field's name (<c>GlyphMaxRank</c>, <c>GlyphAbilityRank</c>), and one per tuning value of the
-/// record under the tuning value's name. A tuning value has a value per rank: one value at every rank is a constant, and
-/// values differing by rank are a <c>public static readonly double[]</c> named after the tuning value and <c>ByRank</c>.
-/// The class's own part has the glyph's behaviour and its <c>Name</c> and <c>Id</c> overrides. A constant whose name the
-/// class or a base class already has is left out. The game data is the AdditionalFiles <c>entities.jsonl</c> and
+/// record under its <see cref="TuningNames"/> name. A tuning value has a value per rank: one value at every rank is a
+/// constant, and values differing by rank are a <c>public static readonly double[]</c> named after the tuning value and
+/// <c>_BY_RANK</c>. The class's own part has the glyph's behaviour and its <c>Name</c> and <c>Id</c> overrides. A member of
+/// the class or a base class with a constant's name is CODEX021. The game data is the AdditionalFiles <c>entities.jsonl</c> and
 /// <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/> reports missing game
 /// data.
 /// </summary>
@@ -41,17 +41,13 @@ public sealed class GlyphGenerator : IIncrementalGenerator
         "CODEX019", "A partial glyph class names several glyph records",
         "The partial class {0} names the glyph records {1} in the game data", "Codex", DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor SharedName = new(
-        "CODEX020", "Two tuning values of a glyph share a name",
-        "Glyph {0} has tuning values {1} with different values under the name {2}; the class has no member {2}", "Codex", DiagnosticSeverity.Warning, true);
-
     private static readonly DiagnosticDescriptor DeclaredName = new(
         "CODEX021", "A glyph constant's name is a member of the class",
-        "The class {0} or a base class has a member {1}, so the member {1} of glyph {2} is left out", "Codex", DiagnosticSeverity.Warning, true);
+        "The class {0} or a base class has a member {1}, and {1} is a member of glyph {2}; rename the class's member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>
     /// A member of a glyph record: its name, C# type and value (a literal, or an array's elements), its summary, and whether
-    /// it is a per-rank array. A member with no type has several values under its name, and its summary names them.
+    /// it is a per-rank array.
     /// </summary>
     private sealed record Member(string Name, string Type, string Literal, string Summary, bool ByRank = false);
 
@@ -62,9 +58,9 @@ public sealed class GlyphGenerator : IIncrementalGenerator
     private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
 
     /// <summary>A partial glyph class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Accepted, Location? Location)
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members) && Accepted.Equals(other.Accepted);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -106,7 +102,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!glyph) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), LeftOut.AcceptedOf(type), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -163,37 +159,19 @@ public sealed class GlyphGenerator : IIncrementalGenerator
     }
 
     /// <summary>
-    /// The record's tuning values, one per name, in the order of the game data. A value the same at every rank is a
-    /// constant; values differing by rank are an array by rank (rank 1 first), named after the tuning value and
-    /// <c>ByRank</c>.
+    /// The record's tuning values (<see cref="TuningNames"/>), in the order of the game data. A value the same at every
+    /// rank is a constant; values differing by rank are an array by rank (rank 1 first), named after the tuning value and
+    /// <c>_BY_RANK</c>.
     /// </summary>
-    private static List<Member> TuningsOf(GlyphDocument g)
-    {
-        var tunings = new List<Member>();
-        foreach (var group in (g.Tuning ?? new Dictionary<string, TuningReference>()).GroupBy(t => t.Value.Name ?? ""))
+    private static List<Member> TuningsOf(GlyphDocument g) =>
+        [.. TuningNames.Of(g.Tuning, ValueOf).Select(t =>
         {
-            if (group.Key.Length == 0) continue;
-            var values = group.Select(t => ValueOf(t.Value.Value)).Distinct().ToList();
-            string keys = string.Join(", ", group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal));
-            if (values.Count != 1 || values[0] is not { } value)
-            {
-                // Two values under one name: no member, and the diagnostic names the keys.
-                tunings.Add(new Member(group.Key, "", "", keys));
-                continue;
-            }
-            string source = SourceOf(group.First().Value);
-            string summary = $"Game data: tuning <c>{Escape(keys)}</c> of glyph {g.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}";
-            if (value.ByRank)
-            {
-                tunings.Add(new Member(group.Key + "ByRank", "double[]", value.Literal, summary + ", by rank.", ByRank: true));
-            }
-            else
-            {
-                tunings.Add(new Member(group.Key, value.Type, value.Literal, summary + "."));
-            }
-        }
-        return tunings;
-    }
+            string source = SourceOf(t.Source);
+            string summary = $"Game data: tuning <c>{Escape(t.Keys)}</c> of glyph {g.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}";
+            return t.Value.ByRank
+                ? new Member(t.Name + "_BY_RANK", "double[]", t.Value.Literal, summary + ", by rank.", ByRank: true)
+                : new Member(t.Name, t.Value.Type, t.Value.Literal, summary + ".");
+        })];
 
     /// <summary>
     /// The C# type and literal of a tuning value, and whether it is an array by rank; null for a value of no constant type.
@@ -262,7 +240,6 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
-            var leftOut = new LeftOut(context, d.Name, d.Accepted, d.Location);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Member>
             {
@@ -270,21 +247,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 new("GlyphName", "string", Literal(record.Name), $"Game data: <c>name</c> of glyph {record.Id}."),
             };
             all.AddRange(record.Fields);
-            var names = new HashSet<string>(all.Select(c => c.Name), StringComparer.Ordinal);
-            foreach (var member in record.Tunings)
-            {
-                if (member.Type.Length == 0)
-                {
-                    leftOut.Report(SharedName, member.Name, record.Id, member.Summary, member.Name);
-                    continue;
-                }
-                if (!names.Add(member.Name))
-                {
-                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, record.Id);
-                    continue;
-                }
-                all.Add(member);
-            }
+            all.AddRange(record.Tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -297,7 +260,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             {
                 if (members.Contains(member.Name))
                 {
-                    leftOut.Report(DeclaredName, member.Name, d.Name, member.Name, record.Id);
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, member.Name, record.Id));
                     continue;
                 }
                 if (!first) source.Append('\n');
@@ -313,7 +276,6 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 }
             }
             source.Append("}\n");
-            leftOut.Finish();
             context.AddSource($"Glyphs.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

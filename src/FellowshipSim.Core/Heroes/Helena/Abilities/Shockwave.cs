@@ -7,7 +7,6 @@ namespace FellowshipSim.Core.Heroes.Helena.Abilities;
 /// seconds." Cooldown 30s, shortened by Haste at the cast; up to 20 enemies, losing damage as sqrt(5/N) beyond 5. The hits
 /// are effect 1272 and the slow is effect 1270.
 /// </summary>
-[CodexAccepted("DamageMultiplier", "Duration")]
 public partial class Shockwave : HelenaAbility
 {
     public const int DamageEffectId = 1272;
@@ -31,9 +30,9 @@ public partial class Shockwave : HelenaAbility
 
     public Shockwave(Helena owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
         DamageLogId = LogIds.Effect(DamageEffectId);
         VeteranOfWarReductions.Add((typeof(ShieldsUp), ShieldsUpReductionSeconds));
     }
@@ -44,7 +43,7 @@ public partial class Shockwave : HelenaAbility
         var now = ctx.CurrentTime;
         var targets = ctx.Outcomes.SelectTargets(DamageLogId, Enemies(ctx, target), ctx);
         if (targets.Count > AbilityMaxTargets) targets = targets.Take(AbilityMaxTargets).ToList();
-        double falloff = targets.Count > TargetCountThreshold ? Math.Sqrt((double)TargetCountThreshold / targets.Count) : 1.0;
+        double falloff = targets.Count > TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)TARGET_COUNT_THRESHOLD / targets.Count) : 1.0;
         for (int i = 0; i < targets.Count; i++)
         {
             var enemy = targets[i];

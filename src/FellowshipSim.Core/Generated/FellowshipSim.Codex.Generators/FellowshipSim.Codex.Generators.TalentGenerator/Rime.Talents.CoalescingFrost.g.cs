@@ -11,11 +11,11 @@ partial class CoalescingFrost
     public const string TalentName = "Coalescing Frost";
 
     /// <summary>Game data: tuning <c>IncreasedDamage.DamageScaler, Rime.ChanneledBeamSingleDamageAndCastedDebuffAoeDamage.Talent.IncreasedDamage.DamageScaler</c> of talent 36; DamageScale Multiplicitive.</summary>
-    public const double DamageScaler = 1.05;
+    public const double DAMAGE_SCALER = 1.05;
 
     /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamage.Talent.DelayedAoe.DamageDividerToInt</c> of talent 36; Freezing Torrent (ability 1027).</summary>
-    public const double DelayedAoeDamageDividerToInt = 0.56;
+    public const double DELAYED_AOE_DAMAGE_DIVIDER_TO_INT = 0.56;
 
     /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamage.Talent.DelayedAoe.TargetCountThreshold</c> of talent 36; Freezing Torrent (ability 1027).</summary>
-    public const int DelayedAoeTargetCountThreshold = 5;
+    public const int DELAYED_AOE_TARGET_COUNT_THRESHOLD = 5;
 }

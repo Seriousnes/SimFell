@@ -11,29 +11,29 @@ partial class CracklingInferno
     public const string TalentName = "Crackling Inferno";
 
     /// <summary>Game data: tuning <c>DamageDoneToDotDamageScaler, Firemage.CastedDotBoostProjectile.Talent.CritsApplyDot.DamageDoneToDotDamageScaler</c> of talent 183; Crackling Inferno (ability 1568).</summary>
-    public const double DamageDoneToDotDamageScaler = 0.6;
+    public const double DAMAGE_DONE_TO_DOT_DAMAGE_SCALER = 0.6;
 
     /// <summary>Game data: tuning <c>DotDuration, Firemage.CastedDotBoostProjectile.Talent.CritsApplyDot.DotDuration</c> of talent 183; Crackling Inferno (ability 1568).</summary>
-    public const int DotDuration = 24;
+    public const int DOT_DURATION = 24;
 
     /// <summary>Game data: tuning <c>TickPeriod, Firemage.CastedDotBoostProjectile.Talent.CritsApplyDot.TickPeriod</c> of talent 183; Crackling Inferno (ability 1568).</summary>
-    public const int TickPeriod = 3;
+    public const int TICK_PERIOD = 3;
 
     /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance</c> of talent 183; Infernal Wave (ability 1276), CritChance Additive.</summary>
-    public const double IncreasedCritChance = 0.2;
+    public const double INCREASED_CRIT_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 183; ability 2246, CritChance Additive.</summary>
-    public const int AdditionalCritChance = 1;
+    public const int ADDITIONAL_CRIT_CHANCE = 1;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.MaxStacks, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.MaxStacks</c> of talent 183; ability 2246.</summary>
-    public const int MaxStacks = 12;
+    public const int MAX_STACKS = 12;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.ResourceMultiplier, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.ResourceMultiplier</c> of talent 183; ability 2246.</summary>
-    public const int ResourceMultiplier = 2;
+    public const int RESOURCE_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>IncreasedCritChance.StacksThreshold, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.StacksThreshold</c> of talent 183; ability 2246.</summary>
-    public const int StacksThreshold = 4;
+    public const int STACKS_THRESHOLD = 4;
 
     /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 183; Ardeos (hero 7).</summary>
-    public const double CritChanceIncrease = 0.2;
+    public const double CRIT_CHANCE_INCREASE = 0.2;
 }

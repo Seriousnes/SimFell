@@ -17,5 +17,5 @@ partial class HuntersFocus
     public const int SigilRandomChance = 2;
 
     /// <summary>Game data: rank run <c>Trait.OffensiveAbilityHasteRatingStacking.AdditionalHasteRating</c> of sigil 42, transform <c>plain</c>; the tooltip has 4 / 8 / 12 / 16.</summary>
-    public static readonly double[] AdditionalHasteRatingByRank = [4, 8, 12, 16];
+    public static readonly double[] ADDITIONAL_HASTE_RATING_BY_RANK = [4, 8, 12, 16];
 }

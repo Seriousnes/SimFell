@@ -29,17 +29,17 @@ partial class SahrilsWrath
     public const int AbilityRadius = 1000;
 
     /// <summary>Game data: tuning <c>Buff.CriticalStrikeBonusPerStack</c> of weapon power 351; Sundering Wrath (effect 75), CritChance Additive.</summary>
-    public const double CriticalStrikeBonusPerStack = 0.06;
+    public const double CRITICAL_STRIKE_BONUS_PER_STACK = 0.06;
 
     /// <summary>Game data: tuning <c>Buff.Duration</c> of weapon power 351; Sundering Wrath (effect 75).</summary>
-    public const int Duration = 20;
+    public const int DURATION = 20;
 
     /// <summary>Game data: tuning <c>Buff.MaxStacks</c> of weapon power 351; Sundering Wrath (effect 75).</summary>
-    public const int MaxStacks = 5;
+    public const int MAX_STACKS = 5;
 
     /// <summary>Game data: tuning <c>Damage.DamageFalloffTargetCountThreshold</c> of weapon power 351; Sahril's Wrath (effect 74).</summary>
-    public const int DamageFalloffTargetCountThreshold = 1;
+    public const int DAMAGE_FALLOFF_TARGET_COUNT_THRESHOLD = 1;
 
     /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 351; Sahril's Wrath (effect 74).</summary>
-    public const double PrimaryAttributeCoefficient = 21.09;
+    public const double PRIMARY_ATTRIBUTE_COEFFICIENT = 21.09;
 }

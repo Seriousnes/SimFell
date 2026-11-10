@@ -11,11 +11,11 @@ partial class StrikersAim
     public const string TalentName = "Striker's Aim";
 
     /// <summary>Game data: tuning <c>NoBounceBuff.BuffDuration, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.BuffDuration</c> of talent 680; Striker's Aim (effect 3179).</summary>
-    public const int BuffDuration = 2;
+    public const int BUFF_DURATION = 2;
 
     /// <summary>Game data: tuning <c>NoBounceBuff.ExpertiseAdded, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.ExpertiseAdded</c> of talent 680; Striker's Aim (effect 3179), Expertise Additive.</summary>
-    public const double ExpertiseAdded = 0.02;
+    public const double EXPERTISE_ADDED = 0.02;
 
     /// <summary>Game data: tuning <c>NoBounceBuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.MaxStacks</c> of talent 680; Striker's Aim (effect 3179).</summary>
-    public const int MaxStacks = 3;
+    public const int MAX_STACKS = 3;
 }

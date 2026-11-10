@@ -11,23 +11,23 @@ partial class WardenOfTheTemple
     public const string TalentName = "Warden of the Temple";
 
     /// <summary>Game data: tuning <c>ConsumedBuffsToDefensiveBuff.MaxStacksForActivation, Meiko.Talent.ConsumedBuffsToDefensiveBuff.MaxStacksForActivation</c> of talent 102; Warden of the Temple (effect 2447).</summary>
-    public const int MaxStacksForActivation = 3;
+    public const int MAX_STACKS_FOR_ACTIVATION = 3;
 
     /// <summary>Game data: tuning <c>Firemage.SelfDefenceBuff.Duration</c> of talent 102; Flame Ward (ability 1258).</summary>
-    public const int Duration = 4;
+    public const int DURATION = 4;
 
     /// <summary>Game data: tuning <c>Meiko.InstantSelfDefensive.Heal.MaxStacks</c> of talent 102; Serenity (ability 1119).</summary>
-    public const int HealMaxStacks = 50;
+    public const int HEAL_MAX_STACKS = 50;
 
     /// <summary>Game data: tuning <c>Meiko.Talent.ConsumedBuffsToDefensiveBuff.DurationalAoeDamageBuff.DamageMultiplier</c> of talent 102; Warden of the Temple (effect 2447).</summary>
-    public const double DurationalAoeDamageBuffDamageMultiplier = 1.5;
+    public const double DURATIONAL_AOE_DAMAGE_BUFF_DAMAGE_MULTIPLIER = 1.5;
 
     /// <summary>Game data: tuning <c>Meiko.Talent.ConsumedBuffsToDefensiveBuff.DurationalAoeDamageBuff.DodgeChanceMultiplier</c> of talent 102; Warden of the Temple (effect 2447).</summary>
-    public const int DurationalAoeDamageBuffDodgeChanceMultiplier = 2;
+    public const int DURATIONAL_AOE_DAMAGE_BUFF_DODGE_CHANCE_MULTIPLIER = 2;
 
     /// <summary>Game data: tuning <c>Meiko.Talent.ConsumedBuffsToDefensiveBuff.MeleeDamageImmediateSelfBuff.DamageMultiplier</c> of talent 102; Warden of the Temple (effect 2447), DamageScale MultiplyCompound.</summary>
-    public const int MeleeDamageImmediateSelfBuffDamageMultiplier = 4;
+    public const int MELEE_DAMAGE_IMMEDIATE_SELF_BUFF_DAMAGE_MULTIPLIER = 4;
 
     /// <summary>Game data: tuning <c>NumOfStacks, Meiko.Talent.ConsumedBuffsToDefensiveBuff.MeleeDamageImmediateSelfBuff.InstantSelfDefensive.NumOfStacks</c> of talent 102; ability 1676.</summary>
-    public const int NumOfStacks = 25;
+    public const int NUM_OF_STACKS = 25;
 }

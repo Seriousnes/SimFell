@@ -6,7 +6,6 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// Enemies that take damage from Spirited Vortex have 35% reduced Movement Speed and 10% reduced Damage for 5 seconds. Can
 /// be used during Global Cooldown". Logged under 1120. Effect 1570 on Meiko marks the vortex's time.
 /// </summary>
-[CodexAccepted("Duration")]
 public partial class SpiritedVortex : MeikoFinisher
 {
     /// <summary>Effect 1570: the vortex on Meiko.</summary>
@@ -20,8 +19,8 @@ public partial class SpiritedVortex : MeikoFinisher
 
     public SpiritedVortex(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory, Technique.Palm, Technique.Fist)
     {
-        BaseCoefficient = AgilityCoefficient;
-        AoeTargetThreshold = TargetCountDamageScalingThreshold;
+        BaseCoefficient = AGILITY_COEFFICIENT;
+        AoeTargetThreshold = TARGET_COUNT_DAMAGE_SCALING_THRESHOLD;
     }
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target) => Activate(ctx, target, CastDamageMultiplier);

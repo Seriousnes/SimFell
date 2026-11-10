@@ -11,5 +11,5 @@ partial class ColdShower
     public const string TalentName = "Cold Shower";
 
     /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamage.Talent.OnTargetPulsatingAoe.FreeCast.ProcChance</c> of talent 657; Freezing Torrent (ability 1027).</summary>
-    public const double OnTargetPulsatingAoeFreeCastProcChance = 0.07;
+    public const double ON_TARGET_PULSATING_AOE_FREE_CAST_PROC_CHANCE = 0.07;
 }

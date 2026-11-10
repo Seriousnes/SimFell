@@ -6,7 +6,6 @@ namespace FellowshipSim.Core.Heroes.Tariq.Abilities;
 /// Raging Currents at enemies over time." Grants Spirit of Heroism (a Haste bonus). Effect 1766 is the Enhanced
 /// Thunder Call: Expertise per stack, up to <see cref="MaxStacks"/>.
 /// </summary>
-[CodexAccepted("Duration", "StrengthCoefficient")]
 public partial class RagingTempest : TariqAbility
 {
     /// <summary>Share of Strength.</summary>
@@ -25,14 +24,14 @@ public partial class RagingTempest : TariqAbility
     /// adds one, and it lasts <see cref="BuffSeconds"/> from the cast whatever the stacks.
     /// </summary>
     public static readonly AuraDef Buff = AuraDef.Effect("Raging Tempest", BuffEffectId, BuffSeconds, MaxStacks,
-        StatModifier.Add(StatType.Expertise, CritChanceIncreasePerStack)) with { ReapplyKeepsExpiry = true };
+        StatModifier.Add(StatType.Expertise, CRIT_CHANCE_INCREASE_PER_STACK)) with { ReapplyKeepsExpiry = true };
 
     private readonly RagingCurrents _currents;
 
     public RagingTempest(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
         BaseCoefficient = Coefficient;
-        AoeTargetThreshold = TargetThresholdForDamageScale;
+        AoeTargetThreshold = TARGET_THRESHOLD_FOR_DAMAGE_SCALE;
         IgnoresGcd = true;
         _currents = new RagingCurrents(owner);
     }

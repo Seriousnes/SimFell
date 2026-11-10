@@ -23,38 +23,38 @@ partial class LeapSmash
     public const int AbilityRadius = 500;
 
     /// <summary>Game data: tuning <c>IncreasedMovementSpeed.SpeedMultiplier</c> of ability 1225; effect 1738, MoveSpeed MultiplyCompound.</summary>
-    public const double SpeedMultiplier = 1.2;
+    public const double SPEED_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1225.</summary>
-    public const int MaxRangeDown = 5000;
+    public const int MAX_RANGE_DOWN = 5000;
 
     /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1225.</summary>
-    public const int MaxRangeUp = 1000;
+    public const int MAX_RANGE_UP = 1000;
 
     /// <summary>Game data: tuning <c>MoveDuration</c> of ability 1225.</summary>
-    public const double MoveDuration = 0.25;
+    public const double MOVE_DURATION = 0.25;
 
     /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.CooldownReductionInSeconds</c> of ability 1225; talent High Road (talent 441).</summary>
-    public const int CooldownReductionInSeconds = 10;
+    public const int COOLDOWN_REDUCTION_IN_SECONDS = 10;
 
     /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.MovementSpeedBuff.Duration</c> of ability 1225; talent High Road (talent 441).</summary>
-    public const int MovementSpeedBuffDuration = 4;
+    public const int MOVEMENT_SPEED_BUFF_DURATION = 4;
 
     /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1225.</summary>
-    public const double ResourceGain = 0.2;
+    public const double RESOURCE_GAIN = 0.2;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1225.</summary>
-    public const double Spread = 0.1;
+    public const double SPREAD = 0.1;
 
     /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1225.</summary>
-    public const double StrengthCoefficient = 0.69;
+    public const double STRENGTH_COEFFICIENT = 0.69;
 
     /// <summary>Game data: tuning <c>Talent.IncreasedCriticalChance.AddedCrit</c> of ability 1225; talent High Road (talent 441), CritChance Additive.</summary>
-    public const double IncreasedCriticalChanceAddedCrit = 0.4;
+    public const double INCREASED_CRITICAL_CHANCE_ADDED_CRIT = 0.4;
 
     /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1225.</summary>
-    public const int TargetThresholdForDamageScale = 8;
+    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 8;
 
     /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1225.</summary>
-    public const double VisualHitDelay = 0.03;
+    public const double VISUAL_HIT_DELAY = 0.03;
 }

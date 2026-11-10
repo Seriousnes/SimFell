@@ -11,11 +11,11 @@ partial class BurningInitiative
     public const string TalentName = "Burning Initiative";
 
     /// <summary>Game data: tuning <c>AdditionalOrbResources, Firemage.Talent.ExtraResourcesAtStart.AdditionalOrbResources</c> of talent 677; ability 2244.</summary>
-    public const int AdditionalOrbResources = 2;
+    public const int ADDITIONAL_ORB_RESOURCES = 2;
 
     /// <summary>Game data: tuning <c>AdditionalSpiritPoints, Firemage.Talent.ExtraResourcesAtStart.AdditionalSpiritPoints</c> of talent 677; ability 2244.</summary>
-    public const int AdditionalSpiritPoints = 50;
+    public const int ADDITIONAL_SPIRIT_POINTS = 50;
 
     /// <summary>Game data: tuning <c>Firemage.FireBombs.ResourcePerOrb</c> of talent 677.</summary>
-    public const int ResourcePerOrb = 100;
+    public const int RESOURCE_PER_ORB = 100;
 }

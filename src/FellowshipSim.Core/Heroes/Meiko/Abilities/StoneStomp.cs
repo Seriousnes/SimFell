@@ -6,14 +6,13 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// logged as such. Stone Stomp is cast on its cooldown alone: combat logs (27 fights) have 54 of its 111 casts with no
 /// Combo Builder before them.
 /// </summary>
-[CodexAccepted("DamageMultiplier")]
 public partial class StoneStomp : MeikoAbility
 {
     public const int DamageEffectId = 1542;
 
     public StoneStomp(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = AGILITY_COEFFICIENT;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
         DamageLogId = LogIds.Effect(DamageEffectId);

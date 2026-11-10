@@ -11,20 +11,20 @@ partial class SupremeTorrent
     public const string TalentName = "Supreme Torrent";
 
     /// <summary>Game data: tuning <c>DamageBonus.AoeMaxTargets, Rime.ChanneledBeamSingleDamage.Talent.DamageBonus.AoeMaxTargets</c> of talent 527; Freezing Torrent (ability 1027).</summary>
-    public const int DamageBonusAoeMaxTargets = 19;
+    public const int DAMAGE_BONUS_AOE_MAX_TARGETS = 19;
 
     /// <summary>Game data: tuning <c>DamageBonus.AoeRadius, Rime.ChanneledBeamSingleDamage.Talent.DamageBonus.AoeRadius</c> of talent 527; Freezing Torrent (ability 1027).</summary>
-    public const int DamageBonusAoeRadius = 500;
+    public const int DAMAGE_BONUS_AOE_RADIUS = 500;
 
     /// <summary>Game data: tuning <c>DamageBonus.DamageFactorAsAoeScaler, Rime.ChanneledBeamSingleDamage.Talent.DamageBonus.DamageFactorAsAoeScaler</c> of talent 527; Freezing Torrent (ability 1027).</summary>
-    public const int DamageBonusDamageFactorAsAoeScaler = 2;
+    public const int DAMAGE_BONUS_DAMAGE_FACTOR_AS_AOE_SCALER = 2;
 
     /// <summary>Game data: tuning <c>DamageBonus.DamageScale, Rime.ChanneledBeamSingleDamage.Talent.DamageBonus.DamageScale</c> of talent 527; Freezing Torrent (ability 1027).</summary>
-    public const double DamageBonusDamageScale = 1.2;
+    public const double DAMAGE_BONUS_DAMAGE_SCALE = 1.2;
 
     /// <summary>Game data: tuning <c>IncreasedChannelDuration.AddedSeconds, Rime.ChanneledBeamSingleDamage.Talent.IncreasedChannelDuration.AddedSeconds</c> of talent 527; Freezing Torrent (ability 1027).</summary>
-    public const double IncreasedChannelDurationAddedSeconds = 0.8;
+    public const double INCREASED_CHANNEL_DURATION_ADDED_SECONDS = 0.8;
 
     /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamage.ChannelingDuration</c> of talent 527; Freezing Torrent (ability 1027).</summary>
-    public const int ChannelingDuration = 2;
+    public const int CHANNELING_DURATION = 2;
 }

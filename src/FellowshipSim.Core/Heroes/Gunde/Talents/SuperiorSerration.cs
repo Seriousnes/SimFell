@@ -6,5 +6,5 @@ public partial class SuperiorSerration : Talent
     public override string Name => TalentName;
     public override int Id => TalentId;
 
-    public override void Bind(Hero hero) => ((Gunde)hero).SerratedEdgeShare += AddedTransferDotTransferBonus;
+    public override void Bind(Hero hero) => ((Gunde)hero).SerratedEdgeShare += ADDED_TRANSFER_DOT_TRANSFER_BONUS;
 }

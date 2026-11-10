@@ -5,7 +5,6 @@ namespace FellowshipSim.Core.Heroes.Meiko.Abilities;
 /// damage 4 times to all nearby enemies. ... Stone Shield gains Cooldown Acceleration equal to your Haste. Can be used
 /// during Global Cooldown". 30 second cooldown, 2 charges. The stones' damage is ability 1121, logged as effect 1572.
 /// </summary>
-[CodexAccepted("DamageMultiplier")]
 public partial class StoneShield : MeikoAbility
 {
     public const int DamageEffectId = 1572;
@@ -17,17 +16,17 @@ public partial class StoneShield : MeikoAbility
 
     public StoneShield(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageAgilityCoefficient;
+        BaseCoefficient = DAMAGE_AGILITY_COEFFICIENT;
         SetCooldown(AbilityCooldown, AbilityCharges, scalesWithHaste: true);
         IgnoresGcd = true;
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
         DamageLogId = LogIds.Effect(DamageEffectId);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
-        PeriodicEffect.Begin(ctx, Name, (Hits - 1) * DamageTickInterval, DamageTickInterval, tickOnStart: true, partialFinalTick: false,
+        PeriodicEffect.Begin(ctx, Name, (Hits - 1) * DAMAGE_TICK_INTERVAL, DAMAGE_TICK_INTERVAL, tickOnStart: true, partialFinalTick: false,
             onTick: (c, _) => DealAoeDamage(c, c.ActiveEnemies),
             tickDelaySeconds: PeriodicEffect.ServerFrameSeconds, damageLogId: DamageLogId);
     }

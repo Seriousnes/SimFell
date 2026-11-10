@@ -29,7 +29,7 @@ public partial class BrilliantFlash : XavianAbility
 
     public BrilliantFlash(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
     }
 
     protected override bool CanCast(SimulationContext ctx, bool explain, out string? reason)

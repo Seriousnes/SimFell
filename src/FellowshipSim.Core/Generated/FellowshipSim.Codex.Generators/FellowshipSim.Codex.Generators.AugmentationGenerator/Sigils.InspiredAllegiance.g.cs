@@ -20,11 +20,11 @@ partial class InspiredAllegiance
     public const double SigilProcsPerMinute = 1.2;
 
     /// <summary>Game data: rank run <c>Trait.CommitToHasteRatingAndWeaponCooldown.WeaponAbilityCooldownReductionInSeconds</c> of sigil 2, transform <c>plain</c>; the tooltip has 1.5 / 4 / 6 / 8.</summary>
-    public static readonly double[] WeaponAbilityCooldownReductionInSecondsByRank = [1.5, 4, 6, 8];
+    public static readonly double[] WEAPON_ABILITY_COOLDOWN_REDUCTION_IN_SECONDS_BY_RANK = [1.5, 4, 6, 8];
 
     /// <summary>Game data: rank run <c>Trait.CommitToHasteRatingAndWeaponCooldown.AdditionalAllies</c> of sigil 2, transform <c>plain</c>; the tooltip has 1 / 2 / 3 / 3.</summary>
-    public static readonly double[] AdditionalAlliesByRank = [1, 2, 3, 3];
+    public static readonly double[] ADDITIONAL_ALLIES_BY_RANK = [1, 2, 3, 3];
 
     /// <summary>Game data: rank run <c>Trait.CommitToHasteRatingAndWeaponCooldown.Buff.AdditionalHasteRating</c> of sigil 2, transform <c>plain</c>; the tooltip has 6 / 10 / 13 / 17.</summary>
-    public static readonly double[] BuffAdditionalHasteRatingByRank = [6, 10, 13, 17];
+    public static readonly double[] BUFF_ADDITIONAL_HASTE_RATING_BY_RANK = [6, 10, 13, 17];
 }

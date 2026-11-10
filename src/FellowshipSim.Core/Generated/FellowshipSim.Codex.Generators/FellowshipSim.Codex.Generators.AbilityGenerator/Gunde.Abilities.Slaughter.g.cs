@@ -29,17 +29,17 @@ partial class Slaughter
     public const int AbilityMaxTargets = 99999;
 
     /// <summary>Game data: tuning <c>Dot.AccDotToNewDotScaler</c> of ability 2292; Slaughter (effect 3237).</summary>
-    public const double AccDotToNewDotScaler = 1.6;
+    public const double ACC_DOT_TO_NEW_DOT_SCALER = 1.6;
 
     /// <summary>Game data: tuning <c>Dot.Duration</c> of ability 2292; Slaughter (effect 3237).</summary>
-    public const int Duration = 3;
+    public const int DURATION = 3;
 
     /// <summary>Game data: tuning <c>Dot.Period</c> of ability 2292; Slaughter (effect 3237).</summary>
-    public const double Period = 0.3;
+    public const double PERIOD = 0.3;
 
     /// <summary>Game data: tuning <c>ReducedTickSpeed.PeriodFrequencyIncrease</c> of ability 2292; Rend (effect 3231), talent Deep Rend (talent 751).</summary>
-    public const double PeriodFrequencyIncrease = 1.1;
+    public const double PERIOD_FREQUENCY_INCREASE = 1.1;
 
     /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2292.</summary>
-    public const double VisualDelay = 0.5;
+    public const double VISUAL_DELAY = 0.5;
 }

@@ -32,29 +32,29 @@ partial class Omnistrike
     public const int AbilityMaxTargets = 20;
 
     /// <summary>Game data: tuning <c>AoeHeight</c> of ability 1863.</summary>
-    public const int AoeHeight = 300;
+    public const int AOE_HEIGHT = 300;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1863.</summary>
-    public const int DamageScalingTargetCountThreshold = 8;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1863.</summary>
-    public const double DamageStrengthCoefficient = 2.45;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 2.45;
 
     /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1863.</summary>
-    public const double HitVisualDelay = 0.3;
+    public const double HIT_VISUAL_DELAY = 0.3;
 
     /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 1863.</summary>
-    public const int MaxNumTargets = 20;
+    public const int MAX_NUM_TARGETS = 20;
 
     /// <summary>Game data: tuning <c>ResetCdAtTargetInstantAoe.ProcChance</c> of ability 1863; talent Rising Sun (talent 573).</summary>
-    public const double ProcChance = 0.5;
+    public const double PROC_CHANCE = 0.5;
 
     /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1863.</summary>
-    public const double ResourceProcChance = 0.3;
+    public const double RESOURCE_PROC_CHANCE = 0.3;
 
     /// <summary>Game data: tuning <c>SpiritPointGain</c> of ability 1863.</summary>
-    public const int SpiritPointGain = 4;
+    public const int SPIRIT_POINT_GAIN = 4;
 
     /// <summary>Game data: tuning <c>Talent.CooldownProc.Buff.CritChanceIncrease</c> of ability 1863; ability 1913, CritChance Additive.</summary>
-    public const int BuffCritChanceIncrease = 0;
+    public const int BUFF_CRIT_CHANCE_INCREASE = 0;
 }

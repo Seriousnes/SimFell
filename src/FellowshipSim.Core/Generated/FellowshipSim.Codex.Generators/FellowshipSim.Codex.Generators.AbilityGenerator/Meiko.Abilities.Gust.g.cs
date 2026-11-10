@@ -26,20 +26,23 @@ partial class Gust
     public const double AbilityChannelTick = 0.5;
 
     /// <summary>Game data: tuning <c>DashAirExitSpeed</c> of ability 1123.</summary>
-    public const int DashAirExitSpeed = 1000;
+    public const int DASH_AIR_EXIT_SPEED = 1000;
 
     /// <summary>Game data: tuning <c>DashSpeed</c> of ability 1123.</summary>
-    public const int DashSpeed = 5000;
+    public const int DASH_SPEED = 5000;
 
     /// <summary>Game data: tuning <c>Distance</c> of ability 1123.</summary>
-    public const int Distance = 1000;
+    public const int DISTANCE = 1000;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.ShortAbility.Duration</c> of ability 1123.</summary>
-    public const double HeroAbilitySpamProtectionCooldownShortAbilityDuration = 0.18;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_SHORT_ABILITY_DURATION = 0.18;
+
+    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1123.</summary>
+    public const int MAX_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>MoveSpeedIncrease.Duration</c> of ability 1123; Talent Increased Movement Speed (effect 1495).</summary>
-    public const int Duration = 8;
+    public const int DURATION = 8;
 
     /// <summary>Game data: tuning <c>MoveSpeedIncrease.SpeedIncrease</c> of ability 1123; Talent Increased Movement Speed (effect 1495), MoveSpeed Multiplicitive.</summary>
-    public const double SpeedIncrease = 1.5;
+    public const double SPEED_INCREASE = 1.5;
 }

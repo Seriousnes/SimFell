@@ -13,6 +13,6 @@ public partial class PiercingSeekers : Talent
 
     public override void Bind(Hero hero)
     {
-        if (hero.GetAbility<HeartseekerBarrage>() is { } barrage) barrage.RicochetMultiplier = RiccochetDamageScale;
+        if (hero.GetAbility<HeartseekerBarrage>() is { } barrage) barrage.RicochetMultiplier = RICCOCHET_DAMAGE_SCALE;
     }
 }

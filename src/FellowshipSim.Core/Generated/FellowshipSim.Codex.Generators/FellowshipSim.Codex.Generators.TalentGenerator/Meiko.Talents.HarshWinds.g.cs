@@ -11,8 +11,8 @@ partial class HarshWinds
     public const string TalentName = "Harsh Winds";
 
     /// <summary>Game data: tuning <c>FinisherIncreasedDodgeChance.AdditionalDodgeChance, Meiko.DurationalAoeDamageBuff.Talent.FinisherIncreasedDodgeChance.AdditionalDodgeChance</c> of talent 98; Harsh Winds (effect 2454), DodgeChance Additive.</summary>
-    public const double AdditionalDodgeChance = 0.2;
+    public const double ADDITIONAL_DODGE_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>Meiko.DurationalAoeDamageBuff.Talent.IncreasedDamage.DamageMultiplier</c> of talent 98; Spirited Vortex (ability 1120), DamageScale MultiplyCompound.</summary>
-    public const double IncreasedDamageDamageMultiplier = 1.2;
+    public const double INCREASED_DAMAGE_DAMAGE_MULTIPLIER = 1.2;
 }

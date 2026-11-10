@@ -12,7 +12,7 @@ public partial class SkywardMunitions : Talent
 
     public override void Bind(Hero hero)
     {
-        var reduction = SimTime.FromSeconds(ReductionInSeconds);
+        var reduction = SimTime.FromSeconds(REDUCTION_IN_SECONDS);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is not (CelestialShot or Multishot)) return;

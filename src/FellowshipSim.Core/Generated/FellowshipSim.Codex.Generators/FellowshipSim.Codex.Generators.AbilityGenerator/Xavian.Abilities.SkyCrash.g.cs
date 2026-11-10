@@ -29,47 +29,47 @@ partial class SkyCrash
     public const int AbilityMaxTargets = 20;
 
     /// <summary>Game data: tuning <c>Aoe.DamageScalingTargetCountThreshold</c> of ability 1841; Sky Crash (effect 2540).</summary>
-    public const int DamageScalingTargetCountThreshold = 8;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
 
     /// <summary>Game data: tuning <c>Aoe.DamageStrengthCoefficient</c> of ability 1841; Sky Crash (effect 2540).</summary>
-    public const double DamageStrengthCoefficient = 0.71;
+    public const double DAMAGE_STRENGTH_COEFFICIENT = 0.71;
 
     /// <summary>Game data: tuning <c>Aoe.Height</c> of ability 1841; Sky Crash (effect 2540).</summary>
-    public const int Height = 300;
+    public const int HEIGHT = 300;
 
     /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1841.</summary>
-    public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
 
     /// <summary>Game data: tuning <c>LeapDuration</c> of ability 1841.</summary>
-    public const double LeapDuration = 0.15;
+    public const double LEAP_DURATION = 0.15;
 
     /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1841.</summary>
-    public const int MaxRangeDown = 5000;
+    public const int MAX_RANGE_DOWN = 5000;
 
     /// <summary>Game data: tuning <c>MaxRangeHorizontal</c> of ability 1841.</summary>
-    public const int MaxRangeHorizontal = 3000;
+    public const int MAX_RANGE_HORIZONTAL = 3000;
 
     /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1841.</summary>
-    public const int MaxRangeUp = 1000;
+    public const int MAX_RANGE_UP = 1000;
 
     /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ArmorScaler</c> of ability 1841; Tempered Descent (effect 2646), talent Tempered Descent (talent 572), Armor MultiplyCompound.</summary>
-    public const double ArmorScaler = 1.4;
+    public const double ARMOR_SCALER = 1.4;
 
     /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.MoveSpeedScaler</c> of ability 1841; Tempered Descent (effect 2646), talent Tempered Descent (talent 572), MoveSpeed MultiplyCompound.</summary>
-    public const double MoveSpeedScaler = 1.2;
+    public const double MOVE_SPEED_SCALER = 1.2;
 
     /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ProcDuration</c> of ability 1841; Tempered Descent (effect 2646), talent Tempered Descent (talent 572).</summary>
-    public const int ProcDuration = 18;
+    public const int PROC_DURATION = 18;
 
     /// <summary>Game data: tuning <c>NumCharges</c> of ability 1841.</summary>
-    public const int NumCharges = 2;
+    public const int NUM_CHARGES = 2;
 
     /// <summary>Game data: tuning <c>ParryBuff.Buff.Duration</c> of ability 1841; Zenith Technique (effect 2645).</summary>
-    public const int Duration = 3;
+    public const int DURATION = 3;
 
     /// <summary>Game data: tuning <c>ParryBuff.Buff.ParryIncrease</c> of ability 1841; Zenith Technique (effect 2645), ParryChance AddFinal.</summary>
-    public const double ParryIncrease = 0.2;
+    public const double PARRY_INCREASE = 0.2;
 
     /// <summary>Game data: tuning <c>TargetedLeapAoeReplacesPulseAoe.DurationExtension</c> of ability 1841; Shining Halo (ability 1859), talent Zenith Technique (talent 608).</summary>
-    public const int DurationExtension = 6;
+    public const int DURATION_EXTENSION = 6;
 }

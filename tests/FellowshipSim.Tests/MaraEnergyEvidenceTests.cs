@@ -35,7 +35,7 @@ public class MaraEnergyEvidenceTests
         return (new LogOutcomeSource(script, options, new HitLedger([]), new ReplayVerifier(script, options, hero)), ctx);
     }
 
-    private static bool Roll(LogOutcomeSource log, SimulationContext ctx) => log.RollProc(VenomousDelight.ProcKey, VenomousDelight.Chance, ctx);
+    private static bool Roll(LogOutcomeSource log, SimulationContext ctx) => log.RollProc(VenomousDelight.ProcKey, VenomousDelight.CHANCE, ctx);
 
     // Game data: Venomous Delight adds 10 Energy, Queen's Fang costs 40, Widow's Bite gains 30, Mara's maximum is 200
     // Energy and Maiden of Death multiplies Energy gained by 1.2.
@@ -192,7 +192,7 @@ public class MaraEnergyEvidenceTests
             double before = hero.EnergyAt(ctx.CurrentTime);
             hero.GainEnergyWithMaiden(Hemorrhage.EnergyPerTick, ctx);
             scaled = hero.EnergyAt(ctx.CurrentTime) - before;
-            hero.GainEnergy(VenomousDelight.EnergyAdded, ctx);
+            hero.GainEnergy(VenomousDelight.ENERGY_ADDED, ctx);
             plain = hero.EnergyAt(ctx.CurrentTime) - before - scaled;
         });
 

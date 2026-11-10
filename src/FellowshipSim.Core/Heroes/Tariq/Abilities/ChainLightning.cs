@@ -5,7 +5,6 @@ namespace FellowshipSim.Core.Heroes.Tariq.Abilities;
 /// dealt damage a total number of times. Chain Lightning does not deal damage to you. Thunder Call: You can only cast Chain
 /// Lightning while Thunder Call is active. Generates Fury per hit." Its hits are effect 1774.
 /// </summary>
-[CodexAccepted("DamageMultiplier", "MaxCharges")]
 public partial class ChainLightning : TariqAbility
 {
     /// <summary>Game data: a share of maximum Fury per hit.</summary>
@@ -14,7 +13,7 @@ public partial class ChainLightning : TariqAbility
 
     /// <summary>
     /// Combat logs (fXyzwGcQkTrLD34R fight 4, 58 casts): the first hit follows the cast by <see cref="FirstHitSeconds"/>, then a hit
-    /// follows every <see cref="TimeBetweenTargets"/> (the log rounds each to server frames).
+    /// follows every <see cref="TIME_BETWEEN_TARGETS"/> (the log rounds each to server frames).
     /// </summary>
     public const double FirstHitSeconds = 0.30;
 
@@ -32,7 +31,7 @@ public partial class ChainLightning : TariqAbility
 
     public ChainLightning(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         DamageLogId = LogIds.Effect(DamageEffectId);
     }
@@ -66,13 +65,13 @@ public partial class ChainLightning : TariqAbility
         var hero = Tariq;
         double castMultiplier = CastDamageMultiplier;
         double castCrit = (CurrentCast?.CritChance ?? 0.0) + hero.LightningCritChance;
-        int hits = MaxNumOfTargets + ExtraHits;
+        int hits = MAX_NUM_OF_TARGETS + ExtraHits;
         var hitSoFar = new HashSet<EnemyTarget>();
         EnemyTarget? last = null;
         for (int i = 0; i < hits; i++)
         {
             bool first = i == 0;
-            ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * TimeBetweenTargets), c =>
+            ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * TIME_BETWEEN_TARGETS), c =>
             {
                 var next = NextTarget(c, target, first, last, hitSoFar);
                 if (next == null) return;

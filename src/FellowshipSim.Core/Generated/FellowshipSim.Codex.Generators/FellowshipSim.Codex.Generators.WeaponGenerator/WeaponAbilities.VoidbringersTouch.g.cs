@@ -32,11 +32,11 @@ partial class VoidbringersTouch
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>AccumulativeDamageFactor</c> of weapon power 349; Voidbringer's Touch (ability 155).</summary>
-    public const double AccumulativeDamageFactor = 0.1;
+    public const double ACCUMULATIVE_DAMAGE_FACTOR = 0.1;
 
     /// <summary>Game data: tuning <c>Duration</c> of weapon power 349; Voidbringer's Touch (ability 155).</summary>
-    public const int Duration = 15;
+    public const int DURATION = 15;
 
     /// <summary>Game data: tuning <c>MaxDamageCoefficient</c> of weapon power 349; Voidbringer's Touch (ability 155).</summary>
-    public const double MaxDamageCoefficient = 42.5;
+    public const double MAX_DAMAGE_COEFFICIENT = 42.5;
 }

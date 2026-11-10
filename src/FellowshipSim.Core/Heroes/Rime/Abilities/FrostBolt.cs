@@ -10,13 +10,13 @@ public partial class FrostBolt : RimeAbility
 
     public FrostBolt(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = IntellectCoefficient;
+        BaseCoefficient = INTELLECT_COEFFICIENT;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
-        Rime.AddAnima(ResourceGain, ctx, target);
+        Rime.AddAnima(RESOURCE_GAIN, ctx, target);
         DealDamage(ctx, target, onLanded: (c, dealt) => Landed?.Invoke(c, target, dealt));
     }
 }

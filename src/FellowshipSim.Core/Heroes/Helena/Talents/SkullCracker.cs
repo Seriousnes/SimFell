@@ -14,7 +14,7 @@ public partial class SkullCracker : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<ShieldThrow>() is not { } shieldThrow) return;
-        shieldThrow.CritChanceBonus += IncreasedCritChanceAdditionalCritChance;
-        shieldThrow.FirstHitMultipliers.Add(_ => FirstHitDamageDamageIncrease);
+        shieldThrow.CritChanceBonus += INCREASED_CRIT_CHANCE_ADDITIONAL_CRIT_CHANCE;
+        shieldThrow.FirstHitMultipliers.Add(_ => FIRST_HIT_DAMAGE_DAMAGE_INCREASE);
     }
 }

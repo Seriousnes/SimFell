@@ -13,7 +13,7 @@ public partial class FinalCrescendo : Talent
 {
     public const int BuffEffectId = 2222;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Final Cresendo", BuffEffectId, maxStacks: MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect("Final Cresendo", BuffEffectId, maxStacks: MAX_STACKS);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -24,14 +24,14 @@ public partial class FinalCrescendo : Talent
         hero.OnCastResolving += cast =>
         {
             if (cast.Ability != highwind) return;
-            if (hero.Auras.GetStacks(Buff, cast.Time) < MaxStacks)
+            if (hero.Auras.GetStacks(Buff, cast.Time) < MAX_STACKS)
             {
                 hero.Auras.Apply(Buff, cast.Time);
                 return;
             }
             hero.Auras.Remove(Buff, cast.Time);
-            cast.DamageMultiplier *= DamageMultiplier;
-            highwind.CastRicochets = MaxBounces - 1;
+            cast.DamageMultiplier *= DAMAGE_MULTIPLIER;
+            highwind.CastRicochets = MAX_BOUNCES - 1;
         };
     }
 }

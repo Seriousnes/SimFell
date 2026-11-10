@@ -35,50 +35,53 @@ partial class BurstingIce
     public const int AbilityRadius = 600;
 
     /// <summary>Game data: tuning <c>AdditionalAnimaForSingleTarget.AnimaIncreasePerTick</c> of ability 1031.</summary>
-    public const int AdditionalAnimaForSingleTargetAnimaIncreasePerTick = 2;
+    public const int ADDITIONAL_ANIMA_FOR_SINGLE_TARGET_ANIMA_INCREASE_PER_TICK = 2;
 
     /// <summary>Game data: tuning <c>AoeDamageIntellectCoefficient</c> of ability 1031.</summary>
-    public const double AoeDamageIntellectCoefficient = 0.498;
+    public const double AOE_DAMAGE_INTELLECT_COEFFICIENT = 0.498;
 
     /// <summary>Game data: tuning <c>AoeDamageSpread</c> of ability 1031.</summary>
-    public const double AoeDamageSpread = 0.2;
+    public const double AOE_DAMAGE_SPREAD = 0.2;
 
     /// <summary>Game data: tuning <c>AoeDuration</c> of ability 1031.</summary>
-    public const int AoeDuration = 3;
+    public const int AOE_DURATION = 3;
 
     /// <summary>Game data: tuning <c>AoeMaxNumTargets</c> of ability 1031.</summary>
-    public const int AoeMaxNumTargets = 19;
+    public const int AOE_MAX_NUM_TARGETS = 19;
 
     /// <summary>Game data: tuning <c>AoePulsePeriod</c> of ability 1031.</summary>
-    public const double AoePulsePeriod = 0.5;
+    public const double AOE_PULSE_PERIOD = 0.5;
 
     /// <summary>Game data: tuning <c>AoeResourceRewardCap</c> of ability 1031.</summary>
-    public const int AoeResourceRewardCap = 1;
+    public const int AOE_RESOURCE_REWARD_CAP = 1;
 
     /// <summary>Game data: tuning <c>BuffWhileActive.DamageScaleOtherAbilities</c> of ability 1031; Winter's Embrace (effect 2303).</summary>
-    public const double DamageScaleOtherAbilities = 1.2;
+    public const double DAMAGE_SCALE_OTHER_ABILITIES = 1.2;
 
     /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1031.</summary>
-    public const int CastingDuration = 2;
+    public const int CASTING_DURATION = 2;
 
     /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1031.</summary>
-    public const int DamageScalingTargetCountThreshold = 5;
+    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 5;
 
     /// <summary>Game data: tuning <c>IncreasedDuration.DurationInSeconds</c> of ability 1031; talent Skandi's Decree (legendary power 396).</summary>
-    public const int DurationInSeconds = 2;
+    public const int DURATION_IN_SECONDS = 2;
 
     /// <summary>Game data: tuning <c>ResourceGainPerHit</c> of ability 1031.</summary>
-    public const int ResourceGainPerHit = 1;
+    public const int RESOURCE_GAIN_PER_HIT = 1;
 
     /// <summary>Game data: tuning <c>StackingDamageBonus.CooldownReductionToFlightOfNavir.Seconds</c> of ability 1031; Harrowing Ice (effect 2839), talent Harrowing Ice (talent 627).</summary>
-    public const int CooldownReductionToFlightOfNavirSeconds = 5;
+    public const int COOLDOWN_REDUCTION_TO_FLIGHT_OF_NAVIR_SECONDS = 5;
 
     /// <summary>Game data: tuning <c>StackingDamageBonus.DamageScalerPerStack</c> of ability 1031; Harrowing Ice (effect 2839), talent Harrowing Ice (talent 627).</summary>
-    public const double DamageScalerPerStack = 0.03;
+    public const double DAMAGE_SCALER_PER_STACK = 0.03;
+
+    /// <summary>Game data: tuning <c>StackingDamageBonus.Duration</c> of ability 1031; Harrowing Ice (effect 2839), talent Harrowing Ice (talent 627).</summary>
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>StackingDamageBonus.MaxStacks</c> of ability 1031; Harrowing Ice (effect 2839), talent Harrowing Ice (talent 627).</summary>
-    public const int MaxStacks = 31;
+    public const int MAX_STACKS = 31;
 
     /// <summary>Game data: tuning <c>Talent.IncreasedCastedDebuffAoeDamageDamage.DamageScaler</c> of ability 1031; DamageScale Multiplicitive.</summary>
-    public const double IncreasedCastedDebuffAoeDamageDamageDamageScaler = 1.3;
+    public const double INCREASED_CASTED_DEBUFF_AOE_DAMAGE_DAMAGE_DAMAGE_SCALER = 1.3;
 }

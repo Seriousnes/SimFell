@@ -11,8 +11,8 @@ partial class GreaterShockwave
     public const string TalentName = "Greater Shockwave";
 
     /// <summary>Game data: tuning <c>IncreasedToughnessAndDamage.AdditionalToughnessBasedOnMax, Warmaster.MeleeAoeSlow.Talent.IncreasedToughnessAndDamage.AdditionalToughnessBasedOnMax</c> of talent 643; Shockwave (ability 979).</summary>
-    public const double IncreasedToughnessAndDamageAdditionalToughnessBasedOnMax = 0.1;
+    public const double INCREASED_TOUGHNESS_AND_DAMAGE_ADDITIONAL_TOUGHNESS_BASED_ON_MAX = 0.1;
 
     /// <summary>Game data: tuning <c>IncreasedToughnessAndDamage.DamageMultiplier.DamageMultiplierAtFullToughness, Warmaster.MeleeAoeSlow.Talent.IncreasedToughnessAndDamage.DamageMultiplier.DamageMultiplierAtFullToughness</c> of talent 643; Shockwave (ability 979).</summary>
-    public const double IncreasedToughnessAndDamageDamageMultiplierDamageMultiplierAtFullToughness = 0.3;
+    public const double INCREASED_TOUGHNESS_AND_DAMAGE_DAMAGE_MULTIPLIER_DAMAGE_MULTIPLIER_AT_FULL_TOUGHNESS = 0.3;
 }

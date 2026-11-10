@@ -11,16 +11,16 @@ partial class VanguardsAdvance
     public const int LegsItemId = 5900;
 
     /// <summary>Game data: tuning <c>ArrivalMeleeAoeSlow.TargetExtraHelenaDamage.Duration</c> of legendary power 391.</summary>
-    public const int TargetExtraHelenaDamageDuration = 5;
+    public const int TARGET_EXTRA_HELENA_DAMAGE_DURATION = 5;
 
     /// <summary>Game data: tuning <c>ArrivalMeleeAoeSlow.TargetExtraHelenaDamage.IncomingDamageScaler</c> of legendary power 391.</summary>
-    public const double TargetExtraHelenaDamageIncomingDamageScaler = 1.2;
+    public const double TARGET_EXTRA_HELENA_DAMAGE_INCOMING_DAMAGE_SCALER = 1.2;
 
     /// <summary>Game data: tuning <c>Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.Duration, Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.Duration</c> of legendary power 391; Vanguard's Advance (effect 2429).</summary>
-    public const int Duration = 5;
+    public const int DURATION = 5;
 
     /// <summary>Game data: tuning <c>Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.IncomingDamageScaler</c> of legendary power 391; Aftershock (effect 2428), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double IncomingDamageScaler = 1.2;
+    public const double INCOMING_DAMAGE_SCALER = 1.2;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Vanguard's Advance";

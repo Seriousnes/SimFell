@@ -11,8 +11,8 @@ partial class DarkeningHearts
     public const string TalentName = "Darkening Hearts";
 
     /// <summary>Game data: tuning <c>IncreasedDirectDamage.DamageScale, Gunde.HeavyMeleeDotBased.Talent.IncreasedDirectDamage.DamageScale</c> of talent 757; Heart Splitter (ability 2294), DamageScale MultiplyCompound.</summary>
-    public const double IncreasedDirectDamageDamageScale = 1.1;
+    public const double INCREASED_DIRECT_DAMAGE_DAMAGE_SCALE = 1.1;
 
     /// <summary>Game data: tuning <c>LowHealthTarget.AddedCriticalStrikeChance, Gunde.HeavyMeleeDotBased.Talent.LowHealthTarget.AddedCriticalStrikeChance</c> of talent 757; Darkening Hearts (effect 3214), CritChance Additive.</summary>
-    public const int AddedCriticalStrikeChance = 1;
+    public const int ADDED_CRITICAL_STRIKE_CHANCE = 1;
 }

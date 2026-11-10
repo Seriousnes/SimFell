@@ -13,5 +13,5 @@ public partial class HarshWinds : Talent
     public override string Name => TalentName;
     public override int Id => TalentId;
 
-    public override void Bind(Hero hero) => hero.GetAbility<SpiritedVortex>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
+    public override void Bind(Hero hero) => hero.GetAbility<SpiritedVortex>()?.AddDamageMultiplier(INCREASED_DAMAGE_DAMAGE_MULTIPLIER);
 }

@@ -14,7 +14,6 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 /// re-snapshots in the cast's frame. In the Agility damage calculation, source attributes are
 /// snapshots, target attributes are read at the strike, and each application rolls its own crit.
 /// </summary>
-[CodexAccepted("DamageMultiplier")]
 public partial class MatriarchMacabre : MaraAbility
 {
     public const int BuffEffectId = 2039;
@@ -23,7 +22,7 @@ public partial class MatriarchMacabre : MaraAbility
     public const double CloneDelaySeconds = 0.335;
 
     public static readonly AuraDef Buff = AuraDef.Effect("Matriarch Macabre", BuffEffectId, AbilityDuration,
-        modifiers: StatModifier.More(StatType.DamageScale, DamageScaler));
+        modifiers: StatModifier.More(StatType.DamageScale, DAMAGE_SCALER));
 
     /// <summary>
     /// The name of a shadowy clone's hits of <paramref name="abilityName"/>: the log ID is the ability's, the name tells

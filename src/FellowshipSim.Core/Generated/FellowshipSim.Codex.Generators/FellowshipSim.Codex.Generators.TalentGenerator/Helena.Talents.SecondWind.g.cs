@@ -11,50 +11,50 @@ partial class SecondWind
     public const string TalentName = "Second Wind";
 
     /// <summary>Game data: tuning <c>DepleteReductionFromArmorScaler</c> of talent 219; ability 960.</summary>
-    public const double DepleteReductionFromArmorScaler = 0.2;
+    public const double DEPLETE_REDUCTION_FROM_ARMOR_SCALER = 0.2;
 
     /// <summary>Game data: tuning <c>LowerThresholdLevel1</c> of talent 219; ability 960.</summary>
-    public const double LowerThresholdLevel1 = 0.001;
+    public const double LOWER_THRESHOLD_LEVEL1 = 0.001;
 
     /// <summary>Game data: tuning <c>LowerThresholdLevel2</c> of talent 219; ability 960.</summary>
-    public const double LowerThresholdLevel2 = 0.25;
+    public const double LOWER_THRESHOLD_LEVEL2 = 0.25;
 
     /// <summary>Game data: tuning <c>LowerThresholdLevel3</c> of talent 219; ability 960.</summary>
-    public const double LowerThresholdLevel3 = 0.5;
+    public const double LOWER_THRESHOLD_LEVEL3 = 0.5;
 
     /// <summary>Game data: tuning <c>LowerThresholdLevel4</c> of talent 219; ability 960.</summary>
-    public const double LowerThresholdLevel4 = 0.75;
+    public const double LOWER_THRESHOLD_LEVEL4 = 0.75;
 
     /// <summary>Game data: tuning <c>MaxToughnessFlatBonus</c> of talent 219; ability 960.</summary>
-    public const int MaxToughnessFlatBonus = 0;
+    public const int MAX_TOUGHNESS_FLAT_BONUS = 0;
 
     /// <summary>Game data: tuning <c>MaxToughnessStrengthScaler</c> of talent 219; ability 960.</summary>
-    public const double MaxToughnessStrengthScaler = 7.7;
+    public const double MAX_TOUGHNESS_STRENGTH_SCALER = 7.7;
 
     /// <summary>Game data: tuning <c>MaxToughnessTotalSecondaryStatModifier</c> of talent 219; ability 960.</summary>
-    public const int MaxToughnessTotalSecondaryStatModifier = 2;
+    public const int MAX_TOUGHNESS_TOTAL_SECONDARY_STAT_MODIFIER = 2;
 
     /// <summary>Game data: tuning <c>PhysicalDamageReductionLevel1</c> of talent 219; ability 960.</summary>
-    public const double PhysicalDamageReductionLevel1 = 0.05;
+    public const double PHYSICAL_DAMAGE_REDUCTION_LEVEL1 = 0.05;
 
     /// <summary>Game data: tuning <c>PhysicalDamageReductionLevel2</c> of talent 219; ability 960.</summary>
-    public const double PhysicalDamageReductionLevel2 = 0.15;
+    public const double PHYSICAL_DAMAGE_REDUCTION_LEVEL2 = 0.15;
 
     /// <summary>Game data: tuning <c>PhysicalDamageReductionLevel3</c> of talent 219; ability 960.</summary>
-    public const double PhysicalDamageReductionLevel3 = 0.25;
+    public const double PHYSICAL_DAMAGE_REDUCTION_LEVEL3 = 0.25;
 
     /// <summary>Game data: tuning <c>PhysicalDamageReductionLevel4</c> of talent 219; ability 960.</summary>
-    public const double PhysicalDamageReductionLevel4 = 0.35;
+    public const double PHYSICAL_DAMAGE_REDUCTION_LEVEL4 = 0.35;
 
     /// <summary>Game data: tuning <c>ToughnessBuff.Duration, Warmaster.Toughness.Talent.ToughnessBuff.Duration</c> of talent 219; Second Wind (effect 1215).</summary>
-    public const int Duration = 14;
+    public const int DURATION = 14;
 
     /// <summary>Game data: tuning <c>ToughnessBuff.StrengthMultiplier, Warmaster.Toughness.Talent.ToughnessBuff.StrengthMultiplier</c> of talent 219; Second Wind (effect 1215), Strength MultiplyCompound.</summary>
-    public const double StrengthMultiplier = 1.2;
+    public const double STRENGTH_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>ToughnessDecayFactor</c> of talent 219; ability 960.</summary>
-    public const double ToughnessDecayFactor = 0.01;
+    public const double TOUGHNESS_DECAY_FACTOR = 0.01;
 
     /// <summary>Game data: tuning <c>ToughnessDecayPeriod</c> of talent 219; ability 960.</summary>
-    public const int ToughnessDecayPeriod = 10;
+    public const int TOUGHNESS_DECAY_PERIOD = 10;
 }

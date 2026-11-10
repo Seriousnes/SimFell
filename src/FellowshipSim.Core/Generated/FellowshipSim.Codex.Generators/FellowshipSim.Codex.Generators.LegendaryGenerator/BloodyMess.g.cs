@@ -11,10 +11,10 @@ partial class BloodyMess
     public const int HeadItemId = 5899;
 
     /// <summary>Game data: tuning <c>AdditionalTicks.Amount, Gunde.TargetedAoeProjectile.Talent.AdditionalTicks.Amount</c> of legendary power 697; Grim Carve (ability 2262).</summary>
-    public const int AdditionalTicksAmount = 2;
+    public const int ADDITIONAL_TICKS_AMOUNT = 2;
 
     /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Aoe.Period</c> of legendary power 697; Grim Carve (ability 2262).</summary>
-    public const double AoePeriod = 0.5;
+    public const double AOE_PERIOD = 0.5;
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Bloody Mess";

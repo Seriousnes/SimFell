@@ -11,11 +11,11 @@ partial class HallowedShield
     public const string TalentName = "Hallowed Shield";
 
     /// <summary>Game data: tuning <c>ParryBoost.Duration, Sune.SingleTargetAbsorb.Talent.ParryBoost.Duration</c> of talent 567; Hallowed Shield (effect 2649).</summary>
-    public const int Duration = 30;
+    public const int DURATION = 30;
 
     /// <summary>Game data: tuning <c>ParryBoost.StackCap, Sune.SingleTargetAbsorb.Talent.ParryBoost.StackCap</c> of talent 567; Hallowed Shield (effect 2649).</summary>
-    public const int StackCap = 30;
+    public const int STACK_CAP = 30;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetAbsorb.Talent.ParryBoost.ExtraAbsorbPerStack</c> of talent 567; Hallowed Shield (effect 2649).</summary>
-    public const double ExtraAbsorbPerStack = 0.01;
+    public const double EXTRA_ABSORB_PER_STACK = 0.01;
 }

@@ -14,8 +14,8 @@ public partial class Malevolence : Talent
     public const int QueensFangEffectId = 2430;
     public const int ArachnidAssaultEffectId = 2431;
 
-    public static readonly AuraDef QueensFangBuff = AuraDef.Effect("Malevolence: Queen's Fang", QueensFangEffectId, Duration, MaxNumberOfStacks);
-    public static readonly AuraDef ArachnidAssaultBuff = AuraDef.Effect("Malevolence: Arachnid Assault", ArachnidAssaultEffectId, Duration, MaxNumberOfStacks);
+    public static readonly AuraDef QueensFangBuff = AuraDef.Effect("Malevolence: Queen's Fang", QueensFangEffectId, DURATION, MAX_NUMBER_OF_STACKS);
+    public static readonly AuraDef ArachnidAssaultBuff = AuraDef.Effect("Malevolence: Arachnid Assault", ArachnidAssaultEffectId, DURATION, MAX_NUMBER_OF_STACKS);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -27,7 +27,7 @@ public partial class Malevolence : Talent
             var own = cast.Ability switch { QueensFang => QueensFangBuff, ArachnidAssault => ArachnidAssaultBuff, _ => null };
             if (own == null || !hero.Auras.HasAura(own, cast.Time)) return;
             hero.Auras.ConsumeStack(own, cast.Time);
-            cast.DamageMultiplier *= DamageScaler;
+            cast.DamageMultiplier *= DAMAGE_SCALER;
         };
         hero.OnCastCompleted += (ability, _, now) =>
         {

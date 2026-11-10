@@ -25,7 +25,7 @@ public partial class Omnistrike : XavianAbility
 
     public Omnistrike(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
     }
 
@@ -40,15 +40,15 @@ public partial class Omnistrike : XavianAbility
         int consumed = 0;
         for (int i = 0; i < struck.Count; i++) consumed += struck[i].Auras.GetStacks(SunStrike.Sunstruck, now);
         double multiplier = 1.0 + DamagePerSunstruckStack * consumed;
-        DealToEach(ctx, struck, DamageScalingTargetCountThreshold, multiplier);
+        DealToEach(ctx, struck, DAMAGE_SCALING_TARGET_COUNT_THRESHOLD, multiplier);
 
         if (consumed > 0)
         {
             for (int i = 0; i < struck.Count; i++) struck[i].Auras.Remove(SunStrike.Sunstruck, now);
             Xavian.GainMana(SunstruckManaBase + SunstruckManaPerAdditionalStack * (consumed - 1), ctx, target);
         }
-        Owner.GainResource(Hero.SpiritPoints, SpiritPointGain, ctx);
-        if (ctx.Outcomes.RollProc(ProcKey, ResourceProcChance, ctx)) Xavian.GrantSwiftReprieval(ctx);
+        Owner.GainResource(Hero.SpiritPoints, SPIRIT_POINT_GAIN, ctx);
+        if (ctx.Outcomes.RollProc(ProcKey, RESOURCE_PROC_CHANCE, ctx)) Xavian.GrantSwiftReprieval(ctx);
         Struck?.Invoke(ctx);
         Xavian.RaiseOffensiveAbilityUsed(ctx, this);
     }

@@ -20,7 +20,7 @@ public partial class Oathshatter : Talent
     {
         var heartSplitter = hero.GetAbility<HeartSplitter>();
         if (heartSplitter == null) return;
-        heartSplitter.CritChanceBonus += AdditionalCritChance;
+        heartSplitter.CritChanceBonus += ADDITIONAL_CRIT_CHANCE;
         int id = LogIds.Effect(HeartSplitter.ExsanguinateEffectId);
         heartSplitter.Exsanguinated += (ctx, target, damage, crit) =>
         {
@@ -30,7 +30,7 @@ public partial class Oathshatter : Talent
             double falloff = others.Count > ExplosionTargetThreshold ? Math.Sqrt(ExplosionTargetThreshold / others.Count) : 1.0;
             foreach (var enemy in others)
             {
-                ctx.ApplyDamage(hero, enemy, damage * AoeDamageScaler * falloff, id, HeartSplitter.ExsanguinateName, canCrit: false, 0.0, 1.0);
+                ctx.ApplyDamage(hero, enemy, damage * AOE_DAMAGE_SCALER * falloff, id, HeartSplitter.ExsanguinateName, canCrit: false, 0.0, 1.0);
             }
         };
     }

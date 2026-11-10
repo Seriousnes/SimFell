@@ -11,8 +11,8 @@ partial class ImpendingHeartseeker
     public const string TalentName = "Impending Heartseeker";
 
     /// <summary>Game data: tuning <c>ResetCooldownAndBuff.AdditionalDamagePerProjectile, Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.AdditionalDamagePerProjectile</c> of talent 168; Impending Heartseeker (effect 2317).</summary>
-    public const double AdditionalDamagePerProjectile = 0.1;
+    public const double ADDITIONAL_DAMAGE_PER_PROJECTILE = 0.1;
 
     /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration, Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.BuffDuration</c> of talent 168; Impending Heartseeker (effect 2317).</summary>
-    public const int BuffDuration = 15;
+    public const int BUFF_DURATION = 15;
 }

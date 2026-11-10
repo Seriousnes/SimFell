@@ -11,23 +11,23 @@ partial class Invictus
     public const string TalentName = "Invictus";
 
     /// <summary>Game data: tuning <c>SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit, Sune.SingleTargetAbsorb.Talent.SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit</c> of talent 604; Solar Shield (ability 1848).</summary>
-    public const int SecondaryStatBoostsCritChanceCritChanceToDamageOnCommit = 1;
+    public const int SECONDARY_STAT_BOOSTS_CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT = 1;
 
     /// <summary>Game data: tuning <c>SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit.TargetCountThreshold, Sune.SingleTargetAbsorb.Talent.SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit.TargetCountThreshold</c> of talent 604; Solar Shield (ability 1848).</summary>
-    public const int SecondaryStatBoostsCritChanceCritChanceToDamageOnCommitTargetCountThreshold = 1;
+    public const int SECONDARY_STAT_BOOSTS_CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT_TARGET_COUNT_THRESHOLD = 1;
 
     /// <summary>Game data: tuning <c>SecondaryStatBoosts.Expertise.ExpertiseToArmorMultiplierScaler, Sune.SingleTargetAbsorb.Talent.SecondaryStatBoosts.Expertise.ExpertiseToArmorMultiplierScaler</c> of talent 604; effect 2720, Armor MultiplyCompound.</summary>
-    public const int ExpertiseToArmorMultiplierScaler = 1;
+    public const int EXPERTISE_TO_ARMOR_MULTIPLIER_SCALER = 1;
 
     /// <summary>Game data: tuning <c>SecondaryStatBoosts.Haste.HasteToCooldownRecoveryScaler, Sune.SingleTargetAbsorb.Talent.SecondaryStatBoosts.Haste.HasteToCooldownRecoveryScaler</c> of talent 604; effect 2719.</summary>
-    public const double HasteToCooldownRecoveryScaler = 0.33334;
+    public const double HASTE_TO_COOLDOWN_RECOVERY_SCALER = 0.33334;
 
     /// <summary>Game data: tuning <c>SecondaryStatBoosts.Spirit.SpiritRefundCooldownReduction, Sune.SingleTargetAbsorb.Talent.SecondaryStatBoosts.Spirit.SpiritRefundCooldownReduction</c> of talent 604; Solar Shield (ability 1848).</summary>
-    public const int SecondaryStatBoostsSpiritSpiritRefundCooldownReduction = 2;
+    public const int SECONDARY_STAT_BOOSTS_SPIRIT_SPIRIT_REFUND_COOLDOWN_REDUCTION = 2;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetAbsorb.IncomingDamageMultiplier</c> of talent 604; Solar Shield (ability 1848).</summary>
-    public const double IncomingDamageMultiplier = 0.5;
+    public const double INCOMING_DAMAGE_MULTIPLIER = 0.5;
 
     /// <summary>Game data: tuning <c>Sune.SingleTargetAbsorb.VisualDelay</c> of talent 604; Solar Shield (ability 1848).</summary>
-    public const double VisualDelay = 0.2;
+    public const double VISUAL_DELAY = 0.2;
 }

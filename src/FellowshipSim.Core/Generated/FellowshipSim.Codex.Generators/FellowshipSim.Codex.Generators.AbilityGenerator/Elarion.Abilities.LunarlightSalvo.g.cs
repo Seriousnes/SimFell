@@ -17,38 +17,44 @@ partial class LunarlightSalvo
     public const int AbilityMaxTargets = 40;
 
     /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1309.</summary>
-    public const double AgilityCoefficient = 2.19;
+    public const double AGILITY_COEFFICIENT = 2.19;
 
     /// <summary>Game data: tuning <c>Aoe.AgilityCoefficient</c> of ability 1309.</summary>
-    public const double AoeAgilityCoefficient = 2.19;
+    public const double AOE_AGILITY_COEFFICIENT = 2.19;
 
     /// <summary>Game data: tuning <c>Aoe.ChanceToProc</c> of ability 1309.</summary>
-    public const double AoeChanceToProc = 0.25;
+    public const double AOE_CHANCE_TO_PROC = 0.25;
 
     /// <summary>Game data: tuning <c>Aoe.Height</c> of ability 1309.</summary>
-    public const int AoeHeight = 500;
+    public const int AOE_HEIGHT = 500;
 
     /// <summary>Game data: tuning <c>Aoe.Radius</c> of ability 1309.</summary>
-    public const int AoeRadius = 800;
+    public const int AOE_RADIUS = 800;
 
     /// <summary>Game data: tuning <c>Aoe.TargetCountThreshold</c> of ability 1309.</summary>
-    public const int AoeTargetCountThreshold = 12;
+    public const int AOE_TARGET_COUNT_THRESHOLD = 12;
 
     /// <summary>Game data: tuning <c>ChanceInstantMarkTarget.ChanceMultiply</c> of ability 1309; ability 1438.</summary>
-    public const int ChanceMultiply = 1;
+    public const int CHANCE_MULTIPLY = 1;
 
     /// <summary>Game data: tuning <c>ChanceToProc</c> of ability 1309.</summary>
-    public const double ChanceToProc = 0.25;
+    public const double CHANCE_TO_PROC = 0.25;
 
     /// <summary>Game data: tuning <c>ChanceToProcIfCrit</c> of ability 1309.</summary>
-    public const double ChanceToProcIfCrit = 0.5;
+    public const double CHANCE_TO_PROC_IF_CRIT = 0.5;
 
     /// <summary>Game data: tuning <c>ChanneledMultiProjectileDebuff.TriggerAoeHit.ChanceToProc</c> of ability 1309.</summary>
-    public const double ChanneledMultiProjectileDebuffTriggerAoeHitChanceToProc = 0.25;
+    public const double CHANNELED_MULTI_PROJECTILE_DEBUFF_TRIGGER_AOE_HIT_CHANCE_TO_PROC = 0.25;
+
+    /// <summary>Game data: tuning <c>DamageScale</c> of ability 1309.</summary>
+    public const int DAMAGE_SCALE_1 = 1;
+
+    /// <summary>Game data: tuning <c>IncreasedDamage.DamageScale</c> of ability 1309; Lunarlight Mark (ability 1310), talent Lunar Fury (talent 130).</summary>
+    public const double DAMAGE_SCALE_2 = 1.3;
 
     /// <summary>Game data: tuning <c>IncreasedInstantMarkTriggerChance.AddedCritChance</c> of ability 1309; Starfall Volley (ability 126), talent Lunarlight Affinity (talent 203).</summary>
-    public const double AddedCritChance = 0.2;
+    public const double ADDED_CRIT_CHANCE = 0.2;
 
     /// <summary>Game data: tuning <c>IncreasedInstantMarkTriggerChance.ChanceMultiplier</c> of ability 1309; Lunarlight Mark (ability 1310).</summary>
-    public const int IncreasedInstantMarkTriggerChanceChanceMultiplier = 2;
+    public const int INCREASED_INSTANT_MARK_TRIGGER_CHANCE_CHANCE_MULTIPLIER = 2;
 }

@@ -12,5 +12,5 @@ public partial class LastLights : Talent
     public override int Id => TalentId;
 
     public override void Bind(Hero hero) =>
-        hero.TargetCritChanceBonuses.Add((target, _) => target.HealthFraction < HealthThreshold ? AdditionalCritChance : 0.0);
+        hero.TargetCritChanceBonuses.Add((target, _) => target.HealthFraction < HealthThreshold ? ADDITIONAL_CRIT_CHANCE : 0.0);
 }

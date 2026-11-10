@@ -29,9 +29,9 @@ public partial class IceComet : RimeAbility
 
     public IceComet(Rime owner) : this(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = DamageIntellectCoefficient;
+        BaseCoefficient = DAMAGE_INTELLECT_COEFFICIENT;
         // Game data: damage falls off as a square root of the threshold over the targets, beyond the threshold.
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
         DamageLogId = DamageId;
     }
 

@@ -14,8 +14,8 @@ public partial class BraveMachinations : Aspect
     public override void Bind(Hero hero)
     {
         if (hero.WeaponAbility is not { } weapon) return;
-        weapon.CritChanceBonus += ForRank(BuffAddedWeaponCritChanceByRank);
-        double reduction = ForRank(CooldownReductionPerWeaponCritByRank);
+        weapon.CritChanceBonus += ForRank(BUFF_ADDED_WEAPON_CRIT_CHANCE_BY_RANK);
+        double reduction = ForRank(COOLDOWN_REDUCTION_PER_WEAPON_CRIT_BY_RANK);
         // Each completed cast of the weapon ability arms one cooldown reduction, and the first crit takes it. The cast resolving is its
         // completion, before any of its hits (OnCastCompleted comes after an instant weapon ability's hits).
         bool armed = false;

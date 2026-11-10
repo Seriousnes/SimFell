@@ -11,11 +11,11 @@ partial class FrenziedReign
     public const string TalentName = "Frenzied Reign";
 
     /// <summary>Game data: tuning <c>Gunde.ExtraDotDamageBuff.BonusDotDamage</c> of talent 750; Reign in Blood (ability 2295).</summary>
-    public const double BonusDotDamage = 0.3;
+    public const double BONUS_DOT_DAMAGE = 0.3;
 
     /// <summary>Game data: tuning <c>Gunde.ExtraDotDamageBuff.Talent.AddedBonus.AddedTransfer</c> of talent 750; Reign in Blood (ability 2295).</summary>
-    public const double AddedBonusAddedTransfer = 0.25;
+    public const double ADDED_BONUS_ADDED_TRANSFER = 0.25;
 
     /// <summary>Game data: tuning <c>Gunde.InstantAoeWithBuff.Talent.AddedTransfer.DotTransferBonus</c> of talent 750; Blood Arc (ability 2291).</summary>
-    public const double DotTransferBonus = 0.1;
+    public const double DOT_TRANSFER_BONUS = 0.1;
 }

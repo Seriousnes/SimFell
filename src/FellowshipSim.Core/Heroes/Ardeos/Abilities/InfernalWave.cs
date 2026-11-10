@@ -4,7 +4,6 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 /// Ability 1276: a cast that conjures a fiery wave toward the target, dealing Intellect fire damage and generating
 /// Cinders. Talents that react to the wave's hit subscribe to <see cref="Ability.Hit"/>.
 /// </summary>
-[CodexAccepted("CastTime")]
 public partial class InfernalWave : ArdeosAbility
 {
     public const double CindersGained = 40.0;
@@ -17,7 +16,7 @@ public partial class InfernalWave : ArdeosAbility
 
     public InfernalWave(Ardeos owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DirectDamageIntellectCoefficient;
+        BaseCoefficient = DIRECT_DAMAGE_INTELLECT_COEFFICIENT;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
     }
 

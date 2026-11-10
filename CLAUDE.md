@@ -149,8 +149,10 @@ or the desktop app).
   `src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators/<generator>/` (committed, not compiled from disk): read
   it there for a class's game data half. Its `<hash>.sha256` is named after the hash of the folder's files, and CI fails
   when its own build's hash differs (`tools/check-codex-generated.sh`). Tests check game data values as numbers, never
-  as generated constants. A generated constant left out (CODEX008, CODEX009 and the like) is accepted with
-  `[CodexAccepted("<name>")]` on the partial class. `FellowshipSim.Codex.Generators` writes each creature's `<Name>GameCreature` class from it. Its `DungeonGenerator`
+  as generated constants. A tuning value's constant is its name in upper case with an underscore between words
+  (`MAX_CHARGES`), and a name with several values has one per value, numbered from 1 in the order of its tuning keys
+  (`MAX_STACKS_1`, `MAX_STACKS_2`). A hand-written member with a generated constant's name is a build error (CODEX009 and
+  the like). `FellowshipSim.Codex.Generators` writes each creature's `<Name>GameCreature` class from it. Its `DungeonGenerator`
   writes a `partial` `<Name>GameDungeon` class for each dungeon record, with or without a hand-written half for the
   dungeon's mechanics: `DungeonId`, `DungeonName`, the record's fields as `Dungeon<Field>` (`DungeonLevelType`,
   `DungeonQualifierTime`, `DungeonDifficulties`...), the tuning values, `DungeonPlacements` with each creature by its
@@ -166,10 +168,10 @@ or the desktop app).
   `AugmentationGenerator` writes the game data's half of each `partial` aspect, sigil and protective enchant class named
   after a record of its type: `<Type>Id`, `<Type>Name`, the record's fields as `<Type><Field>` (`SigilMaxRank`,
   `AspectProcsPerMinute`, `ProtectiveEnchantDuration`...), the tuning values, and each rank run as a `double[]` named
-  after its key and `ByRank`. `Catalog` reads an augmentation's ID from an instance. Its `GlyphGenerator` writes the game
+  after its key and `_BY_RANK`. `Catalog` reads an augmentation's ID from an instance. Its `GlyphGenerator` writes the game
   data's half of each `partial` glyph class named after a glyph record: `GlyphId`, `GlyphName`, `GlyphMaxRank`,
   `GlyphAbilityRank` and the tuning values, each a constant when it is the same at every rank and otherwise a `double[]`
-  named after it and `ByRank`. `Catalog` reads a glyph's ID and name from an instance. Its `WeaponGenerator` writes the
+  named after it and `_BY_RANK`. `Catalog` reads a glyph's ID and name from an instance. Its `WeaponGenerator` writes the
   game data's half of each `partial` weapon ability class in `Customization/WeaponAbilities` named after a weapon power:
   `WeaponPowerId`, `WeaponPowerName`, `AbilityId` and `AbilityName` of the ability the power grants under its name, that
   ability's fields as `Ability<Field>`, and the power's tuning values. It writes `WeaponPowerId`, `WeaponPowerName` and

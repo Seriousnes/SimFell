@@ -23,11 +23,11 @@ partial class Wildfire
     public const int AbilityRange = 6000;
 
     /// <summary>Game data: tuning <c>DotBonus.Duration</c> of ability 1267; ability 1266.</summary>
-    public const int Duration = 9;
+    public const int DURATION = 9;
 
     /// <summary>Game data: tuning <c>SpreadMaxTargets</c> of ability 1267.</summary>
-    public const int SpreadMaxTargets = 10;
+    public const int SPREAD_MAX_TARGETS = 10;
 
     /// <summary>Game data: tuning <c>SpreadRadius</c> of ability 1267.</summary>
-    public const int SpreadRadius = 1000;
+    public const int SPREAD_RADIUS = 1000;
 }

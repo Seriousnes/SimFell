@@ -23,8 +23,8 @@ partial class WebCrack
     public const int AbilityRange = 1000;
 
     /// <summary>Game data: tuning <c>AdditionalDurationPerComboPoints</c> of ability 1128.</summary>
-    public const int AdditionalDurationPerComboPoints = 1;
+    public const int ADDITIONAL_DURATION_PER_COMBO_POINTS = 1;
 
     /// <summary>Game data: tuning <c>BaseDuration</c> of ability 1128.</summary>
-    public const int BaseDuration = 1;
+    public const int BASE_DURATION = 1;
 }

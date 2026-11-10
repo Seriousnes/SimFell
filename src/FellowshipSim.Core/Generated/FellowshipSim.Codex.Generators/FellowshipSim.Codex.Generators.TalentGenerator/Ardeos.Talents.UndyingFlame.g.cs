@@ -11,5 +11,5 @@ partial class UndyingFlame
     public const string TalentName = "Undying Flame";
 
     /// <summary>Game data: tuning <c>ExtendedDuration.DurationIncrease, Firemage.CastedSingleDot.Talent.ExtendedDuration.DurationIncrease</c> of talent 150; Engulfing Flames (effect 1832).</summary>
-    public const int ExtendedDurationDurationIncrease = 3;
+    public const int EXTENDED_DURATION_DURATION_INCREASE = 3;
 }

@@ -11,10 +11,10 @@ partial class TheBestDefense
     public const string TalentName = "The Best Defense";
 
     /// <summary>Game data: tuning <c>DamageCooldownReset.DamageMultiplier, Warmaster.BouncyProjectile.Talent.DamageCooldownReset.DamageMultiplier</c> of talent 207; The Best Defense (effect 1231), DamageScale MultiplyCompound.</summary>
-    public const double DamageMultiplier = 1.2;
+    public const double DAMAGE_MULTIPLIER = 1.2;
 
     /// <summary>Game data: tuning <c>DamageCooldownReset.Duration, Warmaster.BouncyProjectile.Talent.DamageCooldownReset.Duration</c> of talent 207; The Best Defense (effect 1231).</summary>
-    public const int Duration = 12;
+    public const int DURATION = 12;
 
     /// <summary>Game data: tuning <c>DamageCooldownReset.PPM, Warmaster.BouncyProjectile.Talent.DamageCooldownReset.PPM</c> of talent 207; The Best Defense (effect 1231).</summary>
     public const int PPM = 2;

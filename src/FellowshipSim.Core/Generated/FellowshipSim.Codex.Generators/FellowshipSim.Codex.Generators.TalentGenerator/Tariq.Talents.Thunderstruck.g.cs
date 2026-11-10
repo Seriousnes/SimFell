@@ -11,5 +11,5 @@ partial class Thunderstruck
     public const string TalentName = "Thunderstruck";
 
     /// <summary>Game data: tuning <c>Ink.BouncyProjectile.Talent.IncreasedMaxNumOfTargets.TotalTargets</c> of talent 89; Chain Lightning (ability 1237).</summary>
-    public const int IncreasedMaxNumOfTargetsTotalTargets = 9;
+    public const int INCREASED_MAX_NUM_OF_TARGETS_TOTAL_TARGETS = 9;
 }

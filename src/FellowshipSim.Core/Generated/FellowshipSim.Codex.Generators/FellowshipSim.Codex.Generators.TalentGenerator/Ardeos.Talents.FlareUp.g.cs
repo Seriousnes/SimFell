@@ -14,17 +14,17 @@ partial class FlareUp
     public const int TalentRadius = 1500;
 
     /// <summary>Game data: tuning <c>CastedDotBoostProjectileBonusBuff.BuffDuration, Firemage.CastedDotBoostProjectile.Talent.CastedDotBoostProjectileBonusBuff.BuffDuration</c> of talent 159; Infernal Doom (effect 1808).</summary>
-    public const int BuffDuration = 12;
+    public const int BUFF_DURATION = 12;
 
     /// <summary>Game data: tuning <c>DamageFraction, Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.DamageFraction</c> of talent 159; Flare Up (ability 1257).</summary>
-    public const double DamageFraction = 0.5;
+    public const double DAMAGE_FRACTION = 0.5;
 
     /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.CastedDotBoostProjectileBonusBuff.DamageScaler</c> of talent 159; Infernal Doom (effect 1808).</summary>
-    public const int DamageScaler = 1;
+    public const int DAMAGE_SCALER = 1;
 
     /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.MaxRadius</c> of talent 159; Flare Up (ability 1257).</summary>
-    public const int MaxRadius = 1500;
+    public const int MAX_RADIUS = 1500;
 
     /// <summary>Game data: tuning <c>TargetCountThreshhold, Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.TargetCountThreshhold</c> of talent 159; Flare Up (ability 1257).</summary>
-    public const int TargetCountThreshhold = 3;
+    public const int TARGET_COUNT_THRESHHOLD = 3;
 }

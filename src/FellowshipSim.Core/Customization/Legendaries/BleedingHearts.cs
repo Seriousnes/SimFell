@@ -12,7 +12,7 @@ public partial class BleedingHearts : Legendary
 {
     /// <summary>
     /// Combat logs (Gunde's NOTES.md): the extra strike comes 0.23-0.30s after the cast, sooner than the game data's
-    /// <see cref="ChargesDoubleStrikeDelayBetweenStrikes"/>.
+    /// <see cref="CHARGES_DOUBLE_STRIKE_DELAY_BETWEEN_STRIKES"/>.
     /// </summary>
     public const double ExtraStrikeDelaySeconds = 0.23;
     public const double HighHealthThreshold = 0.8;
@@ -22,11 +22,11 @@ public partial class BleedingHearts : Legendary
     public override void Bind(Hero hero)
     {
         if (hero is not Gunde gunde || gunde.GetAbility<HeartSplitter>() is not { } heartSplitter) return;
-        heartSplitter.SetCharges(ChargesNumOfCharges);
+        heartSplitter.SetCharges(CHARGES_NUM_OF_CHARGES);
         heartSplitter.TargetCritChanceBonuses.Add(target => target.HealthFraction > HighHealthThreshold ? HighHealthCritChance : 0.0);
         heartSplitter.Cast += (ctx, target, rend) =>
         {
-            if (!ctx.Outcomes.RollProc(ProcKey, ChargesDoubleStrikeChance, ctx, target)) return;
+            if (!ctx.Outcomes.RollProc(ProcKey, CHARGES_DOUBLE_STRIKE_CHANCE, ctx, target)) return;
             ctx.Schedule(SimTime.FromSeconds(ExtraStrikeDelaySeconds), c =>
             {
                 if (target is { IsSleeping: false }) heartSplitter.Strike(c, target, rend, extra: true);

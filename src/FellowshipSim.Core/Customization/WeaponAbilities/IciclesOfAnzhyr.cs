@@ -9,12 +9,11 @@ namespace FellowshipSim.Core.Customization.WeaponAbilities;
 /// damage, crit chance and crit power of the cast; damage falls off beyond a target cap (every wave on 16-22
 /// enemies fits one cap; all 12 casts then match). The curse (effect 2286) ticks on a hasted period.
 /// </summary>
-[CodexAccepted("PrimaryAttributeCoefficient")]
 public partial class IciclesOfAnzhyr : Ability
 {
     /// <summary>Game data: tuning <c>Aoe.Damage.PrimaryAttributeCoefficient</c> of weapon power 357.</summary>
     public const double Coefficient = 1.44;
-    /// <summary>Combat logs: the first wave lands 0.27s after the cast (the game data's <see cref="VolleyDamageDelay"/> is 0.25).</summary>
+    /// <summary>Combat logs: the first wave lands 0.27s after the cast (the game data's <see cref="VOLLEY_DAMAGE_DELAY"/> is 0.25).</summary>
     public const double FirstWaveSeconds = 0.27;
     public const double TargetThreshold = 15;
     public const double CursedDamageMultiplier = 3.0;
@@ -55,10 +54,10 @@ public partial class IciclesOfAnzhyr : Ability
         double critMultiplier = CritMultiplierAt(now);
         // The curse this cast applies (or re-applies) snapshots the cast too.
         var curse = new CurseSnapshot(_curse.BaseDamage(ctx, null), critChance, critMultiplier);
-        for (int i = 0; i < NumberOfVolleys; i++)
+        for (int i = 0; i < NUMBER_OF_VOLLEYS; i++)
         {
-            bool final = i == NumberOfVolleys - 1;
-            ctx.Schedule(SimTime.FromSeconds(FirstWaveSeconds + i * VolleyInterval),
+            bool final = i == NUMBER_OF_VOLLEYS - 1;
+            ctx.Schedule(SimTime.FromSeconds(FirstWaveSeconds + i * VOLLEY_INTERVAL),
                 c => Wave(c, target, final, damage, critChance, critMultiplier, curse), Name);
         }
     }
@@ -114,7 +113,7 @@ public partial class IciclesOfAnzhyr : Ability
         }
         // Effect 2286 is tagged EffectType.Dot with no tickrate exemption, a hasted period, Infinite, no tick on application
         // Its ticks run on the game's period timer, which each Haste change re-arms at Period / Haste(now).
-        timer = HastedTimer.StartPeriod(ctx, Owner, TickInterval, Tick, CurseName, _curse.DamageLogId);
+        timer = HastedTimer.StartPeriod(ctx, Owner, TICK_INTERVAL, Tick, CurseName, _curse.DamageLogId);
     }
 
     /// <summary>The curse's damage numbers (logged as effect 2286).</summary>

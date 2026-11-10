@@ -14,8 +14,8 @@ public partial class Explosivo : Legendary
 {
     public const int DamageEffectId = 3175;
     public const string DamageName = "Apocalypse: Explosivo";
-    /// <summary>Apocalypse's charges with it (<see cref="AddedChargesMaxCharges"/>) beyond its one.</summary>
-    public const int ExtraCharges = AddedChargesMaxCharges - 1;
+    /// <summary>Apocalypse's charges with it (<see cref="ADDED_CHARGES_MAX_CHARGES"/>) beyond its one.</summary>
+    public const int ExtraCharges = ADDED_CHARGES_MAX_CHARGES - 1;
 
     public override void Bind(Hero hero)
     {
@@ -26,16 +26,16 @@ public partial class Explosivo : Legendary
         {
             if (hit.Amount > 0 && hit.Target != null && hit.SimContext != null)
             {
-                ardeos.Dots.Apply(hit.SimContext, burn, hit.Target, pool: hit.Amount * DirectDamageScale);
+                ardeos.Dots.Apply(hit.SimContext, burn, hit.Target, pool: hit.Amount * DIRECT_DAMAGE_SCALE);
             }
         };
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (ability is FireBall) hero.ReduceCooldown(apocalypse.Name, SimTime.FromSeconds(CooldownReductionToApocalypseReductionInSeconds), now);
+            if (ability is FireBall) hero.ReduceCooldown(apocalypse.Name, SimTime.FromSeconds(COOLDOWN_REDUCTION_TO_APOCALYPSE_REDUCTION_IN_SECONDS), now);
         };
     }
 
     /// <summary>Apocalypse's burn: a share of the damage of its hit, dealt over the burn's duration.</summary>
     private sealed class Burn(Ardeos owner)
-        : DamageOverTime(owner, DamageEffectId, DamageName, Explosivo.Period, Explosivo.Duration, DotStacking.Accumulate);
+        : DamageOverTime(owner, DamageEffectId, DamageName, Explosivo.PERIOD, Explosivo.DURATION, DotStacking.Accumulate);
 }

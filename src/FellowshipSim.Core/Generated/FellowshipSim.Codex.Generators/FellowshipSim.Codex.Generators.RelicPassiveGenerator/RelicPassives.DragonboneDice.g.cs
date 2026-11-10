@@ -23,13 +23,13 @@ partial class DragonboneDice
     public const string RelicItemName = "Orb of Awakened Gaze";
 
     /// <summary>Game data: tuning <c>BuffDuration</c> of relic passive 778; ability 1387.</summary>
-    public const int BuffDuration = 14;
+    public const int BUFF_DURATION = 14;
 
     /// <summary>Game data: tuning <c>PPM</c> of relic passive 778; ability 1387.</summary>
     public const int PPM = 1;
 
     /// <summary>Game data: tuning <c>PowerIncreaseFactor</c> of relic passive 778; ability 1387, PrimaryAttributeMultiplier MultiplyCompound.</summary>
-    public const double PowerIncreaseFactor = 1.18;
+    public const double POWER_INCREASE_FACTOR = 1.18;
 
     /// <summary>Game data: the items granting relic passive 778.</summary>
     public static readonly global::FellowshipSim.Core.Customization.RelicPassives.RelicItem[] RelicPassiveItems =

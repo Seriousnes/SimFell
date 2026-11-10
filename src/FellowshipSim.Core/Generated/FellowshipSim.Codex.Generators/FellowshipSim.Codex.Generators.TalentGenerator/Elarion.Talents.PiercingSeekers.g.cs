@@ -11,8 +11,8 @@ partial class PiercingSeekers
     public const string TalentName = "Piercing Seekers";
 
     /// <summary>Game data: tuning <c>Riccochet.AdditionalTargets, Bowguy.ChanneledMultiProjectileDebuff.Talent.Riccochet.AdditionalTargets</c> of talent 201; ability 1553.</summary>
-    public const int RiccochetAdditionalTargets = 1;
+    public const int RICCOCHET_ADDITIONAL_TARGETS = 1;
 
     /// <summary>Game data: tuning <c>Riccochet.DamageScale, Bowguy.ChanneledMultiProjectileDebuff.Talent.Riccochet.DamageScale</c> of talent 201; ability 1553.</summary>
-    public const double RiccochetDamageScale = 0.7;
+    public const double RICCOCHET_DAMAGE_SCALE = 0.7;
 }

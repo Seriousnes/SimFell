@@ -11,11 +11,11 @@ partial class GreatBallsOfFire
     public const string TalentName = "Great Balls of Fire";
 
     /// <summary>Game data: tuning <c>Firemage.PlacedProjectileAoe.DamageDoneToDotDamageScaler</c> of talent 160; Fire Ball (ability 1260).</summary>
-    public const double DamageDoneToDotDamageScaler = 0.2;
+    public const double DAMAGE_DONE_TO_DOT_DAMAGE_SCALER = 0.2;
 
     /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DamageToDotTransferIncrease, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeDamageBonus.DamageToDotTransferIncrease</c> of talent 160; Fire Ball (ability 1260).</summary>
-    public const double PlacedProjectileAoeDamageBonusDamageToDotTransferIncrease = 0.1;
+    public const double PLACED_PROJECTILE_AOE_DAMAGE_BONUS_DAMAGE_TO_DOT_TRANSFER_INCREASE = 0.1;
 
     /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DirectDamageScale, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeDamageBonus.DirectDamageScale</c> of talent 160; Fire Ball (ability 1260).</summary>
-    public const double PlacedProjectileAoeDamageBonusDirectDamageScale = 1.5;
+    public const double PLACED_PROJECTILE_AOE_DAMAGE_BONUS_DIRECT_DAMAGE_SCALE = 1.5;
 }

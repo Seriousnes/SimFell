@@ -11,8 +11,8 @@ partial class BurstingSwallows
     public const string TalentName = "Bursting Swallows";
 
     /// <summary>Game data: tuning <c>CritChanceAndCritDamage.CritChanceIncrease, Rime.AutoDamageProjectile.Talent.CritChanceAndCritDamage.CritChanceIncrease</c> of talent 628; Frost Swallows (ability 1033), CritChance Additive.</summary>
-    public const double CritChanceAndCritDamageCritChanceIncrease = 0.1;
+    public const double CRIT_CHANCE_AND_CRIT_DAMAGE_CRIT_CHANCE_INCREASE = 0.1;
 
     /// <summary>Game data: tuning <c>IncreasedCastedDebuffAoeDamageDamage.DamageScaler, Rime.CastedDebuffAoeDamage.Talent.IncreasedCastedDebuffAoeDamageDamage.DamageScaler</c> of talent 628; Bursting Ice (ability 1031), DamageScale Multiplicitive.</summary>
-    public const double IncreasedCastedDebuffAoeDamageDamageDamageScaler = 1.3;
+    public const double INCREASED_CASTED_DEBUFF_AOE_DAMAGE_DAMAGE_DAMAGE_SCALER = 1.3;
 }

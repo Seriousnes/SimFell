@@ -29,17 +29,17 @@ partial class FrostBolt
     public const int AbilityRange = 3000;
 
     /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1029.</summary>
-    public const double CastingDuration = 1.5;
+    public const double CASTING_DURATION = 1.5;
 
     /// <summary>Game data: tuning <c>InstantSingleDamage.CooldownResetProcChance</c> of ability 1029.</summary>
-    public const double InstantSingleDamageCooldownResetProcChance = 0.15;
+    public const double INSTANT_SINGLE_DAMAGE_COOLDOWN_RESET_PROC_CHANCE = 0.15;
 
     /// <summary>Game data: tuning <c>IntellectCoefficient</c> of ability 1029.</summary>
-    public const double IntellectCoefficient = 2.017;
+    public const double INTELLECT_COEFFICIENT = 2.017;
 
     /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1029.</summary>
-    public const int ResourceGain = 3;
+    public const int RESOURCE_GAIN = 3;
 
     /// <summary>Game data: tuning <c>Spread</c> of ability 1029.</summary>
-    public const double Spread = 0.2;
+    public const double SPREAD = 0.2;
 }

@@ -27,7 +27,7 @@ public partial class CullingStrike : TariqAbility
 
     public CullingStrike(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         // Game data: no global cooldown effect. Combat logs (3 Tariq fights):
         // casts right after other casts.

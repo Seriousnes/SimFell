@@ -11,8 +11,8 @@ partial class MouthForWar
     public const string TalentName = "Mouth for War";
 
     /// <summary>Game data: tuning <c>Ink.CostReductionBuff.Duration</c> of talent 80; Focused Wrath (ability 1233).</summary>
-    public const int Duration = 15;
+    public const int DURATION = 15;
 
     /// <summary>Game data: tuning <c>Ink.CostReductionBuff.MaxStacksLimit</c> of talent 80; Focused Wrath (ability 1233).</summary>
-    public const int MaxStacksLimit = 3;
+    public const int MAX_STACKS_LIMIT = 3;
 }

@@ -17,11 +17,11 @@ partial class TheMonarch
     public const int GlyphAbilityRank = 191;
 
     /// <summary>Game data: tuning <c>BonusIncreasePerHasteInPercentage</c> of glyph 705; The Monarch (effect 3186).</summary>
-    public const double BonusIncreasePerHasteInPercentage = 0.1;
+    public const double BONUS_INCREASE_PER_HASTE_IN_PERCENTAGE = 0.1;
 
     /// <summary>Game data: tuning <c>CooldownAcceleration</c> of glyph 705; The Monarch (effect 3186), by rank.</summary>
-    public static readonly double[] CooldownAccelerationByRank = [0.03, 0.05, 0.08, 0.12];
+    public static readonly double[] COOLDOWN_ACCELERATION_BY_RANK = [0.03, 0.05, 0.08, 0.12];
 
     /// <summary>Game data: tuning <c>HasteThreshold</c> of glyph 705; The Monarch (effect 3186).</summary>
-    public const double HasteThreshold = 0.5;
+    public const double HASTE_THRESHOLD = 0.5;
 }

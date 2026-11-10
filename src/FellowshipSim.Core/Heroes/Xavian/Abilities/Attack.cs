@@ -22,7 +22,7 @@ public partial class Attack : XavianAbility
 
     public Attack(Xavian owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = STRENGTH_COEFFICIENT;
         SetCooldown(SwingSeconds, scalesWithHaste: true);
         IgnoresGcd = true;
     }
