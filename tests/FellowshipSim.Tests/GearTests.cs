@@ -75,6 +75,29 @@ public class GearTests
     }
 
     [Fact]
+    public void A_Weapon_Line_With_An_Item_Id_Takes_The_Items_Weapon_And_Ignores_Its_Name()
+    {
+        // Item 5982 is Mara's Sahril's Vengeance; Sahril's Arms is Helena's item 5981.
+        var build = SimcProfile.Parse("mara=\"x\"\nweapon=sahrils_arms,id=5982,tempers=8\n").Build;
+        Assert.Equal(GearItem.Find("Mara", 5982)!.WeaponAbilityId, build.WeaponAbilityId);
+        Assert.Contains(new GearPiece(GearSlot.Weapon, 5982, 8), build.Gear);
+    }
+
+    [Fact]
+    public void A_Weapon_Line_Without_An_Item_Id_Takes_The_Weapon_Of_Its_Name()
+    {
+        var build = SimcProfile.Parse("mara=\"x\"\nweapon=sahrils_wrath\n").Build;
+        Assert.Equal(GearItem.Find("Mara", 5982)!.WeaponAbilityId, build.WeaponAbilityId);
+        Assert.Contains("no weapon 'sahrils_arms'", Assert.ThrowsAny<FormatException>(() => SimcProfile.Parse("mara=\"x\"\nweapon=sahrils_arms\n")).Message);
+    }
+
+    [Fact]
+    public void A_Weapon_Line_Item_Id_Is_The_Heroes_Weapon()
+    {
+        Assert.Contains("Mara has no item 5981", Assert.ThrowsAny<FormatException>(() => SimcProfile.Parse("mara=\"x\"\nweapon=sahrils_wrath,id=5981\n")).Message);
+    }
+
+    [Fact]
     public void A_Share_Link_Keeps_The_Gear_And_Its_Tempers()
     {
         var build = Read();

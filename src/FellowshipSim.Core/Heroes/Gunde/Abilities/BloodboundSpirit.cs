@@ -14,7 +14,6 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// </summary>
 public partial class BloodboundSpirit : GundeAbility
 {
-    public const double RendShareOfDamage = 1.0;
     public const int Pulses = 5;
     public const double FirstPulseSeconds = 0.035;
     public const int BuffEffectId = 3242;
@@ -27,7 +26,10 @@ public partial class BloodboundSpirit : GundeAbility
     {
         BaseCoefficient = StrengthCoefficient;
         AoeTargetThreshold = DamageScalingTargetCountThreshold;
-        RendShare = RendShareOfDamage;
+        // The Rend of its damage is the whole share times DotScaler, Reign in Blood's and Frenzied Reign's bonuses included
+        // (Blueprint GA_Gunde_Passive_PerTargetAccumulatedBleed_Monitor, build 26320967).
+        RendShare = DamageToDotScaler;
+        RendShareScaler = DotScaler;
         owner.AbilityDamageMultipliers.Add((ability, now) =>
             ability is HeartSplitter or GrimCarve && owner.Auras.HasAura(Buff, now) ? BuffDamage : 1.0);
     }

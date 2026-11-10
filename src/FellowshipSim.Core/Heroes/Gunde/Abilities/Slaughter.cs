@@ -15,8 +15,11 @@ public partial class Slaughter : GundeAbility
 
     public static readonly AuraDef Dot = AuraDef.Effect(AbilityName, DotEffectId, Duration);
 
-    /// <summary>Slaughter consumed an enemy's Rend (Massacre).</summary>
-    public event Action<SimulationContext, EnemyTarget, double>? Consumed;
+    /// <summary>
+    /// Slaughter consumed Rend: the sum of the Rend stacks the enemies had before the consume (Massacre; Blueprint
+    /// InstantAoeDot's <c>TotalAccumulatedStacks</c>, build 26320967).
+    /// </summary>
+    public event Action<SimulationContext, int>? Consumed;
 
     public Slaughter(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
@@ -32,9 +35,11 @@ public partial class Slaughter : GundeAbility
         // The enemies around Gunde with Rend on them (a replay follows the log's first ticks).
         var withRend = ctx.ActiveEnemies.Where(rend.IsOn).ToList();
         if (withRend.Count == 0) return;
+        int stacks = 0;
         foreach (var enemy in ctx.Outcomes.SelectTargets(DamageLogId, withRend, ctx))
         {
             if (!rend.IsOn(enemy)) continue;
+            stacks += enemy.Auras.GetStacks(Rend.Debuff, ctx.CurrentTime);
             double consumed = rend.Consume(ctx, enemy);
             double multiplier = AccDotToNewDotScaler;
             if (enemy.Auras.HasAura(Rupture.OpenWounds, ctx.CurrentTime))
@@ -42,9 +47,9 @@ public partial class Slaughter : GundeAbility
                 multiplier *= Rupture.OpenWoundsSlaughterDamage;
                 enemy.Auras.Remove(Rupture.OpenWounds, ctx.CurrentTime);
             }
-            Consumed?.Invoke(ctx, enemy, consumed);
             Bleed(ctx, enemy, consumed * multiplier);
         }
+        if (stacks > 0) Consumed?.Invoke(ctx, stacks);
     }
 
     /// <summary>Deals <paramref name="damage"/> to <paramref name="enemy"/> over its ticks.</summary>
@@ -54,10 +59,14 @@ public partial class Slaughter : GundeAbility
         enemy.Auras.Apply(Dot, ctx.CurrentTime);
         int ticks = (int)Math.Round(Duration / Period);
         double perTick = damage / ticks;
+        int fired = 0;
         PeriodicEffect.Begin(ctx, Name, Duration, Period, tickOnStart: false, partialFinalTick: false,
             onTick: (c, _) =>
             {
-                if (!enemy.IsSleeping) c.ApplyDamage(Owner, enemy, perTick, DamageLogId, Name, canCrit: false, 0.0, 1.0);
+                fired++;
+                if (enemy.IsSleeping) return;
+                c.ApplyDamage(Owner, enemy, perTick, DamageLogId, Name, canCrit: false, 0.0, 1.0);
+                Gunde.CheckSunderedFlesh(c, enemy, Math.Max(0, ticks - fired) * perTick);
             },
             onEnd: (c, _) => enemy.Auras.Remove(Dot, c.CurrentTime),
             damageLogId: DamageLogId, target: enemy);

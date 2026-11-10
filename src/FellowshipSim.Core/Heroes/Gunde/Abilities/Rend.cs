@@ -1,8 +1,9 @@
-namespace FellowshipSim.Core.Heroes.Gunde;
+namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 
 /// <summary>
-/// Rend (effect 3231, damage logged as 2286): "Damage done by your abilities build up this bleed, damaging the target
-/// over time." Each enemy's Rend is the damage its applications added. Combat logs (n7zxK8harZT2wjDB fight 9,
+/// Rend (ability 2286, effect 3231, damage logged as 2286): "Damage done by your abilities build up this bleed, damaging
+/// the target over time." Each enemy's Rend is the damage its applications added. Gunde never casts it: his abilities
+/// apply it (<see cref="RendCast"/>). Combat logs (n7zxK8harZT2wjDB fight 9,
 /// Y4wpb2f3gc8LqJDX fight 25):
 /// <list type="bullet">
 /// <item>each application deals its damage over <see cref="TicksPerApplication"/> ticks, an equal share each, on the
@@ -12,25 +13,28 @@ namespace FellowshipSim.Core.Heroes.Gunde;
 /// applications that ticked first);</item>
 /// <item>ticks come every <see cref="TickSeconds"/>, not hasted; Deep Rend's ticks come faster, on whole server frames,
 /// and each application deals one more tick of an equal share;</item>
-/// <item>ticks never crit and take no damage multipliers: the damage an application adds is already dealt damage.</item>
+/// <item>ticks never crit and take no damage multipliers from Gunde: the damage an application adds is already dealt
+/// damage. They take the target's incoming-damage multipliers (Blueprint preset <c>GundeRend</c>, build 26320967).</item>
 /// </list>
+/// The game keeps each enemy's Rend as buckets (Blueprint DotManager, build 26320967): Deep Rend makes 11 of them, each
+/// tick dealing its bucket times Deep Rend's rate. <see cref="RawTotal"/> is the buckets' sum and
+/// <see cref="Remaining"/> the damage they deal.
 /// </summary>
-public sealed class Rend
+public sealed partial class Rend : GundeAbility
 {
-    public const int DamageId = 2286;
-    public const string DamageName = "Rend";
     public const int DebuffEffectId = 3231;
-    public const double TickSeconds = 3.0;
-    public const int TicksPerApplication = 10;
+    /// <summary>Seconds between ticks (game data: <c>period</c> of ability 2286).</summary>
+    public const double TickSeconds = AbilityPeriod;
+    /// <summary>Ticks of one application: its <c>duration</c> over its <c>period</c> (game data, ability 2286).</summary>
+    public const int TicksPerApplication = AbilityDuration / AbilityPeriod;
 
     /// <summary>"Each stack of Rend corresponds to a share of Strength damage over its full duration."</summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect(DamageName, DebuffEffectId, maxStacks: 9999) with { Duration = SimTime.Infinite };
+    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, maxStacks: 9999) with { Duration = SimTime.Infinite };
 
-    private readonly Gunde _gunde;
     private readonly Dictionary<EnemyTarget, Bleed> _bleeds = new();
     private SimulationContext? _fight;
 
-    public Rend(Gunde gunde) => _gunde = gunde;
+    public Rend(Gunde owner) : base(owner, AbilityId, AbilityName) { }
 
     /// <summary>How much faster Rend ticks (Deep Rend raises it). Each application ticks this many times more, in equal shares.</summary>
     public double TickRate { get; set; } = 1.0;
@@ -57,12 +61,11 @@ public sealed class Rend
             _bleeds[target] = bleed;
         }
         bleed.Applications.Add(new Application(damage / TicksPerApplication, Ticks));
-        if (bleed.NextTick == null) bleed.NextTick = ctx.Schedule(SimTime.FromSeconds(TickPeriodSeconds), c => Tick(c, target), DamageName);
+        if (bleed.NextTick == null) bleed.NextTick = ctx.Schedule(SimTime.FromSeconds(TickPeriodSeconds), c => Tick(c, target), AbilityName);
         UpdateDebuff(target, ctx.CurrentTime);
-        _gunde.CheckSunderedFlesh(ctx, target);
     }
 
-    /// <summary>The damage <paramref name="target"/>'s Rend has still to deal (Exsanguinate, Slaughter).</summary>
+    /// <summary>The damage <paramref name="target"/>'s Rend has still to deal, Deep Rend's included (Exsanguinate, Slaughter).</summary>
     public double Remaining(EnemyTarget target)
     {
         if (!_bleeds.TryGetValue(target, out var bleed)) return 0.0;
@@ -70,6 +73,13 @@ public sealed class Rend
         foreach (var a in bleed.Applications) left += a.PerTick * a.TicksLeft;
         return left;
     }
+
+    /// <summary>
+    /// The damage <paramref name="target"/>'s Rend holds, without Deep Rend's: the sum of the game's buckets
+    /// (<c>GetTotalDamage</c>), which deal <see cref="TickRate"/> times their damage as they tick (debuff stacks, Sundered
+    /// Flesh).
+    /// </summary>
+    public double RawTotal(EnemyTarget target) => Remaining(target) / TickRate;
 
     public bool IsOn(EnemyTarget target) => _bleeds.ContainsKey(target);
 
@@ -115,27 +125,35 @@ public sealed class Rend
             applications[i] = a with { TicksLeft = a.TicksLeft - 1 };
         }
         applications.RemoveAll(a => a.TicksLeft <= 0);
-        if (applications.Count > 0) bleed.NextTick = ctx.Schedule(SimTime.FromSeconds(TickPeriodSeconds), c => Tick(c, target), DamageName);
+        if (applications.Count > 0) bleed.NextTick = ctx.Schedule(SimTime.FromSeconds(TickPeriodSeconds), c => Tick(c, target), AbilityName);
         else
         {
             _bleeds.Remove(target);
             target.Auras.Remove(Debuff, ctx.CurrentTime);
         }
 
-        ctx.ApplyDamage(_gunde, target, damage, DamageId, DamageName, canCrit: false, 0.0, 1.0);
+        // A forced non-crit rolls no spread: the preset GundeRend has no crit and no spread (Blueprint, build 26320967).
+        ctx.ApplyDamage(Gunde, target, damage * Gunde.DamageMultiplierAgainst(target, ctx.CurrentTime), AbilityId, AbilityName, canCrit: false, 0.0, 1.0,
+            forcedCrit: false);
         UpdateDebuff(target, ctx.CurrentTime);
         Ticked?.Invoke(ctx, target);
-        if (_bleeds.ContainsKey(target)) _gunde.CheckSunderedFlesh(ctx, target);
+        Gunde.CheckSunderedFlesh(ctx, target, RawTotal(target));
     }
 
-    /// <summary>The debuff's stacks: the damage still to deal, in Strength (rounded up).</summary>
+    /// <summary>
+    /// The debuff's stacks: the raw total in Strength, rounded, and at least one (Blueprint <c>UpdateDamageVisuals</c>,
+    /// build 26320967). Unreal's <c>Round</c> takes halves away from zero.
+    /// </summary>
     private void UpdateDebuff(EnemyTarget target, SimTime now)
     {
         if (!_bleeds.ContainsKey(target)) return;
-        double strength = Math.Max(1.0, _gunde.PrimaryAttribute(now));
-        int stacks = Math.Max(1, (int)Math.Ceiling(Remaining(target) / strength - 1e-9));
+        double strength = Math.Max(1.0, Gunde.PrimaryAttribute(now));
+        int stacks = Math.Max(1, (int)Math.Round(RawTotal(target) / strength, MidpointRounding.AwayFromZero));
         target.Auras.Apply(Debuff, now, setStacks: Math.Min(stacks, Debuff.MaxStacks));
     }
+
+    /// <summary>Rend has no cast: <see cref="Apply"/> adds to it.</summary>
+    public override void Execute(SimulationContext ctx, EnemyTarget target) { }
 
     private sealed class Bleed
     {

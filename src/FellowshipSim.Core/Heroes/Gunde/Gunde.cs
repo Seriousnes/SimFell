@@ -129,10 +129,14 @@ public sealed partial class Gunde : Hero
             for (int i = 0; i < count; i++) Auras.Apply(OwedInBlood.Buff, c.CurrentTime);
         }, "Blood Feather");
 
-    /// <summary>Sundered Flesh: an enemy whose Rend holds more damage than its health takes it at once.</summary>
-    internal Action<SimulationContext, EnemyTarget>? SunderedFleshCheck { get; set; }
+    /// <summary>
+    /// Sundered Flesh: after a tick of Rend or Slaughter, an enemy with less health than the damage the bleed holds takes
+    /// its health at once.
+    /// </summary>
+    internal Action<SimulationContext, EnemyTarget, double>? SunderedFleshCheck { get; set; }
 
-    internal void CheckSunderedFlesh(SimulationContext ctx, EnemyTarget target) => SunderedFleshCheck?.Invoke(ctx, target);
+    /// <summary>Runs Sundered Flesh's check after a bleed's tick: <paramref name="held"/> is the damage the bleed still holds.</summary>
+    internal void CheckSunderedFlesh(SimulationContext ctx, EnemyTarget target, double held) => SunderedFleshCheck?.Invoke(ctx, target, held);
 
     public override void ResetForIteration()
     {

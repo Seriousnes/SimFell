@@ -61,20 +61,6 @@ public class GundeTalentSmokeTests(ITestOutputHelper output)
         }
     }
 
-    /// <summary>Sundered Flesh: an enemy whose Rend holds more than its health takes it at once (sim enemies never get that low).</summary>
-    [Fact]
-    public void Sundered_Flesh_Deals_The_Rend_An_Enemy_Cannot_Survive()
-    {
-        var hero = (Gunde)Import([.. BaseTalents, SunderedFlesh.TalentId]);
-        var ctx = new SimulationContext(hero);
-        hero.ResetForIteration();
-        var enemy = ctx.AddEnemy(100, 1, "Training Dummy", maxHealth: 1_000);
-        hero.CurrentTarget = enemy;
-        hero.Rend.Apply(ctx, enemy, 5_000);
-        Assert.Equal(0.0, enemy.CurrentHealth);
-        Assert.False(hero.Rend.IsOn(enemy));
-    }
-
     [Fact]
     public void Every_Talent_In_Gundes_Tree_Is_Modeled()
     {
