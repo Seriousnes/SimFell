@@ -10,6 +10,9 @@ partial class CorrosiveSpill
     /// <summary>Game data: <c>name</c> of talent 206.</summary>
     public const string TalentName = "Corrosive Spill";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 206.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Unholy_197_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 206.</summary>
     public const int TalentDuration = 3;
 
@@ -37,4 +40,6 @@ partial class CorrosiveSpill
         /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Radius</c> of talent 206; Corrosive Spill (ability 1583).</summary>
         public const int TalentComboPointsChanceAoeDamageRadius = 500;
     }
+
+    public override string? Icon => TalentIcon;
 }

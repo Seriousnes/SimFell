@@ -10,6 +10,9 @@ partial class RubyStorm
     /// <summary>Game data: <c>name</c> of aspect 35.</summary>
     public const string AspectName = "Ruby Storm";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 35.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Fire_57_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 35.</summary>
     public const int AspectMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class RubyStorm
         /// <summary>Game data: rank run <c>Trait.GemWhirlwind.HealthPercentageAsDamage</c> of aspect 35, transform <c>raw</c>; the tooltip has 2.4% / 4.0% / 5.4% / 7.0%.</summary>
         public static readonly double[] HealthPercentageAsDamageByRank = [0.024, 0.04, 0.054, 0.07];
     }
+
+    public override string? Icon => AspectIcon;
 }

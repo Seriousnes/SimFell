@@ -14,11 +14,11 @@ public partial class SilkenHollowGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 24.</summary>
     public const string DungeonDescription = "The eastern road connecting the Vidahlian capital to the Stronghold falls silent as merchants vanish without trace. Wagons lie overturned and their goods rot in the rain. The search for bandits leads to the edge of the forest where a simple band of goblins seems, at first glance, to be the cause of the disappearances.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 24.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_SH";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 24.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_SH_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 24.</summary>
-    public const string DungeonBackground = "LoadingScreen_SF_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 24.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_SF_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 24.</summary>
     public const int DungeonMaxPlayers = 4;

@@ -19,7 +19,7 @@ namespace FellowshipSim.Codex.Generators;
 /// a dungeon without one and a name starting with a digit have the dungeon's ID after the name. The constants are
 /// <c>DungeonId</c> (a FellowshipLogs fight's <c>gameZone</c> ID), <c>DungeonName</c>, one per scalar field of the record
 /// under <c>Dungeon</c> and the field's name (<c>DungeonLevelType</c>, <c>DungeonQualifierTime</c>,
-/// <c>DungeonRequiredScore</c>...), and the record's tuning values in a nested <c>Constants</c> under their
+/// <c>DungeonRequiredScore</c>...; <c>DungeonIcon</c> and <c>DungeonBackground</c> are full size image URLs), and the record's tuning values in a nested <c>Constants</c> under their
 /// <see cref="TuningNames"/> names, with no hero as the record's hero.
 /// <c>DungeonDifficulties</c> is a <c>public static readonly int[]</c> of the record's difficulties.
 /// <c>DungeonPlacements</c> is a <c>public static readonly CodexPlacement[]</c> of its creature placements, each creature by
@@ -189,8 +189,8 @@ public sealed class DungeonGenerator : IIncrementalGenerator
     {
         var fields = new List<Constant>();
         AddString(fields, "Description", "description", d.Description, d.Id);
-        AddString(fields, "Icon", "icon", d.Icon, d.Id);
-        AddString(fields, "Background", "background", d.Background, d.Id);
+        AddTexture(fields, "Icon", "icon", d.Icon, d.Id);
+        AddTexture(fields, "Background", "background", d.Background, d.Id);
         AddNumber(fields, "MaxPlayers", "maxPlayers", d.MaxPlayers, d.Id);
         AddNumber(fields, "QualifierTime", "qualifierTime", d.QualifierTime, d.Id);
         AddNumber(fields, "RequiredScore", "requiredScore", d.RequiredScore, d.Id);
@@ -214,6 +214,12 @@ public sealed class DungeonGenerator : IIncrementalGenerator
     {
         if (value is not { Length: > 0 } v) return;
         fields.Add(new Constant("Dungeon" + name, "string", Literal(v), Field(field, id)));
+    }
+
+    private static void AddTexture(List<Constant> fields, string name, string field, string? texture, int id)
+    {
+        if (texture is not { Length: > 0 } t) return;
+        fields.Add(new Constant("Dungeon" + name, "string", Literal(Textures.Url(t)), $"Game data: the full size image URL of <c>{Escape(field)}</c> of dungeon {id}."));
     }
 
     private static void AddBool(List<Constant> fields, string name, string field, bool? value, int id)

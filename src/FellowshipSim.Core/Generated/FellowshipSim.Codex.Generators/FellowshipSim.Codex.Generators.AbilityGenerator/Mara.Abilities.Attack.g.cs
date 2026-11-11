@@ -10,6 +10,9 @@ partial class Attack
     /// <summary>Game data: <c>name</c> of ability 1209.</summary>
     public const string AbilityName = "Attack";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1209.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_swords_05_bg_full.webp";
+
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1209.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 

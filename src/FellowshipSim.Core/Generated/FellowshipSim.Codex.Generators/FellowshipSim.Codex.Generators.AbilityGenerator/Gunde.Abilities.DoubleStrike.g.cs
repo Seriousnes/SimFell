@@ -10,6 +10,9 @@ partial class DoubleStrike
     /// <summary>Game data: <c>name</c> of ability 2301.</summary>
     public const string AbilityName = "Double Strike";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 2301.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_DoubleStrike_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 2301.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Basic;
 

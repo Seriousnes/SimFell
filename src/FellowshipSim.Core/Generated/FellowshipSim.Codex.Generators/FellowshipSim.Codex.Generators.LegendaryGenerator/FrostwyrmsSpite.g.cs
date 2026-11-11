@@ -10,6 +10,9 @@ partial class FrostwyrmsSpite
     /// <summary>Harbinger of Winter Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5899.</summary>
+    public const string HeadItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Rime_ArcticOwl_Head_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 397.</summary>
     public static class Constants
     {
@@ -33,4 +36,5 @@ partial class FrostwyrmsSpite
     public override string Name => "Frostwyrm's Spite";
     public override string HeroName => "Rime";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [HeadItemId];
+    public override string? Icon => HeadItemIcon;
 }

@@ -14,11 +14,11 @@ public partial class RansackOfDrakheimGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 23.</summary>
     public const string DungeonDescription = "Far in the frostbitten north, the port of Drakheim howls with warcries. Bleakfrost Orcs surge across its frozen shores, enslaving the weak and spilling blood in the name of their drowned god. What was once a peaceful harbor shared by eldrin and humans now serves as a sacrificial altar to the abyss.\r\n\r\nDark omens gather above the sea. The tide rises red with sacrifice, and the chants of the Bleakfrost echo through ruined streets. If the ritual completes, the depths will awaken, and the god beneath the waves will claim the coast in hunger and ice.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 23.</summary>
-    public const string DungeonIcon = "Codex_CapDungeon_VV";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 23.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_CapDungeon_VV_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 23.</summary>
-    public const string DungeonBackground = "LoadingScreen_VV_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 23.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_VV_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 23.</summary>
     public const int DungeonMaxPlayers = 4;

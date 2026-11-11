@@ -10,9 +10,14 @@ partial class TheBeetle
     /// <summary>Game data: <c>name</c> of protective enchant 52.</summary>
     public const string ProtectiveEnchantName = "The Beetle";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of protective enchant 52.</summary>
+    public const string ProtectiveEnchantIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_WitchCraftIcons_75_b_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of protective enchant 52.</summary>
     public const int ProtectiveEnchantMaxRank = 1;
 
     /// <summary>Game data: <c>randomChance</c> of protective enchant 52.</summary>
     public const int ProtectiveEnchantRandomChance = 0;
+
+    public override string? Icon => ProtectiveEnchantIcon;
 }

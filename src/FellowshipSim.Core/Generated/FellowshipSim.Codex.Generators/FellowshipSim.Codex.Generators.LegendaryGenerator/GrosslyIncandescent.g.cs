@@ -10,6 +10,9 @@ partial class GrosslyIncandescent
     /// <summary>Helm of the First King, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5899.</summary>
+    public const string HeadItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Sune_Prog01_Head_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 606.</summary>
     public static class Constants
     {
@@ -21,4 +24,5 @@ partial class GrosslyIncandescent
     public override string Name => "Grossly Incandescent";
     public override string HeroName => "Xavian";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [HeadItemId];
+    public override string? Icon => HeadItemIcon;
 }

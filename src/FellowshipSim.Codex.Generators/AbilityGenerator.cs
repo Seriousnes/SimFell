@@ -17,7 +17,8 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>FellowshipSim.Core.Domain.Ability</c> in a namespace <c>FellowshipSim.Core.Heroes.&lt;Hero&gt;</c> or one inside it, a
 /// <c>partial</c> of the same class with the values of its ability record. The record is the ability of that hero whose
 /// name in Pascal case (letters and digits only, an apostrophe inside its word) is the class name; of several, the one with
-/// a category. The constants are <c>AbilityId</c>, <c>AbilityName</c>, one per scalar field of the record under
+/// a category. The constants are <c>AbilityId</c>, <c>AbilityName</c>, <c>AbilityIcon</c> (the full size image URL of the
+/// record's icon), one per scalar field of the record under
 /// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and
 /// the record's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names
 /// (<c>Constants.MaxCharges</c>), with the hero of the class's namespace as the record's hero. A class deriving from another
@@ -166,6 +167,10 @@ public sealed class AbilityGenerator : IIncrementalGenerator
     private static List<Constant> FieldsOf(AbilityDocument a)
     {
         var fields = new List<Constant>();
+        if (a.Icon is { Length: > 0 } icon)
+        {
+            fields.Add(new Constant("AbilityIcon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of ability {a.Id}."));
+        }
         if (a.Category is { } category)
         {
             fields.Add(new Constant("AbilityCategory", "global::FellowshipSim.Core.Domain.AbilityCategory",

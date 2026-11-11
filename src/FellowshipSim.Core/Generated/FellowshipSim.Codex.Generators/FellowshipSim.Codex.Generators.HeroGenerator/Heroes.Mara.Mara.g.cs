@@ -19,14 +19,14 @@ partial class Mara
     /// <summary>Game data: <c>color</c> of hero 11.</summary>
     public const string HeroColor = "4519A3";
 
-    /// <summary>Game data: <c>portrait</c> of hero 11.</summary>
-    public const string HeroPortrait = "hero_portrait_Mara_01";
+    /// <summary>Game data: the full size image URL of <c>portrait</c> of hero 11.</summary>
+    public const string HeroPortrait = "https://cdn.codex.fellowshipanalyzer.com/ui/hero_portrait_Mara_01_full.webp";
 
     /// <summary>Game data: <c>role</c> of hero 11.</summary>
     public const string HeroRole = "Dps";
 
-    /// <summary>Game data: <c>roleIcon</c> of hero 11.</summary>
-    public const string HeroRoleIcon = "T_Icons_RoleBadge_DPS";
+    /// <summary>Game data: the full size image URL of <c>roleIcon</c> of hero 11.</summary>
+    public const string HeroRoleIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_RoleBadge_DPS_full.webp";
 
     /// <summary>Game data: <c>overallDifficulty</c> of hero 11.</summary>
     public const int HeroOverallDifficulty = 4;

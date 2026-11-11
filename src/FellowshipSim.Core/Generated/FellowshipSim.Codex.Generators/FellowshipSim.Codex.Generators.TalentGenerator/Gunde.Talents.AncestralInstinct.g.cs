@@ -10,6 +10,9 @@ partial class AncestralInstinct
     /// <summary>Game data: <c>name</c> of talent 756.</summary>
     public const string TalentName = "Ancestral Instinct";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 756.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_yellow_14_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 756.</summary>
     public const int TalentDuration = 6;
 
@@ -25,4 +28,6 @@ partial class AncestralInstinct
         /// <summary>Game data: tuning <c>StrengthMultiplier, Gunde.Talent.AbilityToBuffChance.StrengthMultiplier</c> of talent 756; ability 2282, Strength Multiplicitive.</summary>
         public const double StrengthMultiplier = 1.06;
     }
+
+    public override string? Icon => TalentIcon;
 }

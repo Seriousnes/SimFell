@@ -10,6 +10,9 @@ partial class Shimmer
     /// <summary>Skystrider Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5899.</summary>
+    public const string HeadItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Bowguy_AngelicHawk_Head_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 429.</summary>
     public static class Constants
     {
@@ -27,4 +30,5 @@ partial class Shimmer
     public override string Name => "Shimmer";
     public override string HeroName => "Elarion";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [HeadItemId];
+    public override string? Icon => HeadItemIcon;
 }

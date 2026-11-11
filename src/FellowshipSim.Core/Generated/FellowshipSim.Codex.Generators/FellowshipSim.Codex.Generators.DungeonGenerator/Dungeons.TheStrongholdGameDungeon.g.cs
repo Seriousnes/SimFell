@@ -11,11 +11,11 @@ public partial class TheStrongholdGameDungeon : GameDungeon
     /// <summary>Game data: <c>name</c> of dungeon 17.</summary>
     public const string DungeonName = "The Stronghold";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 17.</summary>
-    public const string DungeonIcon = "T_Loadingscreen_SH_Halloween";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 17.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_SH_Halloween_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 17.</summary>
-    public const string DungeonBackground = "T_Loadingscreen_SH_Halloween";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 17.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_SH_Halloween_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 17.</summary>
     public const int DungeonMaxPlayers = 4;

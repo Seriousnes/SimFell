@@ -10,10 +10,15 @@ partial class ConclusiveStrikes
     /// <summary>Game data: <c>name</c> of talent 107.</summary>
     public const string TalentName = "Conclusive Strikes";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 107.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Elements_71_full.webp";
+
     /// <summary>Game data: the tuning values of talent 107.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of talent 107.</summary>
         public const double FinishersTalentIncreasedDamageScaler = 1.1;
     }
+
+    public override string? Icon => TalentIcon;
 }

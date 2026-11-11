@@ -10,6 +10,9 @@ partial class DiamondStrike
     /// <summary>Game data: <c>name</c> of aspect 33.</summary>
     public const string AspectName = "Diamond Strike";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 33.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Arcane_27_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 33.</summary>
     public const int AspectMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class DiamondStrike
         /// <summary>Game data: rank run <c>Trait.GemSingleTargetProcOnDamageHeal.Heal.PrimaryAttributeCoefficient, Trait.GemSingleTargetProcOnDamageHeal.Damage.PrimaryAttributeCoefficient</c> of aspect 33, transform <c>raw</c>; the tooltip has 72% / 127% / 182% / 237%.</summary>
         public static readonly double[] HealPrimaryAttributeCoefficientByRank = [0.72, 1.27, 1.82, 2.37];
     }
+
+    public override string? Icon => AspectIcon;
 }

@@ -10,6 +10,9 @@ partial class IceDash
     /// <summary>Game data: <c>name</c> of ability 1024.</summary>
     public const string AbilityName = "Ice Dash";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1024.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Rime_Dash_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1024.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Movement;
 

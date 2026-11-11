@@ -14,11 +14,11 @@ public partial class CrownOfTheWildGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 36.</summary>
     public const string DungeonDescription = "Deep within the boreal wilderness of the Rootlands, towering pines conceal the treetop stronghold of a savage druidic order. Here, the primal druids perform soul-siphoning rituals, train their savage combat techniques, and tame the beasts of the wild. Atop the eldest tree stands the Crown of the Wild, an ancient arena where the strongest druids battle for dominion over the village. \r\n\r\nNow, under the rule of Scrofa, the Wild Incarnate, allies of the Stronghold have been brought to the Crown to fuel the order’s vile rituals. You must ascend the great tree, face Scrofa in the arena, and free the prisoners before they are sacrificed to the untamed powers of the Rootlands.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 36.</summary>
-    public const string DungeonIcon = "Codex_Treevillage";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 36.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Treevillage_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 36.</summary>
-    public const string DungeonBackground = "T_Loadingscreen_TV";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 36.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_TV_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 36.</summary>
     public const int DungeonMaxPlayers = 4;

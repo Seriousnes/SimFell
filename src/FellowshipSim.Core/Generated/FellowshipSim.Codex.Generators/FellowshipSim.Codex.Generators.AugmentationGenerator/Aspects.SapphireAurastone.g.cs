@@ -10,6 +10,9 @@ partial class SapphireAurastone
     /// <summary>Game data: <c>name</c> of aspect 32.</summary>
     public const string AspectName = "Sapphire Aurastone";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 32.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Frost_27_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 32.</summary>
     public const int AspectMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class SapphireAurastone
         /// <summary>Game data: rank run <c>Trait.GemPulsatingOnAbilityTotemProc.Heal.AccumulationPercentage</c> of aspect 32, transform <c>raw</c>; the tooltip has 4.6% / 8.4% / 12% / 16%.</summary>
         public static readonly double[] HealAccumulationPercentageByRank = [0.046, 0.084, 0.12, 0.16];
     }
+
+    public override string? Icon => AspectIcon;
 }

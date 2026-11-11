@@ -9,4 +9,9 @@ partial class IcyTalons
 
     /// <summary>Game data: <c>name</c> of talent 658.</summary>
     public const string TalentName = "Icy Talons";
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 658.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_IcySpikes_2_full.webp";
+
+    public override string? Icon => TalentIcon;
 }

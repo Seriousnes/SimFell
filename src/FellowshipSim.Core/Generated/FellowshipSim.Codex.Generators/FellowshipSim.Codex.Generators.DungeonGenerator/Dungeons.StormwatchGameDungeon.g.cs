@@ -14,11 +14,11 @@ public partial class StormwatchGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 12.</summary>
     public const string DungeonDescription = "A dark storm churns above the cliffs beyond Stronghold, where the arrogant orc Warlord Brogg channels thunder and fury. His raiders gather like wolves at the gate, ready to tear down the walls and claim the fort for themselves. Brogg must be made an example to prove to all other would-be bandits and raiders that the Stronghold will not be easily taken.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 12.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_NP";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 12.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_NP_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 12.</summary>
-    public const string DungeonBackground = "T_Loadingscreen_NP";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 12.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_NP_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 12.</summary>
     public const int DungeonMaxPlayers = 4;

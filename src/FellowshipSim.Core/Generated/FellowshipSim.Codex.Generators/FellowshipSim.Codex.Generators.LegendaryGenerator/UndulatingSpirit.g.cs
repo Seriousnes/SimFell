@@ -10,6 +10,9 @@ partial class UndulatingSpirit
     /// <summary>Harbinger of Winter Furs, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5898.</summary>
+    public const string ChestItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Rime_ArcticOwl_Chest_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 398.</summary>
     public static class Constants
     {
@@ -27,4 +30,5 @@ partial class UndulatingSpirit
     public override string Name => "Undulating Spirit";
     public override string HeroName => "Rime";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [ChestItemId];
+    public override string? Icon => ChestItemIcon;
 }

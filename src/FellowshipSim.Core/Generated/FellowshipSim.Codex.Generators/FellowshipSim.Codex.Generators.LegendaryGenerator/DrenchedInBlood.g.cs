@@ -10,6 +10,9 @@ partial class DrenchedInBlood
     /// <summary>Hungering Blade Hauberk, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5898.</summary>
+    public const string ChestItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Mara_Shadowblade_Chest_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 421.</summary>
     public static class Constants
     {
@@ -27,4 +30,5 @@ partial class DrenchedInBlood
     public override string Name => "Drenched in Blood";
     public override string HeroName => "Mara";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [ChestItemId];
+    public override string? Icon => ChestItemIcon;
 }

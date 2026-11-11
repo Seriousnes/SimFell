@@ -10,6 +10,9 @@ partial class MartialCommand
     /// <summary>Game data: <c>name</c> of talent 14.</summary>
     public const string TalentName = "Martial Command";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 14.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Warmaster_Ultimate_full.webp";
+
     /// <summary>Game data: the tuning values of talent 14.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class MartialCommand
         /// <summary>Game data: tuning <c>Warmaster.Talent.AddedSpiritPassive</c> of talent 14; Martial Command (effect 2417), Spirit Additive.</summary>
         public const double TalentAddedSpiritPassive = 0.05;
     }
+
+    public override string? Icon => TalentIcon;
 }

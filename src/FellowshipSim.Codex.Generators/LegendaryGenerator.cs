@@ -15,11 +15,12 @@ namespace FellowshipSim.Codex.Generators;
 /// <summary>
 /// Writes the game data's half of each legendary class: for each <c>partial</c> class in
 /// <c>FellowshipSim.Core.Customization.Legendaries</c> named after a legendary power (the power's name in Pascal case,
-/// letters and digits only), a <c>partial</c> of the same class with the power's values. These are <c>PowerId</c>, an item
-/// ID constant per item granting the power (<c>HeadItemId</c>, <c>ChestItemId</c>, <c>LegsItemId</c>: the item's slot), the
-/// power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with the items' hero as
-/// the record's hero, and the overrides of <c>Legendary</c>'s <c>LegendaryPowerId</c>, <c>Name</c>, <c>HeroName</c> and
-/// <c>ItemIds</c>. The class's own part derives
+/// letters and digits only), a <c>partial</c> of the same class with the power's values. These are <c>PowerId</c>,
+/// <c>PowerIcon</c> (the full size image URL of the power's icon), an item ID constant and an item icon URL constant per
+/// item granting the power (<c>HeadItemId</c> and <c>HeadItemIcon</c>, <c>ChestItemId</c>, <c>LegsItemId</c>: the item's
+/// slot), the power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with the items'
+/// hero as the record's hero, and the overrides of <c>Legendary</c>'s <c>LegendaryPowerId</c>, <c>Name</c>,
+/// <c>HeroName</c>, <c>ItemIds</c> and <c>Icon</c> (the first item's icon URL, else the power's). The class's own part derives
 /// from <c>Legendary</c> and has the power's behaviour. The game data is the AdditionalFiles <c>entities.jsonl</c> and
 /// <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -38,11 +39,13 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
         "CODEX005", "A legendary power's items name several heroes",
         "The items granting legendary power {0} name the heroes {1}", "Codex", DiagnosticSeverity.Error, true);
 
-    /// <summary>An item granting a power: its ID, name, slot and hero.</summary>
-    private sealed record Item(int Id, string Name, string Slot, string Hero);
+    /// <summary>An item granting a power: its ID, name, slot, hero and icon URL (empty for none).</summary>
+    private sealed record Item(int Id, string Name, string Slot, string Hero, string Icon);
 
-    /// <summary>A legendary power: its ID, name, class name, the items granting it and its tuning keys.</summary>
-    private sealed record Power(int Id, string Name, string ClassName, EquatableArray<Item> Items, EquatableArray<TuningEntry> Tunings);
+    /// <summary>
+    /// A legendary power: its ID, name, icon URL (empty for none), class name, the items granting it and its tuning keys.
+    /// </summary>
+    private sealed record Power(int Id, string Name, string Icon, string ClassName, EquatableArray<Item> Items, EquatableArray<TuningEntry> Tunings);
 
     /// <summary>The game data's powers granted by an item, the tuning keys' first segments naming a hero, and its build date.</summary>
     private sealed record Export(EquatableArray<Power> Powers, EquatableArray<HeroSegment> Segments, string? BuildDate);
@@ -128,13 +131,16 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
         {
             string name = (p.Name ?? "").Trim();
             var granting = items.Where(i => i.Grants!.Id == p.Id).OrderBy(i => i.Id)
-                .Select(i => new Item(i.Id, (i.Name ?? "").Trim(), i.Slot ?? "", i.Hero?.ToString() ?? ""))
+                .Select(i => new Item(i.Id, (i.Name ?? "").Trim(), i.Slot ?? "", i.Hero?.ToString() ?? "", UrlOf(i.Icon)))
                 .ToList();
             if (name.Length == 0 || granting.Count == 0) continue;
-            result.Add(new Power(p.Id, name, PascalCase(name), new([.. granting]), new([.. TuningsOf(p)])));
+            result.Add(new Power(p.Id, name, UrlOf(p.Icon), PascalCase(name), new([.. granting]), new([.. TuningsOf(p)])));
         }
         return new Export(new([.. result]), HeroSegments.Of(entities, ct), buildDate);
     }
+
+    /// <summary>The URL of a texture's full size image; empty for no texture.</summary>
+    private static string UrlOf(string? texture) => texture is { Length: > 0 } ? Textures.Url(texture) : "";
 
     /// <summary>The power's tuning keys, in the order of the game data.</summary>
     private static List<TuningEntry> TuningsOf(LegendaryPowerDocument power) =>
@@ -199,11 +205,24 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
                 .Append("partial class ").Append(power.ClassName).Append("\n{\n")
                 .Append("    /// <summary>").Append(Escape(power.Name)).Append(", legendary power ").Append(power.Id).Append(" of the game data.</summary>\n")
                 .Append("    public const int PowerId = ").Append(power.Id).Append(";\n");
+            if (power.Icon.Length > 0)
+            {
+                source.Append("\n    /// <summary>Game data: the full size image URL of <c>icon</c> of legendary power ").Append(power.Id).Append(".</summary>\n")
+                    .Append("    public const string PowerIcon = ").Append(Literal(power.Icon)).Append(";\n");
+            }
             foreach (var item in power.Items)
             {
                 source.Append("\n    /// <summary>").Append(Escape(item.Name)).Append(", item ").Append(item.Id).Append(" of the game data.</summary>\n")
                     .Append("    public const int ").Append(PascalCase(item.Slot)).Append("ItemId = ").Append(item.Id).Append(";\n");
+                if (item.Icon.Length > 0)
+                {
+                    source.Append("\n    /// <summary>Game data: the full size image URL of <c>icon</c> of item ").Append(item.Id).Append(".</summary>\n")
+                        .Append("    public const string ").Append(PascalCase(item.Slot)).Append("ItemIcon = ").Append(Literal(item.Icon)).Append(";\n");
+                }
             }
+            // The legendary's icon is its first item's, else its power's.
+            string? icon = power.Items.Where(i => i.Icon.Length > 0).Select(i => PascalCase(i.Slot) + "ItemIcon").FirstOrDefault()
+                ?? (power.Icon.Length > 0 ? "PowerIcon" : null);
             var shared = new List<(string Name, string First, string Second)>();
             var tunings = TuningNames.Of(power.Tunings, export.Segments, heroes, shared);
             var part = classes[power.ClassName];
@@ -218,8 +237,9 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
                 .Append("    public override string Name => ").Append(Literal(power.Name)).Append(";\n")
                 .Append("    public override string HeroName => ").Append(Literal(heroes[0])).Append(";\n")
                 .Append("    public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [")
-                .Append(string.Join(", ", power.Items.Select(i => $"{PascalCase(i.Slot)}ItemId"))).Append("];\n")
-                .Append("}\n");
+                .Append(string.Join(", ", power.Items.Select(i => $"{PascalCase(i.Slot)}ItemId"))).Append("];\n");
+            if (icon != null) source.Append("    public override string? Icon => ").Append(icon).Append(";\n");
+            source.Append("}\n");
             context.AddSource($"{power.ClassName}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
     }

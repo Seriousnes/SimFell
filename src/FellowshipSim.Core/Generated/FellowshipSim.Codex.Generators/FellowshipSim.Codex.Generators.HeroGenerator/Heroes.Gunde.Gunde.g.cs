@@ -19,14 +19,14 @@ partial class Gunde
     /// <summary>Game data: <c>color</c> of hero 9.</summary>
     public const string HeroColor = "5A1F20";
 
-    /// <summary>Game data: <c>portrait</c> of hero 9.</summary>
-    public const string HeroPortrait = "hero_potrtrait_Gunde_01";
+    /// <summary>Game data: the full size image URL of <c>portrait</c> of hero 9.</summary>
+    public const string HeroPortrait = "https://cdn.codex.fellowshipanalyzer.com/ui/hero_potrtrait_Gunde_01_full.webp";
 
     /// <summary>Game data: <c>role</c> of hero 9.</summary>
     public const string HeroRole = "Dps";
 
-    /// <summary>Game data: <c>roleIcon</c> of hero 9.</summary>
-    public const string HeroRoleIcon = "T_Icons_RoleBadge_DPS";
+    /// <summary>Game data: the full size image URL of <c>roleIcon</c> of hero 9.</summary>
+    public const string HeroRoleIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_RoleBadge_DPS_full.webp";
 
     /// <summary>Game data: <c>overallDifficulty</c> of hero 9.</summary>
     public const int HeroOverallDifficulty = 3;

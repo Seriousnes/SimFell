@@ -10,6 +10,9 @@ partial class DeathsArc
     /// <summary>Game data: <c>name</c> of talent 748.</summary>
     public const string TalentName = "Death's Arc";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 748.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_NightmarePuppet_full.webp";
+
     /// <summary>Game data: the tuning values of talent 748.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class DeathsArc
         /// <summary>Game data: tuning <c>Gunde.InstantAoeWithBuff.Talent.Empowered.AddedCriticalStrikeChance</c> of talent 748; Death's Arc (effect 3208).</summary>
         public const int InstantAoeWithBuffTalentEmpoweredAddedCriticalStrikeChance = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

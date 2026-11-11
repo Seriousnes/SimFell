@@ -10,6 +10,9 @@ partial class TheSubduer
     /// <summary>Game data: <c>name</c> of glyph 704.</summary>
     public const string GlyphName = "The Subduer";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 704.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_03_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 704.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class TheSubduer
         /// <summary>Game data: tuning <c>DamageBonusAgainstLowHealthEnemies</c> of glyph 704; ability 2252, DamageScale MultiplyCompound, by rank.</summary>
         public static readonly double[] DamageBonusAgainstLowHealthEnemiesByRank = [1.05, 1.1, 1.15, 1.2];
     }
+
+    public override string? Icon => GlyphIcon;
 }

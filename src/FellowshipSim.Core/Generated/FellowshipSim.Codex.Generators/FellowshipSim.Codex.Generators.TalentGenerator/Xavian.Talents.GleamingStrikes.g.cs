@@ -10,6 +10,9 @@ partial class GleamingStrikes
     /// <summary>Game data: <c>name</c> of talent 581.</summary>
     public const string TalentName = "Gleaming Strikes";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 581.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Sune_Sunstrike_full.webp";
+
     /// <summary>Game data: the tuning values of talent 581.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class GleamingStrikes
         /// <summary>Game data: tuning <c>Sune.AoeMeleeDamageBoostAndManaRefundDebuff.AoeMeleeBonusDamagePerStack</c> of talent 581; Sunstruck (effect 2664).</summary>
         public const double AoeMeleeDamageBoostAndManaRefundDebuffAoeMeleeBonusDamagePerStack = 0.25;
     }
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,14 @@ partial class BranchOfTheEverliving
     /// <summary>Game data: <c>name</c> of weapon power 356.</summary>
     public const string WeaponPowerName = "Nature's Fury";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 356.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_NatureBolt_full.webp";
+
     /// <summary>Nature's Fury, ability 161 of the game data, in <c>grants</c> of weapon power 356.</summary>
     public const int WeaponPowerAbilityId = 161;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 161.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_NatureBolt_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

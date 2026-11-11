@@ -19,14 +19,14 @@ partial class Rime
     /// <summary>Game data: <c>color</c> of hero 17.</summary>
     public const string HeroColor = "1EA3EE";
 
-    /// <summary>Game data: <c>portrait</c> of hero 17.</summary>
-    public const string HeroPortrait = "hero_portrait_rime_default";
+    /// <summary>Game data: the full size image URL of <c>portrait</c> of hero 17.</summary>
+    public const string HeroPortrait = "https://cdn.codex.fellowshipanalyzer.com/ui/hero_portrait_rime_default_full.webp";
 
     /// <summary>Game data: <c>role</c> of hero 17.</summary>
     public const string HeroRole = "Dps";
 
-    /// <summary>Game data: <c>roleIcon</c> of hero 17.</summary>
-    public const string HeroRoleIcon = "T_Icons_RoleBadge_DPS";
+    /// <summary>Game data: the full size image URL of <c>roleIcon</c> of hero 17.</summary>
+    public const string HeroRoleIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_RoleBadge_DPS_full.webp";
 
     /// <summary>Game data: <c>overallDifficulty</c> of hero 17.</summary>
     public const int HeroOverallDifficulty = 2;

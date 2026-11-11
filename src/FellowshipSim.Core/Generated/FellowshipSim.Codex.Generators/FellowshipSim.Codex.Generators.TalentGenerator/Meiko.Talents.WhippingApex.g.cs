@@ -10,6 +10,9 @@ partial class WhippingApex
     /// <summary>Game data: <c>name</c> of talent 626.</summary>
     public const string TalentName = "Whipping Apex";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 626.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Tech_26_full.webp";
+
     /// <summary>Game data: the tuning values of talent 626.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class WhippingApex
         /// <summary>Game data: tuning <c>Meiko.InstantSelfDefensive.Heal.MaxStacks</c> of talent 626; Serenity (ability 1119).</summary>
         public const int InstantSelfDefensiveHealMaxStacks = 50;
     }
+
+    public override string? Icon => TalentIcon;
 }

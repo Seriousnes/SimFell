@@ -11,11 +11,11 @@ public partial class JourneyToStrongholdGameDungeon : GameDungeon
     /// <summary>Game data: <c>name</c> of dungeon 9.</summary>
     public const string DungeonName = "Journey To Stronghold";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 9.</summary>
-    public const string DungeonIcon = "T_Loadingscreen_JTS";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 9.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_JTS_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 9.</summary>
-    public const string DungeonBackground = "T_Loadingscreen_JTS";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 9.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_JTS_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 9.</summary>
     public const int DungeonMaxPlayers = 4;

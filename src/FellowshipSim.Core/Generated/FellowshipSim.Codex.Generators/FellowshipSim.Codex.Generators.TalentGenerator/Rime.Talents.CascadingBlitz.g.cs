@@ -9,4 +9,9 @@ partial class CascadingBlitz
 
     /// <summary>Game data: <c>name</c> of talent 192.</summary>
     public const string TalentName = "Cascading Blitz";
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 192.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_IcySpikes_full.webp";
+
+    public override string? Icon => TalentIcon;
 }

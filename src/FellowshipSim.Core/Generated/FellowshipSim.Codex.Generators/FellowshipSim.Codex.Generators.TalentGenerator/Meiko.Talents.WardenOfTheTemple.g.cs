@@ -10,6 +10,9 @@ partial class WardenOfTheTemple
     /// <summary>Game data: <c>name</c> of talent 102.</summary>
     public const string TalentName = "Warden of the Temple";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 102.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Meiko_AbilityIcon_01_full.webp";
+
     /// <summary>Game data: the tuning values of talent 102.</summary>
     public static class Constants
     {
@@ -34,4 +37,6 @@ partial class WardenOfTheTemple
         /// <summary>Game data: tuning <c>NumOfStacks, Meiko.Talent.ConsumedBuffsToDefensiveBuff.MeleeDamageImmediateSelfBuff.InstantSelfDefensive.NumOfStacks</c> of talent 102; ability 1676.</summary>
         public const int NumOfStacks = 25;
     }
+
+    public override string? Icon => TalentIcon;
 }

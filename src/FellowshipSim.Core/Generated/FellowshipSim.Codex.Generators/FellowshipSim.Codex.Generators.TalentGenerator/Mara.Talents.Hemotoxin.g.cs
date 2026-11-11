@@ -10,6 +10,9 @@ partial class Hemotoxin
     /// <summary>Game data: <c>name</c> of talent 205.</summary>
     public const string TalentName = "Hemotoxin";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 205.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_PoisonBlister_full.webp";
+
     /// <summary>Game data: <c>radius</c> of talent 205.</summary>
     public const int TalentRadius = 700;
 
@@ -55,4 +58,6 @@ partial class Hemotoxin
         /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.VisualDelay</c> of talent 205; Hemotoxin (effect 2337).</summary>
         public const double BleedAttackSpenderTalentExplosivePoisonPoisonVisualDelay = 0.35;
     }
+
+    public override string? Icon => TalentIcon;
 }

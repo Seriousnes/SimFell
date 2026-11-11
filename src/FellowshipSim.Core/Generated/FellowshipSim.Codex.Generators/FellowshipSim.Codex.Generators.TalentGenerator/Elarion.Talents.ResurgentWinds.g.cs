@@ -10,6 +10,9 @@ partial class ResurgentWinds
     /// <summary>Game data: <c>name</c> of talent 126.</summary>
     public const string TalentName = "Resurgent Winds";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 126.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Tech_40_full.webp";
+
     /// <summary>Game data: the tuning values of talent 126.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class ResurgentWinds
         /// <summary>Game data: tuning <c>InstantNoCooldownProc.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.ProcChance</c> of talent 126; Resurgent Winds (effect 2074).</summary>
         public const double InstantNoCooldownProcProcChance = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

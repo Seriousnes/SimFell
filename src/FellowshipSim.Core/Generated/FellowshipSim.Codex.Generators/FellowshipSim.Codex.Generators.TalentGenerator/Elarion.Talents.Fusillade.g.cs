@@ -10,10 +10,15 @@ partial class Fusillade
     /// <summary>Game data: <c>name</c> of talent 128.</summary>
     public const string TalentName = "Fusillade";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 128.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Energy_106_full.webp";
+
     /// <summary>Game data: the tuning values of talent 128.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>Bowguy.ChanneledMultiProjectileDebuff.Talent.IncreasedChannelDuration.Amount</c> of talent 128; ability 1553.</summary>
         public const double ChanneledMultiProjectileDebuffTalentIncreasedChannelDurationAmount = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

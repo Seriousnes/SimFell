@@ -10,10 +10,15 @@ partial class UndyingFlame
     /// <summary>Game data: <c>name</c> of talent 150.</summary>
     public const string TalentName = "Undying Flame";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 150.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Pyromancer5_full.webp";
+
     /// <summary>Game data: the tuning values of talent 150.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>ExtendedDuration.DurationIncrease, Firemage.CastedSingleDot.Talent.ExtendedDuration.DurationIncrease</c> of talent 150; Engulfing Flames (effect 1832).</summary>
         public const int ExtendedDurationDurationIncrease = 3;
     }
+
+    public override string? Icon => TalentIcon;
 }

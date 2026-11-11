@@ -10,6 +10,9 @@ partial class SlowBurn
     /// <summary>Game data: <c>name</c> of talent 162.</summary>
     public const string TalentName = "Slow Burn";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 162.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Fire_24_full.webp";
+
     /// <summary>Game data: <c>cooldown</c> of talent 162.</summary>
     public const int TalentCooldown = 30;
 
@@ -64,4 +67,6 @@ partial class SlowBurn
         /// <summary>Game data: tuning <c>ProjectileDuration</c> of talent 162; Fire Ball (ability 1260).</summary>
         public const int ProjectileDuration = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,9 @@ partial class TheSinister
     /// <summary>Game data: <c>name</c> of glyph 701.</summary>
     public const string GlyphName = "The Sinister";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 701.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_05_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 701.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class TheSinister
         /// <summary>Game data: tuning <c>CritPowerMultiplier</c> of glyph 701; Finesse E (effect 3182), CritMultiplier Multiplicitive, by rank.</summary>
         public static readonly double[] CritPowerMultiplierByRank = [1.05, 1.1, 1.15, 1.2];
     }
+
+    public override string? Icon => GlyphIcon;
 }

@@ -19,10 +19,13 @@ partial class GildedBroach
     /// <summary>Game data: <c>name</c> of item 5919.</summary>
     public const string RelicItemName = "Orb of Sanguine Restoration";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5919.</summary>
+    public const string RelicItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_orb_09_b_full.webp";
+
     /// <summary>Game data: the items granting relic passive 782.</summary>
     public static readonly global::FellowshipSim.Core.Customization.RelicPassives.RelicItem[] RelicPassiveItems =
     [
-        new(5919, "Orb of Sanguine Restoration"),
+        new(5919, "Orb of Sanguine Restoration", "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_orb_09_b_full.webp"),
     ];
 
     /// <summary>Game data: the tuning values of relic passive 782.</summary>

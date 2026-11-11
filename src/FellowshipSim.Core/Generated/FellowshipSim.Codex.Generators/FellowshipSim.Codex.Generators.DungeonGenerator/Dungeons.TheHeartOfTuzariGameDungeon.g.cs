@@ -14,11 +14,11 @@ public partial class TheHeartOfTuzariGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 5.</summary>
     public const string DungeonDescription = "Beneath the twisted canopy of the Tuzari Wilds rests the heart of the jungle’s corruption. Ages ago, the old empires sacrificed one hundred holy martyrs to forge a colossal blade called the Demonbrand. With it, they impaled the demon lord Baphumos, trapping his body and hunger in stone. Now the Prophet Ez’rath leads the Urrak into the ruins, offering blood and prayer to awaken the demon once more.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 5.</summary>
-    public const string DungeonIcon = "Codex_CapDungeon_DR";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 5.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_CapDungeon_DR_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 5.</summary>
-    public const string DungeonBackground = "T_Loadingscreen_DR_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 5.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Loadingscreen_DR_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 5.</summary>
     public const int DungeonMaxPlayers = 4;

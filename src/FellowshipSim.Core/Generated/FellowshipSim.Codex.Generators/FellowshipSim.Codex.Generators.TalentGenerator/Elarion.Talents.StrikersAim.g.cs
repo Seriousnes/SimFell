@@ -10,6 +10,9 @@ partial class StrikersAim
     /// <summary>Game data: <c>name</c> of talent 680.</summary>
     public const string TalentName = "Striker's Aim";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 680.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_MagicShot_full.webp";
+
     /// <summary>Game data: the tuning values of talent 680.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class StrikersAim
         /// <summary>Game data: tuning <c>NoBounceBuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.MaxStacks</c> of talent 680; Striker's Aim (effect 3179).</summary>
         public const int NoBounceBuffMaxStacks = 3;
     }
+
+    public override string? Icon => TalentIcon;
 }

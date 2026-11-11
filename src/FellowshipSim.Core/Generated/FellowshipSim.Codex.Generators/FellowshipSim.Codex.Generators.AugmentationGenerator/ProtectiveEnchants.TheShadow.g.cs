@@ -10,6 +10,9 @@ partial class TheShadow
     /// <summary>Game data: <c>name</c> of protective enchant 54.</summary>
     public const string ProtectiveEnchantName = "The Shadow";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of protective enchant 54.</summary>
+    public const string ProtectiveEnchantIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Shadow_119_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of protective enchant 54.</summary>
     public const int ProtectiveEnchantMaxRank = 1;
 
@@ -22,4 +25,6 @@ partial class TheShadow
         /// <summary>Game data: tuning <c>Perk.Passive.IncreasedIncomingMagicDamage.AdditionalReduction</c> of protective enchant 54; The Shadow (effect 2851), MagicDamageReduction Additive.</summary>
         public const double PerkPassiveIncreasedIncomingMagicDamageAdditionalReduction = 0.1;
     }
+
+    public override string? Icon => ProtectiveEnchantIcon;
 }

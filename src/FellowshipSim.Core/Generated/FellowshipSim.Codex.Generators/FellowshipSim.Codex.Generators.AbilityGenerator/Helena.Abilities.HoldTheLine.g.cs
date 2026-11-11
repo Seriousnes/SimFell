@@ -10,6 +10,9 @@ partial class HoldTheLine
     /// <summary>Game data: <c>name</c> of ability 975.</summary>
     public const string AbilityName = "Hold the Line";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 975.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_WM_HoldTheLine_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 975.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Major;
 

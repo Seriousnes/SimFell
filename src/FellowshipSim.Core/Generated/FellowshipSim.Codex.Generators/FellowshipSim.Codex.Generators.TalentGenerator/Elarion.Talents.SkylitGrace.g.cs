@@ -9,4 +9,9 @@ partial class SkylitGrace
 
     /// <summary>Game data: <c>name</c> of talent 200.</summary>
     public const string TalentName = "Skylit Grace";
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 200.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_b_03_full.webp";
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,9 @@ partial class Bloodcraze
     /// <summary>Game data: <c>name</c> of talent 761.</summary>
     public const string TalentName = "Bloodcraze";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 761.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_SanguineFeast_off_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 761.</summary>
     public const double TalentDuration = 6.15;
 
@@ -37,4 +40,6 @@ partial class Bloodcraze
         /// <summary>Game data: tuning <c>TargetThresholdScaling, Gunde.DotTransfer.Talent.AoeBasedOnStacks.TargetThresholdScaling</c> of talent 761; ability 2279.</summary>
         public const int TargetThresholdScaling = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

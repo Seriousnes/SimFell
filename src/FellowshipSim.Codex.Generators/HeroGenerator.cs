@@ -18,7 +18,7 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>partial</c> of the same class with the values of its hero record. The record is the hero whose name in Pascal case
 /// (letters and digits only, an apostrophe inside its word) is the class name. The constants are <c>HeroId</c>,
 /// <c>HeroName</c>, one per scalar field of the record under <c>Hero</c> and the field's name (<c>HeroTitle</c>,
-/// <c>HeroMainStat</c>, <c>HeroRole</c>...), one per base attribute under <c>Hero</c> and the attribute's name
+/// <c>HeroMainStat</c>, <c>HeroRole</c>...; <c>HeroPortrait</c> and <c>HeroRoleIcon</c> are full size image URLs), one per base attribute under <c>Hero</c> and the attribute's name
 /// (<c>HeroBalancingDamageAura</c>, <c>HeroMaxResources</c>, <c>HeroMaxMana</c>...), and the hero's tuning values in a nested
 /// <c>Constants</c> under their <see cref="TuningNames"/> names, with the record itself as the record's hero. A tuning value
 /// of the record is the hero's when it has no owner or the hero is its owner. The class's own part has the hero's
@@ -167,9 +167,9 @@ public sealed class HeroGenerator : IIncrementalGenerator
             fields.Add(new Constant("HeroMainStat", MainStatType, MainStatType + "." + mainStat, Field("mainStat", h.Id)));
         }
         AddString(fields, "Color", "color", h.Color, h.Id);
-        AddString(fields, "Portrait", "portrait", h.Portrait, h.Id);
+        AddTexture(fields, "Portrait", "portrait", h.Portrait, h.Id);
         AddString(fields, "Role", "role", h.Role, h.Id);
-        AddString(fields, "RoleIcon", "roleIcon", h.RoleIcon, h.Id);
+        AddTexture(fields, "RoleIcon", "roleIcon", h.RoleIcon, h.Id);
         AddNumber(fields, "OverallDifficulty", "overallDifficulty", h.OverallDifficulty, h.Id);
         AddNumber(fields, "Offense", "offense", h.Offense, h.Id);
         AddNumber(fields, "Defense", "defense", h.Defense, h.Id);
@@ -190,6 +190,12 @@ public sealed class HeroGenerator : IIncrementalGenerator
     {
         if (value is not { Length: > 0 } v) return;
         fields.Add(new Constant("Hero" + name, "string", Literal(v), Field(field, id)));
+    }
+
+    private static void AddTexture(List<Constant> fields, string name, string field, string? texture, int id)
+    {
+        if (texture is not { Length: > 0 } t) return;
+        fields.Add(new Constant("Hero" + name, "string", Literal(Textures.Url(t)), $"Game data: the full size image URL of <c>{Escape(field)}</c> of hero {id}."));
     }
 
     private static void AddNumber(List<Constant> fields, string name, string field, double? value, int id)

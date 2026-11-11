@@ -10,6 +10,14 @@ partial class ZeralethsArms
     /// <summary>Game data: <c>name</c> of weapon power 358.</summary>
     public const string WeaponPowerName = "Zeraleth's Hunger";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 358.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_Vampiric_full.webp";
+
     /// <summary>Zeraleth's Hunger, ability 162 of the game data, in <c>grants</c> of weapon power 358.</summary>
     public const int WeaponPowerAbilityId = 162;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 162.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_Vampiric_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

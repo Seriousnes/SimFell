@@ -10,6 +10,9 @@ partial class TheMonarch
     /// <summary>Game data: <c>name</c> of glyph 705.</summary>
     public const string GlyphName = "The Monarch";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 705.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_011_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 705.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -28,4 +31,6 @@ partial class TheMonarch
         /// <summary>Game data: tuning <c>HasteThreshold</c> of glyph 705; The Monarch (effect 3186).</summary>
         public const double HasteThreshold = 0.5;
     }
+
+    public override string? Icon => GlyphIcon;
 }

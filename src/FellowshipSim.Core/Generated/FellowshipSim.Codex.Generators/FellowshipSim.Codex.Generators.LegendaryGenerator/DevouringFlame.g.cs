@@ -10,6 +10,9 @@ partial class DevouringFlame
     /// <summary>Pyromancer Codpiece, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5900.</summary>
+    public const string LegsItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Firemage_FmCloth_Waist_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 616.</summary>
     public static class Constants
     {
@@ -21,4 +24,5 @@ partial class DevouringFlame
     public override string Name => "Devouring Flame";
     public override string HeroName => "Ardeos";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [LegsItemId];
+    public override string? Icon => LegsItemIcon;
 }

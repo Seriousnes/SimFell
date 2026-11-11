@@ -14,11 +14,11 @@ public partial class WraithtideVaultGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 13.</summary>
     public const string DungeonDescription = "The holy vault of Wraithtide sleeps beneath a tropical isle, its location guarded by generations of fearful villagers. Within lies the spirit of Bael’Aurum, a demon whose hunger for gold once drowned empires in ruin. The seal now weakens as undead pirates scour the island, led by the Deathless Katrine, who seeks to claim the demon’s treasure and power.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 13.</summary>
-    public const string DungeonIcon = "Codex_CapDungeon_PR";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 13.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_CapDungeon_PR_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 13.</summary>
-    public const string DungeonBackground = "LoadingScreen_PR";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 13.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_PR_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 13.</summary>
     public const int DungeonMaxPlayers = 4;

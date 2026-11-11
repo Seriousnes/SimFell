@@ -19,14 +19,14 @@ partial class Meiko
     /// <summary>Game data: <c>color</c> of hero 13.</summary>
     public const string HeroColor = "28E05C";
 
-    /// <summary>Game data: <c>portrait</c> of hero 13.</summary>
-    public const string HeroPortrait = "hero_portrait_meiko_default";
+    /// <summary>Game data: the full size image URL of <c>portrait</c> of hero 13.</summary>
+    public const string HeroPortrait = "https://cdn.codex.fellowshipanalyzer.com/ui/hero_portrait_meiko_default_full.webp";
 
     /// <summary>Game data: <c>role</c> of hero 13.</summary>
     public const string HeroRole = "Tank";
 
-    /// <summary>Game data: <c>roleIcon</c> of hero 13.</summary>
-    public const string HeroRoleIcon = "T_Icons_RoleBadge_Tank";
+    /// <summary>Game data: the full size image URL of <c>roleIcon</c> of hero 13.</summary>
+    public const string HeroRoleIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_RoleBadge_Tank_full.webp";
 
     /// <summary>Game data: <c>overallDifficulty</c> of hero 13.</summary>
     public const int HeroOverallDifficulty = 4;

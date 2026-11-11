@@ -10,6 +10,9 @@ partial class TwinSoulsBulwark
     /// <summary>Game data: <c>name</c> of ability 1082.</summary>
     public const string AbilityName = "Twin Souls: Bulwark";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1082.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Meiko_TauntTotem_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1082.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Major;
 

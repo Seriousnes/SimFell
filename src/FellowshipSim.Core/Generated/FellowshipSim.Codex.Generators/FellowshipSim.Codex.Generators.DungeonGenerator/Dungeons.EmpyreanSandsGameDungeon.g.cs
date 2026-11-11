@@ -14,11 +14,11 @@ public partial class EmpyreanSandsGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 6.</summary>
     public const string DungeonDescription = "Under the cold light of the moon, the dunes of the Empyrean Sands shift and whisper. From beneath their surface, the Sin-Magir rises once more, the Augur of the Stars reborn in deathless form. His followers gather beneath the constellations, drawn to a celestial relic capable of restoring their ancient empire.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 6.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_DD";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 6.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_DD_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 6.</summary>
-    public const string DungeonBackground = "LoadingScreen_Desertdunes";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 6.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_Desertdunes_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 6.</summary>
     public const int DungeonMaxPlayers = 4;

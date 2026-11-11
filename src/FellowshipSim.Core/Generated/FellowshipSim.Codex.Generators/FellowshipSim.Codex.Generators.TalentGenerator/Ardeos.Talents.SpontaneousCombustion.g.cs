@@ -10,6 +10,9 @@ partial class SpontaneousCombustion
     /// <summary>Game data: <c>name</c> of talent 153.</summary>
     public const string TalentName = "Spontaneous Combustion";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 153.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_r_02_full.webp";
+
     /// <summary>Game data: the tuning values of talent 153.</summary>
     public static class Constants
     {
@@ -28,4 +31,6 @@ partial class SpontaneousCombustion
         /// <summary>Game data: tuning <c>HealTargetingRadius, Firemage.Talent.DotDoubleDamageAndHeal.HealTargetingRadius</c> of talent 153; Spontaneous Combustion (ability 1255).</summary>
         public const int HealTargetingRadius = 3000;
     }
+
+    public override string? Icon => TalentIcon;
 }

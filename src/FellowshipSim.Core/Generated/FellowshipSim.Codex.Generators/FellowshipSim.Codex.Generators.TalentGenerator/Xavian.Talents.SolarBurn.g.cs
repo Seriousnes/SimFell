@@ -10,6 +10,9 @@ partial class SolarBurn
     /// <summary>Game data: <c>name</c> of talent 570.</summary>
     public const string TalentName = "Solar Burn";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 570.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Sune_SolarBlades_full.webp";
+
     /// <summary>Game data: the tuning values of talent 570.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class SolarBurn
         /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotPeriod</c> of talent 570; Solar Burn (effect 2659).</summary>
         public const double AtTargetInstantAoeTalentAddsDotDotPeriod = 1.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

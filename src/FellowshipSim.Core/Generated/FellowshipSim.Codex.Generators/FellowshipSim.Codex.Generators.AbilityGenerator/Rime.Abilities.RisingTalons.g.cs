@@ -10,6 +10,9 @@ partial class RisingTalons
     /// <summary>Game data: <c>name</c> of ability 2224.</summary>
     public new const string AbilityName = "Rising Talons";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 2224.</summary>
+    public new const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Rime_AOE_Spender_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 2224.</summary>
     public new const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Power;
 

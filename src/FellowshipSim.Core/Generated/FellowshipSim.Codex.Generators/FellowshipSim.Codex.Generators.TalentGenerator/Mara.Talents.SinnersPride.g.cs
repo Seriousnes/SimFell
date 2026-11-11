@@ -10,10 +10,15 @@ partial class SinnersPride
     /// <summary>Game data: <c>name</c> of talent 586.</summary>
     public const string TalentName = "Sinner's Pride";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 586.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_SoulDarkening_full.webp";
+
     /// <summary>Game data: the tuning values of talent 586.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Mara.ResetCooldownRefillResources.Talent.ComboPointToCooldownReduction.CooldownReductionInSeconds</c> of talent 586; ability 1772.</summary>
         public const double CooldownReductionInSeconds = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

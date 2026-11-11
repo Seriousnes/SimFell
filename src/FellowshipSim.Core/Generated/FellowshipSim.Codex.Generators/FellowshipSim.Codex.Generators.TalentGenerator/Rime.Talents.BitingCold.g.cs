@@ -10,10 +10,15 @@ partial class BitingCold
     /// <summary>Game data: <c>name</c> of talent 51.</summary>
     public const string TalentName = "Biting Cold";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 51.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Frost_01_full.webp";
+
     /// <summary>Game data: the tuning values of talent 51.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>Multistrike.Passive.CritStrikePowerIncrease, Rime.OnTargetPulsatingAoe.Talent.Multistrike.Passive.CritStrikePowerIncrease</c> of talent 51; Biting Cold (effect 1372), CritMultiplier MultiplyCompound.</summary>
         public const double MultistrikePassiveCritStrikePowerIncrease = 1.1;
     }
+
+    public override string? Icon => TalentIcon;
 }

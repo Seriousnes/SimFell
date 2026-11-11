@@ -10,6 +10,9 @@ partial class ThePhilosopher
     /// <summary>Game data: <c>name</c> of glyph 709.</summary>
     public const string GlyphName = "The Philosopher";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 709.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_08_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 709.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -31,4 +34,6 @@ partial class ThePhilosopher
         /// <summary>Game data: tuning <c>SpiritThreshold</c> of glyph 709; ability 2256.</summary>
         public const double SpiritThreshold = 0.5;
     }
+
+    public override string? Icon => GlyphIcon;
 }

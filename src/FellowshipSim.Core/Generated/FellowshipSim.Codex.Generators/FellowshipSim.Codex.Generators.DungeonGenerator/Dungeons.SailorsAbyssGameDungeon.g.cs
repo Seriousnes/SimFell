@@ -14,11 +14,11 @@ public partial class SailorsAbyssGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 15.</summary>
     public const string DungeonDescription = "Across the endless sea lies an island shaped like a wound upon the world. Its cliffs rise in a hollow ring, surrounding a chasm that descends into endless black. From within, a haunting song drifts across the waters, luring sailors to their doom.\r\n\r\nBeneath the waves, the Sea Witch Sinthara stirs. Her voice binds the dead, her wings blot the sky, and her call grows stronger with every ship that shatters on the rocks. Soon, her song will reach beyond the horizon, calling all who sail into her grasp.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 15.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_SG";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 15.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_SG_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 15.</summary>
-    public const string DungeonBackground = "LoadingScreen_SG";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 15.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_SG_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 15.</summary>
     public const int DungeonMaxPlayers = 4;

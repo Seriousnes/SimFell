@@ -10,6 +10,9 @@ partial class ShiftingSpectrum
     /// <summary>Game data: <c>name</c> of talent 576.</summary>
     public const string TalentName = "Shifting Spectrum";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 576.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_ArcaneLightning__full.webp";
+
     /// <summary>Game data: the tuning values of talent 576.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class ShiftingSpectrum
         /// <summary>Game data: tuning <c>IncomingDamageMultiplier, Sune.Talent.LowHealthDamageReduction.IncomingDamageMultiplier</c> of talent 576; ability 1910, IncomingDamageMultiplier MultiplyCompound.</summary>
         public const double IncomingDamageMultiplier = 0.8;
     }
+
+    public override string? Icon => TalentIcon;
 }

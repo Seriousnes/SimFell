@@ -10,6 +10,9 @@ partial class Jawbreaker
     /// <summary>Game data: <c>name</c> of ability 1244.</summary>
     public const string AbilityName = "Jawbreaker";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1244.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/t_gunde_Interrupt_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1244.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Utility;
 

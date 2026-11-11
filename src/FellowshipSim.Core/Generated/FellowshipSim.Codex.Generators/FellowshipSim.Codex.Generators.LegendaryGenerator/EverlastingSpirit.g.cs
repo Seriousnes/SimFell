@@ -10,6 +10,9 @@ partial class EverlastingSpirit
     /// <summary>Twinsoul Leggings, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5900.</summary>
+    public const string LegsItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Meiko_CmLeather_Waist_R2_T0-legendary_full.webp";
+
     /// <summary>Game data: the tuning values of legendary power 447.</summary>
     public static class Constants
     {
@@ -42,4 +45,5 @@ partial class EverlastingSpirit
     public override string Name => "Everlasting Spirit";
     public override string HeroName => "Meiko";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [LegsItemId];
+    public override string? Icon => LegsItemIcon;
 }

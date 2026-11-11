@@ -10,6 +10,9 @@ partial class InspiredAllegiance
     /// <summary>Game data: <c>name</c> of sigil 2.</summary>
     public const string SigilName = "Inspired Allegiance";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 2.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_b_26_layered_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 2.</summary>
     public const int SigilMaxRank = 4;
 
@@ -31,4 +34,6 @@ partial class InspiredAllegiance
         /// <summary>Game data: rank run <c>Trait.CommitToHasteRatingAndWeaponCooldown.Buff.AdditionalHasteRating</c> of sigil 2, transform <c>plain</c>; the tooltip has 6 / 10 / 13 / 17.</summary>
         public static readonly double[] BuffAdditionalHasteRatingByRank = [6, 10, 13, 17];
     }
+
+    public override string? Icon => SigilIcon;
 }

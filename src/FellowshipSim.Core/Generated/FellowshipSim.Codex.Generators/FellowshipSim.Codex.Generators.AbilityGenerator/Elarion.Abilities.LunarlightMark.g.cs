@@ -10,6 +10,9 @@ partial class LunarlightMark
     /// <summary>Game data: <c>name</c> of ability 1310.</summary>
     public const string AbilityName = "Lunarlight Mark";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1310.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_Mark_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1310.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Major;
 

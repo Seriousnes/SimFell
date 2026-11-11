@@ -10,6 +10,9 @@ partial class FrogSquad
     /// <summary>Game data: <c>name</c> of talent 158.</summary>
     public const string TalentName = "Frog Squad";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 158.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_HypnoToad_full.webp";
+
     /// <summary>Game data: the tuning values of talent 158.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class FrogSquad
         /// <summary>Game data: tuning <c>Firemage.FireFrog.Ability.Talent.ExtraFrogs.NumExtraFrogs</c> of talent 158.</summary>
         public const int FireFrogAbilityTalentExtraFrogsNumExtraFrogs = 2;
     }
+
+    public override string? Icon => TalentIcon;
 }

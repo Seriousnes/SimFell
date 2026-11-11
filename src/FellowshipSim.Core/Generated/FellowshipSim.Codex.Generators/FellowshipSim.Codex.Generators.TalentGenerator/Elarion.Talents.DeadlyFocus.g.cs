@@ -10,6 +10,9 @@ partial class DeadlyFocus
     /// <summary>Game data: <c>name</c> of talent 679.</summary>
     public const string TalentName = "Deadly Focus";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 679.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_FocusShot_full.webp";
+
     /// <summary>Game data: the tuning values of talent 679.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class DeadlyFocus
         /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler, Bowguy.CastedProjectileDamage.Talent.Enhanced.ResourceGenerationScaler</c> of talent 679; Focused Shot (ability 1315).</summary>
         public const double EnhancedResourceGenerationScaler = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

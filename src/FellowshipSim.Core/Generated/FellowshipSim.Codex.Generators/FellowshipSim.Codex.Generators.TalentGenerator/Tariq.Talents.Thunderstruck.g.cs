@@ -10,10 +10,15 @@ partial class Thunderstruck
     /// <summary>Game data: <c>name</c> of talent 89.</summary>
     public const string TalentName = "Thunderstruck";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 89.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Electromancer1_full.webp";
+
     /// <summary>Game data: the tuning values of talent 89.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>Ink.BouncyProjectile.Talent.IncreasedMaxNumOfTargets.TotalTargets</c> of talent 89; Chain Lightning (ability 1237).</summary>
         public const int BouncyProjectileTalentIncreasedMaxNumOfTargetsTotalTargets = 9;
     }
+
+    public override string? Icon => TalentIcon;
 }

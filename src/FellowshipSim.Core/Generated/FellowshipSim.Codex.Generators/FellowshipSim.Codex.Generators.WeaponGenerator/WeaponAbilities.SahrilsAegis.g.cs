@@ -10,11 +10,17 @@ partial class SahrilsAegis
     /// <summary>Game data: <c>name</c> of weapon power 352.</summary>
     public const string WeaponPowerName = "Sahril's Aegis";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 352.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_VoidBarrier_full.webp";
+
     /// <summary>Sahril's Aegis, ability 159 of the game data, in <c>grants</c> of weapon power 352.</summary>
     public const int AbilityId = 159;
 
     /// <summary>Game data: <c>name</c> of ability 159.</summary>
     public const string AbilityName = "Sahril's Aegis";
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 159.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_VoidBarrier_full.webp";
 
     /// <summary>Game data: <c>category</c> of ability 159.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Weapon;

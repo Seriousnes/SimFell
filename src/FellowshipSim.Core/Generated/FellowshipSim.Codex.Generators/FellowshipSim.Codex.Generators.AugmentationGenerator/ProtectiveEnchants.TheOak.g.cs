@@ -10,6 +10,9 @@ partial class TheOak
     /// <summary>Game data: <c>name</c> of protective enchant 62.</summary>
     public const string ProtectiveEnchantName = "The Oak";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of protective enchant 62.</summary>
+    public const string ProtectiveEnchantIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Perk_Oak_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of protective enchant 62.</summary>
     public const int ProtectiveEnchantMaxRank = 1;
 
@@ -22,4 +25,6 @@ partial class TheOak
         /// <summary>Game data: tuning <c>ArmorMultiplier</c> of protective enchant 62.</summary>
         public const double ArmorMultiplier = 1.25;
     }
+
+    public override string? Icon => ProtectiveEnchantIcon;
 }

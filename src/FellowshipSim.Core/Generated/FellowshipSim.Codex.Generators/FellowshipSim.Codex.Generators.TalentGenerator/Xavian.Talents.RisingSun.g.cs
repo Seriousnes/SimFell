@@ -10,10 +10,15 @@ partial class RisingSun
     /// <summary>Game data: <c>name</c> of talent 573.</summary>
     public const string TalentName = "Rising Sun";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 573.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_SpellBook06_56_full.webp";
+
     /// <summary>Game data: the tuning values of talent 573.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>Sune.AoeMelee.Talent.ResetCdAtTargetInstantAoe.ProcChance</c> of talent 573; Omnistrike (ability 1863).</summary>
         public const double AoeMeleeTalentResetCdAtTargetInstantAoeProcChance = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

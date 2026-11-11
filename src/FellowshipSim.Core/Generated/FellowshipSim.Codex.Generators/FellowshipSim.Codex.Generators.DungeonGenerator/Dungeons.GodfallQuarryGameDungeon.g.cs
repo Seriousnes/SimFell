@@ -14,11 +14,11 @@ public partial class GodfallQuarryGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 25.</summary>
     public const string DungeonDescription = "Beneath the jagged peaks of the Godfall Mountains, a hidden quarry pulses with unnatural light. The Nezari Elves have begun a relentless mining operation deep within the stone, tearing blood-red crystals from the earth in a frenzy. Their reasons remain cloaked in secrecy, but the brutality of their methods is plain to see. The Nezari prepare for war.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 25.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_EM";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 25.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_EM_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 25.</summary>
-    public const string DungeonBackground = "Loadingscreen_EM";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 25.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/Loadingscreen_EM_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 25.</summary>
     public const int DungeonMaxPlayers = 4;

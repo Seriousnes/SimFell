@@ -10,6 +10,9 @@ partial class PiercingSeekers
     /// <summary>Game data: <c>name</c> of talent 201.</summary>
     public const string TalentName = "Piercing Seekers";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 201.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_SoulArrow_full.webp";
+
     /// <summary>Game data: the tuning values of talent 201.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class PiercingSeekers
         /// <summary>Game data: tuning <c>Riccochet.DamageScale, Bowguy.ChanneledMultiProjectileDebuff.Talent.Riccochet.DamageScale</c> of talent 201; ability 1553.</summary>
         public const double RiccochetDamageScale = 0.7;
     }
+
+    public override string? Icon => TalentIcon;
 }

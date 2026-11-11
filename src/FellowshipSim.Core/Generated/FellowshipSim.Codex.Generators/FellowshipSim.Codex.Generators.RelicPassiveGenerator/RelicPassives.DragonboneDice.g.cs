@@ -22,10 +22,13 @@ partial class DragonboneDice
     /// <summary>Game data: <c>name</c> of item 5925.</summary>
     public const string RelicItemName = "Orb of Awakened Gaze";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5925.</summary>
+    public const string RelicItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_eye_b_01_full.webp";
+
     /// <summary>Game data: the items granting relic passive 778.</summary>
     public static readonly global::FellowshipSim.Core.Customization.RelicPassives.RelicItem[] RelicPassiveItems =
     [
-        new(5925, "Orb of Awakened Gaze"),
+        new(5925, "Orb of Awakened Gaze", "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_eye_b_01_full.webp"),
     ];
 
     /// <summary>Game data: the tuning values of relic passive 778.</summary>

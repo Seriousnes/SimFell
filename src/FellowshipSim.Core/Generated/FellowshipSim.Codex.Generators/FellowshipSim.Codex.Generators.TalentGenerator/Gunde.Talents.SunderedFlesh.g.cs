@@ -9,4 +9,9 @@ partial class SunderedFlesh
 
     /// <summary>Game data: <c>name</c> of talent 765.</summary>
     public const string TalentName = "Sundered Flesh";
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 765.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_NightmareAura_full.webp";
+
+    public override string? Icon => TalentIcon;
 }

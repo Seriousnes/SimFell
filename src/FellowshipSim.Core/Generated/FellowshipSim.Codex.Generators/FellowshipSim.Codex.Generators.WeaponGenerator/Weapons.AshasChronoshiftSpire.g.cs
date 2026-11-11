@@ -10,6 +10,14 @@ partial class AshasChronoshiftSpire
     /// <summary>Game data: <c>name</c> of weapon power 355.</summary>
     public const string WeaponPowerName = "Chronoshift";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 355.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_ArcaneLoad_full.webp";
+
     /// <summary>Chronoshift, ability 1558 of the game data, in <c>grants</c> of weapon power 355.</summary>
     public const int WeaponPowerAbilityId = 1558;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1558.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_ArcaneLoad_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

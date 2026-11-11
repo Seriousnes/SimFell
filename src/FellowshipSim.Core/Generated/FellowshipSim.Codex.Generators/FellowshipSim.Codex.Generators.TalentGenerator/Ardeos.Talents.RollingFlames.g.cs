@@ -10,6 +10,9 @@ partial class RollingFlames
     /// <summary>Game data: <c>name</c> of talent 226.</summary>
     public const string TalentName = "Rolling Flames";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 226.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Firemage_Dot_01_full.webp";
+
     /// <summary>Game data: the tuning values of talent 226.</summary>
     public static class Constants
     {
@@ -31,4 +34,6 @@ partial class RollingFlames
         /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 226; Ardeos (hero 7).</summary>
         public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
     }
+
+    public override string? Icon => TalentIcon;
 }

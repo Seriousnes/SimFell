@@ -10,10 +10,15 @@ partial class WisdomOfTheNorth
     /// <summary>Game data: <c>name</c> of talent 49.</summary>
     public const string TalentName = "Wisdom of the North";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 49.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Frost_04_full.webp";
+
     /// <summary>Game data: the tuning values of talent 49.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>CooldownReductionPerOrbSpent, Rime.Talent.ResourceSpendingReducesCooldowns.CooldownReductionPerOrbSpent</c> of talent 49; ability 1012.</summary>
         public const double CooldownReductionPerOrbSpent = 0.3;
     }
+
+    public override string? Icon => TalentIcon;
 }

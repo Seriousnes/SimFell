@@ -10,6 +10,9 @@ partial class Peacefield
     /// <summary>Game data: <c>name</c> of talent 174.</summary>
     public const string TalentName = "Peacefield";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 174.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Elements_77_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 174.</summary>
     public const int TalentDuration = 9;
 
@@ -25,4 +28,6 @@ partial class Peacefield
         /// <summary>Game data: tuning <c>TickInterval, Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.TickInterval</c> of talent 174; Peacefield (ability 1547).</summary>
         public const double TickInterval = 1.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

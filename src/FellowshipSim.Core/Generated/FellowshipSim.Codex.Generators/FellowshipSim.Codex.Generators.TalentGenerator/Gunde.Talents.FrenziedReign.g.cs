@@ -10,6 +10,9 @@ partial class FrenziedReign
     /// <summary>Game data: <c>name</c> of talent 750.</summary>
     public const string TalentName = "Frenzied Reign";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 750.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_HPDrain_full.webp";
+
     /// <summary>Game data: the tuning values of talent 750.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class FrenziedReign
         /// <summary>Game data: tuning <c>Gunde.InstantAoeWithBuff.Talent.AddedTransfer.DotTransferBonus</c> of talent 750; Blood Arc (ability 2291).</summary>
         public const double InstantAoeWithBuffTalentAddedTransferDotTransferBonus = 0.1;
     }
+
+    public override string? Icon => TalentIcon;
 }

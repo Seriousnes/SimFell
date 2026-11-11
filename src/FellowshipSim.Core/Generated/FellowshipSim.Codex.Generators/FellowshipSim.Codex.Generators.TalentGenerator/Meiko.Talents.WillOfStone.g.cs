@@ -10,6 +10,9 @@ partial class WillOfStone
     /// <summary>Game data: <c>name</c> of talent 92.</summary>
     public const string TalentName = "Will of Stone";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 92.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Meiko_SlamStun_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 92.</summary>
     public const int TalentDuration = 30;
 
@@ -43,4 +46,6 @@ partial class WillOfStone
         /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of talent 92; Spirited Vortex (ability 1120).</summary>
         public const int TargetCountDamageScalingThreshold = 8;
     }
+
+    public override string? Icon => TalentIcon;
 }

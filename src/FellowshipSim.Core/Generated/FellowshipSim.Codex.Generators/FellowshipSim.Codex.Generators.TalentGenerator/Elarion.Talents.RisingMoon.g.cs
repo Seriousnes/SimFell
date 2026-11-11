@@ -10,10 +10,15 @@ partial class RisingMoon
     /// <summary>Game data: <c>name</c> of talent 681.</summary>
     public const string TalentName = "Rising Moon";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 681.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Energy_17_full.webp";
+
     /// <summary>Game data: the tuning values of talent 681.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Bowguy.InstantMarkTarget.Talent.CooldownReductionOnHeavyProjectileCast.CooldownReductionInSeconds</c> of talent 681; ability 2065.</summary>
         public const int CooldownReductionInSeconds = 2;
     }
+
+    public override string? Icon => TalentIcon;
 }

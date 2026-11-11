@@ -10,6 +10,9 @@ partial class VenomousDelight
     /// <summary>Game data: <c>name</c> of talent 112.</summary>
     public const string TalentName = "Venomous Delight";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 112.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_green_23_full.webp";
+
     /// <summary>Game data: the tuning values of talent 112.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class VenomousDelight
         /// <summary>Game data: tuning <c>EnergyAdded, Mara.Talent.PoisonDamageProcEnergyGain.EnergyAdded</c> of talent 112; ability 1656.</summary>
         public const int EnergyAdded = 10;
     }
+
+    public override string? Icon => TalentIcon;
 }

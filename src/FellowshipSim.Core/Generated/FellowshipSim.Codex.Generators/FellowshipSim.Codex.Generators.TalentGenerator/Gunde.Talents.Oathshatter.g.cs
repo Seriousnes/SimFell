@@ -10,6 +10,9 @@ partial class Oathshatter
     /// <summary>Game data: <c>name</c> of talent 762.</summary>
     public const string TalentName = "Oathshatter";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 762.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_DoubleAxe_full.webp";
+
     /// <summary>Game data: <c>radius</c> of talent 762.</summary>
     public const int TalentRadius = 700;
 
@@ -31,4 +34,6 @@ partial class Oathshatter
         /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Gunde.HeavyMeleeDotBased.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 762; Oathshatter (effect 3215), CritChance Additive.</summary>
         public const double IncreasedCritChanceAdditionalCritChance = 0.3;
     }
+
+    public override string? Icon => TalentIcon;
 }

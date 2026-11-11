@@ -10,6 +10,9 @@ partial class GushingBlood
     /// <summary>Game data: <c>name</c> of talent 122.</summary>
     public const string TalentName = "Gushing Blood";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 122.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Berserker5_full.webp";
+
     /// <summary>Game data: <c>radius</c> of talent 122.</summary>
     public const int TalentRadius = 600;
 
@@ -34,4 +37,6 @@ partial class GushingBlood
         /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.MaxRadius</c> of talent 122; ability 1517.</summary>
         public const int ChargedResourceRefillSelfBuffTalentBleedAttackSpenderBleedAoeMaxRadius = 600;
     }
+
+    public override string? Icon => TalentIcon;
 }

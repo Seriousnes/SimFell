@@ -16,9 +16,12 @@ partial class AccursedTrophy
     /// <summary>Game data: <c>name</c> of item 5926.</summary>
     public const string RelicItemName = "Orb of Inner Seas";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5926.</summary>
+    public const string RelicItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_element_water__b_01_full.webp";
+
     /// <summary>Game data: the items granting relic passive 777.</summary>
     public static readonly global::FellowshipSim.Core.Customization.RelicPassives.RelicItem[] RelicPassiveItems =
     [
-        new(5926, "Orb of Inner Seas"),
+        new(5926, "Orb of Inner Seas", "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_element_water__b_01_full.webp"),
     ];
 }

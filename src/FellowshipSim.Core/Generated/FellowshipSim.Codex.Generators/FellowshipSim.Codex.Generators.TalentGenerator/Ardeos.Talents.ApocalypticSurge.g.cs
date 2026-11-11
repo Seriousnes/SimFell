@@ -10,6 +10,9 @@ partial class ApocalypticSurge
     /// <summary>Game data: <c>name</c> of talent 678.</summary>
     public const string TalentName = "Apocalyptic Surge";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 678.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Firemage_Apocalypse_full.webp";
+
     /// <summary>Game data: the tuning values of talent 678.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class ApocalypticSurge
         /// <summary>Game data: tuning <c>ReducedCastTime.CastTimeReductionInSeconds, Firemage.CastedPlacedAoe.Talent.ReducedCastTime.CastTimeReductionInSeconds</c> of talent 678; Apocalypse (ability 1273).</summary>
         public const double ReducedCastTimeCastTimeReductionInSeconds = 1.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

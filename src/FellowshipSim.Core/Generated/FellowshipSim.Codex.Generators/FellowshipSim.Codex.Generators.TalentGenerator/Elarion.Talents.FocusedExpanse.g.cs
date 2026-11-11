@@ -10,6 +10,9 @@ partial class FocusedExpanse
     /// <summary>Game data: <c>name</c> of talent 167.</summary>
     public const string TalentName = "Focused Expanse";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 167.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_Multishot_full.webp";
+
     /// <summary>Game data: the tuning values of talent 167.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class FocusedExpanse
         /// <summary>Game data: tuning <c>ProcChance, AoeProjectileDamageEmpowered.ProcChance, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.ProcChance</c> of talent 167; ability 1524.</summary>
         public const double ProcChance = 0.2;
     }
+
+    public override string? Icon => TalentIcon;
 }

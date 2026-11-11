@@ -10,6 +10,9 @@ partial class FlareUp
     /// <summary>Game data: <c>name</c> of talent 159.</summary>
     public const string TalentName = "Flare up";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 159.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_FireRune_full.webp";
+
     /// <summary>Game data: <c>radius</c> of talent 159.</summary>
     public const int TalentRadius = 1500;
 
@@ -31,4 +34,6 @@ partial class FlareUp
         /// <summary>Game data: tuning <c>TargetCountThreshhold, Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.TargetCountThreshhold</c> of talent 159; Flare Up (ability 1257).</summary>
         public const int TargetCountThreshhold = 3;
     }
+
+    public override string? Icon => TalentIcon;
 }

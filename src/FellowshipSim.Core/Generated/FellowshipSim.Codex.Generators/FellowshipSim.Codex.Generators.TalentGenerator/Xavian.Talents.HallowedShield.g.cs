@@ -10,6 +10,9 @@ partial class HallowedShield
     /// <summary>Game data: <c>name</c> of talent 567.</summary>
     public const string TalentName = "Hallowed Shield";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 567.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Fire_17_full.webp";
+
     /// <summary>Game data: the tuning values of talent 567.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class HallowedShield
         /// <summary>Game data: tuning <c>Sune.SingleTargetAbsorb.Talent.ParryBoost.ExtraAbsorbPerStack</c> of talent 567; Hallowed Shield (effect 2649).</summary>
         public const double SingleTargetAbsorbTalentParryBoostExtraAbsorbPerStack = 0.01;
     }
+
+    public override string? Icon => TalentIcon;
 }

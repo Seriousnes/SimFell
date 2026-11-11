@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.Json;
 using Fellowship.SDK;
 using Fellowship.SDK.Calculations;
-using Fellowship.SDK.Client;
 using Fellowship.SDK.Documents;
 using Fellowship.SDK.Models;
 using Microsoft.CodeAnalysis;
@@ -126,7 +125,7 @@ public sealed class ItemGenerator : IIncrementalGenerator
         }
 
         var wearable = settings.Items.SlotNames.Values.Where(settings.StatCalculation.SlotWeights.ContainsKey).Distinct().ToList();
-        var slots = wearable.Select(s => new Slot(s, settings.SlotIcons.TryGetValue(s, out string? icon) ? Url(icon) : "")).ToList();
+        var slots = wearable.Select(s => new Slot(s, settings.SlotIcons.TryGetValue(s, out string? icon) ? Textures.Url(icon) : "")).ToList();
 
         // The stat calculation reads the settings and the item alone.
         var export = new FellowshipExport(settings, [.. documents]);
@@ -170,7 +169,7 @@ public sealed class ItemGenerator : IIncrementalGenerator
                     problems.Add(new Problem(NoWeaponAbility.Id, new([id, name, hero, granted.Id.ToString(CultureInfo.InvariantCulture)])));
                 }
             }
-            string icon = document.Icon is { Length: > 0 } texture ? Url(texture) : "";
+            string icon = document.Icon is { Length: > 0 } texture ? Textures.Url(texture) : "";
             items.Add(new Item(hero, document.Id, name, slot, level, maxTempers, staminaPerTemper, document.Rarity == Rarity.Legendary, weaponAbility,
                 new([.. stats]), new([.. dungeons]), icon));
         }
@@ -264,9 +263,6 @@ public sealed class ItemGenerator : IIncrementalGenerator
         source.Append("    };\n}\n");
         context.AddSource("GameGearData.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
     }
-
-    /// <summary>The URL of a texture's full size image.</summary>
-    private static string Url(string texture) => CodexAddresses.Texture(texture, TextureSize.Full).AbsoluteUri;
 
     private static string Literal(string value) => "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
 }

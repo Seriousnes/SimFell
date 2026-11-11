@@ -10,6 +10,9 @@ partial class LunarFury
     /// <summary>Game data: <c>name</c> of talent 130.</summary>
     public const string TalentName = "Lunar Fury";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 130.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_Mark_full.webp";
+
     /// <summary>Game data: the tuning values of talent 130.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class LunarFury
         /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Bowguy.SingleProjectileDamage.Talent.ChanceInstantMarkTarget.CooldownReductionInSeconds</c> of talent 130; ability 1438.</summary>
         public const int CooldownReductionInSeconds = 0;
     }
+
+    public override string? Icon => TalentIcon;
 }

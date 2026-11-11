@@ -10,6 +10,9 @@ partial class TheMystic
     /// <summary>Game data: <c>name</c> of glyph 706.</summary>
     public const string GlyphName = "The Mystic";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 706.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_010_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 706.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -28,4 +31,6 @@ partial class TheMystic
         /// <summary>Game data: tuning <c>SpiritThreshold</c> of glyph 706; ability 2253.</summary>
         public const double SpiritThreshold = 0.5;
     }
+
+    public override string? Icon => GlyphIcon;
 }

@@ -10,6 +10,9 @@ partial class CoalescingFrost
     /// <summary>Game data: <c>name</c> of talent 36.</summary>
     public const string TalentName = "Coalescing Frost";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 36.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Cryomancer9_full.webp";
+
     /// <summary>Game data: the tuning values of talent 36.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class CoalescingFrost
         /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamage.Talent.DelayedAoe.TargetCountThreshold</c> of talent 36; Freezing Torrent (ability 1027).</summary>
         public const int ChanneledBeamSingleDamageTalentDelayedAoeTargetCountThreshold = 5;
     }
+
+    public override string? Icon => TalentIcon;
 }

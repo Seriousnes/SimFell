@@ -17,13 +17,15 @@ namespace FellowshipSim.Codex.Generators;
 /// <list type="bullet">
 /// <item>A <c>partial</c> class deriving from <c>FellowshipSim.Core.Customization.Weapons.Weapon</c> names the weapon power
 /// whose name, or the name of an item granting it, in Pascal case (letters and digits only, an apostrophe inside its word)
-/// is the class name. Its constants are <c>WeaponPowerId</c>, <c>WeaponPowerName</c> and <c>WeaponPowerAbilityId</c>, the
-/// ability the power grants under the power's name. The class's own part has its <c>Name</c>, its <c>WeaponAbilityId</c>
-/// override and <c>Equip</c>.</item>
+/// is the class name. Its constants are <c>WeaponPowerId</c>, <c>WeaponPowerName</c>, <c>WeaponPowerIcon</c> (the full size
+/// image URL of the power's icon), <c>WeaponPowerAbilityId</c>, the ability the power grants under the power's name, and
+/// <c>WeaponPowerAbilityIcon</c>, that ability's icon URL and the <c>Icon</c> override of <c>Weapon</c>. The class's own part
+/// has its <c>Name</c>, its <c>WeaponAbilityId</c> override and <c>Equip</c>.</item>
 /// <item>A <c>partial</c> class deriving from <c>FellowshipSim.Core.Domain.Ability</c> in
 /// <c>FellowshipSim.Core.Customization.WeaponAbilities</c> names the weapon power whose name in Pascal case is the class
 /// name, and the ability that power grants under its name. Its constants are <c>WeaponPowerId</c>,
-/// <c>WeaponPowerName</c>, <c>AbilityId</c>, <c>AbilityName</c>, one per scalar field of the ability record under
+/// <c>WeaponPowerName</c>, <c>WeaponPowerIcon</c>, <c>AbilityId</c>, <c>AbilityName</c>, <c>AbilityIcon</c> (the full size
+/// image URL of the ability's icon), one per scalar field of the ability record under
 /// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and the
 /// weapon power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the
 /// record's hero. The class's own part has the ability's behaviour.</item>
@@ -62,11 +64,11 @@ public sealed class WeaponGenerator : IIncrementalGenerator
     private sealed record Item(int Id, string Name, string Hero, string ClassName);
 
     /// <summary>
-    /// A weapon power record: its ID, name, class name, the items granting it, the ability it grants under its name (ID 0
-    /// for none), that ability's field constants, and the power's tuning values.
+    /// A weapon power record: its ID, name, icon URL (empty for none), class name, the items granting it, the ability it
+    /// grants under its name (ID 0 for none), that ability's icon URL and field constants, and the power's tuning values.
     /// </summary>
-    private sealed record Power(int Id, string Name, string ClassName, EquatableArray<Item> Items, int AbilityId, string AbilityName,
-        EquatableArray<Constant> AbilityFields, EquatableArray<TuningEntry> Tunings);
+    private sealed record Power(int Id, string Name, string Icon, string ClassName, EquatableArray<Item> Items, int AbilityId, string AbilityName,
+        string AbilityIcon, EquatableArray<Constant> AbilityFields, EquatableArray<TuningEntry> Tunings);
 
     /// <summary>The game data's weapon power records, the tuning keys' first segments naming a hero, and its build date.</summary>
     private sealed record Export(EquatableArray<Power> Powers, EquatableArray<HeroSegment> Segments, string? BuildDate);
@@ -192,16 +194,23 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             var granted = (p.Grants ?? []).FirstOrDefault(g => g.Type.ToString() == "Ability" && (g.Name ?? "").Trim() == name);
             AbilityDocument? ability = granted != null ? abilities.GetValueOrDefault(granted.Id) : null;
             var powerItems = items.Where(i => i.PowerId == p.Id).Select(i => i.Item).OrderBy(i => i.Id).ThenBy(i => i.Hero, StringComparer.Ordinal).ToList();
-            records.Add(new Power(p.Id, name, PascalCase(name), new([.. powerItems]), ability?.Id ?? 0, (ability?.Name ?? "").Trim(),
-                new([.. ability != null ? FieldsOf(ability) : []]), new([.. TuningsOf(p)])));
+            records.Add(new Power(p.Id, name, UrlOf(p.Icon), PascalCase(name), new([.. powerItems]), ability?.Id ?? 0, (ability?.Name ?? "").Trim(),
+                UrlOf(ability?.Icon), new([.. ability != null ? FieldsOf(ability) : []]), new([.. TuningsOf(p)])));
         }
         return new Export(new([.. records.OrderBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
     }
+
+    /// <summary>The URL of a texture's full size image; empty for no texture.</summary>
+    private static string UrlOf(string? texture) => texture is { Length: > 0 } ? Textures.Url(texture) : "";
 
     /// <summary>The ability record's scalar fields, each under <c>Ability</c> and the field's name.</summary>
     private static List<Constant> FieldsOf(AbilityDocument a)
     {
         var fields = new List<Constant>();
+        if (a.Icon is { Length: > 0 } icon)
+        {
+            fields.Add(new Constant("AbilityIcon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of ability {a.Id}."));
+        }
         if (a.Category is { } category)
         {
             fields.Add(new Constant("AbilityCategory", "global::FellowshipSim.Core.Domain.AbilityCategory",
@@ -326,6 +335,10 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 new("WeaponPowerId", "int", power.Id.ToString(CultureInfo.InvariantCulture), $"{Escape(power.Name)}, {owner} of the game data{granted}."),
                 new("WeaponPowerName", "string", Literal(power.Name), $"Game data: <c>name</c> of {owner}."),
             };
+            if (power.Icon.Length > 0)
+            {
+                all.Add(new("WeaponPowerIcon", "string", Literal(power.Icon), $"Game data: the full size image URL of <c>icon</c> of {owner}."));
+            }
             if (d.IsAbility)
             {
                 all.Add(new("AbilityId", "int", power.AbilityId.ToString(CultureInfo.InvariantCulture),
@@ -337,6 +350,11 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             {
                 all.Add(new("WeaponPowerAbilityId", "int", power.AbilityId.ToString(CultureInfo.InvariantCulture),
                     $"{Escape(power.AbilityName)}, ability {power.AbilityId} of the game data, in <c>grants</c> of {owner}."));
+                if (power.AbilityIcon.Length > 0)
+                {
+                    all.Add(new("WeaponPowerAbilityIcon", "string", Literal(power.AbilityIcon),
+                        $"Game data: the full size image URL of <c>icon</c> of ability {power.AbilityId}."));
+                }
             }
             var shared = new List<(string Name, string First, string Second)>();
             var tunings = d.IsAbility ? TuningNames.Of(power.Tunings, export.Segments, [], shared) : [];
@@ -350,6 +368,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 .Append("namespace ").Append(d.Namespace).Append(";\n\n")
                 .Append("partial class ").Append(d.Name).Append("\n{\n");
             bool first = true;
+            var written = new HashSet<string>(StringComparer.Ordinal);
             foreach (var constant in all)
             {
                 if (members.Contains(constant.Name))
@@ -359,6 +378,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 }
                 if (!first) source.Append('\n');
                 first = false;
+                written.Add(constant.Name);
                 source.Append("    /// <summary>").Append(constant.Summary).Append("</summary>\n")
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
@@ -374,6 +394,10 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                         tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of {owner}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
                         false, !first);
                 }
+            }
+            if (written.Contains("WeaponPowerAbilityIcon"))
+            {
+                source.Append("\n    public override string? Icon => WeaponPowerAbilityIcon;\n");
             }
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));

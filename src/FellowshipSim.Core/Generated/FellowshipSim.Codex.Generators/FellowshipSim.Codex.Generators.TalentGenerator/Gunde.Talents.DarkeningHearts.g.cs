@@ -10,6 +10,9 @@ partial class DarkeningHearts
     /// <summary>Game data: <c>name</c> of talent 757.</summary>
     public const string TalentName = "Darkening Hearts";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 757.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_Cleave_full.webp";
+
     /// <summary>Game data: the tuning values of talent 757.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class DarkeningHearts
         /// <summary>Game data: tuning <c>LowHealthTarget.AddedCriticalStrikeChance, Gunde.HeavyMeleeDotBased.Talent.LowHealthTarget.AddedCriticalStrikeChance</c> of talent 757; Darkening Hearts (effect 3214), CritChance Additive.</summary>
         public const int LowHealthTargetAddedCriticalStrikeChance = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

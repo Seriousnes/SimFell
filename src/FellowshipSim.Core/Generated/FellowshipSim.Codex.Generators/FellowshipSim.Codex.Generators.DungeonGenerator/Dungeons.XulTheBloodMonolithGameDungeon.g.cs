@@ -14,11 +14,11 @@ public partial class XulTheBloodMonolithGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 30.</summary>
     public const string DungeonDescription = "Built at the zenith of the first Heskyrian Dynasty, the Blood Monolith served as the altar of their magic, where rituals of untold power were performed that cast doom on the world and ensured the Heskyr retained their stranglehold. After the dynasty fell, its dormant magics still protected this seat of power, and to this day, no soul who entered has ever emerged.\r\n\r\nNow the Heskry rise again and the altars of Xul are stirring within the tower where only screams escape.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 30.</summary>
-    public const string DungeonIcon = "Codex_PinnacleDungeon_ST";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 30.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_PinnacleDungeon_ST_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 30.</summary>
-    public const string DungeonBackground = "LoadingScreen_ST";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 30.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_ST_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 30.</summary>
     public const int DungeonMaxPlayers = 4;

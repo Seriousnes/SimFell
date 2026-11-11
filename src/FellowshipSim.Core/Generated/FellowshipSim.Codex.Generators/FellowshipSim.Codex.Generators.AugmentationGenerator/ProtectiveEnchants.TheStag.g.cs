@@ -10,9 +10,14 @@ partial class TheStag
     /// <summary>Game data: <c>name</c> of protective enchant 58.</summary>
     public const string ProtectiveEnchantName = "The Stag";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of protective enchant 58.</summary>
+    public const string ProtectiveEnchantIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Perk_stag_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of protective enchant 58.</summary>
     public const int ProtectiveEnchantMaxRank = 1;
 
     /// <summary>Game data: <c>randomChance</c> of protective enchant 58.</summary>
     public const int ProtectiveEnchantRandomChance = 0;
+
+    public override string? Icon => ProtectiveEnchantIcon;
 }

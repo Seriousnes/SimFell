@@ -14,11 +14,11 @@ public partial class ScryersPeakGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 31.</summary>
     public const string DungeonDescription = "From atop their ancient towers, the Scryers of old looked down on the little people of the world and peered into the deepest of their secrets. Through their arcane devices, they gained incredible insight for centuries, not least the location of the Blood Reliquaries, thought lost at the downfall of the first Heskyrian Dynasty, thousands of years ago.\r\n\r\nNow the resurgent Heskyr lay siege to the ruined tower, seeking the long-lost knowledge of the Scryers; the final locations of the last remaining Blood Reliquaries that will bring about the triumphant resurgence of the Blood Order.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 31.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_SP";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 31.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_SP_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 31.</summary>
-    public const string DungeonBackground = "LoadingScreen_SP";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 31.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_SP_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 31.</summary>
     public const int DungeonMaxPlayers = 4;

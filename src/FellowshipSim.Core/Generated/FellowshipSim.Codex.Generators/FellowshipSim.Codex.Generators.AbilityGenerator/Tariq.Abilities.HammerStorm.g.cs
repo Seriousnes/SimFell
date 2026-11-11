@@ -10,6 +10,9 @@ partial class HammerStorm
     /// <summary>Game data: <c>name</c> of ability 1242.</summary>
     public const string AbilityName = "Hammer Storm";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1242.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Ink_Hammerstorm_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1242.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Power;
 

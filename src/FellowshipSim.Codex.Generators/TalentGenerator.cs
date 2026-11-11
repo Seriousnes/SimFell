@@ -17,10 +17,11 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>FellowshipSim.Core.Domain.Talent</c> in a namespace <c>FellowshipSim.Core.Heroes.&lt;Hero&gt;</c> or one inside it, a
 /// <c>partial</c> of the same class with the values of its talent record. The record is the talent of that hero (the hero of
 /// its talent slot, or one of its origins) whose name in Pascal case (letters and digits only, an apostrophe inside its word)
-/// is the class name. The constants are <c>TalentId</c>, <c>TalentName</c>, one per scalar field of the record under
-/// <c>Talent</c> and the field's name (<c>TalentCooldown</c>, <c>TalentDuration</c>, <c>TalentRadius</c>...), and the
-/// record's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with the hero of the
-/// class's namespace as the record's hero. The class's own part has the talent's behaviour and its <c>Name</c> and
+/// is the class name. The constants are <c>TalentId</c>, <c>TalentName</c>, <c>TalentIcon</c> (the full size image URL of
+/// the record's icon), one per scalar field of the record under <c>Talent</c> and the field's name (<c>TalentCooldown</c>,
+/// <c>TalentDuration</c>, <c>TalentRadius</c>...), and the record's tuning values in a nested <c>Constants</c> under their
+/// <see cref="TuningNames"/> names, with the hero of the class's namespace as the record's hero. The <c>Icon</c> override
+/// of <c>Talent</c> is <c>TalentIcon</c>. The class's own part has the talent's behaviour and its <c>Name</c> and
 /// <c>Id</c> overrides. A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX013. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
@@ -171,6 +172,10 @@ public sealed class TalentGenerator : IIncrementalGenerator
     private static List<Constant> FieldsOf(TalentDocument t)
     {
         var fields = new List<Constant>();
+        if (t.Icon is { Length: > 0 } icon)
+        {
+            fields.Add(new Constant("TalentIcon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of talent {t.Id}."));
+        }
         AddNumber(fields, "Cooldown", "cooldown", t.Cooldown, t.Id);
         AddNumber(fields, "Cost", "cost", t.Cost, t.Id);
         AddNumber(fields, "Duration", "duration", t.Duration, t.Id);
@@ -278,6 +283,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
                 .Append("namespace ").Append(d.Namespace).Append(";\n\n")
                 .Append("partial class ").Append(d.Name).Append("\n{\n");
             bool first = true;
+            var written = new HashSet<string>(StringComparer.Ordinal);
             foreach (var constant in constants)
             {
                 if (members.Contains(constant.Name))
@@ -287,6 +293,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
                 }
                 if (!first) source.Append('\n');
                 first = false;
+                written.Add(constant.Name);
                 source.Append("    /// <summary>").Append(constant.Summary).Append("</summary>\n")
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
@@ -302,6 +309,10 @@ public sealed class TalentGenerator : IIncrementalGenerator
                         tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of talent {record.Id}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
                         false, !first);
                 }
+            }
+            if (written.Contains("TalentIcon"))
+            {
+                source.Append("\n    public override string? Icon => TalentIcon;\n");
             }
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(HeroesNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));

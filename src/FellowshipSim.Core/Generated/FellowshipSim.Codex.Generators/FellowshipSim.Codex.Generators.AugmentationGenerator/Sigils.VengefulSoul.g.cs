@@ -10,6 +10,9 @@ partial class VengefulSoul
     /// <summary>Game data: <c>name</c> of sigil 5.</summary>
     public const string SigilName = "Vengeful Soul";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 5.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Berserker16_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 5.</summary>
     public const int SigilMaxRank = 4;
 
@@ -28,4 +31,6 @@ partial class VengefulSoul
         /// <summary>Game data: rank run <c>Trait.CritsToIncreasedPrimaryStatBuff.Hot.HealValue</c> of sigil 5, transform <c>ticks</c> over 5 ticks; the tooltip has 370% / 630% / 890% / 1150%.</summary>
         public static readonly double[] HotHealValueByRank = [0.74, 1.26, 1.78, 2.3];
     }
+
+    public override string? Icon => SigilIcon;
 }

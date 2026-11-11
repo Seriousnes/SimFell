@@ -10,6 +10,9 @@ partial class HiddenPower
     /// <summary>Game data: <c>name</c> of sigil 1.</summary>
     public const string SigilName = "Hidden Power";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 1.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_SpellBook01_89_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 1.</summary>
     public const int SigilMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class HiddenPower
         /// <summary>Game data: rank run <c>Trait.AbilityToIncreasedMainStat.Buff.AdditionalMainStat</c> of sigil 1, transform <c>delta</c>; the tooltip has 7.2% / 12.8% / 18.4% / 24%.</summary>
         public static readonly double[] BuffAdditionalMainStatByRank = [1.072, 1.128, 1.184, 1.24];
     }
+
+    public override string? Icon => SigilIcon;
 }

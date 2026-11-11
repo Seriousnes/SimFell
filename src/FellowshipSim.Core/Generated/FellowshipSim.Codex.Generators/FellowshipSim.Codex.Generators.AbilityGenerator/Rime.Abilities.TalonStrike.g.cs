@@ -10,6 +10,9 @@ partial class TalonStrike
     /// <summary>Game data: <c>name</c> of ability 2223.</summary>
     public new const string AbilityName = "Talon Strike";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 2223.</summary>
+    public new const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Rime_Singletarget_spender__full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 2223.</summary>
     public new const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Power;
 

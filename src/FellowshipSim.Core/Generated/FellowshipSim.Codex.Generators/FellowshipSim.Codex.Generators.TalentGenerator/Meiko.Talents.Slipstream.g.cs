@@ -10,6 +10,9 @@ partial class Slipstream
     /// <summary>Game data: <c>name</c> of talent 99.</summary>
     public const string TalentName = "Slipstream";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 99.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Meiko_AbilityIcon_10_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 99.</summary>
     public const int TalentDuration = 6;
 
@@ -28,4 +31,6 @@ partial class Slipstream
         /// <summary>Game data: tuning <c>SpeedMultiplier, Meiko.ChargedForwardDash.Talent.AoeSlow.SpeedMultiplier</c> of talent 99; ability 1093, MoveSpeed Multiplicitive.</summary>
         public const double SpeedMultiplier = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

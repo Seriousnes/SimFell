@@ -10,10 +10,15 @@ partial class ColdShower
     /// <summary>Game data: <c>name</c> of talent 657.</summary>
     public const string TalentName = "Cold Shower";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 657.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_MagicRune_2_full.webp";
+
     /// <summary>Game data: the tuning values of talent 657.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamage.Talent.OnTargetPulsatingAoe.FreeCast.ProcChance</c> of talent 657; Freezing Torrent (ability 1027).</summary>
         public const double ChanneledBeamSingleDamageTalentOnTargetPulsatingAoeFreeCastProcChance = 0.07;
     }
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,9 @@ partial class LethalShots
     /// <summary>Game data: <c>name</c> of talent 202.</summary>
     public const string TalentName = "Lethal Shots";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 202.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_arrow_full.webp";
+
     /// <summary>Game data: the tuning values of talent 202.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class LethalShots
         /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.ChanceToHaveIncreasedCritChance.ProcChance</c> of talent 202; Highwind Arrow (ability 1313).</summary>
         public const double ChanceToHaveIncreasedCritChanceProcChance = 0.4;
     }
+
+    public override string? Icon => TalentIcon;
 }

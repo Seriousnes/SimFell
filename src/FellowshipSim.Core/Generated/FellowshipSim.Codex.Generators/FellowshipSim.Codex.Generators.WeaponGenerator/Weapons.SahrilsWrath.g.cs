@@ -10,6 +10,14 @@ partial class SahrilsWrath
     /// <summary>Game data: <c>name</c> of weapon power 351.</summary>
     public const string WeaponPowerName = "Sahril's Wrath";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 351.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_CritAOE_full.webp";
+
     /// <summary>Sahril's Wrath, ability 157 of the game data, in <c>grants</c> of weapon power 351.</summary>
     public const int WeaponPowerAbilityId = 157;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 157.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_CritAOE_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

@@ -10,6 +10,9 @@ partial class VisionsOfGrandeur
     /// <summary>Game data: <c>name</c> of aspect 47.</summary>
     public const string AspectName = "Visions of Grandeur";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 47.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_SpellBook06_08_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 47.</summary>
     public const int AspectMaxRank = 4;
 
@@ -22,4 +25,6 @@ partial class VisionsOfGrandeur
         /// <summary>Game data: rank run <c>Trait.WeaponAndSpiritPoints.SpiritPointsGain.WeaponCooldownFraction</c> of aspect 47, transform <c>raw</c>; the tooltip has 25% / 50% / 75% / 100%.</summary>
         public static readonly double[] SpiritPointsGainWeaponCooldownFractionByRank = [0.25, 0.5, 0.75, 1];
     }
+
+    public override string? Icon => AspectIcon;
 }

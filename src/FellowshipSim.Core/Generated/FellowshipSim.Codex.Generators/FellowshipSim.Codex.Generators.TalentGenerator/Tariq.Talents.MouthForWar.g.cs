@@ -10,6 +10,9 @@ partial class MouthForWar
     /// <summary>Game data: <c>name</c> of talent 80.</summary>
     public const string TalentName = "Mouth for War";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 80.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Ink_FocusedWrath_full.webp";
+
     /// <summary>Game data: the tuning values of talent 80.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class MouthForWar
         /// <summary>Game data: tuning <c>Ink.CostReductionBuff.MaxStacksLimit</c> of talent 80; Focused Wrath (ability 1233).</summary>
         public const int CostReductionBuffMaxStacksLimit = 3;
     }
+
+    public override string? Icon => TalentIcon;
 }

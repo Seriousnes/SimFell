@@ -10,6 +10,9 @@ partial class Burstbolter
     /// <summary>Game data: <c>name</c> of talent 193.</summary>
     public const string TalentName = "Burstbolter";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 193.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Cryomancer7_full.webp";
+
     /// <summary>Game data: the tuning values of talent 193.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class Burstbolter
         /// <summary>Game data: tuning <c>IncreasedCastedDebuffAoeDamageDamage.DamageScaler, Rime.CastedDebuffAoeDamage.Talent.IncreasedCastedDebuffAoeDamageDamage.DamageScaler</c> of talent 193; Bursting Ice (ability 1031), DamageScale Multiplicitive.</summary>
         public const double IncreasedCastedDebuffAoeDamageDamageDamageScaler = 1.3;
     }
+
+    public override string? Icon => TalentIcon;
 }

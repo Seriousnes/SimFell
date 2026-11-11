@@ -10,6 +10,9 @@ partial class MaidensDoom
     /// <summary>Game data: <c>name</c> of talent 442.</summary>
     public const string TalentName = "Maiden's Doom";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 442.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Mara_Maiden_full.webp";
+
     /// <summary>Game data: the tuning values of talent 442.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class MaidensDoom
         /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.IncreasedDamage.DamageMultiplierAtLowHealth</c> of talent 442; Maiden of Death (effect 2194), DamageScale MultiplyCompound.</summary>
         public const double ChargedResourceRefillSelfBuffTalentIncreasedDamageDamageMultiplierAtLowHealth = 1.4;
     }
+
+    public override string? Icon => TalentIcon;
 }

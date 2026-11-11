@@ -19,7 +19,8 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>FellowshipSim.Core.Customization</c>, a <c>partial</c> of the same class with the values of its augmentation record.
 /// The record is the aspect, sigil or protective enchant (the class's base: <c>Aspect</c>, <c>Sigil</c> or
 /// <c>ProtectiveEnchant</c>) whose name in Pascal case (letters and digits only, an apostrophe inside its word) is the class
-/// name. The constants are <c>&lt;Type&gt;Id</c>, <c>&lt;Type&gt;Name</c>, one per scalar field of the record under the type
+/// name. The constants are <c>&lt;Type&gt;Id</c>, <c>&lt;Type&gt;Name</c>, <c>&lt;Type&gt;Icon</c> (the full size image URL
+/// of the record's icon, and the <c>Icon</c> override of <c>Augmentation</c>), one per scalar field of the record under the type
 /// and the field's name (<c>SigilMaxRank</c>, <c>ProtectiveEnchantDuration</c>, <c>AspectProcsPerMinute</c>...), and the
 /// record's tuning values and rank runs in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero
 /// as the record's hero. Each rank run is a <c>public static readonly double[]</c> of its values by rank, named after its
@@ -196,6 +197,10 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
     {
         string owner = $"{Words(type)} {a.Id}";
         var fields = new List<Member>();
+        if (a.Icon is { Length: > 0 } icon)
+        {
+            fields.Add(new Member(type + "Icon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of {owner}."));
+        }
         AddNumber(fields, type + "MaxRank", a.MaxRank, $"Game data: <c>maxRank</c> of {owner}.");
         AddNumber(fields, type + "RandomChance", a.RandomChance, $"Game data: <c>randomChance</c> of {owner}.");
         AddNumber(fields, type + "Cooldown", a.Cooldown, $"Game data: <c>cooldown</c> of {owner}.");
@@ -318,6 +323,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 .Append("namespace ").Append(d.Namespace).Append(";\n\n")
                 .Append("partial class ").Append(d.Name).Append("\n{\n");
             bool first = true;
+            var written = new HashSet<string>(StringComparer.Ordinal);
             foreach (var member in all)
             {
                 if (members.Contains(member.Name))
@@ -327,6 +333,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 }
                 if (!first) source.Append('\n');
                 first = false;
+                written.Add(member.Name);
                 source.Append("    /// <summary>").Append(member.Summary).Append("</summary>\n")
                     .Append("    public const ").Append(member.Type).Append(' ').Append(member.Name).Append(" = ").Append(member.Literal).Append(";\n");
             }
@@ -344,6 +351,10 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                             : $"Game data: tuning <c>{Escape(t.Keys)}</c> of {owner}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
                         false, !first);
                 }
+            }
+            if (written.Contains(record.Type + "Icon"))
+            {
+                source.Append("\n    public override string? Icon => ").Append(record.Type).Append("Icon;\n");
             }
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));

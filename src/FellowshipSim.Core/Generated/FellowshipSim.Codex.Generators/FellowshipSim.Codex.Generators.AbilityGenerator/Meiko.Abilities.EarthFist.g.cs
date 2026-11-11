@@ -10,6 +10,9 @@ partial class EarthFist
     /// <summary>Game data: <c>name</c> of ability 1100.</summary>
     public const string AbilityName = "Earth Fist";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1100.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Meiko_AbilityIcon_03_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1100.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Basic;
 

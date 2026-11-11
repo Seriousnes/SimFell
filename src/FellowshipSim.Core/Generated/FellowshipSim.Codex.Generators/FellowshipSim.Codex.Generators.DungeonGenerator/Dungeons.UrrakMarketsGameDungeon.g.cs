@@ -14,11 +14,11 @@ public partial class UrrakMarketsGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 21.</summary>
     public const string DungeonDescription = "In the heart of the Urrak Markets, the goatmen barter lives for orcish promises of enchanted steel and dark sorcery. Beneath the noise of trade, something far grimmer moves. The orc clans prepare their captives for sacrifice, their rituals meant to rouse the demon god Baphumos from his slumber within the forsaken Demonbrand Ruins.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 21.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_UM";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 21.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_UM_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 21.</summary>
-    public const string DungeonBackground = "LoadingScreen_UM_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 21.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_UM_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 21.</summary>
     public const int DungeonMaxPlayers = 4;

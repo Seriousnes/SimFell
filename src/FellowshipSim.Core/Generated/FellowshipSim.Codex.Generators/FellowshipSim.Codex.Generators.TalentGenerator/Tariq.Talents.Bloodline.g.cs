@@ -10,6 +10,9 @@ partial class Bloodline
     /// <summary>Game data: <c>name</c> of talent 76.</summary>
     public const string TalentName = "Bloodline";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 76.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_BloodCombat_141_full.webp";
+
     /// <summary>Game data: the tuning values of talent 76.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class Bloodline
         /// <summary>Game data: tuning <c>PassiveResourceGeneration.Period, Ink.Talent.PassiveResourceGeneration.Period</c> of talent 76; effect 2424.</summary>
         public const int PassiveResourceGenerationPeriod = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

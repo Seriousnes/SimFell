@@ -10,6 +10,9 @@ partial class TheTrickster
     /// <summary>Game data: <c>name</c> of glyph 700.</summary>
     public const string GlyphName = "The Trickster";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 700.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_02_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 700.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class TheTrickster
         /// <summary>Game data: tuning <c>Duration</c> of glyph 700; The Trickster (effect 3181).</summary>
         public const int Duration = 4;
     }
+
+    public override string? Icon => GlyphIcon;
 }

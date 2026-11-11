@@ -10,6 +10,9 @@ partial class FrostSwallows
     /// <summary>Game data: <c>name</c> of ability 1033.</summary>
     public const string AbilityName = "Frost Swallows";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1033.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Rime_BirdCD_full.webp";
+
     /// <summary>Game data: the tuning values of ability 1033.</summary>
     public static class Constants
     {

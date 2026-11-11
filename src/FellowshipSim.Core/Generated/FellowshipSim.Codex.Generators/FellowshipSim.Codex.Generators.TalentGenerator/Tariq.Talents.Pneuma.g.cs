@@ -9,4 +9,9 @@ partial class Pneuma
 
     /// <summary>Game data: <c>name</c> of talent 81.</summary>
     public const string TalentName = "Pneuma";
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 81.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Energy_18_full.webp";
+
+    public override string? Icon => TalentIcon;
 }

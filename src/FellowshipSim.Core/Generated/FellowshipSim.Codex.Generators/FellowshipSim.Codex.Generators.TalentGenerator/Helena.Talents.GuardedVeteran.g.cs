@@ -10,10 +10,15 @@ partial class GuardedVeteran
     /// <summary>Game data: <c>name</c> of talent 645.</summary>
     public const string TalentName = "Guarded Veteran";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 645.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Fire_08_Yellow_full.webp";
+
     /// <summary>Game data: the tuning values of talent 645.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>IncreasedBlockChance.AdditionalBlockChance, Warmaster.Talent.IncreasedBlockChance.AdditionalBlockChance, Warmaster.DefenceBuff.Talent.IncreasedBlockChance.AdditionalBlockChance</c> of talent 645; Shields Up (ability 984).</summary>
         public const double IncreasedBlockChanceAdditionalBlockChance = 0.05;
     }
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,9 @@ partial class RavensPrecision
     /// <summary>Game data: <c>name</c> of talent 760.</summary>
     public const string TalentName = "Raven's Precision";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 760.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Gunde_AOESwing_01_full.webp";
+
     /// <summary>Game data: <c>range</c> of talent 760.</summary>
     public const int TalentRange = 1000;
 
@@ -31,4 +34,6 @@ partial class RavensPrecision
         /// <summary>Game data: tuning <c>Gunde.InstantWhirlwindAoe.Talent.GatherOrbs.MaxRange</c> of talent 760; ability 2265.</summary>
         public const int InstantWhirlwindAoeTalentGatherOrbsMaxRange = 1000;
     }
+
+    public override string? Icon => TalentIcon;
 }

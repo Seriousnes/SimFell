@@ -10,6 +10,9 @@ partial class ResonanceOfEarth
     /// <summary>Game data: <c>name</c> of talent 90.</summary>
     public const string TalentName = "Resonance of Earth";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 90.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Energy_19_full.webp";
+
     /// <summary>Game data: the tuning values of talent 90.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class ResonanceOfEarth
         /// <summary>Game data: tuning <c>IncomingDamageMultiplier.Duration, Meiko.DamageSoakBuff.Talent.IncomingDamageMultiplier.Duration</c> of talent 90; Resonance of Earth (effect 1512).</summary>
         public const int IncomingDamageMultiplierDuration = 8;
     }
+
+    public override string? Icon => TalentIcon;
 }

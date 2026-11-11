@@ -10,6 +10,9 @@ partial class WillfulMomentum
     /// <summary>Game data: <c>name</c> of sigil 39.</summary>
     public const string SigilName = "Willful Momentum";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 39.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_SpiritFire_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 39.</summary>
     public const int SigilMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class WillfulMomentum
         /// <summary>Game data: rank run <c>Trait.IncreasedMainStatAndSpiritRating.Buff.MainStatAdd</c> of sigil 39, transform <c>delta</c>; the tooltip has 1.5% / 2.6% / 3.7% / 4.8%.</summary>
         public static readonly double[] BuffMainStatAddByRank = [1.015, 1.026, 1.037, 1.048];
     }
+
+    public override string? Icon => SigilIcon;
 }

@@ -16,11 +16,12 @@ namespace FellowshipSim.Codex.Generators;
 /// Writes the game data's half of each relic passive class: for each <c>partial</c> class deriving from
 /// <c>FellowshipSim.Core.Customization.RelicPassives.RelicPassive</c>, a <c>partial</c> of the same class with the values of
 /// its relic passive record. The record is the relic passive whose name in Pascal case (letters and digits only, an
-/// apostrophe inside its word) is the class name. The constants are <c>RelicPassiveId</c>, <c>RelicPassiveName</c>, one per
-/// scalar field of the record under <c>RelicPassive</c> and the field's name (<c>RelicPassiveCooldown</c>, and
-/// <c>RelicPassiveProcsPerMinute</c> from its one proc roll), and <c>&lt;Slot&gt;ItemId</c> and <c>&lt;Slot&gt;ItemName</c> for
-/// each item granting the passive (one item line per hero, one constant pair per item ID). <c>RelicPassiveItems</c> is a
-/// <c>public static readonly RelicItem[]</c> of those items. The record's tuning values are in a nested <c>Constants</c>
+/// apostrophe inside its word) is the class name. The constants are <c>RelicPassiveId</c>, <c>RelicPassiveName</c>,
+/// <c>RelicPassiveIcon</c> (the full size image URL of the record's icon), one per scalar field of the record under
+/// <c>RelicPassive</c> and the field's name (<c>RelicPassiveCooldown</c>, and <c>RelicPassiveProcsPerMinute</c> from its one
+/// proc roll), and <c>&lt;Slot&gt;ItemId</c>, <c>&lt;Slot&gt;ItemName</c> and <c>&lt;Slot&gt;ItemIcon</c> for each item
+/// granting the passive (one item line per hero, one constant set per item ID). <c>RelicPassiveItems</c> is a
+/// <c>public static readonly RelicItem[]</c> of those items, each with its ID, name and icon URL. The record's tuning values are in a nested <c>Constants</c>
 /// under their <see cref="TuningNames"/> names, with no hero as the record's hero. The class's own part has the passive's
 /// behaviour and its <c>Id</c>, <c>Name</c> and <c>Items</c> overrides. A member of the class or a base class with a
 /// constant's name, or the name <c>Constants</c>, is CODEX029. The game data is the AdditionalFiles
@@ -58,8 +59,8 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     /// </summary>
     private sealed record Constant(string Name, string Type, string Literal, string Summary);
 
-    /// <summary>An item granting a relic passive: its ID, name and slot.</summary>
-    private sealed record Item(int Id, string Name, string Slot);
+    /// <summary>An item granting a relic passive: its ID, name, slot and icon URL (empty for none).</summary>
+    private sealed record Item(int Id, string Name, string Slot, string Icon);
 
     /// <summary>A relic passive record: its ID, name, class name, the items granting it, its field constants and its tuning values.</summary>
     private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Item> Items, EquatableArray<Constant> Fields,
@@ -160,7 +161,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
                         passives.Add(p);
                         break;
                     case ItemDocument { Grants: { Type: EntityType.RelicPassive } grants } i when (i.Name ?? "").Trim().Length > 0:
-                        items.Add((grants.Id, new Item(i.Id, i.Name!.Trim(), i.Slot ?? "")));
+                        items.Add((grants.Id, new Item(i.Id, i.Name!.Trim(), i.Slot ?? "", UrlOf(i.Icon))));
                         break;
                 }
             }
@@ -184,6 +185,10 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     private static List<Constant> FieldsOf(RelicPassiveDocument p)
     {
         var fields = new List<Constant>();
+        if (p.Icon is { Length: > 0 } icon)
+        {
+            fields.Add(new Constant("RelicPassiveIcon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of relic passive {p.Id}."));
+        }
         AddNumber(fields, "RelicPassiveCooldown", p.Cooldown, $"Game data: <c>cooldown</c> of relic passive {p.Id}.");
         if (p.ProcRolls is [{ ProcsPerMinute: { } ppm } roll])
         {
@@ -193,6 +198,9 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
         }
         return fields;
     }
+
+    /// <summary>The URL of a texture's full size image; empty for no texture.</summary>
+    private static string UrlOf(string? texture) => texture is { Length: > 0 } ? Textures.Url(texture) : "";
 
     private static void AddNumber(List<Constant> fields, string name, double? value, string summary)
     {
@@ -250,17 +258,23 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             string prefix = PascalCase(bySlot.Key) + "Item";
             var ids = bySlot.Select(i => i.Id).Distinct().ToList();
             var names = bySlot.Select(i => i.Name).Distinct().ToList();
-            if (ids.Count != 1 || names.Count != 1)
+            var icons = bySlot.Select(i => i.Icon).Distinct().ToList();
+            if (ids.Count != 1 || names.Count != 1 || icons.Count != 1)
             {
                 string all = string.Join(", ", bySlot.Select(i => $"item {i.Id} ({i.Name})"));
                 constants.Add(new Constant(prefix + "Id", "", "", all));
                 constants.Add(new Constant(prefix + "Name", "", "", all));
+                constants.Add(new Constant(prefix + "Icon", "", "", all));
                 continue;
             }
             var item = bySlot.First();
             constants.Add(new Constant(prefix + "Id", "int", item.Id.ToString(CultureInfo.InvariantCulture),
                 $"{Escape(item.Name)}, item {item.Id} of the game data, granting relic passive {record.Id}."));
             constants.Add(new Constant(prefix + "Name", "string", Literal(item.Name), $"Game data: <c>name</c> of item {item.Id}."));
+            if (item.Icon.Length > 0)
+            {
+                constants.Add(new Constant(prefix + "Icon", "string", Literal(item.Icon), $"Game data: the full size image URL of <c>icon</c> of item {item.Id}."));
+            }
         }
         return constants;
     }
@@ -334,7 +348,8 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
                     .Append("    public static readonly ").Append(RelicItemType).Append("[] RelicPassiveItems =\n    [\n");
                 foreach (var item in record.Items)
                 {
-                    source.Append("        new(").Append(item.Id).Append(", ").Append(Literal(item.Name)).Append("),\n");
+                    source.Append("        new(").Append(item.Id).Append(", ").Append(Literal(item.Name)).Append(", ")
+                        .Append(item.Icon.Length > 0 ? Literal(item.Icon) : "null").Append("),\n");
                 }
                 source.Append("    ];\n");
                 first = false;

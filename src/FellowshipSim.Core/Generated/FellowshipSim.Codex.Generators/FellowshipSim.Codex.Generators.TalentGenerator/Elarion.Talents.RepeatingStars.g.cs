@@ -10,6 +10,9 @@ partial class RepeatingStars
     /// <summary>Game data: <c>name</c> of talent 124.</summary>
     public const string TalentName = "Repeating Stars";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 124.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_Rain_full.webp";
+
     /// <summary>Game data: the tuning values of talent 124.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class RepeatingStars
         /// <summary>Game data: tuning <c>CooldownReductionEmpowered.CooldownReductionInSeconds, Bowguy.AoeProjectileDamage.Talent.CooldownReductionEmpowered.CooldownReductionInSeconds</c> of talent 124; Multishot (ability 1318).</summary>
         public const int CooldownReductionEmpoweredCooldownReductionInSeconds = 3;
     }
+
+    public override string? Icon => TalentIcon;
 }

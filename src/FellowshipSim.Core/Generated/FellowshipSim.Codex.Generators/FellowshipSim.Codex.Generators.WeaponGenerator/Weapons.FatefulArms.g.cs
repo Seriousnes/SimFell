@@ -10,6 +10,14 @@ partial class FatefulArms
     /// <summary>Game data: <c>name</c> of weapon power 354.</summary>
     public const string WeaponPowerName = "Fated Strike";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 354.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_CDstrike_full.webp";
+
     /// <summary>Fated Strike, ability 160 of the game data, in <c>grants</c> of weapon power 354.</summary>
     public const int WeaponPowerAbilityId = 160;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 160.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_CDstrike_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

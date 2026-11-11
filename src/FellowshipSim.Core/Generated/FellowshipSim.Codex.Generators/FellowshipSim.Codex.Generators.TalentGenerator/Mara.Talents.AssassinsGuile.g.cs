@@ -10,6 +10,9 @@ partial class AssassinsGuile
     /// <summary>Game data: <c>name</c> of talent 422.</summary>
     public const string TalentName = "Assassin's Guile";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 422.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Shadow_121_full.webp";
+
     /// <summary>Game data: the tuning values of talent 422.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class AssassinsGuile
         /// <summary>Game data: tuning <c>SpenderIncreasedDamage.Duration, Mara.Stealth.Talent.SpenderIncreasedDamage.Duration</c> of talent 422; Assassin's Guile (effect 2245).</summary>
         public const int SpenderIncreasedDamageDuration = 5;
     }
+
+    public override string? Icon => TalentIcon;
 }

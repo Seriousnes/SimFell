@@ -10,6 +10,9 @@ partial class SunsTouch
     /// <summary>Game data: <c>name</c> of talent 607.</summary>
     public const string TalentName = "Sun's Touch";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 607.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Sune_BrilliantFlare_full.webp";
+
     /// <summary>Game data: the tuning values of talent 607.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class SunsTouch
         /// <summary>Game data: tuning <c>DotHot.Period, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Period</c> of talent 607; Sun's Touch (effect 2724).</summary>
         public const double DotHotPeriod = 1.5;
     }
+
+    public override string? Icon => TalentIcon;
 }

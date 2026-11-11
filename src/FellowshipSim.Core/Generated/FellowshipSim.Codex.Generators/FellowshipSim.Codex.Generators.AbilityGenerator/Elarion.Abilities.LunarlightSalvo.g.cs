@@ -10,6 +10,9 @@ partial class LunarlightSalvo
     /// <summary>Game data: <c>name</c> of ability 1309.</summary>
     public const string AbilityName = "Lunarlight Salvo";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1309.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_Mark_full.webp";
+
     /// <summary>Game data: <c>radius</c> of ability 1309.</summary>
     public const int AbilityRadius = 3000;
 

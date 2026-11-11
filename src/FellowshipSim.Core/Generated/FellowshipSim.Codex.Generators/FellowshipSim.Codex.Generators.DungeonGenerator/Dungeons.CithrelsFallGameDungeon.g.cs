@@ -14,11 +14,11 @@ public partial class CithrelsFallGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 7.</summary>
     public const string DungeonDescription = "To the frozen south, high atop the Ael'deth Mountain, lies the hidden prison of Al’zerac, an ancient frost wyrm. For centuries, the Eldrin have guarded the vault, but time wears down both vigilance and faith. Cithrel now walks the outer wards, her power cracking ancient seals that once bound the Great Wyrm. When the final lock breaks, Al’zerac will rise again, not as a god to be worshiped but as a weapon to restore the Eldrin’s ancient dominion.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 7.</summary>
-    public const string DungeonIcon = "Codex_CapDungeon_FK";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 7.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_CapDungeon_FK_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 7.</summary>
-    public const string DungeonBackground = "LoadingScreen_FK";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 7.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_FK_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 7.</summary>
     public const int DungeonMaxPlayers = 4;

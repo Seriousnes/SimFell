@@ -10,6 +10,9 @@ partial class EmeraldJudgement
     /// <summary>Game data: <c>name</c> of aspect 34.</summary>
     public const string AspectName = "Emerald Judgement";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 34.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_NatureStaff_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 34.</summary>
     public const int AspectMaxRank = 4;
 
@@ -22,4 +25,6 @@ partial class EmeraldJudgement
         /// <summary>Game data: rank run <c>Trait.GemTargetedSpikeProc.PPM</c> of aspect 34, transform <c>plain</c>; the tooltip has 0.8 PPM / 1.30 PPM / 1.80 PPM / 2.30 PPM.</summary>
         public static readonly double[] PPMByRank = [0.8, 1.3, 1.8, 2.3];
     }
+
+    public override string? Icon => AspectIcon;
 }

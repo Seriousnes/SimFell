@@ -10,6 +10,9 @@ partial class Malevolence
     /// <summary>Game data: <c>name</c> of talent 443.</summary>
     public const string TalentName = "Malevolence";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 443.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_violet_7_full.webp";
+
     /// <summary>Game data: the tuning values of talent 443.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class Malevolence
         /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
         public const int TalentDamageSpendersBuffOtherSpenderMaxNumberOfStacks = 2;
     }
+
+    public override string? Icon => TalentIcon;
 }

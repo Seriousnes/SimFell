@@ -10,10 +10,15 @@ partial class CelestialFavor
     /// <summary>Game data: <c>name</c> of talent 575.</summary>
     public const string TalentName = "Celestial Favor";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 575.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Sune_OmegaReprieval_full.webp";
+
     /// <summary>Game data: the tuning values of talent 575.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>ActiveCooldownReduction.CooldownReduction, Sune.BuffedTargetedCastedHealOrDamage.Talent.ActiveCooldownReduction.CooldownReduction</c> of talent 575; Omega Reprieval (ability 1861).</summary>
         public const int ActiveCooldownReductionCooldownReduction = 3;
     }
+
+    public override string? Icon => TalentIcon;
 }

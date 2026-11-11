@@ -10,10 +10,15 @@ partial class Puncture
     /// <summary>Game data: <c>name</c> of talent 123.</summary>
     public const string TalentName = "Puncture";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 123.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Mara_RegainEnergyHit_full.webp";
+
     /// <summary>Game data: the tuning values of talent 123.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Mara.ChargedDoubleAttackBuilder.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 123; Widow's Bite (ability 1207), CritChance Additive.</summary>
         public const int IncreasedCritChanceAdditionalCritChance = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

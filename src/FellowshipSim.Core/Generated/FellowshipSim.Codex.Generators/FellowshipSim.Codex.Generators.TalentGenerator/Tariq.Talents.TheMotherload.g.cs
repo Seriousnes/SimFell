@@ -10,6 +10,9 @@ partial class TheMotherload
     /// <summary>Game data: <c>name</c> of talent 672.</summary>
     public const string TalentName = "The Motherload";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 672.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_SoulGrave_full.webp";
+
     /// <summary>Game data: the tuning values of talent 672.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class TheMotherload
         /// <summary>Game data: tuning <c>IncreasedDamage.DamageMultiplier, Ink.BouncyProjectile.Talent.IncreasedDamage.DamageMultiplier</c> of talent 672; Chain Lightning (ability 1237), DamageScale MultiplyCompound.</summary>
         public const int IncreasedDamageDamageMultiplier = 1;
     }
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,9 @@ partial class PyrophibianFrenzy
     /// <summary>Game data: <c>name</c> of talent 146.</summary>
     public const string TalentName = "Pyrophibian Frenzy";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 146.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Firemage_Firefrog_full.webp";
+
     /// <summary>Game data: the tuning values of talent 146.</summary>
     public static class Constants
     {
@@ -25,4 +28,6 @@ partial class PyrophibianFrenzy
         /// <summary>Game data: tuning <c>ProcChanceOnCrit, Firemage.Talent.FireFrogOnDotCrit.ProcChanceOnCrit</c> of talent 146; Frog Squad (ability 1254).</summary>
         public const double ProcChanceOnCrit = 0.05;
     }
+
+    public override string? Icon => TalentIcon;
 }

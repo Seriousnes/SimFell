@@ -10,6 +10,9 @@ partial class TheWayfarer
     /// <summary>Game data: <c>name</c> of glyph 703.</summary>
     public const string GlyphName = "The Wayfarer";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of glyph 703.</summary>
+    public const string GlyphIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icons_BlessingRuneIcon_Unallocated_012_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of glyph 703.</summary>
     public const int GlyphMaxRank = 4;
 
@@ -28,4 +31,6 @@ partial class TheWayfarer
         /// <summary>Game data: tuning <c>Cooldown</c> of glyph 703; The Wayfarer: On Cooldown (effect 3183).</summary>
         public const int Cooldown = 60;
     }
+
+    public override string? Icon => GlyphIcon;
 }

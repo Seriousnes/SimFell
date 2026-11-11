@@ -14,11 +14,11 @@ public partial class Dungeon26GameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 26.</summary>
     public const string DungeonDescription = "Please wait until we restore your session...";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 26.</summary>
-    public const string DungeonIcon = "fellowship_background_menu_2024_01";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 26.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/fellowship_background_menu_2024_01_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 26.</summary>
-    public const string DungeonBackground = "fellowship_background_menu_2024_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 26.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/fellowship_background_menu_2024_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 26.</summary>
     public const int DungeonMaxPlayers = 3;

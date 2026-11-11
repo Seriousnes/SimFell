@@ -10,6 +10,14 @@ partial class FrozenStaffOfAnzhyr
     /// <summary>Game data: <c>name</c> of weapon power 357.</summary>
     public const string WeaponPowerName = "Icicles of An'zhyr";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 357.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_FrostRain_full.webp";
+
     /// <summary>Icicles of An'zhyr, ability 1561 of the game data, in <c>grants</c> of weapon power 357.</summary>
     public const int WeaponPowerAbilityId = 1561;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1561.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_FrostRain_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

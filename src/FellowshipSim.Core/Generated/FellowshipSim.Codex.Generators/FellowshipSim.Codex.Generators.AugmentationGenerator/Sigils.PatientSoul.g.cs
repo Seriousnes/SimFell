@@ -10,6 +10,9 @@ partial class PatientSoul
     /// <summary>Game data: <c>name</c> of sigil 46.</summary>
     public const string SigilName = "Patient Soul";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 46.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_SpellBook06_99_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 46.</summary>
     public const int SigilMaxRank = 4;
 
@@ -22,4 +25,6 @@ partial class PatientSoul
         /// <summary>Game data: rank run <c>Trait.StandingStillStaminaExpertiseRatingIncrease.Buff.AdditionalExpertiseRating</c> of sigil 46, transform <c>plain</c>; the tooltip has 12 / 22 / 32 / 42.</summary>
         public static readonly double[] BuffAdditionalExpertiseRatingByRank = [12, 22, 32, 42];
     }
+
+    public override string? Icon => SigilIcon;
 }

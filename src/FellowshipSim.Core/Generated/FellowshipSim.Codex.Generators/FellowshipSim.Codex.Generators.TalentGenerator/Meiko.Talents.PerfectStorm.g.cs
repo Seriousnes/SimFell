@@ -10,6 +10,9 @@ partial class PerfectStorm
     /// <summary>Game data: <c>name</c> of talent 91.</summary>
     public const string TalentName = "Perfect Storm";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 91.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_blue_6_full.webp";
+
     /// <summary>Game data: the tuning values of talent 91.</summary>
     public static class Constants
     {
@@ -40,4 +43,6 @@ partial class PerfectStorm
         /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of talent 91; Earthen Skin (effect 3139).</summary>
         public const double TauntTotemTalentBuffAfterDestroyedWindDamageIncrease = 1.2;
     }
+
+    public override string? Icon => TalentIcon;
 }

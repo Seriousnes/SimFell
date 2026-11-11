@@ -10,6 +10,14 @@ partial class DarkfrostArms
     /// <summary>Game data: <c>name</c> of weapon power 348.</summary>
     public const string WeaponPowerName = "Al'zerac's Shackle";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 348.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_IceShackle_full.webp";
+
     /// <summary>Al'zerac's Shackle, ability 152 of the game data, in <c>grants</c> of weapon power 348.</summary>
     public const int WeaponPowerAbilityId = 152;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 152.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_IceShackle_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

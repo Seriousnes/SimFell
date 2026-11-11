@@ -10,6 +10,9 @@ partial class Aftershock
     /// <summary>Game data: <c>name</c> of talent 213.</summary>
     public const string TalentName = "Aftershock";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 213.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Arcane_36_full.webp";
+
     /// <summary>Game data: the tuning values of talent 213.</summary>
     public static class Constants
     {
@@ -19,4 +22,6 @@ partial class Aftershock
         /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.IncomingDamageDivider, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.IncomingDamageDivider</c> of talent 213; Vanguard's Advance (effect 2429), PhysicalIncomingDamageMultiplier MultiplyCompound.</summary>
         public const double ReducedIncomingDamageFromTargetIncomingDamageDivider = 0.95;
     }
+
+    public override string? Icon => TalentIcon;
 }

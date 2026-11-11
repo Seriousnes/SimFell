@@ -10,6 +10,9 @@ partial class VanguardOfVengeance
     /// <summary>Game data: <c>name</c> of talent 580.</summary>
     public const string TalentName = "Vanguard of Vengeance";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 580.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_FireEnchantment_full.webp";
+
     /// <summary>Game data: the tuning values of talent 580.</summary>
     public static class Constants
     {
@@ -31,4 +34,6 @@ partial class VanguardOfVengeance
         /// <summary>Game data: tuning <c>ManaGain, Sune.Talent.ParryCounterAttack.ManaGain</c> of talent 580; ability 1909.</summary>
         public const double ManaGain = 0.005;
     }
+
+    public override string? Icon => TalentIcon;
 }

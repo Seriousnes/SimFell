@@ -10,6 +10,9 @@ partial class FarBeyondDriven
     /// <summary>Game data: <c>name</c> of talent 79.</summary>
     public const string TalentName = "Far Beyond Driven";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 79.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Energy_13_full.webp";
+
     /// <summary>Game data: the tuning values of talent 79.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class FarBeyondDriven
         /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.StatIncrease</c> of talent 79; Far Beyond Driven (effect 1744), Spirit Additive.</summary>
         public const double TalentAutoAttackBuffDurationalStatBonusStatIncrease = 0.015;
     }
+
+    public override string? Icon => TalentIcon;
 }

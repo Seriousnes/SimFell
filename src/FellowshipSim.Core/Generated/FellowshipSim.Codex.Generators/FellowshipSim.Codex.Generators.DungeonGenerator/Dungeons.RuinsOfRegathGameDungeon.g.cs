@@ -14,11 +14,11 @@ public partial class RuinsOfRegathGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 29.</summary>
     public const string DungeonDescription = "The outpost of Regath festers with decay. The land it stands upon is soaked with the blood of fallen warriors; betrayed by a Heskyr acolyte, slain in a forgotten battle, for an unholy cause. Now their restless spirits are bound to the land by the unnatural magics of the lost Blood Reliquary, hidden in the crypt beneath.\r\n\r\nHoping to extract the blood from within, the Heskyr have mounted an offensive on the keep's inner sanctum. They have stormed the crumbling walls with ease and now seek to unleash the dormant power, awaking the anger and hate of the unquiet dead.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 29.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_MC";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 29.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_MC_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 29.</summary>
-    public const string DungeonBackground = "LoadingScreen_MC";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 29.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_MC_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 29.</summary>
     public const int DungeonMaxPlayers = 4;

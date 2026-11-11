@@ -10,6 +10,9 @@ partial class GleamingShield
     /// <summary>Game data: <c>name</c> of talent 641.</summary>
     public const string TalentName = "Gleaming Shield";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 641.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Gold_05_full.webp";
+
     /// <summary>Game data: <c>duration</c> of talent 641.</summary>
     public const int TalentDuration = 3;
 
@@ -28,4 +31,6 @@ partial class GleamingShield
         /// <summary>Game data: tuning <c>IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor, Warmaster.Talent.IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor</c> of talent 641; ability 2216.</summary>
         public const double IncreasedArmorFromAbilitiesMeleeCleaveAdditionalDamageBasedOnArmor = 0.1;
     }
+
+    public override string? Icon => TalentIcon;
 }

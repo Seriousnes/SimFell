@@ -16,7 +16,8 @@ namespace FellowshipSim.Codex.Generators;
 /// Writes the game data's half of each glyph class: for each <c>partial</c> class deriving from
 /// <c>FellowshipSim.Core.Customization.Glyphs.Glyph</c>, a <c>partial</c> of the same class with the values of its glyph
 /// record. The record is the glyph whose name in Pascal case (letters and digits only, an apostrophe inside its word) is
-/// the class name. The constants are <c>GlyphId</c>, <c>GlyphName</c>, one per scalar field of the record under
+/// the class name. The constants are <c>GlyphId</c>, <c>GlyphName</c>, <c>GlyphIcon</c> (the full size image URL of the
+/// record's icon, and the <c>Icon</c> override of <c>Glyph</c>), one per scalar field of the record under
 /// <c>Glyph</c> and the field's name (<c>GlyphMaxRank</c>, <c>GlyphAbilityRank</c>), and the record's tuning values in a
 /// nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the record's hero. A tuning value has
 /// a value per rank: one value at every rank is a constant, and values differing by rank are a
@@ -150,6 +151,10 @@ public sealed class GlyphGenerator : IIncrementalGenerator
     private static List<Member> FieldsOf(GlyphDocument g)
     {
         var fields = new List<Member>();
+        if (g.Icon is { Length: > 0 } icon)
+        {
+            fields.Add(new Member("GlyphIcon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of glyph {g.Id}."));
+        }
         if (g.MaxRank is { } maxRank)
         {
             fields.Add(new Member("GlyphMaxRank", "int", maxRank.ToString(CultureInfo.InvariantCulture), $"Game data: <c>maxRank</c> of glyph {g.Id}."));
@@ -252,6 +257,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 .Append("namespace ").Append(d.Namespace).Append(";\n\n")
                 .Append("partial class ").Append(d.Name).Append("\n{\n");
             bool first = true;
+            var written = new HashSet<string>(StringComparer.Ordinal);
             foreach (var member in all)
             {
                 if (members.Contains(member.Name))
@@ -261,6 +267,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 }
                 if (!first) source.Append('\n');
                 first = false;
+                written.Add(member.Name);
                 source.Append("    /// <summary>").Append(member.Summary).Append("</summary>\n")
                     .Append("    public const ").Append(member.Type).Append(' ').Append(member.Name).Append(" = ").Append(member.Literal).Append(";\n");
             }
@@ -276,6 +283,10 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                         tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of glyph {record.Id}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}{(t.ByRank ? ", by rank" : "")}.")),
                         false, !first);
                 }
+            }
+            if (written.Contains("GlyphIcon"))
+            {
+                source.Append("\n    public override string? Icon => GlyphIcon;\n");
             }
             source.Append("}\n");
             context.AddSource($"Glyphs.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));

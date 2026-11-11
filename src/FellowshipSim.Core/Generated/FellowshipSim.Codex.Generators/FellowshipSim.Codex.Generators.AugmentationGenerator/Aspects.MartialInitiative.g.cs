@@ -10,6 +10,9 @@ partial class MartialInitiative
     /// <summary>Game data: <c>name</c> of aspect 51.</summary>
     public const string AspectName = "Martial Initiative";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 51.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Guardian5_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 51.</summary>
     public const int AspectMaxRank = 4;
 
@@ -22,4 +25,6 @@ partial class MartialInitiative
         /// <summary>Game data: rank run <c>Trait.WeaponDamageReductionPrimaryStatIncrease.Buff.WeaponCooldownToDuration</c> of aspect 51, transform <c>raw</c>; the tooltip has 10% / 18% / 25% / 32%.</summary>
         public static readonly double[] BuffWeaponCooldownToDurationByRank = [0.1, 0.18, 0.25, 0.32];
     }
+
+    public override string? Icon => AspectIcon;
 }

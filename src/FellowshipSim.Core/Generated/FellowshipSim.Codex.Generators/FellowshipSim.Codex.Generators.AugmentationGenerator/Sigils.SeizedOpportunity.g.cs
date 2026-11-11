@@ -10,6 +10,9 @@ partial class SeizedOpportunity
     /// <summary>Game data: <c>name</c> of sigil 4.</summary>
     public const string SigilName = "Seized Opportunity";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 4.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_violet_27_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 4.</summary>
     public const int SigilMaxRank = 4;
 
@@ -22,4 +25,6 @@ partial class SeizedOpportunity
         /// <summary>Game data: rank run <c>Trait.CritsToIncreasedCritRating.Buff.AdditionalCritRating</c> of sigil 4, transform <c>plain</c>; the tooltip has 21 / 39 / 57 / 75.</summary>
         public static readonly double[] BuffAdditionalCritRatingByRank = [21, 39, 57, 75];
     }
+
+    public override string? Icon => SigilIcon;
 }

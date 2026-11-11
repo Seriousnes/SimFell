@@ -10,6 +10,9 @@ partial class Kindling
     /// <summary>Game data: <c>name</c> of sigil 28.</summary>
     public const string SigilName = "Kindling";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 28.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Gold_10_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 28.</summary>
     public const int SigilMaxRank = 4;
 
@@ -28,4 +31,6 @@ partial class Kindling
         /// <summary>Game data: rank run <c>Trait.ExtraDotHotOnEffectApplicationProc.Hot.FlatHealValue</c> of sigil 28, transform <c>ticks</c> over 7 ticks; the tooltip has 483% / 882% / 1281% / 1680%.</summary>
         public static readonly double[] HotFlatHealValueByRank = [0.69, 1.26, 1.83, 2.4];
     }
+
+    public override string? Icon => SigilIcon;
 }

@@ -10,6 +10,14 @@ partial class SahrilsAegis
     /// <summary>Game data: <c>name</c> of weapon power 352.</summary>
     public const string WeaponPowerName = "Sahril's Aegis";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of weapon power 352.</summary>
+    public const string WeaponPowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_VoidBarrier_full.webp";
+
     /// <summary>Sahril's Aegis, ability 159 of the game data, in <c>grants</c> of weapon power 352.</summary>
     public const int WeaponPowerAbilityId = 159;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 159.</summary>
+    public const string WeaponPowerAbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Weapon_VoidBarrier_full.webp";
+
+    public override string? Icon => WeaponPowerAbilityIcon;
 }

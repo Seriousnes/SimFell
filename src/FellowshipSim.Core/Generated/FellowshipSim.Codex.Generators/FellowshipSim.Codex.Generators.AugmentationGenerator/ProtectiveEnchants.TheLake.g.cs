@@ -10,6 +10,9 @@ partial class TheLake
     /// <summary>Game data: <c>name</c> of protective enchant 56.</summary>
     public const string ProtectiveEnchantName = "The Lake";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of protective enchant 56.</summary>
+    public const string ProtectiveEnchantIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Perk_River_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of protective enchant 56.</summary>
     public const int ProtectiveEnchantMaxRank = 1;
 
@@ -22,4 +25,6 @@ partial class TheLake
         /// <summary>Game data: tuning <c>AdditionalReduction</c> of protective enchant 56.</summary>
         public const double AdditionalReduction = 0.2;
     }
+
+    public override string? Icon => ProtectiveEnchantIcon;
 }

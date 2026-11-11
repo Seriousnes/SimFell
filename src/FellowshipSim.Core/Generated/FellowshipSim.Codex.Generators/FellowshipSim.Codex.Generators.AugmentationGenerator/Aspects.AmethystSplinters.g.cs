@@ -10,6 +10,9 @@ partial class AmethystSplinters
     /// <summary>Game data: <c>name</c> of aspect 31.</summary>
     public const string AspectName = "Amethyst Splinters";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 31.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_SpellBook07_83_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 31.</summary>
     public const int AspectMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class AmethystSplinters
         /// <summary>Game data: rank run <c>Trait.GemDotHotOnCrit.Buff.HealPercentage</c> of aspect 31, transform <c>raw</c>; the tooltip has 4% / 6% / 8% / 11%.</summary>
         public static readonly double[] BuffHealPercentageByRank = [0.04, 0.06, 0.08, 0.11];
     }
+
+    public override string? Icon => AspectIcon;
 }

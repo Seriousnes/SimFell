@@ -10,6 +10,9 @@ partial class TheViper
     /// <summary>Game data: <c>name</c> of protective enchant 57.</summary>
     public const string ProtectiveEnchantName = "The Viper";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of protective enchant 57.</summary>
+    public const string ProtectiveEnchantIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_NatureVision_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of protective enchant 57.</summary>
     public const int ProtectiveEnchantMaxRank = 1;
 
@@ -18,4 +21,6 @@ partial class TheViper
 
     /// <summary>Game data: <c>duration</c> of protective enchant 57.</summary>
     public const int ProtectiveEnchantDuration = 8;
+
+    public override string? Icon => ProtectiveEnchantIcon;
 }

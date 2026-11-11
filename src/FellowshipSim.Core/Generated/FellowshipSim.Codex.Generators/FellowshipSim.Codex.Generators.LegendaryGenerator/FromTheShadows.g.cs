@@ -7,8 +7,14 @@ partial class FromTheShadows
     /// <summary>From the Shadows, legendary power 585 of the game data.</summary>
     public const int PowerId = 585;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of legendary power 585.</summary>
+    public const string PowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Mara_stealth_full.webp";
+
     /// <summary>Hungering Blade Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5899.</summary>
+    public const string HeadItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Mara_Shadowblade_Head_R2_T0-legendary_full.webp";
 
     /// <summary>Game data: the tuning values of legendary power 585.</summary>
     public static class Constants
@@ -24,4 +30,5 @@ partial class FromTheShadows
     public override string Name => "From the Shadows";
     public override string HeroName => "Mara";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [HeadItemId];
+    public override string? Icon => HeadItemIcon;
 }

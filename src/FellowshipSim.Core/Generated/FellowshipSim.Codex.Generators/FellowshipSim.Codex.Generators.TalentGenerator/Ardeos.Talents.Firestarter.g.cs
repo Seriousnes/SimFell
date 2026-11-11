@@ -10,10 +10,15 @@ partial class Firestarter
     /// <summary>Game data: <c>name</c> of talent 149.</summary>
     public const string TalentName = "Firestarter";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 149.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Pyromancer20_full.webp";
+
     /// <summary>Game data: the tuning values of talent 149.</summary>
     public static class Constants
     {
         /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 149; Ardeos (hero 7).</summary>
         public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
     }
+
+    public override string? Icon => TalentIcon;
 }

@@ -10,6 +10,9 @@ partial class HuntersFocus
     /// <summary>Game data: <c>name</c> of sigil 42.</summary>
     public const string SigilName = "Hunter's Focus";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of sigil 42.</summary>
+    public const string SigilIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_SpellBook01_82_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of sigil 42.</summary>
     public const int SigilMaxRank = 4;
 
@@ -22,4 +25,6 @@ partial class HuntersFocus
         /// <summary>Game data: rank run <c>Trait.OffensiveAbilityHasteRatingStacking.AdditionalHasteRating</c> of sigil 42, transform <c>plain</c>; the tooltip has 4 / 8 / 12 / 16.</summary>
         public static readonly double[] AdditionalHasteRatingByRank = [4, 8, 12, 16];
     }
+
+    public override string? Icon => SigilIcon;
 }

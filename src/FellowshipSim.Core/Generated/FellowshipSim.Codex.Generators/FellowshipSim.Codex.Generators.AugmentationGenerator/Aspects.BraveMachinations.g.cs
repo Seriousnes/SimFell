@@ -10,6 +10,9 @@ partial class BraveMachinations
     /// <summary>Game data: <c>name</c> of aspect 48.</summary>
     public const string AspectName = "Brave Machinations";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of aspect 48.</summary>
+    public const string AspectIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_violet_4_full.webp";
+
     /// <summary>Game data: <c>maxRank</c> of aspect 48.</summary>
     public const int AspectMaxRank = 4;
 
@@ -25,4 +28,6 @@ partial class BraveMachinations
         /// <summary>Game data: rank run <c>Trait.WeaponCritChanceCooldownReduction.CooldownReductionPerWeaponCrit</c> of aspect 48, transform <c>raw</c>; the tooltip has 15% / 20% / 25% / 30%.</summary>
         public static readonly double[] CooldownReductionPerWeaponCritByRank = [0.15, 0.2, 0.25, 0.3];
     }
+
+    public override string? Icon => AspectIcon;
 }

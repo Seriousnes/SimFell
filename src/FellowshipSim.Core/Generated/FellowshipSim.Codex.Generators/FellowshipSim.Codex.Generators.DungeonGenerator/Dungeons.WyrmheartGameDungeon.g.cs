@@ -14,11 +14,11 @@ public partial class WyrmheartGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 8.</summary>
     public const string DungeonDescription = "Beneath the ice-choked peaks of the Ael’deth Mountains, an ancient power stirs. Frozen halls tremble as the last egg of Al’zerac’s brood pulses with life once thought extinguished. The cruel Apostate Veras leads his cult through the shattered caverns, seeking to harness the wyrmling’s power.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 8.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_IC";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 8.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_IC_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 8.</summary>
-    public const string DungeonBackground = "LoadingScreen_IC_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 8.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/LoadingScreen_IC_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 8.</summary>
     public const int DungeonMaxPlayers = 4;

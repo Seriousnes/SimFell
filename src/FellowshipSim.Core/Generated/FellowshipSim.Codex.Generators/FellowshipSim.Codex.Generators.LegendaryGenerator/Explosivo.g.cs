@@ -7,8 +7,14 @@ partial class Explosivo
     /// <summary>Explosivo, legendary power 615 of the game data.</summary>
     public const int PowerId = 615;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of legendary power 615.</summary>
+    public const string PowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Firemage_Apocalypse_full.webp";
+
     /// <summary>Pyromancer Robe, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5898.</summary>
+    public const string ChestItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Firemage_FmCloth_Chest_R2_T0-legendary_full.webp";
 
     /// <summary>Game data: the tuning values of legendary power 615.</summary>
     public static class Constants
@@ -36,4 +42,5 @@ partial class Explosivo
     public override string Name => "Explosivo";
     public override string HeroName => "Ardeos";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [ChestItemId];
+    public override string? Icon => ChestItemIcon;
 }

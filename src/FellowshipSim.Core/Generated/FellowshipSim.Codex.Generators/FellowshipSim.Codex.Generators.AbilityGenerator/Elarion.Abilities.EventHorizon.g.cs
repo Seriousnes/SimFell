@@ -10,6 +10,9 @@ partial class EventHorizon
     /// <summary>Game data: <c>name</c> of ability 1584.</summary>
     public const string AbilityName = "Event Horizon";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of ability 1584.</summary>
+    public const string AbilityIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Bowguy_Spirit_full.webp";
+
     /// <summary>Game data: <c>category</c> of ability 1584.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Spirit;
 

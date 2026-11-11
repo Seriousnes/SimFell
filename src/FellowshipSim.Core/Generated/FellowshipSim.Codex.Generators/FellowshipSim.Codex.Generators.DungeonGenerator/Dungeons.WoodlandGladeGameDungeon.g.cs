@@ -11,11 +11,11 @@ public partial class WoodlandGladeGameDungeon : GameDungeon
     /// <summary>Game data: <c>name</c> of dungeon 28.</summary>
     public const string DungeonName = "Woodland Glade";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 28.</summary>
-    public const string DungeonIcon = "Loadingscreen_FM";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 28.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Loadingscreen_FM_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 28.</summary>
-    public const string DungeonBackground = "Loadingscreen_FM";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 28.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/Loadingscreen_FM_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 28.</summary>
     public const int DungeonMaxPlayers = 8;

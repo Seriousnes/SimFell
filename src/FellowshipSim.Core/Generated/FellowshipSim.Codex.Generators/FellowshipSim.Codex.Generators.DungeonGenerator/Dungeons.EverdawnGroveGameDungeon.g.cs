@@ -14,11 +14,11 @@ public partial class EverdawnGroveGameDungeon : GameDungeon
     /// <summary>Game data: <c>description</c> of dungeon 11.</summary>
     public const string DungeonDescription = "In the radiant heart of Farvalaan, the Everdawn Grove blooms with golden grass and violet petals that shimmer beneath eternal sunlight. Now, shadows creep among the roots. Malgut, chieftain of the beastmen, seeks salvation for his tribe and instead finds corruption. Whispering voices promise him power, and the bloodstone crystals that grow from the soil pulse in answer. These once noble changelings call to Akari, the Dawn Lord, a great spirit who presides over Farvalaan's sunlit groves.";
 
-    /// <summary>Game data: <c>icon</c> of dungeon 11.</summary>
-    public const string DungeonIcon = "Codex_Dungeon_MF";
+    /// <summary>Game data: the full size image URL of <c>icon</c> of dungeon 11.</summary>
+    public const string DungeonIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Codex_Dungeon_MF_full.webp";
 
-    /// <summary>Game data: <c>background</c> of dungeon 11.</summary>
-    public const string DungeonBackground = "Loadingscreen_MF_01";
+    /// <summary>Game data: the full size image URL of <c>background</c> of dungeon 11.</summary>
+    public const string DungeonBackground = "https://cdn.codex.fellowshipanalyzer.com/ui/Loadingscreen_MF_01_full.webp";
 
     /// <summary>Game data: <c>maxPlayers</c> of dungeon 11.</summary>
     public const int DungeonMaxPlayers = 4;

@@ -7,8 +7,14 @@ partial class VexirasVenom
     /// <summary>Vexira's Venom, legendary power 420 of the game data.</summary>
     public const int PowerId = 420;
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of legendary power 420.</summary>
+    public const string PowerIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Mara_SpiderAOE_full.webp";
+
     /// <summary>Hungering Blade Leggings, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
+
+    /// <summary>Game data: the full size image URL of <c>icon</c> of item 5900.</summary>
+    public const string LegsItemIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Icon_Mara_Shadowblade_Waist_R2_T0-legendary_full.webp";
 
     /// <summary>Game data: the tuning values of legendary power 420.</summary>
     public static class Constants
@@ -27,4 +33,5 @@ partial class VexirasVenom
     public override string Name => "Vexira's Venom";
     public override string HeroName => "Mara";
     public override global::System.Collections.Generic.IReadOnlyList<int> ItemIds => [LegsItemId];
+    public override string? Icon => LegsItemIcon;
 }

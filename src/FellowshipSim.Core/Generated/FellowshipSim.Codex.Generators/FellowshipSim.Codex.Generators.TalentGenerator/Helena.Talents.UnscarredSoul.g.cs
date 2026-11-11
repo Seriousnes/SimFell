@@ -10,6 +10,9 @@ partial class UnscarredSoul
     /// <summary>Game data: <c>name</c> of talent 390.</summary>
     public const string TalentName = "Unscarred Soul";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 390.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_WM_HoldTheLine_full.webp";
+
     /// <summary>Game data: the tuning values of talent 390.</summary>
     public static class Constants
     {
@@ -22,4 +25,6 @@ partial class UnscarredSoul
         /// <summary>Game data: tuning <c>Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of talent 390; Unscarred Soul (effect 2339).</summary>
         public const double TalentMeleeCleaveAbsorbBuffReducedDamageReflectDamageAbsorbDamageMultiplier = 0.8;
     }
+
+    public override string? Icon => TalentIcon;
 }

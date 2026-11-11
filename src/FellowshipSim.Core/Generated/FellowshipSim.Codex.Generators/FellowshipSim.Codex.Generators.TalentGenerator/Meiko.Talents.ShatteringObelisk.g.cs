@@ -10,6 +10,9 @@ partial class ShatteringObelisk
     /// <summary>Game data: <c>name</c> of talent 415.</summary>
     public const string TalentName = "Shattering Obelisk";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 415.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Meiko_TauntTotem_full.webp";
+
     /// <summary>Game data: the tuning values of talent 415.</summary>
     public static class Constants
     {
@@ -31,4 +34,6 @@ partial class ShatteringObelisk
         /// <summary>Game data: tuning <c>Meiko.TauntTotem.WindMode.Duration</c> of talent 415; Twin Souls: Bulwark (ability 1082).</summary>
         public const int TauntTotemWindModeDuration = 20;
     }
+
+    public override string? Icon => TalentIcon;
 }

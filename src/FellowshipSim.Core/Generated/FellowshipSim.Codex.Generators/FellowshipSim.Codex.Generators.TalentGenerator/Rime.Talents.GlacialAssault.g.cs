@@ -10,6 +10,9 @@ partial class GlacialAssault
     /// <summary>Game data: <c>name</c> of talent 38.</summary>
     public const string TalentName = "Glacial Assault";
 
+    /// <summary>Game data: the full size image URL of <c>icon</c> of talent 38.</summary>
+    public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Rime_AnimaBolt_full.webp";
+
     /// <summary>Game data: <c>radius</c> of talent 38.</summary>
     public const int TalentRadius = 700;
 
@@ -46,4 +49,6 @@ partial class GlacialAssault
         /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.ReductionInSeconds</c> of talent 38; Icy Flow (effect 2308).</summary>
         public const double InstantSingleDamageTalentReducesCastTimeOnOrbSpenderReductionInSeconds = 0.5;
     }
+
+    public override string? Icon => TalentIcon;
 }
