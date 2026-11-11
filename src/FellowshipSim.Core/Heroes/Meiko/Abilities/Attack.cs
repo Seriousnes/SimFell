@@ -9,8 +9,8 @@ public partial class Attack : MeikoAbility
 {
     public Attack(Meiko owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = AgilityCoefficient;
-        SetCooldown(SwingTimer, scalesWithHaste: true);
+        BaseCoefficient = Constants.AgilityCoefficient;
+        SetCooldown(Constants.SwingTimer, scalesWithHaste: true);
         IgnoresGcd = true;
     }
 

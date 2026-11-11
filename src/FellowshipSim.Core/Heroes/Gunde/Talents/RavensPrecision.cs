@@ -26,13 +26,13 @@ public partial class RavensPrecision : Talent
         };
     }
 
-    /// <summary>The explosion's damage: a share of Strength (<see cref="StrengthCoefficient"/>), logged under effect 3220, falling off beyond <see cref="TargetThresholdScaling"/> targets.</summary>
+    /// <summary>The explosion's damage: a share of Strength (<see cref="Constants.DotTransferTalentExplosionOnPickupStrengthCoefficient"/>), logged under effect 3220, falling off beyond <see cref="Constants.DotTransferTalentExplosionOnPickupTargetThresholdScaling"/> targets.</summary>
     private sealed class Explosion : Ability
     {
         public Explosion(Gunde owner) : base(owner, LogIds.Effect(DamageEffectId), TalentName)
         {
-            BaseCoefficient = StrengthCoefficient;
-            AoeTargetThreshold = TargetThresholdScaling;
+            BaseCoefficient = Constants.DotTransferTalentExplosionOnPickupStrengthCoefficient;
+            AoeTargetThreshold = Constants.DotTransferTalentExplosionOnPickupTargetThresholdScaling;
         }
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }

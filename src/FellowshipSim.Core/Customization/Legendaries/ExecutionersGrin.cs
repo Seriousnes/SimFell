@@ -19,7 +19,7 @@ public partial class ExecutionersGrin : Legendary
     public const double FurySpent = 30.0;
     public const string ProcKey = "executioners_grin";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Executioner's Grin", BuffEffectId, BuffDuration, MaxStacks) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Executioner's Grin", BuffEffectId, Constants.BuffDuration, MaxStacks) with { IsProc = true };
 
     public override void Bind(Hero hero)
     {
@@ -29,7 +29,7 @@ public partial class ExecutionersGrin : Legendary
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (hero.SimContext is not { } ctx) return;
-            if (ctx.Outcomes.RollProc(ProcKey, Chance, ctx)) hero.Auras.Apply(Buff, now);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.Chance, ctx)) hero.Auras.Apply(Buff, now);
         };
     }
 }

@@ -12,8 +12,8 @@ public partial class UndyingHeart : RelicPassive
     public const int EffectId = 3270;
     public const string ProcKey = "undying_heart";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Dark Prophecy", EffectId, BuffDuration,
-        modifiers: StatModifier.Add(StatType.Haste, HasteBonus)) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Dark Prophecy", EffectId, Constants.BuffDuration,
+        modifiers: StatModifier.Add(StatType.Haste, Constants.HasteBonus)) with { IsProc = true };
 
     public override int Id => RelicPassiveId;
     public override string Name => RelicPassiveName;

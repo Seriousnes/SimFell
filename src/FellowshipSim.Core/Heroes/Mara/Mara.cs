@@ -226,7 +226,7 @@ public sealed partial class Mara : Hero
     /// Killer go through it; Widow's Bite, Venomous Delight and a Spirit Refund's Energy do not.
     /// </summary>
     public void GainEnergyWithMaiden(double amount, SimulationContext ctx) =>
-        GainEnergy(Auras.HasAura(MaidenOfDeath.Buff, ctx.CurrentTime) ? amount * MaidenOfDeath.EnergyGainMultiplier : amount, ctx);
+        GainEnergy(Auras.HasAura(MaidenOfDeath.Buff, ctx.CurrentTime) ? amount * MaidenOfDeath.Constants.EnergyGainMultiplier : amount, ctx);
 
     protected override void OnFightBegins(SimulationContext ctx)
     {

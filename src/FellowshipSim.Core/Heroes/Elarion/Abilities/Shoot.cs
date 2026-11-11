@@ -1,7 +1,7 @@
 namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 
 /// <summary>
-/// Ability 1303: Elarion's bow shot between abilities, a share of Agility (game data <see cref="AgilityCoefficient"/>). Combat logs record
+/// Ability 1303: Elarion's bow shot between abilities, a share of Agility (game data <see cref="Constants.AgilityCoefficient"/>). Combat logs record
 /// every shot as a cast; an action list uses it as soon as the shot timer allows, and never while casting or channeling.
 /// Combat logs (fXyzwGcQkTrLD34R fight 4, pWmcV42K39GHTLQX fight 23): shots are spaced by a timer that Haste shortens.
 /// UNVERIFIED: <see cref="ShotSeconds"/> as the timer.
@@ -12,7 +12,7 @@ public partial class Shoot : ElarionAbility
 
     public Shoot(Elarion owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = Constants.AgilityCoefficient;
         SetCooldown(ShotSeconds, scalesWithHaste: true);
         IgnoresGcd = true;
     }

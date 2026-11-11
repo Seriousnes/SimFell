@@ -11,7 +11,7 @@ public partial class ZeralethsHunger : Ability
 {
     public ZeralethsHunger(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = PrimaryAttributeCoefficient;
+        BaseCoefficient = Constants.PrimaryAttributeCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);

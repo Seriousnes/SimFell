@@ -6,9 +6,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// </summary>
 public partial class FocusedShot : ElarionAbility
 {
-    /// <summary>Focus gained per cast, from game data.</summary>
-    public const double FocusGain = 20.0;
-
     /// <summary>Multiplier on the Focus gained (Deadly Focus).</summary>
     public double FocusGainMultiplier { get; set; } = 1.0;
 
@@ -17,14 +14,14 @@ public partial class FocusedShot : ElarionAbility
 
     public FocusedShot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = Constants.AgilityCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         // Combat logs: the Focus comes as the cast completes, before the arrow lands.
-        Elarion.GainFocus(FocusGain * FocusGainMultiplier, ctx, target);
+        Elarion.GainFocus(Constants.FocusGain * FocusGainMultiplier, ctx, target);
         DealDamage(ctx, target, onLanded: (c, dealt) =>
         {
             if (dealt > 0) Landed?.Invoke(c, target);

@@ -16,7 +16,7 @@ public partial class Firestarter : Talent
     {
         ((Ardeos)hero).ForEveryDot(dot =>
         {
-            dot.CritChanceBonus += IncreasedDotCritChanceCritChanceIncrease;
+            dot.CritChanceBonus += Constants.IncreasedDotCritChanceCritChanceIncrease;
             dot.TicksCanCrit = true;
         });
     }

@@ -1,9 +1,9 @@
 namespace FellowshipSim.Core.Customization.Glyphs;
 
 /// <summary>
-/// Glyph 712: every few BASIC abilities (<see cref="CounterThresholdByRank"/>), the target erupts, dealing that hit's damage
+/// Glyph 712: every few BASIC abilities (<see cref="Constants.CounterThresholdByRank"/>), the target erupts, dealing that hit's damage
 /// again (effect 3193, cannot crit) to all enemies around it, increased by your Critical Strike chance up to
-/// <see cref="CritChanceThreshold"/>. Counter: effect 3194. Beyond <see cref="TargetCountScaling"/> targets the eruption loses
+/// <see cref="Constants.CritChanceThreshold"/>. Counter: effect 3194. Beyond <see cref="Constants.TargetCountScaling"/> targets the eruption loses
 /// damage as sqrt(TargetCountScaling/N) (fs_tc_uploads s3/gear_data.json; combat logs: a Cold Snap crit on many enemies
 /// matches the formula exactly).
 /// </summary>
@@ -18,8 +18,8 @@ public partial class TheVehement : Glyph
 
     public override void Bind(Hero hero)
     {
-        int threshold = (int)ForRank(CounterThresholdByRank);
-        const double critCap = CritChanceThreshold;
+        int threshold = (int)ForRank(Constants.CounterThresholdByRank);
+        const double critCap = Constants.CritChanceThreshold;
         var counter = hero.Register(AuraDef.Effect(GlyphName, CounterEffectId, maxStacks: threshold - 1));
         int damageId = LogIds.Effect(DamageEffectId);
         const string damageName = DamageName;
@@ -44,7 +44,7 @@ public partial class TheVehement : Glyph
             var ctx = dmg.SimContext;
             var enemies = ctx.Outcomes.SelectTargets(damageId, ctx.ActiveEnemies, ctx);
             if (enemies.Count == 0) return;
-            double falloff = enemies.Count > TargetCountScaling ? Math.Sqrt((double)TargetCountScaling / enemies.Count) : 1.0;
+            double falloff = enemies.Count > Constants.TargetCountScaling ? Math.Sqrt((double)Constants.TargetCountScaling / enemies.Count) : 1.0;
             double damage = dmg.Amount * (1.0 + Math.Min(hero.CritChance(dmg.Timestamp), critCap)) * falloff;
             foreach (var enemy in enemies)
             {

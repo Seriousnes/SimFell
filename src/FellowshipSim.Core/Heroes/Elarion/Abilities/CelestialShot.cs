@@ -7,7 +7,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// </summary>
 public partial class CelestialShot : ElarionAbility
 {
-    public const double Cost = 15.0;
     public const int ImpetusEffectId = 1867;
     public const double ImpetusSeconds = 15.0;
     public const int ImpetusMaxStacks = 2;
@@ -24,8 +23,8 @@ public partial class CelestialShot : ElarionAbility
 
     public CelestialShot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AgilityCoefficient;
-        FocusCost = Cost;
+        BaseCoefficient = Constants.AgilityCoefficient;
+        FocusCost = Constants.Cost;
     }
 
     public override void Connect()

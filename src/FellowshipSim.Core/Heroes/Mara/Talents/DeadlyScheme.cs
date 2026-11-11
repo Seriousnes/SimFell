@@ -5,10 +5,10 @@ namespace FellowshipSim.Core.Heroes.Mara.Talents;
 /// <summary>
 /// Talent 110: "For every few Energy you spend you gain a stack of Deadly Scheme (effect 2434). At full stacks it activates
 /// (effect 2068), causing your next Queen's Fang or Arachnid Assault to have increased Critical Strike chance."
-/// Combat logs (Fc8v6yWxD14GQMnV fight 19): the stacks past <see cref="MaxStack"/> carry over; while it is active the
+/// Combat logs (Fc8v6yWxD14GQMnV fight 19): the stacks past <see cref="Constants.MaxStack"/> carry over; while it is active the
 /// stacks keep counting without the buff, and come back as the finisher uses it up (@ 25.692).
 /// Effect 2434 is off while Active is on (its ongoing tag requirements ignore `CustomGrantedTags.Mara.Talent.ResourceAttackSpenderCritChance.Proc`) and keeps its
-/// stack count: the count a spend set, or <see cref="MaxStack"/> with no spend during Active. The talent's ability
+/// stack count: the count a spend set, or <see cref="Constants.MaxStack"/> with no spend during Active. The talent's ability
 /// sets the stack count, and no node runs as Active runs out (T2qLPpmMkrAtJ9B1 fight 18
 /// @ 544.776: the buff is back at full stacks, and the next spend shows the count).
 /// </summary>
@@ -17,8 +17,8 @@ public partial class DeadlyScheme : Talent
     public const int StackEffectId = 2434;
     public const int ActiveEffectId = 2068;
 
-    public static readonly AuraDef Stacks = AuraDef.Effect(TalentName, StackEffectId, maxStacks: MaxStack);
-    public static readonly AuraDef Active = AuraDef.Effect("Deadly Scheme: Active", ActiveEffectId, BuffDuration);
+    public static readonly AuraDef Stacks = AuraDef.Effect(TalentName, StackEffectId, maxStacks: Constants.MaxStack);
+    public static readonly AuraDef Active = AuraDef.Effect("Deadly Scheme: Active", ActiveEffectId, Constants.BuffDuration);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -50,7 +50,7 @@ public partial class DeadlyScheme : Talent
             _changing = true;
             hero.Auras.Remove(Active, cast.Time);
             _changing = false;
-            cast.CritChance += AdditionalCritChance;
+            cast.CritChance += Constants.AdditionalCritChance;
             Show(hero, cast.Time);
         };
         // The stacks counted go when something else takes the buffs off (combat logs, fight 19 @ 473.015: Mara's death
@@ -73,7 +73,7 @@ public partial class DeadlyScheme : Talent
         {
             if (_changing || aura.Def.Key != Stacks.Key) return;
             _fight = hero.SimContext;
-            _energy = aura.Stacks * ResourcePerStack + _energy % ResourcePerStack;
+            _energy = aura.Stacks * Constants.ResourcePerStack + _energy % Constants.ResourcePerStack;
         };
     }
 
@@ -83,16 +83,16 @@ public partial class DeadlyScheme : Talent
     /// <summary>A spend came during Deadly Scheme: Active.</summary>
     private bool _spentWhileActive;
 
-    /// <summary>Effect 2434's stack count as Active ends: <see cref="MaxStack"/> until a spend sets it to the count.</summary>
-    private int HeldStacks => _spentWhileActive ? (int)(_energy / ResourcePerStack) : MaxStack;
+    /// <summary>Effect 2434's stack count as Active ends: <see cref="Constants.MaxStack"/> until a spend sets it to the count.</summary>
+    private int HeldStacks => _spentWhileActive ? (int)(_energy / Constants.ResourcePerStack) : Constants.MaxStack;
 
-    /// <summary>Shows the stacks counted; at <see cref="MaxStack"/> they activate Deadly Scheme and the rest carry over.</summary>
+    /// <summary>Shows the stacks counted; at <see cref="Constants.MaxStack"/> they activate Deadly Scheme and the rest carry over.</summary>
     private void Show(Hero hero, SimTime now)
     {
-        int stacks = (int)(_energy / ResourcePerStack);
-        if (stacks >= MaxStack)
+        int stacks = (int)(_energy / Constants.ResourcePerStack);
+        if (stacks >= Constants.MaxStack)
         {
-            _energy -= MaxStack * ResourcePerStack;
+            _energy -= Constants.MaxStack * Constants.ResourcePerStack;
             _spentWhileActive = false;
             _changing = true;
             hero.Auras.Remove(Stacks, now);

@@ -25,7 +25,7 @@ public partial class SunStrike : XavianAbility
 
     public SunStrike(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         Hit += (in DamageContext hit) =>
         {
             if (hit.IsCrit && ExtraSunstruckOnCrit > 0 && hit.Target is { } struck && struck == _mainTarget)
@@ -50,10 +50,10 @@ public partial class SunStrike : XavianAbility
         // 20; 0.15 x sqrt(3/N) is 0.130, 0.082 and 0.058). The main target shares the damage ID, so the splash leaves it out.
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, ctx.ActiveEnemiesExcept(target), ctx);
         var nearby = struck.Contains(target) ? struck.Where(e => e != target).ToList() : struck;
-        DealToEach(ctx, nearby, CleaveTargetCountThreshold, CleaveDamageScaler);
+        DealToEach(ctx, nearby, Constants.CleaveTargetCountThreshold, Constants.CleaveDamageScaler);
         target.Auras.Apply(Sunstruck, ctx.CurrentTime, stacks: 1);
         Owner.TriggerHarmfulEffectApplied(ctx, target);
-        if (ctx.Outcomes.RollProc(ProcKey, ResourceProcChance, ctx)) Xavian.GrantSwiftReprieval(ctx);
+        if (ctx.Outcomes.RollProc(ProcKey, Constants.ResourceProcChance, ctx)) Xavian.GrantSwiftReprieval(ctx);
         Xavian.RaiseOffensiveAbilityUsed(ctx, this);
     }
 }

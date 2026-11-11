@@ -142,11 +142,11 @@ public static class ProcEvidence
         // (not on Heavy Strike's target; q3y7pWgXrjN2dftw fight 12).
         new(BloodAndThunder.ProcKey, LogIds.Effect(ChainLightning.DamageEffectId),
             DelaySeconds: 0.55, MinDelaySeconds: 0.45,
-            FollowingHits: ChainLightning.MaxNumOfTargets + Thunderstruck.ExtraBounces - 1, FollowingSpacingSeconds: ChainLightning.TimeBetweenTargets,
+            FollowingHits: ChainLightning.Constants.MaxNumOfTargets + Thunderstruck.ExtraBounces - 1, FollowingSpacingSeconds: ChainLightning.Constants.TimeBetweenTargets,
             FollowingSlackSeconds: PeriodicEffect.ServerFrameSeconds / 2, AnyEnemy: true, QuietBeforeSeconds: 0.1),
         new(AceOfSpades.ProcKey, LogIds.Effect(ChainLightning.DamageEffectId),
             DelaySeconds: 0.55, MinDelaySeconds: 0.45,
-            FollowingHits: ChainLightning.MaxNumOfTargets + Thunderstruck.ExtraBounces - 1, FollowingSpacingSeconds: ChainLightning.TimeBetweenTargets,
+            FollowingHits: ChainLightning.Constants.MaxNumOfTargets + Thunderstruck.ExtraBounces - 1, FollowingSpacingSeconds: ChainLightning.Constants.TimeBetweenTargets,
             FollowingSlackSeconds: PeriodicEffect.ServerFrameSeconds / 2, QuietBeforeSeconds: 0.1),
 
         // Meiko
@@ -159,7 +159,7 @@ public static class ProcEvidence
         // `VenomousDelight.EnergyAdded` Energy at once. Between neighbouring readings in the 23 Mara fights of
         // data/fights, regeneration and a cast's cost aside, jumps of one gain occur with the talent and not without it,
         // jumps of two gains are rare and jumps of three rarer, so one jump is proof of two procs at most.
-        new(VenomousDelight.ProcKey, 0, Resource: Mara.Energy, ResourceGain: VenomousDelight.EnergyAdded,
+        new(VenomousDelight.ProcKey, 0, Resource: Mara.Energy, ResourceGain: VenomousDelight.Constants.EnergyAdded,
             ResourceRegen: (hero, now) => ((Mara)hero).EnergyRate(now), ResourceSpent: (hero, abilityId) => ((Mara)hero).EnergySpentBy(abilityId),
             ResourceGainsAtOnce: 2),
         new(CausticWounds.ProcKey, LogIds.Effect(CausticPoison.EffectId)),

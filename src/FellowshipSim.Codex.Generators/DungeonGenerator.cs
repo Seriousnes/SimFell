@@ -19,13 +19,14 @@ namespace FellowshipSim.Codex.Generators;
 /// a dungeon without one and a name starting with a digit have the dungeon's ID after the name. The constants are
 /// <c>DungeonId</c> (a FellowshipLogs fight's <c>gameZone</c> ID), <c>DungeonName</c>, one per scalar field of the record
 /// under <c>Dungeon</c> and the field's name (<c>DungeonLevelType</c>, <c>DungeonQualifierTime</c>,
-/// <c>DungeonRequiredScore</c>...), and one per tuning value of the record under the tuning value's name.
+/// <c>DungeonRequiredScore</c>...; <c>DungeonIcon</c> and <c>DungeonBackground</c> are full size image URLs), and the record's tuning values in a nested <c>Constants</c> under their
+/// <see cref="TuningNames"/> names, with no hero as the record's hero.
 /// <c>DungeonDifficulties</c> is a <c>public static readonly int[]</c> of the record's difficulties.
 /// <c>DungeonPlacements</c> is a <c>public static readonly CodexPlacement[]</c> of its creature placements, each creature by
 /// the <c>ID</c> of its <c>&lt;Name&gt;GameCreature</c> class (<see cref="CreatureClassNames"/>) and a factory
 /// <c>() =&gt; new &lt;Name&gt;GameCreature()</c>. The class overrides
 /// <c>Id</c>, <c>Name</c> and <c>Placements</c> with them. A dungeon's mechanics go in a hand-written <c>partial</c> of its
-/// class, and a constant whose name that part or a base class already has is left out. A <c>partial</c> of
+/// class, and a member of that part or a base class with a constant's name, or the name <c>Constants</c>, is CODEX036. A <c>partial</c> of
 /// <c>GameDungeon</c> has <c>All</c>, an instance of every dungeon class by ID, and <c>ById</c>. The game data is the
 /// AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
@@ -42,13 +43,9 @@ public sealed class DungeonGenerator : IIncrementalGenerator
         "CODEX034", "A partial dungeon class names no dungeon record",
         "The partial class {0}.{1} names no dungeon record in the game data; a dungeon class is in " + Namespace, "Codex", DiagnosticSeverity.Error, true);
 
-    private static readonly DiagnosticDescriptor SharedTuningName = new(
-        "CODEX035", "Two tuning values of a dungeon share a name",
-        "Dungeon {0} has tuning values {1} with different values under the name {2}; the class has no constant {2}", "Codex", DiagnosticSeverity.Warning, true);
-
     private static readonly DiagnosticDescriptor DeclaredName = new(
         "CODEX036", "A dungeon constant's name is a member of the class",
-        "The class {0} or a base class has a member {1}, so the constant {1} of dungeon {2} is left out", "Codex", DiagnosticSeverity.Warning, true);
+        "The class {0} or a base class has a member {1}, and {1} is a constant of dungeon {2}; rename the member", "Codex", DiagnosticSeverity.Error, true);
 
     private static readonly DiagnosticDescriptor NoCreature = new(
         "CODEX037", "A dungeon placement names no creature record",
@@ -56,8 +53,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
 
     /// <summary>
     /// A constant of a dungeon record: its name, C# type and literal, and its summary. A constant of an array type is a
-    /// <c>static readonly</c> field. A constant with no type has several values under its name, and its summary names the
-    /// tuning keys.
+    /// <c>static readonly</c> field.
     /// </summary>
     private sealed record Constant(string Name, string Type, string Literal, string Summary);
 
@@ -68,16 +64,20 @@ public sealed class DungeonGenerator : IIncrementalGenerator
     /// A dungeon record: its ID, name, class name, field constants, tuning values, creature placements, and the IDs of the
     /// placed creatures with no creature record.
     /// </summary>
-    private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Constant> Fields, EquatableArray<Constant> Tunings,
+    private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Constant> Fields, EquatableArray<TuningEntry> Tunings,
         EquatableArray<Placement> Placements, EquatableArray<int> UnknownCreatures);
 
-    /// <summary>The game data's dungeon records, and its build date.</summary>
-    private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
+    /// <summary>The game data's dungeon records, the tuning keys' first segments naming a hero, and its build date.</summary>
+    private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
-    /// <summary>A hand-written partial dungeon class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
+    /// <summary>
+    /// A hand-written partial dungeon class: its namespace, name, the member names of the class and its base classes, the
+    /// class's constants and static readonly fields, and where it is declared.
+    /// </summary>
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Fields, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members)
+            && Fields.Equals(other.Fields);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -116,7 +116,8 @@ public sealed class DungeonGenerator : IIncrementalGenerator
         {
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), new([.. TuningNames.FieldsOf(type)]),
+            node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -180,7 +181,7 @@ public sealed class DungeonGenerator : IIncrementalGenerator
             records.Add(new Record(d.Id, name, className + ClassSuffix, new([.. FieldsOf(d)]), new([.. TuningsOf(d)]), new([.. placements]),
                 new([.. unknown])));
         }
-        return new Export(new([.. records]), buildDate);
+        return new Export(new([.. records]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The record's scalar fields, each under <c>Dungeon</c> and the field's name, then its difficulties.</summary>
@@ -188,8 +189,8 @@ public sealed class DungeonGenerator : IIncrementalGenerator
     {
         var fields = new List<Constant>();
         AddString(fields, "Description", "description", d.Description, d.Id);
-        AddString(fields, "Icon", "icon", d.Icon, d.Id);
-        AddString(fields, "Background", "background", d.Background, d.Id);
+        AddTexture(fields, "Icon", "icon", d.Icon, d.Id);
+        AddTexture(fields, "Background", "background", d.Background, d.Id);
         AddNumber(fields, "MaxPlayers", "maxPlayers", d.MaxPlayers, d.Id);
         AddNumber(fields, "QualifierTime", "qualifierTime", d.QualifierTime, d.Id);
         AddNumber(fields, "RequiredScore", "requiredScore", d.RequiredScore, d.Id);
@@ -215,6 +216,12 @@ public sealed class DungeonGenerator : IIncrementalGenerator
         fields.Add(new Constant("Dungeon" + name, "string", Literal(v), Field(field, id)));
     }
 
+    private static void AddTexture(List<Constant> fields, string name, string field, string? texture, int id)
+    {
+        if (texture is not { Length: > 0 } t) return;
+        fields.Add(new Constant("Dungeon" + name, "string", Literal(Textures.Url(t)), $"Game data: the full size image URL of <c>{Escape(field)}</c> of dungeon {id}."));
+    }
+
     private static void AddBool(List<Constant> fields, string name, string field, bool? value, int id)
     {
         if (value is not { } v) return;
@@ -229,27 +236,9 @@ public sealed class DungeonGenerator : IIncrementalGenerator
             whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), Field(field, id)));
     }
 
-    /// <summary>The record's tuning values, one per name, in the order of the game data.</summary>
-    private static List<Constant> TuningsOf(DungeonDocument d)
-    {
-        var tunings = new List<Constant>();
-        foreach (var group in (d.Tuning ?? new Dictionary<string, TuningReference>()).GroupBy(t => t.Value.Name ?? ""))
-        {
-            if (group.Key.Length == 0) continue;
-            var values = group.Select(t => ValueOf(t.Value.Value)).Distinct().ToList();
-            string keys = string.Join(", ", group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal));
-            if (values.Count != 1 || values[0] is not { } value)
-            {
-                // Two values under one name: no constant, and the diagnostic names the keys.
-                tunings.Add(new Constant(group.Key, "", "", keys));
-                continue;
-            }
-            string source = SourceOf(group.First().Value);
-            tunings.Add(new Constant(group.Key, value.Type, value.Literal,
-                $"Game data: tuning <c>{Escape(keys)}</c> of dungeon {d.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}."));
-        }
-        return tunings;
-    }
+    /// <summary>The record's tuning keys, in the order of the game data.</summary>
+    private static List<TuningEntry> TuningsOf(DungeonDocument d) =>
+        TuningNames.Entries(d.Tuning, v => ValueOf(v) is { } value ? (value.Type, value.Literal, false) : null, SourceOf);
 
     /// <summary>The C# type and literal of a tuning value; null for a value of no constant type.</summary>
     private static (string Type, string Literal)? ValueOf(object? value)
@@ -315,21 +304,9 @@ public sealed class DungeonGenerator : IIncrementalGenerator
                 new("DungeonName", "string", Literal(record.Name), $"Game data: <c>name</c> of dungeon {record.Id}."),
             };
             constants.AddRange(record.Fields);
-            var names = new HashSet<string>(constants.Select(c => c.Name), StringComparer.Ordinal) { "DungeonPlacements" };
-            foreach (var tuning in record.Tunings)
-            {
-                if (tuning.Type.Length == 0)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(SharedTuningName, location, record.Id, tuning.Summary, tuning.Name));
-                    continue;
-                }
-                if (!names.Add(tuning.Name))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, location, record.ClassName, tuning.Name, record.Id));
-                    continue;
-                }
-                constants.Add(tuning);
-            }
+            var shared = new List<(string Name, string First, string Second)>();
+            var tunings = TuningNames.Of(record.Tunings, export.Segments, [], shared);
+            TuningNames.Report(context, location, record.ClassName, $"dungeon {record.Id}", shared, part?.Fields ?? new EquatableArray<string>([]), tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -363,6 +340,20 @@ public sealed class DungeonGenerator : IIncrementalGenerator
                         .Append(", ").Append(p.Patrol?.ToString(CultureInfo.InvariantCulture) ?? "null").Append("),\n");
                 }
                 source.Append("    ];\n\n");
+            }
+            if (tunings.Count > 0)
+            {
+                if (members.Contains("Constants"))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, location, record.ClassName, "Constants", record.Id));
+                }
+                else
+                {
+                    TuningNames.Write(source, $"Game data: the tuning values of dungeon {record.Id}.",
+                        tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of dungeon {record.Id}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
+                        false, false);
+                    source.Append('\n');
+                }
             }
             source.Append("    public override int Id => DungeonId;\n\n")
                 .Append("    public override string Name => DungeonName;\n\n")

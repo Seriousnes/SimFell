@@ -10,5 +10,5 @@ public partial class CelestialFavor : Talent
 
     public override void Bind(Hero hero) =>
         ((Xavian)hero).BrilliantFlash.Flashed += (ctx, _) =>
-            hero.ReduceCooldown<OmegaReprieval>(SimTime.FromSeconds(ActiveCooldownReductionCooldownReduction), ctx.CurrentTime);
+            hero.ReduceCooldown<OmegaReprieval>(SimTime.FromSeconds(Constants.ActiveCooldownReductionCooldownReduction), ctx.CurrentTime);
 }

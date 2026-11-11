@@ -15,7 +15,7 @@ public partial class GoldenHour : Talent
     public const int BuffEffectId = 2661;
     public const int OmegaStacks = 1;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Duration);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.BuffCritChanceIncreaseDuration);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -24,7 +24,7 @@ public partial class GoldenHour : Talent
     {
         var xavian = (Xavian)hero;
         var omnistrike = xavian.GetAbility<Omnistrike>()!;
-        xavian.BrilliantFlash.AddDamageMultiplier(PowerScaler);
+        xavian.BrilliantFlash.AddDamageMultiplier(Constants.InstantSingleTargetHealOrDamageTalentPowerScaler);
         omnistrike.Struck += ctx =>
         {
             if (!hero.Auras.HasAura(Buff, ctx.CurrentTime)) return;
@@ -33,7 +33,7 @@ public partial class GoldenHour : Talent
         };
         xavian.OffensiveAbilityUsed += (ctx, _) =>
         {
-            if (!ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx)) return;
+            if (!ctx.Outcomes.RollProc(ProcKey, Constants.ProcChance, ctx)) return;
             hero.CooldownOf(omnistrike).ResetAll();
             hero.Auras.Apply(Buff, ctx.CurrentTime);
         };

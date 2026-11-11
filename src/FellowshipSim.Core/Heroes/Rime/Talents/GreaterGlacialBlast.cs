@@ -15,9 +15,9 @@ public partial class GreaterGlacialBlast : Talent
     {
         if (hero.GetAbility<GlacialBlast>() is { } glacialBlast)
         {
-            glacialBlast.AddDamageMultiplier(DamageIncreaseAndCastTimeIncreaseAdditionalDamage);
-            glacialBlast.ExtraCastTimeSeconds += DamageIncreaseAndCastTimeIncreaseCastTimeIncreaseDuration;
+            glacialBlast.AddDamageMultiplier(Constants.DamageIncreaseAndCastTimeIncreaseAdditionalDamage);
+            glacialBlast.ExtraCastTimeSeconds += Constants.DamageIncreaseAndCastTimeIncreaseCastTimeIncreaseDuration;
         }
-        hero.GetAbility<TalonStrike>()?.AddDamageMultiplier(DamageIncreaseAndCastTimeIncreaseAdditionalDamage);
+        hero.GetAbility<TalonStrike>()?.AddDamageMultiplier(Constants.DamageIncreaseAndCastTimeIncreaseAdditionalDamage);
     }
 }

@@ -12,6 +12,6 @@ public partial class CrackTheSky : Talent
 
     public override void Bind(Hero hero)
     {
-        if (hero is Tariq tariq) tariq.LightningCritChance += PassiveLightningCritChanceIncrease;
+        if (hero is Tariq tariq) tariq.LightningCritChance += Constants.TalentPassiveLightningCritChanceIncrease;
     }
 }

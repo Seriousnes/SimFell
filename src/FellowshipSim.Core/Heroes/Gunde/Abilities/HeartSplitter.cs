@@ -29,7 +29,7 @@ public partial class HeartSplitter : GundeAbility
 
     public HeartSplitter(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         RendShare = RendShareOfDamage;
         Hit += (in hit) => _lastHitCrit = hit.IsCrit;

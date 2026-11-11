@@ -16,6 +16,6 @@ public partial class FrenziedReign : Talent
     public override void Bind(Hero hero)
     {
         var reign = hero.GetAbility<ReignInBlood>();
-        if (reign != null) reign.ShareBonus += AddedBonusAddedTransfer;
+        if (reign != null) reign.ShareBonus += Constants.ExtraDotDamageBuffTalentAddedBonusAddedTransfer;
     }
 }

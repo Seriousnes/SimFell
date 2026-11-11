@@ -8,7 +8,7 @@ public partial class FrigidWinds : RimeAbility
 {
     public const int DebuffEffectId = 1385;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, DebuffDuration);
+    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, Constants.DebuffDuration);
 
     public FrigidWinds(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {

@@ -3,7 +3,7 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// <summary>
 /// Ability 126: "Fire a volley of celestial arrows into the sky that pelt the area around target enemy, dealing magic
 /// damage at a fixed period to the target and any nearby enemies. Starfall Volley follows the target for its
-/// duration." Costs Focus and has a cooldown; damage falls off beyond a target count (targetCountFalloff, <see cref="TargetCountThreshold"/>).
+/// duration." Costs Focus and has a cooldown; damage falls off beyond a target count (targetCountFalloff, <see cref="Constants.TargetCountThreshold"/>).
 /// Combat logs (fXyzwGcQkTrLD34R fight 4, pWmcV42K39GHTLQX fight 23, 44 volleys): the arrows land on each enemy at its
 /// own moments, the first shortly after the cast, and each hit deals the
 /// same damage on every enemy. UNVERIFIED: an arrow on every enemy as the volley is cast and every hasted period after
@@ -11,7 +11,6 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// </summary>
 public partial class StarfallVolley : ElarionAbility
 {
-    public const double Cost = 30.0;
     /// <summary>Combat logs: an arrow lands shortly after it is released; the engine releases none in the last <c>FallSeconds</c> of the volley.</summary>
     public const double FallSeconds = 0.3;
 
@@ -38,10 +37,10 @@ public partial class StarfallVolley : ElarionAbility
 
     public StarfallVolley(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AgilityCoefficient;
-        FocusCost = Cost;
+        BaseCoefficient = Constants.AgilityCoefficient;
+        FocusCost = Constants.Cost;
         SetCooldown(AbilityCooldown);
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = Constants.TargetCountThreshold;
     }
 
     /// <summary>The volleys falling now (they can overlap).</summary>
@@ -87,7 +86,7 @@ public partial class StarfallVolley : ElarionAbility
         {
             if (ctx.Outcomes.RollProc(ArrowProcKey, 1.0, ctx, enemies[i])) struck.Add(enemies[i]);
         }
-        double falloff = struck.Count > TargetCountThreshold ? Math.Sqrt((double)TargetCountThreshold / struck.Count) : 1.0;
+        double falloff = struck.Count > Constants.TargetCountThreshold ? Math.Sqrt((double)Constants.TargetCountThreshold / struck.Count) : 1.0;
         for (int i = 0; i < struck.Count; i++)
         {
             var enemy = struck[i];

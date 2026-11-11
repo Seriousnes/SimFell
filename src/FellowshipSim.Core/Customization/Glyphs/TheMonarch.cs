@@ -8,11 +8,11 @@ public partial class TheMonarch : Glyph
 {
     /// <summary>
     /// Tooltip: "increased by +0.1% for every 1% Haste" as a fraction per percent of Haste (the game data's
-    /// <see cref="BonusIncreasePerHasteInPercentage"/> is 0.1, in percent).
+    /// <see cref="Constants.BonusIncreasePerHasteInPercentage"/> is 0.1, in percent).
     /// </summary>
     public const double HasteBonusPerPercent = 0.001;
     /// <summary>
-    /// Tooltip: "up to a maximum of 5%" (the game data has <see cref="HasteThreshold"/>, the Haste at which the bonus stops
+    /// Tooltip: "up to a maximum of 5%" (the game data has <see cref="Constants.HasteThreshold"/>, the Haste at which the bonus stops
     /// growing).
     /// </summary>
     public const double MaxHasteBonus = 0.05;
@@ -22,7 +22,7 @@ public partial class TheMonarch : Glyph
 
     public override void Bind(Hero hero)
     {
-        double acceleration = ForRank(CooldownAccelerationByRank);
+        double acceleration = ForRank(Constants.CooldownAccelerationByRank);
         hero.CooldownAccelerations.Add((ability, now) =>
             ability.Category == AbilityCategory.Major
                 ? acceleration + Math.Min(MaxHasteBonus, HasteBonusPerPercent * hero.GetHaste(now) * 100.0)

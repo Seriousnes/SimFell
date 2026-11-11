@@ -10,7 +10,7 @@ public partial class Warbound : GundeAbility
 
     public Warbound(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, AbilityCharges);
         IgnoresGcd = true;
     }

@@ -369,6 +369,7 @@ public class MonteCarloSimulator
             {
                 var enemy = ctx.AddEnemy(100 + i, i, $"Training Dummy {i}", maxHealth: TrainingDummyHealth);
                 enemy.IsBoss = options.Boss;
+                enemy.IsTrainingDummy = true;
                 if (options.HealthFollowsTime) enemy.FollowTime(ctx, SimTime.Zero, duration);
             }
             ctx.Player.CurrentTarget = ctx.AllEnemies.First();

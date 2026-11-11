@@ -45,7 +45,7 @@ public sealed class BuildEditorTests : IDisposable
     {
         var catalog = BuildCatalog.For("rime");
         Assert.Equal(18, catalog.Talents.Count);
-        Assert.All(catalog.Talents, t => Assert.True(t.Talent.Modeled && t.Talent.Icon != null, t.Talent.Name));
+        Assert.All(catalog.Talents, t => Assert.True(t.Talent.Modeled && t.Talent.IconUrl != null, t.Talent.Name));
         // Rime's four weapons alone, by their abilities: Voidbringer's Touch, Nature's Fury, Chronoshift, Icicles of An'zhyr.
         Assert.Equal([155, 161, 1558, 1561], catalog.Weapons.Select(w => w.Id).Order());
         Assert.Contains(catalog.Legendaries, l => l.Name == "Frostwyrm's Spite");
@@ -61,8 +61,8 @@ public sealed class BuildEditorTests : IDisposable
         foreach (string hero in Catalog.Heroes.Keys)
         {
             var catalog = BuildCatalog.For(hero);
-            Assert.All(catalog.Talents, t => Assert.True(t.Talent.Icon != null, $"{hero}: {t.Talent.Name}"));
-            Assert.All(catalog.Legendaries, l => Assert.True(l.Icon != null, $"{hero}: {l.Name}"));
+            Assert.All(catalog.Talents, t => Assert.True(t.Talent.IconUrl != null, $"{hero}: {t.Talent.Name}"));
+            Assert.All(catalog.Legendaries, l => Assert.True(l.IconUrl != null, $"{hero}: {l.Name}"));
         }
     }
 
@@ -90,7 +90,7 @@ public sealed class BuildEditorTests : IDisposable
             var legendaries = BuildCatalog.For(hero).Legendaries;
             // Head, chest, legs.
             Assert.Equal([5899, 5898, 5900], legendaries.Select(l => l.Id));
-            Assert.All(legendaries, l => Assert.Equal(GameIcons.LegendaryItems[$"{hero}:{l.Id}"], l.Icon));
+            Assert.All(legendaries, l => Assert.Equal(GameIcons.LegendaryItems[$"{hero}:{l.Id}"], l.IconUrl));
         }
         Assert.Contains(BuildCatalog.For("Ardeos").Legendaries, l => l.Name == "Fire Toad" && l.Modeled);
         Assert.Contains(BuildCatalog.For("Gunde").Legendaries, l => l.Name == "Carrion Onslaught" && l.Modeled);

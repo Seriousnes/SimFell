@@ -12,7 +12,7 @@ public partial class BurningInitiative : Talent
     public override void Bind(Hero hero)
     {
         var cinders = hero.Resources.Get(Ardeos.Cinders);
-        cinders.Initial += AdditionalOrbResources * Ardeos.CindersPerBurningEmber;
+        cinders.Initial += Constants.AdditionalOrbResources * Ardeos.CindersPerBurningEmber;
         cinders.Current = cinders.Initial;
     }
 }

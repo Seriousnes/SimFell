@@ -16,7 +16,7 @@ public partial class HuntersFocus : Sigil
     public override void Bind(Hero hero)
     {
         var aura = hero.Register(AuraDef.Effect("Trait : Focused Haste", BuffEffectId, DurationSeconds, MaxStacks,
-            StatModifier.Add(StatType.HasteRating, ForRank(AdditionalHasteRatingByRank))));
+            StatModifier.Add(StatType.HasteRating, ForRank(Constants.AdditionalHasteRatingByRank))));
         EnemyTarget? focus = null;
         hero.OnCastCompleted += (ability, target, now) =>
         {

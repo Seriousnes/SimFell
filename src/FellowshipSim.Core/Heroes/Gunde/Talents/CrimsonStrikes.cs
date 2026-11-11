@@ -11,12 +11,13 @@ namespace FellowshipSim.Core.Heroes.Gunde.Talents;
 /// </summary>
 public partial class CrimsonStrikes : Talent
 {
-    public const string TalentName = "Crimson Strikes";
+    /// <summary>The talent's and its buff's name in combat logs; <see cref="TalentName"/> is "Crimson strikes".</summary>
+    public const string LogName = "Crimson Strikes";
     public const int EffectId = 3224;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId) with { Duration = SimTime.Infinite };
+    public static readonly AuraDef Buff = AuraDef.Effect(LogName, EffectId) with { Duration = SimTime.Infinite };
 
-    public override string Name => TalentName;
+    public override string Name => LogName;
     public override int Id => TalentId;
 
     public override void Bind(Hero hero)
@@ -27,7 +28,7 @@ public partial class CrimsonStrikes : Talent
         {
             if (!hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 1.0;
             hero.Auras.Remove(Buff, ctx.CurrentTime);
-            return DamageMultiplier;
+            return Constants.DashAttackTalentDamageMultiplier;
         });
         // Blood Arc's own pulse comes before it grants the buff.
         gunde.RendPulse += (ctx, _) => hero.Auras.Remove(Buff, ctx.CurrentTime);

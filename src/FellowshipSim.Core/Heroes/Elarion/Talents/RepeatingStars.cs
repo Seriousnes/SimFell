@@ -15,6 +15,6 @@ public partial class RepeatingStars : Talent
     {
         if (hero.GetAbility<Multishot>() is not { } multishot) return;
         multishot.Cast += (ctx, empowered) =>
-            hero.ReduceCooldown<StarfallVolley>(SimTime.FromSeconds(empowered ? CooldownReductionEmpoweredCooldownReductionInSeconds : CooldownReductionInSeconds), ctx.CurrentTime);
+            hero.ReduceCooldown<StarfallVolley>(SimTime.FromSeconds(empowered ? Constants.CooldownReductionEmpoweredCooldownReductionInSeconds : Constants.CooldownReductionInSeconds), ctx.CurrentTime);
     }
 }

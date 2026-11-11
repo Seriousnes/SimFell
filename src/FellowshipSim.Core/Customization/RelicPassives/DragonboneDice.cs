@@ -12,8 +12,8 @@ public partial class DragonboneDice : RelicPassive
     public const int BuffEffectId = 3268;
     public const string ProcKey = "dragonbone_dice";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Draconic Might", BuffEffectId, BuffDuration,
-        modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, PowerIncreaseFactor)) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Draconic Might", BuffEffectId, Constants.BuffDuration,
+        modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, Constants.PowerIncreaseFactor)) with { IsProc = true };
 
     public override int Id => RelicPassiveId;
     public override string Name => RelicPassiveName;

@@ -16,7 +16,7 @@ public partial class GreatBallsOfFire : Talent
     {
         var fireBall = hero.GetAbility<FireBall>();
         if (fireBall == null) return;
-        fireBall.AddDamageMultiplier(PlacedProjectileAoeDamageBonusDirectDamageScale);
-        fireBall.DotFraction += PlacedProjectileAoeDamageBonusDamageToDotTransferIncrease;
+        fireBall.AddDamageMultiplier(Constants.PlacedProjectileAoeDamageBonusDirectDamageScale);
+        fireBall.DotFraction += Constants.PlacedProjectileAoeDamageBonusDamageToDotTransferIncrease;
     }
 }

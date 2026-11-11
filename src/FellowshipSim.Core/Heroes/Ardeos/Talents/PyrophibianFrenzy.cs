@@ -30,7 +30,7 @@ public partial class PyrophibianFrenzy : Talent
             {
                 if (hit.SimContext is not { } ctx || hit.Amount <= 0) return;
                 // The frog leaps at any enemy, so the proof is a frog attack on any of them.
-                if (ctx.Outcomes.RollProc(ProcKey, hit.IsCrit ? ProcChanceOnCrit : ProcChanceNotCrit, ctx)) frogs.Spawn(ctx, 1, FirstAttackSeconds);
+                if (ctx.Outcomes.RollProc(ProcKey, hit.IsCrit ? Constants.ProcChanceOnCrit : Constants.ProcChanceNotCrit, ctx)) frogs.Spawn(ctx, 1, FirstAttackSeconds);
             };
         });
     }

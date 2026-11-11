@@ -20,12 +20,12 @@ public partial class WildSwing : TariqAbility
 
     public WildSwing(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = Constants.StrengthCoefficient;
         // Game data: no cooldown effect, so the cooldown is its global cooldown, 1 / Haste snapshotted at commit, outside
         // Cooldown Recovery.
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         IgnoresCooldownRecovery = true;
-        AoeTargetThreshold = TargetThresholdForDamageScale;
+        AoeTargetThreshold = Constants.TargetThresholdForDamageScale;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
@@ -35,7 +35,7 @@ public partial class WildSwing : TariqAbility
         // Combat logs (3 Tariq fights, 388 hits): no Wild Swing hit crits.
         double recklessness = 1.0 + Owner.CritChance(ctx.CurrentTime);
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, AreaAround(ctx, target), ctx);
-        double falloff = struck.Count > TargetThresholdForDamageScale ? Math.Sqrt((double)TargetThresholdForDamageScale / struck.Count) : 1.0;
+        double falloff = struck.Count > Constants.TargetThresholdForDamageScale ? Math.Sqrt((double)Constants.TargetThresholdForDamageScale / struck.Count) : 1.0;
         for (int i = 0; i < struck.Count; i++)
         {
             // A swing the enemy avoids is a hit of no damage.

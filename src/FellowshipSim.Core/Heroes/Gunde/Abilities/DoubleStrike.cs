@@ -11,8 +11,8 @@ public partial class DoubleStrike : GundeAbility
 
     public DoubleStrike(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficientPerHit;
-        RendShare = DamageToDotScaler;
+        BaseCoefficient = Constants.DamageStrengthCoefficientPerHit;
+        RendShare = Constants.PerTargetAccumulatedBleedDamageToDotScaler;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

@@ -17,8 +17,8 @@ public partial class LunarFury : Talent
     public override void Bind(Hero hero)
     {
         if (hero is not Elarion elarion) return;
-        elarion.Salvo.ChanceMultipliers.Add(id => id == HeartseekerBarrage.AbilityId ? IncreasedInstantMarkTriggerChanceChanceMultiplier : 1.0);
-        elarion.Salvo.AddDamageMultiplier(IncreasedDamageDamageScale);
-        elarion.Salvo.Eruption.AddDamageMultiplier(IncreasedDamageDamageScale);
+        elarion.Salvo.ChanceMultipliers.Add(id => id == HeartseekerBarrage.AbilityId ? Constants.InstantMarkTargetTalentIncreasedInstantMarkTriggerChanceChanceMultiplier : 1.0);
+        elarion.Salvo.AddDamageMultiplier(Constants.IncreasedDamageDamageScale);
+        elarion.Salvo.Eruption.AddDamageMultiplier(Constants.IncreasedDamageDamageScale);
     }
 }

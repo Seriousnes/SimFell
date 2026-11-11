@@ -8,7 +8,7 @@ public partial class SpiritPalm : ComboBuilder
 {
     public SpiritPalm(Meiko owner) : base(owner, AbilityId, AbilityName, Technique.Palm)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = Constants.AgilityCoefficient;
     }
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target) => DealDamage(ctx, target);

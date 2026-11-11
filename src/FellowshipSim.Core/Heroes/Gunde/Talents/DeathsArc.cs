@@ -11,7 +11,7 @@ public partial class DeathsArc : Talent
     public const int EffectId = 3208;
     public const string ProcKey = "deaths_arc";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Duration) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Constants.EmpoweredDuration) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -25,11 +25,11 @@ public partial class DeathsArc : Talent
         {
             if (cast.Ability != bloodArc || !hero.Auras.HasAura(Buff, cast.Time)) return;
             hero.Auras.Remove(Buff, cast.Time);
-            cast.CritChance += AddedCriticalStrikeChance;
+            cast.CritChance += Constants.InstantAoeWithBuffTalentEmpoweredAddedCriticalStrikeChance;
         };
         bloodArc.Arced += (ctx, _) =>
         {
-            if (!ctx.Outcomes.RollProc(ProcKey, Chance, ctx)) return;
+            if (!ctx.Outcomes.RollProc(ProcKey, Constants.Chance, ctx)) return;
             hero.CooldownOf(bloodArc).ResetAll();
             hero.Auras.Apply(Buff, ctx.CurrentTime);
         };

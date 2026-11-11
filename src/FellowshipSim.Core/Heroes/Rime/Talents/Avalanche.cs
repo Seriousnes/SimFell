@@ -13,8 +13,8 @@ namespace FellowshipSim.Core.Heroes.Rime.Talents;
 public partial class Avalanche : Talent
 {
     /// <summary>The chance of at least one extra comet, and of a second one once there is one.</summary>
-    public const double AnyExtraChance = MultiStrikeChanceToStrikeTwice + MultiStrikeChanceToStrikeTrice;
-    public const double SecondExtraChance = MultiStrikeChanceToStrikeTrice / AnyExtraChance;
+    public const double AnyExtraChance = Constants.MultiStrikeChanceToStrikeTwice + Constants.MultiStrikeChanceToStrikeTrice;
+    public const double SecondExtraChance = Constants.MultiStrikeChanceToStrikeTrice / AnyExtraChance;
     public const double CometSpacingSeconds = 5.0 / 30.0;
     public const string ProcKey = "avalanche";
     public const string SecondProcKey = "avalanche_second";

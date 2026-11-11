@@ -26,7 +26,7 @@ public partial class FireFrogs : ArdeosAbility
     public FireFrogAttack Attack { get; }
 
     /// <summary>Frogs a cast conjures (Frog Squad adds to it).</summary>
-    public int Frogs { get; set; } = FiremageFireFrogAbilityNumFrogs;
+    public int Frogs { get; set; } = Constants.FireFrogAbilityNumFrogs;
 
     /// <summary>Attacks each frog performs (Frog Squad adds to it).</summary>
     public int AttacksPerFrog { get; set; } = BaseAttacksPerFrog;

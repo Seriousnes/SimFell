@@ -17,7 +17,7 @@ public partial class DarkeningHearts : Talent
     {
         var heartSplitter = hero.GetAbility<HeartSplitter>();
         if (heartSplitter == null) return;
-        heartSplitter.AddDamageMultiplier(IncreasedDirectDamageDamageScale);
-        heartSplitter.TargetCritChanceBonuses.Add(target => target.HealthFraction <= LowHealthThreshold ? AddedCriticalStrikeChance : 0.0);
+        heartSplitter.AddDamageMultiplier(Constants.IncreasedDirectDamageDamageScale);
+        heartSplitter.TargetCritChanceBonuses.Add(target => target.HealthFraction <= LowHealthThreshold ? Constants.LowHealthTargetAddedCriticalStrikeChance : 0.0);
     }
 }

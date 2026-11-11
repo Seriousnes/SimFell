@@ -12,7 +12,7 @@ public partial class GrosslyIncandescent : Legendary
 {
     public const int BuffEffectId = 2723;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Grossly Incandescent", BuffEffectId, maxStacks: NumberOfStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect("Grossly Incandescent", BuffEffectId, maxStacks: Constants.NumberOfStacks);
 
     public override void Bind(Hero hero)
     {
@@ -21,7 +21,7 @@ public partial class GrosslyIncandescent : Legendary
         {
             var now = ctx.CurrentTime;
             hero.Auras.Apply(Buff, now);
-            if (hero.Auras.GetStacks(Buff, now) < NumberOfStacks) return;
+            if (hero.Auras.GetStacks(Buff, now) < Constants.NumberOfStacks) return;
             hero.Auras.Remove(Buff, now);
             hero.Auras.Apply(OmegaReprieval.Buff, now);
         };

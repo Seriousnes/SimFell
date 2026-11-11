@@ -8,7 +8,7 @@ public partial class NavirsKeeper : Talent
     public const int BuffEffectId = 2730;
 
     /// <summary>"causes your next Cold Snap to not require nor cost any charge"</summary>
-    public static readonly AuraDef Buff = AuraDef.Effect("Navir's Keeper", BuffEffectId, maxStacks: GrantInstantSingleDamageChargeNumCharges);
+    public static readonly AuraDef Buff = AuraDef.Effect("Navir's Keeper", BuffEffectId, maxStacks: Constants.GrantInstantSingleDamageChargeNumCharges);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -18,7 +18,7 @@ public partial class NavirsKeeper : Talent
     {
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (ability is FlightOfTheNavir) hero.Auras.Apply(Buff, now, setStacks: GrantInstantSingleDamageChargeNumCharges);
+            if (ability is FlightOfTheNavir) hero.Auras.Apply(Buff, now, setStacks: Constants.GrantInstantSingleDamageChargeNumCharges);
         };
     }
 }

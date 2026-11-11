@@ -19,7 +19,7 @@ public partial class ThunderingVortex : Legendary
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<ChainLightning>() is not { } chainLightning) return;
-        chainLightning.FuryMultiplier *= BouncyProjectileIncreasedFuryGenerationFuryScaler;
+        chainLightning.FuryMultiplier *= Constants.BouncyProjectileTalentBouncyProjectileIncreasedFuryGenerationFuryScaler;
         chainLightning.Bounced += ctx => hero.Auras.Apply(Buff, ctx.CurrentTime);
         hero.OnCastResolving += cast =>
         {

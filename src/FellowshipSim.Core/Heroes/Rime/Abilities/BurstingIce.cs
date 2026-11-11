@@ -13,11 +13,11 @@ public partial class BurstingIce : RimeAbility
     public const int WintersEmbraceEffectId = 2303;
 
     /// <summary>The debuff on the enemy. Action lists read it; the pulses run on their own timer.</summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect("Bursting Ice", DebuffEffectId, AoeDuration);
+    public static readonly AuraDef Debuff = AuraDef.Effect("Bursting Ice", DebuffEffectId, Constants.AoeDuration);
 
     /// <summary>"While Bursting Ice is active on an enemy you gain Winter's Embrace, causing you to deal more damage."</summary>
     public static readonly AuraDef WintersEmbrace = AuraDef.Effect("Winter's Embrace", WintersEmbraceEffectId,
-        modifiers: StatModifier.More(StatType.DamageScale, DamageScaleOtherAbilities));
+        modifiers: StatModifier.More(StatType.DamageScale, Constants.BuffWhileActiveDamageScaleOtherAbilities));
 
     private int _activeDebuffs;
 
@@ -33,7 +33,7 @@ public partial class BurstingIce : RimeAbility
     }
 
     /// <summary>The debuff's duration with its bonus.</summary>
-    public double Duration => AoeDuration + BonusDurationSeconds;
+    public double Duration => Constants.AoeDuration + BonusDurationSeconds;
 
     private AuraDef _debuff = Debuff;
 
@@ -45,11 +45,11 @@ public partial class BurstingIce : RimeAbility
 
     public BurstingIce(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AoeDamageIntellectCoefficient;
+        BaseCoefficient = Constants.AoeDamageIntellectCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
         // Combat logs: pulses lose damage as a square-root falloff beyond this many targets.
-        AoeTargetThreshold = DamageScalingTargetCountThreshold;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
         DamageLogId = LogIds.Effect(PulseEffectId);
     }
 
@@ -64,7 +64,7 @@ public partial class BurstingIce : RimeAbility
         double dealt = DealAoeDamage(ctx, enemies, damageMultiplier: multiplier);
         // The Anima comes after the damage, for an enemy whose 1396 application succeeded: a pulse that strikes no enemy
         // gives none.
-        if (dealt > 0) hero.AddAnima(ResourceGainPerHit, ctx, target);
+        if (dealt > 0) hero.AddAnima(Constants.ResourceGainPerHit, ctx, target);
         Pulsed?.Invoke(ctx);
     }
 
@@ -110,7 +110,7 @@ public partial class BurstingIce : RimeAbility
             ctx.EnemyDemising += demise;
         }
         // Effect 1395 is tagged EffectType.Dot: a haste change inside a pulse repeats it a server frame later.
-        debuff = PeriodicEffect.BeginHasted(ctx, hero, Name, Duration, AoePulsePeriod, tickOnStart: false, partialFinalTick: true,
+        debuff = PeriodicEffect.BeginHasted(ctx, hero, Name, Duration, Constants.AoePulsePeriod, tickOnStart: false, partialFinalTick: true,
             // Combat logs (10 Rime logs, 526 debuffs): the final pulse deals the fraction of a pulse period left when the
             // debuff runs out.
             onTick: (c, fraction) =>

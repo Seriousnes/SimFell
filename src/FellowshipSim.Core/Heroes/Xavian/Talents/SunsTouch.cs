@@ -17,8 +17,8 @@ public partial class SunsTouch : Talent
     public override void Bind(Hero hero)
     {
         var xavian = (Xavian)hero;
-        var dot = new XavianDot(xavian, DotEffectId, TalentName, Period, Duration);
+        var dot = new XavianDot(xavian, DotEffectId, TalentName, Constants.DotHotPeriod, Constants.DotHotDuration);
         hero.Register(dot.Debuff);
-        xavian.BrilliantFlash.Dealt += (ctx, enemy, dealt) => dot.Apply(ctx, enemy, dealt * DirectValueToPeriodicValueScaler);
+        xavian.BrilliantFlash.Dealt += (ctx, enemy, dealt) => dot.Apply(ctx, enemy, dealt * Constants.DotHotDirectValueToPeriodicValueScaler);
     }
 }

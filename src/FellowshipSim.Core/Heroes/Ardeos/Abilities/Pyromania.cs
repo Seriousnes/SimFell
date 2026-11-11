@@ -40,7 +40,7 @@ public partial class Pyromania : ArdeosAbility
         int chosen = 0;
         foreach (var enemy in _others)
         {
-            if (chosen == MaxNumSpreads) break;
+            if (chosen == Constants.MaxNumSpreads) break;
             if (!ctx.Outcomes.RollProc(TargetProcKey, 1.0, ctx, enemy)) continue;
             dots.Apply(ctx, _dot, enemy);
             chosen++;

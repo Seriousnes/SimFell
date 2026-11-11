@@ -6,5 +6,5 @@ public partial class Bloodrush : Talent
     public override string Name => TalentName;
     public override int Id => TalentId;
 
-    public override void Bind(Hero hero) => ((Mara)hero).Hemorrhage.TickRateBonuses.Add(_ => IncreasedTickRateWhileSingleTickRateIncrease - 1.0);
+    public override void Bind(Hero hero) => ((Mara)hero).Hemorrhage.TickRateBonuses.Add(_ => Constants.IncreasedTickRateWhileSingleTickRateIncrease - 1.0);
 }

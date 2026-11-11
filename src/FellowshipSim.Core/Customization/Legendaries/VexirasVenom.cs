@@ -23,7 +23,7 @@ public partial class VexirasVenom : Legendary
     public const int EffectId = 2364;
     public const string EffectName = "Vexira's Venom";
     /// <summary>The venom's damage is dealt in this many ticks' worth (the duration over the tick interval, which Haste divides).</summary>
-    public const double TicksPerVenom = (double)Duration / TickInterval;
+    public const double TicksPerVenom = (double)Constants.Duration / Constants.TickInterval;
 
     public override void Bind(Hero hero)
     {
@@ -43,7 +43,7 @@ public partial class VexirasVenom : Legendary
             {
                 if (hit.IsCrit && hit.Amount > 0 && hit.AbilityName == own && hit.AbilityGroup != null && hit.Target is { } target && hit.SimContext is { } ctx)
                 {
-                    venom.Add(ctx, target, DamageToDotDamageMultiplier * hit.Amount);
+                    venom.Add(ctx, target, Constants.DamageToDotDamageMultiplier * hit.Amount);
                 }
             };
         }
@@ -83,15 +83,15 @@ public partial class VexirasVenom : Legendary
             if (_active.TryGetValue(target, out var dot) && dot.EndsAt > now && dot.Effect is { IsActive: true, PeriodTimer: { IsActive: true } timer } running)
             {
                 dot.TickValue = RefreshedTick(dot.TickValue, damage, (dot.EndsAt - now).TotalSeconds, (timer.DueTime - now).TotalSeconds, (now - running.LastTickTime).TotalSeconds);
-                dot.EndsAt = now + SimTime.FromSeconds(Duration);
-                running.Refresh(ctx, Duration);
+                dot.EndsAt = now + SimTime.FromSeconds(Constants.Duration);
+                running.Refresh(ctx, Constants.Duration);
                 target.Auras.Apply(Debuff, now);
                 return;
             }
-            var applied = new Instance { TickValue = damage / TicksPerVenom, EndsAt = now + SimTime.FromSeconds(Duration) };
+            var applied = new Instance { TickValue = damage / TicksPerVenom, EndsAt = now + SimTime.FromSeconds(Constants.Duration) };
             _active[target] = applied;
             target.Auras.Apply(Debuff, now);
-            applied.Effect = PeriodicEffect.BeginHasted(ctx, owner, EffectName, Duration, TickInterval, tickOnStart: false, partialFinalTick: true,
+            applied.Effect = PeriodicEffect.BeginHasted(ctx, owner, EffectName, Constants.Duration, Constants.TickInterval, tickOnStart: false, partialFinalTick: true,
                 (c, fraction) =>
                 {
                     if (target.IsSleeping)
@@ -122,7 +122,7 @@ public partial class VexirasVenom : Legendary
     /// (the game: V_new = (V_old x W_old + added) / W_new).
     /// </summary>
     public static double RefreshedTick(double tick, double damage, double left, double nextTick, double sinceTick) =>
-        (tick * TicksIn(left, nextTick, sinceTick) + damage) / TicksIn(Duration, nextTick, sinceTick);
+        (tick * TicksIn(left, nextTick, sinceTick) + damage) / TicksIn(Constants.Duration, nextTick, sinceTick);
 
     /// <summary>
     /// The ticks in <paramref name="seconds"/> of a running venom: the next tick with the unhasted ticks after it, or with no
@@ -130,5 +130,5 @@ public partial class VexirasVenom : Legendary
     /// Period, the period timer's real time to the next tick, and its time since the last, a next tick under a period away).
     /// </summary>
     private static double TicksIn(double seconds, double nextTick, double sinceTick) =>
-        seconds >= nextTick ? 1.0 + (seconds - nextTick) / TickInterval : (seconds + sinceTick) / TickInterval;
+        seconds >= nextTick ? 1.0 + (seconds - nextTick) / Constants.TickInterval : (seconds + sinceTick) / Constants.TickInterval;
 }

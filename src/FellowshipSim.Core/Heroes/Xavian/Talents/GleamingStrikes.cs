@@ -15,7 +15,7 @@ public partial class GleamingStrikes : Talent
 
     public override void Bind(Hero hero)
     {
-        hero.GetAbility<SunStrike>()!.ExtraSunstruckOnCrit = ExtraDebuffFromCritExtraDebuffStack;
-        hero.GetAbility<Omnistrike>()!.DamagePerSunstruckStack = AoeMeleeBonusDamagePerStack;
+        hero.GetAbility<SunStrike>()!.ExtraSunstruckOnCrit = Constants.ExtraDebuffFromCritExtraDebuffStack;
+        hero.GetAbility<Omnistrike>()!.DamagePerSunstruckStack = Constants.AoeMeleeDamageBoostAndManaRefundDebuffAoeMeleeBonusDamagePerStack;
     }
 }

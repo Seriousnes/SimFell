@@ -9,7 +9,7 @@ public partial class SolarShield : XavianAbility
 {
     /// <summary>Effect 2551: the shield, 8 seconds.</summary>
     public const int BuffEffectId = 2551;
-    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, BuffDuration);
+    public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, Constants.BuffDuration);
 
     /// <summary>Multipliers on the next shield's absorb, read as it is cast (Hallowed Shield).</summary>
     public List<Func<SimulationContext, double>> AbsorbMultipliers { get; } = new();
@@ -31,7 +31,7 @@ public partial class SolarShield : XavianAbility
     public double MaxAbsorb(SimulationContext ctx)
     {
         var now = ctx.CurrentTime;
-        double absorb = AbsorbStrengthCoefficient * Owner.PrimaryAttribute(now) * (1.0 + Owner.Expertise(now));
+        double absorb = Constants.AbsorbStrengthCoefficient * Owner.PrimaryAttribute(now) * (1.0 + Owner.Expertise(now));
         foreach (var multiplier in AbsorbMultipliers) absorb *= multiplier(ctx);
         return absorb;
     }

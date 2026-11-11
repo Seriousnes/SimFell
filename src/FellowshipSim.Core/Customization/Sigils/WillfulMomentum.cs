@@ -16,8 +16,8 @@ public partial class WillfulMomentum : Sigil
 
     public override void Bind(Hero hero)
     {
-        hero.Stats.SpiritRating += ForRank(AdditionalSpiritRatingByRank);
-        var buff = Buff.WithModifiers(StatModifier.Increased(StatType.PrimaryAttributeMultiplier, ForRank(BuffMainStatAddByRank)));
+        hero.Stats.SpiritRating += ForRank(Constants.AdditionalSpiritRatingByRank);
+        var buff = Buff.WithModifiers(StatModifier.Increased(StatType.PrimaryAttributeMultiplier, ForRank(Constants.BuffMainStatAddByRank)));
         hero.OnSpiritRefund += (_, _, ctx) => hero.Auras.Apply(buff, ctx.CurrentTime);
     }
 }

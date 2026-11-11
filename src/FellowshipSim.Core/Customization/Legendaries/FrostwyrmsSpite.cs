@@ -17,7 +17,7 @@ public partial class FrostwyrmsSpite : Legendary
     public const int DamageEffectId = 2265;
     public const string DamageName = "Frostwyrm's Spite";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Frostwyrm's Spite", BuffEffectId, BuffDuration, MaxNumStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect("Frostwyrm's Spite", BuffEffectId, Constants.StackBuffForInstantSingleDamageBuffDuration, Constants.StackBuffForInstantSingleDamageMaxNumStacks);
 
     public override void Bind(Hero hero)
     {
@@ -47,7 +47,7 @@ public partial class FrostwyrmsSpite : Legendary
             consumed = 0;
             var selected = ctx.Outcomes.SelectTargets(LogIds.Effect(DamageEffectId), ctx.ActiveEnemiesExcept(target), ctx);
             int struck = Math.Min(stacks, selected.Count);
-            double threshold = TargetCountThreshold;
+            double threshold = Constants.StackBuffForInstantSingleDamageTargetCountThreshold;
             double falloff = struck > threshold ? Math.Sqrt(threshold / struck) : 1.0;
             for (int i = 0; i < struck; i++)
             {
@@ -57,5 +57,5 @@ public partial class FrostwyrmsSpite : Legendary
         };
     }
 
-    public static double DamageMultiplier(int stacks) => 1.0 + InstantSingleDamageDamagePerStack * stacks;
+    public static double DamageMultiplier(int stacks) => 1.0 + Constants.StackBuffForInstantSingleDamageInstantSingleDamageDamagePerStack * stacks;
 }

@@ -11,6 +11,6 @@ public partial class SkandisDecree : Legendary
 {
     public override void Bind(Hero hero)
     {
-        if (hero is Rime rime && rime.GetAbility<BurstingIce>() is { } burstingIce) burstingIce.BonusDurationSeconds += IncreasedDurationDurationInSeconds;
+        if (hero is Rime rime && rime.GetAbility<BurstingIce>() is { } burstingIce) burstingIce.BonusDurationSeconds += Constants.IncreasedDurationDurationInSeconds;
     }
 }

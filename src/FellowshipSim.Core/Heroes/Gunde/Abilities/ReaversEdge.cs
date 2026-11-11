@@ -10,10 +10,10 @@ public partial class ReaversEdge : GundeAbility
 
     public ReaversEdge(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = DamageScalingTargetCountThreshold;
-        RendShare = DamageToDotScaler;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
+        RendShare = Constants.PerTargetAccumulatedBleedDamageToDotScaler;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

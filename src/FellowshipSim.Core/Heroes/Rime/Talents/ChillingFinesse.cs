@@ -14,11 +14,11 @@ public partial class ChillingFinesse : Talent
         var freezingTorrent = hero.GetAbility<FreezingTorrent>();
         hero.OnChannelTick += (ability, _, _, ctx) =>
         {
-            if (ability is FreezingTorrent && burstingIce != null) hero.ReduceCooldown(burstingIce.Name, SimTime.FromSeconds(CastedDebuffAoeDamageCooldownReductionCooldownReductionPerTick), ctx.CurrentTime);
+            if (ability is FreezingTorrent && burstingIce != null) hero.ReduceCooldown(burstingIce.Name, SimTime.FromSeconds(Constants.CastedDebuffAoeDamageCooldownReductionCooldownReductionPerTick), ctx.CurrentTime);
         };
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (ability is ColdSnap && freezingTorrent != null) hero.ReduceCooldown(freezingTorrent.Name, SimTime.FromSeconds(ReduceCooldownOnChanneledBeamReductionInSeconds), now);
+            if (ability is ColdSnap && freezingTorrent != null) hero.ReduceCooldown(freezingTorrent.Name, SimTime.FromSeconds(Constants.InstantSingleDamageTalentReduceCooldownOnChanneledBeamReductionInSeconds), now);
         };
     }
 }

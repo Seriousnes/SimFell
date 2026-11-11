@@ -18,7 +18,7 @@ public partial class DecreeOfTheSun : XavianAbility
 
     public DecreeOfTheSun(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageStrengthCoefficient;
+        BaseCoefficient = Constants.AoeDamageDamageStrengthCoefficient;
         AoeTargetThreshold = TargetThreshold;
         IgnoresGcd = true;
     }

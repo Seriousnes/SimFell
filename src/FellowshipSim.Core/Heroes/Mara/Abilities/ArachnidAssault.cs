@@ -2,7 +2,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 
 /// <summary>
 /// Ability 1212: Agility damage to all targets in a radius around Mara. The damage is increased per combo
-/// point spent. Costs Energy; damage falls off with the target count beyond <see cref="NumTargetsDamageFalloffThreshold"/> (game data targetCountFalloff). During
+/// point spent. Costs Energy; damage falls off with the target count beyond <see cref="Constants.NumTargetsDamageFalloffThreshold"/> (game data targetCountFalloff). During
 /// Matriarch Macabre shadowy clones repeat it (<see cref="MatriarchMacabre"/>).
 /// Combat logs (the 23 Mara fights of `data/fights`): a clone's hit on an enemy is a fixed fraction of the cast's hit on that enemy
 /// at every target count over 858 casts, so it has the cast's falloff, and nearly all clone hits over
@@ -15,17 +15,17 @@ public partial class ArachnidAssault : Finisher
 {
     public ArachnidAssault(Mara owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = Constants.AgilityCoefficient;
         EnergyCost = AbilityCost;
-        AoeTargetThreshold = NumTargetsDamageFalloffThreshold;
+        AoeTargetThreshold = Constants.NumTargetsDamageFalloffThreshold;
     }
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target, int points)
     {
         double multiplier = ComboPointMultiplier(points);
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, EnemiesAround(ctx, target), ctx).ToArray();
-        double falloff = struck.Length > NumTargetsDamageFalloffThreshold
-            ? Math.Sqrt((double)NumTargetsDamageFalloffThreshold / struck.Length)
+        double falloff = struck.Length > Constants.NumTargetsDamageFalloffThreshold
+            ? Math.Sqrt((double)Constants.NumTargetsDamageFalloffThreshold / struck.Length)
             : 1.0;
         // Read before the cast's own hits and their procs.
         var clones = Mara.Matriarch.KeepCast(this, ctx, multiplier * falloff * CastDamageMultiplier, CurrentCast?.CritChance ?? 0.0);

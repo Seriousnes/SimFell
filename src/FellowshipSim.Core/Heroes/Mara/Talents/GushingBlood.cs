@@ -16,7 +16,7 @@ public partial class GushingBlood : Talent
     {
         var mara = (Mara)hero;
         mara.GetAbility<HemorrhagingStrike>()?.ExtraBleedTargets.Add((ctx, target) =>
-            hero.Auras.HasAura(MaidenOfDeath.Buff, ctx.CurrentTime) ? ctx.ActiveEnemiesExcept(target).Take(AdditionalMaxTargets) : []);
-        mara.Hemorrhage.TargetMultipliers.Add((enemy, ctx) => mara.SeethingPoison.IsOn(enemy, ctx) ? BleedMultiplier : 1.0);
+            hero.Auras.HasAura(MaidenOfDeath.Buff, ctx.CurrentTime) ? ctx.ActiveEnemiesExcept(target).Take(Constants.AdditionalMaxTargets) : []);
+        mara.Hemorrhage.TargetMultipliers.Add((enemy, ctx) => mara.SeethingPoison.IsOn(enemy, ctx) ? Constants.ChargedDoubleAttackBuilderPoisonBleedMultiplier : 1.0);
     }
 }

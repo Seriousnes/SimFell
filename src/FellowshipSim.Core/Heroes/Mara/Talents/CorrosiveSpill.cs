@@ -6,7 +6,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Talents;
 /// Talent 206: "Each Combo Point you spend has a chance to cause you to coat the ground in front of you with a
 /// Corrosive Spill. Enemies that stand in Corrosive Spill take Agility poison damage periodically."
 /// Creeping Death adds damage per Haste. The damage is logged as effect 2310. UNVERIFIED: no combat log has
-/// this talent; a sim puts every enemy in the spill and ticks it every <see cref="TickInterval"/> shortened by Haste.
+/// this talent; a sim puts every enemy in the spill and ticks it every <see cref="Constants.DebuffTickInterval"/> shortened by Haste.
 /// </summary>
 public partial class CorrosiveSpill : Talent
 {
@@ -26,19 +26,19 @@ public partial class CorrosiveSpill : Talent
             if (resource != Mara.ComboPoints || mara.SimContext is not { } ctx) return;
             for (int i = 0; i < (int)amount; i++)
             {
-                if (!ctx.Outcomes.RollProc(ProcKey, Chance, ctx)) continue;
-                PeriodicEffect.BeginHasted(ctx, mara, TalentName, TalentDuration, TickInterval, tickOnStart: false, partialFinalTick: false,
+                if (!ctx.Outcomes.RollProc(ProcKey, Constants.Chance, ctx)) continue;
+                PeriodicEffect.BeginHasted(ctx, mara, TalentName, TalentDuration, Constants.DebuffTickInterval, tickOnStart: false, partialFinalTick: false,
                     onTick: (c, _) => spill.DealAoeDamage(c, c.ActiveEnemies), damageLogId: spill.DamageLogId);
             }
         };
     }
 
-    /// <summary>The spill's damage: <see cref="AgilityCoefficient"/> of Agility per tick on every enemy in it.</summary>
+    /// <summary>The spill's damage: <see cref="Constants.DebuffAgilityCoefficient"/> of Agility per tick on every enemy in it.</summary>
     private sealed class Spill : MaraAbility
     {
         public Spill(Mara owner) : base(owner, LogIds.Effect(DamageEffectId), TalentName)
         {
-            BaseCoefficient = AgilityCoefficient;
+            BaseCoefficient = Constants.DebuffAgilityCoefficient;
             HasCreepingDeath = true;
         }
 

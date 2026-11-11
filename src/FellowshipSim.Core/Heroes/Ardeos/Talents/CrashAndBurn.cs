@@ -15,6 +15,6 @@ public partial class CrashAndBurn : Talent
         var searing = hero.GetAbility<SearingBlaze>()?.Dot;
         var fireBall = hero.GetAbility<FireBall>();
         if (searing == null || fireBall == null) return;
-        searing.Hit += (in DamageContext hit) => hero.ReduceCooldown(fireBall.Name, SimTime.FromSeconds(ReductionInSeconds), hit.Timestamp);
+        searing.Hit += (in DamageContext hit) => hero.ReduceCooldown(fireBall.Name, SimTime.FromSeconds(Constants.ReductionInSeconds), hit.Timestamp);
     }
 }

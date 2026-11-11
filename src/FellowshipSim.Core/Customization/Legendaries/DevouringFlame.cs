@@ -13,6 +13,6 @@ public partial class DevouringFlame : Legendary
     public override void Bind(Hero hero)
     {
         if (hero is not Ardeos ardeos || ardeos.GetAbility<EngulfingFlames>()?.Dot is not { } engulfing) return;
-        hero.TargetDamageMultipliers.Add((target, _) => 1.0 + (DamageMultiplier - 1.0) * ardeos.Dots.Count(target, engulfing));
+        hero.TargetDamageMultipliers.Add((target, _) => 1.0 + (Constants.BoostsIncomingDamageDamageMultiplier - 1.0) * ardeos.Dots.Count(target, engulfing));
     }
 }

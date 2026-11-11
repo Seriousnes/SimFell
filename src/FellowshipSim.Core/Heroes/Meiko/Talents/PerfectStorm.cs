@@ -23,10 +23,10 @@ public partial class PerfectStorm : Talent
         if (hero.GetAbility<LashingStormkick>() is not { } lashing) return;
         lashing.Kicked += (ctx, target, multiplier, _, _) =>
         {
-            double chance = Chance * (1.0 + hero.GetHaste(ctx.CurrentTime));
+            double chance = Constants.Chance * (1.0 + hero.GetHaste(ctx.CurrentTime));
             if (!ctx.Outcomes.RollProc(ProcKey, chance, ctx, target)) return;
-            ctx.Schedule(SimTime.FromSeconds(DelayBetweenStrikes),
-                c => lashing.Kick(c, target, multiplier * DamageMultiplier, DamageId, TalentName), TalentName);
+            ctx.Schedule(SimTime.FromSeconds(Constants.DelayBetweenStrikes),
+                c => lashing.Kick(c, target, multiplier * Constants.DamageMultiplier, DamageId, TalentName), TalentName);
         };
     }
 }

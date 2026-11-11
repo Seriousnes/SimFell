@@ -10,8 +10,8 @@ public partial class FarBeyondDriven : Talent
 {
     public const int EffectId = 1744;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Far Beyond Driven", EffectId, Duration, MaxStacks,
-        StatModifier.Add(StatType.Spirit, StatIncrease));
+    public static readonly AuraDef Buff = AuraDef.Effect("Far Beyond Driven", EffectId, Constants.TalentAutoAttackBuffDurationalStatBonusDuration, Constants.TalentAutoAttackBuffDurationalStatBonusMaxStacks,
+        StatModifier.Add(StatType.Spirit, Constants.TalentAutoAttackBuffDurationalStatBonusStatIncrease));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

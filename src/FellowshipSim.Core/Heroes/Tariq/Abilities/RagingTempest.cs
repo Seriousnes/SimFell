@@ -24,14 +24,14 @@ public partial class RagingTempest : TariqAbility
     /// adds one, and it lasts <see cref="BuffSeconds"/> from the cast whatever the stacks.
     /// </summary>
     public static readonly AuraDef Buff = AuraDef.Effect("Raging Tempest", BuffEffectId, BuffSeconds, MaxStacks,
-        StatModifier.Add(StatType.Expertise, CritChanceIncreasePerStack)) with { ReapplyKeepsExpiry = true };
+        StatModifier.Add(StatType.Expertise, Constants.PulsatingSingleDamageSelfBuffCritChanceIncreasePerStack)) with { ReapplyKeepsExpiry = true };
 
     private readonly RagingCurrents _currents;
 
     public RagingTempest(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
         BaseCoefficient = Coefficient;
-        AoeTargetThreshold = TargetThresholdForDamageScale;
+        AoeTargetThreshold = Constants.AoeImpactTargetThresholdForDamageScale;
         IgnoresGcd = true;
         _currents = new RagingCurrents(owner);
     }

@@ -26,7 +26,7 @@ public partial class DiamondStrike : Aspect
 
     public override void Bind(Hero hero)
     {
-        var beam = new Beam(hero, ForRank(DamagePrimaryAttributeCoefficientByRank));
+        var beam = new Beam(hero, ForRank(Constants.DamagePrimaryAttributeCoefficientByRank));
         var rppm = new RealPpm(ProcKey, AspectProcsPerMinute);
         hero.OnDamageDealt += (in dmg) =>
         {

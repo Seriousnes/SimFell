@@ -14,7 +14,7 @@ public partial class ShieldThrow : HelenaAbility
     public const double ShockwaveReductionSeconds = 3.0;
 
     /// <summary>
-    /// A bounce to one more enemy. A sim bounces to every enemy up to <see cref="MaxNumBounces"/>; a replay bounces as often as
+    /// A bounce to one more enemy. A sim bounces to every enemy up to <see cref="Constants.MaxNumBounces"/>; a replay bounces as often as
     /// the log shows.
     /// </summary>
     public const string BounceProcKey = "shield_throw_bounce";
@@ -33,7 +33,7 @@ public partial class ShieldThrow : HelenaAbility
 
     public ShieldThrow(Helena owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = StrengthCoefficient;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         VeteranOfWarReductions.Add((typeof(Shockwave), ShockwaveReductionSeconds));
     }
@@ -76,12 +76,12 @@ public partial class ShieldThrow : HelenaAbility
     }
 
     /// <summary>
-    /// As a hit lands, the shield bounces to an enemy it has not hit yet, up to <see cref="MaxNumBounces"/> times. Each bounce keeps
+    /// As a hit lands, the shield bounces to an enemy it has not hit yet, up to <see cref="Constants.MaxNumBounces"/> times. Each bounce keeps
     /// the cast's damage bonuses and crit.
     /// </summary>
     private void Bounce(SimulationContext ctx, List<EnemyTarget> struck, double castMultiplier, double castCrit)
     {
-        if (struck.Count > MaxNumBounces) return;
+        if (struck.Count > Constants.MaxNumBounces) return;
         var others = ctx.ActiveEnemies.Where(e => !struck.Contains(e)).ToList();
         if (others.Count == 0 || ctx.Outcomes.ChooseTarget(DamageLogId, others, ctx) is not { } next) return;
         if (!ctx.Outcomes.RollProc(BounceProcKey, 1.0, ctx, next)) return;

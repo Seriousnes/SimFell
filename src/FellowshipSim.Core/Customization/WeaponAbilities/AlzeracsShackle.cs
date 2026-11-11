@@ -52,7 +52,7 @@ public partial class AlzeracsShackle : Ability
     public const double SlowTickSeconds = 2.0;
 
     /// <summary>Freeze on the target.</summary>
-    public static readonly AuraDef Freeze = AuraDef.Effect(FreezeName, FreezeEffectId, Duration);
+    public static readonly AuraDef Freeze = AuraDef.Effect(FreezeName, FreezeEffectId, Constants.StunDuration);
 
     /// <summary>Slow on each enemy the explosion hit.</summary>
     public static readonly AuraDef Slow = AuraDef.Effect(SlowName, SlowEffectId, SlowSeconds);
@@ -97,7 +97,7 @@ public partial class AlzeracsShackle : Ability
         target.Auras.Apply(Freeze, ctx.CurrentTime);
         var numbers = _freezeTick.Take(ctx, CritChanceBonus);
         PeriodicEffect? freeze = null;
-        freeze = PeriodicEffect.BeginHasted(ctx, Owner, FreezeName, Duration, FreezeTickSeconds, tickOnStart: false, partialFinalTick: true,
+        freeze = PeriodicEffect.BeginHasted(ctx, Owner, FreezeName, Constants.StunDuration, FreezeTickSeconds, tickOnStart: false, partialFinalTick: true,
             onTick: (c, fraction) => _freezeTick.Deal(c, target, numbers, fraction),
             onEnd: (c, clipped) =>
             {

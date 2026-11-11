@@ -18,23 +18,23 @@ public partial class TheWayfarer : Glyph
     /// <summary>
     /// A [CORE] ability takes a fraction of its cooldown off the time to the next application (glyph 703 constants
     /// CooldownReduction.MovementAbilityCooldownFractionMultiplier and MovementAbilityCooldownDenominator). Combat
-    /// logs: each cycle is <see cref="Cooldown"/> less that fraction of the cooldown of each Bursting Ice and Freezing Torrent
+    /// logs: each cycle is <see cref="Constants.Cooldown"/> less that fraction of the cooldown of each Bursting Ice and Freezing Torrent
     /// completed in it (N18KtgP3rvpYGm24 fight 27, Rzg1nQNHpm2fhYtB fight 23), and a cast that takes it past 0 applies
     /// The Wayfarer as it completes.
     /// </summary>
     public const double ReductionPerCooldownSecond = 4.0 / 30.0;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(GlyphName, BuffEffectId, Duration);
+    public static readonly AuraDef Buff = AuraDef.Effect(GlyphName, BuffEffectId, Constants.BuffDuration);
 
     /// <summary>Effect 3183 (tags System, no RemoveOnDeath): it stays through the hero's death.</summary>
-    public static readonly AuraDef OnCooldown = AuraDef.Effect("The Wayfarer: On Cooldown", CooldownEffectId, Cooldown) with { KeepsOnDeath = true };
+    public static readonly AuraDef OnCooldown = AuraDef.Effect("The Wayfarer: On Cooldown", CooldownEffectId, Constants.Cooldown) with { KeepsOnDeath = true };
 
     public override int Id => GlyphId;
     public override string Name => GlyphName;
 
     public override void Bind(Hero hero)
     {
-        var buff = Buff.WithModifiers(StatModifier.Add(StatType.Haste, ForRank(AdditionalHasteByRank)));
+        var buff = Buff.WithModifiers(StatModifier.Add(StatType.Haste, ForRank(Constants.BuffAdditionalHasteByRank)));
 
         void Grant(SimTime now)
         {

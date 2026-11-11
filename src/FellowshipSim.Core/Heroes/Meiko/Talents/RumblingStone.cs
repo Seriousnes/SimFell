@@ -14,11 +14,11 @@ public partial class RumblingStone : Talent
 
     public override void Bind(Hero hero)
     {
-        hero.GetAbility<EarthFist>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
-        hero.GetAbility<RisingEarth>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
-        hero.GetAbility<StoneStomp>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
-        hero.GetAbility<EarthfistBarrage>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
-        hero.GetAbility<ShatterEarth>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
-        hero.GetAbility<StoneShield>()?.AddDamageMultiplier(IncreasedDamageDamageMultiplier);
+        hero.GetAbility<EarthFist>()?.AddDamageMultiplier(Constants.EarthTalentIncreasedDamageDamageMultiplier);
+        hero.GetAbility<RisingEarth>()?.AddDamageMultiplier(Constants.EarthTalentIncreasedDamageDamageMultiplier);
+        hero.GetAbility<StoneStomp>()?.AddDamageMultiplier(Constants.EarthTalentIncreasedDamageDamageMultiplier);
+        hero.GetAbility<EarthfistBarrage>()?.AddDamageMultiplier(Constants.EarthTalentIncreasedDamageDamageMultiplier);
+        hero.GetAbility<ShatterEarth>()?.AddDamageMultiplier(Constants.EarthTalentIncreasedDamageDamageMultiplier);
+        hero.GetAbility<StoneShield>()?.AddDamageMultiplier(Constants.EarthTalentIncreasedDamageDamageMultiplier);
     }
 }

@@ -23,7 +23,7 @@ public partial class SeethingBurst : Talent
         mara.PoisonDamageIds.Add(burst.DamageLogId);
         mara.SeethingPoison.Ticked += (ctx, target) =>
         {
-            if (ctx.Outcomes.RollProc(ProcKey, ProcChance, ctx, target)) burst.DealAoeDamage(ctx, ctx.ActiveEnemies);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.AoeDamageProcChance, ctx, target)) burst.DealAoeDamage(ctx, ctx.ActiveEnemies);
         };
     }
 
@@ -31,8 +31,8 @@ public partial class SeethingBurst : Talent
     {
         public Burst(Mara owner) : base(owner, LogIds.Effect(DamageEffectId), TalentName)
         {
-            BaseCoefficient = AgilityCoefficient;
-            AoeTargetThreshold = NumTargetsDamageFalloffThreshold;
+            BaseCoefficient = Constants.AoeDamageAgilityCoefficient;
+            AoeTargetThreshold = Constants.AoeDamageNumTargetsDamageFalloffThreshold;
             HasCreepingDeath = true;
         }
 

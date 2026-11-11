@@ -26,12 +26,33 @@ SimFell runs in three ways. They share the same engine:
 
 ## Build
 
-The engine's creatures are generated from the Codex's data export. The build downloads it into `codex-export/`, which git
-ignores, and downloads it again after a new datamine.
-
 ```
 dotnet build -c Release
 ```
+
+The engine's game data (heroes, abilities, talents, gear items and powers, creatures, dungeons and the game icons) is
+generated from the Codex's data export by `FellowshipSim.Codex.Generators`. The generated classes are committed in
+`src/FellowshipSim.Core/Generated/Codex/`, one folder per generator, and the build compiles them, so a build needs no
+export. A review shows every game data value a change touches.
+
+The generators run in a build of their own, over the export in `codex-export/` (git ignores it). Run it after a new
+datamine, a change to a generator, or a new or renamed `partial` class the generators write a half of, and commit the
+folder:
+
+```
+tools/download-codex-export.sh
+tools/regenerate-codex.sh
+dotnet test tests/FellowshipSim.Tests -c Release
+```
+
+On Windows, run the scripts in Git Bash. `regenerate-codex.sh` writes the folder again and its `codex-export.sha256`, the
+hash of the export the files are from. CI's Tests workflow checks the folder (`tools/check-codex-generated.sh`): with the
+export of `codex-export.sha256`, the regenerated folder must be the committed one; a newer export gives a warning until
+someone regenerates. Two branches regenerated from one export merge without a conflict in the folder, unless they change
+one file. After such a merge, regenerate and commit the folder.
+
+A test that checks a game data value has the value as a number. A new export with a different value fails that test,
+and the test's new number is part of the commit.
 
 On Windows the solution builds the desktop app for Windows; on macOS it builds it for Mac Catalyst.
 

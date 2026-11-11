@@ -15,6 +15,6 @@ public partial class GuardiansFluidity : Talent
     {
         if (hero is not Meiko meiko) return;
         meiko.Finished += (ctx, _, _) =>
-            hero.ReduceCooldown<StoneShield>(SimTime.FromSeconds(CooldownReductionInSeconds), ctx.CurrentTime);
+            hero.ReduceCooldown<StoneShield>(SimTime.FromSeconds(Constants.CooldownReductionInSeconds), ctx.CurrentTime);
     }
 }

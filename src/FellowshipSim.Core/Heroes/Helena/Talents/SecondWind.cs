@@ -10,8 +10,8 @@ public partial class SecondWind : Talent
     public const int BuffEffectId = 1215;
     public const string ProcKey = "second_wind";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Duration,
-        modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, StrengthMultiplier));
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.ToughnessBuffDuration,
+        modifiers: StatModifier.More(StatType.PrimaryAttributeMultiplier, Constants.ToughnessBuffStrengthMultiplier));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

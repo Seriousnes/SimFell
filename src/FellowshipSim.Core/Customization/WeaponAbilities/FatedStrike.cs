@@ -17,8 +17,8 @@ public partial class FatedStrike : Ability
     public const int GloriousPurposeEffectId = 80;
 
     /// <summary>Glorious Purpose: increased Cooldown Acceleration (the hero's other abilities; a weapon ability has its own).</summary>
-    public static readonly AuraDef GloriousPurpose = AuraDef.Effect("Glorious Purpose", GloriousPurposeEffectId, Duration,
-        modifiers: StatModifier.Increased(StatType.CooldownRecovery, CooldownRecoveryMultiplier));
+    public static readonly AuraDef GloriousPurpose = AuraDef.Effect("Glorious Purpose", GloriousPurposeEffectId, Constants.BuffDuration,
+        modifiers: StatModifier.Increased(StatType.CooldownRecovery, Constants.BuffCooldownRecoveryMultiplier));
 
     public FatedStrike(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
@@ -31,7 +31,7 @@ public partial class FatedStrike : Ability
         TriggerCooldown(ctx);
         DealDamage(ctx, target);
         var nearby = ctx.Outcomes.SelectTargets(DamageLogId, ctx.ActiveEnemiesExcept(target), ctx);
-        double falloff = nearby.Count > DamageFalloffTargetCountThreshold ? Math.Sqrt((double)DamageFalloffTargetCountThreshold / nearby.Count) : 1.0;
+        double falloff = nearby.Count > Constants.CleaveDamageFalloffTargetCountThreshold ? Math.Sqrt((double)Constants.CleaveDamageFalloffTargetCountThreshold / nearby.Count) : 1.0;
         for (int i = 0; i < nearby.Count; i++) DealDamage(ctx, nearby[i], damageMultiplier: CleaveCoefficient / Coefficient * falloff);
         Owner.Auras.Apply(GloriousPurpose, ctx.CurrentTime);
     }

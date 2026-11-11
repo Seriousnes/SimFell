@@ -18,7 +18,7 @@ public partial class AgonizingBlaze : Talent
     {
         var searing = hero.GetAbility<SearingBlaze>()?.Dot;
         if (searing == null) return;
-        searing.DamagePerTickDealt = StackingBoostPerStackDamageIncrease;
+        searing.DamagePerTickDealt = Constants.StackingBoostPerStackDamageIncrease;
         searing.MaxTicksCounted = MaxStacks;
     }
 }

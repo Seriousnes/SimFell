@@ -14,6 +14,6 @@ public partial class ArachnidOnslaught : Talent
     public override void Bind(Hero hero)
     {
         var mara = (Mara)hero;
-        mara.GetAbility<ArachnidAssault>()?.TargetMultipliers.Add((enemy, ctx) => mara.Hemorrhage.IsOn(enemy, ctx) ? IncreasedDamageWhenBleedDamageMultiplier : 1.0);
+        mara.GetAbility<ArachnidAssault>()?.TargetMultipliers.Add((enemy, ctx) => mara.Hemorrhage.IsOn(enemy, ctx) ? Constants.IncreasedDamageWhenBleedDamageMultiplier : 1.0);
     }
 }

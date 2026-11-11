@@ -10,6 +10,10 @@ public abstract class Augmentation
     /// <summary>The augmentation's game ID (combat logs show it + 3,000,000).</summary>
     public abstract int Id { get; }
     public abstract string Name { get; }
+
+    /// <summary>The augmentation's icon URL from the game data (the generated <c>&lt;Type&gt;Icon</c>), or null.</summary>
+    public virtual string? Icon => null;
+
     public int Rank { get; init; } = 1;
 
     /// <summary>This augmentation's value from a per-rank table (rank 1 first).</summary>

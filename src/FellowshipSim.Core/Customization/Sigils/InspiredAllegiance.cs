@@ -20,8 +20,8 @@ public partial class InspiredAllegiance : Sigil
 
     public override void Bind(Hero hero)
     {
-        var buff = Buff.WithModifiers(StatModifier.Add(StatType.HasteRating, ForRank(BuffAdditionalHasteRatingByRank)));
-        double cooldownSeconds = ForRank(WeaponAbilityCooldownReductionInSecondsByRank);
+        var buff = Buff.WithModifiers(StatModifier.Add(StatType.HasteRating, ForRank(Constants.BuffAdditionalHasteRatingByRank)));
+        double cooldownSeconds = ForRank(Constants.WeaponAbilityCooldownReductionInSecondsByRank);
         var rppm = new RealPpm(ProcKey, SigilProcsPerMinute);
         hero.OnCastCompleted += (_, _, now) =>
         {

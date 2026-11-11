@@ -19,8 +19,8 @@ public partial class SpiritedVortex : MeikoFinisher
 
     public SpiritedVortex(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory, Technique.Palm, Technique.Fist)
     {
-        BaseCoefficient = AgilityCoefficient;
-        AoeTargetThreshold = TargetCountDamageScalingThreshold;
+        BaseCoefficient = Constants.AgilityCoefficient;
+        AoeTargetThreshold = Constants.TargetCountDamageScalingThreshold;
     }
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target) => Activate(ctx, target, CastDamageMultiplier);

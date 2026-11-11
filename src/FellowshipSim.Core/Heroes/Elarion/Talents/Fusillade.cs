@@ -15,7 +15,7 @@ public partial class Fusillade : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<HeartseekerBarrage>() is not { } barrage) return;
-        barrage.ExtendChannel(IncreasedChannelDurationAmount);
+        barrage.ExtendChannel(Constants.ChanneledMultiProjectileDebuffTalentIncreasedChannelDurationAmount);
         barrage.ArrowCritChance += CritChance;
     }
 }

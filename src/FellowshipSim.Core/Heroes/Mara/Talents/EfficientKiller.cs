@@ -14,7 +14,7 @@ public partial class EfficientKiller : Talent
         var mara = (Mara)hero;
         hero.OnResourceSpent += (resource, amount, _) =>
         {
-            if (resource == Mara.ComboPoints && amount > 0 && mara.SimContext is { } ctx) mara.GainEnergyWithMaiden(EnergyGainPerComboPoint * amount, ctx);
+            if (resource == Mara.ComboPoints && amount > 0 && mara.SimContext is { } ctx) mara.GainEnergyWithMaiden(Constants.EnergyGainPerComboPoint * amount, ctx);
         };
     }
 }

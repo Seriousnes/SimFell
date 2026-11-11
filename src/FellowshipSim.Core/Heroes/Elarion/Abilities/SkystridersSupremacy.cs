@@ -9,7 +9,7 @@ public partial class SkystridersSupremacy : ElarionAbility
 {
     public const int BuffEffectId = 2009;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Skystrider's Supremacy", BuffEffectId, AbilityDuration, MaxStacks);
+    public static readonly AuraDef Buff = AuraDef.Effect("Skystrider's Supremacy", BuffEffectId, AbilityDuration, Constants.MaxStacks);
 
     /// <summary>The buff the cast gives (Fervent Supremacy: charges that last longer).</summary>
     public AuraDef CastBuff { get; set; } = Buff;

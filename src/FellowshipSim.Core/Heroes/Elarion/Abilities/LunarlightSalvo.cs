@@ -36,7 +36,7 @@ public sealed partial class LunarlightSalvo : Ability
 
     public LunarlightSalvo(Elarion owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = AgilityCoefficient;
+        BaseCoefficient = Constants.AgilityCoefficient;
         DamageLogId = LogIds.Effect(DamageEffectId);
         _erupt = new Erupt(owner);
         _noSalvo = [Shoot.AbilityId, DamageLogId, _erupt.DamageLogId];
@@ -53,13 +53,13 @@ public sealed partial class LunarlightSalvo : Ability
         if (hit.Target is not { } enemy || hit.SimContext is not { } ctx || hit.Amount <= 0 || _noSalvo.Contains(hit.AbilityId)) return;
         var now = hit.Timestamp;
         if (!enemy.Auras.HasAura(LunarlightMark.Debuff, now)) return;
-        double chance = hit.IsCrit ? ChanceToProcIfCrit : ChanceToProc;
+        double chance = hit.IsCrit ? Constants.ChanceToProcIfCrit : Constants.ChanceToProc;
         foreach (var m in ChanceMultipliers) chance *= m(hit.AbilityId);
         bool keepsMark = KeepsMarkFor.Contains(hit.AbilityId);
         if (!ctx.Outcomes.RollProc(keepsMark ? KeptMarkProcKey : ProcKey, Math.Min(1.0, chance), ctx, enemy)) return;
         if (!keepsMark) enemy.Auras.ConsumeStack(LunarlightMark.Debuff, now);
         DealDamage(ctx, enemy);
-        if (hit.AbilityId == HeartseekerBarrage.AbilityId && ctx.Outcomes.RollProc(EruptProcKey, ChanneledMultiProjectileDebuffTriggerAoeHitChanceToProc, ctx))
+        if (hit.AbilityId == HeartseekerBarrage.AbilityId && ctx.Outcomes.RollProc(EruptProcKey, Constants.ChanneledMultiProjectileDebuffTriggerAoeHitChanceToProc, ctx))
         {
             _erupt.Strike(ctx, enemy);
         }
@@ -70,9 +70,9 @@ public sealed partial class LunarlightSalvo : Ability
     {
         public Erupt(Elarion owner) : base(owner, AbilityId, EruptName)
         {
-            BaseCoefficient = AoeAgilityCoefficient;
+            BaseCoefficient = Constants.AgilityCoefficient;
             DamageLogId = LogIds.Effect(EruptEffectId);
-            AoeTargetThreshold = AoeTargetCountThreshold;
+            AoeTargetThreshold = Constants.AoeTargetCountThreshold;
         }
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }

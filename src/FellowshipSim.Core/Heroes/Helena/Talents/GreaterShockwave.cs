@@ -16,10 +16,10 @@ public partial class GreaterShockwave : Talent
     public override void Bind(Hero hero)
     {
         if (hero is not Helena helena || hero.GetAbility<Shockwave>() is not { } shockwave) return;
-        shockwave.BonusToughnessShare += IncreasedToughnessAndDamageAdditionalToughnessBasedOnMax;
+        shockwave.BonusToughnessShare += Constants.IncreasedToughnessAndDamageAdditionalToughnessBasedOnMax;
         hero.OnCastResolving += cast =>
         {
-            if (cast.Ability is Shockwave) cast.DamageMultiplier *= 1.0 + IncreasedToughnessAndDamageDamageMultiplierDamageMultiplierAtFullToughness * helena.ToughnessShare;
+            if (cast.Ability is Shockwave) cast.DamageMultiplier *= 1.0 + Constants.IncreasedToughnessAndDamageDamageMultiplierDamageMultiplierAtFullToughness * helena.ToughnessShare;
         };
     }
 }

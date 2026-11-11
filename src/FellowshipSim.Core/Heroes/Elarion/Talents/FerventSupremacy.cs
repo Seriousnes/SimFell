@@ -13,7 +13,7 @@ public partial class FerventSupremacy : Talent
 {
     public const double BuffSeconds = 15.0;
 
-    /// <summary>Skystrider's Supremacy's buff as Fervent Supremacy makes it: <see cref="MaxStacks"/> charges for <see cref="BuffSeconds"/>.</summary>
+    /// <summary>Skystrider's Supremacy's buff as Fervent Supremacy makes it: <see cref="Constants.SelfBuffForAoeProjectileMaxStacks"/> charges for <see cref="BuffSeconds"/>.</summary>
     public static readonly AuraDef Buff = SkystridersSupremacy.Buff.WithDuration(BuffSeconds);
 
     public override string Name => TalentName;
@@ -22,9 +22,9 @@ public partial class FerventSupremacy : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<SkystridersSupremacy>() is not { } supremacy) return;
-        supremacy.ShortenCooldown(ChargesCooldownAndDurationCooldownReductionInSeconds);
+        supremacy.ShortenCooldown(Constants.ChargesCooldownAndDurationCooldownReductionInSeconds);
         supremacy.CastBuff = Buff;
-        supremacy.ChargesGranted = MaxStacks;
-        hero.GetAbility<Multishot>()?.DamageMultipliers.Add((now, _) => hero.Auras.HasAura(Buff, now) ? ChargesCooldownAndDurationDamageBonus : 1.0);
+        supremacy.ChargesGranted = Constants.SelfBuffForAoeProjectileMaxStacks;
+        hero.GetAbility<Multishot>()?.DamageMultipliers.Add((now, _) => hero.Auras.HasAura(Buff, now) ? Constants.ChargesCooldownAndDurationDamageBonus : 1.0);
     }
 }

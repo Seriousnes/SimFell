@@ -24,7 +24,7 @@ public partial class SweepingStrike : HelenaAbility
     {
         BaseCoefficient = Coefficient;
         SetCooldown(AbilityCooldown);
-        AoeTargetThreshold = DamageScalingTargetCountThreshold;
+        AoeTargetThreshold = Constants.DamageDamageScalingTargetCountThreshold;
     }
 
     public override void Connect() => _bleed = Helena.GetAbility<SweepingStrikeBleed>();
@@ -33,8 +33,8 @@ public partial class SweepingStrike : HelenaAbility
     {
         TriggerCooldown(ctx);
         var targets = ctx.Outcomes.SelectTargets(DamageLogId, Enemies(ctx, target), ctx);
-        double falloff = targets.Count > DamageScalingTargetCountThreshold
-            ? Math.Sqrt((double)DamageScalingTargetCountThreshold / targets.Count)
+        double falloff = targets.Count > Constants.DamageDamageScalingTargetCountThreshold
+            ? Math.Sqrt((double)Constants.DamageDamageScalingTargetCountThreshold / targets.Count)
             : 1.0;
         for (int i = 0; i < targets.Count; i++)
         {

@@ -16,17 +16,17 @@ public partial class StoneShield : MeikoAbility
 
     public StoneShield(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DamageAgilityCoefficient;
+        BaseCoefficient = Constants.DamageAgilityCoefficient;
         SetCooldown(AbilityCooldown, AbilityCharges, scalesWithHaste: true);
         IgnoresGcd = true;
-        AoeTargetThreshold = TargetCountThreshold;
+        AoeTargetThreshold = Constants.TargetCountThreshold;
         DamageLogId = LogIds.Effect(DamageEffectId);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
-        PeriodicEffect.Begin(ctx, Name, (Hits - 1) * DamageTickInterval, DamageTickInterval, tickOnStart: true, partialFinalTick: false,
+        PeriodicEffect.Begin(ctx, Name, (Hits - 1) * Constants.DamageTickInterval, Constants.DamageTickInterval, tickOnStart: true, partialFinalTick: false,
             onTick: (c, _) => DealAoeDamage(c, c.ActiveEnemies),
             tickDelaySeconds: PeriodicEffect.ServerFrameSeconds, damageLogId: DamageLogId);
     }

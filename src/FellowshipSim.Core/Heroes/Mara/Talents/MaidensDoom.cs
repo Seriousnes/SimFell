@@ -16,6 +16,6 @@ public partial class MaidensDoom : Talent
     public override void Bind(Hero hero)
     {
         var maiden = hero.GetAbility<MaidenOfDeath>();
-        if (maiden != null) maiden.DamageAgainst = enemy => enemy.HealthFraction <= HealthThreshold ? DamageMultiplierAtLowHealth : MaidenOfDeath.BuffDamage;
+        if (maiden != null) maiden.DamageAgainst = enemy => enemy.HealthFraction <= HealthThreshold ? Constants.ChargedResourceRefillSelfBuffTalentIncreasedDamageDamageMultiplierAtLowHealth : MaidenOfDeath.BuffDamage;
     }
 }

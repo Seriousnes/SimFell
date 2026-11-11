@@ -13,7 +13,7 @@ public partial class ReignOfFire : Talent
     public const int MaxStacks = 2;
     public const string ProcKey = "reign_of_fire";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Reign of Fire", EffectId, BuffDuration, MaxStacks) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Reign of Fire", EffectId, Constants.PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcBuffDuration, MaxStacks) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -22,7 +22,7 @@ public partial class ReignOfFire : Talent
     {
         var fireBall = hero.GetAbility<FireBall>();
         if (fireBall == null) return;
-        var rppm = new RealPpm(ProcKey, PPM);
+        var rppm = new RealPpm(ProcKey, Constants.PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcPPM);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is not Detonate || hero.SimContext is not { } ctx || !rppm.Roll(hero, ctx)) return;
@@ -33,7 +33,7 @@ public partial class ReignOfFire : Talent
         {
             if (cast.Ability != fireBall || !hero.Auras.HasAura(Buff, cast.Time)) return;
             hero.Auras.ConsumeStack(Buff, cast.Time);
-            cast.CritChance += CritChanceIncrease;
+            cast.CritChance += Constants.PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcCritChanceIncrease;
         };
     }
 }

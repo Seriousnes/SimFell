@@ -12,7 +12,7 @@ public partial class ImpendingHeartseeker : Talent
 {
     public const int BuffEffectId = 2317;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Impending Heartseeker", BuffEffectId, BuffDuration) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Impending Heartseeker", BuffEffectId, Constants.ResetCooldownAndBuffBuffDuration) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;

@@ -15,6 +15,6 @@ public partial class TheMotherload : Talent
 
     public override void Bind(Hero hero)
     {
-        if (hero.GetAbility<ChainLightning>() is { } chainLightning) chainLightning.DamagePerOtherEnemy += DamagePerUniqueTargetScaler;
+        if (hero.GetAbility<ChainLightning>() is { } chainLightning) chainLightning.DamagePerOtherEnemy += Constants.DamagePerUniqueTargetScaler;
     }
 }

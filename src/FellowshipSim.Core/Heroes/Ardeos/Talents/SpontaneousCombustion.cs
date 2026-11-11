@@ -25,5 +25,5 @@ public partial class SpontaneousCombustion : Talent
     }
 
     private static void Empower(DamageOverTime? dot, string procKey) =>
-        dot?.TickCritChanceBonuses.Add((ctx, instance) => ctx.Outcomes.RollProc(procKey, Chance, ctx, instance.Target) ? CritChanceAdded : 0.0);
+        dot?.TickCritChanceBonuses.Add((ctx, instance) => ctx.Outcomes.RollProc(procKey, Constants.Chance, ctx, instance.Target) ? Constants.CritChanceAdded : 0.0);
 }

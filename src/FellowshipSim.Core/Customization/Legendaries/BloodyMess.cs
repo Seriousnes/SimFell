@@ -11,6 +11,6 @@ public partial class BloodyMess : Legendary
 {
     public override void Bind(Hero hero)
     {
-        if (hero is Gunde gunde && gunde.GetAbility<GrimCarve>() is { } grimCarve) grimCarve.SpinCount += AdditionalTicksAmount;
+        if (hero is Gunde gunde && gunde.GetAbility<GrimCarve>() is { } grimCarve) grimCarve.SpinCount += Constants.AdditionalTicksAmount;
     }
 }
