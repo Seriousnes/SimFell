@@ -76,9 +76,11 @@ record is the hero of that name in the game data. `HeroGenerator` writes the cla
 - `HeroId` and `HeroName`;
 - one constant per scalar field of the record, named `Hero` and the field's name: `HeroTitle`, `HeroMainStat`,
   `HeroColor`, `HeroPortrait`, `HeroRole`, `HeroRoleIcon`, `HeroOverallDifficulty`, `HeroOffense`, `HeroDefense` and
-  `HeroControl`;
+  `HeroControl` (`HeroPortrait` and `HeroRoleIcon` are full size image URLs);
 - one constant per base attribute of the record, named `Hero` and the attribute's name: `HeroBalancingDamageAura`,
   `HeroMaxResources`, `HeroResources`, `HeroMaxResourcesSecond`, `HeroMaxMana`, `HeroManaRegenRate`, `HeroBaseHealth`...;
+- `HeroTalentTree`, the hero's talent slot records, and `HeroWeapons`, each weapon item's name by the ability its weapon
+  power grants, with the `WeaponNames` override of `Hero`;
 - `Constants`, with each tuning value of the record with no owner or the hero as its owner.
 
 A number is an `int` when it is whole and a `double` otherwise. The class's own part has
@@ -122,7 +124,7 @@ after the record (the name in Pascal case, letters and digits only, an apostroph
 namespace. Of several records of that name and hero, the one with a category is the class's. `AbilityGenerator` writes
 the class's game data half:
 
-- `AbilityId` and `AbilityName`;
+- `AbilityId`, `AbilityName` and `AbilityIcon` (the full size image URL of the record's icon);
 - one constant per scalar field of the record, named `Ability` and the field's name: `AbilityCategory`,
   `AbilityCooldown`, `AbilityCharges`, `AbilityGlobalCooldown`, `AbilityGlobalCooldownScalesWithHaste`,
   `AbilityCastTime`, `AbilityCastTimeScalesWithHaste`, `AbilityChannelTime`, `AbilityChannelTick`, `AbilityCost`,
@@ -181,10 +183,13 @@ after the record (the name in Pascal case, letters and digits only, an apostroph
 namespace; the record is the talent of that name in one of the hero's talent slots. `TalentGenerator` writes the class's
 game data half:
 
-- `TalentId` and `TalentName`;
+- `TalentId`, `TalentName` and `TalentIcon` (the full size image URL of the record's icon), with the `Icon` override of
+  `Talent`;
 - one constant per scalar field of the record, named `Talent` and the field's name: `TalentCooldown`, `TalentCost`,
   `TalentDuration`, `TalentRange` and `TalentRadius`;
 - `Constants`, with each tuning value of the record.
+
+The build editor shows a talent with no class by its name and icon in `GameHeroData.TalentNames` and `GameIcons.Talents`.
 
 As for abilities, a number is an `int` when it is whole and a `double` otherwise. The class's own part has the `Name` and `Id` overrides, the behaviour and the values the record does not have. A talent hooks
 its effect into the hero in `Bind`, so abilities never check which talents are taken:
@@ -254,13 +259,13 @@ All found by the catalog through their ID constants; add the file and it is used
 
 | Content | Folder | Identified by |
 |---|---|---|
-| Aspect, sigil, protective enchant | `Customization/Aspects`, `Sigils`, `ProtectiveEnchants` | a `partial` class deriving from `Aspect`, `Sigil` or `ProtectiveEnchant`, named after the record of that type (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `AugmentationGenerator` writes its `<Type>Id` and `<Type>Name`, a constant per scalar field of the record (`<Type>MaxRank`, `<Type>RandomChance`, `<Type>Cooldown`, `<Type>Duration`, and `<Type>ProcsPerMinute` from its one proc roll), and its tuning values and rank runs in `Constants`, each rank run as `public static readonly double[] Constants.<Key>ByRank` (the run's key without `Trait.<Row>.`, its segments joined) read with `ForRank(...)`. A `delta` run's values are multipliers (1.072 for 7.2%), and a `ticks` run's values are per tick |
-| Glyph | `Customization/Glyphs` | a `partial` class deriving from `Glyph`, named after the glyph record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `GlyphGenerator` writes its `GlyphId` and `GlyphName` (logs match glyphs by name), `GlyphMaxRank` and `GlyphAbilityRank`, and its tuning values in `Constants`: a constant when the value is the same at every rank, otherwise `public static readonly double[] Constants.<Key>ByRank` read with `ForRank(...)` |
+| Aspect, sigil, protective enchant | `Customization/Aspects`, `Sigils`, `ProtectiveEnchants` | a `partial` class deriving from `Aspect`, `Sigil` or `ProtectiveEnchant`, named after the record of that type (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `AugmentationGenerator` writes its `<Type>Id`, `<Type>Name` and `<Type>Icon` (its icon URL, with the `Icon` override), a constant per scalar field of the record (`<Type>MaxRank`, `<Type>RandomChance`, `<Type>Cooldown`, `<Type>Duration`, and `<Type>ProcsPerMinute` from its one proc roll), and its tuning values and rank runs in `Constants`, each rank run as `public static readonly double[] Constants.<Key>ByRank` (the run's key without `Trait.<Row>.`, its segments joined) read with `ForRank(...)`. A `delta` run's values are multipliers (1.072 for 7.2%), and a `ticks` run's values are per tick |
+| Glyph | `Customization/Glyphs` | a `partial` class deriving from `Glyph`, named after the glyph record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id` and `Name` overrides; `GlyphGenerator` writes its `GlyphId` and `GlyphName` (logs match glyphs by name), `GlyphIcon` (its icon URL, with the `Icon` override), `GlyphMaxRank` and `GlyphAbilityRank`, and its tuning values in `Constants`: a constant when the value is the same at every rank, otherwise `public static readonly double[] Constants.<Key>ByRank` read with `ForRank(...)` |
 | Gem colour | `Customization/Gems` | its `AllNodes` table (node ID, slot, required power, values) |
-| Relic passive | `Customization/RelicPassives` | a `partial` class deriving from `RelicPassive`, named after the relic passive record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id`, `Name` and `Items` overrides (`Items` returns `RelicPassiveItems`); `RelicPassiveGenerator` writes its `RelicPassiveId` and `RelicPassiveName`, `RelicPassiveCooldown` and `RelicPassiveProcsPerMinute` (from its one proc roll), its tuning values in `Constants`, each granting item's `<Slot>ItemId` and `<Slot>ItemName` (`RelicItemId`, `RelicItemName`), and `public static readonly RelicItem[] RelicPassiveItems` |
-| Legendary | `Customization/Legendaries` | a `partial` class deriving from `Legendary`, named after the legendary power (Pascal case, letters and digits only), with `Bind`; `LegendaryGenerator` writes its `PowerId`, its items' `<Slot>ItemId`, its tuning values in `Constants`, and its `LegendaryPowerId`, `Name`, `HeroName` and `ItemIds` |
-| Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | a `partial` class deriving from `Weapon`, named after the weapon power or an item granting it (Pascal case, letters and digits only, an apostrophe inside its word), with its `Name`, `Equip` and a `WeaponAbilityId` override returning `WeaponPowerAbilityId`; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName` and `WeaponPowerAbilityId`. Its ability is a `partial` class deriving from `Ability` in `WeaponAbilities`, named after the weapon power; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName`, the granted ability's `AbilityId`, `AbilityName` and fields as `Ability<Field>` (`AbilityCategory`, `AbilityCooldown`, `AbilityCastTime`...), and the power's tuning values in `Constants` |
-| Gear items (the editor's slots and their stats) | `Import/GameGearData.cs`, written by `tools/generate-gear.cs`, not by hand | the item ID, per hero |
+| Relic passive | `Customization/RelicPassives` | a `partial` class deriving from `RelicPassive`, named after the relic passive record (Pascal case, letters and digits only, an apostrophe inside its word), with `Bind` and its `Id`, `Name` and `Items` overrides (`Items` returns `RelicPassiveItems`); `RelicPassiveGenerator` writes its `RelicPassiveId`, `RelicPassiveName` and `RelicPassiveIcon`, `RelicPassiveCooldown` and `RelicPassiveProcsPerMinute` (from its one proc roll), its tuning values in `Constants`, each granting item's `<Slot>ItemId`, `<Slot>ItemName` and `<Slot>ItemIcon` (`RelicItemId`, `RelicItemName`, `RelicItemIcon`), and `public static readonly RelicItem[] RelicPassiveItems`, each item with its ID, name and icon URL |
+| Legendary | `Customization/Legendaries` | a `partial` class deriving from `Legendary`, named after the legendary power (Pascal case, letters and digits only), with `Bind`; `LegendaryGenerator` writes its `PowerId` and `PowerIcon`, its items' `<Slot>ItemId` and `<Slot>ItemIcon`, its tuning values in `Constants`, and its `LegendaryPowerId`, `Name`, `HeroName`, `ItemIds` and `Icon` (the first item's icon URL, else the power's) |
+| Weapon | `Customization/Weapons` (+ its ability in `WeaponAbilities`) | a `partial` class deriving from `Weapon`, named after the weapon power or an item granting it (Pascal case, letters and digits only, an apostrophe inside its word), with its `Name`, `Equip` and a `WeaponAbilityId` override returning `WeaponPowerAbilityId`; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName`, `WeaponPowerIcon`, `WeaponPowerAbilityId` and `WeaponPowerAbilityIcon`, with the `Icon` override. Its ability is a `partial` class deriving from `Ability` in `WeaponAbilities`, named after the weapon power; `WeaponGenerator` writes its `WeaponPowerId`, `WeaponPowerName`, `WeaponPowerIcon`, the granted ability's `AbilityId`, `AbilityName`, `AbilityIcon` and fields as `Ability<Field>` (`AbilityCategory`, `AbilityCooldown`, `AbilityCastTime`...), and the power's tuning values in `Constants` |
+| Gear items (the editor's slots and their stats) | `GameGearData`, written by `ItemGenerator` from the game data | the item ID, per hero |
 | Buff from another player | `FellowshipSim.Engine/Replay/PartyBuffs.cs` | the buff's effect ID (optionally scaled by the giver's sigil rank) |
 
 Percentage bonuses to crit, haste, expertise or spirit go in `hero.Stats.Bonus*` (they apply in replays too: logs only give

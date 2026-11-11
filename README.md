@@ -26,8 +26,8 @@ SimFell runs in three ways. They share the same engine:
 
 ## Build
 
-The engine's game data (heroes, abilities, talents, gear powers, creatures and dungeons) is generated from the Codex's
-data export in `codex-export/`, which git ignores. Download it once after cloning, and again after a new datamine:
+The engine's game data (heroes, abilities, talents, gear items and powers, creatures, dungeons and the game icons) is
+generated from the Codex's data export in `codex-export/`, which git ignores. Download it once after cloning, and again after a new datamine:
 
 ```
 tools/download-codex-export.sh
