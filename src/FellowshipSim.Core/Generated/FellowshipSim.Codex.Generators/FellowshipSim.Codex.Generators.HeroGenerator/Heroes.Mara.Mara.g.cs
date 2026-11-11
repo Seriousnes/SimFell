@@ -183,4 +183,38 @@ partial class Mara
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 11.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 11, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 108),
+        new(1, 2, 2, 206),
+        new(1, 3, 2, 422),
+        new(2, 1, 1, 163),
+        new(2, 2, 1, 112),
+        new(2, 3, 1, 113),
+        new(3, 1, 2, 122),
+        new(3, 2, 2, 121),
+        new(3, 3, 2, 110),
+        new(4, 1, 1, 8),
+        new(4, 2, 1, 442),
+        new(4, 3, 1, 668),
+        new(5, 1, 3, 205),
+        new(5, 2, 3, 586),
+        new(5, 3, 3, 443),
+        new(6, 1, 1, 166),
+        new(6, 2, 1, 667),
+        new(6, 3, 1, 123),
+    ];
+
+    /// <summary>Game data: the weapons of hero 11, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [155] = "Void-touched Daggers",
+        [157] = "Sahril's Vengeance",
+        [160] = "Fateful Blades",
+        [1559] = "Wildstone Shards",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

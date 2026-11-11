@@ -183,4 +183,38 @@ partial class Meiko
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 13.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 13, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 90),
+        new(1, 2, 2, 446),
+        new(1, 3, 2, 96),
+        new(2, 1, 1, 91),
+        new(2, 2, 1, 92),
+        new(2, 3, 1, 626),
+        new(3, 1, 2, 97),
+        new(3, 2, 2, 514),
+        new(3, 3, 2, 98),
+        new(4, 1, 1, 99),
+        new(4, 2, 1, 103),
+        new(4, 3, 1, 106),
+        new(5, 1, 3, 102),
+        new(5, 2, 3, 415),
+        new(5, 3, 3, 104),
+        new(6, 1, 1, 174),
+        new(6, 2, 1, 95),
+        new(6, 3, 1, 107),
+    ];
+
+    /// <summary>Game data: the weapons of hero 13, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [152] = "Darkfrost Talons",
+        [159] = "Sahril's Grasp",
+        [160] = "Fists of Fate",
+        [162] = "Zeraleth's Claws",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

@@ -177,4 +177,38 @@ partial class Gunde
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 9.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 9, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 748),
+        new(1, 2, 2, 760),
+        new(1, 3, 2, 766),
+        new(2, 1, 1, 765),
+        new(2, 2, 1, 768),
+        new(2, 3, 1, 751),
+        new(3, 1, 2, 757),
+        new(3, 2, 2, 758),
+        new(3, 3, 2, 772),
+        new(4, 1, 1, 763),
+        new(4, 2, 1, 750),
+        new(4, 3, 1, 764),
+        new(5, 1, 3, 761),
+        new(5, 2, 3, 762),
+        new(5, 3, 3, 754),
+        new(6, 1, 1, 749),
+        new(6, 2, 1, 756),
+        new(6, 3, 1, 767),
+    ];
+
+    /// <summary>Game data: the weapons of hero 9, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [155] = "Voidbringer's Renders",
+        [157] = "Forgefather's Axes",
+        [160] = "Fateful Cleavers",
+        [1559] = "Rootbinder's Choppers",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

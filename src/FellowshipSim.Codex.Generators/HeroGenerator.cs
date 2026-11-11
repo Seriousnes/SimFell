@@ -21,8 +21,12 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>HeroMainStat</c>, <c>HeroRole</c>...; <c>HeroPortrait</c> and <c>HeroRoleIcon</c> are full size image URLs), one per base attribute under <c>Hero</c> and the attribute's name
 /// (<c>HeroBalancingDamageAura</c>, <c>HeroMaxResources</c>, <c>HeroMaxMana</c>...), and the hero's tuning values in a nested
 /// <c>Constants</c> under their <see cref="TuningNames"/> names, with the record itself as the record's hero. A tuning value
-/// of the record is the hero's when it has no owner or the hero is its owner. The class's own part has the hero's
-/// behaviour. A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX033.
+/// of the record is the hero's when it has no owner or the hero is its owner. <c>HeroTalentTree</c> has the hero's talent
+/// slot records row by row and column by column, and <c>HeroWeapons</c> each weapon item's name by the ability its weapon
+/// power grants, also the <c>WeaponNames</c> override of <c>Hero</c>. The class's own part has the hero's behaviour.
+/// <c>GameHeroData</c>'s <c>MainStats</c>, <c>TalentTrees</c> and <c>Weapons</c> have the same for each hero record with
+/// no class, by hero name. A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is
+/// CODEX033.
 /// The game data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through
 /// FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -51,9 +55,12 @@ public sealed class HeroGenerator : IIncrementalGenerator
     private sealed record Constant(string Name, string Type, string Literal, string Summary);
 
     /// <summary>
-    /// A hero record: its ID, name, class name, its field constants and its tuning values.
+    /// A hero record: its ID, name, class name, its field constants, its tuning values, its main stat's literal (empty for
+    /// none), its talent slots' <c>TalentSlot</c> literals row by row and column by column, and its weapons (each weapon
+    /// item's name by the ability its weapon power grants, in ability order).
     /// </summary>
-    private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Constant> Fields, EquatableArray<TuningEntry> Tunings);
+    private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Constant> Fields, EquatableArray<TuningEntry> Tunings,
+        string MainStat, EquatableArray<string> TalentTree, EquatableArray<TableEntry> Weapons);
 
     /// <summary>The game data's hero records, the tuning keys' first segments naming a hero, and its build date.</summary>
     private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
@@ -124,19 +131,34 @@ public sealed class HeroGenerator : IIncrementalGenerator
         }
 
         var heroes = new List<HeroDocument>();
+        var slots = new List<TalentSlotDocument>();
+        var powerAbilities = new Dictionary<int, int>();
+        var weaponItems = new List<ItemDocument>();
         if (entities != null)
         {
             foreach (var line in entities.Lines)
             {
                 ct.ThrowIfCancellationRequested();
                 string text = line.ToString();
-                // Only hero lines are read in full.
-                if (!text.Contains("\"$type\":\"hero\"")) continue;
+                // Only hero, talent slot and weapon power lines, and the item lines granting a weapon power, are read in full.
+                if (!text.Contains("\"$type\":\"hero\"") && !text.Contains("\"$type\":\"talent-slot\"") && !text.Contains("\"$type\":\"weapon-power\"")
+                    && !(text.Contains("\"$type\":\"item\"") && text.Contains("\"grants\":{\"type\":\"weapon-power\""))) continue;
                 try
                 {
-                    if (JsonSerializer.Deserialize<EntityDocument>(text, EntityDocuments.Options) is HeroDocument h && (h.Name ?? "").Trim().Length > 0)
+                    switch (JsonSerializer.Deserialize<EntityDocument>(text, EntityDocuments.Options))
                     {
-                        heroes.Add(h);
+                        case HeroDocument h when (h.Name ?? "").Trim().Length > 0:
+                            heroes.Add(h);
+                            break;
+                        case TalentSlotDocument s:
+                            slots.Add(s);
+                            break;
+                        case WeaponPowerDocument p when p.Grants?.FirstOrDefault(g => g.Type == EntityType.Ability) is { } ability:
+                            powerAbilities[p.Id] = ability.Id;
+                            break;
+                        case ItemDocument { Grants.Type: EntityType.WeaponPower, Hero: not null } i:
+                            weaponItems.Add(i);
+                            break;
                     }
                 }
                 catch (JsonException)
@@ -149,7 +171,16 @@ public sealed class HeroGenerator : IIncrementalGenerator
         foreach (var h in heroes.OrderBy(h => h.Id))
         {
             string name = h.Name!.Trim();
-            records.Add(new Record(h.Id, name, PascalCase(name), new([.. FieldsOf(h)]), new([.. TuningsOf(h)])));
+            var fields = FieldsOf(h);
+            var tree = slots.Where(s => s.Hero.ToString() == h.Name).OrderBy(s => s.Row).ThenBy(s => s.Column)
+                .Select(s => $"new({s.Row}, {s.Column}, {s.Cost}, {s.Talent.Id})");
+            // A weapon item grants a weapon power, and the power its ability.
+            var weapons = weaponItems.Where(i => i.Hero.ToString() == h.Name && powerAbilities.ContainsKey(i.Grants!.Id))
+                .Select(i => (Ability: powerAbilities[i.Grants!.Id], Name: i.Name ?? ""))
+                .GroupBy(w => w.Ability).Select(g => g.First()).OrderBy(w => w.Ability)
+                .Select(w => new TableEntry(w.Ability.ToString(CultureInfo.InvariantCulture), Literal(w.Name)));
+            records.Add(new Record(h.Id, name, PascalCase(name), new([.. fields]), new([.. TuningsOf(h)]),
+                fields.FirstOrDefault(f => f.Name == "HeroMainStat")?.Literal ?? "", new([.. tree]), new([.. weapons])));
         }
         return new Export(new([.. records]), HeroSegments.Of(entities, ct), buildDate);
     }
@@ -244,6 +275,8 @@ public sealed class HeroGenerator : IIncrementalGenerator
     private static void Write(SourceProductionContext context, Export export, ImmutableArray<Declared> declared)
     {
         var byClass = export.Records.ToLookup(r => r.ClassName);
+        // The IDs of the hero records with a class.
+        var matched = new HashSet<int>();
         foreach (var d in declared.GroupBy(d => (d.Namespace, d.Name)).Select(g => g.First())
                      .OrderBy(d => d.Namespace, StringComparer.Ordinal).ThenBy(d => d.Name, StringComparer.Ordinal))
         {
@@ -260,6 +293,7 @@ public sealed class HeroGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            matched.Add(record.Id);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var constants = new List<Constant>
             {
@@ -290,6 +324,32 @@ public sealed class HeroGenerator : IIncrementalGenerator
                 source.Append("    /// <summary>").Append(constant.Summary).Append("</summary>\n")
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
+            if (members.Contains("HeroTalentTree"))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "HeroTalentTree", record.Id));
+            }
+            else
+            {
+                if (!first) source.Append('\n');
+                first = false;
+                source.Append("    /// <summary>Game data: the talent slot records of hero ").Append(record.Id).Append(", row by row and column by column.</summary>\n")
+                    .Append("    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =\n    [\n")
+                    .Append(string.Concat(record.TalentTree.Select(s => "        " + s + ",\n"))).Append("    ];\n");
+            }
+            bool weapons = !members.Contains("HeroWeapons");
+            if (!weapons)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "HeroWeapons", record.Id));
+            }
+            else
+            {
+                if (!first) source.Append('\n');
+                first = false;
+                source.Append("    /// <summary>Game data: the weapons of hero ").Append(record.Id)
+                    .Append(", each weapon item's name by the ability its weapon power grants.</summary>\n")
+                    .Append("    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = ")
+                    .Append(WeaponsLiteral(record, "    ")).Append(";\n");
+            }
             if (tunings.Count > 0)
             {
                 if (members.Contains("Constants"))
@@ -303,10 +363,33 @@ public sealed class HeroGenerator : IIncrementalGenerator
                         false, !first);
                 }
             }
+            if (weapons) source.Append("\n    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;\n");
             source.Append("}\n");
             context.AddSource($"Heroes.{d.Namespace.Substring(HeroesNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        // The heroes with no class: their main stats, talent trees and weapons.
+        var unmatched = export.Records.Where(r => !matched.Contains(r.Id)).OrderBy(r => r.Name, StringComparer.Ordinal).ToList();
+        context.AddSource("GameHeroData.g.cs", SourceText.From(GameTables.Write("GameHeroData",
+            "The heroes of the game data with no hero class: each one's main stat, talent tree and weapons. <see cref=\"BuildHeroes\"/>\n" +
+            "takes them for a hero the engine does not have yet; a hero class has its own in its generated half.",
+        [
+            new GameTable("MainStats", "Each hero's main stat, by hero name.", "string", MainStatType, true,
+                new([.. unmatched.Where(r => r.MainStat.Length > 0).Select(r => new TableEntry(Literal(r.Name), r.MainStat))])),
+            new GameTable("TalentTrees", "Each hero's talent tree, row by row and column by column, by hero name.", "string",
+                "global::FellowshipSim.Core.Domain.TalentSlot[]", true,
+                new([.. unmatched.Select(r => new TableEntry(Literal(r.Name),
+                    "\n        [\n" + string.Concat(r.TalentTree.Select(s => "            " + s + ",\n")) + "        ]"))])),
+            new GameTable("Weapons", "Each hero's weapons: each weapon item's name by the ability its weapon power grants, by hero name.", "string",
+                "global::System.Collections.Generic.IReadOnlyDictionary<int, string>", true,
+                new([.. unmatched.Select(r => new TableEntry(Literal(r.Name), WeaponsLiteral(r, "        ")))])),
+        ], export.BuildDate), Encoding.UTF8));
     }
+
+    /// <summary>A <c>Dictionary&lt;int, string&gt;</c> expression of the hero's weapons, its braces at <paramref name="indent"/>.</summary>
+    private static string WeaponsLiteral(Record record, string indent) =>
+        "new global::System.Collections.Generic.Dictionary<int, string>\n" + indent + "{\n"
+        + string.Concat(record.Weapons.Select(w => $"{indent}    [{w.Key}] = {w.Value},\n")) + indent + "}";
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>
     private static string PascalCase(string name)

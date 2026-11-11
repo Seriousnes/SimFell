@@ -20,7 +20,10 @@ namespace FellowshipSim.Codex.Generators;
 /// item granting the power (<c>HeadItemId</c> and <c>HeadItemIcon</c>, <c>ChestItemId</c>, <c>LegsItemId</c>: the item's
 /// slot), the power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with the items'
 /// hero as the record's hero, and the overrides of <c>Legendary</c>'s <c>LegendaryPowerId</c>, <c>Name</c>,
-/// <c>HeroName</c>, <c>ItemIds</c> and <c>Icon</c> (the first item's icon URL, else the power's). The class's own part derives
+/// <c>HeroName</c>, <c>ItemIds</c> and <c>Icon</c> (the first item's icon URL, else the power's).
+/// <c>GameIcons.LegendaryPowers</c> has the icon URLs of the powers with no class, by ID, <c>GameIcons.LegendaryItems</c> the
+/// icon URL of each hero's legendary rarity items, by hero and ID, and <c>GameHeroData.Legendaries</c> the name of what each
+/// of those items grants, by hero name and ID. The class's own part derives
 /// from <c>Legendary</c> and has the power's behaviour. The game data is the AdditionalFiles <c>entities.jsonl</c> and
 /// <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -47,8 +50,12 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
     /// </summary>
     private sealed record Power(int Id, string Name, string Icon, string ClassName, EquatableArray<Item> Items, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's powers granted by an item, the tuning keys' first segments naming a hero, and its build date.</summary>
-    private sealed record Export(EquatableArray<Power> Powers, EquatableArray<HeroSegment> Segments, string? BuildDate);
+    /// <summary>
+    /// The game data's powers granted by an item, every power's icon URL by ID (in ID order), the legendary item tables,
+    /// the tuning keys' first segments naming a hero, and its build date.
+    /// </summary>
+    private sealed record Export(EquatableArray<Power> Powers, EquatableArray<TableEntry> PowerIcons, EquatableArray<GameTable> ItemTables,
+        EquatableArray<GameTable> HeroTables, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
     /// A partial class in the legendaries namespace: its name, the class's constants and static readonly fields, and where
@@ -99,15 +106,20 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
 
         var powers = new List<LegendaryPowerDocument>();
         var items = new List<ItemDocument>();
+        var legendaryItems = new List<ItemDocument>();
+        var heroes = new List<string>();
         if (entities != null)
         {
             foreach (var line in entities.Lines)
             {
                 ct.ThrowIfCancellationRequested();
                 string text = line.ToString();
-                // Only legendary power lines and the item lines granting a power are read in full.
+                // Only legendary power lines, hero lines and the legendary item lines are read in full.
                 bool power = text.Contains("\"$type\":\"legendary-power\"");
-                if (!power && !(text.Contains("\"$type\":\"item\"") && text.Contains("\"grants\":{\"type\":\"legendary-power\""))) continue;
+                bool hero = text.Contains("\"$type\":\"hero\"");
+                bool item = text.Contains("\"$type\":\"item\"")
+                    && (text.Contains("\"grants\":{\"type\":\"legendary-power\"") || text.Contains("\"rarity\":\"Legendary\""));
+                if (!power && !hero && !item) continue;
                 try
                 {
                     switch (JsonSerializer.Deserialize<EntityDocument>(text, EntityDocuments.Options))
@@ -115,8 +127,12 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
                         case LegendaryPowerDocument p:
                             powers.Add(p);
                             break;
-                        case ItemDocument i when i.Grants is { Type: EntityType.LegendaryPower }:
-                            items.Add(i);
+                        case HeroDocument h when (h.Name ?? "").Length > 0:
+                            heroes.Add(h.Name!);
+                            break;
+                        case ItemDocument i:
+                            if (i.Grants is { Type: EntityType.LegendaryPower }) items.Add(i);
+                            if (i.Rarity == Rarity.Legendary && i.Hero != null) legendaryItems.Add(i);
                             break;
                     }
                 }
@@ -125,6 +141,19 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
                 }
             }
         }
+
+        // Each hero's legendary items: the icon of each by hero and ID, and what each grants.
+        var itemIcons = legendaryItems.Where(i => i.Icon is { Length: > 0 })
+            .Select(i => new TableEntry(Literal($"{i.Hero}:{i.Id}"), Literal(Textures.Url(i.Icon!))))
+            .OrderBy(e => e.Key, StringComparer.Ordinal);
+        var legendaries = heroes.OrderBy(h => h, StringComparer.Ordinal).Select(h => new TableEntry(Literal(h),
+            "new global::System.Collections.Generic.Dictionary<int, string>\n        {\n"
+            + string.Concat(legendaryItems.Where(i => i.Hero.ToString() == h && i.Grants?.Name is { Length: > 0 })
+                .GroupBy(i => i.Id).Select(g => g.First()).OrderBy(i => i.Id)
+                .Select(i => $"            [{i.Id.ToString(CultureInfo.InvariantCulture)}] = {Literal(i.Grants!.Name!)},\n"))
+            + "        }"));
+        var powerIcons = powers.OrderBy(p => p.Id).Where(p => p.Icon is { Length: > 0 })
+            .Select(p => new TableEntry(p.Id.ToString(CultureInfo.InvariantCulture), Literal(Textures.Url(p.Icon!))));
 
         var result = new List<Power>();
         foreach (var p in powers.OrderBy(p => p.Id))
@@ -136,7 +165,11 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
             if (name.Length == 0 || granting.Count == 0) continue;
             result.Add(new Power(p.Id, name, UrlOf(p.Icon), PascalCase(name), new([.. granting]), new([.. TuningsOf(p)])));
         }
-        return new Export(new([.. result]), HeroSegments.Of(entities, ct), buildDate);
+        return new Export(new([.. result]), new([.. powerIcons]),
+            new([new GameTable("LegendaryItems", "Icon URLs of the legendary items, by hero and item ID (\"Rime:5899\").", "string", "string", true, new([.. itemIcons]))]),
+            new([new GameTable("Legendaries", "Each hero's legendaries: the name of what each legendary item grants, by item ID, by hero name.", "string",
+                "global::System.Collections.Generic.IReadOnlyDictionary<int, string>", true, new([.. legendaries]))]),
+            HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The URL of a texture's full size image; empty for no texture.</summary>
@@ -242,6 +275,16 @@ public sealed class LegendaryGenerator : IIncrementalGenerator
             source.Append("}\n");
             context.AddSource($"{power.ClassName}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        // The icons of the powers with no class.
+        var matched = new HashSet<string>(export.Powers.Where(p => classes.ContainsKey(p.ClassName)).Select(p => p.Id.ToString(CultureInfo.InvariantCulture)));
+        context.AddSource("GameIcons.g.cs", SourceText.From(GameTables.Write("GameIcons", null,
+        [
+            new GameTable("LegendaryPowers", "Icon URLs of the game data's legendary power records with no legendary class, by ID.", "int", "string", false,
+                new([.. export.PowerIcons.Where(p => !matched.Contains(p.Key))])),
+            .. export.ItemTables,
+        ], export.BuildDate), Encoding.UTF8));
+        context.AddSource("GameHeroData.g.cs", SourceText.From(GameTables.Write("GameHeroData", null, export.HeroTables, export.BuildDate), Encoding.UTF8));
     }
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>

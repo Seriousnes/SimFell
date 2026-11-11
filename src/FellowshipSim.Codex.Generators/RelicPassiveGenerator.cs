@@ -23,7 +23,9 @@ namespace FellowshipSim.Codex.Generators;
 /// granting the passive (one item line per hero, one constant set per item ID). <c>RelicPassiveItems</c> is a
 /// <c>public static readonly RelicItem[]</c> of those items, each with its ID, name and icon URL. The record's tuning values are in a nested <c>Constants</c>
 /// under their <see cref="TuningNames"/> names, with no hero as the record's hero. The class's own part has the passive's
-/// behaviour and its <c>Id</c>, <c>Name</c> and <c>Items</c> overrides. A member of the class or a base class with a
+/// behaviour and its <c>Id</c>, <c>Name</c> and <c>Items</c> overrides. <c>GameIcons.RelicItems</c> has the icon URLs of
+/// the items in the slots of the items granting a relic passive, other than those granting a passive with a class, by ID.
+/// A member of the class or a base class with a
 /// constant's name, or the name <c>Constants</c>, is CODEX029. The game data is the AdditionalFiles
 /// <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/>
 /// reports missing game data.
@@ -66,8 +68,14 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Item> Items, EquatableArray<Constant> Fields,
         EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's relic passive records, the tuning keys' first segments naming a hero, and its build date.</summary>
-    private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
+    /// <summary>An item of a relic slot: its ID, icon URL and the relic passive it grants (0 for none).</summary>
+    private sealed record RelicSlotItem(int Id, string Icon, int PassiveId);
+
+    /// <summary>
+    /// The game data's relic passive records, the item records with an icon in a slot of an item granting a relic passive
+    /// (in ID order), the tuning keys' first segments naming a hero, and its build date.
+    /// </summary>
+    private sealed record Export(EquatableArray<Record> Records, EquatableArray<RelicSlotItem> RelicSlotItems, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
     /// A partial relic passive class: its namespace, name, the member names of the class and its base classes, the class's
@@ -136,15 +144,16 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
 
         var passives = new List<RelicPassiveDocument>();
         var items = new List<(int PassiveId, Item Item)>();
+        var allItems = new List<ItemDocument>();
         if (entities != null)
         {
             foreach (var line in entities.Lines)
             {
                 ct.ThrowIfCancellationRequested();
                 string text = line.ToString();
-                // Only relic passive lines and the item lines granting a relic passive are read in full.
+                // Only relic passive lines and item lines are read in full.
                 bool passive = text.Contains("\"$type\":\"relic-passive\"");
-                bool item = text.Contains("\"$type\":\"item\"") && text.Contains("\"grants\":{\"type\":\"relic-passive\"");
+                bool item = text.Contains("\"$type\":\"item\"");
                 if (!passive && !item) continue;
                 EntityDocument? document;
                 try
@@ -160,8 +169,12 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
                     case RelicPassiveDocument p when (p.Name ?? "").Trim().Length > 0:
                         passives.Add(p);
                         break;
-                    case ItemDocument { Grants: { Type: EntityType.RelicPassive } grants } i when (i.Name ?? "").Trim().Length > 0:
-                        items.Add((grants.Id, new Item(i.Id, i.Name!.Trim(), i.Slot ?? "", UrlOf(i.Icon))));
+                    case ItemDocument i:
+                        if (i.Grants is { Type: EntityType.RelicPassive } grants && (i.Name ?? "").Trim().Length > 0)
+                        {
+                            items.Add((grants.Id, new Item(i.Id, i.Name!.Trim(), i.Slot ?? "", UrlOf(i.Icon))));
+                        }
+                        allItems.Add(i);
                         break;
                 }
             }
@@ -175,7 +188,12 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             var granting = items.Where(i => i.PassiveId == p.Id).Select(i => i.Item).Distinct().OrderBy(i => i.Id).ToList();
             records.Add(new Record(p.Id, name, PascalCase(name), new([.. granting]), new([.. FieldsOf(p)]), new([.. TuningsOf(p)])));
         }
-        return new Export(new([.. records]), HeroSegments.Of(entities, ct), buildDate);
+        // The slots of the items granting a relic passive, and every item of those slots with an icon.
+        var relicSlots = new HashSet<string>(items.Select(i => i.Item.Slot), StringComparer.Ordinal);
+        var relicSlotItems = allItems.Where(i => i.Slot is { } slot && relicSlots.Contains(slot) && i.Icon is { Length: > 0 }).OrderBy(i => i.Id)
+            .Select(i => new RelicSlotItem(i.Id, Textures.Url(i.Icon!), i.Grants is { Type: EntityType.RelicPassive } g ? g.Id : 0))
+            .ToList();
+        return new Export(new([.. records]), new([.. relicSlotItems]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>
@@ -282,6 +300,8 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     private static void Write(SourceProductionContext context, Export export, ImmutableArray<Declared> declared)
     {
         var byClass = export.Records.ToLookup(r => r.ClassName);
+        // The IDs of the relic passive records with a class.
+        var matched = new HashSet<int>();
         foreach (var d in declared.GroupBy(d => (d.Namespace, d.Name)).Select(g => g.First())
                      .OrderBy(d => d.Namespace, StringComparer.Ordinal).ThenBy(d => d.Name, StringComparer.Ordinal))
         {
@@ -298,6 +318,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            matched.Add(record.Id);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Constant>
             {
@@ -370,6 +391,13 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             source.Append("}\n");
             context.AddSource($"RelicPassives.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        context.AddSource("GameIcons.g.cs", SourceText.From(GameTables.Write("GameIcons", null,
+        [
+            new GameTable("RelicItems", "Icon URLs of the relic items granting no relic passive with a relic passive class, by ID.", "int", "string", false,
+                new([.. export.RelicSlotItems.Where(i => !matched.Contains(i.PassiveId))
+                    .Select(i => new TableEntry(i.Id.ToString(CultureInfo.InvariantCulture), Literal(i.Icon)))])),
+        ], export.BuildDate), Encoding.UTF8));
     }
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>

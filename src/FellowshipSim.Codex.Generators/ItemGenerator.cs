@@ -21,7 +21,8 @@ namespace FellowshipSim.Codex.Generators;
 /// most tempers, the Stamina a temper adds (<c>items.temperStaminaMultiplierAtItemLevel</c>), its dungeon sources, its weapon power's ability and its icon URL. <c>EmptySlotIcons</c> has each gear
 /// kind's empty slot icon URL from <c>slotIcons</c>. A stat no build holds is CODEX040, an item at its most tempers with
 /// stats other than its untempered stats and the tempers is CODEX041, a wearable slot with no <c>GearKind</c> member is
-/// CODEX042, two items of one hero with one ID are CODEX043, and a weapon power granting no ability is CODEX044. The game
+/// CODEX042, two items of one hero with one ID are CODEX043, a weapon power granting no ability is CODEX044, and a wearable
+/// slot with no <c>slotIcons</c> icon is CODEX045. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -55,6 +56,10 @@ public sealed class ItemGenerator : IIncrementalGenerator
     private static readonly DiagnosticDescriptor NoWeaponAbility = new(
         "CODEX044", "A weapon power grants no ability",
         "Item {0} ({1}) of {2} grants weapon power {3}, and the weapon power grants no ability", "Codex", DiagnosticSeverity.Error, true);
+
+    private static readonly DiagnosticDescriptor NoSlotIcon = new(
+        "CODEX045", "A wearable slot has no empty slot icon",
+        "The wearable slot {0} has no icon in slotIcons", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>
     /// A hero's item: its hero, ID, name and slot, its item level, most tempers and Stamina per temper, whether it is
@@ -223,6 +228,7 @@ public sealed class ItemGenerator : IIncrementalGenerator
             string? kind = kindList.Contains(slot.Name) ? slot.Name : kindList.FirstOrDefault(k => k + "s" == slot.Name);
             if (kind == null) context.ReportDiagnostic(Diagnostic.Create(NoGearKind, Location.None, slot.Name));
             else kindOf[slot.Name] = kind;
+            if (slot.Icon.Length == 0) context.ReportDiagnostic(Diagnostic.Create(NoSlotIcon, Location.None, slot.Name));
         }
 
         var source = new StringBuilder()

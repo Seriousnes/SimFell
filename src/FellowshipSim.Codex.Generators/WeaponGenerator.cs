@@ -30,7 +30,9 @@ namespace FellowshipSim.Codex.Generators;
 /// weapon power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the
 /// record's hero. The class's own part has the ability's behaviour.</item>
 /// </list>
-/// A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX025. The game data is the AdditionalFiles
+/// <c>GameIcons.WeaponAbilities</c> has the icon URLs of the weapon category abilities with no weapon class, by ID, and
+/// <c>GameHeroData.WeaponAbilityNames</c> the name of every weapon category ability. A member of the class or a base class
+/// with a constant's name, or the name <c>Constants</c>, is CODEX025. The game data is the AdditionalFiles
 /// <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/>
 /// reports missing game data.
 /// </summary>
@@ -70,8 +72,14 @@ public sealed class WeaponGenerator : IIncrementalGenerator
     private sealed record Power(int Id, string Name, string Icon, string ClassName, EquatableArray<Item> Items, int AbilityId, string AbilityName,
         string AbilityIcon, EquatableArray<Constant> AbilityFields, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's weapon power records, the tuning keys' first segments naming a hero, and its build date.</summary>
-    private sealed record Export(EquatableArray<Power> Powers, EquatableArray<HeroSegment> Segments, string? BuildDate);
+    /// <summary>A weapon category ability record: its ID, name and icon URL (empty for none).</summary>
+    private sealed record WeaponAbility(int Id, string Name, string Icon);
+
+    /// <summary>
+    /// The game data's weapon power records, its weapon category ability records, the tuning keys' first segments naming a hero,
+    /// and its build date.
+    /// </summary>
+    private sealed record Export(EquatableArray<Power> Powers, EquatableArray<WeaponAbility> WeaponAbilities, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
     /// A partial weapon or weapon ability class: its namespace, name, whether it is a weapon ability, the member names of
@@ -150,6 +158,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
         var powers = new List<WeaponPowerDocument>();
         var items = new List<(int PowerId, Item Item)>();
         var abilities = new Dictionary<int, AbilityDocument>();
+        var weaponAbilities = new List<AbilityDocument>();
         if (entities != null)
         {
             foreach (var line in entities.Lines)
@@ -177,6 +186,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                         break;
                     case AbilityDocument a:
                         abilities[a.Id] = a;
+                        if (a.Category == AbilityCategory.Weapon) weaponAbilities.Add(a);
                         break;
                     case ItemDocument { Grants: { } grants } i when (i.Name ?? "").Trim().Length > 0:
                         string name = i.Name!.Trim();
@@ -197,7 +207,9 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             records.Add(new Power(p.Id, name, UrlOf(p.Icon), PascalCase(name), new([.. powerItems]), ability?.Id ?? 0, (ability?.Name ?? "").Trim(),
                 UrlOf(ability?.Icon), new([.. ability != null ? FieldsOf(ability) : []]), new([.. TuningsOf(p)])));
         }
-        return new Export(new([.. records.OrderBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
+        // Every weapon category ability record, in ID order.
+        var weapons = weaponAbilities.OrderBy(a => a.Id).Select(a => new WeaponAbility(a.Id, a.Name ?? "", UrlOf(a.Icon))).ToList();
+        return new Export(new([.. records.OrderBy(r => r.Id)]), new([.. weapons]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The URL of a texture's full size image; empty for no texture.</summary>
@@ -302,6 +314,8 @@ public sealed class WeaponGenerator : IIncrementalGenerator
 
     private static void Write(SourceProductionContext context, Export export, ImmutableArray<Declared> declared)
     {
+        // The weapon abilities of the weapon classes with an Icon override.
+        var withIcon = new HashSet<int>();
         foreach (var d in declared.GroupBy(d => (d.Namespace, d.Name)).Select(g => g.First())
                      .OrderBy(d => d.Namespace, StringComparer.Ordinal).ThenBy(d => d.Name, StringComparer.Ordinal))
         {
@@ -398,10 +412,23 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             if (written.Contains("WeaponPowerAbilityIcon"))
             {
                 source.Append("\n    public override string? Icon => WeaponPowerAbilityIcon;\n");
+                withIcon.Add(power.AbilityId);
             }
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        string Key(WeaponAbility a) => a.Id.ToString(CultureInfo.InvariantCulture);
+        context.AddSource("GameIcons.g.cs", SourceText.From(GameTables.Write("GameIcons", null,
+        [
+            new GameTable("WeaponAbilities", "Icon URLs of the game data's weapon category ability records with no weapon class, by ID.", "int", "string", false,
+                new([.. export.WeaponAbilities.Where(a => a.Icon.Length > 0 && !withIcon.Contains(a.Id)).Select(a => new TableEntry(Key(a), Literal(a.Icon)))])),
+        ], export.BuildDate), Encoding.UTF8));
+        context.AddSource("GameHeroData.g.cs", SourceText.From(GameTables.Write("GameHeroData", null,
+        [
+            new GameTable("WeaponAbilityNames", "The name of each weapon ability (weapon category ability records), by ID.", "int", "string", false,
+                new([.. export.WeaponAbilities.Select(a => new TableEntry(Key(a), Literal(a.Name)))])),
+        ], export.BuildDate), Encoding.UTF8));
     }
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>

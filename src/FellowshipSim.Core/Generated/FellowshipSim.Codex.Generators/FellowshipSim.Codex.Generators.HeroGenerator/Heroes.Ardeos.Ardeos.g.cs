@@ -183,4 +183,38 @@ partial class Ardeos
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 7.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 7, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 162),
+        new(1, 2, 2, 158),
+        new(1, 3, 2, 160),
+        new(2, 1, 1, 617),
+        new(2, 2, 1, 159),
+        new(2, 3, 1, 678),
+        new(3, 1, 2, 145),
+        new(3, 2, 2, 149),
+        new(3, 3, 2, 150),
+        new(4, 1, 1, 676),
+        new(4, 2, 1, 184),
+        new(4, 3, 1, 183),
+        new(5, 1, 3, 226),
+        new(5, 2, 3, 146),
+        new(5, 3, 3, 157),
+        new(6, 1, 1, 677),
+        new(6, 2, 1, 151),
+        new(6, 3, 1, 153),
+    ];
+
+    /// <summary>Game data: the weapons of hero 7, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [155] = "Void-touched Pillar",
+        [161] = "Branch of the Everliving",
+        [1558] = "Asha's Chronoshift Spire",
+        [1561] = "Frozen Staff of An'zhyr",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

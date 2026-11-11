@@ -22,7 +22,8 @@ namespace FellowshipSim.Codex.Generators;
 /// nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the record's hero. A tuning value has
 /// a value per rank: one value at every rank is a constant, and values differing by rank are a
 /// <c>public static readonly double[]</c> named after the tuning key and <c>ByRank</c>. The class's own part has the glyph's
-/// behaviour and its <c>Name</c> and <c>Id</c> overrides. A member of the class or a base class with a constant's name, or
+/// behaviour and its <c>Name</c> and <c>Id</c> overrides. <c>GameIcons.Glyphs</c> has the icon URLs of the glyph records with
+/// no class, by ID. A member of the class or a base class with a constant's name, or
 /// the name <c>Constants</c>, is CODEX021. The game data is the AdditionalFiles <c>entities.jsonl</c> and
 /// <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/> reports missing game
 /// data.
@@ -223,6 +224,8 @@ public sealed class GlyphGenerator : IIncrementalGenerator
     private static void Write(SourceProductionContext context, Export export, ImmutableArray<Declared> declared)
     {
         var byClass = export.Records.ToLookup(r => r.ClassName);
+        // The IDs of the records with a class.
+        var matched = new HashSet<int>();
         foreach (var d in declared.GroupBy(d => (d.Namespace, d.Name)).Select(g => g.First())
                      .OrderBy(d => d.Namespace, StringComparer.Ordinal).ThenBy(d => d.Name, StringComparer.Ordinal))
         {
@@ -239,6 +242,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            matched.Add(record.Id);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Member>
             {
@@ -291,6 +295,16 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             source.Append("}\n");
             context.AddSource($"Glyphs.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        // The icons of the records with no class.
+        var unmatched = export.Records.Where(r => !matched.Contains(r.Id)).OrderBy(r => r.Id)
+            .Select(r => (r.Id, Icon: r.Fields.FirstOrDefault(f => f.Name == "GlyphIcon")?.Literal))
+            .Where(r => r.Icon != null)
+            .Select(r => new TableEntry(r.Id.ToString(CultureInfo.InvariantCulture), r.Icon!));
+        context.AddSource("GameIcons.g.cs", SourceText.From(GameTables.Write("GameIcons", null,
+        [
+            new GameTable("Glyphs", "Icon URLs of the game data's glyph records with no glyph class, by ID.", "int", "string", false, new([.. unmatched])),
+        ], export.BuildDate), Encoding.UTF8));
     }
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>

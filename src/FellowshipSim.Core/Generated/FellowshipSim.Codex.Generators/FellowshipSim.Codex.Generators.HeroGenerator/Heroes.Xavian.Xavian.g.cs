@@ -180,4 +180,38 @@ partial class Xavian
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 25.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 25, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 607),
+        new(1, 2, 2, 571),
+        new(1, 3, 2, 570),
+        new(2, 1, 1, 572),
+        new(2, 2, 1, 568),
+        new(2, 3, 1, 573),
+        new(3, 1, 2, 569),
+        new(3, 2, 2, 575),
+        new(3, 3, 2, 581),
+        new(4, 1, 1, 583),
+        new(4, 2, 1, 584),
+        new(4, 3, 1, 567),
+        new(5, 1, 3, 580),
+        new(5, 2, 3, 604),
+        new(5, 3, 3, 578),
+        new(6, 1, 1, 608),
+        new(6, 2, 1, 574),
+        new(6, 3, 1, 576),
+    ];
+
+    /// <summary>Game data: the weapons of hero 25, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [152] = "Darkfrost Drakecarver",
+        [159] = "Sahril's Greatsword",
+        [160] = "Fateful Dawnrender",
+        [162] = "Zaraleth's Mournfang",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

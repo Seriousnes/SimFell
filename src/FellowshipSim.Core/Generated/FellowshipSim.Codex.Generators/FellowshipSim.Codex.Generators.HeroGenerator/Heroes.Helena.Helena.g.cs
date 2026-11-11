@@ -180,4 +180,38 @@ partial class Helena
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 22.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 22, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 207),
+        new(1, 2, 2, 208),
+        new(1, 3, 2, 209),
+        new(2, 1, 1, 649),
+        new(2, 2, 1, 645),
+        new(2, 3, 1, 644),
+        new(3, 1, 2, 213),
+        new(3, 2, 2, 215),
+        new(3, 3, 2, 390),
+        new(4, 1, 1, 210),
+        new(4, 2, 1, 648),
+        new(4, 3, 1, 214),
+        new(5, 1, 3, 219),
+        new(5, 2, 3, 14),
+        new(5, 3, 3, 641),
+        new(6, 1, 1, 646),
+        new(6, 2, 1, 647),
+        new(6, 3, 1, 643),
+    ];
+
+    /// <summary>Game data: the weapons of hero 22, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [152] = "Darkfrost Arms",
+        [159] = "Sahril's Arms",
+        [160] = "Fateful Arms",
+        [162] = "Zeraleth's Arms",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

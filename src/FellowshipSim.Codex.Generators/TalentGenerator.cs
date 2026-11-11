@@ -22,7 +22,8 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>TalentDuration</c>, <c>TalentRadius</c>...), and the record's tuning values in a nested <c>Constants</c> under their
 /// <see cref="TuningNames"/> names, with the hero of the class's namespace as the record's hero. The <c>Icon</c> override
 /// of <c>Talent</c> is <c>TalentIcon</c>. The class's own part has the talent's behaviour and its <c>Name</c> and
-/// <c>Id</c> overrides. A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX013. The game
+/// <c>Id</c> overrides. <c>GameIcons.Talents</c> has the icon URLs of the talent records with no class, by ID, and
+/// <c>GameHeroData.TalentNames</c> the names of those in a talent slot. A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX013. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -55,8 +56,14 @@ public sealed class TalentGenerator : IIncrementalGenerator
     private sealed record Record(int Id, string Name, string ClassName, EquatableArray<string> Heroes,
         EquatableArray<Constant> Fields, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's talent records, the tuning keys' first segments naming a hero, and its build date.</summary>
-    private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
+    /// <summary>A talent record of any hero: its ID, name, icon URL (empty for none) and whether a talent slot has it.</summary>
+    private sealed record Listed(int Id, string Name, string Icon, bool InSlot);
+
+    /// <summary>
+    /// The game data's talent records with a hero, every talent record in ID order, the tuning keys' first segments naming
+    /// a hero, and its build date.
+    /// </summary>
+    private sealed record Export(EquatableArray<Record> Records, EquatableArray<Listed> All, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
     /// A partial talent class: its namespace, name and hero, the member names of the class and its base classes, the class's
@@ -165,7 +172,10 @@ public sealed class TalentGenerator : IIncrementalGenerator
             if (name.Length == 0 || heroes.Count == 0) continue;
             records.Add(new Record(talent.Id, name, PascalCase(name), new([.. heroes]), new([.. FieldsOf(talent)]), new([.. TuningsOf(talent)])));
         }
-        return new Export(new([.. records]), HeroSegments.Of(entities, ct), buildDate);
+        var all = talents.OrderBy(t => t.Id)
+            .Select(t => new Listed(t.Id, t.Name ?? "", t.Icon is { Length: > 0 } icon ? Textures.Url(icon) : "", slotHeroes.ContainsKey(t.Id)))
+            .ToList();
+        return new Export(new([.. records]), new([.. all]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The record's scalar fields, each under <c>Talent</c> and the field's name.</summary>
@@ -249,6 +259,8 @@ public sealed class TalentGenerator : IIncrementalGenerator
     private static void Write(SourceProductionContext context, Export export, ImmutableArray<Declared> declared)
     {
         var byClass = export.Records.ToLookup(r => r.ClassName);
+        // The IDs of the talent records with a class.
+        var matched = new HashSet<int>();
         foreach (var d in declared.GroupBy(d => (d.Namespace, d.Name)).Select(g => g.First())
                      .OrderBy(d => d.Namespace, StringComparer.Ordinal).ThenBy(d => d.Name, StringComparer.Ordinal))
         {
@@ -265,6 +277,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            matched.Add(record.Id);
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var constants = new List<Constant>
             {
@@ -317,6 +330,20 @@ public sealed class TalentGenerator : IIncrementalGenerator
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(HeroesNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        // The talents with no class: their icons, and the names of those in a talent slot.
+        var unmatched = export.All.Where(t => !matched.Contains(t.Id)).ToList();
+        string Key(Listed t) => t.Id.ToString(CultureInfo.InvariantCulture);
+        context.AddSource("GameIcons.g.cs", SourceText.From(GameTables.Write("GameIcons", null,
+        [
+            new GameTable("Talents", "Icon URLs of the game data's talent records with no talent class, by ID.", "int", "string", false,
+                new([.. unmatched.Where(t => t.Icon.Length > 0).Select(t => new TableEntry(Key(t), Literal(t.Icon)))])),
+        ], export.BuildDate), Encoding.UTF8));
+        context.AddSource("GameHeroData.g.cs", SourceText.From(GameTables.Write("GameHeroData", null,
+        [
+            new GameTable("TalentNames", "The name of each talent in a talent tree with no talent class, by ID.", "int", "string", false,
+                new([.. unmatched.Where(t => t.InSlot).Select(t => new TableEntry(Key(t), Literal(t.Name)))])),
+        ], export.BuildDate), Encoding.UTF8));
     }
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>

@@ -25,7 +25,8 @@ namespace FellowshipSim.Codex.Generators;
 /// record's tuning values and rank runs in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero
 /// as the record's hero. Each rank run is a <c>public static readonly double[]</c> of its values by rank, named after its
 /// key without the <c>Trait.&lt;Row&gt;.</c> prefix and <c>ByRank</c> (<c>Constants.CritPowerMultiplierByRank</c>). The
-/// class's own part has the augmentation's behaviour and its <c>Name</c> and <c>Id</c> overrides. A member of the class or a
+/// class's own part has the augmentation's behaviour and its <c>Name</c> and <c>Id</c> overrides. <c>GameIcons.Augmentations</c>
+/// has the icon URLs of the records with no class, by ID. A member of the class or a
 /// base class with a constant's name, or the name <c>Constants</c>, is CODEX017. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
@@ -286,6 +287,8 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
     private static void Write(SourceProductionContext context, Export export, ImmutableArray<Declared> declared)
     {
         var byClass = export.Records.ToLookup(r => r.ClassName);
+        // The records with a class.
+        var matched = new HashSet<int>();
         foreach (var d in declared.GroupBy(d => (d.Namespace, d.Name)).Select(g => g.First())
                      .OrderBy(d => d.Namespace, StringComparer.Ordinal).ThenBy(d => d.Name, StringComparer.Ordinal))
         {
@@ -304,6 +307,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             }
 
             var record = candidates[0];
+            matched.Add(record.Id);
             string owner = $"{Words(record.Type)} {record.Id}";
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var all = new List<Member>
@@ -359,6 +363,17 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));
         }
+
+        // The icons of the records with no class.
+        var unmatched = export.Records.Where(r => !matched.Contains(r.Id)).OrderBy(r => r.Id)
+            .Select(r => (r.Id, Icon: r.Fields.FirstOrDefault(f => f.Name == r.Type + "Icon")?.Literal))
+            .Where(r => r.Icon != null)
+            .Select(r => new TableEntry(r.Id.ToString(CultureInfo.InvariantCulture), r.Icon!));
+        context.AddSource("GameIcons.g.cs", SourceText.From(GameTables.Write("GameIcons", null,
+        [
+            new GameTable("Augmentations", "Icon URLs of the game data's aspect, sigil and protective enchant records with no augmentation class, by ID.",
+                "int", "string", false, new([.. unmatched])),
+        ], export.BuildDate), Encoding.UTF8));
     }
 
     /// <summary>The name's words, each starting upper case, with letters and digits only.</summary>

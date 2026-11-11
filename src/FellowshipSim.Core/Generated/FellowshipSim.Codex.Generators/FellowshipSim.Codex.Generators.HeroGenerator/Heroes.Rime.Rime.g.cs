@@ -189,4 +189,38 @@ partial class Rime
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 17.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 17, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 48),
+        new(1, 2, 2, 36),
+        new(1, 3, 2, 38),
+        new(2, 1, 1, 657),
+        new(2, 2, 1, 43),
+        new(2, 3, 1, 193),
+        new(3, 1, 2, 192),
+        new(3, 2, 2, 627),
+        new(3, 3, 2, 44),
+        new(4, 1, 1, 628),
+        new(4, 2, 1, 190),
+        new(4, 3, 1, 189),
+        new(5, 1, 3, 658),
+        new(5, 2, 3, 191),
+        new(5, 3, 3, 195),
+        new(6, 1, 1, 51),
+        new(6, 2, 1, 527),
+        new(6, 3, 1, 49),
+    ];
+
+    /// <summary>Game data: the weapons of hero 17, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [155] = "Void-touched Conduit",
+        [161] = "Branch of the Everliving",
+        [1558] = "Asha's Chronoshift Spire",
+        [1561] = "Void-touched Conduit",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

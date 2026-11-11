@@ -174,4 +174,38 @@ partial class Elarion
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 2.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 2, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 167),
+        new(1, 2, 2, 201),
+        new(1, 3, 2, 126),
+        new(2, 1, 1, 679),
+        new(2, 2, 1, 128),
+        new(2, 3, 1, 132),
+        new(3, 1, 2, 124),
+        new(3, 2, 2, 130),
+        new(3, 3, 2, 202),
+        new(4, 1, 1, 681),
+        new(4, 2, 1, 203),
+        new(4, 3, 1, 680),
+        new(5, 1, 3, 136),
+        new(5, 2, 3, 168),
+        new(5, 3, 3, 169),
+        new(6, 1, 1, 164),
+        new(6, 2, 1, 682),
+        new(6, 3, 1, 200),
+    ];
+
+    /// <summary>Game data: the weapons of hero 2, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [155] = "Void-touched Bow",
+        [161] = "Arc of the Everliving",
+        [1558] = "Asha's Chronoshift Bow",
+        [1561] = "Frozen Longbow of An'zhyr",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }

@@ -41,3 +41,4 @@ CODEX041 | Codex | Error | ItemGenerator: an item at its most tempers has other 
 CODEX042 | Codex | Error | ItemGenerator: a wearable slot has no GearKind member
 CODEX043 | Codex | Error | ItemGenerator: two items of one hero have one ID
 CODEX044 | Codex | Error | ItemGenerator: a weapon power grants no ability
+CODEX045 | Codex | Error | ItemGenerator: a wearable slot has no empty slot icon

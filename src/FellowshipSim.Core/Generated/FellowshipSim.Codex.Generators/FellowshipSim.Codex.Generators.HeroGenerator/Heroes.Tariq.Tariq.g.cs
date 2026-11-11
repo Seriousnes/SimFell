@@ -171,4 +171,38 @@ partial class Tariq
 
     /// <summary>Game data: <c>baseAttributes.WeaponDamageMin</c> of hero 10.</summary>
     public const int HeroWeaponDamageMin = 0;
+
+    /// <summary>Game data: the talent slot records of hero 10, row by row and column by column.</summary>
+    public static readonly global::FellowshipSim.Core.Domain.TalentSlot[] HeroTalentTree =
+    [
+        new(1, 1, 2, 72),
+        new(1, 2, 2, 87),
+        new(1, 3, 2, 673),
+        new(2, 1, 1, 441),
+        new(2, 2, 1, 74),
+        new(2, 3, 1, 76),
+        new(3, 1, 2, 672),
+        new(3, 2, 2, 80),
+        new(3, 3, 2, 89),
+        new(4, 1, 1, 81),
+        new(4, 2, 1, 78),
+        new(4, 3, 1, 79),
+        new(5, 1, 3, 671),
+        new(5, 2, 3, 675),
+        new(5, 3, 3, 85),
+        new(6, 1, 1, 75),
+        new(6, 2, 1, 77),
+        new(6, 3, 1, 82),
+    ];
+
+    /// <summary>Game data: the weapons of hero 10, each weapon item's name by the ability its weapon power grants.</summary>
+    public static readonly global::System.Collections.Generic.IReadOnlyDictionary<int, string> HeroWeapons = new global::System.Collections.Generic.Dictionary<int, string>
+    {
+        [155] = "Void-touched Hammer",
+        [157] = "Sahril's Reckoning",
+        [160] = "Fateful Basher",
+        [1559] = "Wildstone Crusher",
+    };
+
+    public override global::System.Collections.Generic.IReadOnlyDictionary<int, string> WeaponNames => HeroWeapons;
 }
