@@ -59,7 +59,7 @@ public sealed partial class LunarlightSalvo : Ability
         if (!ctx.Outcomes.RollProc(keepsMark ? KeptMarkProcKey : ProcKey, Math.Min(1.0, chance), ctx, enemy)) return;
         if (!keepsMark) enemy.Auras.ConsumeStack(LunarlightMark.Debuff, now);
         DealDamage(ctx, enemy);
-        if (hit.AbilityId == HeartseekerBarrage.AbilityId && ctx.Outcomes.RollProc(EruptProcKey, Constants.ChanceToProc, ctx))
+        if (hit.AbilityId == HeartseekerBarrage.AbilityId && ctx.Outcomes.RollProc(EruptProcKey, Constants.ChanneledMultiProjectileDebuffTriggerAoeHitChanceToProc, ctx))
         {
             _erupt.Strike(ctx, enemy);
         }

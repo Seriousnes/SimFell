@@ -16,11 +16,14 @@ partial class Aftershock
     /// <summary>Game data: the tuning values of talent 213.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.Duration, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.Duration, Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.Duration</c> of talent 213; Vanguard's Advance (effect 2429).</summary>
+        /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.Duration, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.Duration</c> of talent 213; Vanguard's Advance (effect 2429).</summary>
         public const int ReducedIncomingDamageFromTargetDuration = 5;
 
         /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.IncomingDamageDivider, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.IncomingDamageDivider</c> of talent 213; Vanguard's Advance (effect 2429), PhysicalIncomingDamageMultiplier MultiplyCompound.</summary>
         public const double ReducedIncomingDamageFromTargetIncomingDamageDivider = 0.95;
+
+        /// <summary>Game data: tuning <c>Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.Duration</c> of talent 213; Aftershock (effect 2428).</summary>
+        public const int MoveToTargetStunTalentArrivalMeleeAoeSlowTargetExtraWarmasterDamageDuration = 5;
     }
 
     public override string? Icon => TalentIcon;

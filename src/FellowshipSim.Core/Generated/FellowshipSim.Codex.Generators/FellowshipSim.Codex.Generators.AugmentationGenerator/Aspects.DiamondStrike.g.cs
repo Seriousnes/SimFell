@@ -25,7 +25,10 @@ partial class DiamondStrike
     /// <summary>Game data: the tuning values and rank runs of aspect 33.</summary>
     public static class Constants
     {
-        /// <summary>Game data: rank run <c>Trait.GemSingleTargetProcOnDamageHeal.Heal.PrimaryAttributeCoefficient, Trait.GemSingleTargetProcOnDamageHeal.Damage.PrimaryAttributeCoefficient</c> of aspect 33, transform <c>raw</c>; the tooltip has 72% / 127% / 182% / 237%.</summary>
+        /// <summary>Game data: rank run <c>Trait.GemSingleTargetProcOnDamageHeal.Damage.PrimaryAttributeCoefficient</c> of aspect 33, transform <c>raw</c>; the tooltip has 72% / 127% / 182% / 237%.</summary>
+        public static readonly double[] DamagePrimaryAttributeCoefficientByRank = [0.72, 1.27, 1.82, 2.37];
+
+        /// <summary>Game data: rank run <c>Trait.GemSingleTargetProcOnDamageHeal.Heal.PrimaryAttributeCoefficient</c> of aspect 33, transform <c>raw</c>; the tooltip has 72% / 127% / 182% / 237%.</summary>
         public static readonly double[] HealPrimaryAttributeCoefficientByRank = [0.72, 1.27, 1.82, 2.37];
     }
 

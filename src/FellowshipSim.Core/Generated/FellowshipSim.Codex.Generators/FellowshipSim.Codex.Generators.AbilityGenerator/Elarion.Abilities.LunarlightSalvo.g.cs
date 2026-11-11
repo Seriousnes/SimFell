@@ -25,8 +25,8 @@ partial class LunarlightSalvo
         /// <summary>Game data: tuning <c>AgilityCoefficient, Aoe.AgilityCoefficient</c> of ability 1309.</summary>
         public const double AgilityCoefficient = 2.19;
 
-        /// <summary>Game data: tuning <c>ChanceToProc, Aoe.ChanceToProc, ChanneledMultiProjectileDebuff.TriggerAoeHit.ChanceToProc</c> of ability 1309.</summary>
-        public const double ChanceToProc = 0.25;
+        /// <summary>Game data: tuning <c>Aoe.ChanceToProc</c> of ability 1309.</summary>
+        public const double AoeChanceToProc = 0.25;
 
         /// <summary>Game data: tuning <c>Aoe.Height</c> of ability 1309.</summary>
         public const int AoeHeight = 500;
@@ -40,8 +40,14 @@ partial class LunarlightSalvo
         /// <summary>Game data: tuning <c>ChanceInstantMarkTarget.ChanceMultiply</c> of ability 1309; ability 1438.</summary>
         public const int ChanceInstantMarkTargetChanceMultiply = 1;
 
+        /// <summary>Game data: tuning <c>ChanceToProc</c> of ability 1309.</summary>
+        public const double ChanceToProc = 0.25;
+
         /// <summary>Game data: tuning <c>ChanceToProcIfCrit</c> of ability 1309.</summary>
         public const double ChanceToProcIfCrit = 0.5;
+
+        /// <summary>Game data: tuning <c>ChanneledMultiProjectileDebuff.TriggerAoeHit.ChanceToProc</c> of ability 1309.</summary>
+        public const double ChanneledMultiProjectileDebuffTriggerAoeHitChanceToProc = 0.25;
 
         /// <summary>Game data: tuning <c>DamageScale</c> of ability 1309.</summary>
         public const int DamageScale = 1;

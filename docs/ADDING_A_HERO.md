@@ -53,8 +53,10 @@ Cold Snap's `MaxCharges` is `Constants.MaxCharges`, and Mara's `Attack` has `Con
 first segment naming the record's own hero is dropped (`Firemage.` on an Ardeos talent), and a first segment naming
 another hero is that hero's name (`Firemage.` on a Meiko talent is `Ardeos`). An internal name (`Firemage`, `Bowguy`,
 `Warmaster`...) is a part of one hero's portrait (`hero_portrait_Firemage_default`), and its hero is the hero whose
-records have the most tuning keys starting with it. Keys of a record with one last segment and one value are one
-constant, named after the shortest key, and its summary names every key. A value by rank is a `double[]` with `ByRank`
+records have the most tuning keys starting with it. Keys of a record with one value are one constant when the segments
+of one, after the hero rule, end with the segments of the other (`Duration` and `Talent.Buff.Duration`). The constant is
+named after the shortest key, and its summary names every key. A key whose segments end two keys of which neither ends
+the other is a constant of its own: `Duration` beside `Buff.Duration` and `Debuff.Duration` is three constants. A value by rank is a `double[]` with `ByRank`
 after its name. A renamed or removed key removes its constant, so code reading it stops compiling.
 
 A tuning key with the value of a field of the record has no constant in `Constants`. The record's `fieldSources` names

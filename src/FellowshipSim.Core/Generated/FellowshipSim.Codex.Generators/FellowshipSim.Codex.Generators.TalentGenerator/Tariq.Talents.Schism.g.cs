@@ -16,8 +16,11 @@ partial class Schism
     /// <summary>Game data: the tuning values of talent 85.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.AoeAttack.DamageMultiplier, Ink.Talent.ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
+        /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.AoeAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
         public const double TalentChanceIncreasedSpenderDamageAoeAttackDamageMultiplier = 2.5;
+
+        /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
+        public const double TalentChanceIncreasedSpenderDamageHeavySingleTargetAttackDamageMultiplier = 2.5;
 
         /// <summary>Game data: tuning <c>PPM, Ink.Talent.ChanceIncreasedSpenderDamage.PPM</c> of talent 85; ability 1215.</summary>
         public const double PPM = 3.2;

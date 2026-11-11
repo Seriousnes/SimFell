@@ -49,11 +49,14 @@ partial class ShieldsUp
         /// <summary>Game data: tuning <c>Helena.MeleeAoeSlow.Talent.IncreasedToughnessAndDamage.AdditionalToughnessBasedOnMax</c> of ability 984; Shockwave (ability 979), talent Greater Shockwave (talent 643).</summary>
         public const double MeleeAoeSlowTalentIncreasedToughnessAndDamageAdditionalToughnessBasedOnMax = 0.1;
 
-        /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus, Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 984; ability 960.</summary>
+        /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus</c> of ability 984; ability 960.</summary>
         public const int ToughnessBlockFlatBonus = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.Block.StrengthScaler</c> of ability 984; ability 960.</summary>
         public const double ToughnessBlockStrengthScaler = 0.24;
+
+        /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 984; ability 960.</summary>
+        public const int ToughnessDefenceBuffFlatBonus = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.StrengthScaler</c> of ability 984; ability 960.</summary>
         public const double ToughnessDefenceBuffStrengthScaler = 2.31;
@@ -79,11 +82,14 @@ partial class ShieldsUp
         /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessTotalSecondaryStatModifier</c> of ability 984; ability 960.</summary>
         public const int ToughnessMaxToughnessTotalSecondaryStatModifier = 2;
 
-        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit, Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 984; ability 960.</summary>
-        public const int ToughnessMeleeCleaveFlatBonusPerHit = 0;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 984; ability 960.</summary>
+        public const int ToughnessMeleeAoeSlowFlatBonusPerHit = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.StrengthScalerPerHit</c> of ability 984; ability 960.</summary>
         public const double ToughnessMeleeAoeSlowStrengthScalerPerHit = 1.925;
+
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit</c> of ability 984; ability 960.</summary>
+        public const int ToughnessMeleeCleaveFlatBonusPerHit = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.StrengthScalerPerHit</c> of ability 984; ability 960.</summary>
         public const double ToughnessMeleeCleaveStrengthScalerPerHit = 1.155;

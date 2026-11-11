@@ -49,7 +49,7 @@ partial class SweepingStrike
         /// <summary>Game data: tuning <c>Damage.StrengthCoefficient</c> of ability 981; Sweeping Strike (effect 1274).</summary>
         public const double DamageStrengthCoefficient = 3.756;
 
-        /// <summary>Game data: tuning <c>Debuff.Duration, ImprovedHeal.Duration</c> of ability 981; Sweeping Strike (effect 1276), talent Sharpened Blade (talent 215).</summary>
+        /// <summary>Game data: tuning <c>Debuff.Duration</c> of ability 981; Sweeping Strike (effect 1276), talent Sharpened Blade (talent 215).</summary>
         public const int DebuffDuration = 12;
 
         /// <summary>Game data: tuning <c>Debuff.Period</c> of ability 981; Sweeping Strike (effect 1276).</summary>
@@ -69,6 +69,9 @@ partial class SweepingStrike
 
         /// <summary>Game data: tuning <c>HealthRegen.Period</c> of ability 981; Sweeping Strike: Blood Rally (effect 3098).</summary>
         public const int HealthRegenPeriod = 1;
+
+        /// <summary>Game data: tuning <c>ImprovedHeal.Duration</c> of ability 981; talent Lingering Rush (talent 649).</summary>
+        public const int ImprovedHealDuration = 12;
 
         /// <summary>Game data: tuning <c>ImprovedHeal.PercentOfMaxHealth</c> of ability 981; talent Lingering Rush (talent 649).</summary>
         public const double ImprovedHealPercentOfMaxHealth = 0.04;

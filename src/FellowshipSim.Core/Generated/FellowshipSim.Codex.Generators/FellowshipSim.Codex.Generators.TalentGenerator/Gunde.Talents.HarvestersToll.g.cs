@@ -19,8 +19,8 @@ partial class HarvestersToll
         /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.DamageScalePerStack, Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.DamageScalePerStack</c> of talent 767; Owed in Blood (ability 2298).</summary>
         public const double IncreasedDamageOnSelfDamageScalePerStack = 0.0025;
 
-        /// <summary>Game data: tuning <c>IncreasedDotDamage.Duration, IncreasedDamageOnSelf.Duration, Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.Duration, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDotDamage.Duration, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.Duration</c> of talent 767; Sever (effect 3213).</summary>
-        public const int IncreasedDotDamageDuration = 10;
+        /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.Duration</c> of talent 767; Owed in Blood (ability 2298).</summary>
+        public const int DotTransferTalentIncreasedDamageOnSelfDuration = 10;
 
         /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.MaxStacks, Gunde.DotTransfer.Talent.IncreasedDamageOnSelf.MaxStacks</c> of talent 767; Owed in Blood (ability 2298).</summary>
         public const int IncreasedDamageOnSelfMaxStacks = 30;
@@ -28,11 +28,20 @@ partial class HarvestersToll
         /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.DamageScale, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.DamageScale</c> of talent 767; Rupture (ability 2293).</summary>
         public const double IncreasedDamageOnSelfDamageScale = 0.075;
 
+        /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.Duration</c> of talent 767; Rupture (ability 2293).</summary>
+        public const int HeavyMeleeDotBoostTalentIncreasedDamageOnSelfDuration = 10;
+
         /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBoost.Talent.IncreasedDamageOnSelf.MaxStacks</c> of talent 767; Rupture (ability 2293).</summary>
         public const int HeavyMeleeDotBoostTalentIncreasedDamageOnSelfMaxStacks = 1;
 
         /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBoost.Talent.IncreasedDotDamage.DamageMultiplier</c> of talent 767; Sever (effect 3213).</summary>
         public const double HeavyMeleeDotBoostTalentIncreasedDotDamageDamageMultiplier = 1.12;
+
+        /// <summary>Game data: tuning <c>IncreasedDotDamage.Duration, Gunde.HeavyMeleeDotBoost.Talent.IncreasedDotDamage.Duration</c> of talent 767; Sever (effect 3213).</summary>
+        public const int IncreasedDotDamageDuration = 10;
+
+        /// <summary>Game data: tuning <c>IncreasedDamageOnSelf.Duration</c> of talent 767; Owed in Blood (ability 2298).</summary>
+        public const int IncreasedDamageOnSelfDuration = 10;
     }
 
     public override string? Icon => TalentIcon;

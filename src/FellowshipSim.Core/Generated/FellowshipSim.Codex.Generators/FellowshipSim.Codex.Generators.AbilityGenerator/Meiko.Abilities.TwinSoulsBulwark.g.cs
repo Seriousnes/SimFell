@@ -28,7 +28,7 @@ partial class TwinSoulsBulwark
     /// <summary>Game data: the tuning values of ability 1082.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Aura.Radius, Meiko.DurationalMultipleTeleportDamage.Radius</c> of ability 1082.</summary>
+        /// <summary>Game data: tuning <c>Aura.Radius</c> of ability 1082.</summary>
         public const int AuraRadius = 1000;
 
         /// <summary>Game data: tuning <c>Distance</c> of ability 1082.</summary>
@@ -39,6 +39,9 @@ partial class TwinSoulsBulwark
 
         /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1082; IncomingDamageMultiplier MultiplyCompound.</summary>
         public const double IncomingDamageMultiplier = 0.3;
+
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Radius</c> of ability 1082; ability 1109.</summary>
+        public const int DurationalMultipleTeleportDamageRadius = 1000;
 
         /// <summary>Game data: tuning <c>MoveDuration</c> of ability 1082.</summary>
         public const double MoveDuration = 0.5;

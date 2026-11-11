@@ -61,7 +61,7 @@ partial class WidowsBite
         /// <summary>Game data: tuning <c>FirstAttack.AgilityCoefficient</c> of ability 1207; Widow's Bite (effect 1718).</summary>
         public const double FirstAttackAgilityCoefficient = 1.452;
 
-        /// <summary>Game data: tuning <c>FirstAttack.Spread, SecondAttack.Spread</c> of ability 1207; Widow's Bite (effect 1718).</summary>
+        /// <summary>Game data: tuning <c>FirstAttack.Spread</c> of ability 1207; Widow's Bite (effect 1718).</summary>
         public const double FirstAttackSpread = 0.1;
 
         /// <summary>Game data: tuning <c>NumOfCharges</c> of ability 1207.</summary>
@@ -69,6 +69,9 @@ partial class WidowsBite
 
         /// <summary>Game data: tuning <c>SecondAttack.AgilityCoefficient</c> of ability 1207; Widow's Bite (effect 1717).</summary>
         public const double SecondAttackAgilityCoefficient = 1.08;
+
+        /// <summary>Game data: tuning <c>SecondAttack.Spread</c> of ability 1207; Widow's Bite (effect 1717).</summary>
+        public const double SecondAttackSpread = 0.1;
 
         /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1207; talent Puncture (talent 123), CritChance Additive.</summary>
         public const int TalentIncreasedCritChanceAdditionalCritChance = 1;

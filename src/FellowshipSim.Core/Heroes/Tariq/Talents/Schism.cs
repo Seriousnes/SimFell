@@ -39,7 +39,7 @@ public partial class Schism : Talent
             };
             if (buff == null || !hero.Auras.HasAura(buff, cast.Time)) return;
             hero.Auras.ConsumeStack(buff, cast.Time);
-            cast.DamageMultiplier *= buff == SkullCrusherBuff ? Constants.TalentChanceIncreasedSpenderDamageAoeAttackDamageMultiplier : Constants.TalentChanceIncreasedSpenderDamageAoeAttackDamageMultiplier;
+            cast.DamageMultiplier *= buff == SkullCrusherBuff ? Constants.TalentChanceIncreasedSpenderDamageHeavySingleTargetAttackDamageMultiplier : Constants.TalentChanceIncreasedSpenderDamageAoeAttackDamageMultiplier;
         };
         // ...and may make the other one's.
         hero.OnCastCompleted += (ability, _, now) =>

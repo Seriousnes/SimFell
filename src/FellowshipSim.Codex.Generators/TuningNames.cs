@@ -9,8 +9,8 @@ namespace FellowshipSim.Codex.Generators;
 /// is its tuning key's segments joined, each in Pascal case (<c>EnergyGainProc.AgilityCoefficient</c> is
 /// <c>EnergyGainProcAgilityCoefficient</c>), after the hero rule: a first segment naming the record's own hero is dropped,
 /// and a first segment naming another hero is that hero's name (<see cref="HeroSegments"/>). A value by rank has
-/// <c>ByRank</c> after its name. Keys of a record with one last segment and one value are one constant, named after the
-/// shortest key (by length, then ordinal). Two keys with one name and different values are CODEX038, and a hand-written
+/// <c>ByRank</c> after its name. Keys of a record with one value are one constant when the segments of one end with the
+/// segments of the other (<see cref="Groups"/>), named after the shortest key (by length, then ordinal). Two keys with one name and different values are CODEX038, and a hand-written
 /// constant or static readonly field of the class with the name of a member of its <c>Constants</c> is CODEX039.
 /// </summary>
 internal static class TuningNames
@@ -41,7 +41,11 @@ internal static class TuningNames
     }
 
     /// <summary>The constant name of a tuning key, after the hero rule for a record of the heroes <paramref name="ownHeroes"/>.</summary>
-    public static string Name(string key, IEnumerable<HeroSegment> segments, IReadOnlyCollection<string> ownHeroes)
+    public static string Name(string key, IEnumerable<HeroSegment> segments, IReadOnlyCollection<string> ownHeroes) =>
+        string.Concat(Segments(key, segments, ownHeroes).Select(PascalCase));
+
+    /// <summary>The segments of a tuning key after the hero rule.</summary>
+    private static List<string> Segments(string key, IEnumerable<HeroSegment> segments, IReadOnlyCollection<string> ownHeroes)
     {
         var parts = key.Split('.').ToList();
         if (parts.Count > 1 && segments.FirstOrDefault(s => s.Segment == parts[0]) is { } hero)
@@ -49,7 +53,34 @@ internal static class TuningNames
             if (ownHeroes.Contains(hero.Hero)) parts.RemoveAt(0);
             else parts[0] = hero.Hero;
         }
-        return string.Concat(parts.Select(PascalCase));
+        return parts;
+    }
+
+    /// <summary>
+    /// The keys of one value and last segment, in groups of one constant. Two keys are in one group when the segments of one,
+    /// after the hero rule, end with the segments of the other (<c>Duration</c> and <c>Talent.Buff.Duration</c>). A key whose
+    /// segments end two keys of which neither ends the other is in no group with them: <c>Duration</c> beside
+    /// <c>Buff.Duration</c> and <c>Debuff.Duration</c> is three constants.
+    /// </summary>
+    private static List<List<(TuningEntry Entry, int Order)>> Groups(List<(TuningEntry Entry, int Order)> keys,
+        IEnumerable<HeroSegment> segments, IReadOnlyCollection<string> ownHeroes)
+    {
+        var parts = keys.Select(k => Segments(k.Entry.NameKey, segments, ownHeroes)).ToList();
+        bool Ends(int shorter, int longer) => parts[shorter].Count <= parts[longer].Count
+            && parts[shorter].SequenceEqual(parts[longer].Skip(parts[longer].Count - parts[shorter].Count), StringComparer.Ordinal);
+
+        var group = Enumerable.Range(0, keys.Count).ToArray();
+        int Find(int i) => group[i] == i ? i : group[i] = Find(group[i]);
+        for (int s = 0; s < keys.Count; s++)
+        {
+            var longer = Enumerable.Range(0, keys.Count).Where(l => l != s && Ends(s, l)).ToList();
+            if (longer.Count == 0) continue;
+            // The key and the keys ending with it, shortest first: one group when each ends the next.
+            var chain = longer.Append(s).OrderBy(i => parts[i].Count).ToList();
+            if (!chain.Zip(chain.Skip(1), (a, b) => Ends(a, b)).All(e => e)) continue;
+            foreach (int l in longer) group[Find(l)] = Find(s);
+        }
+        return Enumerable.Range(0, keys.Count).GroupBy(Find).Select(g => g.Select(i => keys[i]).ToList()).ToList();
     }
 
     /// <summary>
@@ -62,6 +93,7 @@ internal static class TuningNames
         var all = entries.Select((e, i) => (Entry: e, Order: i)).ToList();
         var byValue = all
             .GroupBy(e => (Last: e.Entry.NameKey.Split('.').Last(), e.Entry.Type, e.Entry.Literal, e.Entry.ByRank))
+            .SelectMany(g => Groups(g.ToList(), segments, ownHeroes))
             .Select(g => g.OrderBy(e => e.Entry.NameKey.Length).ThenBy(e => e.Entry.NameKey, StringComparer.Ordinal).ToList())
             .Select(g => (Name: Name(g[0].Entry.NameKey, segments, ownHeroes) + (g[0].Entry.ByRank ? "ByRank" : ""), Entries: g, Order: g.Min(e => e.Order)))
             .OrderBy(g => g.Order)

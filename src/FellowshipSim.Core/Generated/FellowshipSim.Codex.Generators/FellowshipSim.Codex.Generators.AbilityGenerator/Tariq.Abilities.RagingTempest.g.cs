@@ -34,7 +34,7 @@ partial class RagingTempest
         /// <summary>Game data: tuning <c>BuffDuration</c> of ability 1231.</summary>
         public const int BuffDuration = 21;
 
-        /// <summary>Game data: tuning <c>LifestealAndStatboost.Duration, PulsatingSingleDamage.SelfBuff.Duration</c> of ability 1231; ability 1797.</summary>
+        /// <summary>Game data: tuning <c>LifestealAndStatboost.Duration</c> of ability 1231; ability 1797.</summary>
         public const int LifestealAndStatboostDuration = 20;
 
         /// <summary>Game data: tuning <c>LifestealAndStatboost.IncomingDamageMultiplier</c> of ability 1231; ability 1797, IncomingDamageMultiplier MultiplyCompound.</summary>
@@ -63,6 +63,9 @@ partial class RagingTempest
 
         /// <summary>Game data: tuning <c>PulsatingSingleDamage.SelfBuff.CritChanceIncreasePerStack</c> of ability 1231; Raging Tempest (effect 1766), Expertise Additive.</summary>
         public const double PulsatingSingleDamageSelfBuffCritChanceIncreasePerStack = 0.01;
+
+        /// <summary>Game data: tuning <c>PulsatingSingleDamage.SelfBuff.Duration</c> of ability 1231; Raging Tempest (effect 1766).</summary>
+        public const int PulsatingSingleDamageSelfBuffDuration = 20;
 
         /// <summary>Game data: tuning <c>PulsatingSingleDamage.TargetingRange</c> of ability 1231; ability 1230.</summary>
         public const int PulsatingSingleDamageTargetingRange = 800;

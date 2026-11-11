@@ -19,7 +19,7 @@ public partial class ShieldSlam : HelenaAbility
 
     /// <summary>Lingering Concussion on the main target, up to 5 stacks.</summary>
     public static readonly AuraDef LingeringConcussion = AuraDef.Effect("Lingering Concussion", LingeringConcussionEffectId,
-        Constants.AbsorbProcDuration, Constants.ReducedIncomingDamageFromTargetMaxStackCount);
+        Constants.ReducedIncomingDamageFromTargetDuration, Constants.ReducedIncomingDamageFromTargetMaxStackCount);
 
     /// <summary>Share of Armor (<see cref="Helena.Armor"/>) every hit adds to its damage (Gleaming Shield).</summary>
     public double ArmorDamageShare { get; set; }

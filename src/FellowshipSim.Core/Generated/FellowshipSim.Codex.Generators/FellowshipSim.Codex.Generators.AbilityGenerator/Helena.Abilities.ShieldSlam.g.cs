@@ -43,7 +43,7 @@ partial class ShieldSlam
     /// <summary>Game data: the tuning values of ability 977.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>AbsorbProc.Duration, ReducedIncomingDamageFromTarget.Duration</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
+        /// <summary>Game data: tuning <c>AbsorbProc.Duration</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
         public const int AbsorbProcDuration = 12;
 
         /// <summary>Game data: tuning <c>AbsorbProc.StrCoefficient</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
@@ -79,11 +79,14 @@ partial class ShieldSlam
         /// <summary>Game data: tuning <c>IncreasedMeleeCleaveAndHeavyMeleeDamage.DamageMultiplier, Helena.Talent.IncreasedMeleeCleaveAndHeavyMeleeDamage.DamageMultiplier</c> of ability 977; effect 1233, DamageScale MultiplyCompound.</summary>
         public const double IncreasedMeleeCleaveAndHeavyMeleeDamageDamageMultiplier = 1.15;
 
-        /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus, Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 977; ability 960.</summary>
+        /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus</c> of ability 977; ability 960.</summary>
         public const int ToughnessBlockFlatBonus = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.Block.StrengthScaler</c> of ability 977; ability 960.</summary>
         public const double ToughnessBlockStrengthScaler = 0.24;
+
+        /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 977; ability 960.</summary>
+        public const int ToughnessDefenceBuffFlatBonus = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.StrengthScaler</c> of ability 977; ability 960.</summary>
         public const double ToughnessDefenceBuffStrengthScaler = 2.31;
@@ -109,11 +112,14 @@ partial class ShieldSlam
         /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessTotalSecondaryStatModifier</c> of ability 977; ability 960.</summary>
         public const int ToughnessMaxToughnessTotalSecondaryStatModifier = 2;
 
-        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit, Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 977; ability 960.</summary>
-        public const int ToughnessMeleeCleaveFlatBonusPerHit = 0;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 977; ability 960.</summary>
+        public const int ToughnessMeleeAoeSlowFlatBonusPerHit = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.StrengthScalerPerHit</c> of ability 977; ability 960.</summary>
         public const double ToughnessMeleeAoeSlowStrengthScalerPerHit = 1.925;
+
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit</c> of ability 977; ability 960.</summary>
+        public const int ToughnessMeleeCleaveFlatBonusPerHit = 0;
 
         /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.StrengthScalerPerHit</c> of ability 977; ability 960.</summary>
         public const double ToughnessMeleeCleaveStrengthScalerPerHit = 1.155;
@@ -135,6 +141,9 @@ partial class ShieldSlam
 
         /// <summary>Game data: tuning <c>NumCharges</c> of ability 977.</summary>
         public const int NumCharges = 2;
+
+        /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.Duration</c> of ability 977; Lingering Concussion (effect 2478).</summary>
+        public const int ReducedIncomingDamageFromTargetDuration = 12;
 
         /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.MaxStackCount</c> of ability 977; Lingering Concussion (effect 2478).</summary>
         public const int ReducedIncomingDamageFromTargetMaxStackCount = 5;

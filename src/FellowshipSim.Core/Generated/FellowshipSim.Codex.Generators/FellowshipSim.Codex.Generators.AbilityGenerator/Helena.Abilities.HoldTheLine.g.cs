@@ -34,7 +34,7 @@ partial class HoldTheLine
         /// <summary>Game data: tuning <c>BuffDuration</c> of ability 975; talent Sword &amp; Board (talent 209).</summary>
         public const int BuffDuration = 12;
 
-        /// <summary>Game data: tuning <c>Charges.NumCharges, Helena.MeleeCleave.NumCharges</c> of ability 975; talent Iron Sentinel (legendary power 625).</summary>
+        /// <summary>Game data: tuning <c>Charges.NumCharges</c> of ability 975; talent Iron Sentinel (legendary power 625).</summary>
         public const int ChargesNumCharges = 2;
 
         /// <summary>Game data: tuning <c>Helena.MeleeCleave.AbsorbProc.StrCoefficient</c> of ability 975; Empowered Shield Slam: Barrier (effect 2229).</summary>
@@ -45,6 +45,9 @@ partial class HoldTheLine
 
         /// <summary>Game data: tuning <c>Helena.MeleeCleave.Cooldown</c> of ability 975; Shield Slam (ability 977).</summary>
         public const double MeleeCleaveCooldown = 7.5;
+
+        /// <summary>Game data: tuning <c>Helena.MeleeCleave.NumCharges</c> of ability 975; Shield Slam (ability 977).</summary>
+        public const int MeleeCleaveNumCharges = 2;
 
         /// <summary>Game data: tuning <c>Helena.MeleeCleave.TargetCountThreshold</c> of ability 975; Shield Slam (ability 977).</summary>
         public const int MeleeCleaveTargetCountThreshold = 8;
