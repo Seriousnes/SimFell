@@ -10,11 +10,15 @@ partial class FortressInTheSands
     /// <summary>Light of Azamir Greaves, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
-    /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier, Sune.SingleTargetAbsorb.Talent.DamageReduction.IncomingDamageMultiplier</c> of legendary power 579; Solar Shield (ability 1848).</summary>
-    public const double DAMAGE_REDUCTION_INCOMING_DAMAGE_MULTIPLIER = 0.3;
+    /// <summary>Game data: the tuning values of legendary power 579.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier, Sune.SingleTargetAbsorb.Talent.DamageReduction.IncomingDamageMultiplier</c> of legendary power 579; Solar Shield (ability 1848).</summary>
+        public const double DamageReductionIncomingDamageMultiplier = 0.3;
 
-    /// <summary>Game data: tuning <c>DeathPrevention.Cooldown, Sune.Talent.DeathPrevention.Cooldown</c> of legendary power 579; Fortress in the Sands: Exhausted (effect 2658).</summary>
-    public const int COOLDOWN = 30;
+        /// <summary>Game data: tuning <c>DeathPrevention.Cooldown, Sune.Talent.DeathPrevention.Cooldown</c> of legendary power 579; Fortress in the Sands: Exhausted (effect 2658).</summary>
+        public const int DeathPreventionCooldown = 30;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Fortress in the Sands";

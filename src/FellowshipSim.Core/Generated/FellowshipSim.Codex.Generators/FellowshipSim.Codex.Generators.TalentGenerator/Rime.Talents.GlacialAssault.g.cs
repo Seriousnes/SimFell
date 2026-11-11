@@ -13,33 +13,37 @@ partial class GlacialAssault
     /// <summary>Game data: <c>radius</c> of talent 38.</summary>
     public const int TalentRadius = 700;
 
-    /// <summary>Game data: tuning <c>DamageScaler, InstantAndBonusDamage.DamageToAoe.DamageScaler, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.DamageScaler</c> of talent 38; Glacial Assault (ability 2023).</summary>
-    public const double DAMAGE_SCALER = 0.3;
+    /// <summary>Game data: the tuning values of talent 38.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageScaler, InstantAndBonusDamage.DamageToAoe.DamageScaler, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.DamageScaler</c> of talent 38; Glacial Assault (ability 2023).</summary>
+        public const double DamageScaler = 0.3;
 
-    /// <summary>Game data: tuning <c>Height, InstantAndBonusDamage.DamageToAoe.Height, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.Height</c> of talent 38; Glacial Assault (ability 2023).</summary>
-    public const int HEIGHT = 500;
+        /// <summary>Game data: tuning <c>Height, InstantAndBonusDamage.DamageToAoe.Height, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.Height</c> of talent 38; Glacial Assault (ability 2023).</summary>
+        public const int Height = 500;
 
-    /// <summary>Game data: tuning <c>InstantAndBonusDamage.DamageMultiplier, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageMultiplier</c> of talent 38; Glacial Assault (effect 1377).</summary>
-    public const double DAMAGE_MULTIPLIER = 1.4;
+        /// <summary>Game data: tuning <c>InstantAndBonusDamage.DamageMultiplier, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageMultiplier</c> of talent 38; Glacial Assault (effect 1377).</summary>
+        public const double InstantAndBonusDamageDamageMultiplier = 1.4;
 
-    /// <summary>Game data: tuning <c>MaxNumTargets, InstantAndBonusDamage.DamageToAoe.MaxNumTargets, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.MaxNumTargets</c> of talent 38; Glacial Assault (ability 2023).</summary>
-    public const int MAX_NUM_TARGETS = 40;
+        /// <summary>Game data: tuning <c>MaxNumTargets, InstantAndBonusDamage.DamageToAoe.MaxNumTargets, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.MaxNumTargets</c> of talent 38; Glacial Assault (ability 2023).</summary>
+        public const int MaxNumTargets = 40;
 
-    /// <summary>Game data: tuning <c>InstantAndBonusDamage.DamageToAoe.Radius, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.Radius</c> of talent 38; Glacial Assault (ability 2023).</summary>
-    public const int RADIUS = 700;
+        /// <summary>Game data: tuning <c>InstantAndBonusDamage.DamageToAoe.Radius, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.Radius</c> of talent 38; Glacial Assault (ability 2023).</summary>
+        public const int InstantAndBonusDamageDamageToAoeRadius = 700;
 
-    /// <summary>Game data: tuning <c>TargetCountThreshold, InstantAndBonusDamage.DamageToAoe.TargetCountThreshold, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.TargetCountThreshold</c> of talent 38; Glacial Assault (ability 2023).</summary>
-    public const int TARGET_COUNT_THRESHOLD = 12;
+        /// <summary>Game data: tuning <c>TargetCountThreshold, InstantAndBonusDamage.DamageToAoe.TargetCountThreshold, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.TargetCountThreshold</c> of talent 38; Glacial Assault (ability 2023).</summary>
+        public const int TargetCountThreshold = 12;
 
-    /// <summary>Game data: tuning <c>InstantAndBonusDamage.MaxStacks, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.MaxStacks</c> of talent 38; Glacial Assault (effect 1377).</summary>
-    public const int MAX_STACKS = 4;
+        /// <summary>Game data: tuning <c>InstantAndBonusDamage.MaxStacks, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.MaxStacks</c> of talent 38; Glacial Assault (effect 1377).</summary>
+        public const int InstantAndBonusDamageMaxStacks = 4;
 
-    /// <summary>Game data: tuning <c>InstantAndBonusDamage.PPM, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.PPM</c> of talent 38; Glacial Assault (effect 1377).</summary>
-    public const double PPM = 1.2;
+        /// <summary>Game data: tuning <c>InstantAndBonusDamage.PPM, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.PPM</c> of talent 38; Glacial Assault (effect 1377).</summary>
+        public const double InstantAndBonusDamagePPM = 1.2;
 
-    /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.AddedCritChance</c> of talent 38; Icy Flow (effect 2308).</summary>
-    public const double ADDED_CRIT_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.AddedCritChance</c> of talent 38; Icy Flow (effect 2308).</summary>
+        public const double InstantSingleDamageTalentReducesCastTimeOnOrbSpenderAddedCritChance = 0.2;
 
-    /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.ReductionInSeconds</c> of talent 38; Icy Flow (effect 2308).</summary>
-    public const double REDUCTION_IN_SECONDS = 0.5;
+        /// <summary>Game data: tuning <c>Rime.InstantSingleDamage.Talent.ReducesCastTimeOnOrbSpender.ReductionInSeconds</c> of talent 38; Icy Flow (effect 2308).</summary>
+        public const double InstantSingleDamageTalentReducesCastTimeOnOrbSpenderReductionInSeconds = 0.5;
+    }
 }

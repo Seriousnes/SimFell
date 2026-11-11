@@ -10,12 +10,16 @@ partial class FeedTheQueen
     /// <summary>Game data: <c>name</c> of talent 121.</summary>
     public const string TalentName = "Feed the Queen";
 
-    /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.Duration, Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.Duration</c> of talent 121; Feed the Queen (effect 2195).</summary>
-    public const int DURATION = 12;
+    /// <summary>Game data: the tuning values of talent 121.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.Duration, Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.Duration</c> of talent 121; Feed the Queen (effect 2195).</summary>
+        public const int HeavyAttackSpenderDamageIncreaseDuration = 12;
 
-    /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.MaxStacks, Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.MaxStacks</c> of talent 121; Feed the Queen (effect 2195).</summary>
-    public const int MAX_STACKS = 6;
+        /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.MaxStacks, Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.MaxStacks</c> of talent 121; Feed the Queen (effect 2195).</summary>
+        public const int HeavyAttackSpenderDamageIncreaseMaxStacks = 6;
 
-    /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.DamageMultiplierPerStack</c> of talent 121; Feed the Queen (effect 2195).</summary>
-    public const double DAMAGE_MULTIPLIER_PER_STACK = 0.12;
+        /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Talent.HeavyAttackSpenderDamageIncrease.DamageMultiplierPerStack</c> of talent 121; Feed the Queen (effect 2195).</summary>
+        public const double AoeAttackBuilderTalentHeavyAttackSpenderDamageIncreaseDamageMultiplierPerStack = 0.12;
+    }
 }

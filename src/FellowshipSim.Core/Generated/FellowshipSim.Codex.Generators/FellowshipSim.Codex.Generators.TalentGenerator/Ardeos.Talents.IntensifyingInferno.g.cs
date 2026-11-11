@@ -10,9 +10,13 @@ partial class IntensifyingInferno
     /// <summary>Game data: <c>name</c> of talent 151.</summary>
     public const string TalentName = "Intensifying Inferno";
 
-    /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreaseMax, Firemage.CastedDotBoostProjectile.Talent.DamageIncreaseFromDots.DamageIncreaseMax</c> of talent 151; Infernal Wave (ability 1276).</summary>
-    public const double DAMAGE_INCREASE_FROM_DOTS_DAMAGE_INCREASE_MAX = 2.2;
+    /// <summary>Game data: the tuning values of talent 151.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreaseMax, Firemage.CastedDotBoostProjectile.Talent.DamageIncreaseFromDots.DamageIncreaseMax</c> of talent 151; Infernal Wave (ability 1276).</summary>
+        public const double DamageIncreaseFromDotsDamageIncreaseMax = 2.2;
 
-    /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreasePerDot, Firemage.CastedDotBoostProjectile.Talent.DamageIncreaseFromDots.DamageIncreasePerDot</c> of talent 151; Infernal Wave (ability 1276).</summary>
-    public const double DAMAGE_INCREASE_FROM_DOTS_DAMAGE_INCREASE_PER_DOT = 0.15;
+        /// <summary>Game data: tuning <c>DamageIncreaseFromDots.DamageIncreasePerDot, Firemage.CastedDotBoostProjectile.Talent.DamageIncreaseFromDots.DamageIncreasePerDot</c> of talent 151; Infernal Wave (ability 1276).</summary>
+        public const double DamageIncreaseFromDotsDamageIncreasePerDot = 0.15;
+    }
 }

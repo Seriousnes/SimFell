@@ -10,23 +10,27 @@ partial class Explosivo
     /// <summary>Pyromancer Robe, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
-    /// <summary>Game data: tuning <c>DirectDamageScale, Firemage.CastedPlacedAoe.Talent.DamageBasedDot.DirectDamageScale</c> of legendary power 615; Apocalypse: Explosivo (ability 2064).</summary>
-    public const double DIRECT_DAMAGE_SCALE = 0.5;
+    /// <summary>Game data: the tuning values of legendary power 615.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DirectDamageScale, Firemage.CastedPlacedAoe.Talent.DamageBasedDot.DirectDamageScale</c> of legendary power 615; Apocalypse: Explosivo (ability 2064).</summary>
+        public const double DirectDamageScale = 0.5;
 
-    /// <summary>Game data: tuning <c>Duration, Firemage.CastedPlacedAoe.Talent.DamageBasedDot.Duration</c> of legendary power 615; Apocalypse: Explosivo (ability 2064).</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>Duration, Firemage.CastedPlacedAoe.Talent.DamageBasedDot.Duration</c> of legendary power 615; Apocalypse: Explosivo (ability 2064).</summary>
+        public const int Duration = 12;
 
-    /// <summary>Game data: tuning <c>Firemage.CastedPlacedAoe.Talent.AddedCharges.MaxCharges</c> of legendary power 615; Apocalypse (ability 1273).</summary>
-    public const int ADDED_CHARGES_MAX_CHARGES = 2;
+        /// <summary>Game data: tuning <c>Firemage.CastedPlacedAoe.Talent.AddedCharges.MaxCharges</c> of legendary power 615; Apocalypse (ability 1273).</summary>
+        public const int CastedPlacedAoeTalentAddedChargesMaxCharges = 2;
 
-    /// <summary>Game data: tuning <c>Period, Firemage.CastedPlacedAoe.Talent.DamageBasedDot.Period</c> of legendary power 615; Apocalypse: Explosivo (ability 2064).</summary>
-    public const int PERIOD = 3;
+        /// <summary>Game data: tuning <c>Period, Firemage.CastedPlacedAoe.Talent.DamageBasedDot.Period</c> of legendary power 615; Apocalypse: Explosivo (ability 2064).</summary>
+        public const int Period = 3;
 
-    /// <summary>Game data: tuning <c>Firemage.PlacedProjectileAoe.Talent.CooldownReductionToApocalypse.ReductionInSeconds</c> of legendary power 615; Fire Ball (ability 1260).</summary>
-    public const int COOLDOWN_REDUCTION_TO_APOCALYPSE_REDUCTION_IN_SECONDS = 8;
+        /// <summary>Game data: tuning <c>Firemage.PlacedProjectileAoe.Talent.CooldownReductionToApocalypse.ReductionInSeconds</c> of legendary power 615; Fire Ball (ability 1260).</summary>
+        public const int PlacedProjectileAoeTalentCooldownReductionToApocalypseReductionInSeconds = 8;
 
-    /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of legendary power 615; Ardeos (hero 7).</summary>
-    public const double CRIT_CHANCE_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of legendary power 615; Ardeos (hero 7).</summary>
+        public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Explosivo";

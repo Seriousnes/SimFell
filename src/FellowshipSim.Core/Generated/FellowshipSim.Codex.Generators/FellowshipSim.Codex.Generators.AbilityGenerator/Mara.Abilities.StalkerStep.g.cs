@@ -25,18 +25,22 @@ partial class StalkerStep
     /// <summary>Game data: <c>range</c> of ability 1205.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1205.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+    /// <summary>Game data: the tuning values of ability 1205.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1205.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>IncreasedDamageOrMovementSpeed.DamageIncrease.Duration</c> of ability 1205; Nightstalker (effect 2189).</summary>
-    public const int DURATION_1 = 10;
+        /// <summary>Game data: tuning <c>IncreasedDamageOrMovementSpeed.DamageIncrease.Duration</c> of ability 1205; Nightstalker (effect 2189).</summary>
+        public const int IncreasedDamageOrMovementSpeedDamageIncreaseDuration = 10;
 
-    /// <summary>Game data: tuning <c>IncreasedDamageOrMovementSpeed.MovementSpeedIncrease.Duration</c> of ability 1205; Stalker Step (effect 2190).</summary>
-    public const int DURATION_2 = 4;
+        /// <summary>Game data: tuning <c>IncreasedDamageOrMovementSpeed.MovementSpeedIncrease.Duration</c> of ability 1205; Stalker Step (effect 2190).</summary>
+        public const int IncreasedDamageOrMovementSpeedMovementSpeedIncreaseDuration = 4;
 
-    /// <summary>Game data: tuning <c>IncreasedDamageOrMovementSpeed.MovementSpeedIncrease.SpeedMultiplier</c> of ability 1205; Stalker Step (effect 2190), PassiveMoveSpeed MultiplyCompound.</summary>
-    public const double SPEED_MULTIPLIER = 1.5;
+        /// <summary>Game data: tuning <c>IncreasedDamageOrMovementSpeed.MovementSpeedIncrease.SpeedMultiplier</c> of ability 1205; Stalker Step (effect 2190), PassiveMoveSpeed MultiplyCompound.</summary>
+        public const double IncreasedDamageOrMovementSpeedMovementSpeedIncreaseSpeedMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1205.</summary>
-    public const int MAX_CHARGES = 2;
+        /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1205.</summary>
+        public const int MaxCharges = 2;
+    }
 }

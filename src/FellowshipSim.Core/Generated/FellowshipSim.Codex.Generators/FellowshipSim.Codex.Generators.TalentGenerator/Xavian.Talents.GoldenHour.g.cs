@@ -10,18 +10,22 @@ partial class GoldenHour
     /// <summary>Game data: <c>name</c> of talent 578.</summary>
     public const string TalentName = "Golden Hour";
 
-    /// <summary>Game data: tuning <c>Buff.CritChanceIncrease.Duration, Sune.AoeMelee.Talent.CooldownProc.Buff.CritChanceIncrease.Duration</c> of talent 578; Golden Hour (effect 2661).</summary>
-    public const int DURATION = 12;
+    /// <summary>Game data: the tuning values of talent 578.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Buff.CritChanceIncrease.Duration, Sune.AoeMelee.Talent.CooldownProc.Buff.CritChanceIncrease.Duration</c> of talent 578; Golden Hour (effect 2661).</summary>
+        public const int BuffCritChanceIncreaseDuration = 12;
 
-    /// <summary>Game data: tuning <c>ProcChance, Sune.AoeMelee.Talent.CooldownProc.ProcChance</c> of talent 578; ability 1913.</summary>
-    public const double PROC_CHANCE = 0.06;
+        /// <summary>Game data: tuning <c>ProcChance, Sune.AoeMelee.Talent.CooldownProc.ProcChance</c> of talent 578; ability 1913.</summary>
+        public const double ProcChance = 0.06;
 
-    /// <summary>Game data: tuning <c>Sune.AoeMelee.Talent.CooldownProc.Buff.CritChanceIncrease</c> of talent 578; ability 1913, CritChance Additive.</summary>
-    public const int BUFF_CRIT_CHANCE_INCREASE = 0;
+        /// <summary>Game data: tuning <c>Sune.AoeMelee.Talent.CooldownProc.Buff.CritChanceIncrease</c> of talent 578; ability 1913, CritChance Additive.</summary>
+        public const int AoeMeleeTalentCooldownProcBuffCritChanceIncrease = 0;
 
-    /// <summary>Game data: tuning <c>Sune.BuffedTargetedCastedHealOrDamage.BuffDuration</c> of talent 578; Omega Reprieval (ability 1861).</summary>
-    public const int BUFF_DURATION = 12;
+        /// <summary>Game data: tuning <c>Sune.BuffedTargetedCastedHealOrDamage.BuffDuration</c> of talent 578; Omega Reprieval (ability 1861).</summary>
+        public const int BuffedTargetedCastedHealOrDamageBuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>Sune.InstantSingleTargetHealOrDamage.Talent.PowerScaler</c> of talent 578; Brilliant Flash (ability 1855), DamageScale MultiplyCompound.</summary>
-    public const double POWER_SCALER = 1.5;
+        /// <summary>Game data: tuning <c>Sune.InstantSingleTargetHealOrDamage.Talent.PowerScaler</c> of talent 578; Brilliant Flash (ability 1855), DamageScale MultiplyCompound.</summary>
+        public const double InstantSingleTargetHealOrDamageTalentPowerScaler = 1.5;
+    }
 }

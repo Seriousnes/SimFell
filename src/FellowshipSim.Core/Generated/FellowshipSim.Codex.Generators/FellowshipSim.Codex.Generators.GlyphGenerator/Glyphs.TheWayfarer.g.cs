@@ -16,12 +16,16 @@ partial class TheWayfarer
     /// <summary>Game data: <c>abilityRank</c> of glyph 703.</summary>
     public const int GlyphAbilityRank = 192;
 
-    /// <summary>Game data: tuning <c>Buff.AdditionalHaste</c> of glyph 703; The Wayfarer (effect 3184), by rank.</summary>
-    public static readonly double[] ADDITIONAL_HASTE_BY_RANK = [0.06, 0.1, 0.16, 0.25];
+    /// <summary>Game data: the tuning values of glyph 703.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Buff.AdditionalHaste</c> of glyph 703; The Wayfarer (effect 3184), by rank.</summary>
+        public static readonly double[] BuffAdditionalHasteByRank = [0.06, 0.1, 0.16, 0.25];
 
-    /// <summary>Game data: tuning <c>Buff.Duration</c> of glyph 703; The Wayfarer (effect 3184).</summary>
-    public const int DURATION = 14;
+        /// <summary>Game data: tuning <c>Buff.Duration</c> of glyph 703; The Wayfarer (effect 3184).</summary>
+        public const int BuffDuration = 14;
 
-    /// <summary>Game data: tuning <c>Cooldown</c> of glyph 703; The Wayfarer: On Cooldown (effect 3183).</summary>
-    public const int COOLDOWN = 60;
+        /// <summary>Game data: tuning <c>Cooldown</c> of glyph 703; The Wayfarer: On Cooldown (effect 3183).</summary>
+        public const int Cooldown = 60;
+    }
 }

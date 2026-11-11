@@ -25,45 +25,49 @@ partial class SunStrike
     /// <summary>Game data: <c>range</c> of ability 1845.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.DamageScalingTargetCountThreshold</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const int AOE_DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
+    /// <summary>Game data: the tuning values of ability 1845.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.DamageScalingTargetCountThreshold</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
+        public const int AoeProcBuffAoeDamageScalingTargetCountThreshold = 8;
 
-    /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.DamageStrengthCoefficient</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const double AOE_DAMAGE_STRENGTH_COEFFICIENT = 1.24;
+        /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.DamageStrengthCoefficient</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
+        public const double AoeProcBuffAoeDamageStrengthCoefficient = 1.24;
 
-    /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.MaxRange</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const int AOE_MAX_RANGE = 700;
+        /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.MaxRange</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
+        public const int AoeProcBuffAoeMaxRange = 700;
 
-    /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.StackCost</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const int AOE_STACK_COST = 1;
+        /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.StackCost</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
+        public const int AoeProcBuffAoeStackCost = 1;
 
-    /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.VisualDelay</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
-    public const double AOE_VISUAL_DELAY = 0.5;
+        /// <summary>Game data: tuning <c>AoeProcBuff.Aoe.VisualDelay</c> of ability 1845; talent Sun's Verdict (talent 583).</summary>
+        public const double AoeProcBuffAoeVisualDelay = 0.5;
 
-    /// <summary>Game data: tuning <c>Cleave.DamageScaler</c> of ability 1845.</summary>
-    public const double CLEAVE_DAMAGE_SCALER = 0.15;
+        /// <summary>Game data: tuning <c>Cleave.DamageScaler</c> of ability 1845.</summary>
+        public const double CleaveDamageScaler = 0.15;
 
-    /// <summary>Game data: tuning <c>Cleave.MaxNumTargets</c> of ability 1845.</summary>
-    public const int CLEAVE_MAX_NUM_TARGETS = 20;
+        /// <summary>Game data: tuning <c>Cleave.MaxNumTargets</c> of ability 1845.</summary>
+        public const int CleaveMaxNumTargets = 20;
 
-    /// <summary>Game data: tuning <c>Cleave.Radius</c> of ability 1845.</summary>
-    public const int CLEAVE_RADIUS = 700;
+        /// <summary>Game data: tuning <c>Cleave.Radius</c> of ability 1845.</summary>
+        public const int CleaveRadius = 700;
 
-    /// <summary>Game data: tuning <c>Cleave.TargetCountThreshold</c> of ability 1845.</summary>
-    public const int CLEAVE_TARGET_COUNT_THRESHOLD = 3;
+        /// <summary>Game data: tuning <c>Cleave.TargetCountThreshold</c> of ability 1845.</summary>
+        public const int CleaveTargetCountThreshold = 3;
 
-    /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1845.</summary>
-    public const double DAMAGE_STRENGTH_COEFFICIENT = 1.47;
+        /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1845.</summary>
+        public const double DamageStrengthCoefficient = 1.47;
 
-    /// <summary>Game data: tuning <c>ExtraDebuffFromCrit.ExtraDebuffStack</c> of ability 1845; talent Gleaming Strikes (talent 581).</summary>
-    public const int EXTRA_DEBUFF_STACK = 1;
+        /// <summary>Game data: tuning <c>ExtraDebuffFromCrit.ExtraDebuffStack</c> of ability 1845; talent Gleaming Strikes (talent 581).</summary>
+        public const int ExtraDebuffFromCritExtraDebuffStack = 1;
 
-    /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1845.</summary>
-    public const double HIT_VISUAL_DELAY = 0.15;
+        /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1845.</summary>
+        public const double HitVisualDelay = 0.15;
 
-    /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1845.</summary>
-    public const double RESOURCE_PROC_CHANCE = 0.15;
+        /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1845.</summary>
+        public const double ResourceProcChance = 0.15;
 
-    /// <summary>Game data: tuning <c>Talent.CritChanceIncrease</c> of ability 1845; CritChance Additive.</summary>
-    public const int CRIT_CHANCE_INCREASE = 0;
+        /// <summary>Game data: tuning <c>Talent.CritChanceIncrease</c> of ability 1845; CritChance Additive.</summary>
+        public const int TalentCritChanceIncrease = 0;
+    }
 }

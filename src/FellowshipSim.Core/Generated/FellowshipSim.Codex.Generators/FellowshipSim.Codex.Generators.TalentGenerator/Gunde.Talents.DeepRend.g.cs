@@ -10,12 +10,16 @@ partial class DeepRend
     /// <summary>Game data: <c>name</c> of talent 751.</summary>
     public const string TalentName = "Deep Rend";
 
-    /// <summary>Game data: tuning <c>IncreasedDropAmount.DropChance, Gunde.PerTargetAccumulatedBleed.Talent.IncreasedDropAmount.DropChance</c> of talent 751; Rend (effect 3231).</summary>
-    public const double INCREASED_DROP_AMOUNT_DROP_CHANCE = 0.1;
+    /// <summary>Game data: the tuning values of talent 751.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDropAmount.DropChance, Gunde.PerTargetAccumulatedBleed.Talent.IncreasedDropAmount.DropChance</c> of talent 751; Rend (effect 3231).</summary>
+        public const double IncreasedDropAmountDropChance = 0.1;
 
-    /// <summary>Game data: tuning <c>IncreasedDropAmount.NewAmount, Gunde.PerTargetAccumulatedBleed.Talent.IncreasedDropAmount.NewAmount</c> of talent 751; Rend (effect 3231).</summary>
-    public const int INCREASED_DROP_AMOUNT_NEW_AMOUNT = 3;
+        /// <summary>Game data: tuning <c>IncreasedDropAmount.NewAmount, Gunde.PerTargetAccumulatedBleed.Talent.IncreasedDropAmount.NewAmount</c> of talent 751; Rend (effect 3231).</summary>
+        public const int IncreasedDropAmountNewAmount = 3;
 
-    /// <summary>Game data: tuning <c>ReducedTickSpeed.PeriodFrequencyIncrease, Gunde.PerTargetAccumulatedBleed.Talent.ReducedTickSpeed.PeriodFrequencyIncrease</c> of talent 751; Rend (effect 3231).</summary>
-    public const double REDUCED_TICK_SPEED_PERIOD_FREQUENCY_INCREASE = 1.1;
+        /// <summary>Game data: tuning <c>ReducedTickSpeed.PeriodFrequencyIncrease, Gunde.PerTargetAccumulatedBleed.Talent.ReducedTickSpeed.PeriodFrequencyIncrease</c> of talent 751; Rend (effect 3231).</summary>
+        public const double ReducedTickSpeedPeriodFrequencyIncrease = 1.1;
+    }
 }

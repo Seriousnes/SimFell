@@ -3,7 +3,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// <summary>
 /// Ability 2291: cleaves all enemies in front of Gunde and grants Serrated Edge, which makes the next damaging ability
 /// transfer additional damage to Rend. Serrated Edge does not interact with the Bloodbound Spirit ability. Blood Arc
-/// applies Rend to the targets. Damage falls off beyond <see cref="DAMAGE_SCALING_TARGET_COUNT_THRESHOLD"/> enemies (game data effect 3236).
+/// applies Rend to the targets. Damage falls off beyond <see cref="Constants.DamageScalingTargetCountThreshold"/> enemies (game data effect 3236).
 /// The cooldown is shortened by Haste at the cast.
 /// </summary>
 public partial class BloodArc : GundeAbility
@@ -26,10 +26,10 @@ public partial class BloodArc : GundeAbility
 
     public BloodArc(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
-        RendShare = DAMAGE_TO_DOT_SCALER;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
+        RendShare = Constants.PerTargetAccumulatedBleedDamageToDotScaler;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

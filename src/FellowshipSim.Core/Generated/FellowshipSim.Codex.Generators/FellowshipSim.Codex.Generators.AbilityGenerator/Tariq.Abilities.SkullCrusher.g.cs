@@ -31,45 +31,49 @@ partial class SkullCrusher
     /// <summary>Game data: <c>range</c> of ability 1229.</summary>
     public const int AbilityRange = 550;
 
-    /// <summary>Game data: tuning <c>ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of ability 1229; ability 1215, talent Schism (talent 85).</summary>
-    public const double HEAVY_SINGLE_TARGET_ATTACK_DAMAGE_MULTIPLIER = 2.5;
+    /// <summary>Game data: the tuning values of ability 1229.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of ability 1229; ability 1215, talent Schism (talent 85).</summary>
+        public const double ChanceIncreasedSpenderDamageHeavySingleTargetAttackDamageMultiplier = 2.5;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1229.</summary>
-    public const double COST = 0.25;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1229.</summary>
+        public const double Cost = 0.25;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1229.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1229.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>Lightning.Spread</c> of ability 1229.</summary>
-    public const double LIGHTNING_SPREAD = 0.2;
+        /// <summary>Game data: tuning <c>Lightning.Spread</c> of ability 1229.</summary>
+        public const double LightningSpread = 0.2;
 
-    /// <summary>Game data: tuning <c>Lightning.StrengthCoefficient</c> of ability 1229.</summary>
-    public const double LIGHTNING_STRENGTH_COEFFICIENT = 4.06;
+        /// <summary>Game data: tuning <c>Lightning.StrengthCoefficient</c> of ability 1229.</summary>
+        public const double LightningStrengthCoefficient = 4.06;
 
-    /// <summary>Game data: tuning <c>Lightning.VisualHitDelay</c> of ability 1229.</summary>
-    public const double LIGHTNING_VISUAL_HIT_DELAY = 0.35;
+        /// <summary>Game data: tuning <c>Lightning.VisualHitDelay</c> of ability 1229.</summary>
+        public const double LightningVisualHitDelay = 0.35;
 
-    /// <summary>Game data: tuning <c>ProcAddedCritChance.AddedCritChance</c> of ability 1229; talent Them Bones (talent 75).</summary>
-    public const int ADDED_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>ProcAddedCritChance.AddedCritChance</c> of ability 1229; talent Them Bones (talent 75).</summary>
+        public const int ProcAddedCritChanceAddedCritChance = 1;
 
-    /// <summary>Game data: tuning <c>ProcAddedCritChance.Chance</c> of ability 1229; talent Them Bones (talent 75).</summary>
-    public const double CHANCE = 0.3;
+        /// <summary>Game data: tuning <c>ProcAddedCritChance.Chance</c> of ability 1229; talent Them Bones (talent 75).</summary>
+        public const double ProcAddedCritChanceChance = 0.3;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1229.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1229.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1229.</summary>
-    public const double STRENGTH_COEFFICIENT = 11.6;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1229.</summary>
+        public const double StrengthCoefficient = 11.6;
 
-    /// <summary>Game data: tuning <c>SwingTimerPauseDuration</c> of ability 1229.</summary>
-    public const int SWING_TIMER_PAUSE_DURATION = 1;
+        /// <summary>Game data: tuning <c>SwingTimerPauseDuration</c> of ability 1229.</summary>
+        public const int SwingTimerPauseDuration = 1;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDamageScaler</c> of ability 1229; DamageScale MultiplyCompound.</summary>
-    public const double INCREASED_DAMAGE_SCALER = 1.2;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDamageScaler</c> of ability 1229; DamageScale MultiplyCompound.</summary>
+        public const double TalentIncreasedDamageScaler = 1.2;
 
-    /// <summary>Game data: tuning <c>Tariq.Talent.PassiveLightningCritChanceIncrease</c> of ability 1229; ability 1221, talent Crack the Sky (talent 77), CritChance Additive.</summary>
-    public const double PASSIVE_LIGHTNING_CRIT_CHANCE_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>Tariq.Talent.PassiveLightningCritChanceIncrease</c> of ability 1229; ability 1221, talent Crack the Sky (talent 77), CritChance Additive.</summary>
+        public const double TalentPassiveLightningCritChanceIncrease = 0.2;
 
-    /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1229.</summary>
-    public const double VISUAL_HIT_DELAY = 0.52;
+        /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1229.</summary>
+        public const double VisualHitDelay = 0.52;
+    }
 }

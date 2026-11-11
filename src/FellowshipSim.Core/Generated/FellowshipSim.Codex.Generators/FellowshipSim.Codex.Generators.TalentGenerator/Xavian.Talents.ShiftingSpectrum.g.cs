@@ -10,9 +10,13 @@ partial class ShiftingSpectrum
     /// <summary>Game data: <c>name</c> of talent 576.</summary>
     public const string TalentName = "Shifting Spectrum";
 
-    /// <summary>Game data: tuning <c>HealthThreshold, Sune.Talent.LowHealthDamageReduction.HealthThreshold</c> of talent 576; ability 1910.</summary>
-    public const double HEALTH_THRESHOLD = 0.4;
+    /// <summary>Game data: the tuning values of talent 576.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>HealthThreshold, Sune.Talent.LowHealthDamageReduction.HealthThreshold</c> of talent 576; ability 1910.</summary>
+        public const double HealthThreshold = 0.4;
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier, Sune.Talent.LowHealthDamageReduction.IncomingDamageMultiplier</c> of talent 576; ability 1910, IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 0.8;
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier, Sune.Talent.LowHealthDamageReduction.IncomingDamageMultiplier</c> of talent 576; ability 1910, IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double IncomingDamageMultiplier = 0.8;
+    }
 }

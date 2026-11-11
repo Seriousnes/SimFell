@@ -30,9 +30,9 @@ public partial class Shockwave : HelenaAbility
 
     public Shockwave(Helena owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.TargetCountThreshold;
         DamageLogId = LogIds.Effect(DamageEffectId);
         VeteranOfWarReductions.Add((typeof(ShieldsUp), ShieldsUpReductionSeconds));
     }
@@ -43,7 +43,7 @@ public partial class Shockwave : HelenaAbility
         var now = ctx.CurrentTime;
         var targets = ctx.Outcomes.SelectTargets(DamageLogId, Enemies(ctx, target), ctx);
         if (targets.Count > AbilityMaxTargets) targets = targets.Take(AbilityMaxTargets).ToList();
-        double falloff = targets.Count > TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)TARGET_COUNT_THRESHOLD / targets.Count) : 1.0;
+        double falloff = targets.Count > Constants.TargetCountThreshold ? Math.Sqrt((double)Constants.TargetCountThreshold / targets.Count) : 1.0;
         for (int i = 0; i < targets.Count; i++)
         {
             var enemy = targets[i];

@@ -10,26 +10,30 @@ partial class FireToad
     /// <summary>Pyromancer Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>BonusFireToad.NumToads, Firemage.FireFrogs.Talent.BonusFireToad.NumToads</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const int BONUS_FIRE_TOAD_NUM_TOADS = 1;
+    /// <summary>Game data: the tuning values of legendary power 593.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BonusFireToad.NumToads, Firemage.FireFrogs.Talent.BonusFireToad.NumToads</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const int BonusFireToadNumToads = 1;
 
-    /// <summary>Game data: tuning <c>FireToad.Aoe.DamageMultiplier, Firemage.FireFrogs.Ability.Talent.FireToad.Aoe.DamageMultiplier</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const int ABILITY_FIRE_TOAD_AOE_DAMAGE_MULTIPLIER = 5;
+        /// <summary>Game data: tuning <c>FireToad.Aoe.DamageMultiplier, Firemage.FireFrogs.Ability.Talent.FireToad.Aoe.DamageMultiplier</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const int FireToadAoeDamageMultiplier = 5;
 
-    /// <summary>Game data: tuning <c>FireToad.Aoe.Radius, Firemage.FireFrogs.Ability.Talent.FireToad.Aoe.Radius</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const int ABILITY_FIRE_TOAD_AOE_RADIUS = 700;
+        /// <summary>Game data: tuning <c>FireToad.Aoe.Radius, Firemage.FireFrogs.Ability.Talent.FireToad.Aoe.Radius</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const int FireToadAoeRadius = 700;
 
-    /// <summary>Game data: tuning <c>FireToad.AoeDamageScaler, Firemage.FireFrogs.Ability.Talent.FireToad.AoeDamageScaler</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const int ABILITY_FIRE_TOAD_AOE_DAMAGE_SCALER = 1;
+        /// <summary>Game data: tuning <c>FireToad.AoeDamageScaler, Firemage.FireFrogs.Ability.Talent.FireToad.AoeDamageScaler</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const int FireToadAoeDamageScaler = 1;
 
-    /// <summary>Game data: tuning <c>FireToad.DamageScaler, Firemage.FireFrogs.Ability.Talent.FireToad.DamageScaler</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const int ABILITY_FIRE_TOAD_DAMAGE_SCALER = 9;
+        /// <summary>Game data: tuning <c>FireToad.DamageScaler, Firemage.FireFrogs.Ability.Talent.FireToad.DamageScaler</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const int FireToadDamageScaler = 9;
 
-    /// <summary>Game data: tuning <c>FireToad.SpawnChance, Firemage.FireFrogs.Ability.Talent.FireToad.SpawnChance</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const double ABILITY_FIRE_TOAD_SPAWN_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>FireToad.SpawnChance, Firemage.FireFrogs.Ability.Talent.FireToad.SpawnChance</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const double FireToadSpawnChance = 0.2;
 
-    /// <summary>Game data: tuning <c>FireToad.TargetCountDamageScalingThreshold, Firemage.FireFrogs.Ability.Talent.FireToad.TargetCountDamageScalingThreshold</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
-    public const int ABILITY_FIRE_TOAD_TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>FireToad.TargetCountDamageScalingThreshold, Firemage.FireFrogs.Ability.Talent.FireToad.TargetCountDamageScalingThreshold</c> of legendary power 593; Fire Frogs (ability 1268).</summary>
+        public const int FireToadTargetCountDamageScalingThreshold = 1;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Fire Toad";

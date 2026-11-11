@@ -34,45 +34,49 @@ partial class ShatterEarth
     /// <summary>Game data: <c>radius</c> of ability 1115.</summary>
     public const int AbilityRadius = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1115.</summary>
-    public const double AGILITY_COEFFICIENT_1 = 7.46;
+    /// <summary>Game data: the tuning values of ability 1115.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1115.</summary>
+        public const double AgilityCoefficient = 7.46;
 
-    /// <summary>Game data: tuning <c>Dot.AgilityCoefficient</c> of ability 1115; Shatter Earth (effect 1556).</summary>
-    public const double AGILITY_COEFFICIENT_2 = 1.42;
+        /// <summary>Game data: tuning <c>CooldownReduction.ReductionInSeconds</c> of ability 1115; talent Earthbourne (talent 103).</summary>
+        public const int CooldownReductionReductionInSeconds = 0;
 
-    /// <summary>Game data: tuning <c>CooldownReduction.ReductionInSeconds</c> of ability 1115; talent Earthbourne (talent 103).</summary>
-    public const int REDUCTION_IN_SECONDS = 0;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1115; Resources Additive.</summary>
+        public const int Cost = 75;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1115; Resources Additive.</summary>
-    public const int COST = 75;
+        /// <summary>Game data: tuning <c>Dot.AgilityCoefficient</c> of ability 1115; Shatter Earth (effect 1556).</summary>
+        public const double DotAgilityCoefficient = 1.42;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1115.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1115.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>JumpHeight</c> of ability 1115.</summary>
-    public const int JUMP_HEIGHT = 500;
+        /// <summary>Game data: tuning <c>JumpHeight</c> of ability 1115.</summary>
+        public const int JumpHeight = 500;
 
-    /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1115.</summary>
-    public const int MAX_RANGE_DOWN = 5000;
+        /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1115.</summary>
+        public const int MaxRangeDown = 5000;
 
-    /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1115.</summary>
-    public const int MAX_RANGE_UP = 1000;
+        /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1115.</summary>
+        public const int MaxRangeUp = 1000;
 
-    /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of ability 1115; talent Rumbling Stone (talent 95), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.2;
+        /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of ability 1115; talent Rumbling Stone (talent 95), DamageScale MultiplyCompound.</summary>
+        public const double EarthTalentIncreasedDamageDamageMultiplier = 1.2;
 
-    /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.AbilityDamageIncrease</c> of ability 1115; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665), DamageScale MultiplyCompound.</summary>
-    public const double ABILITY_DAMAGE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.AbilityDamageIncrease</c> of ability 1115; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665), DamageScale MultiplyCompound.</summary>
+        public const double TauntTotemTalentBuffAfterDestroyedAbilityDamageIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>MoveSpeed</c> of ability 1115.</summary>
-    public const int MOVE_SPEED = 4000;
+        /// <summary>Game data: tuning <c>MoveSpeed</c> of ability 1115.</summary>
+        public const int MoveSpeed = 4000;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1115.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1115.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of ability 1115.</summary>
-    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of ability 1115.</summary>
+        public const int TargetCountDamageScalingThreshold = 1;
 
-    /// <summary>Game data: tuning <c>TickInterval</c> of ability 1115.</summary>
-    public const int TICK_INTERVAL = 1;
+        /// <summary>Game data: tuning <c>TickInterval</c> of ability 1115.</summary>
+        public const int TickInterval = 1;
+    }
 }

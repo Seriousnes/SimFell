@@ -22,12 +22,16 @@ partial class RecklessAbandon
     /// <summary>Game data: <c>duration</c> of ability 2300.</summary>
     public const int AbilityDuration = 4;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 2300.</summary>
-    public const int DURATION = 4;
+    /// <summary>Game data: the tuning values of ability 2300.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Duration</c> of ability 2300.</summary>
+        public const int Duration = 4;
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 2300; IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 0.6;
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 2300; IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double IncomingDamageMultiplier = 0.6;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2300.</summary>
-    public const double VISUAL_DELAY = 0.24;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2300.</summary>
+        public const double VisualDelay = 0.24;
+    }
 }

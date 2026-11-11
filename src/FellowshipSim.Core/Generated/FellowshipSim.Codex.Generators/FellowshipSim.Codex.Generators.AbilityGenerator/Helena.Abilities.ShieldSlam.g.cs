@@ -37,114 +37,112 @@ partial class ShieldSlam
     /// <summary>Game data: <c>range</c> of ability 977.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AbsorbProc.Duration, ReducedIncomingDamageFromTarget.Duration</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
-    public const int DURATION = 12;
+    /// <summary>Game data: the tuning values of ability 977.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AbsorbProc.Duration, ReducedIncomingDamageFromTarget.Duration</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
+        public const int AbsorbProcDuration = 12;
 
-    /// <summary>Game data: tuning <c>AbsorbProc.StrCoefficient</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
-    public const double STR_COEFFICIENT = 17.43;
+        /// <summary>Game data: tuning <c>AbsorbProc.StrCoefficient</c> of ability 977; Empowered Shield Slam: Barrier (effect 2229).</summary>
+        public const double AbsorbProcStrCoefficient = 17.43;
 
-    /// <summary>Game data: tuning <c>BuffBlockBonus</c> of ability 977.</summary>
-    public const double BUFF_BLOCK_BONUS = 0.03;
+        /// <summary>Game data: tuning <c>BuffBlockBonus</c> of ability 977.</summary>
+        public const double BuffBlockBonus = 0.03;
 
-    /// <summary>Game data: tuning <c>BuffDuration</c> of ability 977.</summary>
-    public const int BUFF_DURATION = 12;
+        /// <summary>Game data: tuning <c>BuffDuration</c> of ability 977.</summary>
+        public const int BuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>BuffMaxStackCount</c> of ability 977.</summary>
-    public const int BUFF_MAX_STACK_COUNT = 5;
+        /// <summary>Game data: tuning <c>BuffMaxStackCount</c> of ability 977.</summary>
+        public const int BuffMaxStackCount = 5;
 
-    /// <summary>Game data: tuning <c>CleaveAdditionalTargets</c> of ability 977.</summary>
-    public const int CLEAVE_ADDITIONAL_TARGETS = 19;
+        /// <summary>Game data: tuning <c>CleaveAdditionalTargets</c> of ability 977.</summary>
+        public const int CleaveAdditionalTargets = 19;
 
-    /// <summary>Game data: tuning <c>CleaveDamageStrengthCoefficient</c> of ability 977.</summary>
-    public const double CLEAVE_DAMAGE_STRENGTH_COEFFICIENT = 0.758;
+        /// <summary>Game data: tuning <c>CleaveDamageStrengthCoefficient</c> of ability 977.</summary>
+        public const double CleaveDamageStrengthCoefficient = 0.758;
 
-    /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 977.</summary>
-    public const int CLEAVE_RADIUS = 500;
+        /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 977.</summary>
+        public const int CleaveRadius = 500;
 
-    /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 977.</summary>
-    public const int COMBO_POINT_COST = 3;
+        /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 977.</summary>
+        public const int ComboPointCost = 3;
 
-    /// <summary>Game data: tuning <c>Helena.BouncyProjectile.ToughnessFromDamageDealtScaler</c> of ability 977; Shield Throw (ability 985).</summary>
-    public const double TOUGHNESS_FROM_DAMAGE_DEALT_SCALER = 0.2;
+        /// <summary>Game data: tuning <c>Helena.BouncyProjectile.ToughnessFromDamageDealtScaler</c> of ability 977; Shield Throw (ability 985).</summary>
+        public const double BouncyProjectileToughnessFromDamageDealtScaler = 0.2;
 
-    /// <summary>Game data: tuning <c>MeleeCleaveIncreasedDamageHeal.IncreasedMeleeCleaveDamage, Helena.DefenceBuff.Talent.MeleeCleaveIncreasedDamageHeal.IncreasedMeleeCleaveDamage</c> of ability 977; Gleaming Shield (effect 1230), DamageScale MultiplyCompound.</summary>
-    public const double INCREASED_MELEE_CLEAVE_DAMAGE = 1.4;
+        /// <summary>Game data: tuning <c>MeleeCleaveIncreasedDamageHeal.IncreasedMeleeCleaveDamage, Helena.DefenceBuff.Talent.MeleeCleaveIncreasedDamageHeal.IncreasedMeleeCleaveDamage</c> of ability 977; Gleaming Shield (effect 1230), DamageScale MultiplyCompound.</summary>
+        public const double MeleeCleaveIncreasedDamageHealIncreasedMeleeCleaveDamage = 1.4;
 
-    /// <summary>Game data: tuning <c>Helena.MeleeAoeSlow.Talent.IncreasedToughnessAndDamage.AdditionalToughnessBasedOnMax</c> of ability 977; Shockwave (ability 979), talent Greater Shockwave (talent 643).</summary>
-    public const double ADDITIONAL_TOUGHNESS_BASED_ON_MAX = 0.1;
+        /// <summary>Game data: tuning <c>Helena.MeleeAoeSlow.Talent.IncreasedToughnessAndDamage.AdditionalToughnessBasedOnMax</c> of ability 977; Shockwave (ability 979), talent Greater Shockwave (talent 643).</summary>
+        public const double MeleeAoeSlowTalentIncreasedToughnessAndDamageAdditionalToughnessBasedOnMax = 0.1;
 
-    /// <summary>Game data: tuning <c>IncreasedMeleeCleaveAndHeavyMeleeDamage.DamageMultiplier, Helena.Talent.IncreasedMeleeCleaveAndHeavyMeleeDamage.DamageMultiplier</c> of ability 977; effect 1233, DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.15;
+        /// <summary>Game data: tuning <c>IncreasedMeleeCleaveAndHeavyMeleeDamage.DamageMultiplier, Helena.Talent.IncreasedMeleeCleaveAndHeavyMeleeDamage.DamageMultiplier</c> of ability 977; effect 1233, DamageScale MultiplyCompound.</summary>
+        public const double IncreasedMeleeCleaveAndHeavyMeleeDamageDamageMultiplier = 1.15;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus</c> of ability 977; ability 960.</summary>
-    public const int BLOCK_FLAT_BONUS = 0;
+        /// <summary>Game data: tuning <c>Helena.Toughness.Block.FlatBonus, Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 977; ability 960.</summary>
+        public const int ToughnessBlockFlatBonus = 0;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.Block.StrengthScaler</c> of ability 977; ability 960.</summary>
-    public const double BLOCK_STRENGTH_SCALER = 0.24;
+        /// <summary>Game data: tuning <c>Helena.Toughness.Block.StrengthScaler</c> of ability 977; ability 960.</summary>
+        public const double ToughnessBlockStrengthScaler = 0.24;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.FlatBonus</c> of ability 977; ability 960.</summary>
-    public const int DEFENCE_BUFF_FLAT_BONUS = 0;
+        /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.StrengthScaler</c> of ability 977; ability 960.</summary>
+        public const double ToughnessDefenceBuffStrengthScaler = 2.31;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.DefenceBuff.StrengthScaler</c> of ability 977; ability 960.</summary>
-    public const double DEFENCE_BUFF_STRENGTH_SCALER = 2.31;
+        /// <summary>Game data: tuning <c>Helena.Toughness.DepleteReductionFromArmorScaler</c> of ability 977; ability 960.</summary>
+        public const double ToughnessDepleteReductionFromArmorScaler = 0.2;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.DepleteReductionFromArmorScaler</c> of ability 977; ability 960.</summary>
-    public const double DEPLETE_REDUCTION_FROM_ARMOR_SCALER = 0.2;
+        /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel1</c> of ability 977; ability 960.</summary>
+        public const double ToughnessLowerThresholdLevel1 = 0.001;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel1</c> of ability 977; ability 960.</summary>
-    public const double LOWER_THRESHOLD_LEVEL1 = 0.001;
+        /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel2</c> of ability 977; ability 960.</summary>
+        public const double ToughnessLowerThresholdLevel2 = 0.25;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel2</c> of ability 977; ability 960.</summary>
-    public const double LOWER_THRESHOLD_LEVEL2 = 0.25;
+        /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel3</c> of ability 977; ability 960.</summary>
+        public const double ToughnessLowerThresholdLevel3 = 0.5;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel3</c> of ability 977; ability 960.</summary>
-    public const double LOWER_THRESHOLD_LEVEL3 = 0.5;
+        /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel4</c> of ability 977; ability 960.</summary>
+        public const double ToughnessLowerThresholdLevel4 = 0.75;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.LowerThresholdLevel4</c> of ability 977; ability 960.</summary>
-    public const double LOWER_THRESHOLD_LEVEL4 = 0.75;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessStrengthScaler</c> of ability 977; ability 960.</summary>
+        public const double ToughnessMaxToughnessStrengthScaler = 7.7;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessStrengthScaler</c> of ability 977; ability 960.</summary>
-    public const double MAX_TOUGHNESS_STRENGTH_SCALER = 7.7;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessTotalSecondaryStatModifier</c> of ability 977; ability 960.</summary>
+        public const int ToughnessMaxToughnessTotalSecondaryStatModifier = 2;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.MaxToughnessTotalSecondaryStatModifier</c> of ability 977; ability 960.</summary>
-    public const int MAX_TOUGHNESS_TOTAL_SECONDARY_STAT_MODIFIER = 2;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit, Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 977; ability 960.</summary>
+        public const int ToughnessMeleeCleaveFlatBonusPerHit = 0;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.FlatBonusPerHit</c> of ability 977; ability 960.</summary>
-    public const int MELEE_AOE_SLOW_FLAT_BONUS_PER_HIT = 0;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.StrengthScalerPerHit</c> of ability 977; ability 960.</summary>
+        public const double ToughnessMeleeAoeSlowStrengthScalerPerHit = 1.925;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.MeleeAoeSlow.StrengthScalerPerHit</c> of ability 977; ability 960.</summary>
-    public const double MELEE_AOE_SLOW_STRENGTH_SCALER_PER_HIT = 1.925;
+        /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.StrengthScalerPerHit</c> of ability 977; ability 960.</summary>
+        public const double ToughnessMeleeCleaveStrengthScalerPerHit = 1.155;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.FlatBonusPerHit</c> of ability 977; ability 960.</summary>
-    public const int MELEE_CLEAVE_FLAT_BONUS_PER_HIT = 0;
+        /// <summary>Game data: tuning <c>Helena.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.Factor</c> of ability 977; ability 960, talent Shield Mastery (talent 208).</summary>
+        public const double ToughnessTalentBouncyProjectileDefensiveBuffCooldownReductionFactor = 0.1;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.MeleeCleave.StrengthScalerPerHit</c> of ability 977; ability 960.</summary>
-    public const double MELEE_CLEAVE_STRENGTH_SCALER_PER_HIT = 1.155;
+        /// <summary>Game data: tuning <c>Helena.Toughness.ToughnessDecayFactor</c> of ability 977; ability 960.</summary>
+        public const double ToughnessToughnessDecayFactor = 0.01;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.Factor</c> of ability 977; ability 960, talent Shield Mastery (talent 208).</summary>
-    public const double FACTOR = 0.1;
+        /// <summary>Game data: tuning <c>Helena.Toughness.ToughnessDecayPeriod</c> of ability 977; ability 960.</summary>
+        public const int ToughnessToughnessDecayPeriod = 10;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.ToughnessDecayFactor</c> of ability 977; ability 960.</summary>
-    public const double TOUGHNESS_DECAY_FACTOR = 0.01;
+        /// <summary>Game data: tuning <c>IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor</c> of ability 977; ability 2216, talent Gleaming Shield (talent 641).</summary>
+        public const double IncreasedArmorFromAbilitiesMeleeCleaveAdditionalDamageBasedOnArmor = 0.1;
 
-    /// <summary>Game data: tuning <c>Helena.Toughness.ToughnessDecayPeriod</c> of ability 977; ability 960.</summary>
-    public const int TOUGHNESS_DECAY_PERIOD = 10;
+        /// <summary>Game data: tuning <c>MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of ability 977; Unscarred Soul (effect 2339), talent Unscarred Soul (talent 390).</summary>
+        public const double MeleeCleaveAbsorbBuffReducedDamageReflectDamageAbsorbDamageMultiplier = 0.8;
 
-    /// <summary>Game data: tuning <c>IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor</c> of ability 977; ability 2216, talent Gleaming Shield (talent 641).</summary>
-    public const double MELEE_CLEAVE_ADDITIONAL_DAMAGE_BASED_ON_ARMOR = 0.1;
+        /// <summary>Game data: tuning <c>NumCharges</c> of ability 977.</summary>
+        public const int NumCharges = 2;
 
-    /// <summary>Game data: tuning <c>MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of ability 977; Unscarred Soul (effect 2339), talent Unscarred Soul (talent 390).</summary>
-    public const double ABSORB_DAMAGE_MULTIPLIER = 0.8;
+        /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.MaxStackCount</c> of ability 977; Lingering Concussion (effect 2478).</summary>
+        public const int ReducedIncomingDamageFromTargetMaxStackCount = 5;
 
-    /// <summary>Game data: tuning <c>NumCharges</c> of ability 977.</summary>
-    public const int NUM_CHARGES = 2;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 977.</summary>
+        public const double StrengthCoefficient = 6.01496;
 
-    /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.MaxStackCount</c> of ability 977; Lingering Concussion (effect 2478).</summary>
-    public const int MAX_STACK_COUNT = 5;
-
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 977.</summary>
-    public const double STRENGTH_COEFFICIENT = 6.01496;
-
-    /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 977.</summary>
-    public const int TARGET_COUNT_THRESHOLD = 8;
+        /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 977.</summary>
+        public const int TargetCountThreshold = 8;
+    }
 }

@@ -22,27 +22,31 @@ partial class ButchersHook
     /// <summary>Game data: <c>range</c> of ability 2284.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>Damage.StrengthCoefficient</c> of ability 2284; Butcher's Hook (effect 3228).</summary>
-    public const double STRENGTH_COEFFICIENT = 0.37;
+    /// <summary>Game data: the tuning values of ability 2284.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Damage.StrengthCoefficient</c> of ability 2284; Butcher's Hook (effect 3228).</summary>
+        public const double DamageStrengthCoefficient = 0.37;
 
-    /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2284; Rend (effect 3231).</summary>
-    public const double DAMAGE_TO_DOT_SCALER = 0.5;
+        /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2284; Rend (effect 3231).</summary>
+        public const double PerTargetAccumulatedBleedDamageToDotScaler = 0.5;
 
-    /// <summary>Game data: tuning <c>MaxPullHeight</c> of ability 2284.</summary>
-    public const int MAX_PULL_HEIGHT = 1000;
+        /// <summary>Game data: tuning <c>MaxPullHeight</c> of ability 2284.</summary>
+        public const int MaxPullHeight = 1000;
 
-    /// <summary>Game data: tuning <c>MultiTargets.AdditionalCooldown</c> of ability 2284.</summary>
-    public const int MULTI_TARGETS_ADDITIONAL_COOLDOWN = 15;
+        /// <summary>Game data: tuning <c>MultiTargets.AdditionalCooldown</c> of ability 2284.</summary>
+        public const int MultiTargetsAdditionalCooldown = 15;
 
-    /// <summary>Game data: tuning <c>MultiTargets.Radius</c> of ability 2284.</summary>
-    public const int MULTI_TARGETS_RADIUS = 800;
+        /// <summary>Game data: tuning <c>MultiTargets.Radius</c> of ability 2284.</summary>
+        public const int MultiTargetsRadius = 800;
 
-    /// <summary>Game data: tuning <c>PullDelay</c> of ability 2284.</summary>
-    public const double PULL_DELAY = 0.25;
+        /// <summary>Game data: tuning <c>PullDelay</c> of ability 2284.</summary>
+        public const double PullDelay = 0.25;
 
-    /// <summary>Game data: tuning <c>PullDuration</c> of ability 2284.</summary>
-    public const double PULL_DURATION = 0.2;
+        /// <summary>Game data: tuning <c>PullDuration</c> of ability 2284.</summary>
+        public const double PullDuration = 0.2;
 
-    /// <summary>Game data: tuning <c>StopDistance</c> of ability 2284.</summary>
-    public const int STOP_DISTANCE = 150;
+        /// <summary>Game data: tuning <c>StopDistance</c> of ability 2284.</summary>
+        public const int StopDistance = 150;
+    }
 }

@@ -26,7 +26,7 @@ public partial class GlacialBlast : RimeAbility
 
     public GlacialBlast(Rime owner) : this(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = INTELLECT_COEFFICIENT;
+        BaseCoefficient = Constants.IntellectCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
     }
 

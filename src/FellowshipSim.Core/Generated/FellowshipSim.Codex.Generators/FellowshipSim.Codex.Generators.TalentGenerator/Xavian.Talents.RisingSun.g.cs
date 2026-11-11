@@ -10,6 +10,10 @@ partial class RisingSun
     /// <summary>Game data: <c>name</c> of talent 573.</summary>
     public const string TalentName = "Rising Sun";
 
-    /// <summary>Game data: tuning <c>Sune.AoeMelee.Talent.ResetCdAtTargetInstantAoe.ProcChance</c> of talent 573; Omnistrike (ability 1863).</summary>
-    public const double RESET_CD_AT_TARGET_INSTANT_AOE_PROC_CHANCE = 0.5;
+    /// <summary>Game data: the tuning values of talent 573.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Sune.AoeMelee.Talent.ResetCdAtTargetInstantAoe.ProcChance</c> of talent 573; Omnistrike (ability 1863).</summary>
+        public const double AoeMeleeTalentResetCdAtTargetInstantAoeProcChance = 0.5;
+    }
 }

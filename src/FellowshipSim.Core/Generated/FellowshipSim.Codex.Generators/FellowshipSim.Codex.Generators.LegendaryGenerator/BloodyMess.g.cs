@@ -10,11 +10,15 @@ partial class BloodyMess
     /// <summary>Northlander's Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>AdditionalTicks.Amount, Gunde.TargetedAoeProjectile.Talent.AdditionalTicks.Amount</c> of legendary power 697; Grim Carve (ability 2262).</summary>
-    public const int ADDITIONAL_TICKS_AMOUNT = 2;
+    /// <summary>Game data: the tuning values of legendary power 697.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalTicks.Amount, Gunde.TargetedAoeProjectile.Talent.AdditionalTicks.Amount</c> of legendary power 697; Grim Carve (ability 2262).</summary>
+        public const int AdditionalTicksAmount = 2;
 
-    /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Aoe.Period</c> of legendary power 697; Grim Carve (ability 2262).</summary>
-    public const double AOE_PERIOD = 0.5;
+        /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Aoe.Period</c> of legendary power 697; Grim Carve (ability 2262).</summary>
+        public const double TargetedAoeProjectileAoePeriod = 0.5;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Bloody Mess";

@@ -17,7 +17,7 @@ public partial class PowerStrike : HelenaAbility
 
     public PowerStrike(Helena owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         VeteranOfWarReductions.Add((typeof(ShieldSlam), ReductionSeconds));
         VeteranOfWarReductions.Add((typeof(ShieldThrow), ReductionSeconds));

@@ -32,7 +32,7 @@ public partial class Hemotoxin : Talent
 
         void Roll(SimulationContext ctx, EnemyTarget target)
         {
-            if (ctx.Outcomes.RollProc(ProcKey, EXPLOSIVE_POISON_CHANCE, ctx, target)) poison.AddStack(ctx, target);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.ExplosivePoisonChance, ctx, target)) poison.AddStack(ctx, target);
         }
         foreach (var backstab in mara.Abilities.OfType<Backstab>()) backstab.Struck += Roll;
         if (mara.GetAbility<WidowsBite>() is { } widowsBite) widowsBite.Struck += Roll;
@@ -44,18 +44,18 @@ public partial class Hemotoxin : Talent
             if (!poison.ConsumeStack(ctx, target)) return;
             var hemorrhage = mara.Hemorrhage;
             double bleed = hemorrhage.TickDamage(ctx, target) * hemorrhage.TicksIn(HemorrhagingStrike.BleedSeconds(points), ctx.CurrentTime);
-            burst.Strike(ctx, target, bleed * BLEED_TO_POISON_DAMAGE_MULTIPLIER);
+            burst.Strike(ctx, target, bleed * Constants.BleedToPoisonDamageMultiplier);
             var nearby = ctx.ActiveEnemiesExcept(target);
             if (nearby.Count == 0) return;
-            double falloff = nearby.Count > TARGET_SCALING_THRESHOLD ? Math.Sqrt((double)TARGET_SCALING_THRESHOLD / nearby.Count) : 1.0;
-            foreach (var enemy in nearby) burst.Strike(ctx, enemy, bleed * AREA_DAMAGE_MULTIPLIER * falloff);
+            double falloff = nearby.Count > Constants.TargetScalingThreshold ? Math.Sqrt((double)Constants.TargetScalingThreshold / nearby.Count) : 1.0;
+            foreach (var enemy in nearby) burst.Strike(ctx, enemy, bleed * Constants.AreaDamageMultiplier * falloff);
         };
     }
 
-    /// <summary>The poison: <see cref="AGILITY_COEFFICIENT"/> of Agility every <see cref="TICK_INTERVAL"/> for <see cref="DURATION"/> per stack, up to <see cref="MaxStacks"/>.</summary>
+    /// <summary>The poison: <see cref="Constants.ExplosivePoisonPoisonAgilityCoefficient"/> of Agility every <see cref="Constants.ExplosivePoisonPoisonTickInterval"/> for <see cref="Constants.ExplosivePoisonPoisonDuration"/> per stack, up to <see cref="MaxStacks"/>.</summary>
     private sealed class Poison : MaraDot
     {
-        public Poison(Mara owner) : base(owner, PoisonEffectId, TalentName, AGILITY_COEFFICIENT, TICK_INTERVAL, DURATION) { }
+        public Poison(Mara owner) : base(owner, PoisonEffectId, TalentName, Constants.ExplosivePoisonPoisonAgilityCoefficient, Constants.ExplosivePoisonPoisonTickInterval, Constants.ExplosivePoisonPoisonDuration) { }
 
         public void AddStack(SimulationContext ctx, EnemyTarget target) => ApplyStack(ctx, target, MaxStacks);
     }

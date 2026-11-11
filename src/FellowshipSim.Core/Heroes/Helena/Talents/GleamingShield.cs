@@ -13,7 +13,7 @@ public partial class GleamingShield : Talent
 {
     public const int BuffEffectId = 3096;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DURATION, MAX_STACKS) with { ExpiryRemovesOneStack = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.Duration, Constants.MaxStacks) with { ExpiryRemovesOneStack = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -21,8 +21,8 @@ public partial class GleamingShield : Talent
     public override void Bind(Hero hero)
     {
         if (hero is not Helena helena) return;
-        helena.ArmorBonuses.Add(now => ADDITIONAL_ARMOR_PER_STACK * hero.Auras.GetStacks(Buff, now));
-        if (hero.GetAbility<ShieldSlam>() is { } shieldSlam) shieldSlam.ArmorDamageShare += MELEE_CLEAVE_ADDITIONAL_DAMAGE_BASED_ON_ARMOR;
+        helena.ArmorBonuses.Add(now => Constants.AdditionalArmorPerStack * hero.Auras.GetStacks(Buff, now));
+        if (hero.GetAbility<ShieldSlam>() is { } shieldSlam) shieldSlam.ArmorDamageShare += Constants.IncreasedArmorFromAbilitiesMeleeCleaveAdditionalDamageBasedOnArmor;
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is ShieldThrow or ShieldSlam or Shockwave or ShieldsUp) hero.Auras.Apply(Buff, now);

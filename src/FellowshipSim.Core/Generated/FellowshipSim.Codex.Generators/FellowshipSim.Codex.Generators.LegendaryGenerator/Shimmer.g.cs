@@ -10,14 +10,18 @@ partial class Shimmer
     /// <summary>Skystrider Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.Duration, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.Duration</c> of legendary power 429; Shimmer (effect 2362).</summary>
-    public const int DURATION = 9;
+    /// <summary>Game data: the tuning values of legendary power 429.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.Duration, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.Duration</c> of legendary power 429; Shimmer (effect 2362).</summary>
+        public const int IncreasedIncomingDamageDebuffDuration = 9;
 
-    /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.IncomingDamageMultiplier, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.IncomingDamageMultiplier</c> of legendary power 429; Shimmer (effect 2362).</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 1.08;
+        /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.IncomingDamageMultiplier, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.IncomingDamageMultiplier</c> of legendary power 429; Shimmer (effect 2362).</summary>
+        public const double IncreasedIncomingDamageDebuffIncomingDamageMultiplier = 1.08;
 
-    /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.MaxStacks</c> of legendary power 429; Shimmer (effect 2362).</summary>
-    public const int MAX_STACKS = 3;
+        /// <summary>Game data: tuning <c>IncreasedIncomingDamageDebuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.IncreasedIncomingDamageDebuff.MaxStacks</c> of legendary power 429; Shimmer (effect 2362).</summary>
+        public const int IncreasedIncomingDamageDebuffMaxStacks = 3;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Shimmer";

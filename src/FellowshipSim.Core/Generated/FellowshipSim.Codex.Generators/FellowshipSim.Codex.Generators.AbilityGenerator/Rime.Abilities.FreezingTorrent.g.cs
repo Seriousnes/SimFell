@@ -34,63 +34,67 @@ partial class FreezingTorrent
     /// <summary>Game data: <c>range</c> of ability 1027.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>BoostByCritProc.BuffDuration</c> of ability 1027; ability 1013.</summary>
-    public const int BUFF_DURATION_1 = 24;
+    /// <summary>Game data: the tuning values of ability 1027.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BoostByCritProc.BuffDuration</c> of ability 1027; ability 1013.</summary>
+        public const int BoostByCritProcBuffDuration = 24;
 
-    /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.BuffDuration</c> of ability 1027; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
-    public const int BUFF_DURATION_2 = 15;
+        /// <summary>Game data: tuning <c>BoostByCritProc.ChannelTickRateIncrease</c> of ability 1027; ability 1013.</summary>
+        public const double BoostByCritProcChannelTickRateIncrease = 1.4;
 
-    /// <summary>Game data: tuning <c>BoostByCritProc.ChannelTickRateIncrease</c> of ability 1027; ability 1013.</summary>
-    public const double CHANNEL_TICK_RATE_INCREASE = 1.4;
+        /// <summary>Game data: tuning <c>BoostByCritProc.CritChance</c> of ability 1027; ability 1013.</summary>
+        public const int BoostByCritProcCritChance = 1;
 
-    /// <summary>Game data: tuning <c>BoostByCritProc.CritChance</c> of ability 1027; ability 1013.</summary>
-    public const int CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>BoostByCritProc.DamageMultiplier</c> of ability 1027; ability 1013.</summary>
+        public const int BoostByCritProcDamageMultiplier = 1;
 
-    /// <summary>Game data: tuning <c>BoostByCritProc.DamageMultiplier</c> of ability 1027; ability 1013.</summary>
-    public const int DAMAGE_MULTIPLIER = 1;
+        /// <summary>Game data: tuning <c>CastedDebuffAOECooldownRecoveryBonus</c> of ability 1027.</summary>
+        public const int CastedDebuffAOECooldownRecoveryBonus = 1;
 
-    /// <summary>Game data: tuning <c>CastedDebuffAOECooldownRecoveryBonus</c> of ability 1027.</summary>
-    public const int CASTED_DEBUFF_AOE_COOLDOWN_RECOVERY_BONUS = 1;
+        /// <summary>Game data: tuning <c>CastedDebuffAoeDamageCooldownReduction.CooldownReductionPerTick</c> of ability 1027; talent Chilling Finesse (talent 43).</summary>
+        public const double CastedDebuffAoeDamageCooldownReductionCooldownReductionPerTick = 0.2;
 
-    /// <summary>Game data: tuning <c>CastedDebuffAoeDamageCooldownReduction.CooldownReductionPerTick</c> of ability 1027; talent Chilling Finesse (talent 43).</summary>
-    public const double COOLDOWN_REDUCTION_PER_TICK = 0.2;
+        /// <summary>Game data: tuning <c>ChannelingDuration</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
+        public const int ChannelingDuration = 2;
 
-    /// <summary>Game data: tuning <c>ChannelingDuration</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
-    public const int CHANNELING_DURATION = 2;
+        /// <summary>Game data: tuning <c>Cleave.DamageFactorAsAoe</c> of ability 1027.</summary>
+        public const double CleaveDamageFactorAsAoe = 0.3512;
 
-    /// <summary>Game data: tuning <c>Cleave.DamageFactorAsAoe</c> of ability 1027.</summary>
-    public const double CLEAVE_DAMAGE_FACTOR_AS_AOE = 0.3512;
+        /// <summary>Game data: tuning <c>Cleave.TargetCountThreshold</c> of ability 1027.</summary>
+        public const int CleaveTargetCountThreshold = 5;
 
-    /// <summary>Game data: tuning <c>Cleave.TargetCountThreshold</c> of ability 1027.</summary>
-    public const int CLEAVE_TARGET_COUNT_THRESHOLD = 5;
+        /// <summary>Game data: tuning <c>DamageBonus.AoeRadius</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
+        public const int DamageBonusAoeRadius = 500;
 
-    /// <summary>Game data: tuning <c>DamageBonus.AoeRadius</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
-    public const int AOE_RADIUS = 500;
+        /// <summary>Game data: tuning <c>DamageBonus.DamageFactorAsAoeScaler</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
+        public const int DamageBonusDamageFactorAsAoeScaler = 2;
 
-    /// <summary>Game data: tuning <c>DamageBonus.DamageFactorAsAoeScaler</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
-    public const int DAMAGE_FACTOR_AS_AOE_SCALER = 2;
+        /// <summary>Game data: tuning <c>DamageBonus.DamageScale</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
+        public const double DamageBonusDamageScale = 1.2;
 
-    /// <summary>Game data: tuning <c>DamageBonus.DamageScale</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
-    public const double DAMAGE_SCALE = 1.2;
+        /// <summary>Game data: tuning <c>IncreasedChannelDuration.AddedSeconds</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
+        public const double IncreasedChannelDurationAddedSeconds = 0.8;
 
-    /// <summary>Game data: tuning <c>IncreasedChannelDuration.AddedSeconds</c> of ability 1027; talent Supreme Torrent (talent 527).</summary>
-    public const double ADDED_SECONDS = 0.8;
+        /// <summary>Game data: tuning <c>IntellectCoefficientPerTick</c> of ability 1027.</summary>
+        public const double IntellectCoefficientPerTick = 1.4806;
 
-    /// <summary>Game data: tuning <c>IntellectCoefficientPerTick</c> of ability 1027.</summary>
-    public const double INTELLECT_COEFFICIENT_PER_TICK = 1.4806;
+        /// <summary>Game data: tuning <c>OnTargetPulsatingAoe.FreeCast.ProcChance</c> of ability 1027; talent Cold Shower (talent 657).</summary>
+        public const double OnTargetPulsatingAoeFreeCastProcChance = 0.07;
 
-    /// <summary>Game data: tuning <c>OnTargetPulsatingAoe.FreeCast.ProcChance</c> of ability 1027; talent Cold Shower (talent 657).</summary>
-    public const double PROC_CHANCE = 0.07;
+        /// <summary>Game data: tuning <c>ResourceGainPerTick</c> of ability 1027.</summary>
+        public const int ResourceGainPerTick = 1;
 
-    /// <summary>Game data: tuning <c>ResourceGainPerTick</c> of ability 1027.</summary>
-    public const int RESOURCE_GAIN_PER_TICK = 1;
+        /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamageAndCastedDebuffAoeDamage.Talent.IncreasedDamage.DamageScaler</c> of ability 1027; talent Burstbolter (talent 193), DamageScale Multiplicitive.</summary>
+        public const double ChanneledBeamSingleDamageAndCastedDebuffAoeDamageTalentIncreasedDamageDamageScaler = 1.05;
 
-    /// <summary>Game data: tuning <c>Rime.ChanneledBeamSingleDamageAndCastedDebuffAoeDamage.Talent.IncreasedDamage.DamageScaler</c> of ability 1027; talent Burstbolter (talent 193), DamageScale Multiplicitive.</summary>
-    public const double DAMAGE_SCALER = 1.05;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1027.</summary>
+        public const double Spread = 0.2;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1027.</summary>
-    public const double SPREAD = 0.2;
+        /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.BuffDuration</c> of ability 1027; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
+        public const int StackBuffForInstantSingleDamageBuffDuration = 15;
 
-    /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.MaxNumStacks</c> of ability 1027; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
-    public const int MAX_NUM_STACKS = 30;
+        /// <summary>Game data: tuning <c>StackBuffForInstantSingleDamage.MaxNumStacks</c> of ability 1027; Frostwyrm's Spite (effect 2264), talent Frostwyrm's Spite (legendary power 397).</summary>
+        public const int StackBuffForInstantSingleDamageMaxNumStacks = 30;
+    }
 }

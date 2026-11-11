@@ -14,10 +14,10 @@ public partial class SkyCrash : XavianAbility
 
     public SkyCrash(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.AoeDamageStrengthCoefficient;
         SetCooldown(AbilityCooldown, AbilityCharges);
         IgnoresGcd = true;
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.AoeDamageScalingTargetCountThreshold;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

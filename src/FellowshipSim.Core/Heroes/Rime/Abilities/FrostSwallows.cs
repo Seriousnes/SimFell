@@ -7,7 +7,7 @@ namespace FellowshipSim.Core.Heroes.Rime.Abilities;
 /// </summary>
 public partial class FrostSwallows : RimeAbility
 {
-    public FrostSwallows(Rime owner) : this(owner, AbilityId, INTELLECT_COEFFICIENT) { }
+    public FrostSwallows(Rime owner) : this(owner, AbilityId, Constants.IntellectCoefficient) { }
 
     /// <summary>Frost Swallows whose damage combat logs report under <paramref name="damageLogId"/>.</summary>
     protected FrostSwallows(Rime owner, int damageLogId, double coefficient) : base(owner, damageLogId, AbilityName)
@@ -16,11 +16,11 @@ public partial class FrostSwallows : RimeAbility
     }
 
     /// <summary>
-    /// Tooltip: each percent of Spirit raises Frost Swallows' damage by <see cref="BONUS_DAMAGE_FROM_SPIRIT_COEFFICIENT"/>
+    /// Tooltip: each percent of Spirit raises Frost Swallows' damage by <see cref="Constants.BonusDamageFromSpiritCoefficient"/>
     /// percent.
     /// </summary>
     public override double BaseDamage(SimulationContext ctx, EnemyTarget? target, double damageMultiplier = 1.0) =>
-        base.BaseDamage(ctx, target, damageMultiplier) * (1.0 + BONUS_DAMAGE_FROM_SPIRIT_COEFFICIENT * Owner.SpiritPercent(ctx.CurrentTime));
+        base.BaseDamage(ctx, target, damageMultiplier) * (1.0 + Constants.BonusDamageFromSpiritCoefficient * Owner.SpiritPercent(ctx.CurrentTime));
 
     public void Attack(SimulationContext ctx, EnemyTarget target, int count)
     {

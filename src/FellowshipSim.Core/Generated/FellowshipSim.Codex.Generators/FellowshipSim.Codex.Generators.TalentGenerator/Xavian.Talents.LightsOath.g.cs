@@ -13,15 +13,19 @@ partial class LightsOath
     /// <summary>Game data: <c>cost</c> of talent 568.</summary>
     public const int TalentCost = 8;
 
-    /// <summary>Game data: tuning <c>DamageScaler, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.DamageScaler</c> of talent 568; ability 1911.</summary>
-    public const int DAMAGE_SCALER = 2;
+    /// <summary>Game data: the tuning values of talent 568.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageScaler, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.DamageScaler</c> of talent 568; ability 1911.</summary>
+        public const int DamageScaler = 2;
 
-    /// <summary>Game data: tuning <c>ProcDuration, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcDuration</c> of talent 568; ability 1911.</summary>
-    public const int PROC_DURATION = 30;
+        /// <summary>Game data: tuning <c>ProcDuration, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcDuration</c> of talent 568; ability 1911.</summary>
+        public const int ProcDuration = 30;
 
-    /// <summary>Game data: tuning <c>ProcStackCap, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCap</c> of talent 568; ability 1911.</summary>
-    public const int PROC_STACK_CAP = 8;
+        /// <summary>Game data: tuning <c>ProcStackCap, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCap</c> of talent 568; ability 1911.</summary>
+        public const int ProcStackCap = 8;
 
-    /// <summary>Game data: tuning <c>ProcStackCost, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCost</c> of talent 568; ability 1911.</summary>
-    public const int PROC_STACK_COST = 8;
+        /// <summary>Game data: tuning <c>ProcStackCost, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCost</c> of talent 568; ability 1911.</summary>
+        public const int ProcStackCost = 8;
+    }
 }

@@ -19,9 +19,9 @@ public partial class LeapSmash : TariqAbility
 
     public LeapSmash(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = TARGET_THRESHOLD_FOR_DAMAGE_SCALE;
+        AoeTargetThreshold = Constants.TargetThresholdForDamageScale;
         CritChanceBonus = AddedCritChance;
         IgnoresGcd = true;
     }
@@ -32,7 +32,7 @@ public partial class LeapSmash : TariqAbility
         ctx.Schedule(SimTime.FromSeconds(LandingSeconds), c =>
         {
             var struck = c.Outcomes.SelectTargets(DamageLogId, WildSwing.AreaAround(c, target), c);
-            DealToEach(c, struck, TARGET_THRESHOLD_FOR_DAMAGE_SCALE);
+            DealToEach(c, struck, Constants.TargetThresholdForDamageScale);
             Smashed?.Invoke(c, struck);
         }, Name);
     }

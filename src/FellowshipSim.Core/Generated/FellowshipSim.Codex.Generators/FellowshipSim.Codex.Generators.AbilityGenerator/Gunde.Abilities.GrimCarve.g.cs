@@ -31,30 +31,34 @@ partial class GrimCarve
     /// <summary>Game data: <c>radius</c> of ability 2262.</summary>
     public const int AbilityRadius = 850;
 
-    /// <summary>Game data: tuning <c>AdditionalTicks.Amount</c> of ability 2262; talent Bloody Mess (legendary power 697).</summary>
-    public const int AMOUNT = 2;
+    /// <summary>Game data: the tuning values of ability 2262.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalTicks.Amount</c> of ability 2262; talent Bloody Mess (legendary power 697).</summary>
+        public const int AdditionalTicksAmount = 2;
 
-    /// <summary>Game data: tuning <c>Aoe.Duration</c> of ability 2262.</summary>
-    public const double AOE_DURATION = 1.15;
+        /// <summary>Game data: tuning <c>Aoe.Duration</c> of ability 2262.</summary>
+        public const double AoeDuration = 1.15;
 
-    /// <summary>Game data: tuning <c>Aoe.Period</c> of ability 2262; talent Bloody Mess (legendary power 697).</summary>
-    public const double AOE_PERIOD = 0.5;
+        /// <summary>Game data: tuning <c>Aoe.Period</c> of ability 2262; talent Bloody Mess (legendary power 697).</summary>
+        public const double AoePeriod = 0.5;
 
-    /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2262.</summary>
-    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 5;
+        /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2262.</summary>
+        public const int DamageScalingTargetCountThreshold = 5;
 
-    /// <summary>Game data: tuning <c>DamageStrengthCoefficientPerHit</c> of ability 2262.</summary>
-    public const double DAMAGE_STRENGTH_COEFFICIENT_PER_HIT = 2.076;
+        /// <summary>Game data: tuning <c>DamageStrengthCoefficientPerHit</c> of ability 2262.</summary>
+        public const double DamageStrengthCoefficientPerHit = 2.076;
 
-    /// <summary>Game data: tuning <c>Empowered.AddedCritChance</c> of ability 2262; ability 2263, talent Grim Harvest (talent 766).</summary>
-    public const int ADDED_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Empowered.AddedCritChance</c> of ability 2262; ability 2263, talent Grim Harvest (talent 766).</summary>
+        public const int EmpoweredAddedCritChance = 1;
 
-    /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2262; Rend (effect 3231).</summary>
-    public const double DAMAGE_TO_DOT_SCALER = 0.5;
+        /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2262; Rend (effect 3231).</summary>
+        public const double PerTargetAccumulatedBleedDamageToDotScaler = 0.5;
 
-    /// <summary>Game data: tuning <c>ProjectileSpawnDelay</c> of ability 2262.</summary>
-    public const double PROJECTILE_SPAWN_DELAY = 0.14;
+        /// <summary>Game data: tuning <c>ProjectileSpawnDelay</c> of ability 2262.</summary>
+        public const double ProjectileSpawnDelay = 0.14;
 
-    /// <summary>Game data: tuning <c>Speed</c> of ability 2262.</summary>
-    public const int SPEED = 5000;
+        /// <summary>Game data: tuning <c>Speed</c> of ability 2262.</summary>
+        public const int Speed = 5000;
+    }
 }

@@ -12,7 +12,7 @@ public partial class StoneStomp : MeikoAbility
 
     public StoneStomp(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
+        BaseCoefficient = Constants.AgilityCoefficient;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
         DamageLogId = LogIds.Effect(DamageEffectId);

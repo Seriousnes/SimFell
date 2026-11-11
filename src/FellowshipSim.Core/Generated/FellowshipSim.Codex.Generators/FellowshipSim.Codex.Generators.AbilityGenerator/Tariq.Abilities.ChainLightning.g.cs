@@ -31,45 +31,49 @@ partial class ChainLightning
     /// <summary>Game data: <c>range</c> of ability 1237.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>BounceSearchMaxRadius</c> of ability 1237.</summary>
-    public const int BOUNCE_SEARCH_MAX_RADIUS = 700;
+    /// <summary>Game data: the tuning values of ability 1237.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BounceSearchMaxRadius</c> of ability 1237.</summary>
+        public const int BounceSearchMaxRadius = 700;
 
-    /// <summary>Game data: tuning <c>Charged.MaxCharges</c> of ability 1237; talent Ace of Spades (talent 675).</summary>
-    public const int MAX_CHARGES = 2;
+        /// <summary>Game data: tuning <c>Charged.MaxCharges</c> of ability 1237; talent Ace of Spades (talent 675).</summary>
+        public const int ChargedMaxCharges = 2;
 
-    /// <summary>Game data: tuning <c>MaxNumOfTargets</c> of ability 1237.</summary>
-    public const int MAX_NUM_OF_TARGETS = 6;
+        /// <summary>Game data: tuning <c>MaxNumOfTargets</c> of ability 1237.</summary>
+        public const int MaxNumOfTargets = 6;
 
-    /// <summary>Game data: tuning <c>ProjectileAcceleration</c> of ability 1237.</summary>
-    public const int PROJECTILE_ACCELERATION = 550000;
+        /// <summary>Game data: tuning <c>ProjectileAcceleration</c> of ability 1237.</summary>
+        public const int ProjectileAcceleration = 550000;
 
-    /// <summary>Game data: tuning <c>ProjectileSpeed</c> of ability 1237.</summary>
-    public const int PROJECTILE_SPEED = 10500;
+        /// <summary>Game data: tuning <c>ProjectileSpeed</c> of ability 1237.</summary>
+        public const int ProjectileSpeed = 10500;
 
-    /// <summary>Game data: tuning <c>ResourceGainPerTarget</c> of ability 1237.</summary>
-    public const double RESOURCE_GAIN_PER_TARGET = 0.012;
+        /// <summary>Game data: tuning <c>ResourceGainPerTarget</c> of ability 1237.</summary>
+        public const double ResourceGainPerTarget = 0.012;
 
-    /// <summary>Game data: tuning <c>ShouldSelfBounceAddToCounter</c> of ability 1237.</summary>
-    public const int SHOULD_SELF_BOUNCE_ADD_TO_COUNTER = 0;
+        /// <summary>Game data: tuning <c>ShouldSelfBounceAddToCounter</c> of ability 1237.</summary>
+        public const int ShouldSelfBounceAddToCounter = 0;
 
-    /// <summary>Game data: tuning <c>SpawnDelay</c> of ability 1237.</summary>
-    public const double SPAWN_DELAY = 0.3;
+        /// <summary>Game data: tuning <c>SpawnDelay</c> of ability 1237.</summary>
+        public const double SpawnDelay = 0.3;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1237.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1237.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1237.</summary>
-    public const double STRENGTH_COEFFICIENT = 1.4998;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1237.</summary>
+        public const double StrengthCoefficient = 1.4998;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageMultiplier</c> of ability 1237; talent The Motherload (talent 672), DamageScale MultiplyCompound.</summary>
-    public const int DAMAGE_MULTIPLIER = 1;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageMultiplier</c> of ability 1237; talent The Motherload (talent 672), DamageScale MultiplyCompound.</summary>
+        public const int TalentIncreasedDamageDamageMultiplier = 1;
 
-    /// <summary>Game data: tuning <c>Tariq.Talent.PassiveLightningCritChanceIncrease</c> of ability 1237; ability 1221, talent Crack the Sky (talent 77), CritChance Additive.</summary>
-    public const double PASSIVE_LIGHTNING_CRIT_CHANCE_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>Tariq.Talent.PassiveLightningCritChanceIncrease</c> of ability 1237; ability 1221, talent Crack the Sky (talent 77), CritChance Additive.</summary>
+        public const double TalentPassiveLightningCritChanceIncrease = 0.2;
 
-    /// <summary>Game data: tuning <c>TimeBetweenTargets</c> of ability 1237.</summary>
-    public const double TIME_BETWEEN_TARGETS = 0.05;
+        /// <summary>Game data: tuning <c>TimeBetweenTargets</c> of ability 1237.</summary>
+        public const double TimeBetweenTargets = 0.05;
 
-    /// <summary>Game data: tuning <c>VisualDelayProjectile</c> of ability 1237.</summary>
-    public const double VISUAL_DELAY_PROJECTILE = 0.06;
+        /// <summary>Game data: tuning <c>VisualDelayProjectile</c> of ability 1237.</summary>
+        public const double VisualDelayProjectile = 0.06;
+    }
 }

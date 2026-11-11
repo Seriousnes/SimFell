@@ -11,8 +11,8 @@ public partial class SupremeTorrent : Talent
     public override void Bind(Hero hero)
     {
         var torrent = hero.GetAbility<FreezingTorrent>();
-        torrent?.AddDamageMultiplier(DAMAGE_BONUS_DAMAGE_SCALE);
-        torrent?.ExtendChannel(INCREASED_CHANNEL_DURATION_ADDED_SECONDS);
+        torrent?.AddDamageMultiplier(Constants.DamageBonusDamageScale);
+        torrent?.ExtendChannel(Constants.IncreasedChannelDurationAddedSeconds);
         if (torrent != null) torrent.FullFinalTick = true;
     }
 }

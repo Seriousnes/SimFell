@@ -19,8 +19,10 @@ namespace FellowshipSim.Codex.Generators;
 /// name in Pascal case (letters and digits only, an apostrophe inside its word) is the class name; of several, the one with
 /// a category. The constants are <c>AbilityId</c>, <c>AbilityName</c>, one per scalar field of the record under
 /// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and
-/// one per tuning value of the record under its <see cref="TuningNames"/> name (<c>MAX_CHARGES</c>). The class's own part
-/// has the ability's behaviour. A member of the class or a base class with a constant's name is CODEX009. The game data is the AdditionalFiles
+/// the record's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names
+/// (<c>Constants.MaxCharges</c>), with the hero of the class's namespace as the record's hero. A class deriving from another
+/// ability class declares its <c>Constants</c> with <c>new</c>. The class's own part has the ability's behaviour. A member
+/// of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX009. The game data is the AdditionalFiles
 /// <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/>
 /// reports missing game data.
 /// </summary>
@@ -52,21 +54,23 @@ public sealed class AbilityGenerator : IIncrementalGenerator
     /// values.
     /// </summary>
     private sealed record Record(int Id, string Name, string ClassName, EquatableArray<string> Heroes, bool HasCategory,
-        EquatableArray<Constant> Fields, EquatableArray<Constant> Tunings);
+        EquatableArray<Constant> Fields, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's ability records, and its build date.</summary>
-    private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
+    /// <summary>The game data's ability records, the tuning keys' first segments naming a hero, and its build date.</summary>
+    private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
-    /// A partial ability class: its namespace, name and hero, the member names of the class and its base classes, the full
-    /// names of its base classes (nearest first), and where it is declared.
+    /// A partial ability class: its namespace, name and hero, the member names of the class and its base classes, the
+    /// class's constants and static readonly fields, the full names of its base classes (nearest first), and where it is
+    /// declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, string Hero, EquatableArray<string> Members, EquatableArray<string> Bases, Location? Location)
+    private sealed record Declared(string Namespace, string Name, string Hero, EquatableArray<string> Members, EquatableArray<string> Fields,
+        EquatableArray<string> Bases, Location? Location)
     {
         public string FullName => Namespace + "." + Name;
 
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Hero == other.Hero
-            && Members.Equals(other.Members) && Bases.Equals(other.Bases);
+            && Members.Equals(other.Members) && Fields.Equals(other.Fields) && Bases.Equals(other.Bases);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -113,7 +117,8 @@ public sealed class AbilityGenerator : IIncrementalGenerator
         if (!ability) return null;
         string ns = NamespaceOf(node)!;
         string hero = ns.Substring(HeroesNamespace.Length).Split('.')[0];
-        return new Declared(ns, type.Name, hero, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), new([.. bases]), node.Identifier.GetLocation());
+        return new Declared(ns, type.Name, hero, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), new([.. TuningNames.FieldsOf(type)]),
+            new([.. bases]), node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -154,7 +159,7 @@ public sealed class AbilityGenerator : IIncrementalGenerator
                     new([.. FieldsOf(ability)]), new([.. TuningsOf(ability)])));
             }
         }
-        return new Export(new([.. records.OrderBy(r => r.Id)]), buildDate);
+        return new Export(new([.. records.OrderBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The record's scalar fields, each under <c>Ability</c> and the field's name.</summary>
@@ -201,14 +206,9 @@ public sealed class AbilityGenerator : IIncrementalGenerator
         fields.Add(new Constant("Ability" + name, "bool", v ? "true" : "false", Field(field, id)));
     }
 
-    /// <summary>The record's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
-    private static List<Constant> TuningsOf(AbilityDocument ability) =>
-        [.. TuningNames.Of(ability.Tuning, ValueOf).Select(t =>
-        {
-            string source = SourceOf(t.Source);
-            return new Constant(t.Name, t.Value.Type, t.Value.Literal,
-                $"Game data: tuning <c>{Escape(t.Keys)}</c> of ability {ability.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
-        })];
+    /// <summary>The record's tuning keys, in the order of the game data.</summary>
+    private static List<TuningEntry> TuningsOf(AbilityDocument ability) =>
+        TuningNames.Entries(ability.Tuning, v => ValueOf(v) is { } value ? (value.Type, value.Literal, false) : null, SourceOf);
 
     /// <summary>The C# type and literal of a tuning value; null for a value of no constant type.</summary>
     private static (string Type, string Literal)? ValueOf(object? value)
@@ -288,7 +288,9 @@ public sealed class AbilityGenerator : IIncrementalGenerator
                 new("AbilityName", "string", Literal(record.Name), $"Game data: <c>name</c> of ability {record.Id}."),
             };
             constants.AddRange(record.Fields);
-            constants.AddRange(record.Tunings);
+            var shared = new List<(string Name, string First, string Second)>();
+            var tunings = TuningNames.Of(record.Tunings, export.Segments, [d.Hero], shared);
+            TuningNames.Report(context, d.Location, d.Name, $"ability {record.Id}", shared, d.Fields, tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -310,6 +312,20 @@ public sealed class AbilityGenerator : IIncrementalGenerator
                 source.Append("    /// <summary>").Append(constant.Summary).Append("</summary>\n")
                     .Append("    public ").Append(inherited.Contains(constant.Name) ? "new " : "").Append("const ").Append(constant.Type).Append(' ')
                     .Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
+            }
+            if (tunings.Count > 0)
+            {
+                if (members.Contains("Constants"))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "Constants", record.Id));
+                }
+                else
+                {
+                    TuningNames.Write(source, $"Game data: the tuning values of ability {record.Id}.",
+                        tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of ability {record.Id}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
+                        inherited.Contains("Constants"), names.Count > 0);
+                    names.Add("Constants");
+                }
             }
             source.Append("}\n");
             written[d.FullName] = names;

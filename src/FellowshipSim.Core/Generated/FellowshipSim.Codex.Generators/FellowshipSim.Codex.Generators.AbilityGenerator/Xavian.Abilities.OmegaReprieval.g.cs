@@ -19,12 +19,16 @@ partial class OmegaReprieval
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1861.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: tuning <c>BuffDuration</c> of ability 1861; talent Golden Hour (talent 578).</summary>
-    public const int BUFF_DURATION = 12;
+    /// <summary>Game data: the tuning values of ability 1861.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BuffDuration</c> of ability 1861; talent Golden Hour (talent 578).</summary>
+        public const int BuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>Stacks</c> of ability 1861.</summary>
-    public const int STACKS = 2;
+        /// <summary>Game data: tuning <c>Stacks</c> of ability 1861.</summary>
+        public const int Stacks = 2;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1861.</summary>
-    public const double VISUAL_DELAY = 0.2;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1861.</summary>
+        public const double VisualDelay = 0.2;
+    }
 }

@@ -10,17 +10,21 @@ partial class SolarGlare
     /// <summary>Light of Azamir Breastplate, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
-    /// <summary>Game data: tuning <c>DamageReduction.Duration, Sune.AtTargetInstantAoe.Talent.DamageReduction.Duration</c> of legendary power 605; Blinding Horizon (effect 2727).</summary>
-    public const int DURATION = 5;
+    /// <summary>Game data: the tuning values of legendary power 605.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageReduction.Duration, Sune.AtTargetInstantAoe.Talent.DamageReduction.Duration</c> of legendary power 605; Blinding Horizon (effect 2727).</summary>
+        public const int DamageReductionDuration = 5;
 
-    /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier, Sune.AtTargetInstantAoe.Talent.DamageReduction.IncomingDamageMultiplier</c> of legendary power 605; Blinding Horizon (effect 2727), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 0.8;
+        /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier, Sune.AtTargetInstantAoe.Talent.DamageReduction.IncomingDamageMultiplier</c> of legendary power 605; Blinding Horizon (effect 2727), IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double DamageReductionIncomingDamageMultiplier = 0.8;
 
-    /// <summary>Game data: tuning <c>GrievousCritChance.CritChanceIncrease, Sune.AtTargetInstantAoe.Talent.GrievousCritChance.CritChanceIncrease</c> of legendary power 605; Solar Blades (ability 1862).</summary>
-    public const int GRIEVOUS_CRIT_CHANCE_CRIT_CHANCE_INCREASE = 1;
+        /// <summary>Game data: tuning <c>GrievousCritChance.CritChanceIncrease, Sune.AtTargetInstantAoe.Talent.GrievousCritChance.CritChanceIncrease</c> of legendary power 605; Solar Blades (ability 1862).</summary>
+        public const int GrievousCritChanceCritChanceIncrease = 1;
 
-    /// <summary>Game data: tuning <c>GrievousCritChance.ProcChance, Sune.AtTargetInstantAoe.Talent.GrievousCritChance.ProcChance</c> of legendary power 605; Solar Blades (ability 1862).</summary>
-    public const double GRIEVOUS_CRIT_CHANCE_PROC_CHANCE = 0.3;
+        /// <summary>Game data: tuning <c>GrievousCritChance.ProcChance, Sune.AtTargetInstantAoe.Talent.GrievousCritChance.ProcChance</c> of legendary power 605; Solar Blades (ability 1862).</summary>
+        public const double GrievousCritChanceProcChance = 0.3;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Solar Glare";

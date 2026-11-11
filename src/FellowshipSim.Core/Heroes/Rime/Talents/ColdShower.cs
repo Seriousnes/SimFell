@@ -26,7 +26,7 @@ public partial class ColdShower : Talent
         if (comet == null) return;
         hero.OnChannelTick += (ability, target, _, ctx) =>
         {
-            if (ability is FreezingTorrent && target != null && ctx.Outcomes.RollProc(ProcKey, ON_TARGET_PULSATING_AOE_FREE_CAST_PROC_CHANCE, ctx))
+            if (ability is FreezingTorrent && target != null && ctx.Outcomes.RollProc(ProcKey, Constants.ChanneledBeamSingleDamageTalentOnTargetPulsatingAoeFreeCastProcChance, ctx))
             {
                 comet.FreeCast(ctx, target, source: this, countsAsCast: true, impactDelaySeconds: ImpactDelaySeconds);
             }

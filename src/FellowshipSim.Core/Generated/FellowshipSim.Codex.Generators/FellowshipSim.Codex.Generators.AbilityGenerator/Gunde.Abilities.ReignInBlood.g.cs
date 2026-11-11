@@ -22,15 +22,19 @@ partial class ReignInBlood
     /// <summary>Game data: <c>duration</c> of ability 2295.</summary>
     public const int AbilityDuration = 12;
 
-    /// <summary>Game data: tuning <c>AddedBonus.AddedTransfer</c> of ability 2295.</summary>
-    public const double ADDED_BONUS_ADDED_TRANSFER = 0.25;
+    /// <summary>Game data: the tuning values of ability 2295.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AddedBonus.AddedTransfer</c> of ability 2295.</summary>
+        public const double AddedBonusAddedTransfer = 0.25;
 
-    /// <summary>Game data: tuning <c>BonusDotDamage</c> of ability 2295; talent Frenzied Reign (talent 750).</summary>
-    public const double BONUS_DOT_DAMAGE = 0.3;
+        /// <summary>Game data: tuning <c>BonusDotDamage</c> of ability 2295; talent Frenzied Reign (talent 750).</summary>
+        public const double BonusDotDamage = 0.3;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 2295.</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 2295.</summary>
+        public const int Duration = 12;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2295.</summary>
-    public const double VISUAL_DELAY = 0.2;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2295.</summary>
+        public const double VisualDelay = 0.2;
+    }
 }

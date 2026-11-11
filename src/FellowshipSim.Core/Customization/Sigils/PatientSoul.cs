@@ -16,5 +16,5 @@ public partial class PatientSoul : Sigil
     public override string Name => SigilName;
 
     public override void Bind(Hero hero) =>
-        hero.SituationalAuras.Add(Buff.WithModifiers(StatModifier.Add(StatType.ExpertiseRating, ForRank(BUFF_ADDITIONAL_EXPERTISE_RATING_BY_RANK))));
+        hero.SituationalAuras.Add(Buff.WithModifiers(StatModifier.Add(StatType.ExpertiseRating, ForRank(Constants.BuffAdditionalExpertiseRatingByRank))));
 }

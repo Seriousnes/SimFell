@@ -10,6 +10,10 @@ partial class KillingInTheName
     /// <summary>Game data: <c>name</c> of talent 82.</summary>
     public const string TalentName = "Killing in the Name";
 
-    /// <summary>Game data: tuning <c>Ink.LowHealthSingleTargetResourceDamage.Talent.AddedCritChance</c> of talent 82; ability 1556, CritChance Additive.</summary>
-    public const double ADDED_CRIT_CHANCE = 0.5;
+    /// <summary>Game data: the tuning values of talent 82.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Ink.LowHealthSingleTargetResourceDamage.Talent.AddedCritChance</c> of talent 82; ability 1556, CritChance Additive.</summary>
+        public const double LowHealthSingleTargetResourceDamageTalentAddedCritChance = 0.5;
+    }
 }

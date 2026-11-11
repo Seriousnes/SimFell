@@ -22,7 +22,7 @@ public partial class MatriarchMacabre : MaraAbility
     public const double CloneDelaySeconds = 0.335;
 
     public static readonly AuraDef Buff = AuraDef.Effect("Matriarch Macabre", BuffEffectId, AbilityDuration,
-        modifiers: StatModifier.More(StatType.DamageScale, DAMAGE_SCALER));
+        modifiers: StatModifier.More(StatType.DamageScale, Constants.DamageIncreaseBuffDamageScaler));
 
     /// <summary>
     /// The name of a shadowy clone's hits of <paramref name="abilityName"/>: the log ID is the ability's, the name tells

@@ -10,6 +10,10 @@ partial class CrackTheSky
     /// <summary>Game data: <c>name</c> of talent 77.</summary>
     public const string TalentName = "Crack the Sky";
 
-    /// <summary>Game data: tuning <c>Ink.Talent.PassiveLightningCritChanceIncrease</c> of talent 77; ability 1221, CritChance Additive.</summary>
-    public const double PASSIVE_LIGHTNING_CRIT_CHANCE_INCREASE = 0.2;
+    /// <summary>Game data: the tuning values of talent 77.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Ink.Talent.PassiveLightningCritChanceIncrease</c> of talent 77; ability 1221, CritChance Additive.</summary>
+        public const double TalentPassiveLightningCritChanceIncrease = 0.2;
+    }
 }

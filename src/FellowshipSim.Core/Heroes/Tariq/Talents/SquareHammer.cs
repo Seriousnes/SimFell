@@ -15,10 +15,10 @@ public partial class SquareHammer : Talent
     public const double CooldownPerStackSeconds = 1.0;
     public const int ActiveEffectId = 3159;
 
-    public static readonly AuraDef Stacks = AuraDef.Effect("Square Hammer", StackEffectId, StackSeconds, MAX_STACKS);
+    public static readonly AuraDef Stacks = AuraDef.Effect("Square Hammer", StackEffectId, StackSeconds, Constants.StackingBuffConsumedByNextSpenderStackerMaxStacks);
 
     public static readonly AuraDef Active = AuraDef.Effect("Square Hammer: Active", ActiveEffectId, TalentDuration,
-        modifiers: StatModifier.Add(StatType.Expertise, ADDED_EXPERTISE_PER_STACK));
+        modifiers: StatModifier.Add(StatType.Expertise, Constants.AddedExpertisePerStack));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

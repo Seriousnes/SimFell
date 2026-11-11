@@ -34,3 +34,5 @@ CODEX033 | Codex | Error | HeroGenerator: a hero constant's name is a member of 
 CODEX034 | Codex | Error | DungeonGenerator: a partial dungeon class names no dungeon record
 CODEX036 | Codex | Error | DungeonGenerator: a dungeon constant's name is a member of the class or a base class
 CODEX037 | Codex | Warning | DungeonGenerator: a dungeon placement names no creature record
+CODEX038 | Codex | Error | TuningNames: two tuning keys of a record have different values and one constant name
+CODEX039 | Codex | Error | TuningNames: a hand-written constant or static readonly field of the class has the name of a member of its Constants

@@ -43,21 +43,25 @@ partial class BloodboundSpirit
     /// <summary>Game data: <c>radius</c> of ability 2296.</summary>
     public const int AbilityRadius = 1000;
 
-    /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2296.</summary>
-    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 1;
+    /// <summary>Game data: the tuning values of ability 2296.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2296.</summary>
+        public const int DamageScalingTargetCountThreshold = 1;
 
-    /// <summary>Game data: tuning <c>DotScaler</c> of ability 2296.</summary>
-    public const int DOT_SCALER = 2;
+        /// <summary>Game data: tuning <c>DotScaler</c> of ability 2296.</summary>
+        public const int DotScaler = 2;
 
-    /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2296; Rend (effect 3231).</summary>
-    public const double DAMAGE_TO_DOT_SCALER = 0.5;
+        /// <summary>Game data: tuning <c>Gunde.PerTargetAccumulatedBleed.DamageToDotScaler</c> of ability 2296; Rend (effect 3231).</summary>
+        public const double PerTargetAccumulatedBleedDamageToDotScaler = 0.5;
 
-    /// <summary>Game data: tuning <c>SelfBuff.DamageMultiplier</c> of ability 2296; Bloodbound Spirit (effect 3242), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.25;
+        /// <summary>Game data: tuning <c>SelfBuff.DamageMultiplier</c> of ability 2296; Bloodbound Spirit (effect 3242), DamageScale MultiplyCompound.</summary>
+        public const double SelfBuffDamageMultiplier = 1.25;
 
-    /// <summary>Game data: tuning <c>SelfBuff.Duration</c> of ability 2296; Bloodbound Spirit (effect 3242).</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>SelfBuff.Duration</c> of ability 2296; Bloodbound Spirit (effect 3242).</summary>
+        public const int SelfBuffDuration = 20;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 2296.</summary>
-    public const double STRENGTH_COEFFICIENT = 4.653;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 2296.</summary>
+        public const double StrengthCoefficient = 4.653;
+    }
 }

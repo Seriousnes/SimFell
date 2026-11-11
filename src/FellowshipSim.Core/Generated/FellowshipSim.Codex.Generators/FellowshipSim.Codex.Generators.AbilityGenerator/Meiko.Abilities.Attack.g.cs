@@ -16,18 +16,22 @@ partial class Attack
     /// <summary>Game data: <c>range</c> of ability 1118.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1118.</summary>
-    public const double AGILITY_COEFFICIENT = 0.46;
+    /// <summary>Game data: the tuning values of ability 1118.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1118.</summary>
+        public const double AgilityCoefficient = 0.46;
 
-    /// <summary>Game data: tuning <c>GreenEnergyGain</c> of ability 1118.</summary>
-    public const double GREEN_ENERGY_GAIN = 0.5;
+        /// <summary>Game data: tuning <c>GreenEnergyGain</c> of ability 1118.</summary>
+        public const double GreenEnergyGain = 0.5;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1118.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1118.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1118.</summary>
-    public const double SWING_TIMER = 1.9;
+        /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1118.</summary>
+        public const double SwingTimer = 1.9;
 
-    /// <summary>Game data: tuning <c>YellowEnergyGain</c> of ability 1118.</summary>
-    public const double YELLOW_ENERGY_GAIN = 0.5;
+        /// <summary>Game data: tuning <c>YellowEnergyGain</c> of ability 1118.</summary>
+        public const double YellowEnergyGain = 0.5;
+    }
 }

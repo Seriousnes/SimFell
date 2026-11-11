@@ -10,15 +10,19 @@ partial class Bloodrush
     /// <summary>Game data: <c>name</c> of talent 163.</summary>
     public const string TalentName = "Bloodrush";
 
-    /// <summary>Game data: tuning <c>IncreasedDamageOnSoloTarget.DamageMultiplier, Mara.BleedAttackSpender.Talent.IncreasedDamageOnSoloTarget.DamageMultiplier</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
-    public const double INCREASED_DAMAGE_ON_SOLO_TARGET_DAMAGE_MULTIPLIER = 1.5;
+    /// <summary>Game data: the tuning values of talent 163.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDamageOnSoloTarget.DamageMultiplier, Mara.BleedAttackSpender.Talent.IncreasedDamageOnSoloTarget.DamageMultiplier</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
+        public const double IncreasedDamageOnSoloTargetDamageMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
-    public const double INCREASED_TICK_RATE_WHILE_SINGLE_TICK_RATE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
+        public const double IncreasedTickRateWhileSingleTickRateIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.BaseDuration</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
-    public const int BASE_DURATION = 12;
+        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.BaseDuration</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
+        public const int BleedAttackSpenderBaseDuration = 12;
 
-    /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.DurationIncreasePerComboPoint</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
-    public const int DURATION_INCREASE_PER_COMBO_POINT = 3;
+        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.DurationIncreasePerComboPoint</c> of talent 163; Hemorrhaging Strike (ability 1208).</summary>
+        public const int BleedAttackSpenderDurationIncreasePerComboPoint = 3;
+    }
 }

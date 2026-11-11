@@ -14,7 +14,7 @@ public partial class WardenOfTheTemple : Talent
 {
     public const int BuffEffectId = 2447;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, maxStacks: MAX_STACKS_FOR_ACTIVATION);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, maxStacks: Constants.ConsumedBuffsToDefensiveBuffMaxStacksForActivation);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -25,16 +25,16 @@ public partial class WardenOfTheTemple : Talent
         meiko.ChargeConsumed += (ctx, _) => hero.Auras.Apply(Buff, ctx.CurrentTime);
         hero.OnCastResolving += cast =>
         {
-            if (cast.Ability is not (DoublePalmStrike or SpiritedVortex) || hero.Auras.GetStacks(Buff, cast.Time) < MAX_STACKS_FOR_ACTIVATION) return;
+            if (cast.Ability is not (DoublePalmStrike or SpiritedVortex) || hero.Auras.GetStacks(Buff, cast.Time) < Constants.ConsumedBuffsToDefensiveBuffMaxStacksForActivation) return;
             hero.Auras.Remove(Buff, cast.Time);
             if (cast.Ability is DoublePalmStrike)
             {
-                cast.DamageMultiplier *= MELEE_DAMAGE_IMMEDIATE_SELF_BUFF_DAMAGE_MULTIPLIER;
-                hero.Auras.Apply(Serenity.Stacks, cast.Time, NUM_OF_STACKS);
+                cast.DamageMultiplier *= Constants.TalentConsumedBuffsToDefensiveBuffMeleeDamageImmediateSelfBuffDamageMultiplier;
+                hero.Auras.Apply(Serenity.Stacks, cast.Time, Constants.NumOfStacks);
             }
             else
             {
-                cast.DamageMultiplier *= DURATIONAL_AOE_DAMAGE_BUFF_DAMAGE_MULTIPLIER;
+                cast.DamageMultiplier *= Constants.TalentConsumedBuffsToDefensiveBuffDurationalAoeDamageBuffDamageMultiplier;
             }
         };
     }

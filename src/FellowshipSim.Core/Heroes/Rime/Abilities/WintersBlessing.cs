@@ -11,7 +11,7 @@ public partial class WintersBlessing : RimeAbility
     public const int BuffEffectId = 1389;
 
     public static readonly AuraDef Buff = AuraDef.Effect("Winter's Blessing", BuffEffectId, AbilityDuration,
-        modifiers: StatModifier.Add(StatType.Spirit, SPIRIT_INCREASE));
+        modifiers: StatModifier.Add(StatType.Spirit, Constants.SpiritIncrease));
 
     public WintersBlessing(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {

@@ -22,30 +22,31 @@ partial class TwinSoulsBulwark
     /// <summary>Game data: <c>channelTick</c> of ability 1082.</summary>
     public const double AbilityChannelTick = 0.5;
 
-    /// <summary>Game data: tuning <c>Aura.Radius</c> of ability 1082.</summary>
-    public const int AURA_RADIUS = 1000;
+    /// <summary>Game data: the tuning values of ability 1082.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Aura.Radius, Meiko.DurationalMultipleTeleportDamage.Radius</c> of ability 1082.</summary>
+        public const int AuraRadius = 1000;
 
-    /// <summary>Game data: tuning <c>Distance</c> of ability 1082.</summary>
-    public const int DISTANCE = 250;
+        /// <summary>Game data: tuning <c>Distance</c> of ability 1082.</summary>
+        public const int Distance = 250;
 
-    /// <summary>Game data: tuning <c>GMMC_Meiko_TauntTotem_Duration_C</c> of ability 1082.</summary>
-    public const int GMMC_MEIKO_TAUNT_TOTEM_DURATION_C = 20;
+        /// <summary>Game data: tuning <c>GMMC_Meiko_TauntTotem_Duration_C</c> of ability 1082.</summary>
+        public const int GMMCMeikoTauntTotemDurationC = 20;
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1082; IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 0.3;
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1082; IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double IncomingDamageMultiplier = 0.3;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Radius</c> of ability 1082; ability 1109.</summary>
-    public const int RADIUS = 1000;
+        /// <summary>Game data: tuning <c>MoveDuration</c> of ability 1082.</summary>
+        public const double MoveDuration = 0.5;
 
-    /// <summary>Game data: tuning <c>MoveDuration</c> of ability 1082.</summary>
-    public const double MOVE_DURATION = 0.5;
+        /// <summary>Game data: tuning <c>Talent.IncreasedHealthAndDuration.MaxHealthMultiplier</c> of ability 1082; ability 1083, talent Shattering Obelisk (talent 415).</summary>
+        public const double TalentIncreasedHealthAndDurationMaxHealthMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedHealthAndDuration.MaxHealthMultiplier</c> of ability 1082; ability 1083, talent Shattering Obelisk (talent 415).</summary>
-    public const double INCREASED_HEALTH_AND_DURATION_MAX_HEALTH_MULTIPLIER = 1.5;
+        /// <summary>Game data: tuning <c>TotemHealthTotalSecondaryStatModifier</c> of ability 1082.</summary>
+        public const int TotemHealthTotalSecondaryStatModifier = 2;
 
-    /// <summary>Game data: tuning <c>TotemHealthTotalSecondaryStatModifier</c> of ability 1082.</summary>
-    public const int TOTEM_HEALTH_TOTAL_SECONDARY_STAT_MODIFIER = 2;
-
-    /// <summary>Game data: tuning <c>WindMode.Duration</c> of ability 1082; talent Shattering Obelisk (talent 415).</summary>
-    public const int WIND_MODE_DURATION = 20;
+        /// <summary>Game data: tuning <c>WindMode.Duration</c> of ability 1082; talent Shattering Obelisk (talent 415).</summary>
+        public const int WindModeDuration = 20;
+    }
 }

@@ -11,6 +11,6 @@ public partial class Puncture : Talent
     public override void Bind(Hero hero)
     {
         var widowsBite = hero.GetAbility<WidowsBite>();
-        if (widowsBite != null) widowsBite.CritChanceBonus += INCREASED_CRIT_CHANCE_ADDITIONAL_CRIT_CHANCE;
+        if (widowsBite != null) widowsBite.CritChanceBonus += Constants.IncreasedCritChanceAdditionalCritChance;
     }
 }

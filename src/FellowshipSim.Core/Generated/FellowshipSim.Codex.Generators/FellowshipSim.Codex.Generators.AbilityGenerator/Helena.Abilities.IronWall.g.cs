@@ -22,6 +22,10 @@ partial class IronWall
     /// <summary>Game data: <c>duration</c> of ability 973.</summary>
     public const int AbilityDuration = 12;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 973.</summary>
-    public const int DURATION = 12;
+    /// <summary>Game data: the tuning values of ability 973.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Duration</c> of ability 973.</summary>
+        public const int Duration = 12;
+    }
 }

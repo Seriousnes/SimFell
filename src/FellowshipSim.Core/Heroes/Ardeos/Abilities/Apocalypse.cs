@@ -12,10 +12,10 @@ public partial class Apocalypse : ArdeosAbility
 
     public Apocalypse(Ardeos owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = INTELLECT_COEFFICIENT;
+        BaseCoefficient = Constants.DamageIntellectCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.DamageDamageScalingTargetCountThreshold;
         // Every enemy the eruption hits gets Searing Blaze.
         Hit += (in DamageContext hit) =>
         {

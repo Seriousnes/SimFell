@@ -28,42 +28,46 @@ partial class ShieldThrow
     /// <summary>Game data: <c>range</c> of ability 985.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>BounceSearchAngle</c> of ability 985.</summary>
-    public const int BOUNCE_SEARCH_ANGLE = 350;
+    /// <summary>Game data: the tuning values of ability 985.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BounceSearchAngle</c> of ability 985.</summary>
+        public const int BounceSearchAngle = 350;
 
-    /// <summary>Game data: tuning <c>BounceSearchMaxDistance</c> of ability 985.</summary>
-    public const int BOUNCE_SEARCH_MAX_DISTANCE = 650;
+        /// <summary>Game data: tuning <c>BounceSearchMaxDistance</c> of ability 985.</summary>
+        public const int BounceSearchMaxDistance = 650;
 
-    /// <summary>Game data: tuning <c>BounceSearchMinDistance</c> of ability 985.</summary>
-    public const int BOUNCE_SEARCH_MIN_DISTANCE = 0;
+        /// <summary>Game data: tuning <c>BounceSearchMinDistance</c> of ability 985.</summary>
+        public const int BounceSearchMinDistance = 0;
 
-    /// <summary>Game data: tuning <c>BouncyProjectileIncreasedDamagePerStackOfMeleeCleaveBuff</c> of ability 985.</summary>
-    public const double BOUNCY_PROJECTILE_INCREASED_DAMAGE_PER_STACK_OF_MELEE_CLEAVE_BUFF = 0.05;
+        /// <summary>Game data: tuning <c>BouncyProjectileIncreasedDamagePerStackOfMeleeCleaveBuff</c> of ability 985.</summary>
+        public const double BouncyProjectileIncreasedDamagePerStackOfMeleeCleaveBuff = 0.05;
 
-    /// <summary>Game data: tuning <c>ComboPointRewardPerHit</c> of ability 985.</summary>
-    public const int COMBO_POINT_REWARD_PER_HIT = 1;
+        /// <summary>Game data: tuning <c>ComboPointRewardPerHit</c> of ability 985.</summary>
+        public const int ComboPointRewardPerHit = 1;
 
-    /// <summary>Game data: tuning <c>MaxNumBounces</c> of ability 985.</summary>
-    public const int MAX_NUM_BOUNCES = 5;
+        /// <summary>Game data: tuning <c>MaxNumBounces</c> of ability 985.</summary>
+        public const int MaxNumBounces = 5;
 
-    /// <summary>Game data: tuning <c>NumberOfBounceSelectionTargets</c> of ability 985.</summary>
-    public const int NUMBER_OF_BOUNCE_SELECTION_TARGETS = 1;
+        /// <summary>Game data: tuning <c>NumberOfBounceSelectionTargets</c> of ability 985.</summary>
+        public const int NumberOfBounceSelectionTargets = 1;
 
-    /// <summary>Game data: tuning <c>SpiritPointGain.NumPoints</c> of ability 985; talent Martial Command (talent 14).</summary>
-    public const int NUM_POINTS = 2;
+        /// <summary>Game data: tuning <c>SpiritPointGain.NumPoints</c> of ability 985; talent Martial Command (talent 14).</summary>
+        public const int SpiritPointGainNumPoints = 2;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 985.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 985.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 985.</summary>
-    public const double STRENGTH_COEFFICIENT = 3.416;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 985.</summary>
+        public const double StrengthCoefficient = 3.416;
 
-    /// <summary>Game data: tuning <c>Talent.DamageCooldownReset.DamageMultiplier</c> of ability 985; The Best Defense (effect 1231), talent The Best Defense (talent 207), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.2;
+        /// <summary>Game data: tuning <c>Talent.DamageCooldownReset.DamageMultiplier</c> of ability 985; The Best Defense (effect 1231), talent The Best Defense (talent 207), DamageScale MultiplyCompound.</summary>
+        public const double TalentDamageCooldownResetDamageMultiplier = 1.2;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 985; talent Skull Cracker (talent 214), CritChance Additive.</summary>
-    public const double INCREASED_CRIT_CHANCE_ADDITIONAL_CRIT_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 985; talent Skull Cracker (talent 214), CritChance Additive.</summary>
+        public const double TalentIncreasedCritChanceAdditionalCritChance = 0.2;
 
-    /// <summary>Game data: tuning <c>ToughnessFromDamageDealtScaler</c> of ability 985.</summary>
-    public const double TOUGHNESS_FROM_DAMAGE_DEALT_SCALER = 0.2;
+        /// <summary>Game data: tuning <c>ToughnessFromDamageDealtScaler</c> of ability 985.</summary>
+        public const double ToughnessFromDamageDealtScaler = 0.2;
+    }
 }

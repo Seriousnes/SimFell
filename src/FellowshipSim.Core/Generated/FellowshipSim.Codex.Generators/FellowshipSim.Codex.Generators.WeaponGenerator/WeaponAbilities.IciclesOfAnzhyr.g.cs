@@ -28,27 +28,31 @@ partial class IciclesOfAnzhyr
     /// <summary>Game data: <c>radius</c> of ability 1561.</summary>
     public const int AbilityRadius = 700;
 
-    /// <summary>Game data: tuning <c>Debuff.PrimaryAttributeCoefficient</c> of weapon power 357; Curse of An'zhyr (effect 2286).</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_1 = 0.384;
+    /// <summary>Game data: the tuning values of weapon power 357.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Aoe.Damage.PrimaryAttributeCoefficient</c> of weapon power 357; Icicles of An'zhyr (effect 2287).</summary>
+        public const double AoeDamagePrimaryAttributeCoefficient = 1.44;
 
-    /// <summary>Game data: tuning <c>Aoe.Damage.PrimaryAttributeCoefficient</c> of weapon power 357; Icicles of An'zhyr (effect 2287).</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_2 = 1.44;
+        /// <summary>Game data: tuning <c>Aoe.NumberOfVolleys</c> of weapon power 357; effect 2845.</summary>
+        public const int AoeNumberOfVolleys = 3;
 
-    /// <summary>Game data: tuning <c>Aoe.NumberOfVolleys</c> of weapon power 357; effect 2845.</summary>
-    public const int NUMBER_OF_VOLLEYS = 3;
+        /// <summary>Game data: tuning <c>Aoe.VolleyDamageDelay</c> of weapon power 357; effect 2845.</summary>
+        public const double AoeVolleyDamageDelay = 0.25;
 
-    /// <summary>Game data: tuning <c>Aoe.VolleyDamageDelay</c> of weapon power 357; effect 2845.</summary>
-    public const double VOLLEY_DAMAGE_DELAY = 0.25;
+        /// <summary>Game data: tuning <c>Aoe.VolleyInterval</c> of weapon power 357; effect 2845.</summary>
+        public const int AoeVolleyInterval = 1;
 
-    /// <summary>Game data: tuning <c>Aoe.VolleyInterval</c> of weapon power 357; effect 2845.</summary>
-    public const int VOLLEY_INTERVAL = 1;
+        /// <summary>Game data: tuning <c>Debuff.PrimaryAttributeCoefficient</c> of weapon power 357; Curse of An'zhyr (effect 2286).</summary>
+        public const double DebuffPrimaryAttributeCoefficient = 0.384;
 
-    /// <summary>Game data: tuning <c>Debuff.TickInterval</c> of weapon power 357; Curse of An'zhyr (effect 2286).</summary>
-    public const int TICK_INTERVAL = 3;
+        /// <summary>Game data: tuning <c>Debuff.TickInterval</c> of weapon power 357; Curse of An'zhyr (effect 2286).</summary>
+        public const int DebuffTickInterval = 3;
 
-    /// <summary>Game data: tuning <c>RangeDown</c> of weapon power 357; Icicles of An'zhyr (ability 1561).</summary>
-    public const int RANGE_DOWN = 3000;
+        /// <summary>Game data: tuning <c>RangeDown</c> of weapon power 357; Icicles of An'zhyr (ability 1561).</summary>
+        public const int RangeDown = 3000;
 
-    /// <summary>Game data: tuning <c>RangeUp</c> of weapon power 357; Icicles of An'zhyr (ability 1561).</summary>
-    public const int RANGE_UP = 2000;
+        /// <summary>Game data: tuning <c>RangeUp</c> of weapon power 357; Icicles of An'zhyr (ability 1561).</summary>
+        public const int RangeUp = 2000;
+    }
 }

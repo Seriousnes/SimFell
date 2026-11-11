@@ -19,9 +19,9 @@ public partial class FireBall : ArdeosAbility
 
     public FireBall(Ardeos owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AOE_DAMAGE_INTELLECT_COEFFICIENT;
+        BaseCoefficient = Constants.AoeDamageIntellectCoefficient;
         SetCooldown(AbilityCooldown, AbilityCharges, scalesWithHaste: true);
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
         Dot = new FireBallDot(owner);
     }
 
@@ -40,7 +40,7 @@ public partial class FireBall : ArdeosAbility
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
         if (struck.Count == 0) return;
-        double falloff = struck.Count > DAMAGE_SCALING_TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)DAMAGE_SCALING_TARGET_COUNT_THRESHOLD / struck.Count) : 1.0;
+        double falloff = struck.Count > Constants.DamageScalingTargetCountThreshold ? Math.Sqrt((double)Constants.DamageScalingTargetCountThreshold / struck.Count) : 1.0;
         foreach (var enemy in struck)
         {
             DealDamage(ctx, enemy, damageMultiplier: falloff * castDamage, extraCritChance: castCrit, onLanded: (c, dealt) =>

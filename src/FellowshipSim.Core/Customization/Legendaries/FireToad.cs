@@ -23,17 +23,17 @@ public partial class FireToad : Legendary
     {
         var frogs = hero.GetAbility<FireFrogs>();
         if (frogs == null) return;
-        frogs.ToadChance = ABILITY_FIRE_TOAD_SPAWN_CHANCE;
-        frogs.ToadsPerCast = BONUS_FIRE_TOAD_NUM_TOADS;
+        frogs.ToadChance = Constants.FireToadSpawnChance;
+        frogs.ToadsPerCast = Constants.BonusFireToadNumToads;
         // The toad's damage is the frog's, with every bonus a frog's hit has and its burn.
         frogs.ToadExplosion = (ctx, target) =>
         {
-            frogs.Attack.DealDamage(ctx, target, damageMultiplier: ABILITY_FIRE_TOAD_DAMAGE_SCALER);
+            frogs.Attack.DealDamage(ctx, target, damageMultiplier: Constants.FireToadDamageScaler);
             var nearby = ctx.Outcomes.SelectTargets(frogs.Attack.DamageLogId, ctx.ActiveEnemiesExcept(target), ctx);
             int struck = nearby.Count + 1;
-            double threshold = ABILITY_FIRE_TOAD_TARGET_COUNT_DAMAGE_SCALING_THRESHOLD;
+            double threshold = Constants.FireToadTargetCountDamageScalingThreshold;
             double falloff = struck > threshold ? Math.Sqrt(threshold / struck) : 1.0;
-            foreach (var enemy in nearby) frogs.Attack.DealDamage(ctx, enemy, damageMultiplier: ABILITY_FIRE_TOAD_AOE_DAMAGE_MULTIPLIER * falloff);
+            foreach (var enemy in nearby) frogs.Attack.DealDamage(ctx, enemy, damageMultiplier: Constants.FireToadAoeDamageMultiplier * falloff);
         };
     }
 }

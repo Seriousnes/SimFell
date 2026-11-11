@@ -12,7 +12,7 @@ public partial class CascadingInferno : Talent
 {
     public const int EffectId = 3177;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Cascading Inferno", EffectId, maxStacks: MAX_STACKS);
+    public static readonly AuraDef Buff = AuraDef.Effect("Cascading Inferno", EffectId, maxStacks: Constants.MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -21,7 +21,7 @@ public partial class CascadingInferno : Talent
     {
         var wave = hero.GetAbility<InfernalWave>();
         if (wave == null) return;
-        bool Ready(SimTime now) => hero.Auras.GetStacks(Buff, now) >= STACKS_THRESHOLD;
+        bool Ready(SimTime now) => hero.Auras.GetStacks(Buff, now) >= Constants.StacksThreshold;
         wave.InstantCastSources.Add(Ready);
         hero.OnCastCompleted += (ability, _, now) =>
         {
@@ -34,9 +34,9 @@ public partial class CascadingInferno : Talent
             empowered = false;
             if (cast.Ability != wave || !Ready(cast.Time)) return;
             empowered = true;
-            hero.Auras.ConsumeStack(Buff, cast.Time, STACKS_THRESHOLD);
-            cast.CritChance += ADDITIONAL_CRIT_CHANCE;
+            hero.Auras.ConsumeStack(Buff, cast.Time, Constants.StacksThreshold);
+            cast.CritChance += Constants.AdditionalCritChance;
         };
-        wave.CinderMultipliers.Add(cast => empowered && cast.Ability == wave ? RESOURCE_MULTIPLIER : 1.0);
+        wave.CinderMultipliers.Add(cast => empowered && cast.Ability == wave ? Constants.ResourceMultiplier : 1.0);
     }
 }

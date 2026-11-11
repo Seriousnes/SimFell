@@ -10,6 +10,10 @@ partial class CrimsonStrikes
     /// <summary>Game data: <c>name</c> of talent 768.</summary>
     public const string TalentName = "Crimson strikes";
 
-    /// <summary>Game data: tuning <c>Gunde.DashAttack.Talent.DamageMultiplier</c> of talent 768; Crimson Strikes (effect 3224), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.15;
+    /// <summary>Game data: the tuning values of talent 768.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Gunde.DashAttack.Talent.DamageMultiplier</c> of talent 768; Crimson Strikes (effect 3224), DamageScale MultiplyCompound.</summary>
+        public const double DashAttackTalentDamageMultiplier = 1.15;
+    }
 }

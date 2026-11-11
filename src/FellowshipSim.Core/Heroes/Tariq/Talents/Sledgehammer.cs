@@ -5,7 +5,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Talents;
 /// <summary>
 /// Talent 78: "Your Skull Crusher direct damage deals a share of the damage dealt to enemies near your target. (Damage
 /// reduced beyond a number of targets)." Logged as ability 2061 (whose own text states another share). Combat logs
-/// (fXyzwGcQkTrLD34R fight 4, 1p7AXmHfwV9CYMxR fight 30; 587 hits): each nearby enemy takes <see cref="DAMAGE_SCALER"/> of the
+/// (fXyzwGcQkTrLD34R fight 4, 1p7AXmHfwV9CYMxR fight 30; 587 hits): each nearby enemy takes <see cref="Constants.DamageScaler"/> of the
 /// physical hit dealt, crit included; it never crits itself.
 /// </summary>
 public partial class Sledgehammer : Talent
@@ -23,10 +23,10 @@ public partial class Sledgehammer : Talent
             if (dealt <= 0.0) return;
             var nearby = ctx.Outcomes.SelectTargets(DamageId, ctx.ActiveEnemiesExcept(target), ctx);
             if (nearby.Count == 0) return;
-            double falloff = nearby.Count > TARGET_THRESHOLD_FOR_DAMAGE_SCALE ? Math.Sqrt((double)TARGET_THRESHOLD_FOR_DAMAGE_SCALE / nearby.Count) : 1.0;
+            double falloff = nearby.Count > Constants.TargetThresholdForDamageScale ? Math.Sqrt((double)Constants.TargetThresholdForDamageScale / nearby.Count) : 1.0;
             for (int i = 0; i < nearby.Count; i++)
             {
-                ctx.ApplyDamage(hero, nearby[i], dealt * DAMAGE_SCALER * falloff, DamageId, TalentName, canCrit: false, 0.0, 1.0);
+                ctx.ApplyDamage(hero, nearby[i], dealt * Constants.DamageScaler * falloff, DamageId, TalentName, canCrit: false, 0.0, 1.0);
             }
         };
     }

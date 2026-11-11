@@ -10,9 +10,13 @@ partial class HarshWinds
     /// <summary>Game data: <c>name</c> of talent 98.</summary>
     public const string TalentName = "Harsh Winds";
 
-    /// <summary>Game data: tuning <c>FinisherIncreasedDodgeChance.AdditionalDodgeChance, Meiko.DurationalAoeDamageBuff.Talent.FinisherIncreasedDodgeChance.AdditionalDodgeChance</c> of talent 98; Harsh Winds (effect 2454), DodgeChance Additive.</summary>
-    public const double ADDITIONAL_DODGE_CHANCE = 0.2;
+    /// <summary>Game data: the tuning values of talent 98.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>FinisherIncreasedDodgeChance.AdditionalDodgeChance, Meiko.DurationalAoeDamageBuff.Talent.FinisherIncreasedDodgeChance.AdditionalDodgeChance</c> of talent 98; Harsh Winds (effect 2454), DodgeChance Additive.</summary>
+        public const double FinisherIncreasedDodgeChanceAdditionalDodgeChance = 0.2;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalAoeDamageBuff.Talent.IncreasedDamage.DamageMultiplier</c> of talent 98; Spirited Vortex (ability 1120), DamageScale MultiplyCompound.</summary>
-    public const double INCREASED_DAMAGE_DAMAGE_MULTIPLIER = 1.2;
+        /// <summary>Game data: tuning <c>Meiko.DurationalAoeDamageBuff.Talent.IncreasedDamage.DamageMultiplier</c> of talent 98; Spirited Vortex (ability 1120), DamageScale MultiplyCompound.</summary>
+        public const double DurationalAoeDamageBuffTalentIncreasedDamageDamageMultiplier = 1.2;
+    }
 }

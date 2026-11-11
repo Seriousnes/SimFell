@@ -10,6 +10,10 @@ partial class RumblingStone
     /// <summary>Game data: <c>name</c> of talent 95.</summary>
     public const string TalentName = "Rumbling Stone";
 
-    /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of talent 95; DamageScale MultiplyCompound.</summary>
-    public const double INCREASED_DAMAGE_DAMAGE_MULTIPLIER = 1.2;
+    /// <summary>Game data: the tuning values of talent 95.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of talent 95; DamageScale MultiplyCompound.</summary>
+        public const double EarthTalentIncreasedDamageDamageMultiplier = 1.2;
+    }
 }

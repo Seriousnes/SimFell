@@ -14,7 +14,7 @@ public partial class ResurgentWinds : Talent
     public const int MaxStacks = 2;
     public const string ProcKey = "resurgent_winds";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Resurgent Winds", BuffEffectId, DURATION, MaxStacks) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Resurgent Winds", BuffEffectId, Constants.InstantNoCooldownProcDuration, MaxStacks) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -36,7 +36,7 @@ public partial class ResurgentWinds : Talent
         {
             if (hero.SimContext is not { } ctx || !IsOffensive(ability)) return;
             // The Offensive Ability proc chance (InstantNoCooldownProc.OffensiveAbility.ProcChance).
-            if (ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE_1, ctx)) Grant(ctx);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.ProcChance, ctx)) Grant(ctx);
         };
     }
 

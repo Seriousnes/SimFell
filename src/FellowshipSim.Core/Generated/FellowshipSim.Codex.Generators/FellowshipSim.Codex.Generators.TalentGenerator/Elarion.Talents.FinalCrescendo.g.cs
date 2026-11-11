@@ -10,12 +10,16 @@ partial class FinalCrescendo
     /// <summary>Game data: <c>name</c> of talent 169.</summary>
     public const string TalentName = "Final Crescendo";
 
-    /// <summary>Game data: tuning <c>Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.DamageMultiplier</c> of talent 169; Final Cresendo (effect 2222), DamageScale Multiplicitive.</summary>
-    public const int DAMAGE_MULTIPLIER = 2;
+    /// <summary>Game data: the tuning values of talent 169.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.DamageMultiplier</c> of talent 169; Final Cresendo (effect 2222), DamageScale Multiplicitive.</summary>
+        public const int CastedProjectileHeavyDamageTalentStacksMoreDamageAndBouncesDamageMultiplier = 2;
 
-    /// <summary>Game data: tuning <c>Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.MaxBounces</c> of talent 169; Final Cresendo (effect 2222).</summary>
-    public const int MAX_BOUNCES = 9;
+        /// <summary>Game data: tuning <c>Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.MaxBounces</c> of talent 169; Final Cresendo (effect 2222).</summary>
+        public const int CastedProjectileHeavyDamageTalentStacksMoreDamageAndBouncesMaxBounces = 9;
 
-    /// <summary>Game data: tuning <c>StacksMoreDamageAndBounces.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.MaxStacks</c> of talent 169; Final Cresendo (effect 2222).</summary>
-    public const int MAX_STACKS = 2;
+        /// <summary>Game data: tuning <c>StacksMoreDamageAndBounces.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.StacksMoreDamageAndBounces.MaxStacks</c> of talent 169; Final Cresendo (effect 2222).</summary>
+        public const int StacksMoreDamageAndBouncesMaxStacks = 2;
+    }
 }

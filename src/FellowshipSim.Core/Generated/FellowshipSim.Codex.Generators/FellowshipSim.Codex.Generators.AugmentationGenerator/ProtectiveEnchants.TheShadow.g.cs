@@ -16,6 +16,10 @@ partial class TheShadow
     /// <summary>Game data: <c>randomChance</c> of protective enchant 54.</summary>
     public const int ProtectiveEnchantRandomChance = 0;
 
-    /// <summary>Game data: tuning <c>Perk.Passive.IncreasedIncomingMagicDamage.AdditionalReduction</c> of protective enchant 54; The Shadow (effect 2851), MagicDamageReduction Additive.</summary>
-    public const double ADDITIONAL_REDUCTION = 0.1;
+    /// <summary>Game data: the tuning values and rank runs of protective enchant 54.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Perk.Passive.IncreasedIncomingMagicDamage.AdditionalReduction</c> of protective enchant 54; The Shadow (effect 2851), MagicDamageReduction Additive.</summary>
+        public const double PerkPassiveIncreasedIncomingMagicDamageAdditionalReduction = 0.1;
+    }
 }

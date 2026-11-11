@@ -13,42 +13,46 @@ partial class Hemotoxin
     /// <summary>Game data: <c>radius</c> of talent 205.</summary>
     public const int TalentRadius = 700;
 
-    /// <summary>Game data: tuning <c>AreaDamageMultiplier, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.AreaDamageMultiplier</c> of talent 205; Hemotoxin (ability 1590).</summary>
-    public const double AREA_DAMAGE_MULTIPLIER = 0.5;
+    /// <summary>Game data: the tuning values of talent 205.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AreaDamageMultiplier, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.AreaDamageMultiplier</c> of talent 205; Hemotoxin (ability 1590).</summary>
+        public const double AreaDamageMultiplier = 0.5;
 
-    /// <summary>Game data: tuning <c>BleedToPoisonDamageMultiplier, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.BleedToPoisonDamageMultiplier</c> of talent 205; Hemotoxin (ability 1590).</summary>
-    public const double BLEED_TO_POISON_DAMAGE_MULTIPLIER = 0.75;
+        /// <summary>Game data: tuning <c>BleedToPoisonDamageMultiplier, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.BleedToPoisonDamageMultiplier</c> of talent 205; Hemotoxin (ability 1590).</summary>
+        public const double BleedToPoisonDamageMultiplier = 0.75;
 
-    /// <summary>Game data: tuning <c>ExplosivePoison.Chance, Mara.BleedAttackSpender.Talent.ExplosivePoison.Chance</c> of talent 205; Hemorrhaging Strike (ability 1208).</summary>
-    public const double EXPLOSIVE_POISON_CHANCE = 0.12;
+        /// <summary>Game data: tuning <c>ExplosivePoison.Chance, Mara.BleedAttackSpender.Talent.ExplosivePoison.Chance</c> of talent 205; Hemorrhaging Strike (ability 1208).</summary>
+        public const double ExplosivePoisonChance = 0.12;
 
-    /// <summary>Game data: tuning <c>ExplosivePoison.Poison.AgilityCoefficient, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.AgilityCoefficient</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const double AGILITY_COEFFICIENT = 0.2;
+        /// <summary>Game data: tuning <c>ExplosivePoison.Poison.AgilityCoefficient, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.AgilityCoefficient</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const double ExplosivePoisonPoisonAgilityCoefficient = 0.2;
 
-    /// <summary>Game data: tuning <c>ExplosivePoison.Poison.Duration, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.Duration</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const int DURATION = 9;
+        /// <summary>Game data: tuning <c>ExplosivePoison.Poison.Duration, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.Duration</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const int ExplosivePoisonPoisonDuration = 9;
 
-    /// <summary>Game data: tuning <c>ExplosivePoison.Poison.NumberOfStacksApplied, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.NumberOfStacksApplied</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const int NUMBER_OF_STACKS_APPLIED = 1;
+        /// <summary>Game data: tuning <c>ExplosivePoison.Poison.NumberOfStacksApplied, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.NumberOfStacksApplied</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const int ExplosivePoisonPoisonNumberOfStacksApplied = 1;
 
-    /// <summary>Game data: tuning <c>ExplosivePoison.Poison.TickInterval, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.TickInterval</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const double TICK_INTERVAL = 1.5;
+        /// <summary>Game data: tuning <c>ExplosivePoison.Poison.TickInterval, Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.TickInterval</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const double ExplosivePoisonPoisonTickInterval = 1.5;
 
-    /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 205; Hemorrhaging Strike (ability 1208).</summary>
-    public const double INCREASED_TICK_RATE_WHILE_SINGLE_TICK_RATE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 205; Hemorrhaging Strike (ability 1208).</summary>
+        public const double IncreasedTickRateWhileSingleTickRateIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.Radius</c> of talent 205; Hemotoxin (ability 1590).</summary>
-    public const int RADIUS = 700;
+        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.Radius</c> of talent 205; Hemotoxin (ability 1590).</summary>
+        public const int BleedAttackSpenderTalentExplosivePoisonExplosionRadius = 700;
 
-    /// <summary>Game data: tuning <c>TargetScalingThreshold, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.TargetScalingThreshold</c> of talent 205; Hemotoxin (ability 1590).</summary>
-    public const int TARGET_SCALING_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>TargetScalingThreshold, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.TargetScalingThreshold</c> of talent 205; Hemotoxin (ability 1590).</summary>
+        public const int TargetScalingThreshold = 1;
 
-    /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.AoeAttackSpender.DurationInSecondsTranslatedToPoisonDamage</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const double AOE_ATTACK_SPENDER_DURATION_IN_SECONDS_TRANSLATED_TO_POISON_DAMAGE = 0.4;
+        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.AoeAttackSpender.DurationInSecondsTranslatedToPoisonDamage</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const double BleedAttackSpenderTalentExplosivePoisonPoisonAoeAttackSpenderDurationInSecondsTranslatedToPoisonDamage = 0.4;
 
-    /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.HeavyAttackSpender.DurationInSecondsTranslatedToPoisonDamage</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const double HEAVY_ATTACK_SPENDER_DURATION_IN_SECONDS_TRANSLATED_TO_POISON_DAMAGE = 0.8;
+        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.HeavyAttackSpender.DurationInSecondsTranslatedToPoisonDamage</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const double BleedAttackSpenderTalentExplosivePoisonPoisonHeavyAttackSpenderDurationInSecondsTranslatedToPoisonDamage = 0.8;
 
-    /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.VisualDelay</c> of talent 205; Hemotoxin (effect 2337).</summary>
-    public const double VISUAL_DELAY = 0.35;
+        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Poison.VisualDelay</c> of talent 205; Hemotoxin (effect 2337).</summary>
+        public const double BleedAttackSpenderTalentExplosivePoisonPoisonVisualDelay = 0.35;
+    }
 }

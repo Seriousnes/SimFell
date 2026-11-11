@@ -10,7 +10,7 @@ public partial class TemperedDescent : Talent
 {
     public const int BuffEffectId = 2646;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, PROC_DURATION);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.MoveSpeedAndArmorBuffProcDuration);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

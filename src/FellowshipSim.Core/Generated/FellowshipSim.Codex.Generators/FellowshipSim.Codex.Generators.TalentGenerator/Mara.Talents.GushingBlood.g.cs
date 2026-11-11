@@ -13,21 +13,25 @@ partial class GushingBlood
     /// <summary>Game data: <c>radius</c> of talent 122.</summary>
     public const int TalentRadius = 600;
 
-    /// <summary>Game data: tuning <c>AdditionalMaxTargets, Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.AdditionalMaxTargets</c> of talent 122; ability 1517.</summary>
-    public const int ADDITIONAL_MAX_TARGETS = 4;
+    /// <summary>Game data: the tuning values of talent 122.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalMaxTargets, Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.AdditionalMaxTargets</c> of talent 122; ability 1517.</summary>
+        public const int AdditionalMaxTargets = 4;
 
-    /// <summary>Game data: tuning <c>ForwardAngleCutOff, Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.ForwardAngleCutOff</c> of talent 122; ability 1517.</summary>
-    public const int FORWARD_ANGLE_CUT_OFF = 270;
+        /// <summary>Game data: tuning <c>ForwardAngleCutOff, Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.ForwardAngleCutOff</c> of talent 122; ability 1517.</summary>
+        public const int ForwardAngleCutOff = 270;
 
-    /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Mara.BleedAttackSpender.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 122; Hemorrhaging Strike (ability 1208), CritChance Additive.</summary>
-    public const double ADDITIONAL_CRIT_CHANCE = 0.15;
+        /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Mara.BleedAttackSpender.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 122; Hemorrhaging Strike (ability 1208), CritChance Additive.</summary>
+        public const double IncreasedCritChanceAdditionalCritChance = 0.15;
 
-    /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 122; Hemorrhaging Strike (ability 1208).</summary>
-    public const double INCREASED_TICK_RATE_WHILE_SINGLE_TICK_RATE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 122; Hemorrhaging Strike (ability 1208).</summary>
+        public const double IncreasedTickRateWhileSingleTickRateIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.BleedMultiplier</c> of talent 122; Predator's Rush (effect 1715), DamageScale MultiplyCompound.</summary>
-    public const double BLEED_MULTIPLIER = 1.5;
+        /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.BleedMultiplier</c> of talent 122; Predator's Rush (effect 1715), DamageScale MultiplyCompound.</summary>
+        public const double ChargedDoubleAttackBuilderPoisonBleedMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.MaxRadius</c> of talent 122; ability 1517.</summary>
-    public const int MAX_RADIUS = 600;
+        /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.MaxRadius</c> of talent 122; ability 1517.</summary>
+        public const int ChargedResourceRefillSelfBuffTalentBleedAttackSpenderBleedAoeMaxRadius = 600;
+    }
 }

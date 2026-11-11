@@ -25,11 +25,11 @@ public partial class FocusedExpanse : Talent
         var multishot = hero.GetAbility<Multishot>();
         if (multishot == null) return;
         multishot.EmpoweringBuffs.Add(new Multishot.EmpoweringBuff(now => hero.Auras.HasAura(Buff, now), now => hero.Auras.ConsumeStack(Buff, now)));
-        multishot.DamageMultipliers.Add((_, empowered) => empowered ? DAMAGE_BONUS : 1.0);
+        multishot.DamageMultipliers.Add((_, empowered) => empowered ? Constants.DamageBonus : 1.0);
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is not FocusedShot || hero.SimContext is not { } ctx) return;
-            if (ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE, ctx)) hero.Auras.Apply(Buff, now);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.ProcChance, ctx)) hero.Auras.Apply(Buff, now);
         };
     }
 }

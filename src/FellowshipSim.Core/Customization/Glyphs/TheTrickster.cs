@@ -10,8 +10,8 @@ public partial class TheTrickster : Glyph
 
     public override void Bind(Hero hero)
     {
-        var aura = hero.Register(AuraDef.Effect(GlyphName, BuffEffectId, DURATION,
-            modifiers: StatModifier.Add(StatType.CritChance, ForRank(ADDITIONAL_CRIT_CHANCE_BY_RANK))));
+        var aura = hero.Register(AuraDef.Effect(GlyphName, BuffEffectId, Constants.Duration,
+            modifiers: StatModifier.Add(StatType.CritChance, ForRank(Constants.AdditionalCritChanceByRank))));
         hero.OnCastStarted += (ability, _, now) =>
         {
             if (ability.Category == AbilityCategory.Power) hero.Auras.Apply(aura, now);

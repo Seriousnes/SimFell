@@ -37,42 +37,46 @@ partial class HemorrhagingStrike
     /// <summary>Game data: <c>range</c> of ability 1208.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1208.</summary>
-    public const double AGILITY_COEFFICIENT_1 = 0.9841;
+    /// <summary>Game data: the tuning values of ability 1208.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1208.</summary>
+        public const double AgilityCoefficient = 0.9841;
 
-    /// <summary>Game data: tuning <c>InitialDamage.AgilityCoefficient</c> of ability 1208; Hemorrhaging Strike (effect 1721).</summary>
-    public const double AGILITY_COEFFICIENT_2 = 2.8665;
+        /// <summary>Game data: tuning <c>AttackSpeedMultiplier</c> of ability 1208.</summary>
+        public const double AttackSpeedMultiplier = 1.2;
 
-    /// <summary>Game data: tuning <c>AttackSpeedMultiplier</c> of ability 1208.</summary>
-    public const double ATTACK_SPEED_MULTIPLIER = 1.2;
+        /// <summary>Game data: tuning <c>BaseDuration</c> of ability 1208; talent Bloodrush (talent 163).</summary>
+        public const int BaseDuration = 12;
 
-    /// <summary>Game data: tuning <c>BaseDuration</c> of ability 1208; talent Bloodrush (talent 163).</summary>
-    public const int BASE_DURATION = 12;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1208.</summary>
+        public const int Cost = 20;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1208.</summary>
-    public const int COST = 20;
+        /// <summary>Game data: tuning <c>DurationIncreasePerComboPoint</c> of ability 1208; talent Bloodrush (talent 163).</summary>
+        public const int DurationIncreasePerComboPoint = 3;
 
-    /// <summary>Game data: tuning <c>DurationIncreasePerComboPoint</c> of ability 1208; talent Bloodrush (talent 163).</summary>
-    public const int DURATION_INCREASE_PER_COMBO_POINT = 3;
+        /// <summary>Game data: tuning <c>EnergyGainPerTick</c> of ability 1208.</summary>
+        public const int EnergyGainPerTick = 2;
 
-    /// <summary>Game data: tuning <c>EnergyGainPerTick</c> of ability 1208.</summary>
-    public const int ENERGY_GAIN_PER_TICK = 2;
+        /// <summary>Game data: tuning <c>EnergyRegenSpeedMultiplier</c> of ability 1208.</summary>
+        public const double EnergyRegenSpeedMultiplier = 0.8;
 
-    /// <summary>Game data: tuning <c>EnergyRegenSpeedMultiplier</c> of ability 1208.</summary>
-    public const double ENERGY_REGEN_SPEED_MULTIPLIER = 0.8;
+        /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease</c> of ability 1208.</summary>
+        public const double IncreasedTickRateWhileSingleTickRateIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease</c> of ability 1208.</summary>
-    public const double INCREASED_TICK_RATE_WHILE_SINGLE_TICK_RATE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>InitialDamage.AgilityCoefficient</c> of ability 1208; Hemorrhaging Strike (effect 1721).</summary>
+        public const double InitialDamageAgilityCoefficient = 2.8665;
 
-    /// <summary>Game data: tuning <c>InitialDamage.DamageMultiplierPerComboPoint</c> of ability 1208; Hemorrhaging Strike (effect 1721).</summary>
-    public const int DAMAGE_MULTIPLIER_PER_COMBO_POINT = 0;
+        /// <summary>Game data: tuning <c>InitialDamage.DamageMultiplierPerComboPoint</c> of ability 1208; Hemorrhaging Strike (effect 1721).</summary>
+        public const int InitialDamageDamageMultiplierPerComboPoint = 0;
 
-    /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.BleedMultiplier</c> of ability 1208; Predator's Rush (effect 1715), talent Gushing Blood (talent 122), DamageScale MultiplyCompound.</summary>
-    public const double BLEED_MULTIPLIER = 1.5;
+        /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.BleedMultiplier</c> of ability 1208; Predator's Rush (effect 1715), talent Gushing Blood (talent 122), DamageScale MultiplyCompound.</summary>
+        public const double ChargedDoubleAttackBuilderPoisonBleedMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1208; talent Puncture (talent 123), CritChance Additive.</summary>
-    public const double ADDITIONAL_CRIT_CHANCE = 0.15;
+        /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1208; talent Puncture (talent 123), CritChance Additive.</summary>
+        public const double TalentIncreasedCritChanceAdditionalCritChance = 0.15;
 
-    /// <summary>Game data: tuning <c>TickInterval</c> of ability 1208.</summary>
-    public const int TICK_INTERVAL = 3;
+        /// <summary>Game data: tuning <c>TickInterval</c> of ability 1208.</summary>
+        public const int TickInterval = 3;
+    }
 }

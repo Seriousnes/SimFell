@@ -43,42 +43,46 @@ partial class HeartseekerBarrage
     /// <summary>Game data: <c>range</c> of ability 1312.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1312.</summary>
-    public const double AGILITY_COEFFICIENT = 1.305;
+    /// <summary>Game data: the tuning values of ability 1312.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1312.</summary>
+        public const double AgilityCoefficient = 1.305;
 
-    /// <summary>Game data: tuning <c>CastDuration</c> of ability 1312.</summary>
-    public const int CAST_DURATION = 0;
+        /// <summary>Game data: tuning <c>CastDuration</c> of ability 1312.</summary>
+        public const int CastDuration = 0;
 
-    /// <summary>Game data: tuning <c>ChannelDuration</c> of ability 1312.</summary>
-    public const int CHANNEL_DURATION = 2;
+        /// <summary>Game data: tuning <c>ChannelDuration</c> of ability 1312.</summary>
+        public const int ChannelDuration = 2;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1312.</summary>
-    public const int COST = 30;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1312.</summary>
+        public const int Cost = 30;
 
-    /// <summary>Game data: tuning <c>Elarion.InstantMarkTarget.AdditionalHit.Aoe.AgilityCoefficient</c> of ability 1312; Lunarlight Salvo (ability 1309).</summary>
-    public const double AOE_AGILITY_COEFFICIENT = 2.19;
+        /// <summary>Game data: tuning <c>Elarion.InstantMarkTarget.AdditionalHit.Aoe.AgilityCoefficient</c> of ability 1312; Lunarlight Salvo (ability 1309).</summary>
+        public const double InstantMarkTargetAdditionalHitAoeAgilityCoefficient = 2.19;
 
-    /// <summary>Game data: tuning <c>Elarion.InstantMarkTarget.Talent.IncreasedDamage.DamageScale</c> of ability 1312; Lunarlight Mark (ability 1310), talent Lunar Fury (talent 130).</summary>
-    public const double DAMAGE_SCALE = 1.3;
+        /// <summary>Game data: tuning <c>Elarion.InstantMarkTarget.Talent.IncreasedDamage.DamageScale</c> of ability 1312; Lunarlight Mark (ability 1310), talent Lunar Fury (talent 130).</summary>
+        public const double InstantMarkTargetTalentIncreasedDamageDamageScale = 1.3;
 
-    /// <summary>Game data: tuning <c>IncreasedChannelDuration.Amount</c> of ability 1312; ability 1553, talent Fusillade (talent 128).</summary>
-    public const double AMOUNT = 0.5;
+        /// <summary>Game data: tuning <c>IncreasedChannelDuration.Amount</c> of ability 1312; ability 1553, talent Fusillade (talent 128).</summary>
+        public const double IncreasedChannelDurationAmount = 0.5;
 
-    /// <summary>Game data: tuning <c>MaxRadiusFromTarget</c> of ability 1312.</summary>
-    public const int MAX_RADIUS_FROM_TARGET = 1000;
+        /// <summary>Game data: tuning <c>MaxRadiusFromTarget</c> of ability 1312.</summary>
+        public const int MaxRadiusFromTarget = 1000;
 
-    /// <summary>Game data: tuning <c>MaxTicks</c> of ability 1312.</summary>
-    public const int MAX_TICKS = 10;
+        /// <summary>Game data: tuning <c>MaxTicks</c> of ability 1312.</summary>
+        public const int MaxTicks = 10;
 
-    /// <summary>Game data: tuning <c>ResetCooldownAndBuff.AdditionalDamagePerProjectile</c> of ability 1312; Impending Heartseeker (effect 2317), talent Impending Heartseeker (talent 168).</summary>
-    public const double ADDITIONAL_DAMAGE_PER_PROJECTILE = 0.1;
+        /// <summary>Game data: tuning <c>ResetCooldownAndBuff.AdditionalDamagePerProjectile</c> of ability 1312; Impending Heartseeker (effect 2317), talent Impending Heartseeker (talent 168).</summary>
+        public const double ResetCooldownAndBuffAdditionalDamagePerProjectile = 0.1;
 
-    /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration</c> of ability 1312; Impending Heartseeker (effect 2317), talent Impending Heartseeker (talent 168).</summary>
-    public const int BUFF_DURATION = 15;
+        /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration</c> of ability 1312; Impending Heartseeker (effect 2317), talent Impending Heartseeker (talent 168).</summary>
+        public const int ResetCooldownAndBuffBuffDuration = 15;
 
-    /// <summary>Game data: tuning <c>Riccochet.AdditionalTargets</c> of ability 1312; ability 1553, talent Piercing Seekers (talent 201).</summary>
-    public const int RICCOCHET_ADDITIONAL_TARGETS = 1;
+        /// <summary>Game data: tuning <c>Riccochet.AdditionalTargets</c> of ability 1312; ability 1553, talent Piercing Seekers (talent 201).</summary>
+        public const int RiccochetAdditionalTargets = 1;
 
-    /// <summary>Game data: tuning <c>SearchMaxAngle</c> of ability 1312.</summary>
-    public const int SEARCH_MAX_ANGLE = 320;
+        /// <summary>Game data: tuning <c>SearchMaxAngle</c> of ability 1312.</summary>
+        public const int SearchMaxAngle = 320;
+    }
 }

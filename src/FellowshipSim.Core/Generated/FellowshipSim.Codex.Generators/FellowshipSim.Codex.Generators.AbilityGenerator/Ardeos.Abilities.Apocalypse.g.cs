@@ -37,36 +37,40 @@ partial class Apocalypse
     /// <summary>Game data: <c>maxTargets</c> of ability 1273.</summary>
     public const int AbilityMaxTargets = 999999;
 
-    /// <summary>Game data: tuning <c>AddedCharges.MaxCharges</c> of ability 1273.</summary>
-    public const int ADDED_CHARGES_MAX_CHARGES = 2;
+    /// <summary>Game data: the tuning values of ability 1273.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AddedCharges.MaxCharges</c> of ability 1273.</summary>
+        public const int AddedChargesMaxCharges = 2;
 
-    /// <summary>Game data: tuning <c>CastTime</c> of ability 1273.</summary>
-    public const int CAST_TIME = 3;
+        /// <summary>Game data: tuning <c>CastTime</c> of ability 1273.</summary>
+        public const int CastTime = 3;
 
-    /// <summary>Game data: tuning <c>CooldownReductionFromCastedDotDetonate</c> of ability 1273.</summary>
-    public const int COOLDOWN_REDUCTION_FROM_CASTED_DOT_DETONATE = 0;
+        /// <summary>Game data: tuning <c>CooldownReductionFromCastedDotDetonate</c> of ability 1273.</summary>
+        public const int CooldownReductionFromCastedDotDetonate = 0;
 
-    /// <summary>Game data: tuning <c>Damage.DamageScalingTargetCountThreshold</c> of ability 1273; Apocalypse (effect 1833).</summary>
-    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>Damage.DamageScalingTargetCountThreshold</c> of ability 1273; Apocalypse (effect 1833).</summary>
+        public const int DamageDamageScalingTargetCountThreshold = 1;
 
-    /// <summary>Game data: tuning <c>Damage.IntellectCoefficient</c> of ability 1273; Apocalypse (effect 1833).</summary>
-    public const double INTELLECT_COEFFICIENT = 24.07;
+        /// <summary>Game data: tuning <c>Damage.IntellectCoefficient</c> of ability 1273; Apocalypse (effect 1833).</summary>
+        public const double DamageIntellectCoefficient = 24.07;
 
-    /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1273.</summary>
-    public const int MAX_RANGE_DOWN = 3000;
+        /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1273.</summary>
+        public const int MaxRangeDown = 3000;
 
-    /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1273.</summary>
-    public const int MAX_RANGE_UP = 2000;
+        /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1273.</summary>
+        public const int MaxRangeUp = 2000;
 
-    /// <summary>Game data: tuning <c>ReducedCastTime.CastTimeReductionInSeconds</c> of ability 1273; talent Apocalyptic Surge (talent 678).</summary>
-    public const double CAST_TIME_REDUCTION_IN_SECONDS = 1.5;
+        /// <summary>Game data: tuning <c>ReducedCastTime.CastTimeReductionInSeconds</c> of ability 1273; talent Apocalyptic Surge (talent 678).</summary>
+        public const double ReducedCastTimeCastTimeReductionInSeconds = 1.5;
 
-    /// <summary>Game data: tuning <c>StunAndCooldownReduction.MaxCooldownReduction</c> of ability 1273; Stunned (effect 2270).</summary>
-    public const int MAX_COOLDOWN_REDUCTION = 30;
+        /// <summary>Game data: tuning <c>StunAndCooldownReduction.MaxCooldownReduction</c> of ability 1273; Stunned (effect 2270).</summary>
+        public const int StunAndCooldownReductionMaxCooldownReduction = 30;
 
-    /// <summary>Game data: tuning <c>StunAndCooldownReduction.PerHitCooldownReduction</c> of ability 1273; Stunned (effect 2270).</summary>
-    public const int PER_HIT_COOLDOWN_REDUCTION = 2;
+        /// <summary>Game data: tuning <c>StunAndCooldownReduction.PerHitCooldownReduction</c> of ability 1273; Stunned (effect 2270).</summary>
+        public const int StunAndCooldownReductionPerHitCooldownReduction = 2;
 
-    /// <summary>Game data: tuning <c>StunAndCooldownReduction.StunDuration</c> of ability 1273; Stunned (effect 2270).</summary>
-    public const int STUN_DURATION = 3;
+        /// <summary>Game data: tuning <c>StunAndCooldownReduction.StunDuration</c> of ability 1273; Stunned (effect 2270).</summary>
+        public const int StunAndCooldownReductionStunDuration = 3;
+    }
 }

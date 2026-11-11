@@ -19,27 +19,31 @@ partial class BroodingShadows
     /// <summary>Game data: <c>charges</c> of ability 1130.</summary>
     public const int AbilityCharges = 2;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1130.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+    /// <summary>Game data: the tuning values of ability 1130.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1130.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Volatile Poison (effect 1731).</summary>
-    public const double AGILITY_COEFFICIENT_1 = 0.312;
+        /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Volatile Poison (effect 1731).</summary>
+        public const double AoeAttackBuilderPoisonAgilityCoefficient = 0.312;
 
-    /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Poison.Aoe.AgilityCoefficient</c> of ability 1130; ability 122.</summary>
-    public const double AGILITY_COEFFICIENT_2 = 1.248;
+        /// <summary>Game data: tuning <c>Mara.AoeAttackBuilder.Poison.Aoe.AgilityCoefficient</c> of ability 1130; ability 122.</summary>
+        public const double AoeAttackBuilderPoisonAoeAgilityCoefficient = 1.248;
 
-    /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Predator's Rush (effect 1715).</summary>
-    public const double AGILITY_COEFFICIENT_3 = 1.2276;
+        /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Predator's Rush (effect 1715).</summary>
+        public const double ChargedDoubleAttackBuilderPoisonAgilityCoefficient = 1.2276;
 
-    /// <summary>Game data: tuning <c>Mara.StrongerBehindAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Caustic Poison (effect 1585).</summary>
-    public const double AGILITY_COEFFICIENT_4 = 4.7893;
+        /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.TickInterval</c> of ability 1130; Predator's Rush (effect 1715).</summary>
+        public const int ChargedDoubleAttackBuilderPoisonTickInterval = 2;
 
-    /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.TickInterval</c> of ability 1130; Predator's Rush (effect 1715).</summary>
-    public const int TICK_INTERVAL = 2;
+        /// <summary>Game data: tuning <c>Mara.StrongerBehindAttackBuilder.Poison.AddedCritChance</c> of ability 1130; Caustic Poison (effect 1585), CritChance Additive.</summary>
+        public const int StrongerBehindAttackBuilderPoisonAddedCritChance = 1;
 
-    /// <summary>Game data: tuning <c>Mara.StrongerBehindAttackBuilder.Poison.AddedCritChance</c> of ability 1130; Caustic Poison (effect 1585), CritChance Additive.</summary>
-    public const int ADDED_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Mara.StrongerBehindAttackBuilder.Poison.AgilityCoefficient</c> of ability 1130; Caustic Poison (effect 1585).</summary>
+        public const double StrongerBehindAttackBuilderPoisonAgilityCoefficient = 4.7893;
 
-    /// <summary>Game data: tuning <c>PaddingCooldown</c> of ability 1130.</summary>
-    public const double PADDING_COOLDOWN = 0.7;
+        /// <summary>Game data: tuning <c>PaddingCooldown</c> of ability 1130.</summary>
+        public const double PaddingCooldown = 0.7;
+    }
 }

@@ -10,12 +10,16 @@ partial class WhippingApex
     /// <summary>Game data: <c>name</c> of talent 626.</summary>
     public const string TalentName = "Whipping Apex";
 
-    /// <summary>Game data: tuning <c>Firemage.SelfDefenceBuff.Duration</c> of talent 626; Flame Ward (ability 1258).</summary>
-    public const int DURATION = 4;
+    /// <summary>Game data: the tuning values of talent 626.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Firemage.SelfDefenceBuff.Duration</c> of talent 626; Flame Ward (ability 1258).</summary>
+        public const int ArdeosSelfDefenceBuffDuration = 4;
 
-    /// <summary>Game data: tuning <c>InstantSelfDefensive.MaxStacks, Meiko.HighDamageCleave.Talent.InstantSelfDefensive.MaxStacks</c> of talent 626; Lashing Stormkick (ability 1106).</summary>
-    public const int INSTANT_SELF_DEFENSIVE_MAX_STACKS = 5;
+        /// <summary>Game data: tuning <c>InstantSelfDefensive.MaxStacks, Meiko.HighDamageCleave.Talent.InstantSelfDefensive.MaxStacks</c> of talent 626; Lashing Stormkick (ability 1106).</summary>
+        public const int InstantSelfDefensiveMaxStacks = 5;
 
-    /// <summary>Game data: tuning <c>Meiko.InstantSelfDefensive.Heal.MaxStacks</c> of talent 626; Serenity (ability 1119).</summary>
-    public const int HEAL_MAX_STACKS = 50;
+        /// <summary>Game data: tuning <c>Meiko.InstantSelfDefensive.Heal.MaxStacks</c> of talent 626; Serenity (ability 1119).</summary>
+        public const int InstantSelfDefensiveHealMaxStacks = 50;
+    }
 }

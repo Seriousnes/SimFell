@@ -16,6 +16,10 @@ partial class MartialInitiative
     /// <summary>Game data: <c>randomChance</c> of aspect 51.</summary>
     public const int AspectRandomChance = 1;
 
-    /// <summary>Game data: rank run <c>Trait.WeaponDamageReductionPrimaryStatIncrease.Buff.WeaponCooldownToDuration</c> of aspect 51, transform <c>raw</c>; the tooltip has 10% / 18% / 25% / 32%.</summary>
-    public static readonly double[] BUFF_WEAPON_COOLDOWN_TO_DURATION_BY_RANK = [0.1, 0.18, 0.25, 0.32];
+    /// <summary>Game data: the tuning values and rank runs of aspect 51.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.WeaponDamageReductionPrimaryStatIncrease.Buff.WeaponCooldownToDuration</c> of aspect 51, transform <c>raw</c>; the tooltip has 10% / 18% / 25% / 32%.</summary>
+        public static readonly double[] BuffWeaponCooldownToDurationByRank = [0.1, 0.18, 0.25, 0.32];
+    }
 }

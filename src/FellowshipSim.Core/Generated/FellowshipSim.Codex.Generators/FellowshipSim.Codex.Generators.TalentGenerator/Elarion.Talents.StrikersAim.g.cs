@@ -10,12 +10,16 @@ partial class StrikersAim
     /// <summary>Game data: <c>name</c> of talent 680.</summary>
     public const string TalentName = "Striker's Aim";
 
-    /// <summary>Game data: tuning <c>NoBounceBuff.BuffDuration, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.BuffDuration</c> of talent 680; Striker's Aim (effect 3179).</summary>
-    public const int BUFF_DURATION = 2;
+    /// <summary>Game data: the tuning values of talent 680.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>NoBounceBuff.BuffDuration, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.BuffDuration</c> of talent 680; Striker's Aim (effect 3179).</summary>
+        public const int NoBounceBuffBuffDuration = 2;
 
-    /// <summary>Game data: tuning <c>NoBounceBuff.ExpertiseAdded, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.ExpertiseAdded</c> of talent 680; Striker's Aim (effect 3179), Expertise Additive.</summary>
-    public const double EXPERTISE_ADDED = 0.02;
+        /// <summary>Game data: tuning <c>NoBounceBuff.ExpertiseAdded, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.ExpertiseAdded</c> of talent 680; Striker's Aim (effect 3179), Expertise Additive.</summary>
+        public const double NoBounceBuffExpertiseAdded = 0.02;
 
-    /// <summary>Game data: tuning <c>NoBounceBuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.MaxStacks</c> of talent 680; Striker's Aim (effect 3179).</summary>
-    public const int MAX_STACKS = 3;
+        /// <summary>Game data: tuning <c>NoBounceBuff.MaxStacks, Bowguy.CastedProjectileHeavyDamage.Talent.NoBounceBuff.MaxStacks</c> of talent 680; Striker's Aim (effect 3179).</summary>
+        public const int NoBounceBuffMaxStacks = 3;
+    }
 }

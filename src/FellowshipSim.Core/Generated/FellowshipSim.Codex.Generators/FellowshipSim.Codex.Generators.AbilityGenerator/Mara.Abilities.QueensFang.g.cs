@@ -31,42 +31,46 @@ partial class QueensFang
     /// <summary>Game data: <c>range</c> of ability 1201.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1201.</summary>
-    public const double AGILITY_COEFFICIENT = 3.572;
+    /// <summary>Game data: the tuning values of ability 1201.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1201.</summary>
+        public const double AgilityCoefficient = 3.572;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1201.</summary>
-    public const int COST = 40;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1201.</summary>
+        public const int Cost = 40;
 
-    /// <summary>Game data: tuning <c>DamageMultiplierPerComboPoint</c> of ability 1201.</summary>
-    public const double DAMAGE_MULTIPLIER_PER_COMBO_POINT = 0.2;
+        /// <summary>Game data: tuning <c>DamageMultiplierPerComboPoint</c> of ability 1201.</summary>
+        public const double DamageMultiplierPerComboPoint = 0.2;
 
-    /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.Duration</c> of ability 1201; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
-    public const int DURATION_1 = 20;
+        /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.Duration</c> of ability 1201; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
+        public const int DamageSpendersBuffOtherSpenderDuration = 20;
 
-    /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.Duration</c> of ability 1201; Feed the Queen (effect 2195), talent Feed the Queen (talent 121).</summary>
-    public const int DURATION_2 = 12;
+        /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of ability 1201; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
+        public const int DamageSpendersBuffOtherSpenderMaxNumberOfStacks = 2;
 
-    /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of ability 1201; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
-    public const int MAX_NUMBER_OF_STACKS = 2;
+        /// <summary>Game data: tuning <c>ExplosivePoison.Poison.VisualDelay</c> of ability 1201; Hemotoxin (effect 2337), talent Hemotoxin (talent 205).</summary>
+        public const double ExplosivePoisonPoisonVisualDelay = 0.35;
 
-    /// <summary>Game data: tuning <c>ExplosivePoison.Poison.VisualDelay</c> of ability 1201; Hemotoxin (effect 2337), talent Hemotoxin (talent 205).</summary>
-    public const double EXPLOSIVE_POISON_POISON_VISUAL_DELAY = 0.35;
+        /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.DamageMultiplierPerStack</c> of ability 1201; Feed the Queen (effect 2195), talent Feed the Queen (talent 121).</summary>
+        public const double HeavyAttackSpenderDamageIncreaseDamageMultiplierPerStack = 0.12;
 
-    /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.DamageMultiplierPerStack</c> of ability 1201; Feed the Queen (effect 2195), talent Feed the Queen (talent 121).</summary>
-    public const double DAMAGE_MULTIPLIER_PER_STACK = 0.12;
+        /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.Duration</c> of ability 1201; Feed the Queen (effect 2195), talent Feed the Queen (talent 121).</summary>
+        public const int HeavyAttackSpenderDamageIncreaseDuration = 12;
 
-    /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.MaxStacks</c> of ability 1201; Feed the Queen (effect 2195), talent Feed the Queen (talent 121).</summary>
-    public const int MAX_STACKS = 6;
+        /// <summary>Game data: tuning <c>HeavyAttackSpenderDamageIncrease.MaxStacks</c> of ability 1201; Feed the Queen (effect 2195), talent Feed the Queen (talent 121).</summary>
+        public const int HeavyAttackSpenderDamageIncreaseMaxStacks = 6;
 
-    /// <summary>Game data: tuning <c>Mara.CopyCharacterDamage.DamageMultiplier</c> of ability 1201; Matriarch Macabre (ability 1420), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER_1 = 0.5;
+        /// <summary>Game data: tuning <c>Mara.CopyCharacterDamage.DamageMultiplier</c> of ability 1201; Matriarch Macabre (ability 1420), DamageScale MultiplyCompound.</summary>
+        public const double CopyCharacterDamageDamageMultiplier = 0.5;
 
-    /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of ability 1201; Assassin's Guile (effect 2245), talent Assassin's Guile (talent 422), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER_2 = 1.4;
+        /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of ability 1201; Assassin's Guile (effect 2245), talent Assassin's Guile (talent 422), DamageScale MultiplyCompound.</summary>
+        public const double StealthTalentSpenderIncreasedDamageDamageMultiplier = 1.4;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of ability 1201; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443), DamageScale MultiplyCompound.</summary>
-    public const int DAMAGE_SCALER = 2;
+        /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of ability 1201; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443), DamageScale MultiplyCompound.</summary>
+        public const int TalentDamageSpendersBuffOtherSpenderDamageScaler = 2;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.ResourceAttackSpenderCritChance.AdditionalCritChance</c> of ability 1201; ability 1435, talent Deadly Scheme (talent 110), CritChance Additive.</summary>
-    public const int ADDITIONAL_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Mara.Talent.ResourceAttackSpenderCritChance.AdditionalCritChance</c> of ability 1201; ability 1435, talent Deadly Scheme (talent 110), CritChance Additive.</summary>
+        public const int TalentResourceAttackSpenderCritChanceAdditionalCritChance = 1;
+    }
 }

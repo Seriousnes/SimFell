@@ -8,8 +8,8 @@ public partial class DrenchedInBlood : Legendary
 {
     public const int BuffEffectId = 2262;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Drenched in Blood", BuffEffectId, DURATION,
-        modifiers: StatModifier.Add(StatType.Expertise, ADDITIONAL_EXPERTISE));
+    public static readonly AuraDef Buff = AuraDef.Effect("Drenched in Blood", BuffEffectId, Constants.BuffDuration,
+        modifiers: StatModifier.Add(StatType.Expertise, Constants.BuffAdditionalExpertise));
 
     public override void Bind(Hero hero) => hero.OnSpiritRefund += (_, _, ctx) => hero.Auras.Apply(Buff, ctx.CurrentTime);
 }

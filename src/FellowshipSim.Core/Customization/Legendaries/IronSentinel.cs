@@ -11,6 +11,6 @@ public partial class IronSentinel : Legendary
 {
     public override void Bind(Hero hero)
     {
-        if (hero is Helena && hero.GetAbility<HoldTheLine>() is { } holdTheLine) holdTheLine.UseChargesWithHaste(CHARGES_NUM_CHARGES);
+        if (hero is Helena && hero.GetAbility<HoldTheLine>() is { } holdTheLine) holdTheLine.UseChargesWithHaste(Constants.ChargesNumCharges);
     }
 }

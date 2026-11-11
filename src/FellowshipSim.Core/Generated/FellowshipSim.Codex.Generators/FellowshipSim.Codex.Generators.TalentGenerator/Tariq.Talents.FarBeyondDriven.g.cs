@@ -10,12 +10,16 @@ partial class FarBeyondDriven
     /// <summary>Game data: <c>name</c> of talent 79.</summary>
     public const string TalentName = "Far Beyond Driven";
 
-    /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.Duration</c> of talent 79; Far Beyond Driven (effect 1744).</summary>
-    public const int DURATION = 20;
+    /// <summary>Game data: the tuning values of talent 79.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.Duration</c> of talent 79; Far Beyond Driven (effect 1744).</summary>
+        public const int TalentAutoAttackBuffDurationalStatBonusDuration = 20;
 
-    /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.MaxStacks</c> of talent 79; Far Beyond Driven (effect 1744).</summary>
-    public const int MAX_STACKS = 5;
+        /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.MaxStacks</c> of talent 79; Far Beyond Driven (effect 1744).</summary>
+        public const int TalentAutoAttackBuffDurationalStatBonusMaxStacks = 5;
 
-    /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.StatIncrease</c> of talent 79; Far Beyond Driven (effect 1744), Spirit Additive.</summary>
-    public const double STAT_INCREASE = 0.015;
+        /// <summary>Game data: tuning <c>Ink.Talent.AutoAttackBuffDurationalStatBonus.StatIncrease</c> of talent 79; Far Beyond Driven (effect 1744), Spirit Additive.</summary>
+        public const double TalentAutoAttackBuffDurationalStatBonusStatIncrease = 0.015;
+    }
 }

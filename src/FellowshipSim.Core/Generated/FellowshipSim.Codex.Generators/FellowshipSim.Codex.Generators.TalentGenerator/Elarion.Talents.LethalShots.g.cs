@@ -10,9 +10,13 @@ partial class LethalShots
     /// <summary>Game data: <c>name</c> of talent 202.</summary>
     public const string TalentName = "Lethal Shots";
 
-    /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.AddedCritChance, Bowguy.CastedProjectileHeavyDamage.Talent.ChanceToHaveIncreasedCritChance.AddedCritChance</c> of talent 202; Highwind Arrow (ability 1313).</summary>
-    public const int CHANCE_TO_HAVE_INCREASED_CRIT_CHANCE_ADDED_CRIT_CHANCE = 1;
+    /// <summary>Game data: the tuning values of talent 202.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.AddedCritChance, Bowguy.CastedProjectileHeavyDamage.Talent.ChanceToHaveIncreasedCritChance.AddedCritChance</c> of talent 202; Highwind Arrow (ability 1313).</summary>
+        public const int ChanceToHaveIncreasedCritChanceAddedCritChance = 1;
 
-    /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.ChanceToHaveIncreasedCritChance.ProcChance</c> of talent 202; Highwind Arrow (ability 1313).</summary>
-    public const double CHANCE_TO_HAVE_INCREASED_CRIT_CHANCE_PROC_CHANCE = 0.4;
+        /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.ChanceToHaveIncreasedCritChance.ProcChance</c> of talent 202; Highwind Arrow (ability 1313).</summary>
+        public const double ChanceToHaveIncreasedCritChanceProcChance = 0.4;
+    }
 }

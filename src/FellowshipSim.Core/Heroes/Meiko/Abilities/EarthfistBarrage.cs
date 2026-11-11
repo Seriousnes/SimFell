@@ -33,7 +33,7 @@ public partial class EarthfistBarrage : MeikoFinisher
 
     public EarthfistBarrage(Meiko owner) : base(owner, AbilityId, AbilityName, AbilityCategory, Technique.Fist, Technique.Kick)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
+        BaseCoefficient = Constants.AgilityCoefficient;
         SetChannel(AbilityChannelTime, AbilityChannelTick);
         ChannelTicksOnStart = true;
     }
@@ -60,7 +60,7 @@ public partial class EarthfistBarrage : MeikoFinisher
     {
         if (target is not { IsSleeping: false }) return;
         bool uppercut = _strikes++ >= Punches;
-        double multiplier = _channelMultiplier * (uppercut ? FINAL_HIT_AGILITY_COEFFICIENT / AGILITY_COEFFICIENT * UppercutMultiplier : 1.0);
+        double multiplier = _channelMultiplier * (uppercut ? Constants.FinalHitAgilityCoefficient / Constants.AgilityCoefficient * UppercutMultiplier : 1.0);
         DealDamage(ctx, target, multiplier);
         Punched?.Invoke(ctx, target);
         if (uppercut && ExplosionTargetThreshold > 0) Explode(ctx, target, multiplier);

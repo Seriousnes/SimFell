@@ -10,6 +10,10 @@ partial class FrontLineDefender
     /// <summary>Game data: <c>name</c> of talent 646.</summary>
     public const string TalentName = "Front Line Defender";
 
-    /// <summary>Game data: tuning <c>IncreasedDamageReduction.DamageReductionIncreasePerLevel, Warmaster.Toughness.Talent.IncreasedDamageReduction.DamageReductionIncreasePerLevel</c> of talent 646; ability 960.</summary>
-    public const double INCREASED_DAMAGE_REDUCTION_DAMAGE_REDUCTION_INCREASE_PER_LEVEL = 0.05;
+    /// <summary>Game data: the tuning values of talent 646.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDamageReduction.DamageReductionIncreasePerLevel, Warmaster.Toughness.Talent.IncreasedDamageReduction.DamageReductionIncreasePerLevel</c> of talent 646; ability 960.</summary>
+        public const double IncreasedDamageReductionDamageReductionIncreasePerLevel = 0.05;
+    }
 }

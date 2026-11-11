@@ -15,9 +15,9 @@ public partial class DeadlyFocus : Talent
     {
         if (hero.GetAbility<FocusedShot>() is { } focusedShot)
         {
-            focusedShot.AddDamageMultiplier(ENHANCED_DAMAGE_SCALER);
-            focusedShot.FocusGainMultiplier *= ENHANCED_RESOURCE_GENERATION_SCALER;
+            focusedShot.AddDamageMultiplier(Constants.EnhancedDamageScaler);
+            focusedShot.FocusGainMultiplier *= Constants.EnhancedResourceGenerationScaler;
         }
-        hero.GetAbility<CelestialShot>()?.AddDamageMultiplier(ENHANCED_DAMAGE_SCALER);
+        hero.GetAbility<CelestialShot>()?.AddDamageMultiplier(Constants.EnhancedDamageScaler);
     }
 }

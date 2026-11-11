@@ -43,18 +43,22 @@ partial class StarfallVolley
     /// <summary>Game data: <c>radius</c> of ability 126.</summary>
     public const int AbilityRadius = 700;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 126.</summary>
-    public const int AGILITY_COEFFICIENT = 1;
+    /// <summary>Game data: the tuning values of ability 126.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 126.</summary>
+        public const int AgilityCoefficient = 1;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 126.</summary>
-    public const int COST = 30;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 126.</summary>
+        public const int Cost = 30;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDamage</c> of ability 126; talent Astronomer's Hail (legendary power 516), DamageScale MultiplyCompound.</summary>
-    public const int INCREASED_DAMAGE = 1;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDamage</c> of ability 126; talent Astronomer's Hail (legendary power 516), DamageScale MultiplyCompound.</summary>
+        public const int TalentIncreasedDamage = 1;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDurationAndExtension.MainTargetDamageBonus.DamageScaler</c> of ability 126; talent Astronomer's Hail (legendary power 516), DamageScale MultiplyCompound.</summary>
-    public const int MAIN_TARGET_DAMAGE_BONUS_DAMAGE_SCALER = 2;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDurationAndExtension.MainTargetDamageBonus.DamageScaler</c> of ability 126; talent Astronomer's Hail (legendary power 516), DamageScale MultiplyCompound.</summary>
+        public const int TalentIncreasedDurationAndExtensionMainTargetDamageBonusDamageScaler = 2;
 
-    /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 126.</summary>
-    public const int TARGET_COUNT_THRESHOLD = 12;
+        /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 126.</summary>
+        public const int TargetCountThreshold = 12;
+    }
 }

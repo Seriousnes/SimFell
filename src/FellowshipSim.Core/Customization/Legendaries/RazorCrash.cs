@@ -17,7 +17,7 @@ public partial class RazorCrash : Legendary
     public const int AgonizingWoundEffectId = 2361;
 
     /// <summary>Agonizing Wound on every enemy hit: it deals less damage to Helena.</summary>
-    public static readonly AuraDef AgonizingWound = AuraDef.Effect("Agonizing Wound", AgonizingWoundEffectId, DURATION);
+    public static readonly AuraDef AgonizingWound = AuraDef.Effect("Agonizing Wound", AgonizingWoundEffectId, Constants.FirstHitAoeDamageDebuffDuration);
 
     public override void Bind(Hero hero)
     {

@@ -24,10 +24,10 @@ public partial class Invictus : Talent
         var burst = new SolarBurst(xavian);
         xavian.SolarShield.Shielded += burst.Strike;
         hero.CooldownRecoveryBonuses.Add(now =>
-            hero.Auras.HasAura(SolarShield.Buff, now) ? HASTE_TO_COOLDOWN_RECOVERY_SCALER * hero.GetHaste(now) : 0.0);
+            hero.Auras.HasAura(SolarShield.Buff, now) ? Constants.SecondaryStatBoostsHasteHasteToCooldownRecoveryScaler * hero.GetHaste(now) : 0.0);
         hero.CooldownAccelerationAuraKeys.Add(SolarShield.Buff.Key);
         hero.OnSpiritRefund += (_, _, ctx) =>
-            hero.ReduceCooldown<SolarShield>(SimTime.FromSeconds(SECONDARY_STAT_BOOSTS_SPIRIT_SPIRIT_REFUND_COOLDOWN_REDUCTION), ctx.CurrentTime);
+            hero.ReduceCooldown<SolarShield>(SimTime.FromSeconds(Constants.SecondaryStatBoostsSpiritSpiritRefundCooldownReduction), ctx.CurrentTime);
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ public partial class Invictus : Talent
             if (ctx.ActiveEnemies.Count == 0) return;
             _absorb = absorb;
             var struck = ctx.Outcomes.SelectTargets(DamageLogId, ctx.ActiveEnemies, ctx);
-            double falloff = struck.Count > SECONDARY_STAT_BOOSTS_CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT_TARGET_COUNT_THRESHOLD
-                ? Math.Sqrt((double)SECONDARY_STAT_BOOSTS_CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT_TARGET_COUNT_THRESHOLD / struck.Count)
+            double falloff = struck.Count > Constants.SecondaryStatBoostsCritChanceCritChanceToDamageOnCommitTargetCountThreshold
+                ? Math.Sqrt((double)Constants.SecondaryStatBoostsCritChanceCritChanceToDamageOnCommitTargetCountThreshold / struck.Count)
                 : 1.0;
             for (int i = 0; i < struck.Count; i++) DealDamage(ctx, struck[i], falloff, forcedCrit: false);
         }
@@ -60,7 +60,7 @@ public partial class Invictus : Talent
         public override double BaseDamage(SimulationContext ctx, EnemyTarget? target, double damageMultiplier = 1.0)
         {
             var now = ctx.CurrentTime;
-            return _absorb * SECONDARY_STAT_BOOSTS_CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT * Owner.CritChance(now)
+            return _absorb * Constants.SecondaryStatBoostsCritChanceCritChanceToDamageOnCommit * Owner.CritChance(now)
                    * (1.0 + Owner.Expertise(now))
                    * DamageScaleFor(ctx)
                    * Owner.DamageMultiplierAgainst(target, now)

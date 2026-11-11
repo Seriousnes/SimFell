@@ -28,21 +28,25 @@ partial class FocusedShot
     /// <summary>Game data: <c>range</c> of ability 1315.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1315.</summary>
-    public const double AGILITY_COEFFICIENT = 1.6164;
+    /// <summary>Game data: the tuning values of ability 1315.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1315.</summary>
+        public const double AgilityCoefficient = 1.6164;
 
-    /// <summary>Game data: tuning <c>Buff.MaxStacks</c> of ability 1315; Steady Hands (effect 1892).</summary>
-    public const int MAX_STACKS = 3;
+        /// <summary>Game data: tuning <c>Buff.MaxStacks</c> of ability 1315; Steady Hands (effect 1892).</summary>
+        public const int BuffMaxStacks = 3;
 
-    /// <summary>Game data: tuning <c>CastDuration</c> of ability 1315.</summary>
-    public const double CAST_DURATION = 1.5;
+        /// <summary>Game data: tuning <c>CastDuration</c> of ability 1315.</summary>
+        public const double CastDuration = 1.5;
 
-    /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
-    public const double RESOURCE_GENERATION_SCALER = 0.5;
+        /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
+        public const double EnhancedResourceGenerationScaler = 0.5;
 
-    /// <summary>Game data: tuning <c>FocusGain</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
-    public const int FOCUS_GAIN = 20;
+        /// <summary>Game data: tuning <c>FocusGain</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
+        public const int FocusGain = 20;
 
-    /// <summary>Game data: tuning <c>Talent.Enhanced.DamageScaler</c> of ability 1315; talent Deadly Focus (talent 679), DamageScale MultiplyCompound.</summary>
-    public const int DAMAGE_SCALER = 2;
+        /// <summary>Game data: tuning <c>Talent.Enhanced.DamageScaler</c> of ability 1315; talent Deadly Focus (talent 679), DamageScale MultiplyCompound.</summary>
+        public const int TalentEnhancedDamageScaler = 2;
+    }
 }

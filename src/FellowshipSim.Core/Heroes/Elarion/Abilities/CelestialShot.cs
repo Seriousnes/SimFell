@@ -23,8 +23,8 @@ public partial class CelestialShot : ElarionAbility
 
     public CelestialShot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
-        FocusCost = COST;
+        BaseCoefficient = Constants.AgilityCoefficient;
+        FocusCost = Constants.Cost;
     }
 
     public override void Connect()

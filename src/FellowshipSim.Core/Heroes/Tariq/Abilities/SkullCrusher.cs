@@ -21,7 +21,7 @@ public partial class SkullCrusher : TariqAbility
 
     public SkullCrusher(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(CooldownSeconds, scalesWithHaste: true);
         // Game data: a shorter coefficient on the hasted global cooldown than the shared one. Combat logs (3 Tariq fights):
         // the next cast comes a shorter global cooldown after a Skull Crusher.
@@ -39,7 +39,7 @@ public partial class SkullCrusher : TariqAbility
         DealDamage(ctx, target, damageMultiplier: multiplier, onLanded: (c, dealt) => Landed?.Invoke(c, target, dealt));
         if (hero.IsCharged(ctx.CurrentTime))
         {
-            DealDamage(ctx, target, damageMultiplier: multiplier * LIGHTNING_STRENGTH_COEFFICIENT / STRENGTH_COEFFICIENT, overrideName: LightningName,
+            DealDamage(ctx, target, damageMultiplier: multiplier * Constants.LightningStrengthCoefficient / Constants.StrengthCoefficient, overrideName: LightningName,
                 extraCritChance: hero.LightningCritChance);
         }
     }

@@ -10,15 +10,19 @@ partial class ApocalypticSurge
     /// <summary>Game data: <c>name</c> of talent 678.</summary>
     public const string TalentName = "Apocalyptic Surge";
 
-    /// <summary>Game data: tuning <c>BuffDuration, Firemage.CastedDotDetonate.Talent.FreeProc.BuffDuration</c> of talent 678; ability 2245.</summary>
-    public const int BUFF_DURATION = 18;
+    /// <summary>Game data: the tuning values of talent 678.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BuffDuration, Firemage.CastedDotDetonate.Talent.FreeProc.BuffDuration</c> of talent 678; ability 2245.</summary>
+        public const int BuffDuration = 18;
 
-    /// <summary>Game data: tuning <c>MaxStacks, Firemage.CastedDotDetonate.Talent.FreeProc.MaxStacks</c> of talent 678; ability 2245.</summary>
-    public const int MAX_STACKS = 4;
+        /// <summary>Game data: tuning <c>MaxStacks, Firemage.CastedDotDetonate.Talent.FreeProc.MaxStacks</c> of talent 678; ability 2245.</summary>
+        public const int MaxStacks = 4;
 
-    /// <summary>Game data: tuning <c>StacksGranted, Firemage.CastedDotDetonate.Talent.FreeProc.StacksGranted</c> of talent 678; ability 2245.</summary>
-    public const int STACKS_GRANTED = 2;
+        /// <summary>Game data: tuning <c>StacksGranted, Firemage.CastedDotDetonate.Talent.FreeProc.StacksGranted</c> of talent 678; ability 2245.</summary>
+        public const int StacksGranted = 2;
 
-    /// <summary>Game data: tuning <c>ReducedCastTime.CastTimeReductionInSeconds, Firemage.CastedPlacedAoe.Talent.ReducedCastTime.CastTimeReductionInSeconds</c> of talent 678; Apocalypse (ability 1273).</summary>
-    public const double REDUCED_CAST_TIME_CAST_TIME_REDUCTION_IN_SECONDS = 1.5;
+        /// <summary>Game data: tuning <c>ReducedCastTime.CastTimeReductionInSeconds, Firemage.CastedPlacedAoe.Talent.ReducedCastTime.CastTimeReductionInSeconds</c> of talent 678; Apocalypse (ability 1273).</summary>
+        public const double ReducedCastTimeCastTimeReductionInSeconds = 1.5;
+    }
 }

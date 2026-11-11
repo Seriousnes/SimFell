@@ -13,14 +13,14 @@ public partial class FlightOfTheNavir : RimeAbility
     /// <summary>Combat logs report the circling swallows' hits under effect 1365.</summary>
     public const int SwallowDamageEffectId = 1365;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Flight of the Navir", BuffEffectId, DURATION);
+    public static readonly AuraDef Buff = AuraDef.Effect("Flight of the Navir", BuffEffectId, Constants.AoeDuration);
 
     /// <summary>The circling swallows: Frost Swallows logged under effect 1365 that come back when they hit.</summary>
     public CirclingSwallows Swallows { get; }
 
     public FlightOfTheNavir(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_INTELLECT_COEFFICIENT;
+        BaseCoefficient = Constants.AoeDamageIntellectCoefficient;
         SetCooldown(AbilityCooldown);
         Swallows = new CirclingSwallows(owner);
     }
@@ -56,7 +56,7 @@ public partial class FlightOfTheNavir : RimeAbility
     {
         private int _inFlight;
 
-        public CirclingSwallows(Rime owner) : base(owner, LogIds.Effect(SwallowDamageEffectId), DAMAGE_INTELLECT_COEFFICIENT) { }
+        public CirclingSwallows(Rime owner) : base(owner, LogIds.Effect(SwallowDamageEffectId), FlightOfTheNavir.Constants.AoeDamageIntellectCoefficient) { }
 
         /// <summary>
         /// The circling swallows not out attacking: one that is sent comes back when it hits (combat logs: a Cold Snap cast

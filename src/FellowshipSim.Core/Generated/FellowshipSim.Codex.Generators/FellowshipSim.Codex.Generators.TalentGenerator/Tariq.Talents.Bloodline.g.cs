@@ -10,15 +10,19 @@ partial class Bloodline
     /// <summary>Game data: <c>name</c> of talent 76.</summary>
     public const string TalentName = "Bloodline";
 
-    /// <summary>Game data: tuning <c>IncreasedMovementSpeed.SpeedMultiplier, Ink.Talent.IncreasedMovementSpeed.SpeedMultiplier</c> of talent 76; effect 1738, MoveSpeed MultiplyCompound.</summary>
-    public const double SPEED_MULTIPLIER = 1.2;
+    /// <summary>Game data: the tuning values of talent 76.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedMovementSpeed.SpeedMultiplier, Ink.Talent.IncreasedMovementSpeed.SpeedMultiplier</c> of talent 76; effect 1738, MoveSpeed MultiplyCompound.</summary>
+        public const double IncreasedMovementSpeedSpeedMultiplier = 1.2;
 
-    /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.MovementSpeedBuff.Duration, Ink.MoveToLocationAoeDamage.Talent.ReducedCooldownIfNoHit.MovementSpeedBuff.Duration</c> of talent 76; Leap Smash (ability 1225).</summary>
-    public const int MOVEMENT_SPEED_BUFF_DURATION = 4;
+        /// <summary>Game data: tuning <c>ReducedCooldownIfNoHit.MovementSpeedBuff.Duration, Ink.MoveToLocationAoeDamage.Talent.ReducedCooldownIfNoHit.MovementSpeedBuff.Duration</c> of talent 76; Leap Smash (ability 1225).</summary>
+        public const int ReducedCooldownIfNoHitMovementSpeedBuffDuration = 4;
 
-    /// <summary>Game data: tuning <c>PassiveResourceGeneration.FuryPerTick, Ink.Talent.PassiveResourceGeneration.FuryPerTick</c> of talent 76; effect 2424, Resources Additive.</summary>
-    public const double FURY_PER_TICK = 0.01;
+        /// <summary>Game data: tuning <c>PassiveResourceGeneration.FuryPerTick, Ink.Talent.PassiveResourceGeneration.FuryPerTick</c> of talent 76; effect 2424, Resources Additive.</summary>
+        public const double PassiveResourceGenerationFuryPerTick = 0.01;
 
-    /// <summary>Game data: tuning <c>PassiveResourceGeneration.Period, Ink.Talent.PassiveResourceGeneration.Period</c> of talent 76; effect 2424.</summary>
-    public const int PERIOD = 1;
+        /// <summary>Game data: tuning <c>PassiveResourceGeneration.Period, Ink.Talent.PassiveResourceGeneration.Period</c> of talent 76; effect 2424.</summary>
+        public const int PassiveResourceGenerationPeriod = 1;
+    }
 }

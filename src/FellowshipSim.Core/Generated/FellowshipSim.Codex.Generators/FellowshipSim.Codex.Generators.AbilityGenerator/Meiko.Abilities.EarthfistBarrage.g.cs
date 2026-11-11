@@ -28,54 +28,58 @@ partial class EarthfistBarrage
     /// <summary>Game data: <c>range</c> of ability 1112.</summary>
     public const int AbilityRange = 800;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1112.</summary>
-    public const double AGILITY_COEFFICIENT = 1.2696;
+    /// <summary>Game data: the tuning values of ability 1112.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1112.</summary>
+        public const double AgilityCoefficient = 1.2696;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 1112.</summary>
-    public const int DURATION_1 = 1;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 1112.</summary>
+        public const int Duration = 1;
 
-    /// <summary>Game data: tuning <c>ResourceIncrease.Duration</c> of ability 1112; Yellow Power (effect 1551).</summary>
-    public const int DURATION_2 = 8;
+        /// <summary>Game data: tuning <c>FinalHit.AgilityCoefficient</c> of ability 1112.</summary>
+        public const double FinalHitAgilityCoefficient = 2.9383;
 
-    /// <summary>Game data: tuning <c>FinalHit.AgilityCoefficient</c> of ability 1112.</summary>
-    public const double FINAL_HIT_AGILITY_COEFFICIENT = 2.9383;
+        /// <summary>Game data: tuning <c>FinalHitSpendCharge.DamageMultiplier</c> of ability 1112; talent Tectonic Impact (legendary power 416).</summary>
+        public const double FinalHitSpendChargeDamageMultiplier = 1.35;
 
-    /// <summary>Game data: tuning <c>FinalHitSpendCharge.DamageMultiplier</c> of ability 1112; talent Tectonic Impact (legendary power 416).</summary>
-    public const double DAMAGE_MULTIPLIER_1 = 1.35;
+        /// <summary>Game data: tuning <c>GreenEnergyCost</c> of ability 1112.</summary>
+        public const int GreenEnergyCost = 0;
 
-    /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of ability 1112; talent Rumbling Stone (talent 95), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER_2 = 1.2;
+        /// <summary>Game data: tuning <c>Hero.SpiritProcRefundResource.Delay</c> of ability 1112.</summary>
+        public const double HeroSpiritProcRefundResourceDelay = 0.2;
 
-    /// <summary>Game data: tuning <c>GreenEnergyCost</c> of ability 1112.</summary>
-    public const int GREEN_ENERGY_COST = 0;
+        /// <summary>Game data: tuning <c>LastStrikeDamageIncrease</c> of ability 1112.</summary>
+        public const int LastStrikeDamageIncrease = 1;
 
-    /// <summary>Game data: tuning <c>Hero.SpiritProcRefundResource.Delay</c> of ability 1112.</summary>
-    public const double HERO_SPIRIT_PROC_REFUND_RESOURCE_DELAY = 0.2;
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1112; ability 1109, DamageScale Multiplicitive.</summary>
+        public const double DurationalMultipleTeleportDamageTalentTargetDebuffIncreasedDamage = 1.1;
 
-    /// <summary>Game data: tuning <c>LastStrikeDamageIncrease</c> of ability 1112.</summary>
-    public const int LAST_STRIKE_DAMAGE_INCREASE = 1;
+        /// <summary>Game data: tuning <c>Meiko.Earth.Talent.IncreasedDamage.DamageMultiplier</c> of ability 1112; talent Rumbling Stone (talent 95), DamageScale MultiplyCompound.</summary>
+        public const double EarthTalentIncreasedDamageDamageMultiplier = 1.2;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1112; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
+        /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of ability 1112; talent Conclusive Strikes (talent 107).</summary>
+        public const double FinishersTalentIncreasedDamageScaler = 1.1;
 
-    /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of ability 1112; talent Conclusive Strikes (talent 107).</summary>
-    public const double INCREASED_DAMAGE_SCALER = 1.1;
+        /// <summary>Game data: tuning <c>Meiko.SpiritProc.ResourceRefund.FlatSpiritPointGain</c> of ability 1112.</summary>
+        public const int SpiritProcResourceRefundFlatSpiritPointGain = 2;
 
-    /// <summary>Game data: tuning <c>Meiko.SpiritProc.ResourceRefund.FlatSpiritPointGain</c> of ability 1112.</summary>
-    public const int MEIKO_SPIRIT_PROC_RESOURCE_REFUND_FLAT_SPIRIT_POINT_GAIN = 2;
+        /// <summary>Game data: tuning <c>ResourceIncrease.Duration</c> of ability 1112; Yellow Power (effect 1551).</summary>
+        public const int ResourceIncreaseDuration = 8;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1112.</summary>
-    public const int SPREAD = 0;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1112.</summary>
+        public const int Spread = 0;
 
-    /// <summary>Game data: tuning <c>Talent.FinalHitCritChance</c> of ability 1112.</summary>
-    public const int FINAL_HIT_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Talent.FinalHitCritChance</c> of ability 1112.</summary>
+        public const int TalentFinalHitCritChance = 1;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDamage</c> of ability 1112; DamageScale Multiplicitive.</summary>
-    public const double INCREASED_DAMAGE = 1.15;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDamage</c> of ability 1112; DamageScale Multiplicitive.</summary>
+        public const double TalentIncreasedDamage = 1.15;
 
-    /// <summary>Game data: tuning <c>TickInterval</c> of ability 1112.</summary>
-    public const double TICK_INTERVAL = 0.25;
+        /// <summary>Game data: tuning <c>TickInterval</c> of ability 1112.</summary>
+        public const double TickInterval = 0.25;
 
-    /// <summary>Game data: tuning <c>YellowEnergyCost</c> of ability 1112.</summary>
-    public const int YELLOW_ENERGY_COST = 3;
+        /// <summary>Game data: tuning <c>YellowEnergyCost</c> of ability 1112.</summary>
+        public const int YellowEnergyCost = 3;
+    }
 }

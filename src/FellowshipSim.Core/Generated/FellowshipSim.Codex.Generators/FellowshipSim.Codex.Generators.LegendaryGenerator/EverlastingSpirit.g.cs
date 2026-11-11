@@ -10,29 +10,33 @@ partial class EverlastingSpirit
     /// <summary>Twinsoul Leggings, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.AgilityCoefficient, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.AgilityCoefficient</c> of legendary power 447; ability 1677.</summary>
-    public const double AGILITY_COEFFICIENT = 0.35;
+    /// <summary>Game data: the tuning values of legendary power 447.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.AgilityCoefficient, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.AgilityCoefficient</c> of legendary power 447; ability 1677.</summary>
+        public const double DamageReductionLessHealAoeDamageAgilityCoefficient = 0.35;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.AgilityCoefficientMultiplierPerStack, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.AgilityCoefficientMultiplierPerStack</c> of legendary power 447; ability 1677.</summary>
-    public const double AGILITY_COEFFICIENT_MULTIPLIER_PER_STACK = 0.4;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.AgilityCoefficientMultiplierPerStack, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.AgilityCoefficientMultiplierPerStack</c> of legendary power 447; ability 1677.</summary>
+        public const double DamageReductionLessHealAoeDamageAgilityCoefficientMultiplierPerStack = 0.4;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.Radius, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.Radius</c> of legendary power 447; ability 1677.</summary>
-    public const int RADIUS = 800;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.Radius, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.Radius</c> of legendary power 447; ability 1677.</summary>
+        public const int DamageReductionLessHealAoeDamageRadius = 800;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.TargetCountDamageScalingThreshold, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.TargetCountDamageScalingThreshold</c> of legendary power 447; ability 1677.</summary>
-    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 5;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.TargetCountDamageScalingThreshold, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.TargetCountDamageScalingThreshold</c> of legendary power 447; ability 1677.</summary>
+        public const int DamageReductionLessHealAoeDamageTargetCountDamageScalingThreshold = 5;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.TickInterval, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.TickInterval</c> of legendary power 447; ability 1677.</summary>
-    public const double TICK_INTERVAL = 8.99;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.AoeDamage.TickInterval, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.AoeDamage.TickInterval</c> of legendary power 447; ability 1677.</summary>
+        public const double DamageReductionLessHealAoeDamageTickInterval = 8.99;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.DamageMultiplierPerStack, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.DamageMultiplierPerStack</c> of legendary power 447; Everlasting Spirit (effect 1510).</summary>
-    public const double DAMAGE_MULTIPLIER_PER_STACK = 0.004;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.DamageMultiplierPerStack, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.DamageMultiplierPerStack</c> of legendary power 447; Everlasting Spirit (effect 1510).</summary>
+        public const double DamageReductionLessHealDamageMultiplierPerStack = 0.004;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.Duration, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.Duration</c> of legendary power 447; Everlasting Spirit (effect 1510).</summary>
-    public const int DURATION = 9;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.Duration, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.Duration</c> of legendary power 447; Everlasting Spirit (effect 1510).</summary>
+        public const int DamageReductionLessHealDuration = 9;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.HealMultiplier, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.HealMultiplier</c> of legendary power 447; Everlasting Spirit (effect 1510).</summary>
-    public const int HEAL_MULTIPLIER = 1;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.HealMultiplier, Meiko.InstantSelfDefensive.Talent.DamageReductionLessHeal.HealMultiplier</c> of legendary power 447; Everlasting Spirit (effect 1510).</summary>
+        public const int DamageReductionLessHealHealMultiplier = 1;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Everlasting Spirit";

@@ -28,27 +28,31 @@ partial class BlindingSlash
     /// <summary>Game data: <c>range</c> of ability 1858.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 1858.</summary>
-    public const int CLEAVE_RADIUS = 500;
+    /// <summary>Game data: the tuning values of ability 1858.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 1858.</summary>
+        public const int CleaveRadius = 500;
 
-    /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1858.</summary>
-    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 8;
+        /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1858.</summary>
+        public const int DamageScalingTargetCountThreshold = 8;
 
-    /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1858.</summary>
-    public const double DAMAGE_STRENGTH_COEFFICIENT = 1.23;
+        /// <summary>Game data: tuning <c>DamageStrengthCoefficient</c> of ability 1858.</summary>
+        public const double DamageStrengthCoefficient = 1.23;
 
-    /// <summary>Game data: tuning <c>DroppedPulseAoeDurationExtension.AdditionalDuration</c> of ability 1858.</summary>
-    public const double DROPPED_PULSE_AOE_DURATION_EXTENSION_ADDITIONAL_DURATION = 1.5;
+        /// <summary>Game data: tuning <c>DroppedPulseAoeDurationExtension.AdditionalDuration</c> of ability 1858.</summary>
+        public const double DroppedPulseAoeDurationExtensionAdditionalDuration = 1.5;
 
-    /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1858.</summary>
-    public const double HIT_VISUAL_DELAY = 0.25;
+        /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1858.</summary>
+        public const double HitVisualDelay = 0.25;
 
-    /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 1858.</summary>
-    public const int MAX_NUM_TARGETS = 20;
+        /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 1858.</summary>
+        public const int MaxNumTargets = 20;
 
-    /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1858.</summary>
-    public const double RESOURCE_PROC_CHANCE = 0.15;
+        /// <summary>Game data: tuning <c>ResourceProcChance</c> of ability 1858.</summary>
+        public const double ResourceProcChance = 0.15;
 
-    /// <summary>Game data: tuning <c>Talent.DamageIncrease.DamageScaler</c> of ability 1858; talent Grand Halo (talent 571), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_SCALER = 1.15;
+        /// <summary>Game data: tuning <c>Talent.DamageIncrease.DamageScaler</c> of ability 1858; talent Grand Halo (talent 571), DamageScale MultiplyCompound.</summary>
+        public const double TalentDamageIncreaseDamageScaler = 1.15;
+    }
 }

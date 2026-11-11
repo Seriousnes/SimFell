@@ -13,7 +13,7 @@ public partial class Burstbolter : Talent
     public override void Bind(Hero hero)
     {
         var burstingIce = hero.GetAbility<BurstingIce>();
-        burstingIce?.AddDamageMultiplier(INCREASED_CASTED_DEBUFF_AOE_DAMAGE_DAMAGE_DAMAGE_SCALER);
+        burstingIce?.AddDamageMultiplier(Constants.IncreasedCastedDebuffAoeDamageDamageDamageScaler);
         // "When your Frost Bolt deals damage to an enemy, it triggers a single pulse of Bursting Ice." (on the bolt's hit,
         // after its travel: yMAZVJL9hTpFjqbC fight 7 @ 57.569 cast, 57.906 hit and pulse)
         var frostBolt = hero.GetAbility<FrostBolt>();

@@ -10,15 +10,19 @@ partial class ReignOfFire
     /// <summary>Game data: <c>name</c> of talent 157.</summary>
     public const string TalentName = "Reign of Fire";
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.BuffDuration, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.BuffDuration</c> of talent 157; Reign of Fire (effect 2301).</summary>
-    public const int BUFF_DURATION = 12;
+    /// <summary>Game data: the tuning values of talent 157.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.BuffDuration, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.BuffDuration</c> of talent 157; Reign of Fire (effect 2301).</summary>
+        public const int PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcBuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.CritChanceIncrease, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.CritChanceIncrease</c> of talent 157; Reign of Fire (effect 2301), CritChance Additive.</summary>
-    public const int CRIT_CHANCE_INCREASE = 2;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.CritChanceIncrease, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.CritChanceIncrease</c> of talent 157; Reign of Fire (effect 2301), CritChance Additive.</summary>
+        public const int PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcCritChanceIncrease = 2;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.PPM, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.PPM</c> of talent 157; Reign of Fire (effect 2301).</summary>
-    public const double PPM = 1.5;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.PPM, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.PPM</c> of talent 157; Reign of Fire (effect 2301).</summary>
+        public const double PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcPPM = 1.5;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.NumCharges, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.NumCharges</c> of talent 157; Fire Ball (ability 1260).</summary>
-    public const int PLACED_PROJECTILE_AOE_HAS_CHARGES_NUM_CHARGES = 2;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.NumCharges, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeHasCharges.NumCharges</c> of talent 157; Fire Ball (ability 1260).</summary>
+        public const int PlacedProjectileAoeHasChargesNumCharges = 2;
+    }
 }

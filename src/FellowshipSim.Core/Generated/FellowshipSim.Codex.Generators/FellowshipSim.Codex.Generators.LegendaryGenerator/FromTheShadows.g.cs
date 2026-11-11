@@ -10,11 +10,15 @@ partial class FromTheShadows
     /// <summary>Hungering Blade Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>ActivationChancePerTarget, Mara.AoeAttackSpender.Talent.CloneAttack.ActivationChancePerTarget</c> of legendary power 585; From the Shadows (ability 1589).</summary>
-    public const double ACTIVATION_CHANCE_PER_TARGET = 0.15;
+    /// <summary>Game data: the tuning values of legendary power 585.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ActivationChancePerTarget, Mara.AoeAttackSpender.Talent.CloneAttack.ActivationChancePerTarget</c> of legendary power 585; From the Shadows (ability 1589).</summary>
+        public const double ActivationChancePerTarget = 0.15;
 
-    /// <summary>Game data: tuning <c>TickPeriodMultiplier, Mara.AoeAttackSpender.Talent.CloneAttack.TickPeriodMultiplier</c> of legendary power 585; From the Shadows (ability 1589).</summary>
-    public const double TICK_PERIOD_MULTIPLIER = 0.87;
+        /// <summary>Game data: tuning <c>TickPeriodMultiplier, Mara.AoeAttackSpender.Talent.CloneAttack.TickPeriodMultiplier</c> of legendary power 585; From the Shadows (ability 1589).</summary>
+        public const double TickPeriodMultiplier = 0.87;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "From the Shadows";

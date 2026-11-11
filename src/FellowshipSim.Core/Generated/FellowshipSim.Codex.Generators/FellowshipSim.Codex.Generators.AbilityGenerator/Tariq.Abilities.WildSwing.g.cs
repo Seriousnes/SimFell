@@ -31,21 +31,25 @@ partial class WildSwing
     /// <summary>Game data: <c>radius</c> of ability 1234.</summary>
     public const int AbilityRadius = 500;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1234; Resources Additive.</summary>
-    public const int COST = 0;
+    /// <summary>Game data: the tuning values of ability 1234.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1234; Resources Additive.</summary>
+        public const int Cost = 0;
 
-    /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1234.</summary>
-    public const double RESOURCE_GAIN = 0.03;
+        /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1234.</summary>
+        public const double ResourceGain = 0.03;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1234.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1234.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1234.</summary>
-    public const double STRENGTH_COEFFICIENT = 1.2914;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1234.</summary>
+        public const double StrengthCoefficient = 1.2914;
 
-    /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1234.</summary>
-    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 5;
+        /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1234.</summary>
+        public const int TargetThresholdForDamageScale = 5;
 
-    /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1234.</summary>
-    public const double VISUAL_HIT_DELAY = 0.15;
+        /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 1234.</summary>
+        public const double VisualHitDelay = 0.15;
+    }
 }

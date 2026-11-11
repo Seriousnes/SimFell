@@ -8,8 +8,8 @@ public partial class WindKick : ComboBuilder
 {
     public WindKick(Meiko owner) : base(owner, AbilityId, AbilityName, Technique.Kick)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
-        AoeTargetThreshold = TARGET_THRESHOLD_FOR_DAMAGE_SCALE;
+        BaseCoefficient = Constants.AgilityCoefficient;
+        AoeTargetThreshold = Constants.TargetThresholdForDamageScale;
     }
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target)

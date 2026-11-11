@@ -6,7 +6,7 @@ namespace FellowshipSim.Core.Customization.Sigils;
 /// duration" (the heal over time does not affect damage). Each application of a harmful effect rolls, a damage over time
 /// tick does not (the applied and refresh listeners at ability 172, InTriggerPeriodicExecutions
 /// false), on one hasted proc timer for every target (ScaleWithHaste true). Each tick is
-/// <see cref="DOT_FLAT_DAMAGE_VALUE_BY_RANK"/> x Main Stat (effect 104's DamageScale modifier), preset HeroMagicalOT (crits,
+/// <see cref="Constants.DotFlatDamageValueByRank"/> x Main Stat (effect 104's DamageScale modifier), preset HeroMagicalOT (crits,
 /// Expertise).
 /// </summary>
 public partial class Kindling : Sigil
@@ -39,7 +39,7 @@ public partial class Kindling : Sigil
 
     public override void Bind(Hero hero)
     {
-        var dot = new KindlingDot(hero, ForRank(DOT_FLAT_DAMAGE_VALUE_BY_RANK));
+        var dot = new KindlingDot(hero, ForRank(Constants.DotFlatDamageValueByRank));
         hero.DotDamageIds.Add(dot.DamageLogId);
         var rppm = new RealPpm(ProcKey, SigilProcsPerMinute);
         var burning = new Dictionary<EnemyTarget, Burn>();

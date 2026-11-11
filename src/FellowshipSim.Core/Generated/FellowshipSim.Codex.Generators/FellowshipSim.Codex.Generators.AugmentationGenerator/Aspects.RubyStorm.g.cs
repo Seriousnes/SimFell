@@ -19,6 +19,10 @@ partial class RubyStorm
     /// <summary>Game data: <c>procsPerMinute</c> of proc roll <c>Trait.GemWhirlwind.PPM</c> of aspect 35 (PPM × (1 + Haste)).</summary>
     public const double AspectProcsPerMinute = 1.3;
 
-    /// <summary>Game data: rank run <c>Trait.GemWhirlwind.HealthPercentageAsDamage</c> of aspect 35, transform <c>raw</c>; the tooltip has 2.4% / 4.0% / 5.4% / 7.0%.</summary>
-    public static readonly double[] HEALTH_PERCENTAGE_AS_DAMAGE_BY_RANK = [0.024, 0.04, 0.054, 0.07];
+    /// <summary>Game data: the tuning values and rank runs of aspect 35.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.GemWhirlwind.HealthPercentageAsDamage</c> of aspect 35, transform <c>raw</c>; the tooltip has 2.4% / 4.0% / 5.4% / 7.0%.</summary>
+        public static readonly double[] HealthPercentageAsDamageByRank = [0.024, 0.04, 0.054, 0.07];
+    }
 }

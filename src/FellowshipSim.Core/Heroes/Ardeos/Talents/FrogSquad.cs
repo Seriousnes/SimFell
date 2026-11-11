@@ -19,9 +19,9 @@ public partial class FrogSquad : Talent
     {
         var frogs = hero.GetAbility<FireFrogs>();
         if (frogs == null) return;
-        frogs.Frogs += EXTRA_FROGS_NUM_EXTRA_FROGS;
+        frogs.Frogs += Constants.FireFrogAbilityTalentExtraFrogsNumExtraFrogs;
         frogs.AttacksPerFrog += ExtraAttacks;
-        frogs.Attack.AddDamageMultiplier(ABILITY_DIRECT_DAMAGE_INCREASE_DAMAGE_SCALE);
-        frogs.Attack.DotFraction *= ABILITY_DIRECT_DAMAGE_INCREASE_DAMAGE_SCALE;
+        frogs.Attack.AddDamageMultiplier(Constants.DirectDamageIncreaseDamageScale);
+        frogs.Attack.DotFraction *= Constants.DirectDamageIncreaseDamageScale;
     }
 }

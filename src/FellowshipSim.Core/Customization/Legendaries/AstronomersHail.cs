@@ -13,11 +13,11 @@ public partial class AstronomersHail : Legendary
     public override void Bind(Hero hero)
     {
         if (hero is not Elarion || hero.GetAbility<StarfallVolley>() is not { } starfall) return;
-        starfall.MainTargetMultiplier *= INCREASED_DURATION_AND_EXTENSION_MAIN_TARGET_DAMAGE_BONUS_DAMAGE_SCALER;
-        starfall.ExtraDurationSeconds += INCREASED_DURATION_AND_EXTENSION_DURATION_INCREASE_IN_SECONDS;
+        starfall.MainTargetMultiplier *= Constants.IncreasedDurationAndExtensionMainTargetDamageBonusDamageScaler;
+        starfall.ExtraDurationSeconds += Constants.IncreasedDurationAndExtensionDurationIncreaseInSeconds;
         if (hero.GetAbility<Multishot>() is { } multishot)
         {
-            multishot.Cast += (ctx, _) => starfall.Extend(ctx, DURATION_EXTENSION_PER_USE);
+            multishot.Cast += (ctx, _) => starfall.Extend(ctx, Constants.DurationExtensionPerUse);
         }
     }
 }

@@ -16,18 +16,22 @@ partial class TheVehement
     /// <summary>Game data: <c>abilityRank</c> of glyph 712.</summary>
     public const int GlyphAbilityRank = 186;
 
-    /// <summary>Game data: tuning <c>CounterThreshold</c> of glyph 712; ability 2259, by rank.</summary>
-    public static readonly double[] COUNTER_THRESHOLD_BY_RANK = [6, 5, 4, 3];
+    /// <summary>Game data: the tuning values of glyph 712.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CounterThreshold</c> of glyph 712; ability 2259, by rank.</summary>
+        public static readonly double[] CounterThresholdByRank = [6, 5, 4, 3];
 
-    /// <summary>Game data: tuning <c>CritChanceThreshold</c> of glyph 712; ability 2259.</summary>
-    public const double CRIT_CHANCE_THRESHOLD = 0.5;
+        /// <summary>Game data: tuning <c>CritChanceThreshold</c> of glyph 712; ability 2259.</summary>
+        public const double CritChanceThreshold = 0.5;
 
-    /// <summary>Game data: tuning <c>Radius</c> of glyph 712; ability 2259.</summary>
-    public const int RADIUS = 800;
+        /// <summary>Game data: tuning <c>Radius</c> of glyph 712; ability 2259.</summary>
+        public const int Radius = 800;
 
-    /// <summary>Game data: tuning <c>SearchRangeNoTarget</c> of glyph 712; ability 2259.</summary>
-    public const int SEARCH_RANGE_NO_TARGET = 2000;
+        /// <summary>Game data: tuning <c>SearchRangeNoTarget</c> of glyph 712; ability 2259.</summary>
+        public const int SearchRangeNoTarget = 2000;
 
-    /// <summary>Game data: tuning <c>TargetCountScaling</c> of glyph 712; ability 2259.</summary>
-    public const int TARGET_COUNT_SCALING = 5;
+        /// <summary>Game data: tuning <c>TargetCountScaling</c> of glyph 712; ability 2259.</summary>
+        public const int TargetCountScaling = 5;
+    }
 }

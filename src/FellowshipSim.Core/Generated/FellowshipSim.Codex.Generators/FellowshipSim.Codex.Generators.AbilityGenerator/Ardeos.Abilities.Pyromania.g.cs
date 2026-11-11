@@ -22,18 +22,22 @@ partial class Pyromania
     /// <summary>Game data: <c>range</c> of ability 1623.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>GMMC_Firemage_CastedSingleHeavyDot_Duration_C</c> of ability 1623.</summary>
-    public const int GMMC_FIREMAGE_CASTED_SINGLE_HEAVY_DOT_DURATION_C = 9;
+    /// <summary>Game data: the tuning values of ability 1623.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>GMMC_Firemage_CastedSingleHeavyDot_Duration_C</c> of ability 1623.</summary>
+        public const int GMMCFiremageCastedSingleHeavyDotDurationC = 9;
 
-    /// <summary>Game data: tuning <c>IncreasedDamage.DamageScaler</c> of ability 1623; Engulfing Flames (effect 1832), DamageScale MultiplyCompound.</summary>
-    public const double INCREASED_DAMAGE_DAMAGE_SCALER = 1.15;
+        /// <summary>Game data: tuning <c>IncreasedDamage.DamageScaler</c> of ability 1623; Engulfing Flames (effect 1832), DamageScale MultiplyCompound.</summary>
+        public const double IncreasedDamageDamageScaler = 1.15;
 
-    /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease</c> of ability 1623; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
-    public const double CRIT_CHANCE_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease</c> of ability 1623; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
+        public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
 
-    /// <summary>Game data: tuning <c>MaxNumSpreads</c> of ability 1623.</summary>
-    public const int MAX_NUM_SPREADS = 2;
+        /// <summary>Game data: tuning <c>MaxNumSpreads</c> of ability 1623.</summary>
+        public const int MaxNumSpreads = 2;
 
-    /// <summary>Game data: tuning <c>SpreadRadius</c> of ability 1623.</summary>
-    public const int SPREAD_RADIUS = 1000;
+        /// <summary>Game data: tuning <c>SpreadRadius</c> of ability 1623.</summary>
+        public const int SpreadRadius = 1000;
+    }
 }

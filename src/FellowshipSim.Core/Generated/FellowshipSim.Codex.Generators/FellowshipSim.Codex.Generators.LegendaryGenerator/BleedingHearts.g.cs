@@ -10,14 +10,18 @@ partial class BleedingHearts
     /// <summary>Northlander's Harness, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
-    /// <summary>Game data: tuning <c>Charges.DoubleStrike.Chance, Gunde.HeavyMeleeDotBased.Talent.Charges.DoubleStrike.Chance</c> of legendary power 698; Heart Splitter (ability 2294).</summary>
-    public const double CHARGES_DOUBLE_STRIKE_CHANCE = 0.25;
+    /// <summary>Game data: the tuning values of legendary power 698.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Charges.DoubleStrike.Chance, Gunde.HeavyMeleeDotBased.Talent.Charges.DoubleStrike.Chance</c> of legendary power 698; Heart Splitter (ability 2294).</summary>
+        public const double ChargesDoubleStrikeChance = 0.25;
 
-    /// <summary>Game data: tuning <c>Charges.DoubleStrike.DelayBetweenStrikes, Gunde.HeavyMeleeDotBased.Talent.Charges.DoubleStrike.DelayBetweenStrikes</c> of legendary power 698; Heart Splitter (ability 2294).</summary>
-    public const double CHARGES_DOUBLE_STRIKE_DELAY_BETWEEN_STRIKES = 0.4;
+        /// <summary>Game data: tuning <c>Charges.DoubleStrike.DelayBetweenStrikes, Gunde.HeavyMeleeDotBased.Talent.Charges.DoubleStrike.DelayBetweenStrikes</c> of legendary power 698; Heart Splitter (ability 2294).</summary>
+        public const double ChargesDoubleStrikeDelayBetweenStrikes = 0.4;
 
-    /// <summary>Game data: tuning <c>Charges.NumOfCharges, Gunde.HeavyMeleeDotBased.Talent.Charges.NumOfCharges</c> of legendary power 698; Heart Splitter (ability 2294).</summary>
-    public const int CHARGES_NUM_OF_CHARGES = 2;
+        /// <summary>Game data: tuning <c>Charges.NumOfCharges, Gunde.HeavyMeleeDotBased.Talent.Charges.NumOfCharges</c> of legendary power 698; Heart Splitter (ability 2294).</summary>
+        public const int ChargesNumOfCharges = 2;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Bleeding Hearts";

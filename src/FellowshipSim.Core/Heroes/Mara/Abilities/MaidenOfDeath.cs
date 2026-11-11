@@ -22,7 +22,7 @@ public partial class MaidenOfDeath : MaraAbility
     {
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
-        owner.EnergyRegenMultipliers.Add(now => owner.Auras.HasAura(Buff, now) ? ENERGY_GAIN_MULTIPLIER : 1.0);
+        owner.EnergyRegenMultipliers.Add(now => owner.Auras.HasAura(Buff, now) ? Constants.EnergyGainMultiplier : 1.0);
         owner.TargetDamageMultipliers.Add((enemy, now) => owner.Auras.HasAura(Buff, now) ? DamageAgainst(enemy) : 1.0);
     }
 

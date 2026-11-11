@@ -10,12 +10,16 @@ partial class GreatBallsOfFire
     /// <summary>Game data: <c>name</c> of talent 160.</summary>
     public const string TalentName = "Great Balls of Fire";
 
-    /// <summary>Game data: tuning <c>Firemage.PlacedProjectileAoe.DamageDoneToDotDamageScaler</c> of talent 160; Fire Ball (ability 1260).</summary>
-    public const double DAMAGE_DONE_TO_DOT_DAMAGE_SCALER = 0.2;
+    /// <summary>Game data: the tuning values of talent 160.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Firemage.PlacedProjectileAoe.DamageDoneToDotDamageScaler</c> of talent 160; Fire Ball (ability 1260).</summary>
+        public const double PlacedProjectileAoeDamageDoneToDotDamageScaler = 0.2;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DamageToDotTransferIncrease, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeDamageBonus.DamageToDotTransferIncrease</c> of talent 160; Fire Ball (ability 1260).</summary>
-    public const double PLACED_PROJECTILE_AOE_DAMAGE_BONUS_DAMAGE_TO_DOT_TRANSFER_INCREASE = 0.1;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DamageToDotTransferIncrease, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeDamageBonus.DamageToDotTransferIncrease</c> of talent 160; Fire Ball (ability 1260).</summary>
+        public const double PlacedProjectileAoeDamageBonusDamageToDotTransferIncrease = 0.1;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DirectDamageScale, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeDamageBonus.DirectDamageScale</c> of talent 160; Fire Ball (ability 1260).</summary>
-    public const double PLACED_PROJECTILE_AOE_DAMAGE_BONUS_DIRECT_DAMAGE_SCALE = 1.5;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DirectDamageScale, Firemage.PlacedProjectileAoe.Talent.PlacedProjectileAoeDamageBonus.DirectDamageScale</c> of talent 160; Fire Ball (ability 1260).</summary>
+        public const double PlacedProjectileAoeDamageBonusDirectDamageScale = 1.5;
+    }
 }

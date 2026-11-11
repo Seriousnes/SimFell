@@ -10,6 +10,10 @@ partial class WisdomOfTheNorth
     /// <summary>Game data: <c>name</c> of talent 49.</summary>
     public const string TalentName = "Wisdom of the North";
 
-    /// <summary>Game data: tuning <c>CooldownReductionPerOrbSpent, Rime.Talent.ResourceSpendingReducesCooldowns.CooldownReductionPerOrbSpent</c> of talent 49; ability 1012.</summary>
-    public const double COOLDOWN_REDUCTION_PER_ORB_SPENT = 0.3;
+    /// <summary>Game data: the tuning values of talent 49.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CooldownReductionPerOrbSpent, Rime.Talent.ResourceSpendingReducesCooldowns.CooldownReductionPerOrbSpent</c> of talent 49; ability 1012.</summary>
+        public const double CooldownReductionPerOrbSpent = 0.3;
+    }
 }

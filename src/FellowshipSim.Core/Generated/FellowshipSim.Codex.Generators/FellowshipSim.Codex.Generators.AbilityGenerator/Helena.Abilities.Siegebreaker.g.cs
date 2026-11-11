@@ -22,15 +22,19 @@ partial class Siegebreaker
     /// <summary>Game data: <c>duration</c> of ability 1515.</summary>
     public const int AbilityDuration = 20;
 
-    /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1515; DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.25;
+    /// <summary>Game data: the tuning values of ability 1515.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1515; DamageScale MultiplyCompound.</summary>
+        public const double DamageMultiplier = 1.25;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 1515.</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 1515.</summary>
+        public const int Duration = 20;
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1515; IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 0.75;
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1515; IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double IncomingDamageMultiplier = 0.75;
 
-    /// <summary>Game data: tuning <c>SpiritCost</c> of ability 1515.</summary>
-    public const int SPIRIT_COST = 100;
+        /// <summary>Game data: tuning <c>SpiritCost</c> of ability 1515.</summary>
+        public const int SpiritCost = 100;
+    }
 }

@@ -9,7 +9,7 @@ public partial class FreezingTorrent : RimeAbility
 {
     public FreezingTorrent(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = INTELLECT_COEFFICIENT_PER_TICK;
+        BaseCoefficient = Constants.IntellectCoefficientPerTick;
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);
         // Combat logs: a tick lands as the channel starts, then every hasted period, plus a partial final tick.
@@ -39,7 +39,7 @@ public partial class FreezingTorrent : RimeAbility
 
     /// <summary>Soulfrost Torrent: the channel it empowers ticks faster.</summary>
     public override double ChannelTickPeriodFor(SimulationContext ctx) =>
-        _soulfrost ? ChannelTickPeriodSeconds / SoulfrostTorrent.CHANNEL_TICK_RATE_INCREASE : ChannelTickPeriodSeconds;
+        _soulfrost ? ChannelTickPeriodSeconds / SoulfrostTorrent.Constants.ChannelTickRateIncrease : ChannelTickPeriodSeconds;
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
@@ -56,13 +56,13 @@ public partial class FreezingTorrent : RimeAbility
         // Flight of the Navir: every tick (the partial one too) sends a swallow at an enemy of its choosing
         // (yMAZVJL9hTpFjqbC fight 7 @ 49.522: a hit per tick; @ 34.229: one per tick until Flight of the Navir ends).
         _flightOfTheNavir?.CommandSwallow(ctx);
-        Rime.AddAnima(RESOURCE_GAIN_PER_TICK, ctx, target);
+        Rime.AddAnima(Constants.ResourceGainPerTick, ctx, target);
         if (!_soulfrost)
         {
             DealDamage(ctx, target, damageMultiplier: fraction);
             return;
         }
         DealDamage(ctx, target, damageMultiplier: fraction * SoulfrostTorrent.TickDamageScale(Owner, ctx.CurrentTime),
-            extraCritChance: SoulfrostTorrent.CRIT_CHANCE);
+            extraCritChance: SoulfrostTorrent.Constants.CritChance);
     }
 }

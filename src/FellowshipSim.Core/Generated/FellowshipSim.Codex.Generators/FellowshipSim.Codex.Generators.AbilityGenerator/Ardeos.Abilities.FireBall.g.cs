@@ -34,54 +34,58 @@ partial class FireBall
     /// <summary>Game data: <c>radius</c> of ability 1260.</summary>
     public const int AbilityRadius = 500;
 
-    /// <summary>Game data: tuning <c>AoeAddedDotStackAmount</c> of ability 1260.</summary>
-    public const int AOE_ADDED_DOT_STACK_AMOUNT = 1;
+    /// <summary>Game data: the tuning values of ability 1260.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AoeAddedDotStackAmount</c> of ability 1260.</summary>
+        public const int AoeAddedDotStackAmount = 1;
 
-    /// <summary>Game data: tuning <c>AoeDamageIntellectCoefficient</c> of ability 1260.</summary>
-    public const double AOE_DAMAGE_INTELLECT_COEFFICIENT = 5.8482;
+        /// <summary>Game data: tuning <c>AoeDamageIntellectCoefficient</c> of ability 1260.</summary>
+        public const double AoeDamageIntellectCoefficient = 5.8482;
 
-    /// <summary>Game data: tuning <c>CooldownReductionToApocalypse.ReductionInSeconds</c> of ability 1260.</summary>
-    public const int COOLDOWN_REDUCTION_TO_APOCALYPSE_REDUCTION_IN_SECONDS = 8;
+        /// <summary>Game data: tuning <c>CooldownReductionToApocalypse.ReductionInSeconds</c> of ability 1260.</summary>
+        public const int CooldownReductionToApocalypseReductionInSeconds = 8;
 
-    /// <summary>Game data: tuning <c>DamageDoneToDotDamageScaler</c> of ability 1260; talent Great Balls of Fire (talent 160).</summary>
-    public const double DAMAGE_DONE_TO_DOT_DAMAGE_SCALER = 0.2;
+        /// <summary>Game data: tuning <c>DamageDoneToDotDamageScaler</c> of ability 1260; talent Great Balls of Fire (talent 160).</summary>
+        public const double DamageDoneToDotDamageScaler = 0.2;
 
-    /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1260.</summary>
-    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 5;
+        /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1260.</summary>
+        public const int DamageScalingTargetCountThreshold = 5;
 
-    /// <summary>Game data: tuning <c>DotDuration</c> of ability 1260.</summary>
-    public const int DOT_DURATION = 12;
+        /// <summary>Game data: tuning <c>DotDuration</c> of ability 1260.</summary>
+        public const int DotDuration = 12;
 
-    /// <summary>Game data: tuning <c>DotIntellectCoefficientPerTick</c> of ability 1260.</summary>
-    public const double DOT_INTELLECT_COEFFICIENT_PER_TICK = 0.35;
+        /// <summary>Game data: tuning <c>DotIntellectCoefficientPerTick</c> of ability 1260.</summary>
+        public const double DotIntellectCoefficientPerTick = 0.35;
 
-    /// <summary>Game data: tuning <c>DotPeriod</c> of ability 1260.</summary>
-    public const int DOT_PERIOD = 2;
+        /// <summary>Game data: tuning <c>DotPeriod</c> of ability 1260.</summary>
+        public const int DotPeriod = 2;
 
-    /// <summary>Game data: tuning <c>DotTickChanceToAddResource</c> of ability 1260.</summary>
-    public const double DOT_TICK_CHANCE_TO_ADD_RESOURCE = 0.5;
+        /// <summary>Game data: tuning <c>DotTickChanceToAddResource</c> of ability 1260.</summary>
+        public const double DotTickChanceToAddResource = 0.5;
 
-    /// <summary>Game data: tuning <c>DotTickResourceRewardFractionOfBomb</c> of ability 1260.</summary>
-    public const double DOT_TICK_RESOURCE_REWARD_FRACTION_OF_BOMB = 0.02;
+        /// <summary>Game data: tuning <c>DotTickResourceRewardFractionOfBomb</c> of ability 1260.</summary>
+        public const double DotTickResourceRewardFractionOfBomb = 0.02;
 
-    /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease</c> of ability 1260; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
-    public const double CRIT_CHANCE_INCREASE_1 = 0.2;
+        /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease</c> of ability 1260; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
+        public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.CritChanceIncrease</c> of ability 1260; Reign of Fire (effect 2301), talent Reign of Fire (talent 157), CritChance Additive.</summary>
-    public const int CRIT_CHANCE_INCREASE_2 = 2;
+        /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1260.</summary>
+        public const int MaxRangeDown = 3000;
 
-    /// <summary>Game data: tuning <c>MaxRangeDown</c> of ability 1260.</summary>
-    public const int MAX_RANGE_DOWN = 3000;
+        /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1260.</summary>
+        public const int MaxRangeUp = 1500;
 
-    /// <summary>Game data: tuning <c>MaxRangeUp</c> of ability 1260.</summary>
-    public const int MAX_RANGE_UP = 1500;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DirectDamageScale</c> of ability 1260; talent Great Balls of Fire (talent 160).</summary>
+        public const double PlacedProjectileAoeDamageBonusDirectDamageScale = 1.5;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeDamageBonus.DirectDamageScale</c> of ability 1260; talent Great Balls of Fire (talent 160).</summary>
-    public const double DIRECT_DAMAGE_SCALE = 1.5;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.CritChanceIncrease</c> of ability 1260; Reign of Fire (effect 2301), talent Reign of Fire (talent 157), CritChance Additive.</summary>
+        public const int PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcCritChanceIncrease = 2;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.NumCharges</c> of ability 1260; talent Reign of Fire (talent 157).</summary>
-    public const int NUM_CHARGES = 2;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.NumCharges</c> of ability 1260; talent Reign of Fire (talent 157).</summary>
+        public const int PlacedProjectileAoeHasChargesNumCharges = 2;
 
-    /// <summary>Game data: tuning <c>ProjectileDuration</c> of ability 1260.</summary>
-    public const int PROJECTILE_DURATION = 1;
+        /// <summary>Game data: tuning <c>ProjectileDuration</c> of ability 1260.</summary>
+        public const int ProjectileDuration = 1;
+    }
 }

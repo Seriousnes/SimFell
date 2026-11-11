@@ -25,24 +25,28 @@ partial class Gust
     /// <summary>Game data: <c>channelTick</c> of ability 1123.</summary>
     public const double AbilityChannelTick = 0.5;
 
-    /// <summary>Game data: tuning <c>DashAirExitSpeed</c> of ability 1123.</summary>
-    public const int DASH_AIR_EXIT_SPEED = 1000;
+    /// <summary>Game data: the tuning values of ability 1123.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DashAirExitSpeed</c> of ability 1123.</summary>
+        public const int DashAirExitSpeed = 1000;
 
-    /// <summary>Game data: tuning <c>DashSpeed</c> of ability 1123.</summary>
-    public const int DASH_SPEED = 5000;
+        /// <summary>Game data: tuning <c>DashSpeed</c> of ability 1123.</summary>
+        public const int DashSpeed = 5000;
 
-    /// <summary>Game data: tuning <c>Distance</c> of ability 1123.</summary>
-    public const int DISTANCE = 1000;
+        /// <summary>Game data: tuning <c>Distance</c> of ability 1123.</summary>
+        public const int Distance = 1000;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.ShortAbility.Duration</c> of ability 1123.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_SHORT_ABILITY_DURATION = 0.18;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.ShortAbility.Duration</c> of ability 1123.</summary>
+        public const double HeroAbilitySpamProtectionCooldownShortAbilityDuration = 0.18;
 
-    /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1123.</summary>
-    public const int MAX_CHARGES = 2;
+        /// <summary>Game data: tuning <c>MaxCharges</c> of ability 1123.</summary>
+        public const int MaxCharges = 2;
 
-    /// <summary>Game data: tuning <c>MoveSpeedIncrease.Duration</c> of ability 1123; Talent Increased Movement Speed (effect 1495).</summary>
-    public const int DURATION = 8;
+        /// <summary>Game data: tuning <c>MoveSpeedIncrease.Duration</c> of ability 1123; Talent Increased Movement Speed (effect 1495).</summary>
+        public const int MoveSpeedIncreaseDuration = 8;
 
-    /// <summary>Game data: tuning <c>MoveSpeedIncrease.SpeedIncrease</c> of ability 1123; Talent Increased Movement Speed (effect 1495), MoveSpeed Multiplicitive.</summary>
-    public const double SPEED_INCREASE = 1.5;
+        /// <summary>Game data: tuning <c>MoveSpeedIncrease.SpeedIncrease</c> of ability 1123; Talent Increased Movement Speed (effect 1495), MoveSpeed Multiplicitive.</summary>
+        public const double MoveSpeedIncreaseSpeedIncrease = 1.5;
+    }
 }

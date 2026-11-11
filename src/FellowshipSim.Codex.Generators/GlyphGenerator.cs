@@ -17,11 +17,12 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>FellowshipSim.Core.Customization.Glyphs.Glyph</c>, a <c>partial</c> of the same class with the values of its glyph
 /// record. The record is the glyph whose name in Pascal case (letters and digits only, an apostrophe inside its word) is
 /// the class name. The constants are <c>GlyphId</c>, <c>GlyphName</c>, one per scalar field of the record under
-/// <c>Glyph</c> and the field's name (<c>GlyphMaxRank</c>, <c>GlyphAbilityRank</c>), and one per tuning value of the
-/// record under its <see cref="TuningNames"/> name. A tuning value has a value per rank: one value at every rank is a
-/// constant, and values differing by rank are a <c>public static readonly double[]</c> named after the tuning value and
-/// <c>_BY_RANK</c>. The class's own part has the glyph's behaviour and its <c>Name</c> and <c>Id</c> overrides. A member of
-/// the class or a base class with a constant's name is CODEX021. The game data is the AdditionalFiles <c>entities.jsonl</c> and
+/// <c>Glyph</c> and the field's name (<c>GlyphMaxRank</c>, <c>GlyphAbilityRank</c>), and the record's tuning values in a
+/// nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the record's hero. A tuning value has
+/// a value per rank: one value at every rank is a constant, and values differing by rank are a
+/// <c>public static readonly double[]</c> named after the tuning key and <c>ByRank</c>. The class's own part has the glyph's
+/// behaviour and its <c>Name</c> and <c>Id</c> overrides. A member of the class or a base class with a constant's name, or
+/// the name <c>Constants</c>, is CODEX021. The game data is the AdditionalFiles <c>entities.jsonl</c> and
 /// <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/> reports missing game
 /// data.
 /// </summary>
@@ -45,22 +46,23 @@ public sealed class GlyphGenerator : IIncrementalGenerator
         "CODEX021", "A glyph constant's name is a member of the class",
         "The class {0} or a base class has a member {1}, and {1} is a member of glyph {2}; rename the class's member", "Codex", DiagnosticSeverity.Error, true);
 
-    /// <summary>
-    /// A member of a glyph record: its name, C# type and value (a literal, or an array's elements), its summary, and whether
-    /// it is a per-rank array.
-    /// </summary>
-    private sealed record Member(string Name, string Type, string Literal, string Summary, bool ByRank = false);
+    /// <summary>A field constant of a glyph record: its name, C# type and literal, and its summary.</summary>
+    private sealed record Member(string Name, string Type, string Literal, string Summary);
 
     /// <summary>A glyph record: its ID, name, class name, its field constants and its tuning values.</summary>
-    private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Member> Fields, EquatableArray<Member> Tunings);
+    private sealed record Record(int Id, string Name, string ClassName, EquatableArray<Member> Fields, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's glyph records, and its build date.</summary>
-    private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
+    /// <summary>The game data's glyph records, the tuning keys' first segments naming a hero, and its build date.</summary>
+    private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
-    /// <summary>A partial glyph class: its namespace, name, the member names of the class and its base classes, and where it is declared.</summary>
-    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, Location? Location)
+    /// <summary>
+    /// A partial glyph class: its namespace, name, the member names of the class and its base classes, the class's constants
+    /// and static readonly fields, and where it is declared.
+    /// </summary>
+    private sealed record Declared(string Namespace, string Name, EquatableArray<string> Members, EquatableArray<string> Fields, Location? Location)
     {
-        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members);
+        public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Members.Equals(other.Members)
+            && Fields.Equals(other.Fields);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -102,7 +104,8 @@ public sealed class GlyphGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!glyph) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), new([.. TuningNames.FieldsOf(type)]),
+            node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -140,7 +143,7 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 records.Add(new Record(document.Id, name, PascalCase(name), new([.. FieldsOf(document)]), new([.. TuningsOf(document)])));
             }
         }
-        return new Export(new([.. records.OrderBy(r => r.Id)]), buildDate);
+        return new Export(new([.. records.OrderBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The record's scalar fields, each under <c>Glyph</c> and the field's name.</summary>
@@ -159,19 +162,10 @@ public sealed class GlyphGenerator : IIncrementalGenerator
     }
 
     /// <summary>
-    /// The record's tuning values (<see cref="TuningNames"/>), in the order of the game data. A value the same at every
-    /// rank is a constant; values differing by rank are an array by rank (rank 1 first), named after the tuning value and
-    /// <c>_BY_RANK</c>.
+    /// The record's tuning keys, in the order of the game data. A value the same at every rank is a constant; values
+    /// differing by rank are an array by rank (rank 1 first).
     /// </summary>
-    private static List<Member> TuningsOf(GlyphDocument g) =>
-        [.. TuningNames.Of(g.Tuning, ValueOf).Select(t =>
-        {
-            string source = SourceOf(t.Source);
-            string summary = $"Game data: tuning <c>{Escape(t.Keys)}</c> of glyph {g.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}";
-            return t.Value.ByRank
-                ? new Member(t.Name + "_BY_RANK", "double[]", t.Value.Literal, summary + ", by rank.", ByRank: true)
-                : new Member(t.Name, t.Value.Type, t.Value.Literal, summary + ".");
-        })];
+    private static List<TuningEntry> TuningsOf(GlyphDocument g) => TuningNames.Entries(g.Tuning, ValueOf, SourceOf);
 
     /// <summary>
     /// The C# type and literal of a tuning value, and whether it is an array by rank; null for a value of no constant type.
@@ -247,7 +241,9 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 new("GlyphName", "string", Literal(record.Name), $"Game data: <c>name</c> of glyph {record.Id}."),
             };
             all.AddRange(record.Fields);
-            all.AddRange(record.Tunings);
+            var shared = new List<(string Name, string First, string Second)>();
+            var tunings = TuningNames.Of(record.Tunings, export.Segments, [], shared);
+            TuningNames.Report(context, d.Location, d.Name, $"glyph {record.Id}", shared, d.Fields, tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -265,14 +261,20 @@ public sealed class GlyphGenerator : IIncrementalGenerator
                 }
                 if (!first) source.Append('\n');
                 first = false;
-                source.Append("    /// <summary>").Append(member.Summary).Append("</summary>\n");
-                if (member.ByRank)
+                source.Append("    /// <summary>").Append(member.Summary).Append("</summary>\n")
+                    .Append("    public const ").Append(member.Type).Append(' ').Append(member.Name).Append(" = ").Append(member.Literal).Append(";\n");
+            }
+            if (tunings.Count > 0)
+            {
+                if (members.Contains("Constants"))
                 {
-                    source.Append("    public static readonly double[] ").Append(member.Name).Append(" = [").Append(member.Literal).Append("];\n");
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "Constants", record.Id));
                 }
                 else
                 {
-                    source.Append("    public const ").Append(member.Type).Append(' ').Append(member.Name).Append(" = ").Append(member.Literal).Append(";\n");
+                    TuningNames.Write(source, $"Game data: the tuning values of glyph {record.Id}.",
+                        tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of glyph {record.Id}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}{(t.ByRank ? ", by rank" : "")}.")),
+                        false, !first);
                 }
             }
             source.Append("}\n");

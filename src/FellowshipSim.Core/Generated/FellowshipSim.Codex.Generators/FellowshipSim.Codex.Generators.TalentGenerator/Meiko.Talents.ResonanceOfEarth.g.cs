@@ -10,9 +10,13 @@ partial class ResonanceOfEarth
     /// <summary>Game data: <c>name</c> of talent 90.</summary>
     public const string TalentName = "Resonance of Earth";
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier.DamageMultiplier, Meiko.DamageSoakBuff.Talent.IncomingDamageMultiplier.DamageMultiplier</c> of talent 90; Resonance of Earth (effect 1512), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 0.8;
+    /// <summary>Game data: the tuning values of talent 90.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier.DamageMultiplier, Meiko.DamageSoakBuff.Talent.IncomingDamageMultiplier.DamageMultiplier</c> of talent 90; Resonance of Earth (effect 1512), IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double IncomingDamageMultiplierDamageMultiplier = 0.8;
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier.Duration, Meiko.DamageSoakBuff.Talent.IncomingDamageMultiplier.Duration</c> of talent 90; Resonance of Earth (effect 1512).</summary>
-    public const int DURATION = 8;
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier.Duration, Meiko.DamageSoakBuff.Talent.IncomingDamageMultiplier.Duration</c> of talent 90; Resonance of Earth (effect 1512).</summary>
+        public const int IncomingDamageMultiplierDuration = 8;
+    }
 }

@@ -10,6 +10,10 @@ partial class Backdraft
     /// <summary>Game data: <c>name</c> of talent 617.</summary>
     public const string TalentName = "Backdraft";
 
-    /// <summary>Game data: tuning <c>ExtendsInstantSingleTargetDot.DurationExtension, Firemage.CastedDotDetonate.Talent.ExtendsInstantSingleTargetDot.DurationExtension</c> of talent 617; Detonate (ability 1275).</summary>
-    public const double EXTENDS_INSTANT_SINGLE_TARGET_DOT_DURATION_EXTENSION = 1.5;
+    /// <summary>Game data: the tuning values of talent 617.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ExtendsInstantSingleTargetDot.DurationExtension, Firemage.CastedDotDetonate.Talent.ExtendsInstantSingleTargetDot.DurationExtension</c> of talent 617; Detonate (ability 1275).</summary>
+        public const double ExtendsInstantSingleTargetDotDurationExtension = 1.5;
+    }
 }

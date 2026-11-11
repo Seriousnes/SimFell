@@ -28,7 +28,7 @@ public partial class CrimsonStrikes : Talent
         {
             if (!hero.Auras.HasAura(Buff, ctx.CurrentTime)) return 1.0;
             hero.Auras.Remove(Buff, ctx.CurrentTime);
-            return DAMAGE_MULTIPLIER;
+            return Constants.DashAttackTalentDamageMultiplier;
         });
         // Blood Arc's own pulse comes before it grants the buff.
         gunde.RendPulse += (ctx, _) => hero.Auras.Remove(Buff, ctx.CurrentTime);

@@ -10,12 +10,16 @@ partial class SharpenedBlade
     /// <summary>Game data: <c>name</c> of talent 215.</summary>
     public const string TalentName = "Sharpened Blade";
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalAoeDamageBuff.Talent.ReducedAttackSpeed.AttackSpeedMultiplier</c> of talent 215; Harsh Winds (effect 1511), AttackSpeed MultiplyCompound.</summary>
-    public const double ATTACK_SPEED_MULTIPLIER = 0.8;
+    /// <summary>Game data: the tuning values of talent 215.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Meiko.DurationalAoeDamageBuff.Talent.ReducedAttackSpeed.AttackSpeedMultiplier</c> of talent 215; Harsh Winds (effect 1511), AttackSpeed MultiplyCompound.</summary>
+        public const double MeikoDurationalAoeDamageBuffTalentReducedAttackSpeedAttackSpeedMultiplier = 0.8;
 
-    /// <summary>Game data: tuning <c>Warmaster.HeavyMelee.Talent.SweepingStrikeApplied.IncreasedDamage.DamageMultiplier</c> of talent 215; Sweeping Strike (effect 3089), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const int DAMAGE_MULTIPLIER = 3;
+        /// <summary>Game data: tuning <c>Warmaster.HeavyMelee.Talent.SweepingStrikeApplied.IncreasedDamage.DamageMultiplier</c> of talent 215; Sweeping Strike (effect 3089), IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const int HeavyMeleeTalentSweepingStrikeAppliedIncreasedDamageDamageMultiplier = 3;
 
-    /// <summary>Game data: tuning <c>Warmaster.InstantMeleeCleave.Debuff.Duration</c> of talent 215; Sweeping Strike (effect 1276).</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>Warmaster.InstantMeleeCleave.Debuff.Duration</c> of talent 215; Sweeping Strike (effect 1276).</summary>
+        public const int InstantMeleeCleaveDebuffDuration = 12;
+    }
 }

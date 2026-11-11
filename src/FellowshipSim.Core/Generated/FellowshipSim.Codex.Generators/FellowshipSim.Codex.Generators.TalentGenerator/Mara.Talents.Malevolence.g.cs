@@ -10,12 +10,16 @@ partial class Malevolence
     /// <summary>Game data: <c>name</c> of talent 443.</summary>
     public const string TalentName = "Malevolence";
 
-    /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of talent 443; Malevolence: Queen's Fang (effect 2430), DamageScale MultiplyCompound.</summary>
-    public const int DAMAGE_SCALER = 2;
+    /// <summary>Game data: the tuning values of talent 443.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of talent 443; Malevolence: Queen's Fang (effect 2430), DamageScale MultiplyCompound.</summary>
+        public const int TalentDamageSpendersBuffOtherSpenderDamageScaler = 2;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.Duration</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.Duration</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
+        public const int TalentDamageSpendersBuffOtherSpenderDuration = 20;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
-    public const int MAX_NUMBER_OF_STACKS = 2;
+        /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of talent 443; Malevolence: Queen's Fang (effect 2430).</summary>
+        public const int TalentDamageSpendersBuffOtherSpenderMaxNumberOfStacks = 2;
+    }
 }

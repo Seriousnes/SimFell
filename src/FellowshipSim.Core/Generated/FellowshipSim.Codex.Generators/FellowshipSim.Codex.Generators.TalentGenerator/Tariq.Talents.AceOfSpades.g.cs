@@ -10,15 +10,19 @@ partial class AceOfSpades
     /// <summary>Game data: <c>name</c> of talent 675.</summary>
     public const string TalentName = "Ace of Spades";
 
-    /// <summary>Game data: tuning <c>ActivationToLightningDelay, Ink.BouncyProjectile.Talent.FreeCastFromAoeAttack.ActivationToLightningDelay</c> of talent 675; ability 2238.</summary>
-    public const double ACTIVATION_TO_LIGHTNING_DELAY = 0.2;
+    /// <summary>Game data: the tuning values of talent 675.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ActivationToLightningDelay, Ink.BouncyProjectile.Talent.FreeCastFromAoeAttack.ActivationToLightningDelay</c> of talent 675; ability 2238.</summary>
+        public const double ActivationToLightningDelay = 0.2;
 
-    /// <summary>Game data: tuning <c>Charged.MaxCharges, Ink.BouncyProjectile.Talent.Charged.MaxCharges</c> of talent 675; Chain Lightning (ability 1237).</summary>
-    public const int CHARGED_MAX_CHARGES = 2;
+        /// <summary>Game data: tuning <c>Charged.MaxCharges, Ink.BouncyProjectile.Talent.Charged.MaxCharges</c> of talent 675; Chain Lightning (ability 1237).</summary>
+        public const int ChargedMaxCharges = 2;
 
-    /// <summary>Game data: tuning <c>PPMChance, Ink.BouncyProjectile.Talent.FreeCastFromAoeAttack.PPMChance</c> of talent 675; ability 2238.</summary>
-    public const int PPM_CHANCE = 3;
+        /// <summary>Game data: tuning <c>PPMChance, Ink.BouncyProjectile.Talent.FreeCastFromAoeAttack.PPMChance</c> of talent 675; ability 2238.</summary>
+        public const int PPMChance = 3;
 
-    /// <summary>Game data: tuning <c>VFXDuration, Ink.BouncyProjectile.Talent.FreeCastFromAoeAttack.VFXDuration</c> of talent 675; ability 2238.</summary>
-    public const double VFX_DURATION = 1.5;
+        /// <summary>Game data: tuning <c>VFXDuration, Ink.BouncyProjectile.Talent.FreeCastFromAoeAttack.VFXDuration</c> of talent 675; ability 2238.</summary>
+        public const double VFXDuration = 1.5;
+    }
 }

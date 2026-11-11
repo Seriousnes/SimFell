@@ -13,7 +13,7 @@ public partial class PunishingStrikes : Talent
     public const int BuffEffectId = 3095;
     public const string ProcKey = "punishing_strikes";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, maxStacks: MAX_STACKS);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, maxStacks: Constants.MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -21,15 +21,15 @@ public partial class PunishingStrikes : Talent
     public override void Bind(Hero hero)
     {
         if (hero is not Helena helena) return;
-        hero.AddDefensiveProc(ProcKey, (ctx, _) => hero.Auras.Apply(Buff, ctx.CurrentTime, setStacks: STACKS_AT_PROC));
+        hero.AddDefensiveProc(ProcKey, (ctx, _) => hero.Auras.Apply(Buff, ctx.CurrentTime, setStacks: Constants.StacksAtProc));
         bool empowered = false;
         hero.OnCastResolving += cast =>
         {
             empowered = cast.Ability is MeasuredStrike && hero.Auras.HasAura(Buff, cast.Time);
             if (!empowered) return;
             hero.Auras.ConsumeStack(Buff, cast.Time);
-            cast.DamageMultiplier *= DAMAGE_MULTIPLIER;
+            cast.DamageMultiplier *= Constants.DamageMultiplier;
         };
-        helena.VeteranOfWarMultipliers.Add((_, source) => source is MeasuredStrike && empowered ? COOLDOWN_REDUCEMENT_MULTIPLIER : 1.0);
+        helena.VeteranOfWarMultipliers.Add((_, source) => source is MeasuredStrike && empowered ? Constants.CooldownReducementMultiplier : 1.0);
     }
 }

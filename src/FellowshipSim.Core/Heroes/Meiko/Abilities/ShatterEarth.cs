@@ -20,7 +20,7 @@ public partial class ShatterEarth : MeikoAbility
     {
         BaseCoefficient = Coefficient;
         SetCooldown(AbilityCooldown);
-        AoeTargetThreshold = TARGET_COUNT_DAMAGE_SCALING_THRESHOLD;
+        AoeTargetThreshold = Constants.TargetCountDamageScalingThreshold;
         Quake = new ShatterEarthQuake(owner);
     }
 

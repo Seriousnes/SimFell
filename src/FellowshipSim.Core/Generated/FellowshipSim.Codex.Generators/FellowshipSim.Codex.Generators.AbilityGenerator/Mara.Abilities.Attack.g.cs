@@ -16,18 +16,22 @@ partial class Attack
     /// <summary>Game data: <c>range</c> of ability 1209.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1209.</summary>
-    public const double AGILITY_COEFFICIENT_1 = 0.3;
+    /// <summary>Game data: the tuning values of ability 1209.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1209.</summary>
+        public const double AgilityCoefficient = 0.3;
 
-    /// <summary>Game data: tuning <c>EnergyGainProc.AgilityCoefficient</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
-    public const double AGILITY_COEFFICIENT_2 = 0.9;
+        /// <summary>Game data: tuning <c>EnergyGainProc.AgilityCoefficient</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
+        public const double EnergyGainProcAgilityCoefficient = 0.9;
 
-    /// <summary>Game data: tuning <c>EnergyGainProc.Chance</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
-    public const double CHANCE = 0.15;
+        /// <summary>Game data: tuning <c>EnergyGainProc.Chance</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
+        public const double EnergyGainProcChance = 0.15;
 
-    /// <summary>Game data: tuning <c>EnergyGainProc.EnergyGain</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
-    public const int ENERGY_GAIN = 20;
+        /// <summary>Game data: tuning <c>EnergyGainProc.EnergyGain</c> of ability 1209; Auto Attack: Envenom (effect 1726).</summary>
+        public const int EnergyGainProcEnergyGain = 20;
 
-    /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1209.</summary>
-    public const double SWING_TIMER = 1.5;
+        /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1209.</summary>
+        public const double SwingTimer = 1.5;
+    }
 }

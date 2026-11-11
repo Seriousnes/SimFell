@@ -34,48 +34,52 @@ partial class FatedStrike
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 160.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: tuning <c>Buff.AddedExpertise</c> of weapon power 354; Glorious Purpose (effect 80), Expertise Additive.</summary>
-    public const int ADDED_EXPERTISE = 0;
+    /// <summary>Game data: the tuning values of weapon power 354.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Buff.AddedExpertise</c> of weapon power 354; Glorious Purpose (effect 80), Expertise Additive.</summary>
+        public const int BuffAddedExpertise = 0;
 
-    /// <summary>Game data: tuning <c>Buff.CooldownRecoveryMultiplier</c> of weapon power 354; Glorious Purpose (effect 80).</summary>
-    public const int COOLDOWN_RECOVERY_MULTIPLIER = 3;
+        /// <summary>Game data: tuning <c>Buff.CooldownRecoveryMultiplier</c> of weapon power 354; Glorious Purpose (effect 80).</summary>
+        public const int BuffCooldownRecoveryMultiplier = 3;
 
-    /// <summary>Game data: tuning <c>Buff.Duration</c> of weapon power 354; Glorious Purpose (effect 80).</summary>
-    public const int DURATION = 6;
+        /// <summary>Game data: tuning <c>Buff.Duration</c> of weapon power 354; Glorious Purpose (effect 80).</summary>
+        public const int BuffDuration = 6;
 
-    /// <summary>Game data: tuning <c>Charge.ArrivalRange</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const int CHARGE_ARRIVAL_RANGE = 60;
+        /// <summary>Game data: tuning <c>Charge.ArrivalRange</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const int ChargeArrivalRange = 60;
 
-    /// <summary>Game data: tuning <c>Charge.MaxRange</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const int CHARGE_MAX_RANGE = 2000;
+        /// <summary>Game data: tuning <c>Charge.MaxRange</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const int ChargeMaxRange = 2000;
 
-    /// <summary>Game data: tuning <c>Charge.Speed</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const int CHARGE_SPEED = 5000;
+        /// <summary>Game data: tuning <c>Charge.Speed</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const int ChargeSpeed = 5000;
 
-    /// <summary>Game data: tuning <c>ChargesIncrease</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const int CHARGES_INCREASE = 1;
+        /// <summary>Game data: tuning <c>ChargesIncrease</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const int ChargesIncrease = 1;
 
-    /// <summary>Game data: tuning <c>Cleave.AngleCutoff</c> of weapon power 354; Fated Strike (effect 79).</summary>
-    public const int ANGLE_CUTOFF = 210;
+        /// <summary>Game data: tuning <c>Cleave.AngleCutoff</c> of weapon power 354; Fated Strike (effect 79).</summary>
+        public const int CleaveAngleCutoff = 210;
 
-    /// <summary>Game data: tuning <c>Cleave.DamageFalloffTargetCountThreshold</c> of weapon power 354; Fated Strike (effect 79).</summary>
-    public const int DAMAGE_FALLOFF_TARGET_COUNT_THRESHOLD = 3;
+        /// <summary>Game data: tuning <c>Cleave.DamageFalloffTargetCountThreshold</c> of weapon power 354; Fated Strike (effect 79).</summary>
+        public const int CleaveDamageFalloffTargetCountThreshold = 3;
 
-    /// <summary>Game data: tuning <c>PrimaryAttributeCoefficient</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_1 = 7.39;
+        /// <summary>Game data: tuning <c>Cleave.PrimaryAttributeCoefficient</c> of weapon power 354; Fated Strike (effect 79).</summary>
+        public const double CleavePrimaryAttributeCoefficient = 2.874;
 
-    /// <summary>Game data: tuning <c>Cleave.PrimaryAttributeCoefficient</c> of weapon power 354; Fated Strike (effect 79).</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_2 = 2.874;
+        /// <summary>Game data: tuning <c>Cleave.Radius</c> of weapon power 354; Fated Strike (effect 79).</summary>
+        public const int CleaveRadius = 700;
 
-    /// <summary>Game data: tuning <c>Cleave.Radius</c> of weapon power 354; Fated Strike (effect 79).</summary>
-    public const int RADIUS = 700;
+        /// <summary>Game data: tuning <c>CooldownReduction</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const int CooldownReduction = 30;
 
-    /// <summary>Game data: tuning <c>CooldownReduction</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const int COOLDOWN_REDUCTION = 30;
+        /// <summary>Game data: tuning <c>MeleeRange</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const int MeleeRange = 500;
 
-    /// <summary>Game data: tuning <c>MeleeRange</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const int MELEE_RANGE = 500;
+        /// <summary>Game data: tuning <c>PostChargeDelay</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const double PostChargeDelay = 0.5;
 
-    /// <summary>Game data: tuning <c>PostChargeDelay</c> of weapon power 354; Fated Strike (ability 160).</summary>
-    public const double POST_CHARGE_DELAY = 0.5;
+        /// <summary>Game data: tuning <c>PrimaryAttributeCoefficient</c> of weapon power 354; Fated Strike (ability 160).</summary>
+        public const double PrimaryAttributeCoefficient = 7.39;
+    }
 }

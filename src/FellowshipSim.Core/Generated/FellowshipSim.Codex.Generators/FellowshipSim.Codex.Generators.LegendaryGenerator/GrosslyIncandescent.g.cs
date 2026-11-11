@@ -10,8 +10,12 @@ partial class GrosslyIncandescent
     /// <summary>Helm of the First King, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>NumberOfStacks, Sune.Talent.StackingBuffToProc.NumberOfStacks</c> of legendary power 606; ability 1940.</summary>
-    public const int NUMBER_OF_STACKS = 5;
+    /// <summary>Game data: the tuning values of legendary power 606.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>NumberOfStacks, Sune.Talent.StackingBuffToProc.NumberOfStacks</c> of legendary power 606; ability 1940.</summary>
+        public const int NumberOfStacks = 5;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Grossly Incandescent";

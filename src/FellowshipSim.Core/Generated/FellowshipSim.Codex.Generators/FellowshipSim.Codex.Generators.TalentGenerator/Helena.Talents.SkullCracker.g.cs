@@ -10,9 +10,13 @@ partial class SkullCracker
     /// <summary>Game data: <c>name</c> of talent 214.</summary>
     public const string TalentName = "Skull Cracker";
 
-    /// <summary>Game data: tuning <c>FirstHitDamage.DamageIncrease, Warmaster.BouncyProjectile.Talent.FirstHitDamage.DamageIncrease</c> of talent 214; Shield Throw (ability 985).</summary>
-    public const int FIRST_HIT_DAMAGE_DAMAGE_INCREASE = 2;
+    /// <summary>Game data: the tuning values of talent 214.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>FirstHitDamage.DamageIncrease, Warmaster.BouncyProjectile.Talent.FirstHitDamage.DamageIncrease</c> of talent 214; Shield Throw (ability 985).</summary>
+        public const int FirstHitDamageDamageIncrease = 2;
 
-    /// <summary>Game data: tuning <c>Warmaster.BouncyProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 214; Shield Throw (ability 985), CritChance Additive.</summary>
-    public const double INCREASED_CRIT_CHANCE_ADDITIONAL_CRIT_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>Warmaster.BouncyProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 214; Shield Throw (ability 985), CritChance Additive.</summary>
+        public const double BouncyProjectileTalentIncreasedCritChanceAdditionalCritChance = 0.2;
+    }
 }

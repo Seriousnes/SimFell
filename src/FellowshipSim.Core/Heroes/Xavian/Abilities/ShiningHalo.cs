@@ -30,11 +30,11 @@ public partial class ShiningHalo : XavianAbility
 
     public ShiningHalo(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown);
         ManaCost = AbilityCost;
         IgnoresGcd = true;
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
     }
 
     public bool IsActive(SimTime now) => now <= _endsAt && _halo > 0;
@@ -62,7 +62,7 @@ public partial class ShiningHalo : XavianAbility
         Placed?.Invoke(ctx);
         // A new halo replaces the one up (combat logs: no pulse of the old one after the cast).
         int halo = ++_halo;
-        _endsAt = now + SimTime.FromSeconds(AOE_DURATION + BonusDurationSeconds);
+        _endsAt = now + SimTime.FromSeconds(Constants.AoeDuration + BonusDurationSeconds);
         Xavian.Auras.Apply(Buff, now);
         Pulse(ctx);
         Xavian.RaiseOffensiveAbilityUsed(ctx, this);
@@ -76,10 +76,10 @@ public partial class ShiningHalo : XavianAbility
                 return;
             }
             Pulse(c);
-            c.Schedule(SimTime.FromSeconds(AOE_PERIOD), Next, AbilityName);
+            c.Schedule(SimTime.FromSeconds(Constants.AoePeriod), Next, AbilityName);
         }
         // Combat logs (XyGpcHjNaAzgk7mW fight 20, 24 halos): a pulse as it is cast, then one every period whatever the Haste.
-        ctx.Schedule(SimTime.FromSeconds(AOE_PERIOD), Next, AbilityName);
+        ctx.Schedule(SimTime.FromSeconds(Constants.AoePeriod), Next, AbilityName);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public partial class ShiningHalo : XavianAbility
     {
         if (ctx.ActiveEnemies.Count == 0) return;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, ctx.ActiveEnemies, ctx);
-        double falloff = Falloff(struck.Count, DAMAGE_SCALING_TARGET_COUNT_THRESHOLD);
+        double falloff = Falloff(struck.Count, Constants.DamageScalingTargetCountThreshold);
         var now = ctx.CurrentTime;
         for (int i = 0; i < struck.Count; i++)
         {

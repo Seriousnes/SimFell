@@ -25,18 +25,22 @@ partial class AuraOfSolace
     /// <summary>Game data: <c>resource</c> of ability 1917.</summary>
     public const string AbilityResource = "mana";
 
-    /// <summary>Game data: tuning <c>Dot.DamageStrengthCoefficient</c> of ability 1917; ability 1915.</summary>
-    public const double DAMAGE_STRENGTH_COEFFICIENT = 0.34;
+    /// <summary>Game data: the tuning values of ability 1917.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Dot.DamageStrengthCoefficient</c> of ability 1917; ability 1915.</summary>
+        public const double DotDamageStrengthCoefficient = 0.34;
 
-    /// <summary>Game data: tuning <c>ManaCostPerPeriod</c> of ability 1917.</summary>
-    public const int MANA_COST_PER_PERIOD = 10;
+        /// <summary>Game data: tuning <c>ManaCostPerPeriod</c> of ability 1917.</summary>
+        public const int ManaCostPerPeriod = 10;
 
-    /// <summary>Game data: tuning <c>ManaCostTickPeriod</c> of ability 1917.</summary>
-    public const double MANA_COST_TICK_PERIOD = 1.5;
+        /// <summary>Game data: tuning <c>ManaCostTickPeriod</c> of ability 1917.</summary>
+        public const double ManaCostTickPeriod = 1.5;
 
-    /// <summary>Game data: tuning <c>ParryChanceIncrease</c> of ability 1917; ParryChance AddFinal.</summary>
-    public const double PARRY_CHANCE_INCREASE = 0.08;
+        /// <summary>Game data: tuning <c>ParryChanceIncrease</c> of ability 1917; ParryChance AddFinal.</summary>
+        public const double ParryChanceIncrease = 0.08;
 
-    /// <summary>Game data: tuning <c>SelfBuffVisualDelay</c> of ability 1917.</summary>
-    public const double SELF_BUFF_VISUAL_DELAY = 0.41;
+        /// <summary>Game data: tuning <c>SelfBuffVisualDelay</c> of ability 1917.</summary>
+        public const double SelfBuffVisualDelay = 0.41;
+    }
 }

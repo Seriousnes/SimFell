@@ -17,7 +17,7 @@ public partial class EngulfingFlames : ArdeosAbility
         owner.Dots.EnemyDying += (ctx, _, dots) =>
         {
             int instances = dots.Count(d => d.Effect == Dot);
-            if (instances > 0) Owner.ReduceCooldown(Name, SimTime.FromSeconds(COOLDOWN_REDUCTION_IN_SECONDS_ON_TARGET_DEATH * instances), ctx.CurrentTime);
+            if (instances > 0) Owner.ReduceCooldown(Name, SimTime.FromSeconds(Constants.CooldownReductionInSecondsOnTargetDeath * instances), ctx.CurrentTime);
         };
     }
 

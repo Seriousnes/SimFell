@@ -25,24 +25,28 @@ partial class SearingBlaze
     /// <summary>Game data: <c>range</c> of ability 1587.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Ardeos.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of ability 1587; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
-    public const double CRIT_CHANCE_INCREASE = 0.2;
+    /// <summary>Game data: the tuning values of ability 1587.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Ardeos.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of ability 1587; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
+        public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
 
-    /// <summary>Game data: tuning <c>DotDuration</c> of ability 1587.</summary>
-    public const int DOT_DURATION = 30;
+        /// <summary>Game data: tuning <c>DotDuration</c> of ability 1587.</summary>
+        public const int DotDuration = 30;
 
-    /// <summary>Game data: tuning <c>DotPeriod</c> of ability 1587.</summary>
-    public const int DOT_PERIOD = 2;
+        /// <summary>Game data: tuning <c>DotPeriod</c> of ability 1587.</summary>
+        public const int DotPeriod = 2;
 
-    /// <summary>Game data: tuning <c>GMMC_Firemage_InstantSingleTargetDot_Duration_C</c> of ability 1587.</summary>
-    public const int GMMC_FIREMAGE_INSTANT_SINGLE_TARGET_DOT_DURATION_C = 30;
+        /// <summary>Game data: tuning <c>GMMC_Firemage_InstantSingleTargetDot_Duration_C</c> of ability 1587.</summary>
+        public const int GMMCFiremageInstantSingleTargetDotDurationC = 30;
 
-    /// <summary>Game data: tuning <c>IntellectCoefficientPerTick</c> of ability 1587.</summary>
-    public const double INTELLECT_COEFFICIENT_PER_TICK = 0.64695;
+        /// <summary>Game data: tuning <c>IntellectCoefficientPerTick</c> of ability 1587.</summary>
+        public const double IntellectCoefficientPerTick = 0.64695;
 
-    /// <summary>Game data: tuning <c>TickChanceToAddResource</c> of ability 1587.</summary>
-    public const int TICK_CHANCE_TO_ADD_RESOURCE = 1;
+        /// <summary>Game data: tuning <c>TickChanceToAddResource</c> of ability 1587.</summary>
+        public const int TickChanceToAddResource = 1;
 
-    /// <summary>Game data: tuning <c>TickResourceRewardFractionOfBomb</c> of ability 1587.</summary>
-    public const double TICK_RESOURCE_REWARD_FRACTION_OF_BOMB = 0.01;
+        /// <summary>Game data: tuning <c>TickResourceRewardFractionOfBomb</c> of ability 1587.</summary>
+        public const double TickResourceRewardFractionOfBomb = 0.01;
+    }
 }

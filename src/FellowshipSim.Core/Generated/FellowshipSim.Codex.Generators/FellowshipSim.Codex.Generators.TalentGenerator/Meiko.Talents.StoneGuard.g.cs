@@ -10,6 +10,10 @@ partial class StoneGuard
     /// <summary>Game data: <c>name</c> of talent 446.</summary>
     public const string TalentName = "Stone Guard";
 
-    /// <summary>Game data: tuning <c>HealMultiplier, SelfHealToStoneHealth.HealMultiplier, Meiko.Talent.SelfHealToStoneHealth.HealMultiplier</c> of talent 446; ability 1767.</summary>
-    public const double HEAL_MULTIPLIER = 0.1;
+    /// <summary>Game data: the tuning values of talent 446.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>HealMultiplier, SelfHealToStoneHealth.HealMultiplier, Meiko.Talent.SelfHealToStoneHealth.HealMultiplier</c> of talent 446; ability 1767.</summary>
+        public const double HealMultiplier = 0.1;
+    }
 }

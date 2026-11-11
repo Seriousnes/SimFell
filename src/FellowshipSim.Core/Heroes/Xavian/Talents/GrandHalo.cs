@@ -14,7 +14,7 @@ public partial class GrandHalo : Talent
     public override void Bind(Hero hero)
     {
         var halo = ((Xavian)hero).ShiningHalo;
-        halo.AddDamageMultiplier(DAMAGE_INCREASE_MULTIPLIER);
+        halo.AddDamageMultiplier(Constants.DamageIncreaseMultiplier);
         halo.BonusDurationSeconds += BonusSeconds;
     }
 }

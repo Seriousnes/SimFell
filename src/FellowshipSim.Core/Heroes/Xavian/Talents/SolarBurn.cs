@@ -18,8 +18,8 @@ public partial class SolarBurn : Talent
     public override void Bind(Hero hero)
     {
         var xavian = (Xavian)hero;
-        var dot = new XavianDot(xavian, DotEffectId, "Sunburn", DOT_PERIOD, DOT_DURATION);
+        var dot = new XavianDot(xavian, DotEffectId, "Sunburn", Constants.AtTargetInstantAoeTalentAddsDotDotPeriod, Constants.AtTargetInstantAoeTalentAddsDotDotDuration);
         hero.Register(dot.Debuff);
-        xavian.SolarBlades.MainTargetHit += (ctx, enemy, dealt) => dot.Apply(ctx, enemy, dealt * DOT_DAMAGE_SCALER);
+        xavian.SolarBlades.MainTargetHit += (ctx, enemy, dealt) => dot.Apply(ctx, enemy, dealt * Constants.AtTargetInstantAoeTalentAddsDotDotDamageScaler);
     }
 }

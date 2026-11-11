@@ -16,7 +16,7 @@ public partial class RubyStorm : Aspect
 
     public override void Bind(Hero hero)
     {
-        double share = ForRank(HEALTH_PERCENTAGE_AS_DAMAGE_BY_RANK);
+        double share = ForRank(Constants.HealthPercentageAsDamageByRank);
         int logId = LogIds.Effect(DamageEffectId);
         var rppm = new RealPpm(ProcKey, AspectProcsPerMinute);
         hero.OnCastCompleted += (ability, target, _) =>

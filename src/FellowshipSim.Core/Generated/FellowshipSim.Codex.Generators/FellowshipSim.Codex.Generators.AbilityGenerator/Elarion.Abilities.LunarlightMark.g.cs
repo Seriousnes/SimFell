@@ -28,33 +28,37 @@ partial class LunarlightMark
     /// <summary>Game data: <c>range</c> of ability 1310.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>AdditionalHit.AgilityCoefficient</c> of ability 1310; Lunarlight Salvo (ability 1309).</summary>
-    public const double AGILITY_COEFFICIENT = 2.19;
+    /// <summary>Game data: the tuning values of ability 1310.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalHit.AgilityCoefficient</c> of ability 1310; Lunarlight Salvo (ability 1309).</summary>
+        public const double AdditionalHitAgilityCoefficient = 2.19;
 
-    /// <summary>Game data: tuning <c>AdditionalTargetsRadius</c> of ability 1310.</summary>
-    public const int ADDITIONAL_TARGETS_RADIUS = 850;
+        /// <summary>Game data: tuning <c>AdditionalTargetsRadius</c> of ability 1310.</summary>
+        public const int AdditionalTargetsRadius = 850;
 
-    /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.Cost</c> of ability 1310.</summary>
-    public const int BOWGUY_DAMAGE_BOUNCE_SELF_BUFF_COST = 20;
+        /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.Cost</c> of ability 1310.</summary>
+        public const int DamageBounceSelfBuffCost = 20;
 
-    /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.DamageMultiplier</c> of ability 1310.</summary>
-    public const int BOWGUY_DAMAGE_BOUNCE_SELF_BUFF_DAMAGE_MULTIPLIER = 1;
+        /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.DamageMultiplier</c> of ability 1310.</summary>
+        public const int DamageBounceSelfBuffDamageMultiplier = 1;
 
-    /// <summary>Game data: tuning <c>Duration, InstantNoCooldownProc.Duration</c> of ability 1310.</summary>
-    public const int DURATION = 15;
+        /// <summary>Game data: tuning <c>Duration, InstantNoCooldownProc.Duration</c> of ability 1310.</summary>
+        public const int Duration = 15;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1310.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1310.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>MaxStacks</c> of ability 1310.</summary>
-    public const int MAX_STACKS = 20;
+        /// <summary>Game data: tuning <c>MaxStacks</c> of ability 1310.</summary>
+        public const int MaxStacks = 20;
 
-    /// <summary>Game data: tuning <c>MaxTargets</c> of ability 1310.</summary>
-    public const int MAX_TARGETS = 12;
+        /// <summary>Game data: tuning <c>MaxTargets</c> of ability 1310.</summary>
+        public const int MaxTargets = 12;
 
-    /// <summary>Game data: tuning <c>StacksApplied</c> of ability 1310.</summary>
-    public const int STACKS_APPLIED = 3;
+        /// <summary>Game data: tuning <c>StacksApplied</c> of ability 1310.</summary>
+        public const int StacksApplied = 3;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageScale</c> of ability 1310; talent Lunar Fury (talent 130).</summary>
-    public const double DAMAGE_SCALE = 1.3;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageScale</c> of ability 1310; talent Lunar Fury (talent 130).</summary>
+        public const double TalentIncreasedDamageDamageScale = 1.3;
+    }
 }

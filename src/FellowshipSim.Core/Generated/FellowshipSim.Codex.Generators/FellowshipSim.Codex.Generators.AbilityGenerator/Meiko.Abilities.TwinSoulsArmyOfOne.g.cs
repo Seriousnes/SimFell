@@ -22,15 +22,19 @@ partial class TwinSoulsArmyOfOne
     /// <summary>Game data: <c>duration</c> of ability 1110.</summary>
     public const double AbilityDuration = 0.3;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.AgilityCoefficient</c> of ability 1110; ability 1109.</summary>
-    public const double AGILITY_COEFFICIENT = 1.316;
+    /// <summary>Game data: the tuning values of ability 1110.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.AgilityCoefficient</c> of ability 1110; ability 1109.</summary>
+        public const double DurationalMultipleTeleportDamageAgilityCoefficient = 1.316;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.IncreasedDamage</c> of ability 1110; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double INCREASED_DAMAGE = 1.15;
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.IncreasedDamage</c> of ability 1110; ability 1109, DamageScale Multiplicitive.</summary>
+        public const double DurationalMultipleTeleportDamageTalentIncreasedDamage = 1.15;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1110; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1110; ability 1109, DamageScale Multiplicitive.</summary>
+        public const double DurationalMultipleTeleportDamageTalentTargetDebuffIncreasedDamage = 1.1;
 
-    /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1110; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
-    public const double WIND_DAMAGE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1110; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
+        public const double TauntTotemTalentBuffAfterDestroyedWindDamageIncrease = 1.2;
+    }
 }

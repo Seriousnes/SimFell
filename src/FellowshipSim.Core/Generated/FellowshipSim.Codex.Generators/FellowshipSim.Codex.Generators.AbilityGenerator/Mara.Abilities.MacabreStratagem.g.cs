@@ -22,9 +22,13 @@ partial class MacabreStratagem
     /// <summary>Game data: <c>duration</c> of ability 2233.</summary>
     public const int AbilityDuration = 10;
 
-    /// <summary>Game data: tuning <c>AdditionalDuration</c> of ability 2233.</summary>
-    public const int ADDITIONAL_DURATION = 10;
+    /// <summary>Game data: the tuning values of ability 2233.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalDuration</c> of ability 2233.</summary>
+        public const int AdditionalDuration = 10;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 2233.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 2233.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    }
 }

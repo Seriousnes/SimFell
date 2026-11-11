@@ -10,17 +10,15 @@ partial class VanguardsAdvance
     /// <summary>Warmaster Greaves, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
-    /// <summary>Game data: tuning <c>ArrivalMeleeAoeSlow.TargetExtraHelenaDamage.Duration</c> of legendary power 391.</summary>
-    public const int TARGET_EXTRA_HELENA_DAMAGE_DURATION = 5;
+    /// <summary>Game data: the tuning values of legendary power 391.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ArrivalMeleeAoeSlow.TargetExtraHelenaDamage.Duration, Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.Duration, Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.Duration</c> of legendary power 391.</summary>
+        public const int ArrivalMeleeAoeSlowTargetExtraHelenaDamageDuration = 5;
 
-    /// <summary>Game data: tuning <c>ArrivalMeleeAoeSlow.TargetExtraHelenaDamage.IncomingDamageScaler</c> of legendary power 391.</summary>
-    public const double TARGET_EXTRA_HELENA_DAMAGE_INCOMING_DAMAGE_SCALER = 1.2;
-
-    /// <summary>Game data: tuning <c>Warmaster.MeleeAoeSlow.Talent.ReducedIncomingDamageFromTarget.Duration, Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.Duration</c> of legendary power 391; Vanguard's Advance (effect 2429).</summary>
-    public const int DURATION = 5;
-
-    /// <summary>Game data: tuning <c>Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.IncomingDamageScaler</c> of legendary power 391; Aftershock (effect 2428), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_SCALER = 1.2;
+        /// <summary>Game data: tuning <c>ArrivalMeleeAoeSlow.TargetExtraHelenaDamage.IncomingDamageScaler, Warmaster.MoveToTargetStun.Talent.ArrivalMeleeAoeSlow.TargetExtraWarmasterDamage.IncomingDamageScaler</c> of legendary power 391.</summary>
+        public const double ArrivalMeleeAoeSlowTargetExtraHelenaDamageIncomingDamageScaler = 1.2;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Vanguard's Advance";

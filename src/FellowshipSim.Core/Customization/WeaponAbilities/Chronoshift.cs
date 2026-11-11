@@ -10,20 +10,20 @@ public partial class Chronoshift : Ability
 
     /// <summary>Asha's Arcane Embrace: the temporal barrier while channeling.</summary>
     public static readonly AuraDef Barrier = AuraDef.Effect("Asha's Arcane Embrace", BarrierEffectId,
-        modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, INCOMING_DAMAGE_MULTIPLIER), StatModifier.Increased(StatType.CooldownRecovery, CHANNEL_WHILE_ACTIVE_ADDED_COOLDOWN_RECOVERY)]);
+        modifiers: [StatModifier.More(StatType.IncomingDamageMultiplier, Constants.BuffIncomingDamageMultiplier), StatModifier.Increased(StatType.CooldownRecovery, Constants.ChannelWhileActiveAddedCooldownRecovery)]);
 
     private readonly AuraDef _barrier = Barrier;
 
     public Chronoshift(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = PRIMARY_ATTRIBUTE_COEFFICIENT;
+        BaseCoefficient = Constants.DamagePrimaryAttributeCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);
         // Logs: a pulse lands as the channel starts, then every hasted period, plus a partial final pulse.
         ChannelTicksOnStart = true;
         ChannelPartialFinalTick = true;
-        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.DamageTargetCountThreshold;
         // The barrier's CooldownRecovery joins the hero's recovery pool while channeling and leaves it when
         // the channel ends or is stopped. Chronoshift's own cooldown is fixed (a weapon ability's cooldown runs at normal speed).
     }

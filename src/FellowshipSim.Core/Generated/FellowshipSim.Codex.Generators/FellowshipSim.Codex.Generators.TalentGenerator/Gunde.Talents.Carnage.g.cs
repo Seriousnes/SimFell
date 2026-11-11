@@ -10,9 +10,13 @@ partial class Carnage
     /// <summary>Game data: <c>name</c> of talent 754.</summary>
     public const string TalentName = "Carnage";
 
-    /// <summary>Game data: tuning <c>DamageCooldownReduction.DamageMultiplier, Gunde.TargetedAoeProjectile.Talent.DamageCooldownReduction.DamageMultiplier</c> of talent 754; Carnage (effect 3207), DamageScale Multiplicitive.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.25;
+    /// <summary>Game data: the tuning values of talent 754.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageCooldownReduction.DamageMultiplier, Gunde.TargetedAoeProjectile.Talent.DamageCooldownReduction.DamageMultiplier</c> of talent 754; Carnage (effect 3207), DamageScale Multiplicitive.</summary>
+        public const double DamageCooldownReductionDamageMultiplier = 1.25;
 
-    /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Talent.DamageCooldownReduction.CooldownReductionInSecondsPerHit</c> of talent 754; Carnage (effect 3207).</summary>
-    public const int COOLDOWN_REDUCTION_IN_SECONDS_PER_HIT = 1;
+        /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Talent.DamageCooldownReduction.CooldownReductionInSecondsPerHit</c> of talent 754; Carnage (effect 3207).</summary>
+        public const int TargetedAoeProjectileTalentDamageCooldownReductionCooldownReductionInSecondsPerHit = 1;
+    }
 }

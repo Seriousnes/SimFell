@@ -10,12 +10,16 @@ partial class DeathsArc
     /// <summary>Game data: <c>name</c> of talent 748.</summary>
     public const string TalentName = "Death's Arc";
 
-    /// <summary>Game data: tuning <c>Chance, Gunde.InstantAoeWithBuff.Talent.ChanceCooldownReset.Chance</c> of talent 748; ability 2266.</summary>
-    public const double CHANCE = 0.3;
+    /// <summary>Game data: the tuning values of talent 748.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Chance, Gunde.InstantAoeWithBuff.Talent.ChanceCooldownReset.Chance</c> of talent 748; ability 2266.</summary>
+        public const double Chance = 0.3;
 
-    /// <summary>Game data: tuning <c>Empowered.Duration, Gunde.InstantAoeWithBuff.Talent.Empowered.Duration</c> of talent 748; Death's Arc (effect 3208).</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>Empowered.Duration, Gunde.InstantAoeWithBuff.Talent.Empowered.Duration</c> of talent 748; Death's Arc (effect 3208).</summary>
+        public const int EmpoweredDuration = 12;
 
-    /// <summary>Game data: tuning <c>Gunde.InstantAoeWithBuff.Talent.Empowered.AddedCriticalStrikeChance</c> of talent 748; Death's Arc (effect 3208).</summary>
-    public const int ADDED_CRITICAL_STRIKE_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Gunde.InstantAoeWithBuff.Talent.Empowered.AddedCriticalStrikeChance</c> of talent 748; Death's Arc (effect 3208).</summary>
+        public const int InstantAoeWithBuffTalentEmpoweredAddedCriticalStrikeChance = 1;
+    }
 }

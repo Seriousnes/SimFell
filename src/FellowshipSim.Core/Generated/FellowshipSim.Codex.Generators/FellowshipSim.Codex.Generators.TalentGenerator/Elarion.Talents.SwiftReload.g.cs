@@ -10,6 +10,10 @@ partial class SwiftReload
     /// <summary>Game data: <c>name</c> of talent 682.</summary>
     public const string TalentName = "Swift Reload";
 
-    /// <summary>Game data: tuning <c>HitReducesCooldown.CooldownReductionInSeconds, Bowguy.CastedProjectileHeavyDamage.Talent.HitReducesCooldown.CooldownReductionInSeconds</c> of talent 682; Highwind Arrow (ability 1313).</summary>
-    public const double HIT_REDUCES_COOLDOWN_COOLDOWN_REDUCTION_IN_SECONDS = 0.5;
+    /// <summary>Game data: the tuning values of talent 682.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>HitReducesCooldown.CooldownReductionInSeconds, Bowguy.CastedProjectileHeavyDamage.Talent.HitReducesCooldown.CooldownReductionInSeconds</c> of talent 682; Highwind Arrow (ability 1313).</summary>
+        public const double HitReducesCooldownCooldownReductionInSeconds = 0.5;
+    }
 }

@@ -12,7 +12,7 @@ public partial class AssassinsGuile : Talent
     public const int EffectId = 2245;
 
     // Combat logs: the buff stays through the hero's death.
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, DURATION) with { KeepsOnDeath = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Constants.SpenderIncreasedDamageDuration) with { KeepsOnDeath = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -24,7 +24,7 @@ public partial class AssassinsGuile : Talent
         // Read as the cast resolves, so the clones of Matriarch Macabre keep it.
         hero.OnCastResolving += cast =>
         {
-            if (cast.Ability is QueensFang or ArachnidAssault && hero.Auras.HasAura(Buff, cast.Time)) cast.DamageMultiplier *= DAMAGE_MULTIPLIER;
+            if (cast.Ability is QueensFang or ArachnidAssault && hero.Auras.HasAura(Buff, cast.Time)) cast.DamageMultiplier *= Constants.StealthTalentSpenderIncreasedDamageDamageMultiplier;
         };
     }
 }

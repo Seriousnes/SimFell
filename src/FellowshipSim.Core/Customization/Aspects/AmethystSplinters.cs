@@ -63,7 +63,7 @@ public partial class AmethystSplinters : Aspect
 
     public override void Bind(Hero hero)
     {
-        double share = ForRank(DEBUFF_DAMAGE_PERCENTAGE_BY_RANK);
+        double share = ForRank(Constants.DebuffDamagePercentageByRank);
         int logId = LogIds.Effect(DotEffectId);
         hero.DotDamageIds.Add(logId);
         var splinters = new Dictionary<EnemyTarget, Splinter>();

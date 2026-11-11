@@ -10,15 +10,19 @@ partial class EfficientKiller
     /// <summary>Game data: <c>name</c> of talent 113.</summary>
     public const string TalentName = "Efficient Killer";
 
-    /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient</c> of talent 113; Corrosive Spill (effect 2310).</summary>
-    public const double AGILITY_COEFFICIENT = 1.58;
+    /// <summary>Game data: the tuning values of talent 113.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient</c> of talent 113; Corrosive Spill (effect 2310).</summary>
+        public const double ComboPointsChanceAoeDamageDebuffAgilityCoefficient = 1.58;
 
-    /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.Duration, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.Duration</c> of talent 113; Corrosive Spill (effect 2310).</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.Duration, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.Duration</c> of talent 113; Corrosive Spill (effect 2310).</summary>
+        public const int ComboPointsChanceAoeDamageDebuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 113; Corrosive Spill (effect 2310).</summary>
-    public const double TICK_INTERVAL = 1.5;
+        /// <summary>Game data: tuning <c>ComboPointsChanceAoeDamage.Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 113; Corrosive Spill (effect 2310).</summary>
+        public const double ComboPointsChanceAoeDamageDebuffTickInterval = 1.5;
 
-    /// <summary>Game data: tuning <c>EnergyGainPerComboPoint, Mara.Talent.ComboPointsRefundEnergy.EnergyGainPerComboPoint</c> of talent 113; ability 1785.</summary>
-    public const int ENERGY_GAIN_PER_COMBO_POINT = 1;
+        /// <summary>Game data: tuning <c>EnergyGainPerComboPoint, Mara.Talent.ComboPointsRefundEnergy.EnergyGainPerComboPoint</c> of talent 113; ability 1785.</summary>
+        public const int EnergyGainPerComboPoint = 1;
+    }
 }

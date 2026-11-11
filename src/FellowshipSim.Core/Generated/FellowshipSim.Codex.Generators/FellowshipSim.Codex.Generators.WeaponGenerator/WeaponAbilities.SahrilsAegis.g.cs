@@ -25,12 +25,16 @@ partial class SahrilsAegis
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 159.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: tuning <c>Absorb.AbsorbMaxHealthPercentage</c> of weapon power 352; Sahril's Aegis (effect 77).</summary>
-    public const double ABSORB_MAX_HEALTH_PERCENTAGE = 0.35;
+    /// <summary>Game data: the tuning values of weapon power 352.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Absorb.AbsorbMaxHealthPercentage</c> of weapon power 352; Sahril's Aegis (effect 77).</summary>
+        public const double AbsorbAbsorbMaxHealthPercentage = 0.35;
 
-    /// <summary>Game data: tuning <c>Absorb.Duration</c> of weapon power 352; Sahril's Aegis (effect 77).</summary>
-    public const int DURATION = 18;
+        /// <summary>Game data: tuning <c>Absorb.Duration</c> of weapon power 352; Sahril's Aegis (effect 77).</summary>
+        public const int AbsorbDuration = 18;
 
-    /// <summary>Game data: tuning <c>Explosion.PrimaryAttributeCoefficient</c> of weapon power 352; ability 158.</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT = 22.41;
+        /// <summary>Game data: tuning <c>Explosion.PrimaryAttributeCoefficient</c> of weapon power 352; ability 158.</summary>
+        public const double ExplosionPrimaryAttributeCoefficient = 22.41;
+    }
 }

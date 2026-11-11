@@ -19,15 +19,19 @@ partial class GrandMelee
     /// <summary>Game data: <c>radius</c> of ability 1465.</summary>
     public const int AbilityRadius = 1500;
 
-    /// <summary>Game data: tuning <c>AoeDuration</c> of ability 1465.</summary>
-    public const int AOE_DURATION = 10;
+    /// <summary>Game data: the tuning values of ability 1465.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AoeDuration</c> of ability 1465.</summary>
+        public const int AoeDuration = 10;
 
-    /// <summary>Game data: tuning <c>FriendlyAura.IncomingMagicDamageScaler</c> of ability 1465; Grand Melee (effect 2205), MagicalIncomingDamageMultiplier Multiplicitive.</summary>
-    public const double INCOMING_MAGIC_DAMAGE_SCALER = 0.8;
+        /// <summary>Game data: tuning <c>FriendlyAura.IncomingMagicDamageScaler</c> of ability 1465; Grand Melee (effect 2205), MagicalIncomingDamageMultiplier Multiplicitive.</summary>
+        public const double FriendlyAuraIncomingMagicDamageScaler = 0.8;
 
-    /// <summary>Game data: tuning <c>Talent.ReducedCooldown</c> of ability 1465.</summary>
-    public const double REDUCED_COOLDOWN = 0.8;
+        /// <summary>Game data: tuning <c>Talent.ReducedCooldown</c> of ability 1465.</summary>
+        public const double TalentReducedCooldown = 0.8;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1465.</summary>
-    public const double VISUAL_DELAY = 0.22;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1465.</summary>
+        public const double VisualDelay = 0.22;
+    }
 }

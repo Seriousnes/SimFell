@@ -10,12 +10,16 @@ partial class TemperedDescent
     /// <summary>Game data: <c>name</c> of talent 572.</summary>
     public const string TalentName = "Tempered Descent";
 
-    /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ArmorScaler, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.ArmorScaler</c> of talent 572; Tempered Descent (effect 2646), Armor MultiplyCompound.</summary>
-    public const double ARMOR_SCALER = 1.4;
+    /// <summary>Game data: the tuning values of talent 572.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ArmorScaler, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.ArmorScaler</c> of talent 572; Tempered Descent (effect 2646), Armor MultiplyCompound.</summary>
+        public const double MoveSpeedAndArmorBuffArmorScaler = 1.4;
 
-    /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.MoveSpeedScaler, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.MoveSpeedScaler</c> of talent 572; Tempered Descent (effect 2646), MoveSpeed MultiplyCompound.</summary>
-    public const double MOVE_SPEED_SCALER = 1.2;
+        /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.MoveSpeedScaler, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.MoveSpeedScaler</c> of talent 572; Tempered Descent (effect 2646), MoveSpeed MultiplyCompound.</summary>
+        public const double MoveSpeedAndArmorBuffMoveSpeedScaler = 1.2;
 
-    /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ProcDuration, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.ProcDuration</c> of talent 572; Tempered Descent (effect 2646).</summary>
-    public const int PROC_DURATION = 18;
+        /// <summary>Game data: tuning <c>MoveSpeedAndArmorBuff.ProcDuration, Sune.TargetedLeapAoe.Talent.MoveSpeedAndArmorBuff.ProcDuration</c> of talent 572; Tempered Descent (effect 2646).</summary>
+        public const int MoveSpeedAndArmorBuffProcDuration = 18;
+    }
 }

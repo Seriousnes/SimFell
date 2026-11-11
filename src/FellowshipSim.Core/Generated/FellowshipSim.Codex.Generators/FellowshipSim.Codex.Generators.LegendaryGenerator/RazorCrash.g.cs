@@ -10,11 +10,15 @@ partial class RazorCrash
     /// <summary>Warmaster Breastplate, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
-    /// <summary>Game data: tuning <c>DamageDivision, FirstHitAoeDamageDebuff.DamageDivision, Warmaster.BouncyProjectile.Talent.FirstHitAoeDamageDebuff.DamageDivision</c> of legendary power 389; Razor Crash (ability 1615).</summary>
-    public const double DAMAGE_DIVISION = 1.2;
+    /// <summary>Game data: the tuning values of legendary power 389.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageDivision, FirstHitAoeDamageDebuff.DamageDivision, Warmaster.BouncyProjectile.Talent.FirstHitAoeDamageDebuff.DamageDivision</c> of legendary power 389; Razor Crash (ability 1615).</summary>
+        public const double DamageDivision = 1.2;
 
-    /// <summary>Game data: tuning <c>FirstHitAoeDamageDebuff.Duration, Warmaster.BouncyProjectile.Talent.FirstHitAoeDamageDebuff.Duration</c> of legendary power 389; Razor Crash (ability 1615).</summary>
-    public const int DURATION = 5;
+        /// <summary>Game data: tuning <c>FirstHitAoeDamageDebuff.Duration, Warmaster.BouncyProjectile.Talent.FirstHitAoeDamageDebuff.Duration</c> of legendary power 389; Razor Crash (ability 1615).</summary>
+        public const int FirstHitAoeDamageDebuffDuration = 5;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Razor Crash";

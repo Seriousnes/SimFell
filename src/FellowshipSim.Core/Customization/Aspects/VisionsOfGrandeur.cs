@@ -14,7 +14,7 @@ public partial class VisionsOfGrandeur : Aspect
 
     public override void Bind(Hero hero)
     {
-        double fraction = ForRank(SPIRIT_POINTS_GAIN_WEAPON_COOLDOWN_FRACTION_BY_RANK);
+        double fraction = ForRank(Constants.SpiritPointsGainWeaponCooldownFractionByRank);
         hero.OnCastCompleted += (ability, _, _) =>
         {
             if (ability == hero.WeaponAbility && hero.SimContext is { } ctx)

@@ -15,7 +15,7 @@ public partial class SolarBlades : XavianAbility
 
     public SolarBlades(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         ManaCost = AbilityCost;
         IgnoresGcd = true;
@@ -30,13 +30,13 @@ public partial class SolarBlades : XavianAbility
         // Combat logs (16 Xavian players, 27,127 hits): the main target takes its 200% whatever the count; every other
         // enemy loses damage as sqrt(5/N) over all N enemies struck, the main target counted (log/engine 0.99-1.01 at
         // every N from 2 to 17).
-        double falloff = Falloff(struck.Count, DAMAGE_SCALING_TARGET_COUNT_THRESHOLD);
+        double falloff = Falloff(struck.Count, Constants.DamageScalingTargetCountThreshold);
         for (int i = 0; i < struck.Count; i++)
         {
             var enemy = struck[i];
             if (enemy == target)
             {
-                DealDamage(ctx, enemy, MAIN_TARGET_DAMAGE_SCALER, onLanded: (c, dealt) => MainTargetHit?.Invoke(c, enemy, dealt));
+                DealDamage(ctx, enemy, Constants.MainTargetDamageScaler, onLanded: (c, dealt) => MainTargetHit?.Invoke(c, enemy, dealt));
             }
             else
             {

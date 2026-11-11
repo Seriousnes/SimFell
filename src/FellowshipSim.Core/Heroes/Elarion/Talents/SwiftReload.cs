@@ -14,7 +14,7 @@ public partial class SwiftReload : Talent
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<HighwindArrow>() is not { } highwind) return;
-        var reduction = SimTime.FromSeconds(HIT_REDUCES_COOLDOWN_COOLDOWN_REDUCTION_IN_SECONDS);
+        var reduction = SimTime.FromSeconds(Constants.HitReducesCooldownCooldownReductionInSeconds);
         highwind.Hit += (in DamageContext hit) => hero.ReduceCooldown(highwind.Name, reduction, hit.Timestamp);
     }
 }

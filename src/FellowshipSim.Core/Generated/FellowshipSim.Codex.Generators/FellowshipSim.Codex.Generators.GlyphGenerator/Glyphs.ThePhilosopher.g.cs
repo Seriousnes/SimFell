@@ -16,15 +16,19 @@ partial class ThePhilosopher
     /// <summary>Game data: <c>abilityRank</c> of glyph 709.</summary>
     public const int GlyphAbilityRank = 188;
 
-    /// <summary>Game data: tuning <c>CurrentSpiritPerIncrease</c> of glyph 709; ability 2256, by rank.</summary>
-    public static readonly double[] CURRENT_SPIRIT_PER_INCREASE_BY_RANK = [4, 2.5, 1.6, 1];
+    /// <summary>Game data: the tuning values of glyph 709.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CurrentSpiritPerIncrease</c> of glyph 709; ability 2256, by rank.</summary>
+        public static readonly double[] CurrentSpiritPerIncreaseByRank = [4, 2.5, 1.6, 1];
 
-    /// <summary>Game data: tuning <c>Duration</c> of glyph 709; ability 2256.</summary>
-    public const int DURATION = 8;
+        /// <summary>Game data: tuning <c>Duration</c> of glyph 709; ability 2256.</summary>
+        public const int Duration = 8;
 
-    /// <summary>Game data: tuning <c>IncreasePerSpirit</c> of glyph 709; ability 2256.</summary>
-    public const double INCREASE_PER_SPIRIT = 0.002;
+        /// <summary>Game data: tuning <c>IncreasePerSpirit</c> of glyph 709; ability 2256.</summary>
+        public const double IncreasePerSpirit = 0.002;
 
-    /// <summary>Game data: tuning <c>SpiritThreshold</c> of glyph 709; ability 2256.</summary>
-    public const double SPIRIT_THRESHOLD = 0.5;
+        /// <summary>Game data: tuning <c>SpiritThreshold</c> of glyph 709; ability 2256.</summary>
+        public const double SpiritThreshold = 0.5;
+    }
 }

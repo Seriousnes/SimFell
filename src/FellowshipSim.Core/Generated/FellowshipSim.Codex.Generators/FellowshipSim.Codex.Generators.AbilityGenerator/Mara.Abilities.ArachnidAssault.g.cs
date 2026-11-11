@@ -34,33 +34,37 @@ partial class ArachnidAssault
     /// <summary>Game data: <c>radius</c> of ability 1212.</summary>
     public const int AbilityRadius = 800;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1212.</summary>
-    public const double AGILITY_COEFFICIENT = 1.1722;
+    /// <summary>Game data: the tuning values of ability 1212.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1212.</summary>
+        public const double AgilityCoefficient = 1.1722;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1212.</summary>
-    public const int COST = 45;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1212.</summary>
+        public const int Cost = 45;
 
-    /// <summary>Game data: tuning <c>DamageMultiplierPerComboPoint</c> of ability 1212.</summary>
-    public const double DAMAGE_MULTIPLIER_PER_COMBO_POINT = 0.2;
+        /// <summary>Game data: tuning <c>DamageMultiplierPerComboPoint</c> of ability 1212.</summary>
+        public const double DamageMultiplierPerComboPoint = 0.2;
 
-    /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.Duration</c> of ability 1212; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.Duration</c> of ability 1212; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
+        public const int DamageSpendersBuffOtherSpenderDuration = 20;
 
-    /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of ability 1212; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
-    public const int MAX_NUMBER_OF_STACKS = 2;
+        /// <summary>Game data: tuning <c>DamageSpenders.BuffOtherSpender.MaxNumberOfStacks</c> of ability 1212; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443).</summary>
+        public const int DamageSpendersBuffOtherSpenderMaxNumberOfStacks = 2;
 
-    /// <summary>Game data: tuning <c>Mara.CopyCharacterDamage.DamageMultiplier</c> of ability 1212; Matriarch Macabre (ability 1420), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER_1 = 0.5;
+        /// <summary>Game data: tuning <c>Mara.CopyCharacterDamage.DamageMultiplier</c> of ability 1212; Matriarch Macabre (ability 1420), DamageScale MultiplyCompound.</summary>
+        public const double CopyCharacterDamageDamageMultiplier = 0.5;
 
-    /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of ability 1212; Assassin's Guile (effect 2245), talent Assassin's Guile (talent 422), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER_2 = 1.4;
+        /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of ability 1212; Assassin's Guile (effect 2245), talent Assassin's Guile (talent 422), DamageScale MultiplyCompound.</summary>
+        public const double StealthTalentSpenderIncreasedDamageDamageMultiplier = 1.4;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of ability 1212; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443), DamageScale MultiplyCompound.</summary>
-    public const int DAMAGE_SCALER = 2;
+        /// <summary>Game data: tuning <c>Mara.Talent.DamageSpenders.BuffOtherSpender.DamageScaler</c> of ability 1212; Malevolence: Queen's Fang (effect 2430), talent Malevolence (talent 443), DamageScale MultiplyCompound.</summary>
+        public const int TalentDamageSpendersBuffOtherSpenderDamageScaler = 2;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.ResourceAttackSpenderCritChance.AdditionalCritChance</c> of ability 1212; ability 1435, talent Deadly Scheme (talent 110), CritChance Additive.</summary>
-    public const int ADDITIONAL_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Mara.Talent.ResourceAttackSpenderCritChance.AdditionalCritChance</c> of ability 1212; ability 1435, talent Deadly Scheme (talent 110), CritChance Additive.</summary>
+        public const int TalentResourceAttackSpenderCritChanceAdditionalCritChance = 1;
 
-    /// <summary>Game data: tuning <c>NumTargetsDamageFalloffThreshold</c> of ability 1212.</summary>
-    public const int NUM_TARGETS_DAMAGE_FALLOFF_THRESHOLD = 8;
+        /// <summary>Game data: tuning <c>NumTargetsDamageFalloffThreshold</c> of ability 1212.</summary>
+        public const int NumTargetsDamageFalloffThreshold = 8;
+    }
 }

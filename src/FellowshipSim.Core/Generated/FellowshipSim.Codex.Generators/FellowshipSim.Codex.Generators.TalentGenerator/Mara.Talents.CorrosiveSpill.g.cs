@@ -16,21 +16,25 @@ partial class CorrosiveSpill
     /// <summary>Game data: <c>radius</c> of talent 206.</summary>
     public const int TalentRadius = 500;
 
-    /// <summary>Game data: tuning <c>Chance, Mara.Talent.ComboPointsChanceAoeDamage.Chance</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-    public const double CHANCE = 0.03;
+    /// <summary>Game data: the tuning values of talent 206.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Chance, Mara.Talent.ComboPointsChanceAoeDamage.Chance</c> of talent 206; Corrosive Spill (ability 1583).</summary>
+        public const double Chance = 0.03;
 
-    /// <summary>Game data: tuning <c>Debuff.AgilityCoefficient, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient</c> of talent 206; Corrosive Spill (effect 2310).</summary>
-    public const double AGILITY_COEFFICIENT = 1.58;
+        /// <summary>Game data: tuning <c>Debuff.AgilityCoefficient, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.AgilityCoefficient</c> of talent 206; Corrosive Spill (effect 2310).</summary>
+        public const double DebuffAgilityCoefficient = 1.58;
 
-    /// <summary>Game data: tuning <c>Debuff.Duration, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.Duration</c> of talent 206; Corrosive Spill (effect 2310).</summary>
-    public const int DURATION_1 = 12;
+        /// <summary>Game data: tuning <c>Debuff.Duration, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.Duration</c> of talent 206; Corrosive Spill (effect 2310).</summary>
+        public const int DebuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Duration</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-    public const int DURATION_2 = 3;
+        /// <summary>Game data: tuning <c>Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 206; Corrosive Spill (effect 2310).</summary>
+        public const double DebuffTickInterval = 1.5;
 
-    /// <summary>Game data: tuning <c>Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 206; Corrosive Spill (effect 2310).</summary>
-    public const double TICK_INTERVAL = 1.5;
+        /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Duration</c> of talent 206; Corrosive Spill (ability 1583).</summary>
+        public const int TalentComboPointsChanceAoeDamageDuration = 3;
 
-    /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Radius</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-    public const int RADIUS = 500;
+        /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Radius</c> of talent 206; Corrosive Spill (ability 1583).</summary>
+        public const int TalentComboPointsChanceAoeDamageRadius = 500;
+    }
 }

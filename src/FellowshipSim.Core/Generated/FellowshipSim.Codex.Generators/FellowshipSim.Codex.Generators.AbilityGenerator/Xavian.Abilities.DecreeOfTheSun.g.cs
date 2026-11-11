@@ -22,21 +22,25 @@ partial class DecreeOfTheSun
     /// <summary>Game data: <c>resource</c> of ability 1853.</summary>
     public const string AbilityResource = "Spirit";
 
-    /// <summary>Game data: tuning <c>AoeDamage.DamageStrengthCoefficient</c> of ability 1853; ability 1852.</summary>
-    public const double DAMAGE_STRENGTH_COEFFICIENT = 5.53;
+    /// <summary>Game data: the tuning values of ability 1853.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AoeDamage.DamageStrengthCoefficient</c> of ability 1853; ability 1852.</summary>
+        public const double AoeDamageDamageStrengthCoefficient = 5.53;
 
-    /// <summary>Game data: tuning <c>AoeHeal.HealStrengthCoefficient</c> of ability 1853; ability 1851.</summary>
-    public const double HEAL_STRENGTH_COEFFICIENT = 1.54;
+        /// <summary>Game data: tuning <c>AoeHeal.HealStrengthCoefficient</c> of ability 1853; ability 1851.</summary>
+        public const double AoeHealHealStrengthCoefficient = 1.54;
 
-    /// <summary>Game data: tuning <c>SelfBuff.Immunity.Duration</c> of ability 1853; Decree of the Sun (effect 2557).</summary>
-    public const int DURATION_1 = 3;
+        /// <summary>Game data: tuning <c>SelfBuff.DamageReduction.Duration</c> of ability 1853; Decree of the Sun (effect 2558).</summary>
+        public const int SelfBuffDamageReductionDuration = 5;
 
-    /// <summary>Game data: tuning <c>SelfBuff.DamageReduction.Duration</c> of ability 1853; Decree of the Sun (effect 2558).</summary>
-    public const int DURATION_2 = 5;
+        /// <summary>Game data: tuning <c>SelfBuff.Immunity.Duration</c> of ability 1853; Decree of the Sun (effect 2557).</summary>
+        public const int SelfBuffImmunityDuration = 3;
 
-    /// <summary>Game data: tuning <c>SelfBuff.VisualDelay</c> of ability 1853; Decree of the Sun (effect 2559).</summary>
-    public const double VISUAL_DELAY = 0.4;
+        /// <summary>Game data: tuning <c>SelfBuff.VisualDelay</c> of ability 1853; Decree of the Sun (effect 2559).</summary>
+        public const double SelfBuffVisualDelay = 0.4;
 
-    /// <summary>Game data: tuning <c>SpiritPointCost</c> of ability 1853.</summary>
-    public const int SPIRIT_POINT_COST = 100;
+        /// <summary>Game data: tuning <c>SpiritPointCost</c> of ability 1853.</summary>
+        public const int SpiritPointCost = 100;
+    }
 }

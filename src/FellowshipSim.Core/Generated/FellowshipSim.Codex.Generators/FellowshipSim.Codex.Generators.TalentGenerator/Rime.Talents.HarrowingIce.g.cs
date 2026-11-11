@@ -10,15 +10,19 @@ partial class HarrowingIce
     /// <summary>Game data: <c>name</c> of talent 627.</summary>
     public const string TalentName = "Harrowing Ice";
 
-    /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.CooldownReductionToFlightOfNavir.Seconds</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const int COOLDOWN_REDUCTION_TO_FLIGHT_OF_NAVIR_SECONDS = 5;
+    /// <summary>Game data: the tuning values of talent 627.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.CooldownReductionToFlightOfNavir.Seconds</c> of talent 627; Harrowing Ice (effect 2839).</summary>
+        public const int CastedDebuffAoeDamageTalentStackingDamageBonusCooldownReductionToFlightOfNavirSeconds = 5;
 
-    /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.DamageScalerPerStack</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const double DAMAGE_SCALER_PER_STACK = 0.03;
+        /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.DamageScalerPerStack</c> of talent 627; Harrowing Ice (effect 2839).</summary>
+        public const double CastedDebuffAoeDamageTalentStackingDamageBonusDamageScalerPerStack = 0.03;
 
-    /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.Duration</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.Duration</c> of talent 627; Harrowing Ice (effect 2839).</summary>
+        public const int CastedDebuffAoeDamageTalentStackingDamageBonusDuration = 12;
 
-    /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.MaxStacks</c> of talent 627; Harrowing Ice (effect 2839).</summary>
-    public const int MAX_STACKS = 31;
+        /// <summary>Game data: tuning <c>Rime.CastedDebuffAoeDamage.Talent.StackingDamageBonus.MaxStacks</c> of talent 627; Harrowing Ice (effect 2839).</summary>
+        public const int CastedDebuffAoeDamageTalentStackingDamageBonusMaxStacks = 31;
+    }
 }

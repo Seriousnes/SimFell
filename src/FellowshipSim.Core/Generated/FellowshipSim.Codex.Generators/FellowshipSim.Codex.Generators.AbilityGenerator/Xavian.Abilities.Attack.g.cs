@@ -16,12 +16,16 @@ partial class Attack
     /// <summary>Game data: <c>range</c> of ability 1854.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1854.</summary>
-    public const double HIT_VISUAL_DELAY = 0.5;
+    /// <summary>Game data: the tuning values of ability 1854.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>HitVisualDelay</c> of ability 1854.</summary>
+        public const double HitVisualDelay = 0.5;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1854.</summary>
-    public const double STRENGTH_COEFFICIENT = 0.98;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 1854.</summary>
+        public const double StrengthCoefficient = 0.98;
 
-    /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1854.</summary>
-    public const int SWING_TIMER = 3;
+        /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1854.</summary>
+        public const int SwingTimer = 3;
+    }
 }

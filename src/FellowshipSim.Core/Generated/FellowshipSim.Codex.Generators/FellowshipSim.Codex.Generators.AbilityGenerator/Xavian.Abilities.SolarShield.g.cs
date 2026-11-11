@@ -28,30 +28,34 @@ partial class SolarShield
     /// <summary>Game data: <c>range</c> of ability 1848.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>AbsorbStrengthCoefficient</c> of ability 1848.</summary>
-    public const double ABSORB_STRENGTH_COEFFICIENT = 22.998;
+    /// <summary>Game data: the tuning values of ability 1848.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AbsorbStrengthCoefficient</c> of ability 1848.</summary>
+        public const double AbsorbStrengthCoefficient = 22.998;
 
-    /// <summary>Game data: tuning <c>BuffDuration</c> of ability 1848.</summary>
-    public const int BUFF_DURATION = 8;
+        /// <summary>Game data: tuning <c>BuffDuration</c> of ability 1848.</summary>
+        public const int BuffDuration = 8;
 
-    /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1848; talent Invictus (talent 604).</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER_1 = 0.5;
+        /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier</c> of ability 1848; talent Fortress in the Sands (legendary power 579).</summary>
+        public const double DamageReductionIncomingDamageMultiplier = 0.3;
 
-    /// <summary>Game data: tuning <c>DamageReduction.IncomingDamageMultiplier</c> of ability 1848; talent Fortress in the Sands (legendary power 579).</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER_2 = 0.3;
+        /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1848; talent Invictus (talent 604).</summary>
+        public const double IncomingDamageMultiplier = 0.5;
 
-    /// <summary>Game data: tuning <c>ManaCost</c> of ability 1848; Mana Additive.</summary>
-    public const int MANA_COST = 182;
+        /// <summary>Game data: tuning <c>ManaCost</c> of ability 1848; Mana Additive.</summary>
+        public const int ManaCost = 182;
 
-    /// <summary>Game data: tuning <c>ParryBoost.ExtraAbsorbPerStack</c> of ability 1848; Hallowed Shield (effect 2649), talent Hallowed Shield (talent 567).</summary>
-    public const double EXTRA_ABSORB_PER_STACK = 0.01;
+        /// <summary>Game data: tuning <c>ParryBoost.ExtraAbsorbPerStack</c> of ability 1848; Hallowed Shield (effect 2649), talent Hallowed Shield (talent 567).</summary>
+        public const double ParryBoostExtraAbsorbPerStack = 0.01;
 
-    /// <summary>Game data: tuning <c>SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit</c> of ability 1848; talent Invictus (talent 604).</summary>
-    public const int CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT = 1;
+        /// <summary>Game data: tuning <c>SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit</c> of ability 1848; talent Invictus (talent 604).</summary>
+        public const int SecondaryStatBoostsCritChanceCritChanceToDamageOnCommit = 1;
 
-    /// <summary>Game data: tuning <c>SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit.TargetCountThreshold</c> of ability 1848; talent Invictus (talent 604).</summary>
-    public const int CRIT_CHANCE_CRIT_CHANCE_TO_DAMAGE_ON_COMMIT_TARGET_COUNT_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>SecondaryStatBoosts.CritChance.CritChanceToDamageOnCommit.TargetCountThreshold</c> of ability 1848; talent Invictus (talent 604).</summary>
+        public const int SecondaryStatBoostsCritChanceCritChanceToDamageOnCommitTargetCountThreshold = 1;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1848; talent Invictus (talent 604).</summary>
-    public const double VISUAL_DELAY = 0.2;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1848; talent Invictus (talent 604).</summary>
+        public const double VisualDelay = 0.2;
+    }
 }

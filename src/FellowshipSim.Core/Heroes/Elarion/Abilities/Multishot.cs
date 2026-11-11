@@ -2,7 +2,7 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 
 /// <summary>
 /// Ability 1318: "Fire multiple arrows at your enemies, each dealing physical damage to them." Instant, costs Focus; damage
-/// falls off beyond a target count (targetCountFalloff, <see cref="TARGET_COUNT_THRESHOLD"/>). An Empowered Multishot (Skystrider's
+/// falls off beyond a target count (targetCountFalloff, <see cref="Constants.TargetCountThreshold"/>). An Empowered Multishot (Skystrider's
 /// Supremacy, Focused Expanse) always fires a minimum number of arrows regardless of how many targets are in range, costs less
 /// Focus, and deals magic damage.
 /// Combat logs (fXyzwGcQkTrLD34R fight 4, pWmcV42K39GHTLQX fight 23, 496 casts): one arrow on each enemy around the
@@ -30,9 +30,9 @@ public partial class Multishot : ElarionAbility
 
     public Multishot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
-        FocusCost = COST;
-        AoeTargetThreshold = TARGET_COUNT_THRESHOLD;
+        BaseCoefficient = Constants.AgilityCoefficient;
+        FocusCost = Constants.Cost;
+        AoeTargetThreshold = Constants.TargetCountThreshold;
     }
 
     /// <summary>A buff that empowers Multishot: whether it is up, and using it up for one cast.</summary>
@@ -53,7 +53,7 @@ public partial class Multishot : ElarionAbility
         empowering?.Use(now);
         IReadOnlyList<EnemyTarget> enemies = ctx.ActiveEnemies.Count == 0 && target is { IsSleeping: false } ? [target] : ctx.ActiveEnemies;
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
-        double falloff = struck.Count > TARGET_COUNT_THRESHOLD ? Math.Sqrt((double)TARGET_COUNT_THRESHOLD / struck.Count) : 1.0;
+        double falloff = struck.Count > Constants.TargetCountThreshold ? Math.Sqrt((double)Constants.TargetCountThreshold / struck.Count) : 1.0;
         for (int i = 0; i < struck.Count; i++) DealDamage(ctx, struck[i], damageMultiplier: multiplier * falloff);
         // The arrows past one per enemy go to the enemies struck, in turn.
         if (empowered && struck.Count > 0)

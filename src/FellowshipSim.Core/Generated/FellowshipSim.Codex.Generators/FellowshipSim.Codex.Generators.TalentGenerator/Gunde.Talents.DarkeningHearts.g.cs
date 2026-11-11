@@ -10,9 +10,13 @@ partial class DarkeningHearts
     /// <summary>Game data: <c>name</c> of talent 757.</summary>
     public const string TalentName = "Darkening Hearts";
 
-    /// <summary>Game data: tuning <c>IncreasedDirectDamage.DamageScale, Gunde.HeavyMeleeDotBased.Talent.IncreasedDirectDamage.DamageScale</c> of talent 757; Heart Splitter (ability 2294), DamageScale MultiplyCompound.</summary>
-    public const double INCREASED_DIRECT_DAMAGE_DAMAGE_SCALE = 1.1;
+    /// <summary>Game data: the tuning values of talent 757.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDirectDamage.DamageScale, Gunde.HeavyMeleeDotBased.Talent.IncreasedDirectDamage.DamageScale</c> of talent 757; Heart Splitter (ability 2294), DamageScale MultiplyCompound.</summary>
+        public const double IncreasedDirectDamageDamageScale = 1.1;
 
-    /// <summary>Game data: tuning <c>LowHealthTarget.AddedCriticalStrikeChance, Gunde.HeavyMeleeDotBased.Talent.LowHealthTarget.AddedCriticalStrikeChance</c> of talent 757; Darkening Hearts (effect 3214), CritChance Additive.</summary>
-    public const int ADDED_CRITICAL_STRIKE_CHANCE = 1;
+        /// <summary>Game data: tuning <c>LowHealthTarget.AddedCriticalStrikeChance, Gunde.HeavyMeleeDotBased.Talent.LowHealthTarget.AddedCriticalStrikeChance</c> of talent 757; Darkening Hearts (effect 3214), CritChance Additive.</summary>
+        public const int LowHealthTargetAddedCriticalStrikeChance = 1;
+    }
 }

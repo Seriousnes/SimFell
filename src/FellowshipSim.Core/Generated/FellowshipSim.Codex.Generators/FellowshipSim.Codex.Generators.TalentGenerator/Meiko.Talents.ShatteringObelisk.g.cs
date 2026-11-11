@@ -10,21 +10,25 @@ partial class ShatteringObelisk
     /// <summary>Game data: <c>name</c> of talent 415.</summary>
     public const string TalentName = "Shattering Obelisk";
 
-    /// <summary>Game data: tuning <c>IncomingDamageToDamage.HealthThresholdDifference, Meiko.TauntTotem.Talent.IncomingDamageToDamage.HealthThresholdDifference</c> of talent 415; ability 1551.</summary>
-    public const double HEALTH_THRESHOLD_DIFFERENCE = 0.35;
+    /// <summary>Game data: the tuning values of talent 415.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncomingDamageToDamage.HealthThresholdDifference, Meiko.TauntTotem.Talent.IncomingDamageToDamage.HealthThresholdDifference</c> of talent 415; ability 1551.</summary>
+        public const double IncomingDamageToDamageHealthThresholdDifference = 0.35;
 
-    /// <summary>Game data: tuning <c>IncomingDamageToDamage.PercentageOfDamageTaken, Meiko.TauntTotem.Talent.IncomingDamageToDamage.PercentageOfDamageTaken</c> of talent 415; ability 1551.</summary>
-    public const double PERCENTAGE_OF_DAMAGE_TAKEN = 0.15;
+        /// <summary>Game data: tuning <c>IncomingDamageToDamage.PercentageOfDamageTaken, Meiko.TauntTotem.Talent.IncomingDamageToDamage.PercentageOfDamageTaken</c> of talent 415; ability 1551.</summary>
+        public const double IncomingDamageToDamagePercentageOfDamageTaken = 0.15;
 
-    /// <summary>Game data: tuning <c>IncomingDamageToDamage.TargetCountDamageScalingThreshold, Meiko.TauntTotem.Talent.IncomingDamageToDamage.TargetCountDamageScalingThreshold</c> of talent 415; ability 1551.</summary>
-    public const int TARGET_COUNT_DAMAGE_SCALING_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>IncomingDamageToDamage.TargetCountDamageScalingThreshold, Meiko.TauntTotem.Talent.IncomingDamageToDamage.TargetCountDamageScalingThreshold</c> of talent 415; ability 1551.</summary>
+        public const int IncomingDamageToDamageTargetCountDamageScalingThreshold = 1;
 
-    /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.IncreasedHealthAndDuration.DurationMultiplier</c> of talent 415; ability 1083.</summary>
-    public const double DURATION_MULTIPLIER = 1.5;
+        /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.IncreasedHealthAndDuration.DurationMultiplier</c> of talent 415; ability 1083.</summary>
+        public const double TauntTotemTalentIncreasedHealthAndDurationDurationMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.IncreasedHealthAndDuration.MaxHealthMultiplier</c> of talent 415; ability 1083.</summary>
-    public const double MAX_HEALTH_MULTIPLIER = 1.5;
+        /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.IncreasedHealthAndDuration.MaxHealthMultiplier</c> of talent 415; ability 1083.</summary>
+        public const double TauntTotemTalentIncreasedHealthAndDurationMaxHealthMultiplier = 1.5;
 
-    /// <summary>Game data: tuning <c>Meiko.TauntTotem.WindMode.Duration</c> of talent 415; Twin Souls: Bulwark (ability 1082).</summary>
-    public const int WIND_MODE_DURATION = 20;
+        /// <summary>Game data: tuning <c>Meiko.TauntTotem.WindMode.Duration</c> of talent 415; Twin Souls: Bulwark (ability 1082).</summary>
+        public const int TauntTotemWindModeDuration = 20;
+    }
 }

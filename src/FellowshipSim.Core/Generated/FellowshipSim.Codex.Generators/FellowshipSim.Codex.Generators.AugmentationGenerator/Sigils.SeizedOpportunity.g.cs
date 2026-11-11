@@ -16,6 +16,10 @@ partial class SeizedOpportunity
     /// <summary>Game data: <c>randomChance</c> of sigil 4.</summary>
     public const int SigilRandomChance = 2;
 
-    /// <summary>Game data: rank run <c>Trait.CritsToIncreasedCritRating.Buff.AdditionalCritRating</c> of sigil 4, transform <c>plain</c>; the tooltip has 21 / 39 / 57 / 75.</summary>
-    public static readonly double[] BUFF_ADDITIONAL_CRIT_RATING_BY_RANK = [21, 39, 57, 75];
+    /// <summary>Game data: the tuning values and rank runs of sigil 4.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.CritsToIncreasedCritRating.Buff.AdditionalCritRating</c> of sigil 4, transform <c>plain</c>; the tooltip has 21 / 39 / 57 / 75.</summary>
+        public static readonly double[] BuffAdditionalCritRatingByRank = [21, 39, 57, 75];
+    }
 }

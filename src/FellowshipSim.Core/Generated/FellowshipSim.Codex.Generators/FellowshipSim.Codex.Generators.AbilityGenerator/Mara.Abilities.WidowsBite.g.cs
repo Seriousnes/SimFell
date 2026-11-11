@@ -31,39 +31,43 @@ partial class WidowsBite
     /// <summary>Game data: <c>range</c> of ability 1207.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AoeDamage.AgilityCoefficient</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
-    public const double AGILITY_COEFFICIENT_1 = 1.5;
+    /// <summary>Game data: the tuning values of ability 1207.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AoeDamage.AgilityCoefficient</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
+        public const double AoeDamageAgilityCoefficient = 1.5;
 
-    /// <summary>Game data: tuning <c>FirstAttack.AgilityCoefficient</c> of ability 1207; Widow's Bite (effect 1718).</summary>
-    public const double AGILITY_COEFFICIENT_2 = 1.452;
+        /// <summary>Game data: tuning <c>AoeDamage.NumTargetsDamageFalloffThreshold</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
+        public const int AoeDamageNumTargetsDamageFalloffThreshold = 10;
 
-    /// <summary>Game data: tuning <c>SecondAttack.AgilityCoefficient</c> of ability 1207; Widow's Bite (effect 1717).</summary>
-    public const double AGILITY_COEFFICIENT_3 = 1.08;
+        /// <summary>Game data: tuning <c>AoeDamage.ProcChance</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
+        public const double AoeDamageProcChance = 0.2;
 
-    /// <summary>Game data: tuning <c>AoeDamage.NumTargetsDamageFalloffThreshold</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
-    public const int NUM_TARGETS_DAMAGE_FALLOFF_THRESHOLD = 10;
+        /// <summary>Game data: tuning <c>AoeDamage.Radius</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
+        public const int AoeDamageRadius = 700;
 
-    /// <summary>Game data: tuning <c>AoeDamage.ProcChance</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
-    public const double PROC_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>ComboPointGain</c> of ability 1207.</summary>
+        public const int ComboPointGain = 2;
 
-    /// <summary>Game data: tuning <c>AoeDamage.Radius</c> of ability 1207; Seeting Burst (ability 1131), talent Seething Burst (talent 668).</summary>
-    public const int RADIUS = 700;
+        /// <summary>Game data: tuning <c>ComboPointGainAtCrit</c> of ability 1207.</summary>
+        public const int ComboPointGainAtCrit = 3;
 
-    /// <summary>Game data: tuning <c>ComboPointGain</c> of ability 1207.</summary>
-    public const int COMBO_POINT_GAIN = 2;
+        /// <summary>Game data: tuning <c>EnergyGain</c> of ability 1207.</summary>
+        public const int EnergyGain = 30;
 
-    /// <summary>Game data: tuning <c>ComboPointGainAtCrit</c> of ability 1207.</summary>
-    public const int COMBO_POINT_GAIN_AT_CRIT = 3;
+        /// <summary>Game data: tuning <c>FirstAttack.AgilityCoefficient</c> of ability 1207; Widow's Bite (effect 1718).</summary>
+        public const double FirstAttackAgilityCoefficient = 1.452;
 
-    /// <summary>Game data: tuning <c>EnergyGain</c> of ability 1207.</summary>
-    public const int ENERGY_GAIN = 30;
+        /// <summary>Game data: tuning <c>FirstAttack.Spread, SecondAttack.Spread</c> of ability 1207; Widow's Bite (effect 1718).</summary>
+        public const double FirstAttackSpread = 0.1;
 
-    /// <summary>Game data: tuning <c>FirstAttack.Spread, SecondAttack.Spread</c> of ability 1207; Widow's Bite (effect 1718).</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>NumOfCharges</c> of ability 1207.</summary>
+        public const int NumOfCharges = 3;
 
-    /// <summary>Game data: tuning <c>NumOfCharges</c> of ability 1207.</summary>
-    public const int NUM_OF_CHARGES = 3;
+        /// <summary>Game data: tuning <c>SecondAttack.AgilityCoefficient</c> of ability 1207; Widow's Bite (effect 1717).</summary>
+        public const double SecondAttackAgilityCoefficient = 1.08;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1207; talent Puncture (talent 123), CritChance Additive.</summary>
-    public const int ADDITIONAL_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1207; talent Puncture (talent 123), CritChance Additive.</summary>
+        public const int TalentIncreasedCritChanceAdditionalCritChance = 1;
+    }
 }

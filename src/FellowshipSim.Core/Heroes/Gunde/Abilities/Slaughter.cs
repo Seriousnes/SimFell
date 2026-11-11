@@ -5,15 +5,15 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// applying Slaughter to them. Slaughter is a bleed that deals a multiple of the total Rend damage consumed from each enemy, to
 /// each enemy over a set time." The cooldown is not hasted.
 /// Combat logs (n7zxK8harZT2wjDB fight 9 @ 28.655, Y4wpb2f3gc8LqJDX fight 25): each enemy's Slaughter is
-/// <see cref="ACC_DOT_TO_NEW_DOT_SCALER"/> times the damage its own Rend had still to deal (Desecrator); it ticks at
-/// <see cref="PERIOD"/> from the first tick after the cast, never crits and takes no damage multipliers. It takes no
+/// <see cref="Constants.DotAccDotToNewDotScaler"/> times the damage its own Rend had still to deal (Desecrator); it ticks at
+/// <see cref="Constants.DotPeriod"/> from the first tick after the cast, never crits and takes no damage multipliers. It takes no
 /// global cooldown (Gunde guide corpus).
 /// </summary>
 public partial class Slaughter : GundeAbility
 {
     public const int DotEffectId = 3237;
 
-    public static readonly AuraDef Dot = AuraDef.Effect(AbilityName, DotEffectId, DURATION);
+    public static readonly AuraDef Dot = AuraDef.Effect(AbilityName, DotEffectId, Constants.DotDuration);
 
     /// <summary>Slaughter consumed an enemy's Rend (Massacre).</summary>
     public event Action<SimulationContext, EnemyTarget, double>? Consumed;
@@ -36,7 +36,7 @@ public partial class Slaughter : GundeAbility
         {
             if (!rend.IsOn(enemy)) continue;
             double consumed = rend.Consume(ctx, enemy);
-            double multiplier = ACC_DOT_TO_NEW_DOT_SCALER;
+            double multiplier = Constants.DotAccDotToNewDotScaler;
             if (enemy.Auras.HasAura(Rupture.OpenWounds, ctx.CurrentTime))
             {
                 multiplier *= Rupture.OpenWoundsSlaughterDamage;
@@ -52,9 +52,9 @@ public partial class Slaughter : GundeAbility
     {
         if (damage <= 0.0) return;
         enemy.Auras.Apply(Dot, ctx.CurrentTime);
-        int ticks = (int)Math.Round(DURATION / PERIOD);
+        int ticks = (int)Math.Round(Constants.DotDuration / Constants.DotPeriod);
         double perTick = damage / ticks;
-        PeriodicEffect.Begin(ctx, Name, DURATION, PERIOD, tickOnStart: false, partialFinalTick: false,
+        PeriodicEffect.Begin(ctx, Name, Constants.DotDuration, Constants.DotPeriod, tickOnStart: false, partialFinalTick: false,
             onTick: (c, _) =>
             {
                 if (!enemy.IsSleeping) c.ApplyDamage(Owner, enemy, perTick, DamageLogId, Name, canCrit: false, 0.0, 1.0);

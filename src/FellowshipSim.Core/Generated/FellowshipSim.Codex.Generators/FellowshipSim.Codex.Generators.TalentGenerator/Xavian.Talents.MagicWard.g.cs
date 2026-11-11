@@ -10,9 +10,13 @@ partial class MagicWard
     /// <summary>Game data: <c>name</c> of talent 584.</summary>
     public const string TalentName = "Magic Ward";
 
-    /// <summary>Game data: tuning <c>MagicDamageReductionBuff.Duration, Sune.SingleTargetAbsorb.Talent.MagicDamageReductionBuff.Duration</c> of talent 584; Magic Ward (effect 2650).</summary>
-    public const int DURATION = 4;
+    /// <summary>Game data: the tuning values of talent 584.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>MagicDamageReductionBuff.Duration, Sune.SingleTargetAbsorb.Talent.MagicDamageReductionBuff.Duration</c> of talent 584; Magic Ward (effect 2650).</summary>
+        public const int MagicDamageReductionBuffDuration = 4;
 
-    /// <summary>Game data: tuning <c>MagicDamageReductionBuff.IncomingMagicDamageMultiplier, Sune.SingleTargetAbsorb.Talent.MagicDamageReductionBuff.IncomingMagicDamageMultiplier</c> of talent 584; Magic Ward (effect 2650), MagicalIncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_MAGIC_DAMAGE_MULTIPLIER = 0.7;
+        /// <summary>Game data: tuning <c>MagicDamageReductionBuff.IncomingMagicDamageMultiplier, Sune.SingleTargetAbsorb.Talent.MagicDamageReductionBuff.IncomingMagicDamageMultiplier</c> of talent 584; Magic Ward (effect 2650), MagicalIncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double MagicDamageReductionBuffIncomingMagicDamageMultiplier = 0.7;
+    }
 }

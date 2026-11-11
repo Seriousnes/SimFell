@@ -3,7 +3,7 @@ namespace FellowshipSim.Core.Heroes.Gunde.Abilities;
 /// <summary>
 /// Ability 2262: "Throw your axe at the target enemy, where it spins like a sawblade, hitting all nearby enemies several
 /// times and dealing damage with each spin. Applies Rend to the targets." Damage
-/// falls off beyond <see cref="DAMAGE_SCALING_TARGET_COUNT_THRESHOLD"/> enemies (game data). The cooldown is shortened by Haste at the cast.
+/// falls off beyond <see cref="Constants.DamageScalingTargetCountThreshold"/> enemies (game data). The cooldown is shortened by Haste at the cast.
 /// Combat logs (Y4wpb2f3gc8LqJDX fight 25, 40 casts): the spins land at fixed delays after the
 /// cast, not hasted; each spin hits the enemies there as it lands.
 /// </summary>
@@ -22,10 +22,10 @@ public partial class GrimCarve : GundeAbility
 
     public GrimCarve(Gunde owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT_PER_HIT;
+        BaseCoefficient = Constants.DamageStrengthCoefficientPerHit;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
-        RendShare = DAMAGE_TO_DOT_SCALER;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
+        RendShare = Constants.PerTargetAccumulatedBleedDamageToDotScaler;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

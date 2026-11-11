@@ -21,7 +21,7 @@ public partial class LunarlightMark : ElarionAbility
     /// Combat logs (fXyzwGcQkTrLD34R fight 4, pWmcV42K39GHTLQX fight 23): every application adds its stacks to the ones
     /// held and restarts the duration (a Spirit Refund adds stacks to a mark already held).
     /// </summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect("Lunarlight Mark", DebuffEffectId, AbilityDuration, MAX_STACKS);
+    public static readonly AuraDef Debuff = AuraDef.Effect("Lunarlight Mark", DebuffEffectId, AbilityDuration, Constants.MaxStacks);
 
     /// <summary>The cast resolved (Resurgent Winds).</summary>
     public event Action<SimulationContext>? Cast;
@@ -39,13 +39,13 @@ public partial class LunarlightMark : ElarionAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
-        if (target != null) Mark(ctx, target, STACKS_APPLIED);
+        if (target != null) Mark(ctx, target, Constants.StacksApplied);
         int chosen = 0;
         foreach (var enemy in ctx.ActiveEnemiesExcept(target))
         {
             if (chosen == ExtraTargets) break;
             if (!ctx.Outcomes.RollProc(TargetProcKey, 1.0, ctx, enemy)) continue;
-            Mark(ctx, enemy, STACKS_APPLIED);
+            Mark(ctx, enemy, Constants.StacksApplied);
             chosen++;
         }
         Cast?.Invoke(ctx);

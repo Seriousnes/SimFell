@@ -31,9 +31,13 @@ partial class TalonStrike
     /// <summary>Game data: <c>range</c> of ability 2223.</summary>
     public new const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 2223.</summary>
-    public new const double DAMAGE_MULTIPLIER = 0.4;
+    /// <summary>Game data: the tuning values of ability 2223.</summary>
+    public new static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 2223.</summary>
+        public const double DamageMultiplier = 0.4;
 
-    /// <summary>Game data: tuning <c>PulsePeriod</c> of ability 2223.</summary>
-    public const double PULSE_PERIOD = 0.15;
+        /// <summary>Game data: tuning <c>PulsePeriod</c> of ability 2223.</summary>
+        public const double PulsePeriod = 0.15;
+    }
 }

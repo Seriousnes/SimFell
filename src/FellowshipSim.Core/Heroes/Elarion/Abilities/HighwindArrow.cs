@@ -7,7 +7,7 @@ namespace FellowshipSim.Core.Heroes.Elarion.Abilities;
 /// additional enemies near your target, dealing physical damage to them. Highwind Arrow gains Cooldown Acceleration equal
 /// to your Haste." Has a cast time, costs Focus and recharges its charges (cooldownTimeRateScalesOff Haste).
 /// Combat logs (fXyzwGcQkTrLD34R fight 4): each ricochet strikes another enemy a few server frames after the hit before
-/// it, for a share of the first hit (<see cref="BOUNCE_DAMAGE_MULTIPLIER_AFTER_FIRST_HIT"/>), with the cast's bonuses and
+/// it, for a share of the first hit (<see cref="Constants.BounceDamageMultiplierAfterFirstHit"/>), with the cast's bonuses and
 /// crit chance (a Lethal Shots cast's ricochets are grievous crits too).
 /// </summary>
 public partial class HighwindArrow : ElarionAbility
@@ -31,9 +31,9 @@ public partial class HighwindArrow : ElarionAbility
 
     public HighwindArrow(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
+        BaseCoefficient = Constants.AgilityCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
-        FocusCost = COST;
+        FocusCost = Constants.Cost;
         SetCooldown(AbilityCooldown, AbilityCharges, scalesWithHaste: true);
     }
 
@@ -74,7 +74,7 @@ public partial class HighwindArrow : ElarionAbility
                 return;
             }
             struck.Add(next);
-            DealDamage(c, next, damageMultiplier: castDamage * multiplier * BOUNCE_DAMAGE_MULTIPLIER_AFTER_FIRST_HIT, extraCritChance: castCrit,
+            DealDamage(c, next, damageMultiplier: castDamage * multiplier * Constants.BounceDamageMultiplierAfterFirstHit, extraCritChance: castCrit,
                 onLanded: (cc, _) => After(cc, left - 1));
         }
 

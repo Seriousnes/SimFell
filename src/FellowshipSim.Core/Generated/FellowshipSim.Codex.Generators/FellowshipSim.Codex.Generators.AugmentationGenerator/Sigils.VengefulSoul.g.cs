@@ -19,9 +19,13 @@ partial class VengefulSoul
     /// <summary>Game data: <c>procsPerMinute</c> of proc roll <c>Trait.CritsToIncreasedPrimaryStatBuff.ChancePPM</c> of sigil 5 (PPM × (1 + Haste)).</summary>
     public const int SigilProcsPerMinute = 3;
 
-    /// <summary>Game data: rank run <c>Trait.CritsToIncreasedPrimaryStatBuff.Buff.AdditionalPrimaryStat</c> of sigil 5, transform <c>delta</c>; the tooltip has 3.0% / 5.1% / 7.2% / 9.3%.</summary>
-    public static readonly double[] BUFF_ADDITIONAL_PRIMARY_STAT_BY_RANK = [1.03, 1.051, 1.072, 1.093];
+    /// <summary>Game data: the tuning values and rank runs of sigil 5.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.CritsToIncreasedPrimaryStatBuff.Buff.AdditionalPrimaryStat</c> of sigil 5, transform <c>delta</c>; the tooltip has 3.0% / 5.1% / 7.2% / 9.3%.</summary>
+        public static readonly double[] BuffAdditionalPrimaryStatByRank = [1.03, 1.051, 1.072, 1.093];
 
-    /// <summary>Game data: rank run <c>Trait.CritsToIncreasedPrimaryStatBuff.Hot.HealValue</c> of sigil 5, transform <c>ticks</c> over 5 ticks; the tooltip has 370% / 630% / 890% / 1150%.</summary>
-    public static readonly double[] HOT_HEAL_VALUE_BY_RANK = [0.74, 1.26, 1.78, 2.3];
+        /// <summary>Game data: rank run <c>Trait.CritsToIncreasedPrimaryStatBuff.Hot.HealValue</c> of sigil 5, transform <c>ticks</c> over 5 ticks; the tooltip has 370% / 630% / 890% / 1150%.</summary>
+        public static readonly double[] HotHealValueByRank = [0.74, 1.26, 1.78, 2.3];
+    }
 }

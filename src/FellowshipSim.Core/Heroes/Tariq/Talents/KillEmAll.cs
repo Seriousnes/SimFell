@@ -16,7 +16,7 @@ public partial class KillEmAll : Talent
     public const double CooldownAcceleration = 1.6;
     public const string ProcKey = "kill_em_all";
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Kill Em All", EffectId, DURATION, MAX_STACKS) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect("Kill Em All", EffectId, Constants.AlwaysHitWindowBuffBuffDuration, Constants.AlwaysHitWindowBuffBuffMaxStacks) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -28,9 +28,9 @@ public partial class KillEmAll : Talent
         {
             if (ability is not (WildSwing or FaceBreaker or SkullCrusher or HammerStorm or CullingStrike or ChainLightning
                 or LeapSmash or RagingTempest) || hero.SimContext is not { } ctx) return;
-            if (!ctx.Outcomes.RollProc(ProcKey, ALWAYS_HIT_WINDOW_BUFF_PROC_CHANCE, ctx)) return;
+            if (!ctx.Outcomes.RollProc(ProcKey, Constants.AlwaysHitWindowBuffProcChance, ctx)) return;
             hero.CooldownOf(heavyStrike).ResetAll();
-            hero.Auras.Apply(Buff, now, setStacks: MAX_STACKS);
+            hero.Auras.Apply(Buff, now, setStacks: Constants.AlwaysHitWindowBuffBuffMaxStacks);
         };
         hero.CooldownAccelerations.Add((ability, now) => ability == heavyStrike && hero.Auras.HasAura(Buff, now) ? CooldownAcceleration : 0.0);
         hero.CooldownAccelerationAuraKeys.Add(Buff.Key);
@@ -38,7 +38,7 @@ public partial class KillEmAll : Talent
         {
             if (cast.Ability != heavyStrike || !hero.Auras.HasAura(Buff, cast.Time)) return;
             hero.Auras.ConsumeStack(Buff, cast.Time);
-            cast.DamageMultiplier *= AUTO_ATTACK_BUFF_DAMAGE_SCALER;
+            cast.DamageMultiplier *= Constants.AutoAttackBuffTalentAlwaysHitWindowBuffBuffAutoAttackBuffDamageScaler;
         };
     }
 }

@@ -16,6 +16,10 @@ partial class EmeraldJudgement
     /// <summary>Game data: <c>randomChance</c> of aspect 34.</summary>
     public const int AspectRandomChance = 1;
 
-    /// <summary>Game data: rank run <c>Trait.GemTargetedSpikeProc.PPM</c> of aspect 34, transform <c>plain</c>; the tooltip has 0.8 PPM / 1.30 PPM / 1.80 PPM / 2.30 PPM.</summary>
-    public static readonly double[] PPM_BY_RANK = [0.8, 1.3, 1.8, 2.3];
+    /// <summary>Game data: the tuning values and rank runs of aspect 34.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.GemTargetedSpikeProc.PPM</c> of aspect 34, transform <c>plain</c>; the tooltip has 0.8 PPM / 1.30 PPM / 1.80 PPM / 2.30 PPM.</summary>
+        public static readonly double[] PPMByRank = [0.8, 1.3, 1.8, 2.3];
+    }
 }

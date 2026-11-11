@@ -10,15 +10,19 @@ partial class LunarFury
     /// <summary>Game data: <c>name</c> of talent 130.</summary>
     public const string TalentName = "Lunar Fury";
 
-    /// <summary>Game data: tuning <c>IncreasedDamage.DamageScale, Bowguy.InstantMarkTarget.Talent.IncreasedDamage.DamageScale</c> of talent 130; Lunarlight Mark (ability 1310).</summary>
-    public const double INCREASED_DAMAGE_DAMAGE_SCALE = 1.3;
+    /// <summary>Game data: the tuning values of talent 130.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDamage.DamageScale, Bowguy.InstantMarkTarget.Talent.IncreasedDamage.DamageScale</c> of talent 130; Lunarlight Mark (ability 1310).</summary>
+        public const double IncreasedDamageDamageScale = 1.3;
 
-    /// <summary>Game data: tuning <c>Bowguy.InstantMarkTarget.Talent.IncreasedInstantMarkTriggerChance.ChanceMultiplier</c> of talent 130; Lunarlight Mark (ability 1310).</summary>
-    public const int INCREASED_INSTANT_MARK_TRIGGER_CHANCE_CHANCE_MULTIPLIER = 2;
+        /// <summary>Game data: tuning <c>Bowguy.InstantMarkTarget.Talent.IncreasedInstantMarkTriggerChance.ChanceMultiplier</c> of talent 130; Lunarlight Mark (ability 1310).</summary>
+        public const int InstantMarkTargetTalentIncreasedInstantMarkTriggerChanceChanceMultiplier = 2;
 
-    /// <summary>Game data: tuning <c>ChanceMultiply, Bowguy.SingleProjectileDamage.Talent.ChanceInstantMarkTarget.ChanceMultiply</c> of talent 130; ability 1438.</summary>
-    public const int CHANCE_MULTIPLY = 1;
+        /// <summary>Game data: tuning <c>ChanceMultiply, Bowguy.SingleProjectileDamage.Talent.ChanceInstantMarkTarget.ChanceMultiply</c> of talent 130; ability 1438.</summary>
+        public const int ChanceMultiply = 1;
 
-    /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Bowguy.SingleProjectileDamage.Talent.ChanceInstantMarkTarget.CooldownReductionInSeconds</c> of talent 130; ability 1438.</summary>
-    public const int COOLDOWN_REDUCTION_IN_SECONDS = 0;
+        /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Bowguy.SingleProjectileDamage.Talent.ChanceInstantMarkTarget.CooldownReductionInSeconds</c> of talent 130; ability 1438.</summary>
+        public const int CooldownReductionInSeconds = 0;
+    }
 }

@@ -10,9 +10,13 @@ partial class ThemBones
     /// <summary>Game data: <c>name</c> of talent 75.</summary>
     public const string TalentName = "Them Bones";
 
-    /// <summary>Game data: tuning <c>ProcAddedCritChance.AddedCritChance, Ink.HeavySingleTargetAttack.Talent.ProcAddedCritChance.AddedCritChance</c> of talent 75; Skull Crusher (ability 1229).</summary>
-    public const int PROC_ADDED_CRIT_CHANCE_ADDED_CRIT_CHANCE = 1;
+    /// <summary>Game data: the tuning values of talent 75.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ProcAddedCritChance.AddedCritChance, Ink.HeavySingleTargetAttack.Talent.ProcAddedCritChance.AddedCritChance</c> of talent 75; Skull Crusher (ability 1229).</summary>
+        public const int ProcAddedCritChanceAddedCritChance = 1;
 
-    /// <summary>Game data: tuning <c>ProcAddedCritChance.Chance, Ink.HeavySingleTargetAttack.Talent.ProcAddedCritChance.Chance</c> of talent 75; Skull Crusher (ability 1229).</summary>
-    public const double PROC_ADDED_CRIT_CHANCE_CHANCE = 0.3;
+        /// <summary>Game data: tuning <c>ProcAddedCritChance.Chance, Ink.HeavySingleTargetAttack.Talent.ProcAddedCritChance.Chance</c> of talent 75; Skull Crusher (ability 1229).</summary>
+        public const double ProcAddedCritChanceChance = 0.3;
+    }
 }

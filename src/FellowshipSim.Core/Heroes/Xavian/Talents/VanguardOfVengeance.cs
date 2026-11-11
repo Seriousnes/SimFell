@@ -15,8 +15,8 @@ public partial class VanguardOfVengeance : Talent
     public const string CounterAttackProcKey = "counter_attack";
     public const string StackProcKey = "vanguard_of_vengeance_parry";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DURATION, STACK_CAP,
-        StatModifier.Add(StatType.Spirit, ADDITIONAL_SPIRIT_PER_STACK));
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.BuffDuration, Constants.BuffStackCap,
+        StatModifier.Add(StatType.Spirit, Constants.BuffAdditionalSpiritPerStack));
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -30,7 +30,7 @@ public partial class VanguardOfVengeance : Talent
         {
             if (enemy is not { IsSleeping: false }) return;
             counter.DealDamage(ctx, enemy);
-            xavian.GainMana(Xavian.HeroMaxMana * MANA_GAIN, ctx, enemy);
+            xavian.GainMana(Xavian.HeroMaxMana * Constants.ManaGain, ctx, enemy);
         });
     }
 
@@ -39,7 +39,7 @@ public partial class VanguardOfVengeance : Talent
     {
         public CounterAttack(Xavian owner) : base(owner, LogIds.Effect(CounterAttackEffectId), "Counter-Attack")
         {
-            BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+            BaseCoefficient = Constants.DamageStrengthCoefficient;
         }
 
         public override void Execute(SimulationContext ctx, EnemyTarget target) { }

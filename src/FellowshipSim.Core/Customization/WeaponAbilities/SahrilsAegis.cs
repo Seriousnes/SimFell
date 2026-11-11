@@ -14,11 +14,11 @@ public partial class SahrilsAegis : Ability
     public const int ShieldEffectId = 77;
 
     /// <summary>The shield on the hero until it explodes.</summary>
-    public static readonly AuraDef Shield = AuraDef.Effect(AbilityName, ShieldEffectId, DURATION);
+    public static readonly AuraDef Shield = AuraDef.Effect(AbilityName, ShieldEffectId, Constants.AbsorbDuration);
 
     public SahrilsAegis(Hero owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = PRIMARY_ATTRIBUTE_COEFFICIENT;
+        BaseCoefficient = Constants.ExplosionPrimaryAttributeCoefficient;
         SetCooldown(AbilityCooldown);
         AoeTargetThreshold = TargetThreshold;
         IgnoresGcd = true;

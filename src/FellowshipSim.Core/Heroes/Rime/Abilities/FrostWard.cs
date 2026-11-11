@@ -9,7 +9,7 @@ public partial class FrostWard : RimeAbility
     public const int BuffEffectId = 1379;
 
     public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, AbilityDuration,
-        modifiers: StatModifier.More(StatType.IncomingDamageMultiplier, INCOMING_DAMAGE_SCALER));
+        modifiers: StatModifier.More(StatType.IncomingDamageMultiplier, Constants.IncomingDamageScaler));
 
     public FrostWard(Rime owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {

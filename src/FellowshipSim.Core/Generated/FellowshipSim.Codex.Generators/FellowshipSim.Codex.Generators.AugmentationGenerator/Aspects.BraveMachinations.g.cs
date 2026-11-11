@@ -16,9 +16,13 @@ partial class BraveMachinations
     /// <summary>Game data: <c>randomChance</c> of aspect 48.</summary>
     public const int AspectRandomChance = 1;
 
-    /// <summary>Game data: rank run <c>Trait.WeaponCritChanceCooldownReduction.Buff.AddedWeaponCritChance</c> of aspect 48, transform <c>raw</c>; the tooltip has 9.5% / 17% / 24% / 32%.</summary>
-    public static readonly double[] BUFF_ADDED_WEAPON_CRIT_CHANCE_BY_RANK = [0.095, 0.17, 0.24, 0.32];
+    /// <summary>Game data: the tuning values and rank runs of aspect 48.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.WeaponCritChanceCooldownReduction.Buff.AddedWeaponCritChance</c> of aspect 48, transform <c>raw</c>; the tooltip has 9.5% / 17% / 24% / 32%.</summary>
+        public static readonly double[] BuffAddedWeaponCritChanceByRank = [0.095, 0.17, 0.24, 0.32];
 
-    /// <summary>Game data: rank run <c>Trait.WeaponCritChanceCooldownReduction.CooldownReductionPerWeaponCrit</c> of aspect 48, transform <c>raw</c>; the tooltip has 15% / 20% / 25% / 30%.</summary>
-    public static readonly double[] COOLDOWN_REDUCTION_PER_WEAPON_CRIT_BY_RANK = [0.15, 0.2, 0.25, 0.3];
+        /// <summary>Game data: rank run <c>Trait.WeaponCritChanceCooldownReduction.CooldownReductionPerWeaponCrit</c> of aspect 48, transform <c>raw</c>; the tooltip has 15% / 20% / 25% / 30%.</summary>
+        public static readonly double[] CooldownReductionPerWeaponCritByRank = [0.15, 0.2, 0.25, 0.3];
+    }
 }

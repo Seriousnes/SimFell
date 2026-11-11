@@ -16,9 +16,13 @@ partial class TheSinister
     /// <summary>Game data: <c>abilityRank</c> of glyph 701.</summary>
     public const int GlyphAbilityRank = 185;
 
-    /// <summary>Game data: tuning <c>AdditionalCritChance</c> of glyph 701; Finesse E (effect 3182), CritChance Additive, by rank.</summary>
-    public static readonly double[] ADDITIONAL_CRIT_CHANCE_BY_RANK = [0.01, 0.02, 0.03, 0.04];
+    /// <summary>Game data: the tuning values of glyph 701.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalCritChance</c> of glyph 701; Finesse E (effect 3182), CritChance Additive, by rank.</summary>
+        public static readonly double[] AdditionalCritChanceByRank = [0.01, 0.02, 0.03, 0.04];
 
-    /// <summary>Game data: tuning <c>CritPowerMultiplier</c> of glyph 701; Finesse E (effect 3182), CritMultiplier Multiplicitive, by rank.</summary>
-    public static readonly double[] CRIT_POWER_MULTIPLIER_BY_RANK = [1.05, 1.1, 1.15, 1.2];
+        /// <summary>Game data: tuning <c>CritPowerMultiplier</c> of glyph 701; Finesse E (effect 3182), CritMultiplier Multiplicitive, by rank.</summary>
+        public static readonly double[] CritPowerMultiplierByRank = [1.05, 1.1, 1.15, 1.2];
+    }
 }

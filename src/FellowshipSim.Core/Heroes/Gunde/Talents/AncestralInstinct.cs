@@ -11,8 +11,8 @@ public partial class AncestralInstinct : Talent
     public const int EffectId = 3225;
     public const string ProcKey = "ancestral_instinct";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, DURATION,
-        modifiers: StatModifier.Add(StatType.PrimaryAttributeMultiplier, STRENGTH_MULTIPLIER - 1.0)) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Constants.Duration,
+        modifiers: StatModifier.Add(StatType.PrimaryAttributeMultiplier, Constants.StrengthMultiplier - 1.0)) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -22,7 +22,7 @@ public partial class AncestralInstinct : Talent
         hero.OnCastCompleted += (ability, _, now) =>
         {
             if (ability is not (ReaversEdge or GrimCarve) || hero.SimContext is not { } ctx) return;
-            if (ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE, ctx)) hero.Auras.Apply(Buff, now);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.ProcChance, ctx)) hero.Auras.Apply(Buff, now);
         };
     }
 }

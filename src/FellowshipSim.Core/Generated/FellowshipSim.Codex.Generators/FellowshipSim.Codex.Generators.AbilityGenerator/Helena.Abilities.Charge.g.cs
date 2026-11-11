@@ -25,36 +25,40 @@ partial class Charge
     /// <summary>Game data: <c>range</c> of ability 974.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>ArrivalRange</c> of ability 974.</summary>
-    public const int ARRIVAL_RANGE = 60;
+    /// <summary>Game data: the tuning values of ability 974.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ArrivalRange</c> of ability 974.</summary>
+        public const int ArrivalRange = 60;
 
-    /// <summary>Game data: tuning <c>ChargesIncreasedSpeed.MoveSpeedIncrease</c> of ability 974; Rushing Advance (effect 1217), MoveSpeed Multiplicitive.</summary>
-    public const double MOVE_SPEED_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>ChargesIncreasedSpeed.MoveSpeedIncrease</c> of ability 974; Rushing Advance (effect 1217), MoveSpeed Multiplicitive.</summary>
+        public const double ChargesIncreasedSpeedMoveSpeedIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>ChargesIncreasedSpeed.MoveSpeedIncreaseDuration</c> of ability 974; Rushing Advance (effect 1217).</summary>
-    public const int MOVE_SPEED_INCREASE_DURATION = 5;
+        /// <summary>Game data: tuning <c>ChargesIncreasedSpeed.MoveSpeedIncreaseDuration</c> of ability 974; Rushing Advance (effect 1217).</summary>
+        public const int ChargesIncreasedSpeedMoveSpeedIncreaseDuration = 5;
 
-    /// <summary>Game data: tuning <c>ChargesIncreasedSpeed.NumOfCharges</c> of ability 974; Rushing Advance (effect 1217).</summary>
-    public const int NUM_OF_CHARGES = 2;
+        /// <summary>Game data: tuning <c>ChargesIncreasedSpeed.NumOfCharges</c> of ability 974; Rushing Advance (effect 1217).</summary>
+        public const int ChargesIncreasedSpeedNumOfCharges = 2;
 
-    /// <summary>Game data: tuning <c>ComboPointReward</c> of ability 974.</summary>
-    public const int COMBO_POINT_REWARD = 0;
+        /// <summary>Game data: tuning <c>ComboPointReward</c> of ability 974.</summary>
+        public const int ComboPointReward = 0;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 974.</summary>
-    public const int DURATION = 2;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 974.</summary>
+        public const int Duration = 2;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 974.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 974.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>IncreasedComboPoints.Level1</c> of ability 974.</summary>
-    public const int INCREASED_COMBO_POINTS_LEVEL1 = 3;
+        /// <summary>Game data: tuning <c>IncreasedComboPoints.Level1</c> of ability 974.</summary>
+        public const int IncreasedComboPointsLevel1 = 3;
 
-    /// <summary>Game data: tuning <c>MeleeRange</c> of ability 974.</summary>
-    public const int MELEE_RANGE = 500;
+        /// <summary>Game data: tuning <c>MeleeRange</c> of ability 974.</summary>
+        public const int MeleeRange = 500;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 974.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 974.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 974.</summary>
-    public const double STRENGTH_COEFFICIENT = 3.617;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 974.</summary>
+        public const double StrengthCoefficient = 3.617;
+    }
 }

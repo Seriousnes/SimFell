@@ -18,9 +18,9 @@ public partial class BlindingSlash : XavianAbility
 
     public BlindingSlash(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
@@ -28,9 +28,9 @@ public partial class BlindingSlash : XavianAbility
         TriggerCooldown(ctx);
         var enemies = Area(ctx, target);
         var struck = ctx.Outcomes.SelectTargets(DamageLogId, enemies, ctx);
-        DealToEach(ctx, struck, DAMAGE_SCALING_TARGET_COUNT_THRESHOLD);
+        DealToEach(ctx, struck, Constants.DamageScalingTargetCountThreshold);
         for (int i = 0; i < struck.Count; i++) struck[i].Auras.Apply(Blinded, ctx.CurrentTime);
-        if (ctx.Outcomes.RollProc(ProcKey, RESOURCE_PROC_CHANCE, ctx)) Xavian.GrantSwiftReprieval(ctx);
+        if (ctx.Outcomes.RollProc(ProcKey, Constants.ResourceProcChance, ctx)) Xavian.GrantSwiftReprieval(ctx);
         Xavian.RaiseOffensiveAbilityUsed(ctx, this);
     }
 }

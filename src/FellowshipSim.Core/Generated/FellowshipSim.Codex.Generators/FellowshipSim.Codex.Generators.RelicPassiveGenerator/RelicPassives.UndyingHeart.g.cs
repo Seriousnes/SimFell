@@ -22,18 +22,22 @@ partial class UndyingHeart
     /// <summary>Game data: <c>name</c> of item 5924.</summary>
     public const string RelicItemName = "Orb of Gathering Storms";
 
-    /// <summary>Game data: tuning <c>BuffDuration</c> of relic passive 779; ability 1389.</summary>
-    public const int BUFF_DURATION = 20;
-
-    /// <summary>Game data: tuning <c>HasteBonus</c> of relic passive 779; ability 1389, Haste Additive.</summary>
-    public const double HASTE_BONUS = 0.25;
-
-    /// <summary>Game data: tuning <c>PPM</c> of relic passive 779; ability 1389.</summary>
-    public const double PPM = 0.8;
-
     /// <summary>Game data: the items granting relic passive 779.</summary>
     public static readonly global::FellowshipSim.Core.Customization.RelicPassives.RelicItem[] RelicPassiveItems =
     [
         new(5924, "Orb of Gathering Storms"),
     ];
+
+    /// <summary>Game data: the tuning values of relic passive 779.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BuffDuration</c> of relic passive 779; ability 1389.</summary>
+        public const int BuffDuration = 20;
+
+        /// <summary>Game data: tuning <c>HasteBonus</c> of relic passive 779; ability 1389, Haste Additive.</summary>
+        public const double HasteBonus = 0.25;
+
+        /// <summary>Game data: tuning <c>PPM</c> of relic passive 779; ability 1389.</summary>
+        public const double PPM = 0.8;
+    }
 }

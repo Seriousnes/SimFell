@@ -10,21 +10,25 @@ partial class RollingFlames
     /// <summary>Game data: <c>name</c> of talent 226.</summary>
     public const string TalentName = "Rolling Flames";
 
-    /// <summary>Game data: tuning <c>CastedSingleDotDamageReducesCooldown.OnCritReductionInSeconds, Firemage.InstantDoubleDotSelfBuff.Talent.CastedSingleDotDamageReducesCooldown.OnCritReductionInSeconds</c> of talent 226; ability 1566.</summary>
-    public const double ON_CRIT_REDUCTION_IN_SECONDS = 0.05;
+    /// <summary>Game data: the tuning values of talent 226.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CastedSingleDotDamageReducesCooldown.OnCritReductionInSeconds, Firemage.InstantDoubleDotSelfBuff.Talent.CastedSingleDotDamageReducesCooldown.OnCritReductionInSeconds</c> of talent 226; ability 1566.</summary>
+        public const double CastedSingleDotDamageReducesCooldownOnCritReductionInSeconds = 0.05;
 
-    /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance</c> of talent 226; Infernal Wave (ability 1276), CritChance Additive.</summary>
-    public const double INCREASED_CRIT_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance</c> of talent 226; Infernal Wave (ability 1276), CritChance Additive.</summary>
+        public const double CastedDotBoostProjectileTalentIncreasedCritChance = 0.2;
 
-    /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 226; ability 2246, CritChance Additive.</summary>
-    public const int ADDITIONAL_CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>IncreasedCritChance.AdditionalCritChance, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 226; ability 2246, CritChance Additive.</summary>
+        public const int IncreasedCritChanceAdditionalCritChance = 1;
 
-    /// <summary>Game data: tuning <c>ReductionInSeconds, Firemage.CastedSingleHeavyDot.Talent.CastedDotBoostProjectileReducesCooldown.ReductionInSeconds</c> of talent 226; ability 1975.</summary>
-    public const int REDUCTION_IN_SECONDS = 1;
+        /// <summary>Game data: tuning <c>ReductionInSeconds, Firemage.CastedSingleHeavyDot.Talent.CastedDotBoostProjectileReducesCooldown.ReductionInSeconds</c> of talent 226; ability 1975.</summary>
+        public const int ReductionInSeconds = 1;
 
-    /// <summary>Game data: tuning <c>InstantSingleDotReducesCooldown.ReductionInSeconds, Firemage.CastedSingleHeavyDot.Talent.InstantSingleDotReducesCooldown.ReductionInSeconds</c> of talent 226; Engulfing Flames (ability 1586).</summary>
-    public const double INSTANT_SINGLE_DOT_REDUCES_COOLDOWN_REDUCTION_IN_SECONDS = 0.25;
+        /// <summary>Game data: tuning <c>InstantSingleDotReducesCooldown.ReductionInSeconds, Firemage.CastedSingleHeavyDot.Talent.InstantSingleDotReducesCooldown.ReductionInSeconds</c> of talent 226; Engulfing Flames (ability 1586).</summary>
+        public const double InstantSingleDotReducesCooldownReductionInSeconds = 0.25;
 
-    /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 226; Ardeos (hero 7).</summary>
-    public const double CRIT_CHANCE_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Firemage.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of talent 226; Ardeos (hero 7).</summary>
+        public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
+    }
 }

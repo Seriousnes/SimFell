@@ -19,7 +19,7 @@ public partial class BroodingShadows : MaraAbility
     public static readonly AuraDef Stealth = AuraDef.Effect("Brooding Shadows", StealthEffectId);
 
     /// <summary>
-    /// End of the padding cooldown: no cast of the ability is possible for <see cref="PADDING_COOLDOWN"/> seconds after one,
+    /// End of the padding cooldown: no cast of the ability is possible for <see cref="Constants.PaddingCooldown"/> seconds after one,
     /// divided by the Haste at the cast. Game data: blocked by padding cooldown true, comment "To protect against double
     /// presses", applied after the ability commits. The padding effect takes 1 / Haste (snapshot), multiplied by the
     /// padding, and has no time-rate tag, so it runs in real time.
@@ -52,7 +52,7 @@ public partial class BroodingShadows : MaraAbility
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         var now = ctx.CurrentTime;
-        _paddingEndsAt = now + SimTime.FromSeconds(PADDING_COOLDOWN / (1.0 + Mara.GetHaste(now)));
+        _paddingEndsAt = now + SimTime.FromSeconds(Constants.PaddingCooldown / (1.0 + Mara.GetHaste(now)));
         if (Mara.IsStealthed(now)) Mara.Auras.Remove(Stealth, now);
         else Mara.Auras.Apply(Stealth, now);
     }

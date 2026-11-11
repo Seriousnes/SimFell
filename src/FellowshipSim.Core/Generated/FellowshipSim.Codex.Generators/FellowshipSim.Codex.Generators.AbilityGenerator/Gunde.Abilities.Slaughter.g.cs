@@ -28,18 +28,22 @@ partial class Slaughter
     /// <summary>Game data: <c>maxTargets</c> of ability 2292.</summary>
     public const int AbilityMaxTargets = 99999;
 
-    /// <summary>Game data: tuning <c>Dot.AccDotToNewDotScaler</c> of ability 2292; Slaughter (effect 3237).</summary>
-    public const double ACC_DOT_TO_NEW_DOT_SCALER = 1.6;
+    /// <summary>Game data: the tuning values of ability 2292.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Dot.AccDotToNewDotScaler</c> of ability 2292; Slaughter (effect 3237).</summary>
+        public const double DotAccDotToNewDotScaler = 1.6;
 
-    /// <summary>Game data: tuning <c>Dot.Duration</c> of ability 2292; Slaughter (effect 3237).</summary>
-    public const int DURATION = 3;
+        /// <summary>Game data: tuning <c>Dot.Duration</c> of ability 2292; Slaughter (effect 3237).</summary>
+        public const int DotDuration = 3;
 
-    /// <summary>Game data: tuning <c>Dot.Period</c> of ability 2292; Slaughter (effect 3237).</summary>
-    public const double PERIOD = 0.3;
+        /// <summary>Game data: tuning <c>Dot.Period</c> of ability 2292; Slaughter (effect 3237).</summary>
+        public const double DotPeriod = 0.3;
 
-    /// <summary>Game data: tuning <c>ReducedTickSpeed.PeriodFrequencyIncrease</c> of ability 2292; Rend (effect 3231), talent Deep Rend (talent 751).</summary>
-    public const double PERIOD_FREQUENCY_INCREASE = 1.1;
+        /// <summary>Game data: tuning <c>ReducedTickSpeed.PeriodFrequencyIncrease</c> of ability 2292; Rend (effect 3231), talent Deep Rend (talent 751).</summary>
+        public const double ReducedTickSpeedPeriodFrequencyIncrease = 1.1;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2292.</summary>
-    public const double VISUAL_DELAY = 0.5;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 2292.</summary>
+        public const double VisualDelay = 0.5;
+    }
 }

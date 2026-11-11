@@ -16,15 +16,19 @@ partial class Shoot
     /// <summary>Game data: <c>range</c> of ability 1303.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1303.</summary>
-    public const double AGILITY_COEFFICIENT = 0.6;
+    /// <summary>Game data: the tuning values of ability 1303.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1303.</summary>
+        public const double AgilityCoefficient = 0.6;
 
-    /// <summary>Game data: tuning <c>Proc.Chance</c> of ability 1303; Celestial Shot (effect 1864).</summary>
-    public const int CHANCE = 2;
+        /// <summary>Game data: tuning <c>Proc.Chance</c> of ability 1303; Celestial Shot (effect 1864).</summary>
+        public const int ProcChance = 2;
 
-    /// <summary>Game data: tuning <c>Proc.Duration</c> of ability 1303; Celestial Shot (effect 1864).</summary>
-    public const int DURATION = 15;
+        /// <summary>Game data: tuning <c>Proc.Duration</c> of ability 1303; Celestial Shot (effect 1864).</summary>
+        public const int ProcDuration = 15;
 
-    /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1303.</summary>
-    public const double SWING_TIMER = 2.4;
+        /// <summary>Game data: tuning <c>SwingTimer</c> of ability 1303.</summary>
+        public const double SwingTimer = 2.4;
+    }
 }

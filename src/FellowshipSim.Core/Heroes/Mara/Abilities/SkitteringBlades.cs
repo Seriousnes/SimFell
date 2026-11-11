@@ -16,13 +16,13 @@ public partial class SkitteringBlades : MaraAbility
     /// <summary>For the Stealth Skittering Blades: it is built on Skittering Blades.</summary>
     protected SkitteringBlades(Mara owner, int id, string name) : base(owner, id, name, AbilityCategory)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
+        BaseCoefficient = Constants.AgilityCoefficient;
         EnergyCost = AbilityCost;
-        AoeTargetThreshold = NUM_TARGETS_DAMAGE_FALLOFF_THRESHOLD;
+        AoeTargetThreshold = Constants.NumTargetsDamageFalloffThreshold;
         BreaksStealth = true;
         Hit += (in hit) =>
         {
-            if (hit.SimContext is { } ctx) GenerateComboPoints(ctx, hit.IsCrit ? COMBO_POINT_GAIN_AT_CRIT : COMBO_POINT_GAIN_PER_HIT, hit.Target);
+            if (hit.SimContext is { } ctx) GenerateComboPoints(ctx, hit.IsCrit ? Constants.ComboPointGainAtCrit : Constants.ComboPointGainPerHit, hit.Target);
         };
     }
 

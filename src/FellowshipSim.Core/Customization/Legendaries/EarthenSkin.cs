@@ -13,16 +13,16 @@ public partial class EarthenSkin : Legendary
 {
     public override void Bind(Hero hero)
     {
-        hero.GetAbility<WindKick>()?.AddDamageMultiplier(WIND_DAMAGE_INCREASE);
-        hero.GetAbility<RisingStorm>()?.AddDamageMultiplier(WIND_DAMAGE_INCREASE);
-        hero.GetAbility<LashingStormkick>()?.AddDamageMultiplier(WIND_DAMAGE_INCREASE);
-        hero.GetAbility<TwinSoulsArmyOfOne>()?.Sibling.AddDamageMultiplier(WIND_DAMAGE_INCREASE);
-        hero.GetAbility<SpiritedVortex>()?.AddDamageMultiplier(WIND_DAMAGE_INCREASE);
+        hero.GetAbility<WindKick>()?.AddDamageMultiplier(Constants.BuffAfterDestroyedWindDamageIncrease);
+        hero.GetAbility<RisingStorm>()?.AddDamageMultiplier(Constants.BuffAfterDestroyedWindDamageIncrease);
+        hero.GetAbility<LashingStormkick>()?.AddDamageMultiplier(Constants.BuffAfterDestroyedWindDamageIncrease);
+        hero.GetAbility<TwinSoulsArmyOfOne>()?.Sibling.AddDamageMultiplier(Constants.BuffAfterDestroyedWindDamageIncrease);
+        hero.GetAbility<SpiritedVortex>()?.AddDamageMultiplier(Constants.BuffAfterDestroyedWindDamageIncrease);
         if (hero.GetAbility<ShatterEarth>() is { } shatterEarth)
         {
-            shatterEarth.AddDamageMultiplier(ABILITY_DAMAGE_INCREASE);
-            shatterEarth.Quake.AddDamageMultiplier(ABILITY_DAMAGE_INCREASE);
+            shatterEarth.AddDamageMultiplier(Constants.BuffAfterDestroyedAbilityDamageIncrease);
+            shatterEarth.Quake.AddDamageMultiplier(Constants.BuffAfterDestroyedAbilityDamageIncrease);
         }
-        hero.GetAbility<StoneShield>()?.AddDamageMultiplier(ABILITY_DAMAGE_INCREASE);
+        hero.GetAbility<StoneShield>()?.AddDamageMultiplier(Constants.BuffAfterDestroyedAbilityDamageIncrease);
     }
 }

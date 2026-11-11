@@ -25,15 +25,19 @@ partial class SpiritPalm
     /// <summary>Game data: <c>range</c> of ability 1101.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1101.</summary>
-    public const double AGILITY_COEFFICIENT = 1.404;
+    /// <summary>Game data: the tuning values of ability 1101.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1101.</summary>
+        public const double AgilityCoefficient = 1.404;
 
-    /// <summary>Game data: tuning <c>EnergyCost</c> of ability 1101.</summary>
-    public const int ENERGY_COST = 30;
+        /// <summary>Game data: tuning <c>EnergyCost</c> of ability 1101.</summary>
+        public const int EnergyCost = 30;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1101; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1101; ability 1109, DamageScale Multiplicitive.</summary>
+        public const double DurationalMultipleTeleportDamageTalentTargetDebuffIncreasedDamage = 1.1;
 
-    /// <summary>Game data: tuning <c>Spread</c> of ability 1101.</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread</c> of ability 1101.</summary>
+        public const double Spread = 0.1;
+    }
 }

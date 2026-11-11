@@ -12,7 +12,7 @@ public partial class TheBestDefense : Talent
     public const int BuffEffectId = 1231;
     public const string ProcKey = "the_best_defense";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, DURATION);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.DamageCooldownResetDuration);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -28,7 +28,7 @@ public partial class TheBestDefense : Talent
         {
             if (cast.Ability is not ShieldThrow || !hero.Auras.HasAura(Buff, cast.Time)) return;
             hero.Auras.Remove(Buff, cast.Time);
-            cast.DamageMultiplier *= DAMAGE_MULTIPLIER;
+            cast.DamageMultiplier *= Constants.DamageCooldownResetDamageMultiplier;
         };
     }
 }

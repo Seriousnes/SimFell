@@ -11,8 +11,8 @@ public partial class HarvestersToll : Talent
 {
     public const int EffectId = 3218;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Harvesters Toll", EffectId, INCREASED_DAMAGE_ON_SELF_DURATION,
-        modifiers: StatModifier.More(StatType.DamageScale, 1.0 + INCREASED_DAMAGE_ON_SELF_DAMAGE_SCALE));
+    public static readonly AuraDef Buff = AuraDef.Effect("Harvesters Toll", EffectId, Constants.IncreasedDotDamageDuration,
+        modifiers: StatModifier.More(StatType.DamageScale, 1.0 + Constants.IncreasedDamageOnSelfDamageScale));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

@@ -22,24 +22,28 @@ partial class ThunderCall
     /// <summary>Game data: <c>duration</c> of ability 1235.</summary>
     public const int AbilityDuration = 21;
 
-    /// <summary>Game data: tuning <c>Duration, RageIncrease.Duration</c> of ability 1235.</summary>
-    public const int DURATION_1 = 21;
+    /// <summary>Game data: the tuning values of ability 1235.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Duration, RageIncrease.Duration</c> of ability 1235.</summary>
+        public const int Duration = 21;
 
-    /// <summary>Game data: tuning <c>LifestealAndStatboost.Duration</c> of ability 1235; ability 1797.</summary>
-    public const int DURATION_2 = 20;
+        /// <summary>Game data: tuning <c>LifestealAndStatboost.Duration</c> of ability 1235; ability 1797.</summary>
+        public const int LifestealAndStatboostDuration = 20;
 
-    /// <summary>Game data: tuning <c>LifestealAndStatboost.IncomingDamageMultiplier</c> of ability 1235; ability 1797, IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_MULTIPLIER = 0.9;
+        /// <summary>Game data: tuning <c>LifestealAndStatboost.IncomingDamageMultiplier</c> of ability 1235; ability 1797, IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double LifestealAndStatboostIncomingDamageMultiplier = 0.9;
 
-    /// <summary>Game data: tuning <c>RageIncrease.RagePerTick</c> of ability 1235; effect 1745, talent Ride the Lightning (talent 87), Resources Additive.</summary>
-    public const double RAGE_PER_TICK = 0.00143;
+        /// <summary>Game data: tuning <c>RageIncrease.RagePerTick</c> of ability 1235; effect 1745, talent Ride the Lightning (talent 87), Resources Additive.</summary>
+        public const double RageIncreaseRagePerTick = 0.00143;
 
-    /// <summary>Game data: tuning <c>RageIncrease.TickInterval</c> of ability 1235; effect 1745, talent Ride the Lightning (talent 87).</summary>
-    public const double TICK_INTERVAL = 0.1;
+        /// <summary>Game data: tuning <c>RageIncrease.TickInterval</c> of ability 1235; effect 1745, talent Ride the Lightning (talent 87).</summary>
+        public const double RageIncreaseTickInterval = 0.1;
 
-    /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1235.</summary>
-    public const int RESOURCE_GAIN = 0;
+        /// <summary>Game data: tuning <c>ResourceGain</c> of ability 1235.</summary>
+        public const int ResourceGain = 0;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1235.</summary>
-    public const double VISUAL_DELAY = 0.27;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1235.</summary>
+        public const double VisualDelay = 0.27;
+    }
 }

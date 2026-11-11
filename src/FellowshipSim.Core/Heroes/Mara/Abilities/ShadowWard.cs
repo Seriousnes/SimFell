@@ -17,7 +17,7 @@ public partial class ShadowWard : MaraAbility
     public const int BuffEffectId = 1592;
 
     public static readonly AuraDef Buff = AuraDef.Effect(AbilityName, BuffEffectId, AbilityDuration,
-        modifiers: StatModifier.More(StatType.IncomingDamageMultiplier, INCOMING_DAMAGE_REDUCTION));
+        modifiers: StatModifier.More(StatType.IncomingDamageMultiplier, Constants.IncomingDamageReduction));
 
     /// <summary>Seconds added to the buff (The Tower).</summary>
     public double BonusDurationSeconds { get; set; }

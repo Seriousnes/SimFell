@@ -16,15 +16,19 @@ partial class RavensPrecision
     /// <summary>Game data: <c>radius</c> of talent 760.</summary>
     public const int TalentRadius = 700;
 
-    /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.Radius</c> of talent 760; ability 2278.</summary>
-    public const int RADIUS = 700;
+    /// <summary>Game data: the tuning values of talent 760.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.Radius</c> of talent 760; ability 2278.</summary>
+        public const int DotTransferTalentExplosionOnPickupRadius = 700;
 
-    /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.StrengthCoefficient</c> of talent 760; ability 2278.</summary>
-    public const double STRENGTH_COEFFICIENT = 0.374;
+        /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.StrengthCoefficient</c> of talent 760; ability 2278.</summary>
+        public const double DotTransferTalentExplosionOnPickupStrengthCoefficient = 0.374;
 
-    /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.TargetThresholdScaling</c> of talent 760; ability 2278.</summary>
-    public const int TARGET_THRESHOLD_SCALING = 5;
+        /// <summary>Game data: tuning <c>Gunde.DotTransfer.Talent.ExplosionOnPickup.TargetThresholdScaling</c> of talent 760; ability 2278.</summary>
+        public const int DotTransferTalentExplosionOnPickupTargetThresholdScaling = 5;
 
-    /// <summary>Game data: tuning <c>Gunde.InstantWhirlwindAoe.Talent.GatherOrbs.MaxRange</c> of talent 760; ability 2265.</summary>
-    public const int MAX_RANGE = 1000;
+        /// <summary>Game data: tuning <c>Gunde.InstantWhirlwindAoe.Talent.GatherOrbs.MaxRange</c> of talent 760; ability 2265.</summary>
+        public const int InstantWhirlwindAoeTalentGatherOrbsMaxRange = 1000;
+    }
 }

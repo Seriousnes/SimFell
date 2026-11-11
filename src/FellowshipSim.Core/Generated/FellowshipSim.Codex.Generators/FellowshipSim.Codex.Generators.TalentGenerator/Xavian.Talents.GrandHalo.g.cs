@@ -10,6 +10,10 @@ partial class GrandHalo
     /// <summary>Game data: <c>name</c> of talent 571.</summary>
     public const string TalentName = "Grand Halo";
 
-    /// <summary>Game data: tuning <c>DamageIncrease.Multiplier, Sune.DroppedPulseAoe.Talent.DamageIncrease.Multiplier</c> of talent 571; Shining Halo (ability 1859), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_INCREASE_MULTIPLIER = 1.25;
+    /// <summary>Game data: the tuning values of talent 571.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageIncrease.Multiplier, Sune.DroppedPulseAoe.Talent.DamageIncrease.Multiplier</c> of talent 571; Shining Halo (ability 1859), DamageScale MultiplyCompound.</summary>
+        public const double DamageIncreaseMultiplier = 1.25;
+    }
 }

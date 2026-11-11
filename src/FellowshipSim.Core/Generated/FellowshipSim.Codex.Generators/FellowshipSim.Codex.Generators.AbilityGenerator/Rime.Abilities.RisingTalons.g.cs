@@ -31,12 +31,16 @@ partial class RisingTalons
     /// <summary>Game data: <c>range</c> of ability 2224.</summary>
     public new const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 2224.</summary>
-    public const double DAMAGE_MULTIPLIER = 0.4;
+    /// <summary>Game data: the tuning values of ability 2224.</summary>
+    public new static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 2224.</summary>
+        public const double DamageMultiplier = 0.4;
 
-    /// <summary>Game data: tuning <c>OnTargetPulsatingAoe.FreeCast.ProcChance</c> of ability 2224; Freezing Torrent (ability 1027), talent Cold Shower (talent 657).</summary>
-    public const double PROC_CHANCE = 0.07;
+        /// <summary>Game data: tuning <c>OnTargetPulsatingAoe.FreeCast.ProcChance</c> of ability 2224; Freezing Torrent (ability 1027), talent Cold Shower (talent 657).</summary>
+        public const double OnTargetPulsatingAoeFreeCastProcChance = 0.07;
 
-    /// <summary>Game data: tuning <c>PulsePeriod</c> of ability 2224.</summary>
-    public const double PULSE_PERIOD = 0.15;
+        /// <summary>Game data: tuning <c>PulsePeriod</c> of ability 2224.</summary>
+        public const double PulsePeriod = 0.15;
+    }
 }

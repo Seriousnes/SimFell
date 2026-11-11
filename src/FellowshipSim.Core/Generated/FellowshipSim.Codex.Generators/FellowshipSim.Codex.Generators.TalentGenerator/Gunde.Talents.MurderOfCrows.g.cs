@@ -10,12 +10,16 @@ partial class MurderOfCrows
     /// <summary>Game data: <c>name</c> of talent 758.</summary>
     public const string TalentName = "Murder of Crows";
 
-    /// <summary>Game data: tuning <c>AdditionalFlatSpiritPointsFromSpiritRefunds, Hero.Talent.AbilityCommitToSpiritRefund.AdditionalFlatSpiritPointsFromSpiritRefunds</c> of talent 758; ability 2226.</summary>
-    public const int ADDITIONAL_FLAT_SPIRIT_POINTS_FROM_SPIRIT_REFUNDS = 1;
+    /// <summary>Game data: the tuning values of talent 758.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalFlatSpiritPointsFromSpiritRefunds, Hero.Talent.AbilityCommitToSpiritRefund.AdditionalFlatSpiritPointsFromSpiritRefunds</c> of talent 758; ability 2226.</summary>
+        public const int AdditionalFlatSpiritPointsFromSpiritRefunds = 1;
 
-    /// <summary>Game data: tuning <c>AdditionalSpiritRefundChance, Hero.Talent.AbilityCommitToSpiritRefund.AdditionalSpiritRefundChance</c> of talent 758; ability 2226, SpiritRefundChanceFlatIncrease Additive.</summary>
-    public const int ADDITIONAL_SPIRIT_REFUND_CHANCE = 1;
+        /// <summary>Game data: tuning <c>AdditionalSpiritRefundChance, Hero.Talent.AbilityCommitToSpiritRefund.AdditionalSpiritRefundChance</c> of talent 758; ability 2226, SpiritRefundChanceFlatIncrease Additive.</summary>
+        public const int AdditionalSpiritRefundChance = 1;
 
-    /// <summary>Game data: tuning <c>ProcChance, Hero.Talent.AbilityCommitToSpiritRefund.ProcChance</c> of talent 758; ability 2226.</summary>
-    public const double PROC_CHANCE = 0.05;
+        /// <summary>Game data: tuning <c>ProcChance, Hero.Talent.AbilityCommitToSpiritRefund.ProcChance</c> of talent 758; ability 2226.</summary>
+        public const double ProcChance = 0.05;
+    }
 }

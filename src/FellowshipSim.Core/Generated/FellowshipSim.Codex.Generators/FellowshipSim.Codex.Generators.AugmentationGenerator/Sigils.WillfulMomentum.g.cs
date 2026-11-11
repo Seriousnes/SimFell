@@ -16,9 +16,13 @@ partial class WillfulMomentum
     /// <summary>Game data: <c>randomChance</c> of sigil 39.</summary>
     public const int SigilRandomChance = 2;
 
-    /// <summary>Game data: rank run <c>Trait.IncreasedMainStatAndSpiritRating.AdditionalSpiritRating</c> of sigil 39, transform <c>plain</c>; the tooltip has 7 / 11 / 17 / 23.</summary>
-    public static readonly double[] ADDITIONAL_SPIRIT_RATING_BY_RANK = [7, 11, 17, 23];
+    /// <summary>Game data: the tuning values and rank runs of sigil 39.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.IncreasedMainStatAndSpiritRating.AdditionalSpiritRating</c> of sigil 39, transform <c>plain</c>; the tooltip has 7 / 11 / 17 / 23.</summary>
+        public static readonly double[] AdditionalSpiritRatingByRank = [7, 11, 17, 23];
 
-    /// <summary>Game data: rank run <c>Trait.IncreasedMainStatAndSpiritRating.Buff.MainStatAdd</c> of sigil 39, transform <c>delta</c>; the tooltip has 1.5% / 2.6% / 3.7% / 4.8%.</summary>
-    public static readonly double[] BUFF_MAIN_STAT_ADD_BY_RANK = [1.015, 1.026, 1.037, 1.048];
+        /// <summary>Game data: rank run <c>Trait.IncreasedMainStatAndSpiritRating.Buff.MainStatAdd</c> of sigil 39, transform <c>delta</c>; the tooltip has 1.5% / 2.6% / 3.7% / 4.8%.</summary>
+        public static readonly double[] BuffMainStatAddByRank = [1.015, 1.026, 1.037, 1.048];
+    }
 }

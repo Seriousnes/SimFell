@@ -10,18 +10,22 @@ partial class SoulfrostTorrent
     /// <summary>Game data: <c>name</c> of talent 195.</summary>
     public const string TalentName = "Soulfrost Torrent";
 
-    /// <summary>Game data: tuning <c>BuffDuration</c> of talent 195; ability 1013.</summary>
-    public const int BUFF_DURATION = 24;
+    /// <summary>Game data: the tuning values of talent 195.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BuffDuration</c> of talent 195; ability 1013.</summary>
+        public const int BuffDuration = 24;
 
-    /// <summary>Game data: tuning <c>ChannelTickRateIncrease</c> of talent 195; ability 1013.</summary>
-    public const double CHANNEL_TICK_RATE_INCREASE = 1.4;
+        /// <summary>Game data: tuning <c>ChannelTickRateIncrease</c> of talent 195; ability 1013.</summary>
+        public const double ChannelTickRateIncrease = 1.4;
 
-    /// <summary>Game data: tuning <c>CritChance</c> of talent 195; ability 1013.</summary>
-    public const int CRIT_CHANCE = 1;
+        /// <summary>Game data: tuning <c>CritChance</c> of talent 195; ability 1013.</summary>
+        public const int CritChance = 1;
 
-    /// <summary>Game data: tuning <c>DamageMultiplier</c> of talent 195; ability 1013.</summary>
-    public const int DAMAGE_MULTIPLIER = 1;
+        /// <summary>Game data: tuning <c>DamageMultiplier</c> of talent 195; ability 1013.</summary>
+        public const int DamageMultiplier = 1;
 
-    /// <summary>Game data: tuning <c>Ppm</c> of talent 195; ability 1013.</summary>
-    public const double PPM = 1.2;
+        /// <summary>Game data: tuning <c>Ppm</c> of talent 195; ability 1013.</summary>
+        public const double Ppm = 1.2;
+    }
 }

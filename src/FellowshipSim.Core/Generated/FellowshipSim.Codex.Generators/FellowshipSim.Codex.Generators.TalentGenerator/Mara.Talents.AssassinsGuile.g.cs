@@ -10,9 +10,13 @@ partial class AssassinsGuile
     /// <summary>Game data: <c>name</c> of talent 422.</summary>
     public const string TalentName = "Assassin's Guile";
 
-    /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of talent 422; Assassin's Guile (effect 2245), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.4;
+    /// <summary>Game data: the tuning values of talent 422.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Mara.Stealth.Talent.SpenderIncreasedDamage.DamageMultiplier</c> of talent 422; Assassin's Guile (effect 2245), DamageScale MultiplyCompound.</summary>
+        public const double StealthTalentSpenderIncreasedDamageDamageMultiplier = 1.4;
 
-    /// <summary>Game data: tuning <c>SpenderIncreasedDamage.Duration, Mara.Stealth.Talent.SpenderIncreasedDamage.Duration</c> of talent 422; Assassin's Guile (effect 2245).</summary>
-    public const int DURATION = 5;
+        /// <summary>Game data: tuning <c>SpenderIncreasedDamage.Duration, Mara.Stealth.Talent.SpenderIncreasedDamage.Duration</c> of talent 422; Assassin's Guile (effect 2245).</summary>
+        public const int SpenderIncreasedDamageDuration = 5;
+    }
 }

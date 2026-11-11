@@ -11,8 +11,8 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 /// </summary>
 public partial class FromTheShadows : Legendary
 {
-    /// <summary>The bleed's tick rate bonus that shortens its period to <see cref="TICK_PERIOD_MULTIPLIER"/> of it.</summary>
-    public const double TickRateBonus = 1.0 / TICK_PERIOD_MULTIPLIER - 1.0;
+    /// <summary>The bleed's tick rate bonus that shortens its period to <see cref="Constants.TickPeriodMultiplier"/> of it.</summary>
+    public const double TickRateBonus = 1.0 / Constants.TickPeriodMultiplier - 1.0;
     public const int CloneComboPoints = 6;
     public const double ClonePower = 1.0;
     public const string ProcKey = "from_the_shadows";
@@ -25,7 +25,7 @@ public partial class FromTheShadows : Legendary
         hero.OnDamageDealt += (in hit) =>
         {
             if (hit.Amount <= 0 || hit.Target is not { } target || hit.SimContext is not { } ctx || !mara.Hemorrhage.IsOn(target, ctx)) return;
-            if (ctx.Outcomes.RollProc(ProcKey, ACTIVATION_CHANCE_PER_TARGET, ctx, target)) queensFang.CloneStrike(ctx, target, CloneComboPoints, ClonePower);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.ActivationChancePerTarget, ctx, target)) queensFang.CloneStrike(ctx, target, CloneComboPoints, ClonePower);
         };
     }
 }

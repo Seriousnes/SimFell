@@ -10,6 +10,10 @@ partial class CausticWounds
     /// <summary>Game data: <c>name</c> of talent 667.</summary>
     public const string TalentName = "Caustic Wounds";
 
-    /// <summary>Game data: tuning <c>ProcChance, Mara.StrongerBehindAttackBuilder.Talent.PoisonChance.ProcChance</c> of talent 667; ability 2231.</summary>
-    public const double PROC_CHANCE = 0.3;
+    /// <summary>Game data: the tuning values of talent 667.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ProcChance, Mara.StrongerBehindAttackBuilder.Talent.PoisonChance.ProcChance</c> of talent 667; ability 2231.</summary>
+        public const double ProcChance = 0.3;
+    }
 }

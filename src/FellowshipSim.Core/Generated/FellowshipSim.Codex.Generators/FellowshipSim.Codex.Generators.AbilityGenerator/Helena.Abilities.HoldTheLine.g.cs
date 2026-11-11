@@ -22,42 +22,46 @@ partial class HoldTheLine
     /// <summary>Game data: <c>maxTargets</c> of ability 975.</summary>
     public const int AbilityMaxTargets = 100;
 
-    /// <summary>Game data: tuning <c>AllyMoveSpeedScaler</c> of ability 975; MoveSpeed Multiplicitive.</summary>
-    public const double ALLY_MOVE_SPEED_SCALER = 1.25;
+    /// <summary>Game data: the tuning values of ability 975.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AllyMoveSpeedScaler</c> of ability 975; MoveSpeed Multiplicitive.</summary>
+        public const double AllyMoveSpeedScaler = 1.25;
 
-    /// <summary>Game data: tuning <c>BuffDuration</c> of ability 975; talent Sword &amp; Board (talent 209).</summary>
-    public const int BUFF_DURATION = 12;
+        /// <summary>Game data: tuning <c>BuffDuration</c> of ability 975; talent Sword &amp; Board (talent 209).</summary>
+        public const int BuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>Charges.NumCharges, Helena.MeleeCleave.NumCharges</c> of ability 975; talent Iron Sentinel (legendary power 625).</summary>
-    public const int NUM_CHARGES = 2;
+        /// <summary>Game data: tuning <c>Charges.NumCharges, Helena.MeleeCleave.NumCharges</c> of ability 975; talent Iron Sentinel (legendary power 625).</summary>
+        public const int ChargesNumCharges = 2;
 
-    /// <summary>Game data: tuning <c>Helena.MeleeCleave.AbsorbProc.StrCoefficient</c> of ability 975; Empowered Shield Slam: Barrier (effect 2229).</summary>
-    public const double STR_COEFFICIENT = 17.43;
+        /// <summary>Game data: tuning <c>Helena.MeleeCleave.AbsorbProc.StrCoefficient</c> of ability 975; Empowered Shield Slam: Barrier (effect 2229).</summary>
+        public const double MeleeCleaveAbsorbProcStrCoefficient = 17.43;
 
-    /// <summary>Game data: tuning <c>Helena.MeleeCleave.CleaveRadius</c> of ability 975; Shield Slam (ability 977).</summary>
-    public const int CLEAVE_RADIUS = 500;
+        /// <summary>Game data: tuning <c>Helena.MeleeCleave.CleaveRadius</c> of ability 975; Shield Slam (ability 977).</summary>
+        public const int MeleeCleaveCleaveRadius = 500;
 
-    /// <summary>Game data: tuning <c>Helena.MeleeCleave.Cooldown</c> of ability 975; Shield Slam (ability 977).</summary>
-    public const double COOLDOWN = 7.5;
+        /// <summary>Game data: tuning <c>Helena.MeleeCleave.Cooldown</c> of ability 975; Shield Slam (ability 977).</summary>
+        public const double MeleeCleaveCooldown = 7.5;
 
-    /// <summary>Game data: tuning <c>Helena.MeleeCleave.TargetCountThreshold</c> of ability 975; Shield Slam (ability 977).</summary>
-    public const int TARGET_COUNT_THRESHOLD = 8;
+        /// <summary>Game data: tuning <c>Helena.MeleeCleave.TargetCountThreshold</c> of ability 975; Shield Slam (ability 977).</summary>
+        public const int MeleeCleaveTargetCountThreshold = 8;
 
-    /// <summary>Game data: tuning <c>Helena.MeleeRange</c> of ability 975; Helena (hero 22).</summary>
-    public const int MELEE_RANGE = 500;
+        /// <summary>Game data: tuning <c>Helena.MeleeRange</c> of ability 975; Helena (hero 22).</summary>
+        public const int MeleeRange = 500;
 
-    /// <summary>Game data: tuning <c>Helena.Talent.IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor</c> of ability 975; ability 2216, talent Gleaming Shield (talent 641).</summary>
-    public const double MELEE_CLEAVE_ADDITIONAL_DAMAGE_BASED_ON_ARMOR = 0.1;
+        /// <summary>Game data: tuning <c>Helena.Talent.IncreasedArmorFromAbilities.MeleeCleave.AdditionalDamageBasedOnArmor</c> of ability 975; ability 2216, talent Gleaming Shield (talent 641).</summary>
+        public const double TalentIncreasedArmorFromAbilitiesMeleeCleaveAdditionalDamageBasedOnArmor = 0.1;
 
-    /// <summary>Game data: tuning <c>Helena.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of ability 975; Unscarred Soul (effect 2339), talent Unscarred Soul (talent 390).</summary>
-    public const double ABSORB_DAMAGE_MULTIPLIER = 0.8;
+        /// <summary>Game data: tuning <c>Helena.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of ability 975; Unscarred Soul (effect 2339), talent Unscarred Soul (talent 390).</summary>
+        public const double TalentMeleeCleaveAbsorbBuffReducedDamageReflectDamageAbsorbDamageMultiplier = 0.8;
 
-    /// <summary>Game data: tuning <c>Hero.AbilityPaddingCooldown.Default.Duration</c> of ability 975; Wrath of Winter (ability 1023).</summary>
-    public const double DURATION = 0.3;
+        /// <summary>Game data: tuning <c>Hero.AbilityPaddingCooldown.Default.Duration</c> of ability 975; Wrath of Winter (ability 1023).</summary>
+        public const double HeroAbilityPaddingCooldownDefaultDuration = 0.3;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 975.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 975.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
 
-    /// <summary>Game data: tuning <c>SelfMoveSpeedScaler</c> of ability 975; MoveSpeed Multiplicitive.</summary>
-    public const double SELF_MOVE_SPEED_SCALER = 1.5;
+        /// <summary>Game data: tuning <c>SelfMoveSpeedScaler</c> of ability 975; MoveSpeed Multiplicitive.</summary>
+        public const double SelfMoveSpeedScaler = 1.5;
+    }
 }

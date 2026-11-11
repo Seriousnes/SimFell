@@ -16,9 +16,13 @@ partial class SapphireAurastone
     /// <summary>Game data: <c>randomChance</c> of aspect 32.</summary>
     public const int AspectRandomChance = 1;
 
-    /// <summary>Game data: rank run <c>Trait.GemPulsatingOnAbilityTotemProc.Damage.AccumulationPercentage</c> of aspect 32, transform <c>raw</c>; the tooltip has 3.4% / 6.3% / 9.1% / 12%.</summary>
-    public static readonly double[] DAMAGE_ACCUMULATION_PERCENTAGE_BY_RANK = [0.034, 0.063, 0.091, 0.12];
+    /// <summary>Game data: the tuning values and rank runs of aspect 32.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: rank run <c>Trait.GemPulsatingOnAbilityTotemProc.Damage.AccumulationPercentage</c> of aspect 32, transform <c>raw</c>; the tooltip has 3.4% / 6.3% / 9.1% / 12%.</summary>
+        public static readonly double[] DamageAccumulationPercentageByRank = [0.034, 0.063, 0.091, 0.12];
 
-    /// <summary>Game data: rank run <c>Trait.GemPulsatingOnAbilityTotemProc.Heal.AccumulationPercentage</c> of aspect 32, transform <c>raw</c>; the tooltip has 4.6% / 8.4% / 12% / 16%.</summary>
-    public static readonly double[] HEAL_ACCUMULATION_PERCENTAGE_BY_RANK = [0.046, 0.084, 0.12, 0.16];
+        /// <summary>Game data: rank run <c>Trait.GemPulsatingOnAbilityTotemProc.Heal.AccumulationPercentage</c> of aspect 32, transform <c>raw</c>; the tooltip has 4.6% / 8.4% / 12% / 16%.</summary>
+        public static readonly double[] HealAccumulationPercentageByRank = [0.046, 0.084, 0.12, 0.16];
+    }
 }

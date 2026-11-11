@@ -10,15 +10,19 @@ partial class FocusedExpanse
     /// <summary>Game data: <c>name</c> of talent 167.</summary>
     public const string TalentName = "Focused Expanse";
 
-    /// <summary>Game data: tuning <c>DamageBonus, AoeProjectileDamageEmpowered.DamageBonus, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.DamageBonus</c> of talent 167; ability 1524, DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_BONUS = 1.2;
+    /// <summary>Game data: the tuning values of talent 167.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageBonus, AoeProjectileDamageEmpowered.DamageBonus, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.DamageBonus</c> of talent 167; ability 1524, DamageScale MultiplyCompound.</summary>
+        public const double DamageBonus = 1.2;
 
-    /// <summary>Game data: tuning <c>MinNumOfProjectiles, AoeProjectileDamageEmpowered.MinNumOfProjectiles, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.MinNumOfProjectiles</c> of talent 167; ability 1524.</summary>
-    public const int MIN_NUM_OF_PROJECTILES = 3;
+        /// <summary>Game data: tuning <c>MinNumOfProjectiles, AoeProjectileDamageEmpowered.MinNumOfProjectiles, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.MinNumOfProjectiles</c> of talent 167; ability 1524.</summary>
+        public const int MinNumOfProjectiles = 3;
 
-    /// <summary>Game data: tuning <c>NumOfStacks, AoeProjectileDamageEmpowered.NumOfStacks, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.NumOfStacks</c> of talent 167; ability 1524.</summary>
-    public const int NUM_OF_STACKS = 1;
+        /// <summary>Game data: tuning <c>NumOfStacks, AoeProjectileDamageEmpowered.NumOfStacks, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.NumOfStacks</c> of talent 167; ability 1524.</summary>
+        public const int NumOfStacks = 1;
 
-    /// <summary>Game data: tuning <c>ProcChance, AoeProjectileDamageEmpowered.ProcChance, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.ProcChance</c> of talent 167; ability 1524.</summary>
-    public const double PROC_CHANCE = 0.2;
+        /// <summary>Game data: tuning <c>ProcChance, AoeProjectileDamageEmpowered.ProcChance, Bowguy.CastedProjectileDamage.Talent.AoeProjectileDamageEmpowered.ProcChance</c> of talent 167; ability 1524.</summary>
+        public const double ProcChance = 0.2;
+    }
 }

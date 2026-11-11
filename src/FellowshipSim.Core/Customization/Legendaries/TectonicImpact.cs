@@ -17,7 +17,7 @@ public partial class TectonicImpact : Legendary
     public override void Bind(Hero hero)
     {
         if (hero.GetAbility<EarthfistBarrage>() is not { } barrage) return;
-        barrage.UppercutMultiplier *= FINAL_HIT_SPEND_CHARGE_DAMAGE_MULTIPLIER;
+        barrage.UppercutMultiplier *= Constants.FinalHitSpendChargeDamageMultiplier;
         barrage.ExplosionTargetThreshold = TargetThreshold;
     }
 }

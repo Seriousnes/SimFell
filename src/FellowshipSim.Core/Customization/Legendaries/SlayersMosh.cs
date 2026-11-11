@@ -10,7 +10,7 @@ public partial class SlayersMosh : Legendary
 {
     public const int DebuffEffectId = 2250;
 
-    public static readonly AuraDef Debuff = AuraDef.Effect("Slayer's Mosh", DebuffEffectId, DURATION);
+    public static readonly AuraDef Debuff = AuraDef.Effect("Slayer's Mosh", DebuffEffectId, Constants.MoveToLocationAoeDamageTalentTargetExtraInkDamageDuration);
 
     public override void Bind(Hero hero)
     {
@@ -19,6 +19,6 @@ public partial class SlayersMosh : Legendary
         {
             for (int i = 0; i < struck.Count; i++) struck[i].Auras.Apply(Debuff, ctx.CurrentTime);
         };
-        hero.TargetDamageMultipliers.Add((target, now) => target.Auras.HasAura(Debuff, now) ? INCOMING_DAMAGE_SCALER : 1.0);
+        hero.TargetDamageMultipliers.Add((target, now) => target.Auras.HasAura(Debuff, now) ? Constants.MoveToLocationAoeDamageTalentTargetExtraInkDamageIncomingDamageScaler : 1.0);
     }
 }

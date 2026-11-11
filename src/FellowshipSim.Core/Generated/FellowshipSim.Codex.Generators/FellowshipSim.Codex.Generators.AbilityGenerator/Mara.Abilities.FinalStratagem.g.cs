@@ -19,6 +19,10 @@ partial class FinalStratagem
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1468.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1468.</summary>
-    public const double HERO_ABILITY_SPAM_PROTECTION_COOLDOWN_DEFAULT_DURATION = 0.4;
+    /// <summary>Game data: the tuning values of ability 1468.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1468.</summary>
+        public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+    }
 }

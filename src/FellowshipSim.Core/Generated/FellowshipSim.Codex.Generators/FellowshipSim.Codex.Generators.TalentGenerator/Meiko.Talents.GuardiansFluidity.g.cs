@@ -10,6 +10,10 @@ partial class GuardiansFluidity
     /// <summary>Game data: <c>name</c> of talent 514.</summary>
     public const string TalentName = "Guardian's Fluidity";
 
-    /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Meiko.DamageSoakBuff.Talent.FinisherToReducedCooldown.CooldownReductionInSeconds</c> of talent 514; ability 1769.</summary>
-    public const int COOLDOWN_REDUCTION_IN_SECONDS = 1;
+    /// <summary>Game data: the tuning values of talent 514.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Meiko.DamageSoakBuff.Talent.FinisherToReducedCooldown.CooldownReductionInSeconds</c> of talent 514; ability 1769.</summary>
+        public const int CooldownReductionInSeconds = 1;
+    }
 }

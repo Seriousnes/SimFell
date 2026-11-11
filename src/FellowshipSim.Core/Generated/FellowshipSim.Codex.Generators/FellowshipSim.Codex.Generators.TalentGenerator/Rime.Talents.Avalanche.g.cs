@@ -10,12 +10,16 @@ partial class Avalanche
     /// <summary>Game data: <c>name</c> of talent 48.</summary>
     public const string TalentName = "Avalanche";
 
-    /// <summary>Game data: tuning <c>MultiStrike.ChanceToStrikeTrice, Rime.OnTargetPulsatingAoe.Talent.MultiStrike.ChanceToStrikeTrice</c> of talent 48; Ice Comet (ability 1018).</summary>
-    public const double MULTI_STRIKE_CHANCE_TO_STRIKE_TRICE = 0.09;
+    /// <summary>Game data: the tuning values of talent 48.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>MultiStrike.ChanceToStrikeTrice, Rime.OnTargetPulsatingAoe.Talent.MultiStrike.ChanceToStrikeTrice</c> of talent 48; Ice Comet (ability 1018).</summary>
+        public const double MultiStrikeChanceToStrikeTrice = 0.09;
 
-    /// <summary>Game data: tuning <c>MultiStrike.ChanceToStrikeTwice, Rime.OnTargetPulsatingAoe.Talent.MultiStrike.ChanceToStrikeTwice</c> of talent 48; Ice Comet (ability 1018).</summary>
-    public const double MULTI_STRIKE_CHANCE_TO_STRIKE_TWICE = 0.18;
+        /// <summary>Game data: tuning <c>MultiStrike.ChanceToStrikeTwice, Rime.OnTargetPulsatingAoe.Talent.MultiStrike.ChanceToStrikeTwice</c> of talent 48; Ice Comet (ability 1018).</summary>
+        public const double MultiStrikeChanceToStrikeTwice = 0.18;
 
-    /// <summary>Game data: tuning <c>Multistrike.Passive.CritStrikePowerIncrease, Rime.OnTargetPulsatingAoe.Talent.Multistrike.Passive.CritStrikePowerIncrease</c> of talent 48; Biting Cold (effect 1372), CritMultiplier MultiplyCompound.</summary>
-    public const double CRIT_STRIKE_POWER_INCREASE = 1.1;
+        /// <summary>Game data: tuning <c>Multistrike.Passive.CritStrikePowerIncrease, Rime.OnTargetPulsatingAoe.Talent.Multistrike.Passive.CritStrikePowerIncrease</c> of talent 48; Biting Cold (effect 1372), CritMultiplier MultiplyCompound.</summary>
+        public const double MultistrikePassiveCritStrikePowerIncrease = 1.1;
+    }
 }

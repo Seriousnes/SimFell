@@ -25,24 +25,28 @@ partial class FocusedWrath
     /// <summary>Game data: <c>range</c> of ability 1233.</summary>
     public const int AbilityRange = 550;
 
-    /// <summary>Game data: tuning <c>CostReduction</c> of ability 1233.</summary>
-    public const double COST_REDUCTION = 0.48;
+    /// <summary>Game data: the tuning values of ability 1233.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CostReduction</c> of ability 1233.</summary>
+        public const double CostReduction = 0.48;
 
-    /// <summary>Game data: tuning <c>DamageIncrease</c> of ability 1233.</summary>
-    public const double DAMAGE_INCREASE = 1.1;
+        /// <summary>Game data: tuning <c>DamageIncrease</c> of ability 1233.</summary>
+        public const double DamageIncrease = 1.1;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 1233.</summary>
-    public const int DURATION = 15;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 1233.</summary>
+        public const int Duration = 15;
 
-    /// <summary>Game data: tuning <c>MaxStacksLimit</c> of ability 1233.</summary>
-    public const int MAX_STACKS_LIMIT = 3;
+        /// <summary>Game data: tuning <c>MaxStacksLimit</c> of ability 1233.</summary>
+        public const int MaxStacksLimit = 3;
 
-    /// <summary>Game data: tuning <c>NumOfStacks</c> of ability 1233.</summary>
-    public const int NUM_OF_STACKS = 2;
+        /// <summary>Game data: tuning <c>NumOfStacks</c> of ability 1233.</summary>
+        public const int NumOfStacks = 2;
 
-    /// <summary>Game data: tuning <c>Talent.CooldownReductionInSeconds</c> of ability 1233.</summary>
-    public const int COOLDOWN_REDUCTION_IN_SECONDS = 45;
+        /// <summary>Game data: tuning <c>Talent.CooldownReductionInSeconds</c> of ability 1233.</summary>
+        public const int TalentCooldownReductionInSeconds = 45;
 
-    /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1233.</summary>
-    public const double VISUAL_DELAY = 0.3;
+        /// <summary>Game data: tuning <c>VisualDelay</c> of ability 1233.</summary>
+        public const double VisualDelay = 0.3;
+    }
 }

@@ -16,7 +16,7 @@ public partial class RedLedger : Talent
         hero.TargetCritChanceBonuses.Add((_, _) =>
         {
             int bleeding = mara.SimContext is { } ctx ? mara.Hemorrhage.ActiveCount(ctx) : 0;
-            return bleeding == 0 ? 0.0 : Math.Min(MAX_THRESHOLD, ADDITIONAL_HASTE + ADDITIONAL_HASTE_PER_ADDITIONAL_TARGET * (bleeding - 1));
+            return bleeding == 0 ? 0.0 : Math.Min(Constants.MaxThreshold, Constants.AdditionalHaste + Constants.AdditionalHastePerAdditionalTarget * (bleeding - 1));
         });
     }
 }

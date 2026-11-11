@@ -16,6 +16,10 @@ partial class TheLake
     /// <summary>Game data: <c>randomChance</c> of protective enchant 56.</summary>
     public const int ProtectiveEnchantRandomChance = 0;
 
-    /// <summary>Game data: tuning <c>AdditionalReduction</c> of protective enchant 56.</summary>
-    public const double ADDITIONAL_REDUCTION = 0.2;
+    /// <summary>Game data: the tuning values and rank runs of protective enchant 56.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalReduction</c> of protective enchant 56.</summary>
+        public const double AdditionalReduction = 0.2;
+    }
 }

@@ -4,7 +4,7 @@ namespace FellowshipSim.Core.Heroes.Tariq.Talents;
 
 /// <summary>
 /// Talent 87: "Your Thunder Call generates Fury over its duration and grants you Haste while it is active."
-/// Effect 1745 (every <see cref="TICK_INTERVAL"/>: a share of maximum Fury) and effect 2753 (a Haste bonus). Combat logs show neither as a buff,
+/// Effect 1745 (every <see cref="Constants.RageIncreaseTickInterval"/>: a share of maximum Fury) and effect 2753 (a Haste bonus). Combat logs show neither as a buff,
 /// so both are internal here. The Fury ticks are hasted by the haste as Thunder Call is cast, for the whole buff (confirmed
 /// in game, 2026-11-01; combat logs, fXyzwGcQkTrLD34R fight 4). Raging Tempest's
 /// Enhanced Thunder Call has them too (YC861NTRgLbmw4Qa fight 31 @ 199.7: the log gains more Fury a second than
@@ -15,7 +15,7 @@ public partial class RideTheLightning : Talent
 {
     /// <summary>Effect 2753, while Thunder Call or Raging Tempest is active.</summary>
     public static readonly AuraDef HasteBuff = AuraDef.Internal("Ride the Lightning", ThunderCall.AbilityDuration,
-        modifiers: StatModifier.Add(StatType.Haste, ADDED_HASTE));
+        modifiers: StatModifier.Add(StatType.Haste, Constants.ChargedBuffTalentAddedHaste));
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -37,11 +37,11 @@ public partial class RideTheLightning : Talent
             ticks?.Stop(ctx);
             hero.Auras.Apply(HasteBuff.WithDuration(seconds), now);
             // The ticks' haste is the haste now, until the buff ends.
-            double period = TICK_INTERVAL / (1.0 + hero.GetHaste(now));
+            double period = Constants.RageIncreaseTickInterval / (1.0 + hero.GetHaste(now));
             ticks = PeriodicEffect.Begin(ctx, TalentName, seconds, period, tickOnStart: false, partialFinalTick: false,
                 onTick: (c, _) =>
                 {
-                    if (tariq.IsCharged(c.CurrentTime)) tariq.GainFury(RAGE_PER_TICK * Tariq.Fury.Max, c);
+                    if (tariq.IsCharged(c.CurrentTime)) tariq.GainFury(Constants.RageIncreaseRagePerTick * Tariq.Fury.Max, c);
                 });
         };
     }

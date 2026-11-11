@@ -13,7 +13,7 @@ public partial class MartialCommand : Talent
 {
     public const double SiegebreakerDamage = 1.15;
 
-    public static readonly AuraDef Passive = AuraDef.Internal(TalentName, 0, modifiers: StatModifier.Add(StatType.Spirit, ADDED_SPIRIT_PASSIVE));
+    public static readonly AuraDef Passive = AuraDef.Internal(TalentName, 0, modifiers: StatModifier.Add(StatType.Spirit, Constants.TalentAddedSpiritPassive));
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -24,7 +24,7 @@ public partial class MartialCommand : Talent
         hero.AbilityDamageMultipliers.Add((_, now) => hero.Auras.HasAura(Siegebreaker.Buff, now) ? SiegebreakerDamage : 1.0);
         if (hero.GetAbility<ShieldThrow>() is { } shieldThrow)
         {
-            shieldThrow.Thrown += ctx => hero.GainResource(Hero.SpiritPoints, SPIRIT_POINT_GAIN_NUM_POINTS, ctx);
+            shieldThrow.Thrown += ctx => hero.GainResource(Hero.SpiritPoints, Constants.SpiritPointGainNumPoints, ctx);
         }
     }
 }

@@ -10,6 +10,10 @@ partial class SlayersGrin
     /// <summary>Game data: <c>name</c> of talent 763.</summary>
     public const string TalentName = "Slayer's Grin";
 
-    /// <summary>Game data: tuning <c>ReductionInSeconds, Gunde.HeavyMeleeDotBoost.Talent.ReducedCooldownPerOrb.ReductionInSeconds</c> of talent 763; ability 2269.</summary>
-    public const double REDUCTION_IN_SECONDS = 0.4;
+    /// <summary>Game data: the tuning values of talent 763.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ReductionInSeconds, Gunde.HeavyMeleeDotBoost.Talent.ReducedCooldownPerOrb.ReductionInSeconds</c> of talent 763; ability 2269.</summary>
+        public const double ReductionInSeconds = 0.4;
+    }
 }

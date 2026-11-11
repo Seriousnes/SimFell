@@ -10,6 +10,10 @@ partial class LastLights
     /// <summary>Game data: <c>name</c> of talent 164.</summary>
     public const string TalentName = "Last Lights";
 
-    /// <summary>Game data: tuning <c>IncreasedCritChanceAtLowHealth.AdditionalCritChance, Bowguy.Talent.IncreasedCritChanceAtLowHealth.AdditionalCritChance</c> of talent 164; Last Lights (effect 2204), CritChance Additive.</summary>
-    public const double ADDITIONAL_CRIT_CHANCE = 0.2;
+    /// <summary>Game data: the tuning values of talent 164.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedCritChanceAtLowHealth.AdditionalCritChance, Bowguy.Talent.IncreasedCritChanceAtLowHealth.AdditionalCritChance</c> of talent 164; Last Lights (effect 2204), CritChance Additive.</summary>
+        public const double IncreasedCritChanceAtLowHealthAdditionalCritChance = 0.2;
+    }
 }

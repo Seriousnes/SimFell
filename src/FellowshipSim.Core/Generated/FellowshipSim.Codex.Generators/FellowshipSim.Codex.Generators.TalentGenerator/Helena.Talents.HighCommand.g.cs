@@ -10,6 +10,10 @@ partial class HighCommand
     /// <summary>Game data: <c>name</c> of talent 210.</summary>
     public const string TalentName = "High Command";
 
-    /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Warmaster.DefenceBuff.Talent.MoveSpeedBuffCooldownReduction.CooldownReductionInSeconds</c> of talent 210; ability 1606.</summary>
-    public const int COOLDOWN_REDUCTION_IN_SECONDS = 6;
+    /// <summary>Game data: the tuning values of talent 210.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CooldownReductionInSeconds, Warmaster.DefenceBuff.Talent.MoveSpeedBuffCooldownReduction.CooldownReductionInSeconds</c> of talent 210; ability 1606.</summary>
+        public const int CooldownReductionInSeconds = 6;
+    }
 }

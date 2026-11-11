@@ -2,10 +2,10 @@ namespace FellowshipSim.Core.Heroes.Ardeos.Abilities;
 
 /// <summary>
 /// Ability 1275: costs a Burning Ember (<see cref="CinderCost"/>). Instantly detonates all active fire damage over time
-/// effects from Ardeos abilities on enemies, dealing damage equal to <see cref="DOT_DAMAGE_SAMPLE_DURATION"/> of average ticking
+/// effects from Ardeos abilities on enemies, dealing damage equal to <see cref="Constants.DotDamageSampleDuration"/> of average ticking
 /// damage to each enemy.
-/// Combat logs (yMAZVJL9hTpFjqbC fight 7): the cast is instant; each enemy with an effect takes <see cref="NUM_HITS_PER_TARGET"/>
-/// hits, spaced by <see cref="BETWEEN_HIT_DELAY"/>, each the damage its effects deal per second at the cast (the hits that
+/// Combat logs (yMAZVJL9hTpFjqbC fight 7): the cast is instant; each enemy with an effect takes <see cref="Constants.NumHitsPerTarget"/>
+/// hits, spaced by <see cref="Constants.BetweenHitDelay"/>, each the damage its effects deal per second at the cast (the hits that
 /// land later keep it); the hits crit on their own; the effects keep ticking. On many enemies the hits queue up and land
 /// late.
 /// </summary>
@@ -73,13 +73,13 @@ public partial class Detonate : ArdeosAbility
             double perSecond = 0.0;
             var on = dots.On(enemy);
             for (int i = 0; i < on.Count; i++) perSecond += on[i].Effect.DamagePerSecond(ctx, on[i]);
-            double damage = perSecond * DOT_DAMAGE_SAMPLE_DURATION / NUM_HITS_PER_TARGET * CastDamageMultiplier;
+            double damage = perSecond * Constants.DotDamageSampleDuration / Constants.NumHitsPerTarget * CastDamageMultiplier;
             if (damage <= 0) continue;
             double critChance = Owner.CritChanceAgainst(enemy, now) + CritChanceBonus + (CurrentCast?.CritChance ?? 0.0);
             double critMultiplier = CritMultiplierAt(now);
-            for (int i = 0; i < NUM_HITS_PER_TARGET; i++)
+            for (int i = 0; i < Constants.NumHitsPerTarget; i++)
             {
-                ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * BETWEEN_HIT_DELAY), c =>
+                ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * Constants.BetweenHitDelay), c =>
                 {
                     if (!enemy.IsSleeping) c.ApplyDamage(Owner, enemy, damage, DamageLogId, Name, canCrit: true, critChance, critMultiplier);
                 }, Name);

@@ -10,8 +10,12 @@ partial class IronSentinel
     /// <summary>Warmaster Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>Charges.NumCharges, Warmaster.MoveSpeedBuff.Talent.Charges.NumCharges</c> of legendary power 625; Hold the Line (ability 975).</summary>
-    public const int CHARGES_NUM_CHARGES = 2;
+    /// <summary>Game data: the tuning values of legendary power 625.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Charges.NumCharges, Warmaster.MoveSpeedBuff.Talent.Charges.NumCharges</c> of legendary power 625; Hold the Line (ability 975).</summary>
+        public const int ChargesNumCharges = 2;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Iron Sentinel";

@@ -10,17 +10,21 @@ partial class ExecutionersGrin
     /// <summary>Stormlord Wraps, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
-    /// <summary>Game data: tuning <c>AddedCritChance, Ink.LowHealthSingleTargetResourceDamage.Talent.AddedCritChance</c> of legendary power 423; ability 1556, CritChance Additive.</summary>
-    public const double ADDED_CRIT_CHANCE = 0.5;
+    /// <summary>Game data: the tuning values of legendary power 423.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AddedCritChance, Ink.LowHealthSingleTargetResourceDamage.Talent.AddedCritChance</c> of legendary power 423; ability 1556, CritChance Additive.</summary>
+        public const double AddedCritChance = 0.5;
 
-    /// <summary>Game data: tuning <c>BuffDuration, Ink.LowHealthSingleTargetResourceDamage.Talent.BuffDuration</c> of legendary power 423; ability 1556.</summary>
-    public const int BUFF_DURATION = 8;
+        /// <summary>Game data: tuning <c>BuffDuration, Ink.LowHealthSingleTargetResourceDamage.Talent.BuffDuration</c> of legendary power 423; ability 1556.</summary>
+        public const int BuffDuration = 8;
 
-    /// <summary>Game data: tuning <c>Chance, Ink.LowHealthSingleTargetResourceDamage.Talent.Chance</c> of legendary power 423; ability 1556.</summary>
-    public const double CHANCE = 0.06;
+        /// <summary>Game data: tuning <c>Chance, Ink.LowHealthSingleTargetResourceDamage.Talent.Chance</c> of legendary power 423; ability 1556.</summary>
+        public const double Chance = 0.06;
 
-    /// <summary>Game data: tuning <c>ResourceAmountToDamage, Ink.LowHealthSingleTargetResourceDamage.Talent.ResourceAmountToDamage</c> of legendary power 423; ability 1556.</summary>
-    public const double RESOURCE_AMOUNT_TO_DAMAGE = 0.3;
+        /// <summary>Game data: tuning <c>ResourceAmountToDamage, Ink.LowHealthSingleTargetResourceDamage.Talent.ResourceAmountToDamage</c> of legendary power 423; ability 1556.</summary>
+        public const double ResourceAmountToDamage = 0.3;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Executioner's Grin";

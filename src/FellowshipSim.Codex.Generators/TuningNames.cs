@@ -1,74 +1,163 @@
 using System.Text;
 using Fellowship.SDK.Models;
+using Microsoft.CodeAnalysis;
 
 namespace FellowshipSim.Codex.Generators;
 
 /// <summary>
-/// The constant names of a record's tuning values. A tuning value's constant is its name in upper case with an underscore
-/// between words (<c>MaxCharges</c> is <c>MAX_CHARGES</c>), so it never has the name of a Pascal case member. A name with
-/// several values has one constant per value, numbered from 1 in the order of their tuning keys (<c>MAX_STACKS_1</c>,
-/// <c>MAX_STACKS_2</c>).
+/// The names of a record's tuning values in its class's nested <c>public static class Constants</c>. A tuning value's name
+/// is its tuning key's segments joined, each in Pascal case (<c>EnergyGainProc.AgilityCoefficient</c> is
+/// <c>EnergyGainProcAgilityCoefficient</c>), after the hero rule: a first segment naming the record's own hero is dropped,
+/// and a first segment naming another hero is that hero's name (<see cref="HeroSegments"/>). A value by rank has
+/// <c>ByRank</c> after its name. Keys of a record with one last segment and one value are one constant, named after the
+/// shortest key (by length, then ordinal). Two keys with one name and different values are CODEX038, and a hand-written
+/// constant or static readonly field of the class with the name of a member of its <c>Constants</c> is CODEX039.
 /// </summary>
 internal static class TuningNames
 {
-    /// <summary>
-    /// One value of a tuning name: its constant name, its value, its tuning keys (shortest first) and the tuning
-    /// reference its summary names the source of.
-    /// </summary>
-    public sealed record Named<T>(string Name, T Value, string Keys, TuningReference Source);
+    public static readonly DiagnosticDescriptor SharedName = new(
+        "CODEX038", "Two tuning keys of a record have one constant name",
+        "The tuning keys {1} and {2} of {0} have different values and the one constant name {3}", "Codex", DiagnosticSeverity.Error, true);
 
-    /// <summary>A Pascal case name in upper case with an underscore between words: <c>AoeDamageMaxRange</c> is <c>AOE_DAMAGE_MAX_RANGE</c>.</summary>
-    public static string ConstantName(string pascal)
+    public static readonly DiagnosticDescriptor DeclaredConstant = new(
+        "CODEX039", "A hand-written constant has the name of a tuning constant",
+        "The class {0} has a constant or static readonly field {1}, and Constants.{1} is a tuning value of {2}; delete or rename the field",
+        "Codex", DiagnosticSeverity.Error, true);
+
+    /// <summary>
+    /// The record's tuning keys with a value of a constant type (<paramref name="valueOf"/> is not null), in the order of
+    /// the game data.
+    /// </summary>
+    public static List<TuningEntry> Entries(IEnumerable<KeyValuePair<string, TuningReference>>? tuning,
+        Func<object?, (string Type, string Literal, bool ByRank)?> valueOf, Func<TuningReference, string> sourceOf)
     {
-        var result = new StringBuilder();
-        for (int i = 0; i < pascal.Length; i++)
+        var entries = new List<TuningEntry>();
+        foreach (var t in tuning ?? [])
         {
-            char c = pascal[i];
-            if (c == '_')
-            {
-                if (result.Length > 0 && result[result.Length - 1] != '_') result.Append('_');
-                continue;
-            }
-            if (i > 0 && char.IsUpper(c) && result.Length > 0 && result[result.Length - 1] != '_')
-            {
-                char before = pascal[i - 1];
-                bool acronymEnd = char.IsUpper(before) && i + 1 < pascal.Length && char.IsLower(pascal[i + 1]);
-                if (char.IsLower(before) || char.IsDigit(before) || acronymEnd) result.Append('_');
-            }
-            result.Append(char.ToUpperInvariant(c));
+            if (t.Key is not { Length: > 0 } key || valueOf(t.Value.Value) is not { } value) continue;
+            entries.Add(new TuningEntry(key, key, value.Type, value.Literal, value.ByRank, sourceOf(t.Value)));
         }
-        return result.ToString();
+        return entries;
+    }
+
+    /// <summary>The constant name of a tuning key, after the hero rule for a record of the heroes <paramref name="ownHeroes"/>.</summary>
+    public static string Name(string key, IEnumerable<HeroSegment> segments, IReadOnlyCollection<string> ownHeroes)
+    {
+        var parts = key.Split('.').ToList();
+        if (parts.Count > 1 && segments.FirstOrDefault(s => s.Segment == parts[0]) is { } hero)
+        {
+            if (ownHeroes.Contains(hero.Hero)) parts.RemoveAt(0);
+            else parts[0] = hero.Hero;
+        }
+        return string.Concat(parts.Select(PascalCase));
     }
 
     /// <summary>
-    /// The record's tuning values by constant name, in the order of the game data. A tuning key with no value of a
-    /// constant type (<paramref name="valueOf"/> is null) has no constant.
+    /// The record's constants, in the order of the game data, and the pairs of keys with one name and different values
+    /// (<see cref="SharedName"/>). Of such a pair, the constant is the first key's.
     /// </summary>
-    public static List<Named<T>> Of<T>(IEnumerable<KeyValuePair<string, TuningReference>>? tuning, Func<object?, T?> valueOf)
-        where T : struct
+    public static List<TuningConstant> Of(IEnumerable<TuningEntry> entries, IEnumerable<HeroSegment> segments, IReadOnlyCollection<string> ownHeroes,
+        List<(string Name, string First, string Second)> shared)
     {
-        var named = new List<Named<T>>();
-        foreach (var group in (tuning ?? []).Where(t => t.Value.Name is { Length: > 0 }).GroupBy(t => ConstantName(t.Value.Name!)))
+        var all = entries.Select((e, i) => (Entry: e, Order: i)).ToList();
+        var byValue = all
+            .GroupBy(e => (Last: e.Entry.NameKey.Split('.').Last(), e.Entry.Type, e.Entry.Literal, e.Entry.ByRank))
+            .Select(g => g.OrderBy(e => e.Entry.NameKey.Length).ThenBy(e => e.Entry.NameKey, StringComparer.Ordinal).ToList())
+            .Select(g => (Name: Name(g[0].Entry.NameKey, segments, ownHeroes) + (g[0].Entry.ByRank ? "ByRank" : ""), Entries: g, Order: g.Min(e => e.Order)))
+            .OrderBy(g => g.Order)
+            .ToList();
+        var constants = new List<TuningConstant>();
+        var named = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var (name, group, _) in byValue)
         {
-            var byValue = group
-                .Select(t => (t.Key, Reference: t.Value, Value: valueOf(t.Value.Value)))
-                .Where(t => t.Value.HasValue)
-                .GroupBy(t => t.Value!.Value)
-                .Select(g => (Value: g.Key, Entries: g.OrderBy(e => e.Key.Length).ThenBy(e => e.Key, StringComparer.Ordinal).ToList()))
-                .OrderBy(g => g.Entries[0].Key.Length).ThenBy(g => g.Entries[0].Key, StringComparer.Ordinal)
-                .ToList();
-            for (int i = 0; i < byValue.Count; i++)
+            var first = group[0].Entry;
+            string keys = string.Join(", ", group.Select(e => e.Entry.Key));
+            if (named.TryGetValue(name, out int at))
             {
-                var (value, entries) = byValue[i];
-                string name = byValue.Count == 1 ? group.Key : $"{group.Key}_{i + 1}";
-                // One value: its keys are every key of the name, and its source is the name's first in the game data.
-                var keys = byValue.Count == 1
-                    ? group.Select(t => t.Key).OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal)
-                    : entries.Select(e => e.Key);
-                var source = byValue.Count == 1 ? group.First().Value : entries[0].Reference;
-                named.Add(new Named<T>(name, value, string.Join(", ", keys), source));
+                var other = constants[at];
+                // Keys of several last segments with one value under one name are one constant.
+                if (other.Type == first.Type && other.Literal == first.Literal && other.ByRank == first.ByRank)
+                {
+                    constants[at] = other with { Keys = string.Join(", ", other.Keys.Split([", "], StringSplitOptions.None).Concat(group.Select(e => e.Entry.Key))
+                        .OrderBy(k => k.Length).ThenBy(k => k, StringComparer.Ordinal)) };
+                }
+                else
+                {
+                    shared.Add((name, other.Keys.Split([", "], StringSplitOptions.None)[0], first.Key));
+                }
+                continue;
+            }
+            named[name] = constants.Count;
+            constants.Add(new TuningConstant(name, first.Type, first.Literal, first.ByRank, keys, first.Source));
+        }
+        return constants;
+    }
+
+    /// <summary>
+    /// Reports CODEX038 for each pair of keys in <paramref name="shared"/>, and CODEX039 for each name of
+    /// <paramref name="fields"/> (the class's constants and static readonly fields) in <paramref name="constants"/>.
+    /// </summary>
+    public static void Report(SourceProductionContext context, Location? location, string className, string owner,
+        IEnumerable<(string Name, string First, string Second)> shared, IEnumerable<string> fields, IEnumerable<TuningConstant> constants)
+    {
+        foreach (var (name, first, second) in shared)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(SharedName, location, owner, first, second, name));
+        }
+        var names = new HashSet<string>(constants.Select(c => c.Name), StringComparer.Ordinal);
+        foreach (string field in fields.Where(names.Contains))
+        {
+            context.ReportDiagnostic(Diagnostic.Create(DeclaredConstant, location, className, field, owner));
+        }
+    }
+
+    /// <summary>
+    /// Appends the nested <c>Constants</c> class of <paramref name="constants"/>, each with its summary, after a blank line
+    /// when <paramref name="separate"/>. A class deriving from a class with a <c>Constants</c> declares its own with
+    /// <c>new</c> (<paramref name="hides"/>).
+    /// </summary>
+    public static void Write(StringBuilder source, string summary, IEnumerable<(TuningConstant Constant, string Summary)> constants, bool hides, bool separate)
+    {
+        if (separate) source.Append('\n');
+        source.Append("    /// <summary>").Append(summary).Append("</summary>\n")
+            .Append("    public ").Append(hides ? "new " : "").Append("static class Constants\n    {\n");
+        bool first = true;
+        foreach (var (constant, constantSummary) in constants)
+        {
+            if (!first) source.Append('\n');
+            first = false;
+            source.Append("        /// <summary>").Append(constantSummary).Append("</summary>\n");
+            if (constant.ByRank)
+            {
+                source.Append("        public static readonly double[] ").Append(constant.Name).Append(" = [").Append(constant.Literal).Append("];\n");
+            }
+            else
+            {
+                source.Append("        public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
             }
         }
-        return named;
+        source.Append("    }\n");
+    }
+
+    /// <summary>The class's constants and static readonly fields, the names <see cref="DeclaredConstant"/> checks.</summary>
+    public static IEnumerable<string> FieldsOf(INamedTypeSymbol type) =>
+        type.GetMembers().OfType<IFieldSymbol>().Where(f => !f.IsImplicitlyDeclared && (f.IsConst || (f.IsStatic && f.IsReadOnly)))
+            .Select(f => f.Name).Distinct().OrderBy(n => n, StringComparer.Ordinal);
+
+    /// <summary>A key segment's words, each starting upper case, with letters and digits only.</summary>
+    private static string PascalCase(string segment)
+    {
+        var result = new StringBuilder();
+        bool start = true;
+        foreach (char c in segment)
+        {
+            if (char.IsLetterOrDigit(c))
+            {
+                result.Append(start ? char.ToUpperInvariant(c) : c);
+                start = false;
+            }
+            else start = true;
+        }
+        return result.ToString();
     }
 }

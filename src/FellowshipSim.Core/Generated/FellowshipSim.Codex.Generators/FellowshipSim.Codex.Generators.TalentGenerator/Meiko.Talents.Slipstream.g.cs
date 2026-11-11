@@ -16,12 +16,16 @@ partial class Slipstream
     /// <summary>Game data: <c>radius</c> of talent 99.</summary>
     public const int TalentRadius = 750;
 
-    /// <summary>Game data: tuning <c>Duration, Meiko.ChargedForwardDash.Talent.AoeSlow.Duration</c> of talent 99; ability 1093.</summary>
-    public const int DURATION = 6;
+    /// <summary>Game data: the tuning values of talent 99.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Duration, Meiko.ChargedForwardDash.Talent.AoeSlow.Duration</c> of talent 99; ability 1093.</summary>
+        public const int Duration = 6;
 
-    /// <summary>Game data: tuning <c>Meiko.ChargedForwardDash.Talent.AoeSlow.Radius</c> of talent 99; ability 1093.</summary>
-    public const int RADIUS = 750;
+        /// <summary>Game data: tuning <c>Meiko.ChargedForwardDash.Talent.AoeSlow.Radius</c> of talent 99; ability 1093.</summary>
+        public const int ChargedForwardDashTalentAoeSlowRadius = 750;
 
-    /// <summary>Game data: tuning <c>SpeedMultiplier, Meiko.ChargedForwardDash.Talent.AoeSlow.SpeedMultiplier</c> of talent 99; ability 1093, MoveSpeed Multiplicitive.</summary>
-    public const double SPEED_MULTIPLIER = 0.5;
+        /// <summary>Game data: tuning <c>SpeedMultiplier, Meiko.ChargedForwardDash.Talent.AoeSlow.SpeedMultiplier</c> of talent 99; ability 1093, MoveSpeed Multiplicitive.</summary>
+        public const double SpeedMultiplier = 0.5;
+    }
 }

@@ -10,15 +10,19 @@ partial class SolarBurn
     /// <summary>Game data: <c>name</c> of talent 570.</summary>
     public const string TalentName = "Solar Burn";
 
-    /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotDamageScaler</c> of talent 570; Solar Burn (effect 2659).</summary>
-    public const int DOT_DAMAGE_SCALER = 1;
+    /// <summary>Game data: the tuning values of talent 570.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotDamageScaler</c> of talent 570; Solar Burn (effect 2659).</summary>
+        public const int AtTargetInstantAoeTalentAddsDotDotDamageScaler = 1;
 
-    /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotDuration</c> of talent 570; Solar Burn (effect 2659).</summary>
-    public const int DOT_DURATION = 9;
+        /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotDuration</c> of talent 570; Solar Burn (effect 2659).</summary>
+        public const int AtTargetInstantAoeTalentAddsDotDotDuration = 9;
 
-    /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotOutgoingDamageMultiplier</c> of talent 570; Solar Burn (effect 2659), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double DOT_OUTGOING_DAMAGE_MULTIPLIER = 0.9;
+        /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotOutgoingDamageMultiplier</c> of talent 570; Solar Burn (effect 2659), IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double AtTargetInstantAoeTalentAddsDotDotOutgoingDamageMultiplier = 0.9;
 
-    /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotPeriod</c> of talent 570; Solar Burn (effect 2659).</summary>
-    public const double DOT_PERIOD = 1.5;
+        /// <summary>Game data: tuning <c>Sune.AtTargetInstantAoe.Talent.AddsDot.DotPeriod</c> of talent 570; Solar Burn (effect 2659).</summary>
+        public const double AtTargetInstantAoeTalentAddsDotDotPeriod = 1.5;
+    }
 }

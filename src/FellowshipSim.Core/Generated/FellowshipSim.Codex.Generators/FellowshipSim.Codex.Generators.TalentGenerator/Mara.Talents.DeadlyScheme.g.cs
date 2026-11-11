@@ -10,15 +10,19 @@ partial class DeadlyScheme
     /// <summary>Game data: <c>name</c> of talent 110.</summary>
     public const string TalentName = "Deadly Scheme";
 
-    /// <summary>Game data: tuning <c>AdditionalCritChance, Mara.Talent.ResourceAttackSpenderCritChance.AdditionalCritChance</c> of talent 110; ability 1435, CritChance Additive.</summary>
-    public const int ADDITIONAL_CRIT_CHANCE = 1;
+    /// <summary>Game data: the tuning values of talent 110.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalCritChance, Mara.Talent.ResourceAttackSpenderCritChance.AdditionalCritChance</c> of talent 110; ability 1435, CritChance Additive.</summary>
+        public const int AdditionalCritChance = 1;
 
-    /// <summary>Game data: tuning <c>BuffDuration, Mara.Talent.ResourceAttackSpenderCritChance.BuffDuration</c> of talent 110; ability 1435.</summary>
-    public const int BUFF_DURATION = 12;
+        /// <summary>Game data: tuning <c>BuffDuration, Mara.Talent.ResourceAttackSpenderCritChance.BuffDuration</c> of talent 110; ability 1435.</summary>
+        public const int BuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>MaxStack, Mara.Talent.ResourceAttackSpenderCritChance.MaxStack</c> of talent 110; ability 1435.</summary>
-    public const int MAX_STACK = 40;
+        /// <summary>Game data: tuning <c>MaxStack, Mara.Talent.ResourceAttackSpenderCritChance.MaxStack</c> of talent 110; ability 1435.</summary>
+        public const int MaxStack = 40;
 
-    /// <summary>Game data: tuning <c>ResourcePerStack, Mara.Talent.ResourceAttackSpenderCritChance.ResourcePerStack</c> of talent 110; ability 1435.</summary>
-    public const int RESOURCE_PER_STACK = 5;
+        /// <summary>Game data: tuning <c>ResourcePerStack, Mara.Talent.ResourceAttackSpenderCritChance.ResourcePerStack</c> of talent 110; ability 1435.</summary>
+        public const int ResourcePerStack = 5;
+    }
 }

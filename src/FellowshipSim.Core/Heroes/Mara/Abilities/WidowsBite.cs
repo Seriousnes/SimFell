@@ -13,7 +13,7 @@ public partial class WidowsBite : MaraAbility
     /// <summary>Widow's Bite hit an enemy (Hemotoxin).</summary>
     public event Action<SimulationContext, EnemyTarget>? Struck;
 
-    public override double NetEnergyCost => EnergyCost - ENERGY_GAIN;
+    public override double NetEnergyCost => EnergyCost - Constants.EnergyGain;
 
     public WidowsBite(Mara owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
@@ -22,7 +22,7 @@ public partial class WidowsBite : MaraAbility
         BreaksStealth = true;
         Hit += (in hit) =>
         {
-            if (hit.SimContext is { } ctx) GenerateComboPoints(ctx, hit.IsCrit ? COMBO_POINT_GAIN_AT_CRIT : COMBO_POINT_GAIN, hit.Target);
+            if (hit.SimContext is { } ctx) GenerateComboPoints(ctx, hit.IsCrit ? Constants.ComboPointGainAtCrit : Constants.ComboPointGain, hit.Target);
         };
     }
 
@@ -31,7 +31,7 @@ public partial class WidowsBite : MaraAbility
         bool stealthed = Mara.IsStealthed(ctx.CurrentTime);
         TriggerCooldown(ctx);
         Pay(ctx);
-        Mara.GainEnergy(ENERGY_GAIN, ctx);
+        Mara.GainEnergy(Constants.EnergyGain, ctx);
         DealDamage(ctx, target);
         DealDamage(ctx, target, damageMultiplier: LeftHandCoefficient / RightHandCoefficient);
         Struck?.Invoke(ctx, target);

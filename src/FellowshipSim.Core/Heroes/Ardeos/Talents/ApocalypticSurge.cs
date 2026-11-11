@@ -10,7 +10,7 @@ public partial class ApocalypticSurge : Talent
 {
     public const int EffectId = 3176;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Apocalyptic Surge", EffectId, BUFF_DURATION, MAX_STACKS);
+    public static readonly AuraDef Buff = AuraDef.Effect("Apocalyptic Surge", EffectId, Constants.BuffDuration, Constants.MaxStacks);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -19,11 +19,11 @@ public partial class ApocalypticSurge : Talent
     {
         var apocalypse = hero.GetAbility<Apocalypse>();
         if (apocalypse == null) return;
-        apocalypse.CastTimeReductionSeconds += REDUCED_CAST_TIME_CAST_TIME_REDUCTION_IN_SECONDS;
+        apocalypse.CastTimeReductionSeconds += Constants.ReducedCastTimeCastTimeReductionInSeconds;
         hero.GetAbility<Detonate>()?.FreeCastBuffs.Add(Buff);
         hero.OnCastCompleted += (ability, _, now) =>
         {
-            if (ability is Apocalypse) hero.Auras.Apply(Buff, now, stacks: STACKS_GRANTED);
+            if (ability is Apocalypse) hero.Auras.Apply(Buff, now, stacks: Constants.StacksGranted);
         };
     }
 }

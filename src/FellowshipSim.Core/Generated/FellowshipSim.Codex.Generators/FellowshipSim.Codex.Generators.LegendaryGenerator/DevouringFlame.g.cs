@@ -10,8 +10,12 @@ partial class DevouringFlame
     /// <summary>Pyromancer Codpiece, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
-    /// <summary>Game data: tuning <c>BoostsIncomingDamage.DamageMultiplier, Firemage.CastedSingleHeavyDot.Talent.BoostsIncomingDamage.DamageMultiplier</c> of legendary power 616; effect 3174.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.07;
+    /// <summary>Game data: the tuning values of legendary power 616.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BoostsIncomingDamage.DamageMultiplier, Firemage.CastedSingleHeavyDot.Talent.BoostsIncomingDamage.DamageMultiplier</c> of legendary power 616; effect 3174.</summary>
+        public const double BoostsIncomingDamageDamageMultiplier = 1.07;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Devouring Flame";

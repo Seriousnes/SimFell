@@ -11,6 +11,6 @@ public partial class UndyingFlame : Talent
     public override void Bind(Hero hero)
     {
         var dot = hero.GetAbility<EngulfingFlames>()?.Dot;
-        if (dot != null) dot.Duration += EXTENDED_DURATION_DURATION_INCREASE;
+        if (dot != null) dot.Duration += Constants.ExtendedDurationDurationIncrease;
     }
 }

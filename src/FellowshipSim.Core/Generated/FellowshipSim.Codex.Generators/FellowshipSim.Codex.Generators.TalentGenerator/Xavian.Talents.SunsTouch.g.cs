@@ -10,12 +10,16 @@ partial class SunsTouch
     /// <summary>Game data: <c>name</c> of talent 607.</summary>
     public const string TalentName = "Sun's Touch";
 
-    /// <summary>Game data: tuning <c>DotHot.DirectValueToPeriodicValueScaler, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.DirectValueToPeriodicValueScaler</c> of talent 607; Sun's Touch (effect 2724).</summary>
-    public const double DIRECT_VALUE_TO_PERIODIC_VALUE_SCALER = 0.3;
+    /// <summary>Game data: the tuning values of talent 607.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DotHot.DirectValueToPeriodicValueScaler, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.DirectValueToPeriodicValueScaler</c> of talent 607; Sun's Touch (effect 2724).</summary>
+        public const double DotHotDirectValueToPeriodicValueScaler = 0.3;
 
-    /// <summary>Game data: tuning <c>DotHot.Duration, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Duration</c> of talent 607; Sun's Touch (effect 2724).</summary>
-    public const int DURATION = 12;
+        /// <summary>Game data: tuning <c>DotHot.Duration, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Duration</c> of talent 607; Sun's Touch (effect 2724).</summary>
+        public const int DotHotDuration = 12;
 
-    /// <summary>Game data: tuning <c>DotHot.Period, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Period</c> of talent 607; Sun's Touch (effect 2724).</summary>
-    public const double PERIOD = 1.5;
+        /// <summary>Game data: tuning <c>DotHot.Period, Sune.InstantSingleTargetHealOrDamage.Talent.DotHot.Period</c> of talent 607; Sun's Touch (effect 2724).</summary>
+        public const double DotHotPeriod = 1.5;
+    }
 }

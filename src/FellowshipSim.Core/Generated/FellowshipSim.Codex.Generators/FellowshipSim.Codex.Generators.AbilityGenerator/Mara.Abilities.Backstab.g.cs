@@ -31,24 +31,28 @@ partial class Backstab
     /// <summary>Game data: <c>range</c> of ability 1129.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1129.</summary>
-    public const double AGILITY_COEFFICIENT = 0.996;
+    /// <summary>Game data: the tuning values of ability 1129.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1129.</summary>
+        public const double AgilityCoefficient = 0.996;
 
-    /// <summary>Game data: tuning <c>ComboPointGain</c> of ability 1129.</summary>
-    public const int COMBO_POINT_GAIN = 2;
+        /// <summary>Game data: tuning <c>ComboPointGain</c> of ability 1129.</summary>
+        public const int ComboPointGain = 2;
 
-    /// <summary>Game data: tuning <c>ComboPointGainAtCrit</c> of ability 1129.</summary>
-    public const int COMBO_POINT_GAIN_AT_CRIT = 3;
+        /// <summary>Game data: tuning <c>ComboPointGainAtCrit</c> of ability 1129.</summary>
+        public const int ComboPointGainAtCrit = 3;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 1129; Resources Additive.</summary>
-    public const int COST = 20;
+        /// <summary>Game data: tuning <c>Cost</c> of ability 1129; Resources Additive.</summary>
+        public const int Cost = 20;
 
-    /// <summary>Game data: tuning <c>DamageMultiplierBehind</c> of ability 1129.</summary>
-    public const double DAMAGE_MULTIPLIER_BEHIND = 1.4;
+        /// <summary>Game data: tuning <c>DamageMultiplierBehind</c> of ability 1129.</summary>
+        public const double DamageMultiplierBehind = 1.4;
 
-    /// <summary>Game data: tuning <c>DamageMultiplierInStealth</c> of ability 1129; DamageScale MultiplyCompound.</summary>
-    public const int DAMAGE_MULTIPLIER_IN_STEALTH = 1;
+        /// <summary>Game data: tuning <c>DamageMultiplierInStealth</c> of ability 1129; DamageScale MultiplyCompound.</summary>
+        public const int DamageMultiplierInStealth = 1;
 
-    /// <summary>Game data: tuning <c>Poison.ComboPointGainMultiplier</c> of ability 1129; Caustic Poison (effect 1585).</summary>
-    public const int COMBO_POINT_GAIN_MULTIPLIER = 3;
+        /// <summary>Game data: tuning <c>Poison.ComboPointGainMultiplier</c> of ability 1129; Caustic Poison (effect 1585).</summary>
+        public const int PoisonComboPointGainMultiplier = 3;
+    }
 }

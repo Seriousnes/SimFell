@@ -11,8 +11,8 @@ public partial class Massacre : Talent
 {
     public const int EffectId = 3211;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, DURATION, MAX_STACKS,
-        StatModifier.Add(StatType.Spirit, ADDITIONAL_HASTE_PER_STACK));
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Constants.StacksToHasteDuration, Constants.StacksToHasteMaxStacks,
+        StatModifier.Add(StatType.Spirit, Constants.StacksToHasteAdditionalHastePerStack));
 
     public override string Name => TalentName;
     public override int Id => TalentId;

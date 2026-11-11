@@ -17,7 +17,7 @@ public partial class FaceBreaker : TariqAbility
 
     public FaceBreaker(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
     }
 

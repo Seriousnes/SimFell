@@ -10,11 +10,15 @@ partial class SlayersMosh
     /// <summary>Stormlord Helm, item 5899 of the game data.</summary>
     public const int HeadItemId = 5899;
 
-    /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.TargetExtraInkDamage.Duration</c> of legendary power 424; Slayer's Mosh (effect 2250).</summary>
-    public const int DURATION = 6;
+    /// <summary>Game data: the tuning values of legendary power 424.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.TargetExtraInkDamage.Duration</c> of legendary power 424; Slayer's Mosh (effect 2250).</summary>
+        public const int MoveToLocationAoeDamageTalentTargetExtraInkDamageDuration = 6;
 
-    /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.TargetExtraInkDamage.IncomingDamageScaler</c> of legendary power 424; Slayer's Mosh (effect 2250), IncomingDamageMultiplier MultiplyCompound.</summary>
-    public const double INCOMING_DAMAGE_SCALER = 1.2;
+        /// <summary>Game data: tuning <c>Ink.MoveToLocationAoeDamage.Talent.TargetExtraInkDamage.IncomingDamageScaler</c> of legendary power 424; Slayer's Mosh (effect 2250), IncomingDamageMultiplier MultiplyCompound.</summary>
+        public const double MoveToLocationAoeDamageTalentTargetExtraInkDamageIncomingDamageScaler = 1.2;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Slayer's Mosh";

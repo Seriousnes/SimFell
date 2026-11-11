@@ -14,14 +14,14 @@ public partial class FocusedShot : ElarionAbility
 
     public FocusedShot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
+        BaseCoefficient = Constants.AgilityCoefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         // Combat logs: the Focus comes as the cast completes, before the arrow lands.
-        Elarion.GainFocus(FOCUS_GAIN * FocusGainMultiplier, ctx, target);
+        Elarion.GainFocus(Constants.FocusGain * FocusGainMultiplier, ctx, target);
         DealDamage(ctx, target, onLanded: (c, dealt) =>
         {
             if (dealt > 0) Landed?.Invoke(c, target);

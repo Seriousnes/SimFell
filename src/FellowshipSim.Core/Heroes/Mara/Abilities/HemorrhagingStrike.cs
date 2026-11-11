@@ -2,7 +2,7 @@ namespace FellowshipSim.Core.Heroes.Mara.Abilities;
 
 /// <summary>
 /// Ability 1208: strikes the target for Agility damage and applies a bleed. The bleed's duration is increased per combo point
-/// spent (<see cref="DURATION_INCREASE_PER_COMBO_POINT"/>). Costs Energy. The bleed is <see cref="Hemorrhage"/>.
+/// spent (<see cref="Constants.DurationIncreasePerComboPoint"/>). Costs Energy. The bleed is <see cref="Hemorrhage"/>.
 /// No cooldown, so the global cooldown is the limit on a recast (T2qLPpmMkrAtJ9B1 fight 18 @ 1062.844 and 1063.878). In
 /// game data the cooldown duration has a row with no value, table or
 /// registry, and the ability has no cooldown effect class. Both take their defaults, a value of zero and null.
@@ -24,7 +24,7 @@ public partial class HemorrhagingStrike : Finisher
         EnergyCost = AbilityCost;
     }
 
-    public static double BleedSeconds(int points) => Hemorrhage.BaseDurationSeconds + DURATION_INCREASE_PER_COMBO_POINT * points;
+    public static double BleedSeconds(int points) => Hemorrhage.BaseDurationSeconds + Constants.DurationIncreasePerComboPoint * points;
 
     protected override void Strike(SimulationContext ctx, EnemyTarget target, int points)
     {

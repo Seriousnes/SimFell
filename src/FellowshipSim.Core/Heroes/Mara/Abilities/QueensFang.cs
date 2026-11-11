@@ -8,7 +8,7 @@ public partial class QueensFang : Finisher
 {
     public QueensFang(Mara owner) : base(owner, AbilityId, AbilityName)
     {
-        BaseCoefficient = AGILITY_COEFFICIENT;
+        BaseCoefficient = Constants.AgilityCoefficient;
         EnergyCost = AbilityCost;
     }
 

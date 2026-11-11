@@ -20,11 +20,12 @@ namespace FellowshipSim.Codex.Generators;
 /// The record is the aspect, sigil or protective enchant (the class's base: <c>Aspect</c>, <c>Sigil</c> or
 /// <c>ProtectiveEnchant</c>) whose name in Pascal case (letters and digits only, an apostrophe inside its word) is the class
 /// name. The constants are <c>&lt;Type&gt;Id</c>, <c>&lt;Type&gt;Name</c>, one per scalar field of the record under the type
-/// and the field's name (<c>SigilMaxRank</c>, <c>ProtectiveEnchantDuration</c>, <c>AspectProcsPerMinute</c>...), and one per
-/// tuning value of the record under its <see cref="TuningNames"/> name. Each rank run of the record is a
-/// <c>public static readonly double[]</c> of its values by rank, named after its key without the <c>Trait.&lt;Row&gt;.</c>
-/// prefix, its segments joined, and <c>_BY_RANK</c>. The class's own part has the augmentation's behaviour and its
-/// <c>Name</c> and <c>Id</c> overrides. A member of the class or a base class with a constant's name is CODEX017. The game
+/// and the field's name (<c>SigilMaxRank</c>, <c>ProtectiveEnchantDuration</c>, <c>AspectProcsPerMinute</c>...), and the
+/// record's tuning values and rank runs in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero
+/// as the record's hero. Each rank run is a <c>public static readonly double[]</c> of its values by rank, named after its
+/// key without the <c>Trait.&lt;Row&gt;.</c> prefix and <c>ByRank</c> (<c>Constants.CritPowerMultiplierByRank</c>). The
+/// class's own part has the augmentation's behaviour and its <c>Name</c> and <c>Id</c> overrides. A member of the class or a
+/// base class with a constant's name, or the name <c>Constants</c>, is CODEX017. The game
 /// data is the AdditionalFiles <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK;
 /// <see cref="CreatureGenerator"/> reports missing game data.
 /// </summary>
@@ -56,27 +57,27 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         "CODEX017", "An augmentation constant's name is a member of the class",
         "The class {0} or a base class has a member {1}, and {1} is a member of {2}; rename the class's member", "Codex", DiagnosticSeverity.Error, true);
 
+    /// <summary>A field constant of an augmentation record: its name, C# type and literal, and its summary.</summary>
+    private sealed record Member(string Name, string Type, string Literal, string Summary);
+
     /// <summary>
-    /// A member of an augmentation record: its name, C# type and value (a literal, or an array's elements), its summary, and
-    /// whether it is a per-rank array.
+    /// An augmentation record: its type, ID, name, class name, its field constants, and its tuning keys and rank runs (a
+    /// rank run is a tuning entry by rank, and its source is its summary's transform and tooltip numbers).
     /// </summary>
-    private sealed record Member(string Name, string Type, string Literal, string Summary, bool ByRank = false);
-
-    /// <summary>An augmentation record: its type, ID, name, class name, its field constants, tuning values and rank arrays.</summary>
     private sealed record Record(string Type, int Id, string Name, string ClassName,
-        EquatableArray<Member> Fields, EquatableArray<Member> Tunings, EquatableArray<Member> Ranks);
+        EquatableArray<Member> Fields, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's augmentation records, and its build date.</summary>
-    private sealed record Export(EquatableArray<Record> Records, string? BuildDate);
+    /// <summary>The game data's augmentation records, the tuning keys' first segments naming a hero, and its build date.</summary>
+    private sealed record Export(EquatableArray<Record> Records, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
     /// A partial augmentation class: its namespace, name, record type (empty for a class of no listed base), the member
-    /// names of the class and its base classes, and where it is declared.
+    /// names of the class and its base classes, the class's constants and static readonly fields, and where it is declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, string Type, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, string Type, EquatableArray<string> Members, EquatableArray<string> Fields, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && Type == other.Type
-            && Members.Equals(other.Members);
+            && Members.Equals(other.Members) && Fields.Equals(other.Fields);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -124,7 +125,8 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!augmentation) return null;
-        return new Declared(NamespaceOf(node)!, type.Name, kind, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(NamespaceOf(node)!, type.Name, kind, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), new([.. TuningNames.FieldsOf(type)]),
+            node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -167,10 +169,10 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 string name = (document?.Name ?? "").Trim();
                 if (document == null || type == null || name.Length == 0) continue;
                 records.Add(new Record(type, document.Id, name, PascalCase(name),
-                    new([.. FieldsOf(document, type)]), new([.. TuningsOf(document, type)]), new([.. RanksOf(document, type)])));
+                    new([.. FieldsOf(document, type)]), new([.. TuningsOf(document), .. RanksOf(document)])));
             }
         }
-        return new Export(new([.. records.OrderBy(r => r.Type, StringComparer.Ordinal).ThenBy(r => r.Id)]), buildDate);
+        return new Export(new([.. records.OrderBy(r => r.Type, StringComparer.Ordinal).ThenBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The record's type as lower case words: <c>ProtectiveEnchant</c> is <c>protective enchant</c>.</summary>
@@ -213,60 +215,31 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         fields.Add(new Member(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary));
     }
 
-    /// <summary>The record's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
-    private static List<Member> TuningsOf(AugmentationDocument a, string type) =>
-        [.. TuningNames.Of(a.Tuning, ValueOf).Select(t =>
-        {
-            string source = SourceOf(t.Source);
-            return new Member(t.Name, t.Value.Type, t.Value.Literal,
-                $"Game data: tuning <c>{Escape(t.Keys)}</c> of {Words(type)} {a.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
-        })];
+    /// <summary>The record's tuning keys, in the order of the game data.</summary>
+    private static List<TuningEntry> TuningsOf(AugmentationDocument a) =>
+        TuningNames.Entries(a.Tuning, v => ValueOf(v) is { } value ? (value.Type, value.Literal, false) : null, SourceOf);
 
     /// <summary>
-    /// The record's rank runs, each an array of its values by rank (rank 1 first). The summary names the run's key, its
-    /// transform and the tooltip's numbers: a <c>delta</c> run's values are multipliers (the tooltip has the value less 1),
-    /// and a <c>ticks</c> run's values are per tick (the tooltip has the value times the ticks).
+    /// The record's rank runs, each an array of its values by rank (rank 1 first), named after its key without
+    /// <c>Trait.&lt;Row&gt;.</c>. A run with a rank of no value has no array. The source names the run's transform and the
+    /// tooltip's numbers: a <c>delta</c> run's values are multipliers (the tooltip has the value less 1), and a <c>ticks</c>
+    /// run's values are per tick (the tooltip has the value times the ticks).
     /// </summary>
-    private static List<Member> RanksOf(AugmentationDocument a, string type)
+    private static List<TuningEntry> RanksOf(AugmentationDocument a)
     {
-        var ranks = new List<Member>();
-        foreach (var group in (a.RankRuns ?? []).Where(r => r.Key is { Length: > 0 }).GroupBy(r => RankName(r.Key!)))
+        var ranks = new List<TuningEntry>();
+        foreach (var run in (a.RankRuns ?? []).Where(r => r.Key is { Length: > 0 }))
         {
-            // A run with a rank of no value has no array. Runs with different values under one name are numbered from 1
-            // in the order of their keys.
-            var byValue = group
-                .Select(r => (Run: r, Literal: r.Values is { Count: > 0 } v && v.All(x => x != null) ? string.Join(", ", v.Select(x => Number(x!.Value))) : null))
-                .Where(r => r.Literal != null)
-                .GroupBy(r => r.Literal!)
-                .Select(g => (Literal: g.Key, Runs: g.Select(r => r.Run).OrderBy(r => r.Key!.Length).ThenBy(r => r.Key, StringComparer.Ordinal).ToList()))
-                .OrderBy(g => g.Runs[0].Key!.Length).ThenBy(g => g.Runs[0].Key, StringComparer.Ordinal)
-                .ToList();
-            for (int i = 0; i < byValue.Count; i++)
-            {
-                var (literal, runs) = byValue[i];
-                var run = runs[0];
-                string keys = string.Join(", ", runs.Select(r => r.Key));
-                string transform = run.Transform is { Length: > 0 } t
-                    ? $", transform <c>{Escape(t)}</c>{(run.Ticks is { } ticks ? $" over {ticks} ticks" : "")}"
-                    : "";
-                string printed = run.Printed is { Count: > 0 } p ? $"; the tooltip has {Escape(string.Join(" / ", p.Select(Untagged)))}" : "";
-                string name = (byValue.Count == 1 ? group.Key : $"{group.Key}_{i + 1}") + "_BY_RANK";
-                ranks.Add(new Member(name, "double[]", literal,
-                    $"Game data: rank run <c>{Escape(keys)}</c> of {Words(type)} {a.Id}{transform}{printed}.", ByRank: true));
-            }
+            if (run.Values is not { Count: > 0 } values || values.Any(x => x == null)) continue;
+            string transform = run.Transform is { Length: > 0 } t
+                ? $", transform <c>{Escape(t)}</c>{(run.Ticks is { } ticks ? $" over {ticks} ticks" : "")}"
+                : "";
+            string printed = run.Printed is { Count: > 0 } p ? $"; the tooltip has {Escape(string.Join(" / ", p.Select(Untagged)))}" : "";
+            var segments = run.Key!.Split('.');
+            string nameKey = string.Join(".", segments.Skip(segments.Length > 2 && segments[0] == "Trait" ? 2 : 0));
+            ranks.Add(new TuningEntry(run.Key!, nameKey, "double[]", string.Join(", ", values.Select(x => Number(x!.Value))), true, transform + printed));
         }
         return ranks;
-    }
-
-    /// <summary>
-    /// A rank run's name before <c>_BY_RANK</c>: its key without <c>Trait.&lt;Row&gt;.</c>, its segments joined, as a
-    /// <see cref="TuningNames"/> name.
-    /// </summary>
-    private static string RankName(string key)
-    {
-        var segments = key.Split('.');
-        int skip = segments.Length > 2 && segments[0] == "Trait" ? 2 : 0;
-        return TuningNames.ConstantName(string.Concat(segments.Skip(skip).Select(PascalCase)));
     }
 
     /// <summary>A tooltip number without its markup tags.</summary>
@@ -334,8 +307,9 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 new(record.Type + "Name", "string", Literal(record.Name), $"Game data: <c>name</c> of {owner}."),
             };
             all.AddRange(record.Fields);
-            all.AddRange(record.Tunings);
-            all.AddRange(record.Ranks);
+            var shared = new List<(string Name, string First, string Second)>();
+            var tunings = TuningNames.Of(record.Tunings, export.Segments, [], shared);
+            TuningNames.Report(context, d.Location, d.Name, owner, shared, d.Fields, tunings);
 
             var source = new StringBuilder()
                 .Append("// <auto-generated> by FellowshipSim.Codex.Generators from the game data")
@@ -353,14 +327,22 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 }
                 if (!first) source.Append('\n');
                 first = false;
-                source.Append("    /// <summary>").Append(member.Summary).Append("</summary>\n");
-                if (member.ByRank)
+                source.Append("    /// <summary>").Append(member.Summary).Append("</summary>\n")
+                    .Append("    public const ").Append(member.Type).Append(' ').Append(member.Name).Append(" = ").Append(member.Literal).Append(";\n");
+            }
+            if (tunings.Count > 0)
+            {
+                if (members.Contains("Constants"))
                 {
-                    source.Append("    public static readonly double[] ").Append(member.Name).Append(" = [").Append(member.Literal).Append("];\n");
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "Constants", owner));
                 }
                 else
                 {
-                    source.Append("    public const ").Append(member.Type).Append(' ').Append(member.Name).Append(" = ").Append(member.Literal).Append(";\n");
+                    TuningNames.Write(source, $"Game data: the tuning values and rank runs of {owner}.",
+                        tunings.Select(t => (t, t.ByRank
+                            ? $"Game data: rank run <c>{Escape(t.Keys)}</c> of {owner}{t.Source}."
+                            : $"Game data: tuning <c>{Escape(t.Keys)}</c> of {owner}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
+                        false, !first);
                 }
             }
             source.Append("}\n");

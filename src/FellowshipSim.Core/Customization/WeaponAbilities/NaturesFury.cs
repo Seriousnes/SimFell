@@ -22,14 +22,14 @@ public partial class NaturesFury : Ability
         BaseCoefficient = Coefficient;
         CastTime = SimTime.FromSeconds(AbilityCastTime);
         SetCooldown(AbilityCooldown);
-        CritChanceBonus = ABILITY_ADDED_CRIT_CHANCE;
+        CritChanceBonus = Constants.AbilityAddedCritChance;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)
     {
         TriggerCooldown(ctx);
         // The first hit lands right after the cast completes (not inside it), then each bounce.
-        ctx.Schedule(SimTime.Zero, c => DealDamage(c, target, INITIAL_HIT_POWER_SCALER), Name);
+        ctx.Schedule(SimTime.Zero, c => DealDamage(c, target, Constants.InitialHitPowerScaler), Name);
         for (int i = 1; i < Hits; i++)
         {
             ctx.Schedule(SimTime.FromSeconds(i * BounceSeconds), c =>

@@ -25,6 +25,10 @@ partial class Bash
     /// <summary>Game data: <c>range</c> of ability 976.</summary>
     public const int AbilityRange = 500;
 
-    /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 976.</summary>
-    public const int GEC_COOLDOWN_STATIC_C = 1;
+    /// <summary>Game data: the tuning values of ability 976.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 976.</summary>
+        public const int GECCooldownStaticC = 1;
+    }
 }

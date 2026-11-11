@@ -10,15 +10,19 @@ partial class ResurgentWinds
     /// <summary>Game data: <c>name</c> of talent 126.</summary>
     public const string TalentName = "Resurgent Winds";
 
-    /// <summary>Game data: tuning <c>InstantNoCooldownProc.DamageScaleWhenHittingInsantMarkTarget, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.DamageScaleWhenHittingInsantMarkTarget</c> of talent 126; Resurgent Winds (effect 2074).</summary>
-    public const double DAMAGE_SCALE_WHEN_HITTING_INSANT_MARK_TARGET = 1.5;
+    /// <summary>Game data: the tuning values of talent 126.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>InstantNoCooldownProc.DamageScaleWhenHittingInsantMarkTarget, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.DamageScaleWhenHittingInsantMarkTarget</c> of talent 126; Resurgent Winds (effect 2074).</summary>
+        public const double InstantNoCooldownProcDamageScaleWhenHittingInsantMarkTarget = 1.5;
 
-    /// <summary>Game data: tuning <c>InstantNoCooldownProc.Duration, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.Duration</c> of talent 126; Resurgent Winds (effect 2074).</summary>
-    public const int DURATION = 15;
+        /// <summary>Game data: tuning <c>InstantNoCooldownProc.Duration, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.Duration</c> of talent 126; Resurgent Winds (effect 2074).</summary>
+        public const int InstantNoCooldownProcDuration = 15;
 
-    /// <summary>Game data: tuning <c>ProcChance, InstantNoCooldownProc.OffensiveAbility.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.OffensiveAbility.ProcChance</c> of talent 126; ability 2066.</summary>
-    public const double PROC_CHANCE_1 = 0.05;
+        /// <summary>Game data: tuning <c>ProcChance, InstantNoCooldownProc.OffensiveAbility.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.OffensiveAbility.ProcChance</c> of talent 126; ability 2066.</summary>
+        public const double ProcChance = 0.05;
 
-    /// <summary>Game data: tuning <c>InstantNoCooldownProc.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.ProcChance</c> of talent 126; Resurgent Winds (effect 2074).</summary>
-    public const double PROC_CHANCE_2 = 0.5;
+        /// <summary>Game data: tuning <c>InstantNoCooldownProc.ProcChance, Bowguy.CastedProjectileHeavyDamage.Talent.InstantNoCooldownProc.ProcChance</c> of talent 126; Resurgent Winds (effect 2074).</summary>
+        public const double InstantNoCooldownProcProcChance = 0.5;
+    }
 }

@@ -10,9 +10,13 @@ partial class Bloodbath
     /// <summary>Game data: <c>name</c> of talent 764.</summary>
     public const string TalentName = "Bloodbath";
 
-    /// <summary>Game data: tuning <c>CooldownAcceleration.Duration, Gunde.TargetedAoeProjectile.Talent.CooldownAcceleration.Duration</c> of talent 764; Bloodbath (effect 3216).</summary>
-    public const int DURATION = 3;
+    /// <summary>Game data: the tuning values of talent 764.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CooldownAcceleration.Duration, Gunde.TargetedAoeProjectile.Talent.CooldownAcceleration.Duration</c> of talent 764; Bloodbath (effect 3216).</summary>
+        public const int CooldownAccelerationDuration = 3;
 
-    /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Talent.CooldownAcceleration.AdditionalCooldownRecovery</c> of talent 764; Bloodbath (effect 3216).</summary>
-    public const int ADDITIONAL_COOLDOWN_RECOVERY = 2;
+        /// <summary>Game data: tuning <c>Gunde.TargetedAoeProjectile.Talent.CooldownAcceleration.AdditionalCooldownRecovery</c> of talent 764; Bloodbath (effect 3216).</summary>
+        public const int TargetedAoeProjectileTalentCooldownAccelerationAdditionalCooldownRecovery = 2;
+    }
 }

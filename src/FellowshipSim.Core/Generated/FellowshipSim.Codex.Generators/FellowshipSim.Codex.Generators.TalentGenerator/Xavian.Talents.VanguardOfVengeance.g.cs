@@ -10,21 +10,25 @@ partial class VanguardOfVengeance
     /// <summary>Game data: <c>name</c> of talent 580.</summary>
     public const string TalentName = "Vanguard of Vengeance";
 
-    /// <summary>Game data: tuning <c>Buff.AdditionalSpiritPerStack, Sune.Talent.ParryCounterAttack.Buff.AdditionalSpiritPerStack</c> of talent 580; Vanguard of Vengeance (effect 2652), Spirit Additive.</summary>
-    public const double ADDITIONAL_SPIRIT_PER_STACK = 0.005;
+    /// <summary>Game data: the tuning values of talent 580.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Buff.AdditionalSpiritPerStack, Sune.Talent.ParryCounterAttack.Buff.AdditionalSpiritPerStack</c> of talent 580; Vanguard of Vengeance (effect 2652), Spirit Additive.</summary>
+        public const double BuffAdditionalSpiritPerStack = 0.005;
 
-    /// <summary>Game data: tuning <c>Buff.Duration, Sune.Talent.ParryCounterAttack.Buff.Duration</c> of talent 580; Vanguard of Vengeance (effect 2652).</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>Buff.Duration, Sune.Talent.ParryCounterAttack.Buff.Duration</c> of talent 580; Vanguard of Vengeance (effect 2652).</summary>
+        public const int BuffDuration = 20;
 
-    /// <summary>Game data: tuning <c>Buff.StackCap, Sune.Talent.ParryCounterAttack.Buff.StackCap</c> of talent 580; Vanguard of Vengeance (effect 2652).</summary>
-    public const int STACK_CAP = 20;
+        /// <summary>Game data: tuning <c>Buff.StackCap, Sune.Talent.ParryCounterAttack.Buff.StackCap</c> of talent 580; Vanguard of Vengeance (effect 2652).</summary>
+        public const int BuffStackCap = 20;
 
-    /// <summary>Game data: tuning <c>DamageStrengthCoefficient, Sune.Talent.ParryCounterAttack.DamageStrengthCoefficient</c> of talent 580; ability 1909.</summary>
-    public const double DAMAGE_STRENGTH_COEFFICIENT = 0.93;
+        /// <summary>Game data: tuning <c>DamageStrengthCoefficient, Sune.Talent.ParryCounterAttack.DamageStrengthCoefficient</c> of talent 580; ability 1909.</summary>
+        public const double DamageStrengthCoefficient = 0.93;
 
-    /// <summary>Game data: tuning <c>IncreasedParryChance.Increase, Sune.Talent.IncreasedParryChance.Increase</c> of talent 580; Vanguard of Vengeance (effect 2654), ParryChance Additive.</summary>
-    public const double INCREASE = 0.1;
+        /// <summary>Game data: tuning <c>IncreasedParryChance.Increase, Sune.Talent.IncreasedParryChance.Increase</c> of talent 580; Vanguard of Vengeance (effect 2654), ParryChance Additive.</summary>
+        public const double IncreasedParryChanceIncrease = 0.1;
 
-    /// <summary>Game data: tuning <c>ManaGain, Sune.Talent.ParryCounterAttack.ManaGain</c> of talent 580; ability 1909.</summary>
-    public const double MANA_GAIN = 0.005;
+        /// <summary>Game data: tuning <c>ManaGain, Sune.Talent.ParryCounterAttack.ManaGain</c> of talent 580; ability 1909.</summary>
+        public const double ManaGain = 0.005;
+    }
 }

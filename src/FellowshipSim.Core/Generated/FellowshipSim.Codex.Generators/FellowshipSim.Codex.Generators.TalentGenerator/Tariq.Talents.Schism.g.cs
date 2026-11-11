@@ -10,15 +10,16 @@ partial class Schism
     /// <summary>Game data: <c>name</c> of talent 85.</summary>
     public const string TalentName = "Schism";
 
-    /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.AoeAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
-    public const double AOE_ATTACK_DAMAGE_MULTIPLIER = 2.5;
+    /// <summary>Game data: the tuning values of talent 85.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.AoeAttack.DamageMultiplier, Ink.Talent.ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
+        public const double TalentChanceIncreasedSpenderDamageAoeAttackDamageMultiplier = 2.5;
 
-    /// <summary>Game data: tuning <c>Ink.Talent.ChanceIncreasedSpenderDamage.HeavySingleTargetAttack.DamageMultiplier</c> of talent 85; ability 1215.</summary>
-    public const double HEAVY_SINGLE_TARGET_ATTACK_DAMAGE_MULTIPLIER = 2.5;
+        /// <summary>Game data: tuning <c>PPM, Ink.Talent.ChanceIncreasedSpenderDamage.PPM</c> of talent 85; ability 1215.</summary>
+        public const double PPM = 3.2;
 
-    /// <summary>Game data: tuning <c>PPM, Ink.Talent.ChanceIncreasedSpenderDamage.PPM</c> of talent 85; ability 1215.</summary>
-    public const double PPM = 3.2;
-
-    /// <summary>Game data: tuning <c>ProcChance, Ink.Talent.ChanceIncreasedSpenderDamage.ProcChance</c> of talent 85; ability 1215.</summary>
-    public const double PROC_CHANCE = 0.35;
+        /// <summary>Game data: tuning <c>ProcChance, Ink.Talent.ChanceIncreasedSpenderDamage.ProcChance</c> of talent 85; ability 1215.</summary>
+        public const double ProcChance = 0.35;
+    }
 }

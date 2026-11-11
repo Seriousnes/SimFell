@@ -8,10 +8,10 @@ public partial class RupturedDawn : XavianAbility
 {
     public RupturedDawn(Xavian owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = DAMAGE_STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.DamageStrengthCoefficient;
         SetCooldown(AbilityCooldown);
         IgnoresGcd = true;
-        AoeTargetThreshold = DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+        AoeTargetThreshold = Constants.DamageScalingTargetCountThreshold;
     }
 
     public override void Execute(SimulationContext ctx, EnemyTarget target)

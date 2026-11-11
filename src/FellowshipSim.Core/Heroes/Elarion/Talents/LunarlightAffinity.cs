@@ -15,6 +15,6 @@ public partial class LunarlightAffinity : Talent
     {
         if (hero is not Elarion elarion) return;
         elarion.Salvo.KeepsMarkFor.Add(StarfallVolley.AbilityId);
-        elarion.Salvo.CritChanceBonus += INCREASED_INSTANT_MARK_TRIGGER_CHANCE_ADDED_CRIT_CHANCE;
+        elarion.Salvo.CritChanceBonus += Constants.IncreasedInstantMarkTriggerChanceAddedCritChance;
     }
 }

@@ -7,7 +7,7 @@ namespace FellowshipSim.Core.Customization.Legendaries;
 /// per stack of Serenity consumed. When Everlasting Spirit expires, you release a pulse of energy onto all enemies around
 /// you, dealing 35% Agility damage. An additional 10% Agility damage is added for each stack of Serenity that was
 /// consumed." Effect 1510 is the buff; the pulse is ability 1677, logged as effect 2450, with damage falloff beyond
-/// <see cref="TARGET_COUNT_DAMAGE_SCALING_THRESHOLD"/> targets. The game data's <see cref="AGILITY_COEFFICIENT_MULTIPLIER_PER_STACK"/>
+/// <see cref="Constants.DamageReductionLessHealAoeDamageTargetCountDamageScalingThreshold"/> targets. The game data's <see cref="Constants.DamageReductionLessHealAoeDamageAgilityCoefficientMultiplierPerStack"/>
 /// differs from the tooltip's 10% per stack; the engine takes the tooltip. UNVERIFIED: no combat log has the pulse.
 /// </summary>
 public partial class EverlastingSpirit : Legendary
@@ -17,7 +17,7 @@ public partial class EverlastingSpirit : Legendary
     /// <summary>Tooltip: "An additional 10% Agility damage is added for each stack of Serenity that was consumed."</summary>
     public const double PulseCoefficientPerStack = 0.10;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Everlasting Spirit", BuffEffectId, DURATION);
+    public static readonly AuraDef Buff = AuraDef.Effect("Everlasting Spirit", BuffEffectId, Constants.DamageReductionLessHealDuration);
 
     public override void Bind(Hero hero)
     {
@@ -33,9 +33,9 @@ public partial class EverlastingSpirit : Legendary
             {
                 // A later Serenity refreshed the buff: its own expiry pulses.
                 if (hero.Auras.Get(Buff, c.CurrentTime) is { } aura && aura.ExpiresAt > expiry) return;
-                double coefficient = AGILITY_COEFFICIENT + PulseCoefficientPerStack * stacksConsumed;
+                double coefficient = Constants.DamageReductionLessHealAoeDamageAgilityCoefficient + PulseCoefficientPerStack * stacksConsumed;
                 var enemies = c.Outcomes.SelectTargets(pulseId, c.ActiveEnemies, c);
-                double threshold = TARGET_COUNT_DAMAGE_SCALING_THRESHOLD;
+                double threshold = Constants.DamageReductionLessHealAoeDamageTargetCountDamageScalingThreshold;
                 double falloff = enemies.Count > threshold ? Math.Sqrt(threshold / enemies.Count) : 1.0;
                 for (int i = 0; i < enemies.Count; i++)
                 {

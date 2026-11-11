@@ -10,9 +10,13 @@ partial class ImposingPresence
     /// <summary>Game data: <c>name</c> of talent 569.</summary>
     public const string TalentName = "Imposing Presence";
 
-    /// <summary>Game data: tuning <c>Sune.DroppedPulseAoe.Talent.DroppedPulseAoeDebuffsTargets.AttackSpeedScaler</c> of talent 569; effect 3113, AttackSpeed MultiplyCompound.</summary>
-    public const double ATTACK_SPEED_SCALER = 0.8;
+    /// <summary>Game data: the tuning values of talent 569.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Sune.DroppedPulseAoe.Talent.DroppedPulseAoeDebuffsTargets.AttackSpeedScaler</c> of talent 569; effect 3113, AttackSpeed MultiplyCompound.</summary>
+        public const double DroppedPulseAoeTalentDroppedPulseAoeDebuffsTargetsAttackSpeedScaler = 0.8;
 
-    /// <summary>Game data: tuning <c>Sune.DroppedPulseAoe.Talent.DroppedPulseAoeDebuffsTargets.MoveSpeedScaler</c> of talent 569; effect 3113, MoveSpeed MultiplyCompound.</summary>
-    public const double MOVE_SPEED_SCALER = 0.65;
+        /// <summary>Game data: tuning <c>Sune.DroppedPulseAoe.Talent.DroppedPulseAoeDebuffsTargets.MoveSpeedScaler</c> of talent 569; effect 3113, MoveSpeed MultiplyCompound.</summary>
+        public const double DroppedPulseAoeTalentDroppedPulseAoeDebuffsTargetsMoveSpeedScaler = 0.65;
+    }
 }

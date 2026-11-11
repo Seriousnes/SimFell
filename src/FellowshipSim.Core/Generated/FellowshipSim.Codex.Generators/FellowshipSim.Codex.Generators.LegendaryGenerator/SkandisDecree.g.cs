@@ -10,8 +10,12 @@ partial class SkandisDecree
     /// <summary>Harbinger of Winter Leggings, item 5900 of the game data.</summary>
     public const int LegsItemId = 5900;
 
-    /// <summary>Game data: tuning <c>IncreasedDuration.DurationInSeconds, Rime.CastedDebuffAoeDamage.Talent.IncreasedDuration.DurationInSeconds</c> of legendary power 396; Bursting Ice (ability 1031).</summary>
-    public const int INCREASED_DURATION_DURATION_IN_SECONDS = 2;
+    /// <summary>Game data: the tuning values of legendary power 396.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedDuration.DurationInSeconds, Rime.CastedDebuffAoeDamage.Talent.IncreasedDuration.DurationInSeconds</c> of legendary power 396; Bursting Ice (ability 1031).</summary>
+        public const int IncreasedDurationDurationInSeconds = 2;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Skandi's Decree";

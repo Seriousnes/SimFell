@@ -37,42 +37,46 @@ partial class Shockwave
     /// <summary>Game data: <c>maxTargets</c> of ability 979.</summary>
     public const int AbilityMaxTargets = 20;
 
-    /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 979; Resources Additive.</summary>
-    public const int COMBO_POINT_COST = 0;
+    /// <summary>Game data: the tuning values of ability 979.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 979; Resources Additive.</summary>
+        public const int ComboPointCost = 0;
 
-    /// <summary>Game data: tuning <c>DebuffIconDuration</c> of ability 979.</summary>
-    public const int DEBUFF_ICON_DURATION = 5;
+        /// <summary>Game data: tuning <c>DebuffIconDuration</c> of ability 979.</summary>
+        public const int DebuffIconDuration = 5;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 979.</summary>
-    public const double DURATION_1 = 0.5;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 979.</summary>
+        public const double Duration = 0.5;
 
-    /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.Duration</c> of ability 979; Vanguard's Advance (effect 2429), talent Aftershock (talent 213).</summary>
-    public const int DURATION_2 = 5;
+        /// <summary>Game data: tuning <c>IncreasedToughnessAndDamage.DamageMultiplier.DamageMultiplierAtFullToughness</c> of ability 979; talent Greater Shockwave (talent 643).</summary>
+        public const double IncreasedToughnessAndDamageDamageMultiplierDamageMultiplierAtFullToughness = 0.3;
 
-    /// <summary>Game data: tuning <c>IncreasedToughnessAndDamage.DamageMultiplier.DamageMultiplierAtFullToughness</c> of ability 979; talent Greater Shockwave (talent 643).</summary>
-    public const double DAMAGE_MULTIPLIER_DAMAGE_MULTIPLIER_AT_FULL_TOUGHNESS = 0.3;
+        /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 979.</summary>
+        public const int MaxNumTargets = 20;
 
-    /// <summary>Game data: tuning <c>MaxNumTargets</c> of ability 979.</summary>
-    public const int MAX_NUM_TARGETS = 20;
+        /// <summary>Game data: tuning <c>NumStartStacks</c> of ability 979.</summary>
+        public const int NumStartStacks = 9;
 
-    /// <summary>Game data: tuning <c>NumStartStacks</c> of ability 979.</summary>
-    public const int NUM_START_STACKS = 9;
+        /// <summary>Game data: tuning <c>ReducedIncomingDamageFromTarget.Duration</c> of ability 979; Vanguard's Advance (effect 2429), talent Aftershock (talent 213).</summary>
+        public const int ReducedIncomingDamageFromTargetDuration = 5;
 
-    /// <summary>Game data: tuning <c>SingleStackMoveSpeedScale</c> of ability 979; MoveSpeed Multiplicitive.</summary>
-    public const double SINGLE_STACK_MOVE_SPEED_SCALE = 0.9;
+        /// <summary>Game data: tuning <c>SingleStackMoveSpeedScale</c> of ability 979; MoveSpeed Multiplicitive.</summary>
+        public const double SingleStackMoveSpeedScale = 0.9;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 979.</summary>
-    public const double STRENGTH_COEFFICIENT = 3.833;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 979.</summary>
+        public const double StrengthCoefficient = 3.833;
 
-    /// <summary>Game data: tuning <c>Stun.StunDuration</c> of ability 979; Stunned (effect 1268).</summary>
-    public const int STUN_DURATION = 4;
+        /// <summary>Game data: tuning <c>Stun.StunDuration</c> of ability 979; Stunned (effect 1268).</summary>
+        public const int StunStunDuration = 4;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageMultiplier</c> of ability 979; talent Sharpened Blade (talent 215), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.3;
+        /// <summary>Game data: tuning <c>Talent.IncreasedDamage.DamageMultiplier</c> of ability 979; talent Sharpened Blade (talent 215), DamageScale MultiplyCompound.</summary>
+        public const double TalentIncreasedDamageDamageMultiplier = 1.3;
 
-    /// <summary>Game data: tuning <c>Talent.ReducedCooldown</c> of ability 979.</summary>
-    public const double REDUCED_COOLDOWN = 0.8;
+        /// <summary>Game data: tuning <c>Talent.ReducedCooldown</c> of ability 979.</summary>
+        public const double TalentReducedCooldown = 0.8;
 
-    /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 979.</summary>
-    public const int TARGET_COUNT_THRESHOLD = 5;
+        /// <summary>Game data: tuning <c>TargetCountThreshold</c> of ability 979.</summary>
+        public const int TargetCountThreshold = 5;
+    }
 }

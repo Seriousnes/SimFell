@@ -24,11 +24,11 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>FellowshipSim.Core.Customization.WeaponAbilities</c> names the weapon power whose name in Pascal case is the class
 /// name, and the ability that power grants under its name. Its constants are <c>WeaponPowerId</c>,
 /// <c>WeaponPowerName</c>, <c>AbilityId</c>, <c>AbilityName</c>, one per scalar field of the ability record under
-/// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and one
-/// per tuning value of the weapon power under its <see cref="TuningNames"/> name. The class's own part has the ability's
-/// behaviour.</item>
+/// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and the
+/// weapon power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the
+/// record's hero. The class's own part has the ability's behaviour.</item>
 /// </list>
-/// A member of the class or a base class with a constant's name is CODEX025. The game data is the AdditionalFiles
+/// A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX025. The game data is the AdditionalFiles
 /// <c>entities.jsonl</c> and <c>settings.json</c>, read through FellowshipAnalyzer.Codex.SDK; <see cref="CreatureGenerator"/>
 /// reports missing game data.
 /// </summary>
@@ -66,19 +66,19 @@ public sealed class WeaponGenerator : IIncrementalGenerator
     /// for none), that ability's field constants, and the power's tuning values.
     /// </summary>
     private sealed record Power(int Id, string Name, string ClassName, EquatableArray<Item> Items, int AbilityId, string AbilityName,
-        EquatableArray<Constant> AbilityFields, EquatableArray<Constant> Tunings);
+        EquatableArray<Constant> AbilityFields, EquatableArray<TuningEntry> Tunings);
 
-    /// <summary>The game data's weapon power records, and its build date.</summary>
-    private sealed record Export(EquatableArray<Power> Powers, string? BuildDate);
+    /// <summary>The game data's weapon power records, the tuning keys' first segments naming a hero, and its build date.</summary>
+    private sealed record Export(EquatableArray<Power> Powers, EquatableArray<HeroSegment> Segments, string? BuildDate);
 
     /// <summary>
     /// A partial weapon or weapon ability class: its namespace, name, whether it is a weapon ability, the member names of
-    /// the class and its base classes, and where it is declared.
+    /// the class and its base classes, the class's constants and static readonly fields, and where it is declared.
     /// </summary>
-    private sealed record Declared(string Namespace, string Name, bool IsAbility, EquatableArray<string> Members, Location? Location)
+    private sealed record Declared(string Namespace, string Name, bool IsAbility, EquatableArray<string> Members, EquatableArray<string> Fields, Location? Location)
     {
         public bool Equals(Declared? other) => other != null && Namespace == other.Namespace && Name == other.Name && IsAbility == other.IsAbility
-            && Members.Equals(other.Members);
+            && Members.Equals(other.Members) && Fields.Equals(other.Fields);
 
         public override int GetHashCode() => (Namespace, Name).GetHashCode();
     }
@@ -129,7 +129,8 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             foreach (var member in t.GetMembers()) members.Add(member.Name);
         }
         if (!weapon && !ability) return null;
-        return new Declared(ns, type.Name, ability, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), node.Identifier.GetLocation());
+        return new Declared(ns, type.Name, ability, new([.. members.OrderBy(m => m, StringComparer.Ordinal)]), new([.. TuningNames.FieldsOf(type)]),
+            node.Identifier.GetLocation());
     }
 
     private static Export Read(ImmutableArray<AdditionalText> files, CancellationToken ct)
@@ -194,7 +195,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             records.Add(new Power(p.Id, name, PascalCase(name), new([.. powerItems]), ability?.Id ?? 0, (ability?.Name ?? "").Trim(),
                 new([.. ability != null ? FieldsOf(ability) : []]), new([.. TuningsOf(p)])));
         }
-        return new Export(new([.. records.OrderBy(r => r.Id)]), buildDate);
+        return new Export(new([.. records.OrderBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
     }
 
     /// <summary>The ability record's scalar fields, each under <c>Ability</c> and the field's name.</summary>
@@ -241,14 +242,9 @@ public sealed class WeaponGenerator : IIncrementalGenerator
         fields.Add(new Constant("Ability" + name, "bool", v ? "true" : "false", Field(field, id)));
     }
 
-    /// <summary>The weapon power's tuning values (<see cref="TuningNames"/>), in the order of the game data.</summary>
-    private static List<Constant> TuningsOf(WeaponPowerDocument power) =>
-        [.. TuningNames.Of(power.Tuning, ValueOf).Select(t =>
-        {
-            string source = SourceOf(t.Source);
-            return new Constant(t.Name, t.Value.Type, t.Value.Literal,
-                $"Game data: tuning <c>{Escape(t.Keys)}</c> of weapon power {power.Id}{(source.Length > 0 ? "; " + Escape(source) : "")}.");
-        })];
+    /// <summary>The weapon power's tuning keys, in the order of the game data.</summary>
+    private static List<TuningEntry> TuningsOf(WeaponPowerDocument power) =>
+        TuningNames.Entries(power.Tuning, v => ValueOf(v) is { } value ? (value.Type, value.Literal, false) : null, SourceOf);
 
     /// <summary>The C# type and literal of a tuning value; null for a value of no constant type.</summary>
     private static (string Type, string Literal)? ValueOf(object? value)
@@ -336,13 +332,15 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                     $"{Escape(power.AbilityName)}, ability {power.AbilityId} of the game data, in <c>grants</c> of {owner}."));
                 all.Add(new("AbilityName", "string", Literal(power.AbilityName), $"Game data: <c>name</c> of ability {power.AbilityId}."));
                 all.AddRange(power.AbilityFields);
-                all.AddRange(power.Tunings);
             }
             else
             {
                 all.Add(new("WeaponPowerAbilityId", "int", power.AbilityId.ToString(CultureInfo.InvariantCulture),
                     $"{Escape(power.AbilityName)}, ability {power.AbilityId} of the game data, in <c>grants</c> of {owner}."));
             }
+            var shared = new List<(string Name, string First, string Second)>();
+            var tunings = d.IsAbility ? TuningNames.Of(power.Tunings, export.Segments, [], shared) : [];
+            TuningNames.Report(context, d.Location, d.Name, owner, shared, d.Fields, tunings);
 
             var members = new HashSet<string>(d.Members, StringComparer.Ordinal);
             var source = new StringBuilder()
@@ -363,6 +361,19 @@ public sealed class WeaponGenerator : IIncrementalGenerator
                 first = false;
                 source.Append("    /// <summary>").Append(constant.Summary).Append("</summary>\n")
                     .Append("    public const ").Append(constant.Type).Append(' ').Append(constant.Name).Append(" = ").Append(constant.Literal).Append(";\n");
+            }
+            if (tunings.Count > 0)
+            {
+                if (members.Contains("Constants"))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DeclaredName, d.Location, d.Name, "Constants", power.Id));
+                }
+                else
+                {
+                    TuningNames.Write(source, $"Game data: the tuning values of {owner}.",
+                        tunings.Select(t => (t, $"Game data: tuning <c>{Escape(t.Keys)}</c> of {owner}{(t.Source.Length > 0 ? "; " + Escape(t.Source) : "")}.")),
+                        false, !first);
+                }
             }
             source.Append("}\n");
             context.AddSource($"{d.Namespace.Substring(CustomizationNamespace.Length)}.{d.Name}.g.cs", SourceText.From(source.ToString(), Encoding.UTF8));

@@ -10,9 +10,13 @@ partial class ShieldMastery
     /// <summary>Game data: <c>name</c> of talent 208.</summary>
     public const string TalentName = "Shield Mastery";
 
-    /// <summary>Game data: tuning <c>Warmaster.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.Factor</c> of talent 208; ability 960.</summary>
-    public const double BOUNCY_PROJECTILE_DEFENSIVE_BUFF_COOLDOWN_REDUCTION_FACTOR = 0.1;
+    /// <summary>Game data: the tuning values of talent 208.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Warmaster.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.Factor</c> of talent 208; ability 960.</summary>
+        public const double ToughnessTalentBouncyProjectileDefensiveBuffCooldownReductionFactor = 0.1;
 
-    /// <summary>Game data: tuning <c>Warmaster.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.PassiveAddedBlockChance</c> of talent 208; ability 960.</summary>
-    public const double BOUNCY_PROJECTILE_DEFENSIVE_BUFF_COOLDOWN_REDUCTION_PASSIVE_ADDED_BLOCK_CHANCE = 0.1;
+        /// <summary>Game data: tuning <c>Warmaster.Toughness.Talent.BouncyProjectileDefensiveBuffCooldownReduction.PassiveAddedBlockChance</c> of talent 208; ability 960.</summary>
+        public const double ToughnessTalentBouncyProjectileDefensiveBuffCooldownReductionPassiveAddedBlockChance = 0.1;
+    }
 }

@@ -19,48 +19,52 @@ partial class LashingStormkick
     /// <summary>Game data: <c>range</c> of ability 1106.</summary>
     public const int AbilityRange = 800;
 
-    /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1106.</summary>
-    public const double AGILITY_COEFFICIENT = 2.3205;
+    /// <summary>Game data: the tuning values of ability 1106.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1106.</summary>
+        public const double AgilityCoefficient = 2.3205;
 
-    /// <summary>Game data: tuning <c>Chance, DoubleStrike.Chance</c> of ability 1106.</summary>
-    public const double CHANCE = 0.25;
+        /// <summary>Game data: tuning <c>Chance, DoubleStrike.Chance</c> of ability 1106.</summary>
+        public const double Chance = 0.25;
 
-    /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 1106.</summary>
-    public const int CLEAVE_RADIUS = 500;
+        /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 1106.</summary>
+        public const int CleaveRadius = 500;
 
-    /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1106.</summary>
-    public const int DAMAGE_MULTIPLIER = 1;
+        /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1106.</summary>
+        public const int DamageMultiplier = 1;
 
-    /// <summary>Game data: tuning <c>DelayBetweenStrikes</c> of ability 1106.</summary>
-    public const double DELAY_BETWEEN_STRIKES = 0.4;
+        /// <summary>Game data: tuning <c>DelayBetweenStrikes</c> of ability 1106.</summary>
+        public const double DelayBetweenStrikes = 0.4;
 
-    /// <summary>Game data: tuning <c>Hero.SpiritProcRefundResource.Delay</c> of ability 1106.</summary>
-    public const double HERO_SPIRIT_PROC_REFUND_RESOURCE_DELAY = 0.2;
+        /// <summary>Game data: tuning <c>Hero.SpiritProcRefundResource.Delay</c> of ability 1106.</summary>
+        public const double HeroSpiritProcRefundResourceDelay = 0.2;
 
-    /// <summary>Game data: tuning <c>InstantSelfDefensive.MaxStacks</c> of ability 1106; talent Whipping Apex (talent 626).</summary>
-    public const int MAX_STACKS = 5;
+        /// <summary>Game data: tuning <c>InstantSelfDefensive.MaxStacks</c> of ability 1106; talent Whipping Apex (talent 626).</summary>
+        public const int InstantSelfDefensiveMaxStacks = 5;
 
-    /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1106; ability 1109, DamageScale Multiplicitive.</summary>
-    public const double TARGET_DEBUFF_INCREASED_DAMAGE = 1.1;
+        /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1106; ability 1109, DamageScale Multiplicitive.</summary>
+        public const double DurationalMultipleTeleportDamageTalentTargetDebuffIncreasedDamage = 1.1;
 
-    /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of ability 1106; talent Conclusive Strikes (talent 107).</summary>
-    public const double INCREASED_DAMAGE_SCALER = 1.1;
+        /// <summary>Game data: tuning <c>Meiko.Finishers.Talent.IncreasedDamageScaler</c> of ability 1106; talent Conclusive Strikes (talent 107).</summary>
+        public const double FinishersTalentIncreasedDamageScaler = 1.1;
 
-    /// <summary>Game data: tuning <c>Spread, Meiko.MeleeDamageSelfBuff.Spread</c> of ability 1106; Rising Storm (ability 1103).</summary>
-    public const double SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Spread, Meiko.MeleeDamageSelfBuff.Spread</c> of ability 1106.</summary>
+        public const double Spread = 0.1;
 
-    /// <summary>Game data: tuning <c>Meiko.SpiritProc.ResourceRefund.FlatSpiritPointGain</c> of ability 1106.</summary>
-    public const int MEIKO_SPIRIT_PROC_RESOURCE_REFUND_FLAT_SPIRIT_POINT_GAIN = 2;
+        /// <summary>Game data: tuning <c>Meiko.SpiritProc.ResourceRefund.FlatSpiritPointGain</c> of ability 1106.</summary>
+        public const int SpiritProcResourceRefundFlatSpiritPointGain = 2;
 
-    /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1106; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
-    public const double WIND_DAMAGE_INCREASE = 1.2;
+        /// <summary>Game data: tuning <c>Meiko.TauntTotem.Talent.BuffAfterDestroyed.WindDamageIncrease</c> of ability 1106; Earthen Skin (effect 3139), talent Earthen Skin (legendary power 665).</summary>
+        public const double TauntTotemTalentBuffAfterDestroyedWindDamageIncrease = 1.2;
 
-    /// <summary>Game data: tuning <c>NumOfTargetsToCleave</c> of ability 1106.</summary>
-    public const int NUM_OF_TARGETS_TO_CLEAVE = 19;
+        /// <summary>Game data: tuning <c>NumOfTargetsToCleave</c> of ability 1106.</summary>
+        public const int NumOfTargetsToCleave = 19;
 
-    /// <summary>Game data: tuning <c>Talent.IncreasedCriticalChance.ChanceMultiplier</c> of ability 1106; CritChance Additive.</summary>
-    public const double INCREASED_CRITICAL_CHANCE_CHANCE_MULTIPLIER = 0.2;
+        /// <summary>Game data: tuning <c>Talent.IncreasedCriticalChance.ChanceMultiplier</c> of ability 1106; CritChance Additive.</summary>
+        public const double TalentIncreasedCriticalChanceChanceMultiplier = 0.2;
 
-    /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1106.</summary>
-    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 8;
+        /// <summary>Game data: tuning <c>TargetThresholdForDamageScale</c> of ability 1106.</summary>
+        public const int TargetThresholdForDamageScale = 8;
+    }
 }

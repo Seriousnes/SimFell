@@ -37,18 +37,22 @@ partial class NaturesFury
     /// <summary>Game data: <c>range</c> of ability 161.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>AbilityAddedCritChance</c> of weapon power 356; Nature's Fury (ability 161), CritChance Additive.</summary>
-    public const double ABILITY_ADDED_CRIT_CHANCE = 0.3;
+    /// <summary>Game data: the tuning values of weapon power 356.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AbilityAddedCritChance</c> of weapon power 356; Nature's Fury (ability 161), CritChance Additive.</summary>
+        public const double AbilityAddedCritChance = 0.3;
 
-    /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 356; Nature's Fury (ability 161).</summary>
-    public const double CAST_DURATION = 1.5;
+        /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 356; Nature's Fury (ability 161).</summary>
+        public const double CastDuration = 1.5;
 
-    /// <summary>Game data: tuning <c>Heal.PrimaryAttributeCoefficient</c> of weapon power 356; effect 81.</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_1 = 18.17;
+        /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 356; effect 82.</summary>
+        public const double DamagePrimaryAttributeCoefficient = 13.977;
 
-    /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 356; effect 82.</summary>
-    public const double PRIMARY_ATTRIBUTE_COEFFICIENT_2 = 13.977;
+        /// <summary>Game data: tuning <c>Heal.PrimaryAttributeCoefficient</c> of weapon power 356; effect 81.</summary>
+        public const double HealPrimaryAttributeCoefficient = 18.17;
 
-    /// <summary>Game data: tuning <c>InitialHitPowerScaler</c> of weapon power 356; Nature's Fury (ability 161).</summary>
-    public const int INITIAL_HIT_POWER_SCALER = 2;
+        /// <summary>Game data: tuning <c>InitialHitPowerScaler</c> of weapon power 356; Nature's Fury (ability 161).</summary>
+        public const int InitialHitPowerScaler = 2;
+    }
 }

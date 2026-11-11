@@ -10,9 +10,13 @@ partial class Earthbourne
     /// <summary>Game data: <c>name</c> of talent 103.</summary>
     public const string TalentName = "Earthbourne";
 
-    /// <summary>Game data: tuning <c>CooldownReduction.ReductionInSeconds, Meiko.MoveToLocationAoeDamage.Talent.CooldownReduction.ReductionInSeconds</c> of talent 103; Shatter Earth (ability 1115).</summary>
-    public const int COOLDOWN_REDUCTION_REDUCTION_IN_SECONDS = 0;
+    /// <summary>Game data: the tuning values of talent 103.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>CooldownReduction.ReductionInSeconds, Meiko.MoveToLocationAoeDamage.Talent.CooldownReduction.ReductionInSeconds</c> of talent 103; Shatter Earth (ability 1115).</summary>
+        public const int CooldownReductionReductionInSeconds = 0;
 
-    /// <summary>Game data: tuning <c>CooldownReductionInPercentage, CooldownReduction.TauntTotem.CooldownReductionInPercentage, Meiko.MoveToLocationAoeDamage.Talent.CooldownReduction.TauntTotem.CooldownReductionInPercentage</c> of talent 103; ability 1538.</summary>
-    public const double COOLDOWN_REDUCTION_IN_PERCENTAGE = 0.2;
+        /// <summary>Game data: tuning <c>CooldownReductionInPercentage, CooldownReduction.TauntTotem.CooldownReductionInPercentage, Meiko.MoveToLocationAoeDamage.Talent.CooldownReduction.TauntTotem.CooldownReductionInPercentage</c> of talent 103; ability 1538.</summary>
+        public const double CooldownReductionInPercentage = 0.2;
+    }
 }

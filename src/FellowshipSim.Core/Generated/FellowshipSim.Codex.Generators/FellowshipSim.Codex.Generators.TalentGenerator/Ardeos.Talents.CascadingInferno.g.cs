@@ -10,15 +10,19 @@ partial class CascadingInferno
     /// <summary>Game data: <c>name</c> of talent 676.</summary>
     public const string TalentName = "Cascading Inferno";
 
-    /// <summary>Game data: tuning <c>AdditionalCritChance, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 676; ability 2246, CritChance Additive.</summary>
-    public const int ADDITIONAL_CRIT_CHANCE = 1;
+    /// <summary>Game data: the tuning values of talent 676.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalCritChance, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.AdditionalCritChance</c> of talent 676; ability 2246, CritChance Additive.</summary>
+        public const int AdditionalCritChance = 1;
 
-    /// <summary>Game data: tuning <c>MaxStacks, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.MaxStacks</c> of talent 676; ability 2246.</summary>
-    public const int MAX_STACKS = 12;
+        /// <summary>Game data: tuning <c>MaxStacks, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.MaxStacks</c> of talent 676; ability 2246.</summary>
+        public const int MaxStacks = 12;
 
-    /// <summary>Game data: tuning <c>ResourceMultiplier, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.ResourceMultiplier</c> of talent 676; ability 2246.</summary>
-    public const int RESOURCE_MULTIPLIER = 2;
+        /// <summary>Game data: tuning <c>ResourceMultiplier, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.ResourceMultiplier</c> of talent 676; ability 2246.</summary>
+        public const int ResourceMultiplier = 2;
 
-    /// <summary>Game data: tuning <c>StacksThreshold, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.StacksThreshold</c> of talent 676; ability 2246.</summary>
-    public const int STACKS_THRESHOLD = 4;
+        /// <summary>Game data: tuning <c>StacksThreshold, Firemage.CastedDotBoostProjectile.Talent.IncreasedCritChance.StacksThreshold</c> of talent 676; ability 2246.</summary>
+        public const int StacksThreshold = 4;
+    }
 }

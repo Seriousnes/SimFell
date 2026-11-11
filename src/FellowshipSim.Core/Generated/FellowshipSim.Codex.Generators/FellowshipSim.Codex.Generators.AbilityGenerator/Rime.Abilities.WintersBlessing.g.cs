@@ -22,18 +22,22 @@ partial class WintersBlessing
     /// <summary>Game data: <c>duration</c> of ability 1026.</summary>
     public const int AbilityDuration = 20;
 
-    /// <summary>Game data: tuning <c>DamageToHealingFactor</c> of ability 1026.</summary>
-    public const double DAMAGE_TO_HEALING_FACTOR = 0.3;
+    /// <summary>Game data: the tuning values of ability 1026.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageToHealingFactor</c> of ability 1026.</summary>
+        public const double DamageToHealingFactor = 0.3;
 
-    /// <summary>Game data: tuning <c>Duration</c> of ability 1026.</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>Duration</c> of ability 1026.</summary>
+        public const int Duration = 20;
 
-    /// <summary>Game data: tuning <c>HealTick</c> of ability 1026.</summary>
-    public const double HEAL_TICK = 0.5;
+        /// <summary>Game data: tuning <c>HealTick</c> of ability 1026.</summary>
+        public const double HealTick = 0.5;
 
-    /// <summary>Game data: tuning <c>HealingRange</c> of ability 1026.</summary>
-    public const int HEALING_RANGE = 4000;
+        /// <summary>Game data: tuning <c>HealingRange</c> of ability 1026.</summary>
+        public const int HealingRange = 4000;
 
-    /// <summary>Game data: tuning <c>SpiritIncrease</c> of ability 1026; Spirit Additive.</summary>
-    public const double SPIRIT_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>SpiritIncrease</c> of ability 1026; Spirit Additive.</summary>
+        public const double SpiritIncrease = 0.2;
+    }
 }

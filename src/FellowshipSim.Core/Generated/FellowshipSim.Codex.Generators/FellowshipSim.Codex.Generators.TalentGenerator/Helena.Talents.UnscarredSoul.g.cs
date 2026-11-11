@@ -10,12 +10,16 @@ partial class UnscarredSoul
     /// <summary>Game data: <c>name</c> of talent 390.</summary>
     public const string TalentName = "Unscarred Soul";
 
-    /// <summary>Game data: tuning <c>MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.IncomingDamageDivider, Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.IncomingDamageDivider</c> of talent 390; Unscarred Soul (effect 2339), IncomingDamageMultiplier Division.</summary>
-    public const double INCOMING_DAMAGE_DIVIDER = 1.25;
+    /// <summary>Game data: the tuning values of talent 390.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.IncomingDamageDivider, Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.IncomingDamageDivider</c> of talent 390; Unscarred Soul (effect 2339), IncomingDamageMultiplier Division.</summary>
+        public const double MeleeCleaveAbsorbBuffReducedDamageReflectDamageIncomingDamageDivider = 1.25;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient, Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.ReflectedDamage.StrengthCoefficient</c> of talent 390; Unscarred Soul (ability 1591).</summary>
-    public const int STRENGTH_COEFFICIENT = 1;
+        /// <summary>Game data: tuning <c>StrengthCoefficient, Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.ReflectedDamage.StrengthCoefficient</c> of talent 390; Unscarred Soul (ability 1591).</summary>
+        public const int StrengthCoefficient = 1;
 
-    /// <summary>Game data: tuning <c>Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of talent 390; Unscarred Soul (effect 2339).</summary>
-    public const double ABSORB_DAMAGE_MULTIPLIER = 0.8;
+        /// <summary>Game data: tuning <c>Warmaster.Talent.MeleeCleaveAbsorbBuff.ReducedDamageReflectDamage.AbsorbDamageMultiplier</c> of talent 390; Unscarred Soul (effect 2339).</summary>
+        public const double TalentMeleeCleaveAbsorbBuffReducedDamageReflectDamageAbsorbDamageMultiplier = 0.8;
+    }
 }

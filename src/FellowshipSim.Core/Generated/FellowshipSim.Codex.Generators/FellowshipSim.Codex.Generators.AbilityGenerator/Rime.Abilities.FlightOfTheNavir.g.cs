@@ -31,21 +31,25 @@ partial class FlightOfTheNavir
     /// <summary>Game data: <c>range</c> of ability 1009.</summary>
     public const int AbilityRange = 3000;
 
-    /// <summary>Game data: tuning <c>Aoe.Damage.IntellectCoefficient</c> of ability 1009; ability 1675.</summary>
-    public const double DAMAGE_INTELLECT_COEFFICIENT = 0.469;
+    /// <summary>Game data: the tuning values of ability 1009.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Aoe.Damage.IntellectCoefficient</c> of ability 1009; ability 1675.</summary>
+        public const double AoeDamageIntellectCoefficient = 0.469;
 
-    /// <summary>Game data: tuning <c>Aoe.Duration</c> of ability 1009; ability 1675.</summary>
-    public const int DURATION = 20;
+        /// <summary>Game data: tuning <c>Aoe.Duration</c> of ability 1009; ability 1675.</summary>
+        public const int AoeDuration = 20;
 
-    /// <summary>Game data: tuning <c>GrantInstantSingleDamageCharge.NumCharges</c> of ability 1009; talent Navir's Keeper (talent 189).</summary>
-    public const int NUM_CHARGES = 2;
+        /// <summary>Game data: tuning <c>GrantInstantSingleDamageCharge.NumCharges</c> of ability 1009; talent Navir's Keeper (talent 189).</summary>
+        public const int GrantInstantSingleDamageChargeNumCharges = 2;
 
-    /// <summary>Game data: tuning <c>OrbCost</c> of ability 1009.</summary>
-    public const int ORB_COST = 0;
+        /// <summary>Game data: tuning <c>OrbCost</c> of ability 1009.</summary>
+        public const int OrbCost = 0;
 
-    /// <summary>Game data: tuning <c>Rime.AutoDamageProjectile.Talent.CritChanceAndCritDamage.CritChanceIncrease</c> of ability 1009; Frost Swallows (ability 1033), CritChance Additive.</summary>
-    public const double CRIT_CHANCE_AND_CRIT_DAMAGE_CRIT_CHANCE_INCREASE = 0.1;
+        /// <summary>Game data: tuning <c>Rime.AutoDamageProjectile.Talent.CritChanceAndCritDamage.CritChanceIncrease</c> of ability 1009; Frost Swallows (ability 1033), CritChance Additive.</summary>
+        public const double AutoDamageProjectileTalentCritChanceAndCritDamageCritChanceIncrease = 0.1;
 
-    /// <summary>Game data: tuning <c>Talent.ExtendedDurationInSeconds</c> of ability 1009.</summary>
-    public const int EXTENDED_DURATION_IN_SECONDS = 0;
+        /// <summary>Game data: tuning <c>Talent.ExtendedDurationInSeconds</c> of ability 1009.</summary>
+        public const int TalentExtendedDurationInSeconds = 0;
+    }
 }

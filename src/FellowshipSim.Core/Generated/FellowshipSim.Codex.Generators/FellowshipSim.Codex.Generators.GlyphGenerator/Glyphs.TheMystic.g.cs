@@ -16,12 +16,16 @@ partial class TheMystic
     /// <summary>Game data: <c>abilityRank</c> of glyph 706.</summary>
     public const int GlyphAbilityRank = 190;
 
-    /// <summary>Game data: tuning <c>PowerValuesPerSpiritAmountInPercentage</c> of glyph 706; ability 2253, by rank.</summary>
-    public static readonly double[] POWER_VALUES_PER_SPIRIT_AMOUNT_IN_PERCENTAGE_BY_RANK = [0.3, 0.5, 0.8, 1.2];
+    /// <summary>Game data: the tuning values of glyph 706.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>PowerValuesPerSpiritAmountInPercentage</c> of glyph 706; ability 2253, by rank.</summary>
+        public static readonly double[] PowerValuesPerSpiritAmountInPercentageByRank = [0.3, 0.5, 0.8, 1.2];
 
-    /// <summary>Game data: tuning <c>SpiritAmountPerPowerInPercentage</c> of glyph 706; ability 2253.</summary>
-    public const int SPIRIT_AMOUNT_PER_POWER_IN_PERCENTAGE = 3;
+        /// <summary>Game data: tuning <c>SpiritAmountPerPowerInPercentage</c> of glyph 706; ability 2253.</summary>
+        public const int SpiritAmountPerPowerInPercentage = 3;
 
-    /// <summary>Game data: tuning <c>SpiritThreshold</c> of glyph 706; ability 2253.</summary>
-    public const double SPIRIT_THRESHOLD = 0.5;
+        /// <summary>Game data: tuning <c>SpiritThreshold</c> of glyph 706; ability 2253.</summary>
+        public const double SpiritThreshold = 0.5;
+    }
 }

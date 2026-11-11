@@ -11,7 +11,7 @@ public partial class LightsOath : Talent
 {
     public const int BuffEffectId = 2655;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, PROC_DURATION, PROC_STACK_CAP);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.ProcDuration, Constants.ProcStackCap);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -21,10 +21,10 @@ public partial class LightsOath : Talent
         var xavian = (Xavian)hero;
         xavian.GetAbility<Omnistrike>()!.Struck += ctx => hero.Auras.Apply(Buff, ctx.CurrentTime);
         xavian.SolarBlades.Struck += (ctx, _) => hero.Auras.Apply(Buff, ctx.CurrentTime);
-        xavian.ShiningHalo.CastDamageMultipliers.Add(ctx => hero.Auras.GetStacks(Buff, ctx.CurrentTime) >= PROC_STACK_COST ? DAMAGE_SCALER : 1.0);
+        xavian.ShiningHalo.CastDamageMultipliers.Add(ctx => hero.Auras.GetStacks(Buff, ctx.CurrentTime) >= Constants.ProcStackCost ? Constants.DamageScaler : 1.0);
         xavian.ShiningHalo.Placed += ctx =>
         {
-            if (hero.Auras.GetStacks(Buff, ctx.CurrentTime) >= PROC_STACK_COST) hero.Auras.Remove(Buff, ctx.CurrentTime);
+            if (hero.Auras.GetStacks(Buff, ctx.CurrentTime) >= Constants.ProcStackCost) hero.Auras.Remove(Buff, ctx.CurrentTime);
         };
     }
 }

@@ -10,6 +10,10 @@ partial class UndyingFlame
     /// <summary>Game data: <c>name</c> of talent 150.</summary>
     public const string TalentName = "Undying Flame";
 
-    /// <summary>Game data: tuning <c>ExtendedDuration.DurationIncrease, Firemage.CastedSingleDot.Talent.ExtendedDuration.DurationIncrease</c> of talent 150; Engulfing Flames (effect 1832).</summary>
-    public const int EXTENDED_DURATION_DURATION_INCREASE = 3;
+    /// <summary>Game data: the tuning values of talent 150.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ExtendedDuration.DurationIncrease, Firemage.CastedSingleDot.Talent.ExtendedDuration.DurationIncrease</c> of talent 150; Engulfing Flames (effect 1832).</summary>
+        public const int ExtendedDurationDurationIncrease = 3;
+    }
 }

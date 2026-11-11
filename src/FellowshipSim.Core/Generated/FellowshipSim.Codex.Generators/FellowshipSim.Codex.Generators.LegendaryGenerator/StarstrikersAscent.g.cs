@@ -10,14 +10,18 @@ partial class StarstrikersAscent
     /// <summary>Skystrider Hauberk, item 5898 of the game data.</summary>
     public const int ChestItemId = 5898;
 
-    /// <summary>Game data: tuning <c>Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.AdditionalDamagePerProjectile</c> of legendary power 430; Impending Heartseeker (effect 2317).</summary>
-    public const double ADDITIONAL_DAMAGE_PER_PROJECTILE = 0.1;
+    /// <summary>Game data: the tuning values of legendary power 430.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.AdditionalDamagePerProjectile</c> of legendary power 430; Impending Heartseeker (effect 2317).</summary>
+        public const double ChanneledMultiProjectileDebuffTalentResetCooldownAndBuffAdditionalDamagePerProjectile = 0.1;
 
-    /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration, Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.BuffDuration</c> of legendary power 430; Impending Heartseeker (effect 2317).</summary>
-    public const int BUFF_DURATION = 15;
+        /// <summary>Game data: tuning <c>ResetCooldownAndBuff.BuffDuration, Bowguy.ChanneledMultiProjectileDebuff.Talent.ResetCooldownAndBuff.BuffDuration</c> of legendary power 430; Impending Heartseeker (effect 2317).</summary>
+        public const int ResetCooldownAndBuffBuffDuration = 15;
 
-    /// <summary>Game data: tuning <c>SpiritProcResetAndBuff, Bowguy.ChanneledMultiProjectileDebuff.Talent.SpiritProcResetAndBuff</c> of legendary power 430; ability 1553.</summary>
-    public const double SPIRIT_PROC_RESET_AND_BUFF = 0.5;
+        /// <summary>Game data: tuning <c>SpiritProcResetAndBuff, Bowguy.ChanneledMultiProjectileDebuff.Talent.SpiritProcResetAndBuff</c> of legendary power 430; ability 1553.</summary>
+        public const double SpiritProcResetAndBuff = 0.5;
+    }
 
     public override int LegendaryPowerId => PowerId;
     public override string Name => "Starstriker's Ascent";

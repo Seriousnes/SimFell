@@ -28,18 +28,22 @@ partial class FaceBreaker
     /// <summary>Game data: <c>range</c> of ability 2239.</summary>
     public const int AbilityRange = 550;
 
-    /// <summary>Game data: tuning <c>Cost</c> of ability 2239.</summary>
-    public const int COST = 0;
+    /// <summary>Game data: the tuning values of ability 2239.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Cost</c> of ability 2239.</summary>
+        public const int Cost = 0;
 
-    /// <summary>Game data: tuning <c>IncreasedCritChance.Increase, Tariq.SecondChanceSingleTargetAttack.Talent.IncreasedCritChance.Increase</c> of ability 2239; Face Breaker (old) (ability 1219), talent Left Hand Path (talent 72), CritChance Additive.</summary>
-    public const double INCREASE = 0.4;
+        /// <summary>Game data: tuning <c>IncreasedCritChance.Increase, Tariq.SecondChanceSingleTargetAttack.Talent.IncreasedCritChance.Increase</c> of ability 2239; Face Breaker (old) (ability 1219), talent Left Hand Path (talent 72), CritChance Additive.</summary>
+        public const double IncreasedCritChanceIncrease = 0.4;
 
-    /// <summary>Game data: tuning <c>ResourceGain</c> of ability 2239.</summary>
-    public const double RESOURCE_GAIN = 0.07;
+        /// <summary>Game data: tuning <c>ResourceGain</c> of ability 2239.</summary>
+        public const double ResourceGain = 0.07;
 
-    /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 2239.</summary>
-    public const double STRENGTH_COEFFICIENT = 6.18426;
+        /// <summary>Game data: tuning <c>StrengthCoefficient</c> of ability 2239.</summary>
+        public const double StrengthCoefficient = 6.18426;
 
-    /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 2239.</summary>
-    public const double VISUAL_HIT_DELAY = 0.23;
+        /// <summary>Game data: tuning <c>VisualHitDelay</c> of ability 2239.</summary>
+        public const double VisualHitDelay = 0.23;
+    }
 }

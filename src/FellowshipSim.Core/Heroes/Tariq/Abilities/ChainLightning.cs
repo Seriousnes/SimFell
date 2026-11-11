@@ -13,7 +13,7 @@ public partial class ChainLightning : TariqAbility
 
     /// <summary>
     /// Combat logs (fXyzwGcQkTrLD34R fight 4, 58 casts): the first hit follows the cast by <see cref="FirstHitSeconds"/>, then a hit
-    /// follows every <see cref="TIME_BETWEEN_TARGETS"/> (the log rounds each to server frames).
+    /// follows every <see cref="Constants.TimeBetweenTargets"/> (the log rounds each to server frames).
     /// </summary>
     public const double FirstHitSeconds = 0.30;
 
@@ -31,7 +31,7 @@ public partial class ChainLightning : TariqAbility
 
     public ChainLightning(Tariq owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
-        BaseCoefficient = STRENGTH_COEFFICIENT;
+        BaseCoefficient = Constants.StrengthCoefficient;
         SetCooldown(AbilityCooldown, scalesWithHaste: true);
         DamageLogId = LogIds.Effect(DamageEffectId);
     }
@@ -65,13 +65,13 @@ public partial class ChainLightning : TariqAbility
         var hero = Tariq;
         double castMultiplier = CastDamageMultiplier;
         double castCrit = (CurrentCast?.CritChance ?? 0.0) + hero.LightningCritChance;
-        int hits = MAX_NUM_OF_TARGETS + ExtraHits;
+        int hits = Constants.MaxNumOfTargets + ExtraHits;
         var hitSoFar = new HashSet<EnemyTarget>();
         EnemyTarget? last = null;
         for (int i = 0; i < hits; i++)
         {
             bool first = i == 0;
-            ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * TIME_BETWEEN_TARGETS), c =>
+            ctx.Schedule(SimTime.FromSeconds(FirstHitSeconds + i * Constants.TimeBetweenTargets), c =>
             {
                 var next = NextTarget(c, target, first, last, hitSoFar);
                 if (next == null) return;

@@ -10,6 +10,10 @@ partial class LeftHandPath
     /// <summary>Game data: <c>name</c> of talent 72.</summary>
     public const string TalentName = "Left Hand Path";
 
-    /// <summary>Game data: tuning <c>IncreasedCritChance.Increase, Ink.SecondChanceSingleTargetAttack.Talent.IncreasedCritChance.Increase</c> of talent 72; Face Breaker (old) (ability 1219), CritChance Additive.</summary>
-    public const double INCREASED_CRIT_CHANCE_INCREASE = 0.4;
+    /// <summary>Game data: the tuning values of talent 72.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>IncreasedCritChance.Increase, Ink.SecondChanceSingleTargetAttack.Talent.IncreasedCritChance.Increase</c> of talent 72; Face Breaker (old) (ability 1219), CritChance Additive.</summary>
+        public const double IncreasedCritChanceIncrease = 0.4;
+    }
 }

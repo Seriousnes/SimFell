@@ -10,12 +10,16 @@ partial class BurningInitiative
     /// <summary>Game data: <c>name</c> of talent 677.</summary>
     public const string TalentName = "Burning Initiative";
 
-    /// <summary>Game data: tuning <c>AdditionalOrbResources, Firemage.Talent.ExtraResourcesAtStart.AdditionalOrbResources</c> of talent 677; ability 2244.</summary>
-    public const int ADDITIONAL_ORB_RESOURCES = 2;
+    /// <summary>Game data: the tuning values of talent 677.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>AdditionalOrbResources, Firemage.Talent.ExtraResourcesAtStart.AdditionalOrbResources</c> of talent 677; ability 2244.</summary>
+        public const int AdditionalOrbResources = 2;
 
-    /// <summary>Game data: tuning <c>AdditionalSpiritPoints, Firemage.Talent.ExtraResourcesAtStart.AdditionalSpiritPoints</c> of talent 677; ability 2244.</summary>
-    public const int ADDITIONAL_SPIRIT_POINTS = 50;
+        /// <summary>Game data: tuning <c>AdditionalSpiritPoints, Firemage.Talent.ExtraResourcesAtStart.AdditionalSpiritPoints</c> of talent 677; ability 2244.</summary>
+        public const int AdditionalSpiritPoints = 50;
 
-    /// <summary>Game data: tuning <c>Firemage.FireBombs.ResourcePerOrb</c> of talent 677.</summary>
-    public const int RESOURCE_PER_ORB = 100;
+        /// <summary>Game data: tuning <c>Firemage.FireBombs.ResourcePerOrb</c> of talent 677.</summary>
+        public const int FireBombsResourcePerOrb = 100;
+    }
 }

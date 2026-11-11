@@ -10,9 +10,13 @@ partial class MartialCommand
     /// <summary>Game data: <c>name</c> of talent 14.</summary>
     public const string TalentName = "Martial Command";
 
-    /// <summary>Game data: tuning <c>SpiritPointGain.NumPoints, Warmaster.BouncyProjectile.Talent.SpiritPointGain.NumPoints</c> of talent 14; Shield Throw (ability 985).</summary>
-    public const int SPIRIT_POINT_GAIN_NUM_POINTS = 2;
+    /// <summary>Game data: the tuning values of talent 14.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>SpiritPointGain.NumPoints, Warmaster.BouncyProjectile.Talent.SpiritPointGain.NumPoints</c> of talent 14; Shield Throw (ability 985).</summary>
+        public const int SpiritPointGainNumPoints = 2;
 
-    /// <summary>Game data: tuning <c>Warmaster.Talent.AddedSpiritPassive</c> of talent 14; Martial Command (effect 2417), Spirit Additive.</summary>
-    public const double ADDED_SPIRIT_PASSIVE = 0.05;
+        /// <summary>Game data: tuning <c>Warmaster.Talent.AddedSpiritPassive</c> of talent 14; Martial Command (effect 2417), Spirit Additive.</summary>
+        public const double TalentAddedSpiritPassive = 0.05;
+    }
 }

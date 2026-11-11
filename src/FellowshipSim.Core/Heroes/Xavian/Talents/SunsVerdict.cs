@@ -16,7 +16,7 @@ public partial class SunsVerdict : Talent
     public const int BuffEffectId = 2648;
     public const int BeamEffectId = 2647;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, BUFF_DURATION, STACK_CAP);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.BuffDuration, Constants.StackCap);
 
     public override string Name => TalentName;
     public override int Id => TalentId;
@@ -27,7 +27,7 @@ public partial class SunsVerdict : Talent
         var beams = new SunBeams(xavian);
         void Roll(SimulationContext ctx)
         {
-            if (ctx.Outcomes.RollProc(ProcKey, PROC_CHANCE, ctx)) hero.Auras.Apply(Buff, ctx.CurrentTime);
+            if (ctx.Outcomes.RollProc(ProcKey, Constants.ProcChance, ctx)) hero.Auras.Apply(Buff, ctx.CurrentTime);
         }
         xavian.BrilliantFlash.Flashed += (ctx, _) => Roll(ctx);
         xavian.GetAbility<BrilliantFlare>()!.Flared += Roll;
@@ -45,8 +45,8 @@ public partial class SunsVerdict : Talent
     {
         public SunBeams(Xavian owner) : base(owner, LogIds.Effect(BeamEffectId), "Sun Beams")
         {
-            BaseCoefficient = AOE_PROC_BUFF_AOE_DAMAGE_STRENGTH_COEFFICIENT;
-            AoeTargetThreshold = AOE_PROC_BUFF_AOE_DAMAGE_SCALING_TARGET_COUNT_THRESHOLD;
+            BaseCoefficient = Constants.SingleTargetFillerMeleeTalentAoeProcBuffAoeDamageStrengthCoefficient;
+            AoeTargetThreshold = Constants.SingleTargetFillerMeleeTalentAoeProcBuffAoeDamageScalingTargetCountThreshold;
         }
 
         public void Strike(SimulationContext ctx, EnemyTarget target)

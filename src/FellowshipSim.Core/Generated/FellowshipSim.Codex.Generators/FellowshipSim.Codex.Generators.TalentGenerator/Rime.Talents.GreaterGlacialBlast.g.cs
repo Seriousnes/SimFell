@@ -10,15 +10,19 @@ partial class GreaterGlacialBlast
     /// <summary>Game data: <c>name</c> of talent 190.</summary>
     public const string TalentName = "Greater Glacial Blast";
 
-    /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.AdditionalDamage, Rime.CastedProjectileDamageOrbSpender.Talent.DamageIncreaseAndCastTimeIncrease.AdditionalDamage</c> of talent 190; Glacial Blast (ability 1028).</summary>
-    public const double DAMAGE_INCREASE_AND_CAST_TIME_INCREASE_ADDITIONAL_DAMAGE = 1.4;
+    /// <summary>Game data: the tuning values of talent 190.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.AdditionalDamage, Rime.CastedProjectileDamageOrbSpender.Talent.DamageIncreaseAndCastTimeIncrease.AdditionalDamage</c> of talent 190; Glacial Blast (ability 1028).</summary>
+        public const double DamageIncreaseAndCastTimeIncreaseAdditionalDamage = 1.4;
 
-    /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.CastTimeIncreaseDuration, Rime.CastedProjectileDamageOrbSpender.Talent.DamageIncreaseAndCastTimeIncrease.CastTimeIncreaseDuration</c> of talent 190; Glacial Blast (ability 1028).</summary>
-    public const double DAMAGE_INCREASE_AND_CAST_TIME_INCREASE_CAST_TIME_INCREASE_DURATION = 0.5;
+        /// <summary>Game data: tuning <c>DamageIncreaseAndCastTimeIncrease.CastTimeIncreaseDuration, Rime.CastedProjectileDamageOrbSpender.Talent.DamageIncreaseAndCastTimeIncrease.CastTimeIncreaseDuration</c> of talent 190; Glacial Blast (ability 1028).</summary>
+        public const double DamageIncreaseAndCastTimeIncreaseCastTimeIncreaseDuration = 0.5;
 
-    /// <summary>Game data: tuning <c>Rime.CastedProjectileDamageOrbSpender.OrbCost</c> of talent 190; Glacial Blast (ability 1028).</summary>
-    public const int ORB_COST = 2;
+        /// <summary>Game data: tuning <c>Rime.CastedProjectileDamageOrbSpender.OrbCost</c> of talent 190; Glacial Blast (ability 1028).</summary>
+        public const int CastedProjectileDamageOrbSpenderOrbCost = 2;
 
-    /// <summary>Game data: tuning <c>Rime.CastedProjectileDamageOrbSpender.Talent.CostIncrease</c> of talent 190; Glacial Blast (ability 1028).</summary>
-    public const int COST_INCREASE = 0;
+        /// <summary>Game data: tuning <c>Rime.CastedProjectileDamageOrbSpender.Talent.CostIncrease</c> of talent 190; Glacial Blast (ability 1028).</summary>
+        public const int CastedProjectileDamageOrbSpenderTalentCostIncrease = 0;
+    }
 }

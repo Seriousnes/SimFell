@@ -10,9 +10,13 @@ partial class MaidensDoom
     /// <summary>Game data: <c>name</c> of talent 442.</summary>
     public const string TalentName = "Maiden's Doom";
 
-    /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.IncreasedDamage.DamageMultiplier</c> of talent 442; Maiden of Death (effect 2194), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER = 1.2;
+    /// <summary>Game data: the tuning values of talent 442.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.IncreasedDamage.DamageMultiplier</c> of talent 442; Maiden of Death (effect 2194), DamageScale MultiplyCompound.</summary>
+        public const double ChargedResourceRefillSelfBuffTalentIncreasedDamageDamageMultiplier = 1.2;
 
-    /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.IncreasedDamage.DamageMultiplierAtLowHealth</c> of talent 442; Maiden of Death (effect 2194), DamageScale MultiplyCompound.</summary>
-    public const double DAMAGE_MULTIPLIER_AT_LOW_HEALTH = 1.4;
+        /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.IncreasedDamage.DamageMultiplierAtLowHealth</c> of talent 442; Maiden of Death (effect 2194), DamageScale MultiplyCompound.</summary>
+        public const double ChargedResourceRefillSelfBuffTalentIncreasedDamageDamageMultiplierAtLowHealth = 1.4;
+    }
 }

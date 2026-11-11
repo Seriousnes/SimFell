@@ -31,45 +31,49 @@ partial class Detonate
     /// <summary>Game data: <c>resource</c> of ability 1275.</summary>
     public const string AbilityResource = "Burning Ember";
 
-    /// <summary>Game data: tuning <c>BetweenHitDelay</c> of ability 1275.</summary>
-    public const double BETWEEN_HIT_DELAY = 0.3;
+    /// <summary>Game data: the tuning values of ability 1275.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>BetweenHitDelay</c> of ability 1275.</summary>
+        public const double BetweenHitDelay = 0.3;
 
-    /// <summary>Game data: tuning <c>BombCost</c> of ability 1275.</summary>
-    public const int BOMB_COST = 1;
+        /// <summary>Game data: tuning <c>BombCost</c> of ability 1275.</summary>
+        public const int BombCost = 1;
 
-    /// <summary>Game data: tuning <c>BoostsIncomingDamage.DamageMultiplier</c> of ability 1275; effect 3174, talent Devouring Flame (legendary power 616).</summary>
-    public const double DAMAGE_MULTIPLIER = 1.07;
+        /// <summary>Game data: tuning <c>BoostsIncomingDamage.DamageMultiplier</c> of ability 1275; effect 3174, talent Devouring Flame (legendary power 616).</summary>
+        public const double BoostsIncomingDamageDamageMultiplier = 1.07;
 
-    /// <summary>Game data: tuning <c>CustomGlobalCooldownDuration</c> of ability 1275.</summary>
-    public const int CUSTOM_GLOBAL_COOLDOWN_DURATION = 1;
+        /// <summary>Game data: tuning <c>CustomGlobalCooldownDuration</c> of ability 1275.</summary>
+        public const int CustomGlobalCooldownDuration = 1;
 
-    /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1275.</summary>
-    public const int DAMAGE_SCALING_TARGET_COUNT_THRESHOLD = 1;
+        /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1275.</summary>
+        public const int DamageScalingTargetCountThreshold = 1;
 
-    /// <summary>Game data: tuning <c>DotDamageSampleDuration</c> of ability 1275.</summary>
-    public const int DOT_DAMAGE_SAMPLE_DURATION = 3;
+        /// <summary>Game data: tuning <c>DotDamageSampleDuration</c> of ability 1275.</summary>
+        public const int DotDamageSampleDuration = 3;
 
-    /// <summary>Game data: tuning <c>DotNormalizedSoakedDurationDamageScaleMax</c> of ability 1275.</summary>
-    public const double DOT_NORMALIZED_SOAKED_DURATION_DAMAGE_SCALE_MAX = 2.5;
+        /// <summary>Game data: tuning <c>DotNormalizedSoakedDurationDamageScaleMax</c> of ability 1275.</summary>
+        public const double DotNormalizedSoakedDurationDamageScaleMax = 2.5;
 
-    /// <summary>Game data: tuning <c>ExtendsInstantSingleTargetDot.DurationExtension</c> of ability 1275; talent Backdraft (talent 617).</summary>
-    public const double DURATION_EXTENSION = 1.5;
+        /// <summary>Game data: tuning <c>ExtendsInstantSingleTargetDot.DurationExtension</c> of ability 1275; talent Backdraft (talent 617).</summary>
+        public const double ExtendsInstantSingleTargetDotDurationExtension = 1.5;
 
-    /// <summary>Game data: tuning <c>Firemage.FireBombs.ResourcePerOrb</c> of ability 1275; talent Burning Initiative (talent 677).</summary>
-    public const int FIREMAGE_FIRE_BOMBS_RESOURCE_PER_ORB = 100;
+        /// <summary>Game data: tuning <c>Firemage.FireBombs.ResourcePerOrb</c> of ability 1275; talent Burning Initiative (talent 677).</summary>
+        public const int FireBombsResourcePerOrb = 100;
 
-    /// <summary>Game data: tuning <c>InitialDelay</c> of ability 1275.</summary>
-    public const double INITIAL_DELAY = 0.5;
+        /// <summary>Game data: tuning <c>InitialDelay</c> of ability 1275.</summary>
+        public const double InitialDelay = 0.5;
 
-    /// <summary>Game data: tuning <c>NumHitsPerTarget</c> of ability 1275.</summary>
-    public const int NUM_HITS_PER_TARGET = 3;
+        /// <summary>Game data: tuning <c>NumHitsPerTarget</c> of ability 1275.</summary>
+        public const int NumHitsPerTarget = 3;
 
-    /// <summary>Game data: tuning <c>PerTargetHitDelay</c> of ability 1275.</summary>
-    public const double PER_TARGET_HIT_DELAY = 0.4;
+        /// <summary>Game data: tuning <c>PerTargetHitDelay</c> of ability 1275.</summary>
+        public const double PerTargetHitDelay = 0.4;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.BuffDuration</c> of ability 1275; Reign of Fire (effect 2301), talent Reign of Fire (talent 157).</summary>
-    public const int BUFF_DURATION = 12;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.BuffDuration</c> of ability 1275; Reign of Fire (effect 2301), talent Reign of Fire (talent 157).</summary>
+        public const int PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcBuffDuration = 12;
 
-    /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.PPM</c> of ability 1275; Reign of Fire (effect 2301), talent Reign of Fire (talent 157).</summary>
-    public const double PPM = 1.5;
+        /// <summary>Game data: tuning <c>PlacedProjectileAoeHasCharges.CastedDotDetonateChargeRecoveryProc.PPM</c> of ability 1275; Reign of Fire (effect 2301), talent Reign of Fire (talent 157).</summary>
+        public const double PlacedProjectileAoeHasChargesCastedDotDetonateChargeRecoveryProcPPM = 1.5;
+    }
 }

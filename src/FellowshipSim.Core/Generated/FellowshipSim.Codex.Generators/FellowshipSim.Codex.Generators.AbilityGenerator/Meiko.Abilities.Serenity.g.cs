@@ -19,27 +19,31 @@ partial class Serenity
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1119.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.DamageMultiplierPerStack</c> of ability 1119; Everlasting Spirit (effect 1510), talent Everlasting Spirit (legendary power 447).</summary>
-    public const double DAMAGE_MULTIPLIER_PER_STACK = 0.004;
+    /// <summary>Game data: the tuning values of ability 1119.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.DamageMultiplierPerStack</c> of ability 1119; Everlasting Spirit (effect 1510), talent Everlasting Spirit (legendary power 447).</summary>
+        public const double DamageReductionLessHealDamageMultiplierPerStack = 0.004;
 
-    /// <summary>Game data: tuning <c>DamageReductionLessHeal.Duration</c> of ability 1119; Everlasting Spirit (effect 1510), talent Everlasting Spirit (legendary power 447).</summary>
-    public const int DURATION = 9;
+        /// <summary>Game data: tuning <c>DamageReductionLessHeal.Duration</c> of ability 1119; Everlasting Spirit (effect 1510), talent Everlasting Spirit (legendary power 447).</summary>
+        public const int DamageReductionLessHealDuration = 9;
 
-    /// <summary>Game data: tuning <c>Heal.AgilityCoefficient</c> of ability 1119.</summary>
-    public const double HEAL_AGILITY_COEFFICIENT = 2.2;
+        /// <summary>Game data: tuning <c>Heal.AgilityCoefficient</c> of ability 1119.</summary>
+        public const double HealAgilityCoefficient = 2.2;
 
-    /// <summary>Game data: tuning <c>Heal.HealMultiplierPerFinishingMove</c> of ability 1119.</summary>
-    public const double HEAL_HEAL_MULTIPLIER_PER_FINISHING_MOVE = 0.4;
+        /// <summary>Game data: tuning <c>Heal.HealMultiplierPerFinishingMove</c> of ability 1119.</summary>
+        public const double HealHealMultiplierPerFinishingMove = 0.4;
 
-    /// <summary>Game data: tuning <c>Heal.MaxStacks</c> of ability 1119.</summary>
-    public const int HEAL_MAX_STACKS = 50;
+        /// <summary>Game data: tuning <c>Heal.MaxStacks</c> of ability 1119.</summary>
+        public const int HealMaxStacks = 50;
 
-    /// <summary>Game data: tuning <c>Heal.Spread</c> of ability 1119.</summary>
-    public const double HEAL_SPREAD = 0.1;
+        /// <summary>Game data: tuning <c>Heal.Spread</c> of ability 1119.</summary>
+        public const double HealSpread = 0.1;
 
-    /// <summary>Game data: tuning <c>IncreasedCritChance.CriticalStrikeIncrease</c> of ability 1119; CritChance Additive.</summary>
-    public const double INCREASED_CRIT_CHANCE_CRITICAL_STRIKE_INCREASE = 0.2;
+        /// <summary>Game data: tuning <c>IncreasedCritChance.CriticalStrikeIncrease</c> of ability 1119; CritChance Additive.</summary>
+        public const double IncreasedCritChanceCriticalStrikeIncrease = 0.2;
 
-    /// <summary>Game data: tuning <c>InstantSelfDefensiveCharge.DamageSoakBuff.InvinsibilityDurationPerStack</c> of ability 1119; Earthfist Barrage (ability 1112), talent Earthwell (talent 96).</summary>
-    public const double DAMAGE_SOAK_BUFF_INVINSIBILITY_DURATION_PER_STACK = 0.1;
+        /// <summary>Game data: tuning <c>InstantSelfDefensiveCharge.DamageSoakBuff.InvinsibilityDurationPerStack</c> of ability 1119; Earthfist Barrage (ability 1112), talent Earthwell (talent 96).</summary>
+        public const double InstantSelfDefensiveChargeDamageSoakBuffInvinsibilityDurationPerStack = 0.1;
+    }
 }

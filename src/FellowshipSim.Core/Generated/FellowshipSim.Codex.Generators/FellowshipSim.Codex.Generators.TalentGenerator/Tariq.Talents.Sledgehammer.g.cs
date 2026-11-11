@@ -13,12 +13,16 @@ partial class Sledgehammer
     /// <summary>Game data: <c>radius</c> of talent 78.</summary>
     public const int TalentRadius = 500;
 
-    /// <summary>Game data: tuning <c>DamageScaler, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.DamageScaler</c> of talent 78; Sledgehammer (ability 2061).</summary>
-    public const double DAMAGE_SCALER = 0.1;
+    /// <summary>Game data: the tuning values of talent 78.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>DamageScaler, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.DamageScaler</c> of talent 78; Sledgehammer (ability 2061).</summary>
+        public const double DamageScaler = 0.1;
 
-    /// <summary>Game data: tuning <c>Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.Radius</c> of talent 78; Sledgehammer (ability 2061).</summary>
-    public const int RADIUS = 500;
+        /// <summary>Game data: tuning <c>Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.Radius</c> of talent 78; Sledgehammer (ability 2061).</summary>
+        public const int HeavySingleTargetAttackTalentHeavySingleTargetAttackAoeRadius = 500;
 
-    /// <summary>Game data: tuning <c>TargetThresholdForDamageScale, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.TargetThresholdForDamageScale</c> of talent 78; Sledgehammer (ability 2061).</summary>
-    public const int TARGET_THRESHOLD_FOR_DAMAGE_SCALE = 8;
+        /// <summary>Game data: tuning <c>TargetThresholdForDamageScale, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.TargetThresholdForDamageScale</c> of talent 78; Sledgehammer (ability 2061).</summary>
+        public const int TargetThresholdForDamageScale = 8;
+    }
 }

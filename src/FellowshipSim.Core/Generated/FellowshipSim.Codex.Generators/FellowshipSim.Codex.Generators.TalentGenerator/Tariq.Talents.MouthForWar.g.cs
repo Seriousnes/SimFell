@@ -10,9 +10,13 @@ partial class MouthForWar
     /// <summary>Game data: <c>name</c> of talent 80.</summary>
     public const string TalentName = "Mouth for War";
 
-    /// <summary>Game data: tuning <c>Ink.CostReductionBuff.Duration</c> of talent 80; Focused Wrath (ability 1233).</summary>
-    public const int DURATION = 15;
+    /// <summary>Game data: the tuning values of talent 80.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>Ink.CostReductionBuff.Duration</c> of talent 80; Focused Wrath (ability 1233).</summary>
+        public const int CostReductionBuffDuration = 15;
 
-    /// <summary>Game data: tuning <c>Ink.CostReductionBuff.MaxStacksLimit</c> of talent 80; Focused Wrath (ability 1233).</summary>
-    public const int MAX_STACKS_LIMIT = 3;
+        /// <summary>Game data: tuning <c>Ink.CostReductionBuff.MaxStacksLimit</c> of talent 80; Focused Wrath (ability 1233).</summary>
+        public const int CostReductionBuffMaxStacksLimit = 3;
+    }
 }

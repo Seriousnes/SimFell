@@ -10,12 +10,16 @@ partial class HallowedShield
     /// <summary>Game data: <c>name</c> of talent 567.</summary>
     public const string TalentName = "Hallowed Shield";
 
-    /// <summary>Game data: tuning <c>ParryBoost.Duration, Sune.SingleTargetAbsorb.Talent.ParryBoost.Duration</c> of talent 567; Hallowed Shield (effect 2649).</summary>
-    public const int DURATION = 30;
+    /// <summary>Game data: the tuning values of talent 567.</summary>
+    public static class Constants
+    {
+        /// <summary>Game data: tuning <c>ParryBoost.Duration, Sune.SingleTargetAbsorb.Talent.ParryBoost.Duration</c> of talent 567; Hallowed Shield (effect 2649).</summary>
+        public const int ParryBoostDuration = 30;
 
-    /// <summary>Game data: tuning <c>ParryBoost.StackCap, Sune.SingleTargetAbsorb.Talent.ParryBoost.StackCap</c> of talent 567; Hallowed Shield (effect 2649).</summary>
-    public const int STACK_CAP = 30;
+        /// <summary>Game data: tuning <c>ParryBoost.StackCap, Sune.SingleTargetAbsorb.Talent.ParryBoost.StackCap</c> of talent 567; Hallowed Shield (effect 2649).</summary>
+        public const int ParryBoostStackCap = 30;
 
-    /// <summary>Game data: tuning <c>Sune.SingleTargetAbsorb.Talent.ParryBoost.ExtraAbsorbPerStack</c> of talent 567; Hallowed Shield (effect 2649).</summary>
-    public const double EXTRA_ABSORB_PER_STACK = 0.01;
+        /// <summary>Game data: tuning <c>Sune.SingleTargetAbsorb.Talent.ParryBoost.ExtraAbsorbPerStack</c> of talent 567; Hallowed Shield (effect 2649).</summary>
+        public const double SingleTargetAbsorbTalentParryBoostExtraAbsorbPerStack = 0.01;
+    }
 }
