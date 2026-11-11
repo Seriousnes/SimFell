@@ -32,8 +32,6 @@ public sealed class GameIconGenerator : IIncrementalGenerator
 {
     private const string EntitiesName = "entities.jsonl";
     private const string SettingsName = "settings.json";
-    private const string IntString = "int, string";
-
     /// <summary>The record types of <c>Names</c>, in the order a name takes its icon from.</summary>
     private static readonly EntityType[] NameTypes =
     [
@@ -41,9 +39,26 @@ public sealed class GameIconGenerator : IIncrementalGenerator
         EntityType.Glyph, EntityType.WeaponPower, EntityType.LegendaryPower,
     ];
 
-    /// <summary>The record types the tables read.</summary>
-    private static readonly string[] Slugs =
-        ["ability", "effect", "talent", "aspect", "sigil", "protective-enchant", "enchant", "glyph", "weapon-power", "legendary-power", "gem", "hero"];
+    /// <summary>The record types the tables read, each with its document's icon (a hero's portrait) and <c>maxRank</c>.</summary>
+    private static readonly IReadOnlyDictionary<EntityType, Func<EntityDocument, (string? Icon, int MaxRank)>> Types =
+        new Dictionary<EntityType, Func<EntityDocument, (string? Icon, int MaxRank)>>
+        {
+            [EntityType.Ability] = d => (((AbilityDocument)d).Icon, 0),
+            [EntityType.Effect] = d => (((EffectDocument)d).Icon, 0),
+            [EntityType.Talent] = d => (((TalentDocument)d).Icon, 0),
+            [EntityType.Aspect] = d => (((AugmentationDocument)d).Icon, ((AugmentationDocument)d).MaxRank ?? 0),
+            [EntityType.Sigil] = d => (((AugmentationDocument)d).Icon, ((AugmentationDocument)d).MaxRank ?? 0),
+            [EntityType.ProtectiveEnchant] = d => (((AugmentationDocument)d).Icon, ((AugmentationDocument)d).MaxRank ?? 0),
+            [EntityType.Enchant] = d => (((AugmentationDocument)d).Icon, 0),
+            [EntityType.Glyph] = d => (((GlyphDocument)d).Icon, ((GlyphDocument)d).MaxRank ?? 0),
+            [EntityType.WeaponPower] = d => (((WeaponPowerDocument)d).Icon, 0),
+            [EntityType.LegendaryPower] = d => (((LegendaryPowerDocument)d).Icon, 0),
+            [EntityType.Gem] = d => (((GemDocument)d).Icon, 0),
+            [EntityType.Hero] = d => (((HeroDocument)d).Portrait, 0),
+        };
+
+    /// <summary>The <c>$type</c> property of each of <see cref="Types"/>'s lines, by the SDK's slug of the type.</summary>
+    private static readonly string[] Markers = [.. Types.Keys.Select(t => $"\"{EntityDocuments.Discriminator}\":\"{EntityTypes.Slug(t)}\"")];
 
     /// <summary>A record: its type, ID, name, icon (empty for none), whether it is a weapon category ability, its heroes and its <c>maxRank</c>.</summary>
     private sealed record Record(EntityType Type, int Id, string Name, string Icon, bool Weapon, EquatableArray<string> Heroes, int MaxRank);
@@ -86,7 +101,7 @@ public sealed class GameIconGenerator : IIncrementalGenerator
             ct.ThrowIfCancellationRequested();
             string text = line.ToString();
             // Only the lines of the tables' types are read in full.
-            if (!Slugs.Any(s => text.Contains($"\"$type\":\"{s}\""))) continue;
+            if (!Markers.Any(text.Contains)) continue;
             EntityDocument? document;
             try
             {
@@ -145,25 +160,10 @@ public sealed class GameIconGenerator : IIncrementalGenerator
     /// <summary>The document as a <see cref="Record"/>; a hero's icon is its portrait. Null for a document of no table's type.</summary>
     private static Record? RecordOf(EntityDocument? document)
     {
-        (EntityType? type, string? icon, int maxRank) = document switch
-        {
-            AbilityDocument a => ((EntityType?)EntityType.Ability, a.Icon, 0),
-            EffectDocument e => (EntityType.Effect, e.Icon, 0),
-            TalentDocument t => (EntityType.Talent, t.Icon, 0),
-            AspectDocument a => (EntityType.Aspect, a.Icon, a.MaxRank ?? 0),
-            SigilDocument s => (EntityType.Sigil, s.Icon, s.MaxRank ?? 0),
-            ProtectiveEnchantDocument p => (EntityType.ProtectiveEnchant, p.Icon, p.MaxRank ?? 0),
-            EnchantDocument e => (EntityType.Enchant, e.Icon, 0),
-            GlyphDocument g => (EntityType.Glyph, g.Icon, g.MaxRank ?? 0),
-            WeaponPowerDocument w => (EntityType.WeaponPower, w.Icon, 0),
-            LegendaryPowerDocument l => (EntityType.LegendaryPower, l.Icon, 0),
-            GemDocument g => (EntityType.Gem, g.Icon, 0),
-            HeroDocument h => (EntityType.Hero, h.Portrait, 0),
-            _ => (null, null, 0),
-        };
-        if (type is not { } found) return null;
+        if (document == null || !Types.TryGetValue(EntityTypes.TypeOf(document), out var read)) return null;
+        var (icon, maxRank) = read(document);
         var ability = document as AbilityDocument;
-        return new Record(found, document!.Id, document.Name ?? "", icon ?? "", ability?.Category == AbilityCategory.Weapon,
+        return new Record(EntityTypes.TypeOf(document), document.Id, document.Name ?? "", icon ?? "", ability?.Category == AbilityCategory.Weapon,
             new([.. (ability?.Heroes ?? []).Select(h => h.ToString())]), maxRank);
     }
 
