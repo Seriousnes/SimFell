@@ -21,81 +21,69 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FellowshipSim.Core.Generators\FellowshipSim.Core.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\FellowshipSim.Codex.Generators\FellowshipSim.Codex.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <!--
-    Game data in codex-export/ (tools/download-codex-export.sh): each creature's, dungeon's, hero's, ability's, talent's,
-    legendary's, augmentation's, glyph's, weapon's and relic passive's class, and every hero's gear (GameGearData), from
-    FellowshipSim.Codex.Generators.
+    Game data from FellowshipSim.Codex.Generators: each creature's, dungeon's, hero's, ability's, talent's, legendary's,
+    augmentation's, glyph's, weapon's and relic passive's class, and every hero's gear (GameGearData). Its files are
+    committed in Generated/Codex/<generator>/, and a build compiles them, so a build needs no Codex export. With
+    RegenerateCodex=true (tools/regenerate-codex.sh) the generators run over codex-export/ instead, and their files replace
+    Generated/Codex/ with codex-export.sha256, the hash of the export they are from.
   -->
   <PropertyGroup>
+    <RegenerateCodex Condition="'$(RegenerateCodex)' == ''">false</RegenerateCodex>
     <CodexExportFolder>$(MSBuildThisFileDirectory)../../codex-export/</CodexExportFolder>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="$(CodexExportFolder)entities.jsonl" />
-    <AdditionalFiles Include="$(CodexExportFolder)settings.json" />
-  </ItemGroup>
-
-  <!--
-    Each generator's source files are written to Generated/<generator assembly>/<generator>/ as well as compiled from
-    memory. Generated/FellowshipSim.Codex.Generators/ is committed, so a review shows each game data change. The files on
-    disk are not compiled again.
-  -->
-  <PropertyGroup>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-    <CodexGeneratedFolder>$(MSBuildThisFileDirectory)Generated/FellowshipSim.Codex.Generators/</CodexGeneratedFolder>
+    <CodexGeneratedFolder>$(MSBuildThisFileDirectory)Generated/Codex/</CodexGeneratedFolder>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Generated/**" />
+    <Compile Include="Generated/Codex/**/*.cs" Condition="'$(RegenerateCodex)' != 'true'" />
   </ItemGroup>
 
-  <!--
-    The Codex generators' files have one hash: SHA-256 over each file's path (relative, with /) and contents, in ordinal
-    order of the path. <hash>.sha256 in the folder is named after it and lists each file's own hash. CI compares the
-    committed name with its own build's (tools/check-codex-generated.sh).
-  -->
-  <UsingTask TaskName="WriteCodexGeneratedHash" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <Folder ParameterType="System.String" Required="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System.Linq" />
-      <Using Namespace="System.Security.Cryptography" />
-      <Using Namespace="System.Text" />
-      <Code Type="Fragment" Language="cs"><![CDATA[
-        var paths = Directory.GetFiles(Folder, "*.cs", SearchOption.AllDirectories)
-            .Select(f => f.Substring(Folder.Length).TrimStart('/', '\\').Replace('\\', '/'))
-            .OrderBy(p => p, StringComparer.Ordinal)
-            .ToList();
-        var all = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-        var each = SHA256.Create();
-        var listing = new StringBuilder();
-        foreach (var path in paths)
-        {
-            byte[] contents = File.ReadAllBytes(Path.Combine(Folder, path));
-            all.AppendData(Encoding.UTF8.GetBytes(path + "\n"));
-            all.AppendData(contents);
-            all.AppendData(new byte[] { 0 });
-            string fileHash = string.Concat(each.ComputeHash(contents).Select(b => b.ToString("x2")));
-            listing.Append(fileHash).Append("  ").Append(path).Append('\n');
-        }
-        string hash = string.Concat(all.GetHashAndReset().Select(b => b.ToString("x2")));
-        foreach (var old in Directory.GetFiles(Folder, "*.sha256"))
-        {
-            if (Path.GetFileName(old) != hash + ".sha256") File.Delete(old);
-        }
-        File.WriteAllText(Path.Combine(Folder, hash + ".sha256"), listing.ToString());
-        Log.LogMessage(MessageImportance.Normal, "Codex generated files: " + hash);
-      ]]></Code>
-    </Task>
-  </UsingTask>
+  <ItemGroup Condition="'$(RegenerateCodex)' == 'true'">
+    <ProjectReference Include="..\FellowshipSim.Codex.Generators\FellowshipSim.Codex.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <AdditionalFiles Include="$(CodexExportFolder)entities.jsonl" />
+    <AdditionalFiles Include="$(CodexExportFolder)settings.json" />
+  </ItemGroup>
 
-  <Target Name="WriteCodexGeneratedHash" AfterTargets="CoreCompile" Condition="'$(DesignTimeBuild)' != 'true' And Exists('$(CodexGeneratedFolder)')">
-    <WriteCodexGeneratedHash Folder="$(CodexGeneratedFolder)" />
+  <!-- The compiler writes every generator's files to <output>/<generator assembly>/<generator type>/. -->
+  <PropertyGroup Condition="'$(RegenerateCodex)' == 'true'">
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)codex-generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <Target Name="CheckCodexExport" BeforeTargets="ResolveProjectReferences" Condition="'$(RegenerateCodex)' == 'true'">
+    <Error Condition="!Exists('$(CodexExportFolder)entities.jsonl') Or !Exists('$(CodexExportFolder)settings.json')"
+      Text="RegenerateCodex needs the Codex export in codex-export/. Run tools/download-codex-export.sh first." />
+    <RemoveDir Directories="$(CompilerGeneratedFilesOutputPath)" />
+  </Target>
+
+  <!--
+    Generated/Codex/ has a folder per generator, named after its type without its namespace and Generator
+    (FellowshipSim.Codex.Generators.AbilityGenerator is Ability/), so a tracked path stays short.
+  -->
+  <Target Name="CopyCodexGenerated" AfterTargets="CoreCompile" Condition="'$(RegenerateCodex)' == 'true' And '$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <CodexGenerated Include="$(CompilerGeneratedFilesOutputPath)/FellowshipSim.Codex.Generators/**/*.cs" />
+      <CodexGenerated>
+        <Folder>$([System.String]::Copy('%(RecursiveDir)').Replace('FellowshipSim.Codex.Generators.', '').Replace('Generator\', '\').Replace('Generator/', '/'))</Folder>
+      </CodexGenerated>
+      <CodexExportFile Include="$(CodexExportFolder)entities.jsonl;$(CodexExportFolder)settings.json" />
+    </ItemGroup>
+    <Error Condition="'@(CodexGenerated)' == ''" Text="The Codex generators wrote no file. Build with --no-incremental (tools/regenerate-codex.sh)." />
+    <RemoveDir Directories="$(CodexGeneratedFolder)" />
+    <Copy SourceFiles="@(CodexGenerated)" DestinationFiles="@(CodexGenerated->'$(CodexGeneratedFolder)%(Folder)%(Filename)%(Extension)')" />
+    <GetFileHash Files="@(CodexExportFile)" Algorithm="SHA256" HashEncoding="hex">
+      <Output TaskParameter="Items" ItemName="CodexExportHash" />
+    </GetFileHash>
+    <ItemGroup>
+      <CodexExportHash>
+        <Line>$([System.String]::Copy('%(FileHash)').ToLowerInvariant())  %(Filename)%(Extension)</Line>
+      </CodexExportHash>
+    </ItemGroup>
+    <WriteLinesToFile File="$(CodexGeneratedFolder)codex-export.sha256" Overwrite="true" Lines="@(CodexExportHash->'%(Line)')" />
+    <Message Importance="high" Text="Codex generated files: @(CodexGenerated->Count()) in $(CodexGeneratedFolder)" />
   </Target>
 
 </Project>

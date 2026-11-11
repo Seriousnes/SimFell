@@ -40,9 +40,9 @@ Three rules hold everywhere:
 - **The game data (datamine):** the Codex SDK exports `entities.jsonl` with every ability, effect, talent, aspect,
   sigil, protective enchant, glyph, gem ability and relic passive: cooldowns, cast times, coefficients, effect durations, stacks and stat modifiers. Use it as
   the reference when writing constants, and compare against it when the game is patched.
-  `tools/download-codex-export.sh` downloads it into `codex-export/`. Each generator's half of a class is in
-  `src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators/<generator>/`, committed with its `<hash>.sha256`.
-  Read a class's game data constants there.
+  `tools/download-codex-export.sh` downloads it into `codex-export/`. Each generator's half of a class is committed in
+  `src/FellowshipSim.Core/Generated/Codex/<generator>/` (`Ability/`, `Talent/`...). Read a class's game data constants
+  there.
 - **Combat logs:** what really happens (timings, procs, partial ticks). The replay review shows where the engine and a
   log disagree.
 
@@ -56,8 +56,9 @@ another hero is that hero's name (`Firemage.` on a Meiko talent is `Ardeos`). An
 records have the most tuning keys starting with it. Keys of a record with one value are one constant when the segments
 of one, after the hero rule, end with the segments of the other (`Duration` and `Talent.Buff.Duration`). The constant is
 named after the shortest key, and its summary names every key. A key whose segments end two keys of which neither ends
-the other is a constant of its own: `Duration` beside `Buff.Duration` and `Debuff.Duration` is three constants. A value by rank is a `double[]` with `ByRank`
-after its name. A renamed or removed key removes its constant, so code reading it stops compiling.
+the other is a constant of its own: `Duration` beside `Buff.Duration` and `Debuff.Duration` is three constants. A value
+by rank is a `double[]` with `ByRank` after its name. A renamed or removed key removes its constant, so code reading it
+stops compiling.
 
 A tuning key with the value of a field of the record has no constant in `Constants`. The record's `fieldSources` names
 the key: a field of kind `ConstantsRow` has the value of one row, and its `tuning` keys are that row. Apocalypse's
@@ -70,6 +71,28 @@ with the name of a member of the class's `Constants` is CODEX039: read the gener
 the name of a generated field constant or `Constants` is a build error (CODEX009, CODEX013 and the other "is a member"
 errors): rename the member. A test checks a game data value as a number with a `// Game data:` comment, never as the
 generated constant, so a new export with another value fails it.
+
+### Regenerating the game data
+
+The build compiles the committed generated files and runs no generator. The generators run in
+`tools/regenerate-codex.sh`, over the export in `codex-export/`:
+
+```
+tools/download-codex-export.sh
+tools/regenerate-codex.sh
+```
+
+- **A new or renamed class:** a new `partial` ability, talent, legendary, augmentation, glyph, weapon or relic passive
+  class has no generated half until the script runs, so its `AbilityId` and the like do not compile. Run the script and
+  commit the class with its new file in `Generated/Codex/`. The CODEX diagnostics (CODEX006, CODEX009, CODEX038,
+  CODEX039...) come from the generators, so they show in the script's build alone.
+- **A new export:** the script writes `Generated/Codex/codex-export.sha256` with the export's hash. Commit the folder
+  with the tests the new values change. CI's check compares the folder with the generators' files from the export
+  of that hash. A newer export gives a warning and passes, until a commit regenerates the folder.
+- **A worktree:** `codex-export/` is git-ignored, so a new worktree has none. A build needs none. For the script, run
+  `tools/download-codex-export.sh` in the worktree.
+- **A merge:** two branches regenerated from one export change different files, and merge cleanly. When they change
+  one file, or come from two exports, take either side, run the script, and commit the folder.
 
 **IDs in combat logs** are game IDs plus an offset: abilities as-is, effects (auras and effect damage) + 1,000,000,
 talents + 2,000,000, augmentations + 3,000,000 (see `Domain/LogIds.cs`). Glyphs are the exception: logs give them per-item

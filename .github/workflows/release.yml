@@ -75,18 +75,9 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
-      - name: Download the Codex export
-        shell: bash
-        run: tools/download-codex-export.sh
-      - name: Clear the committed generated files
-        shell: bash
-        run: tools/check-codex-generated.sh clear
+      # The release has the committed game data (src/FellowshipSim.Core/Generated/Codex).
       - name: Package
         run: dotnet run tools/package.cs -- --rid ${{ matrix.rid }} --version ${{ needs.version.outputs.version }}
-      # The release has the committed game data alone.
-      - name: Check the committed generated files
-        shell: bash
-        run: tools/check-codex-generated.sh check
       - uses: actions/upload-artifact@v7
         with:
           name: SimFell-${{ matrix.rid }}
@@ -105,17 +96,11 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
-      - name: Download the Codex export
-        run: tools/download-codex-export.sh
-      - name: Clear the committed generated files
-        run: tools/check-codex-generated.sh clear
       - name: Package for every platform
         working-directory: src/FellowshipSim.VsCode
         run: |
           npm ci --no-audit --no-fund
           npm run package -- all --version ${{ needs.version.outputs.version }}
-      - name: Check the committed generated files
-        run: tools/check-codex-generated.sh check
       - uses: actions/upload-artifact@v7
         with:
           name: SimFell-vscode

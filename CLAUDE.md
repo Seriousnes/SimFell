@@ -10,9 +10,10 @@ game content.
 ## Commands
 
 ```
-# the Codex's data export into codex-export/ (git-ignored); once after cloning, and after a new datamine. Then delete
-# src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators, build, and commit that folder
+# the Codex generators' files again, from the Codex's data export in codex-export/ (git-ignored): after a new datamine, a
+# generator change, or a new or renamed partial class they write a half of. Then commit src/FellowshipSim.Core/Generated/Codex
 tools/download-codex-export.sh
+tools/regenerate-codex.sh
 
 # the solution (the desktop app needs the maui workload)
 dotnet build -c Release
@@ -141,11 +142,12 @@ or the desktop app).
   them).
 - **FellowshipSim.Logs** is the FellowshipLogs client and the data folder's fights and reviews. It has no reference to
   the engine.
-- `FellowshipSim.Core`'s build reads the Codex's data export in `codex-export/` (git-ignored, from
-  `tools/download-codex-export.sh`). Every generated class is in
-  `src/FellowshipSim.Core/Generated/FellowshipSim.Codex.Generators/<generator>/` (committed, not compiled from disk): read
-  it there for a class's game data half. Its `<hash>.sha256` is named after the hash of the folder's files, and CI fails
-  when its own build's hash differs (`tools/check-codex-generated.sh`). Tests check game data values as numbers, never
+- Every Codex generated class is committed in `src/FellowshipSim.Core/Generated/Codex/<generator>/` (`Ability/`,
+  `Talent/`...), and `FellowshipSim.Core`'s build compiles it, so a build needs no export: read a class's game data half
+  there. `tools/regenerate-codex.sh` runs the generators over the Codex's data export in `codex-export/` (git-ignored, from
+  `tools/download-codex-export.sh`; a build with `RegenerateCodex=true`) and writes the folder again with
+  `codex-export.sha256`, the export's hash. CI regenerates from that export and fails when the folder changes
+  (`tools/check-codex-generated.sh`), and gives a warning for a newer export. Tests check game data values as numbers, never
   as generated constants. A record's tuning values are in its class's nested `Constants`, each named after its tuning
   key's segments in Pascal case (`Constants.MaxCharges`, `Constants.EnergyGainProcAgilityCoefficient`). A key's first
   segment naming the record's own hero is dropped, and one naming another hero is that hero's name (`Firemage` is

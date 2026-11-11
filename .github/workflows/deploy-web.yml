@@ -30,18 +30,9 @@ jobs:
       - name: Install the WebAssembly tools
         run: dotnet workload install wasm-tools
 
-      - name: Download the Codex export
-        run: tools/download-codex-export.sh
-
-      - name: Clear the committed generated files
-        run: tools/check-codex-generated.sh clear
-
+      # The site has the committed game data (src/FellowshipSim.Core/Generated/Codex).
       - name: Publish
         run: dotnet publish src/FellowshipSim.Web -c Release -p:RunAOTCompilation=true -o publish
-
-      # The site has the committed game data alone.
-      - name: Check the committed generated files
-        run: tools/check-codex-generated.sh check
 
       - name: Ready the site for GitHub Pages
         working-directory: publish/wwwroot
