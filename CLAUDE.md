@@ -217,3 +217,20 @@ and for the web app `visitors/` and `keys/` (the visitor cookie keys).
   flagged as old patch on import and in the reviews, and still runs. When a patch changes a mechanic, the engine takes
   the new one and drops the old: no code, values or name conversions for earlier patches. A new patch moves
   `GamePatch.Current`.
+
+## Remotes and pull requests
+
+- `origin` is the fork, `Seriousnes/SimFell`. `upstream` is `SimFellDev/SimFell`, and `gh` defaults to it. Pass
+  `--repo` on every `gh` call, because one PR number names a different PR in each repository.
+- An upstream PR: `git push origin <branch>`, then
+  `gh pr create --repo SimFellDev/SimFell --base main --head Seriousnes:<branch> --body-file <file>`.
+- The fork's `main` can lag `upstream/main`, so a fork PR can list commits from outside its branch. Before writing
+  a PR body, run `git fetch origin` and `git fetch upstream`, then read `git log <remote>/main..HEAD` for the PR's own
+  base. The body covers the branch's subject alone. Tell the user about any unrelated commits the PR lists.
+
+## Running things locally
+
+- Benchmarks and long parallel sims run at 1, 2, 4 and 8 cores. An all-core 100,000-iteration run locked up this
+  machine and crashed the terminal.
+- When the user is running `dotnet watch`, save edits and leave building and testing to the user.
+- `FellowshipSim.AppHost` and `FellowshipSim.Service` hold their `bin` folders while they run (MSB3021, MSB3027).
