@@ -13,7 +13,7 @@ public partial class GleamingShield : Talent
 {
     public const int BuffEffectId = 3096;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.Duration, Constants.MaxStacks) with { ExpiryRemovesOneStack = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, TalentDuration, Constants.MaxStacks) with { ExpiryRemovesOneStack = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;

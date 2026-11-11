@@ -15,7 +15,7 @@ public partial class Bloodcraze : Talent
     public const int DamageEffectId = 3221;
     public const int Pulses = 2;
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, Constants.Duration);
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, BuffEffectId, TalentDuration);
 
     public override string Name => TalentName;
     public override int Id => TalentId;

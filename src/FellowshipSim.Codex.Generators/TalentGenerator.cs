@@ -20,7 +20,8 @@ namespace FellowshipSim.Codex.Generators;
 /// is the class name. The constants are <c>TalentId</c>, <c>TalentName</c>, <c>TalentIcon</c> (the full size image URL of
 /// the record's icon), one per scalar field of the record under <c>Talent</c> and the field's name (<c>TalentCooldown</c>,
 /// <c>TalentDuration</c>, <c>TalentRadius</c>...), and the record's tuning values in a nested <c>Constants</c> under their
-/// <see cref="TuningNames"/> names, with the hero of the class's namespace as the record's hero. The <c>Icon</c> override
+/// <see cref="TuningNames"/> names, with the hero of the class's namespace as the record's hero. A tuning key with a field's
+/// value (<see cref="FieldTuning"/>) has no constant in <c>Constants</c>, and the field's summary names it. The <c>Icon</c> override
 /// of <c>Talent</c> is <c>TalentIcon</c>. The class's own part has the talent's behaviour and its <c>Name</c> and
 /// <c>Id</c> overrides. <c>GameIcons.Talents</c> has the icon URLs of the talent records with no class, by ID, and
 /// <c>GameHeroData.TalentNames</c> the names of those in a talent slot. A member of the class or a base class with a constant's name, or the name <c>Constants</c>, is CODEX013. The game
@@ -48,7 +49,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
         "The class {0} or a base class has a member {1}, and {1} is a constant of talent {2}; rename the member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>A constant of a talent record: its name, C# type and literal, and its summary.</summary>
-    private sealed record Constant(string Name, string Type, string Literal, string Summary);
+    private sealed record Constant(string Name, string Type, string Literal, string Summary, string? Field = null);
 
     /// <summary>
     /// A talent record: its ID, name, class name, heroes, its field constants and its tuning values.
@@ -170,7 +171,12 @@ public sealed class TalentGenerator : IIncrementalGenerator
                 .Concat((talent.Origins ?? []).Where(o => o.Type == EntityType.Hero).Select(o => (o.Name ?? "").Trim()))
                 .Where(h => h.Length > 0).Distinct().ToList();
             if (name.Length == 0 || heroes.Count == 0) continue;
-            records.Add(new Record(talent.Id, name, PascalCase(name), new([.. heroes]), new([.. FieldsOf(talent)]), new([.. TuningsOf(talent)])));
+            var fields = FieldsOf(talent);
+            var keys = FieldTuning.KeysOf(talent, fields.Select(f => f.Field).OfType<string>(), talent);
+            var merged = new HashSet<string>(keys.Values.SelectMany(k => k), StringComparer.Ordinal);
+            records.Add(new Record(talent.Id, name, PascalCase(name), new([.. heroes]),
+                new([.. fields.Select(f => f.Field != null && keys.TryGetValue(f.Field, out var k) ? f with { Summary = FieldTuning.Summary(f.Summary, k) } : f)]),
+                new([.. TuningsOf(talent).Where(t => !merged.Contains(t.Key))])));
         }
         var all = talents.OrderBy(t => t.Id)
             .Select(t => new Listed(t.Id, t.Name ?? "", t.Icon is { Length: > 0 } icon ? Textures.Url(icon) : "", slotHeroes.ContainsKey(t.Id)))
@@ -199,7 +205,7 @@ public sealed class TalentGenerator : IIncrementalGenerator
         if (value is not { } v) return;
         bool whole = v == Math.Floor(v) && Math.Abs(v) <= int.MaxValue;
         fields.Add(new Constant("Talent" + name, whole ? "int" : "double",
-            whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), $"Game data: <c>{field}</c> of talent {id}."));
+            whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), $"Game data: <c>{field}</c> of talent {id}.", field));
     }
 
     /// <summary>The record's tuning keys, in the order of the game data.</summary>

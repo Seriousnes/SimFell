@@ -13,21 +13,15 @@ partial class Slipstream
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 99.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Meiko_AbilityIcon_10_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 99.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 99; tuning <c>Duration</c>, <c>Meiko.ChargedForwardDash.Talent.AoeSlow.Duration</c>.</summary>
     public const int TalentDuration = 6;
 
-    /// <summary>Game data: <c>radius</c> of talent 99.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 99; tuning <c>Meiko.ChargedForwardDash.Talent.AoeSlow.Radius</c>.</summary>
     public const int TalentRadius = 750;
 
     /// <summary>Game data: the tuning values of talent 99.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Duration, Meiko.ChargedForwardDash.Talent.AoeSlow.Duration</c> of talent 99; ability 1093.</summary>
-        public const int Duration = 6;
-
-        /// <summary>Game data: tuning <c>Meiko.ChargedForwardDash.Talent.AoeSlow.Radius</c> of talent 99; ability 1093.</summary>
-        public const int ChargedForwardDashTalentAoeSlowRadius = 750;
-
         /// <summary>Game data: tuning <c>SpeedMultiplier, Meiko.ChargedForwardDash.Talent.AoeSlow.SpeedMultiplier</c> of talent 99; ability 1093, MoveSpeed Multiplicitive.</summary>
         public const double SpeedMultiplier = 0.5;
     }

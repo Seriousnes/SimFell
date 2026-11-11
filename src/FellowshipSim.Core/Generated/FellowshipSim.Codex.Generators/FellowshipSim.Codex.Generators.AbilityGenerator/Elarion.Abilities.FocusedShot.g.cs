@@ -22,7 +22,7 @@ partial class FocusedShot
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1315.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1315.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1315; tuning <c>CastDuration</c>.</summary>
     public const double AbilityCastTime = 1.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1315.</summary>
@@ -39,9 +39,6 @@ partial class FocusedShot
 
         /// <summary>Game data: tuning <c>Buff.MaxStacks</c> of ability 1315; Steady Hands (effect 1892).</summary>
         public const int BuffMaxStacks = 3;
-
-        /// <summary>Game data: tuning <c>CastDuration</c> of ability 1315.</summary>
-        public const double CastDuration = 1.5;
 
         /// <summary>Game data: tuning <c>Enhanced.ResourceGenerationScaler</c> of ability 1315; talent Deadly Focus (talent 679).</summary>
         public const double EnhancedResourceGenerationScaler = 0.5;

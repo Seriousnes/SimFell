@@ -31,7 +31,7 @@ partial class VoidbringersTouch
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 155.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>duration</c> of ability 155.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 155; tuning <c>Duration</c> of weapon power 349.</summary>
     public const int AbilityDuration = 15;
 
     /// <summary>Game data: <c>range</c> of ability 155.</summary>
@@ -42,9 +42,6 @@ partial class VoidbringersTouch
     {
         /// <summary>Game data: tuning <c>AccumulativeDamageFactor</c> of weapon power 349; Voidbringer's Touch (ability 155).</summary>
         public const double AccumulativeDamageFactor = 0.1;
-
-        /// <summary>Game data: tuning <c>Duration</c> of weapon power 349; Voidbringer's Touch (ability 155).</summary>
-        public const int Duration = 15;
 
         /// <summary>Game data: tuning <c>MaxDamageCoefficient</c> of weapon power 349; Voidbringer's Touch (ability 155).</summary>
         public const double MaxDamageCoefficient = 42.5;

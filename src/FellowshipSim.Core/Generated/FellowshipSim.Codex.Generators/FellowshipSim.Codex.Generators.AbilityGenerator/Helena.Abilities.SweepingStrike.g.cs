@@ -28,13 +28,13 @@ partial class SweepingStrike
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 981.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>cost</c> of ability 981.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 981; tuning <c>ComboPointCost</c>.</summary>
     public const int AbilityCost = 2;
 
     /// <summary>Game data: <c>resource</c> of ability 981.</summary>
     public const string AbilityResource = "Combo Points";
 
-    /// <summary>Game data: <c>range</c> of ability 981.</summary>
+    /// <summary>Game data: <c>range</c> of ability 981; tuning <c>Damage.CleaveRadius</c>.</summary>
     public const int AbilityRange = 800;
 
     /// <summary>Game data: <c>maxTargets</c> of ability 981.</summary>
@@ -43,12 +43,6 @@ partial class SweepingStrike
     /// <summary>Game data: the tuning values of ability 981.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 981.</summary>
-        public const int ComboPointCost = 2;
-
-        /// <summary>Game data: tuning <c>Damage.CleaveRadius</c> of ability 981; Sweeping Strike (effect 1274).</summary>
-        public const int DamageCleaveRadius = 800;
-
         /// <summary>Game data: tuning <c>Damage.DamageScalingTargetCountThreshold</c> of ability 981; Sweeping Strike (effect 1274).</summary>
         public const int DamageDamageScalingTargetCountThreshold = 1;
 

@@ -23,7 +23,8 @@ namespace FellowshipSim.Codex.Generators;
 /// of the record's icon, and the <c>Icon</c> override of <c>Augmentation</c>), one per scalar field of the record under the type
 /// and the field's name (<c>SigilMaxRank</c>, <c>ProtectiveEnchantDuration</c>, <c>AspectProcsPerMinute</c>...), and the
 /// record's tuning values and rank runs in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero
-/// as the record's hero. Each rank run is a <c>public static readonly double[]</c> of its values by rank, named after its
+/// as the record's hero. A tuning key with a field's value (<see cref="FieldTuning"/>) has no constant in <c>Constants</c>,
+/// and the field's summary names it. Each rank run is a <c>public static readonly double[]</c> of its values by rank, named after its
 /// key without the <c>Trait.&lt;Row&gt;.</c> prefix and <c>ByRank</c> (<c>Constants.CritPowerMultiplierByRank</c>). The
 /// class's own part has the augmentation's behaviour and its <c>Name</c> and <c>Id</c> overrides. <c>GameIcons.Augmentations</c>
 /// has the icon URLs of the records with no class, by ID. A member of the class or a
@@ -60,7 +61,7 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         "The class {0} or a base class has a member {1}, and {1} is a member of {2}; rename the class's member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>A field constant of an augmentation record: its name, C# type and literal, and its summary.</summary>
-    private sealed record Member(string Name, string Type, string Literal, string Summary);
+    private sealed record Member(string Name, string Type, string Literal, string Summary, string? Field = null);
 
     /// <summary>
     /// An augmentation record: its type, ID, name, class name, its field constants, and its tuning keys and rank runs (a
@@ -170,8 +171,12 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
                 };
                 string name = (document?.Name ?? "").Trim();
                 if (document == null || type == null || name.Length == 0) continue;
+                var fields = FieldsOf(document, type);
+                var keys = FieldTuning.KeysOf(document, fields.Select(f => f.Field).OfType<string>(), document);
+                var merged = new HashSet<string>(keys.Values.SelectMany(k => k), StringComparer.Ordinal);
                 records.Add(new Record(type, document.Id, name, PascalCase(name),
-                    new([.. FieldsOf(document, type)]), new([.. TuningsOf(document), .. RanksOf(document)])));
+                    new([.. fields.Select(f => f.Field != null && keys.TryGetValue(f.Field, out var k) ? f with { Summary = FieldTuning.Summary(f.Summary, k) } : f)]),
+                    new([.. TuningsOf(document).Where(t => !merged.Contains(t.Key)), .. RanksOf(document)])));
             }
         }
         return new Export(new([.. records.OrderBy(r => r.Type, StringComparer.Ordinal).ThenBy(r => r.Id)]), HeroSegments.Of(entities, ct), buildDate);
@@ -202,10 +207,10 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         {
             fields.Add(new Member(type + "Icon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of {owner}."));
         }
-        AddNumber(fields, type + "MaxRank", a.MaxRank, $"Game data: <c>maxRank</c> of {owner}.");
-        AddNumber(fields, type + "RandomChance", a.RandomChance, $"Game data: <c>randomChance</c> of {owner}.");
-        AddNumber(fields, type + "Cooldown", a.Cooldown, $"Game data: <c>cooldown</c> of {owner}.");
-        AddNumber(fields, type + "Duration", a.Duration, $"Game data: <c>duration</c> of {owner}.");
+        AddNumber(fields, type + "MaxRank", a.MaxRank, $"Game data: <c>maxRank</c> of {owner}.", "maxRank");
+        AddNumber(fields, type + "RandomChance", a.RandomChance, $"Game data: <c>randomChance</c> of {owner}.", "randomChance");
+        AddNumber(fields, type + "Cooldown", a.Cooldown, $"Game data: <c>cooldown</c> of {owner}.", "cooldown");
+        AddNumber(fields, type + "Duration", a.Duration, $"Game data: <c>duration</c> of {owner}.", "duration");
         if (a.ProcRolls is [{ ProcsPerMinute: { } ppm } roll] && !(a.RankRuns ?? []).Any(r => r.Key == roll.Row))
         {
             string formula = roll.Formula is { Length: > 0 } f ? $" ({Escape(f)})" : "";
@@ -214,11 +219,11 @@ public sealed class AugmentationGenerator : IIncrementalGenerator
         return fields;
     }
 
-    private static void AddNumber(List<Member> fields, string name, double? value, string summary)
+    private static void AddNumber(List<Member> fields, string name, double? value, string summary, string? field = null)
     {
         if (value is not { } v) return;
         bool whole = v == Math.Floor(v) && Math.Abs(v) <= int.MaxValue;
-        fields.Add(new Member(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary));
+        fields.Add(new Member(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary, field));
     }
 
     /// <summary>The record's tuning keys, in the order of the game data.</summary>

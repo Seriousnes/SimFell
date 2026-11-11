@@ -22,7 +22,7 @@ partial class GlacialBlast
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1028.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1028.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1028; tuning <c>CastingDuration</c>.</summary>
     public const double AbilityCastTime = 1.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1028.</summary>
@@ -40,9 +40,6 @@ partial class GlacialBlast
     /// <summary>Game data: the tuning values of ability 1028.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1028.</summary>
-        public const double CastingDuration = 1.5;
-
         /// <summary>Game data: tuning <c>ChanceOnOrbGain.NextSpenderCritIncrease.Buff.CritChance</c> of ability 1028; Frostweaver's Wrath (effect 2305).</summary>
         public const int ChanceOnOrbGainNextSpenderCritIncreaseBuffCritChance = 1;
 

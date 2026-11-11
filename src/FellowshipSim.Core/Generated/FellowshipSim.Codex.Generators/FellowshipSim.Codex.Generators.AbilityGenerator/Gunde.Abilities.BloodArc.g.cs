@@ -28,10 +28,10 @@ partial class BloodArc
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 2291.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>range</c> of ability 2291.</summary>
+    /// <summary>Game data: <c>range</c> of ability 2291; tuning <c>AoeRadius</c>.</summary>
     public const int AbilityRange = 700;
 
-    /// <summary>Game data: <c>radius</c> of ability 2291.</summary>
+    /// <summary>Game data: <c>radius</c> of ability 2291; tuning <c>AoeRadius</c>.</summary>
     public const int AbilityRadius = 700;
 
     /// <summary>Game data: <c>maxTargets</c> of ability 2291.</summary>
@@ -42,9 +42,6 @@ partial class BloodArc
     {
         /// <summary>Game data: tuning <c>AdditionalStack.MaxStacks</c> of ability 2291; Blood Arc (effect 3210).</summary>
         public const int AdditionalStackMaxStacks = 2;
-
-        /// <summary>Game data: tuning <c>AoeRadius</c> of ability 2291.</summary>
-        public const int AoeRadius = 700;
 
         /// <summary>Game data: tuning <c>ConePieAngleWidth</c> of ability 2291.</summary>
         public const int ConePieAngleWidth = 120;

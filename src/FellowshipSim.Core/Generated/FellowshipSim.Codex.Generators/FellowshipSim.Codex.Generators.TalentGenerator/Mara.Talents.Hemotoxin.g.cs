@@ -13,7 +13,7 @@ partial class Hemotoxin
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 205.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_PoisonBlister_full.webp";
 
-    /// <summary>Game data: <c>radius</c> of talent 205.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 205; tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.Radius</c>.</summary>
     public const int TalentRadius = 700;
 
     /// <summary>Game data: the tuning values of talent 205.</summary>
@@ -42,9 +42,6 @@ partial class Hemotoxin
 
         /// <summary>Game data: tuning <c>IncreasedTickRateWhileSingle.TickRateIncrease, Mara.BleedAttackSpender.Talent.IncreasedTickRateWhileSingle.TickRateIncrease</c> of talent 205; Hemorrhaging Strike (ability 1208).</summary>
         public const double IncreasedTickRateWhileSingleTickRateIncrease = 1.2;
-
-        /// <summary>Game data: tuning <c>Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.Radius</c> of talent 205; Hemotoxin (ability 1590).</summary>
-        public const int BleedAttackSpenderTalentExplosivePoisonExplosionRadius = 700;
 
         /// <summary>Game data: tuning <c>TargetScalingThreshold, Mara.BleedAttackSpender.Talent.ExplosivePoison.Explosion.TargetScalingThreshold</c> of talent 205; Hemotoxin (ability 1590).</summary>
         public const int TargetScalingThreshold = 1;

@@ -22,7 +22,7 @@ partial class BrilliantFlare
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1860.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1860.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1860; tuning <c>CastingDuration</c>.</summary>
     public const double AbilityCastTime = 1.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1860.</summary>
@@ -40,9 +40,6 @@ partial class BrilliantFlare
     /// <summary>Game data: the tuning values of ability 1860.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1860.</summary>
-        public const double CastingDuration = 1.5;
-
         /// <summary>Game data: tuning <c>DroppedPulseAoeImprovesHeal.Scaler</c> of ability 1860; Shining Halo (ability 1859).</summary>
         public const double DroppedPulseAoeImprovesHealScaler = 1.2;
 

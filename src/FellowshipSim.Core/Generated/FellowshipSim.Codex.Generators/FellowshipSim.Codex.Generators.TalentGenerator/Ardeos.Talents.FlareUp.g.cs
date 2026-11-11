@@ -13,7 +13,7 @@ partial class FlareUp
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 159.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_FireRune_full.webp";
 
-    /// <summary>Game data: <c>radius</c> of talent 159.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 159; tuning <c>Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.MaxRadius</c>.</summary>
     public const int TalentRadius = 1500;
 
     /// <summary>Game data: the tuning values of talent 159.</summary>
@@ -27,9 +27,6 @@ partial class FlareUp
 
         /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.CastedDotBoostProjectileBonusBuff.DamageScaler</c> of talent 159; Infernal Doom (effect 1808).</summary>
         public const int CastedDotBoostProjectileTalentCastedDotBoostProjectileBonusBuffDamageScaler = 1;
-
-        /// <summary>Game data: tuning <c>Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.MaxRadius</c> of talent 159; Flare Up (ability 1257).</summary>
-        public const int CastedDotBoostProjectileTalentDamageSpreadToCastedSingleDotMaxRadius = 1500;
 
         /// <summary>Game data: tuning <c>TargetCountThreshhold, Firemage.CastedDotBoostProjectile.Talent.DamageSpreadToCastedSingleDot.TargetCountThreshhold</c> of talent 159; Flare Up (ability 1257).</summary>
         public const int TargetCountThreshhold = 3;

@@ -22,7 +22,7 @@ partial class SpiritedVortex
     /// <summary>Game data: <c>resource</c> of ability 1120.</summary>
     public const string AbilityResource = "Combo Spenders";
 
-    /// <summary>Game data: <c>duration</c> of ability 1120.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1120; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 30;
 
     /// <summary>Game data: <c>period</c> of ability 1120.</summary>
@@ -48,9 +48,6 @@ partial class SpiritedVortex
 
         /// <summary>Game data: tuning <c>DodgeChanceIncrease</c> of ability 1120.</summary>
         public const double DodgeChanceIncrease = 0.15;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1120.</summary>
-        public const int Duration = 30;
 
         /// <summary>Game data: tuning <c>Enfeeble.Duration</c> of ability 1120; Enfeebled (effect 2487).</summary>
         public const int EnfeebleDuration = 5;

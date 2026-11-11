@@ -13,7 +13,7 @@ partial class GlacialAssault
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 38.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Rime_AnimaBolt_full.webp";
 
-    /// <summary>Game data: <c>radius</c> of talent 38.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 38; tuning <c>InstantAndBonusDamage.DamageToAoe.Radius</c>, <c>Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.Radius</c>.</summary>
     public const int TalentRadius = 700;
 
     /// <summary>Game data: the tuning values of talent 38.</summary>
@@ -30,9 +30,6 @@ partial class GlacialAssault
 
         /// <summary>Game data: tuning <c>MaxNumTargets, InstantAndBonusDamage.DamageToAoe.MaxNumTargets, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.MaxNumTargets</c> of talent 38; Glacial Assault (ability 2023).</summary>
         public const int MaxNumTargets = 40;
-
-        /// <summary>Game data: tuning <c>InstantAndBonusDamage.DamageToAoe.Radius, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.Radius</c> of talent 38; Glacial Assault (ability 2023).</summary>
-        public const int InstantAndBonusDamageDamageToAoeRadius = 700;
 
         /// <summary>Game data: tuning <c>TargetCountThreshold, InstantAndBonusDamage.DamageToAoe.TargetCountThreshold, Rime.CastedProjectileDamageOrbSpender.Talent.InstantAndBonusDamage.DamageToAoe.TargetCountThreshold</c> of talent 38; Glacial Assault (ability 2023).</summary>
         public const int TargetCountThreshold = 12;

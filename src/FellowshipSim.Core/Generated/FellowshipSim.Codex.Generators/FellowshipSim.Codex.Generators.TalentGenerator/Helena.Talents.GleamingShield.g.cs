@@ -13,7 +13,7 @@ partial class GleamingShield
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 641.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Gold_05_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 641.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 641; tuning <c>Duration</c>, <c>IncreasedArmorFromAbilities.Duration</c>, <c>Warmaster.Talent.IncreasedArmorFromAbilities.Duration</c>.</summary>
     public const int TalentDuration = 3;
 
     /// <summary>Game data: the tuning values of talent 641.</summary>
@@ -21,9 +21,6 @@ partial class GleamingShield
     {
         /// <summary>Game data: tuning <c>AdditionalArmorPerStack, IncreasedArmorFromAbilities.AdditionalArmorPerStack, Warmaster.Talent.IncreasedArmorFromAbilities.AdditionalArmorPerStack</c> of talent 641; ability 2216.</summary>
         public const double AdditionalArmorPerStack = 0.03;
-
-        /// <summary>Game data: tuning <c>Duration, IncreasedArmorFromAbilities.Duration, Warmaster.Talent.IncreasedArmorFromAbilities.Duration</c> of talent 641; ability 2216.</summary>
-        public const int Duration = 3;
 
         /// <summary>Game data: tuning <c>MaxStacks, IncreasedArmorFromAbilities.MaxStacks, Warmaster.Talent.IncreasedArmorFromAbilities.MaxStacks</c> of talent 641; ability 2216.</summary>
         public const int MaxStacks = 10;

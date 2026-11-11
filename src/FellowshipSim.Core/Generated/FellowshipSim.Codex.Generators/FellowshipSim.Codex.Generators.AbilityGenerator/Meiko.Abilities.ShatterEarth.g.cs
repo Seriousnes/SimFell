@@ -28,7 +28,7 @@ partial class ShatterEarth
     /// <summary>Game data: <c>duration</c> of ability 1115.</summary>
     public const double AbilityDuration = 5.3;
 
-    /// <summary>Game data: <c>period</c> of ability 1115.</summary>
+    /// <summary>Game data: <c>period</c> of ability 1115; tuning <c>TickInterval</c>.</summary>
     public const int AbilityPeriod = 1;
 
     /// <summary>Game data: <c>range</c> of ability 1115.</summary>
@@ -78,8 +78,5 @@ partial class ShatterEarth
 
         /// <summary>Game data: tuning <c>TargetCountDamageScalingThreshold</c> of ability 1115.</summary>
         public const int TargetCountDamageScalingThreshold = 1;
-
-        /// <summary>Game data: tuning <c>TickInterval</c> of ability 1115.</summary>
-        public const int TickInterval = 1;
     }
 }

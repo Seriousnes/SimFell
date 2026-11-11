@@ -22,7 +22,7 @@ partial class WintersBlessing
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1026.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>duration</c> of ability 1026.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1026; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 20;
 
     /// <summary>Game data: the tuning values of ability 1026.</summary>
@@ -30,9 +30,6 @@ partial class WintersBlessing
     {
         /// <summary>Game data: tuning <c>DamageToHealingFactor</c> of ability 1026.</summary>
         public const double DamageToHealingFactor = 0.3;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1026.</summary>
-        public const int Duration = 20;
 
         /// <summary>Game data: tuning <c>HealTick</c> of ability 1026.</summary>
         public const double HealTick = 0.5;

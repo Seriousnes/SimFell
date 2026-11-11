@@ -28,7 +28,8 @@ namespace FellowshipSim.Codex.Generators;
 /// image URL of the ability's icon), one per scalar field of the ability record under
 /// <c>Ability</c> and the field's name (<c>AbilityCategory</c>, <c>AbilityCooldown</c>, <c>AbilityCastTime</c>...), and the
 /// weapon power's tuning values in a nested <c>Constants</c> under their <see cref="TuningNames"/> names, with no hero as the
-/// record's hero. The class's own part has the ability's behaviour.</item>
+/// record's hero. A tuning key of the power with the row of one of the ability's fields (<see cref="FieldTuning"/>) has no
+/// constant in <c>Constants</c>, and the field's summary names it. The class's own part has the ability's behaviour.</item>
 /// </list>
 /// <c>GameIcons.WeaponAbilities</c> has the icon URLs of the weapon category abilities with no weapon class, by ID, and
 /// <c>GameHeroData.WeaponAbilityNames</c> the name of every weapon category ability. A member of the class or a base class
@@ -60,7 +61,7 @@ public sealed class WeaponGenerator : IIncrementalGenerator
         "The class {0} or a base class has a member {1}, and {1} is a constant of weapon power {2}; rename the member", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>A constant of a weapon power record: its name, C# type and literal, and its summary.</summary>
-    private sealed record Constant(string Name, string Type, string Literal, string Summary);
+    private sealed record Constant(string Name, string Type, string Literal, string Summary, string? Field = null);
 
     /// <summary>An item granting a weapon power: its ID, name, hero and class name.</summary>
     private sealed record Item(int Id, string Name, string Hero, string ClassName);
@@ -204,8 +205,14 @@ public sealed class WeaponGenerator : IIncrementalGenerator
             var granted = (p.Grants ?? []).FirstOrDefault(g => g.Type.ToString() == "Ability" && (g.Name ?? "").Trim() == name);
             AbilityDocument? ability = granted != null ? abilities.GetValueOrDefault(granted.Id) : null;
             var powerItems = items.Where(i => i.PowerId == p.Id).Select(i => i.Item).OrderBy(i => i.Id).ThenBy(i => i.Hero, StringComparer.Ordinal).ToList();
+            // The ability's fields with the value of a tuning key of the power: the field and the key have one row.
+            var fields = ability != null ? FieldsOf(ability) : [];
+            var keys = ability != null ? FieldTuning.KeysOf(ability, fields.Select(f => f.Field).OfType<string>(), p) : [];
+            var merged = new HashSet<string>(keys.Values.SelectMany(k => k), StringComparer.Ordinal);
             records.Add(new Power(p.Id, name, UrlOf(p.Icon), PascalCase(name), new([.. powerItems]), ability?.Id ?? 0, (ability?.Name ?? "").Trim(),
-                UrlOf(ability?.Icon), new([.. ability != null ? FieldsOf(ability) : []]), new([.. TuningsOf(p)])));
+                UrlOf(ability?.Icon),
+                new([.. fields.Select(f => f.Field != null && keys.TryGetValue(f.Field, out var k) ? f with { Summary = FieldTuning.Summary(f.Summary, k, $"weapon power {p.Id}") } : f)]),
+                new([.. TuningsOf(p).Where(t => !merged.Contains(t.Key))])));
         }
         // Every weapon category ability record, in ID order.
         var weapons = weaponAbilities.OrderBy(a => a.Id).Select(a => new WeaponAbility(a.Id, a.Name ?? "", UrlOf(a.Icon))).ToList();
@@ -254,13 +261,13 @@ public sealed class WeaponGenerator : IIncrementalGenerator
         if (value is not { } v) return;
         bool whole = v == Math.Floor(v) && Math.Abs(v) <= int.MaxValue;
         fields.Add(new Constant("Ability" + name, whole ? "int" : "double",
-            whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), Field(field, id)));
+            whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), Field(field, id), field));
     }
 
     private static void AddBool(List<Constant> fields, string name, string field, bool? value, int id)
     {
         if (value is not { } v) return;
-        fields.Add(new Constant("Ability" + name, "bool", v ? "true" : "false", Field(field, id)));
+        fields.Add(new Constant("Ability" + name, "bool", v ? "true" : "false", Field(field, id), field));
     }
 
     /// <summary>The weapon power's tuning keys, in the order of the game data.</summary>

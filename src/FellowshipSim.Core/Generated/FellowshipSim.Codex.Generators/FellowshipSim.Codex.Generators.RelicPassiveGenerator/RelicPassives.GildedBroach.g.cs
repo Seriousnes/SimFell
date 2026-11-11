@@ -10,7 +10,7 @@ partial class GildedBroach
     /// <summary>Game data: <c>name</c> of relic passive 782.</summary>
     public const string RelicPassiveName = "Gilded Broach";
 
-    /// <summary>Game data: <c>cooldown</c> of relic passive 782.</summary>
+    /// <summary>Game data: <c>cooldown</c> of relic passive 782; tuning <c>Cooldown</c>.</summary>
     public const int RelicPassiveCooldown = 180;
 
     /// <summary>Orb of Sanguine Restoration, item 5919 of the game data, granting relic passive 782.</summary>
@@ -31,9 +31,6 @@ partial class GildedBroach
     /// <summary>Game data: the tuning values of relic passive 782.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Cooldown</c> of relic passive 782; Torment of Bael'Aurum (ability 1388).</summary>
-        public const int Cooldown = 180;
-
         /// <summary>Game data: tuning <c>HealMaxHealthFraction</c> of relic passive 782; Torment of Bael'Aurum (ability 1388).</summary>
         public const double HealMaxHealthFraction = 0.4;
 

@@ -57,6 +57,12 @@ records have the most tuning keys starting with it. Keys of a record with one la
 constant, named after the shortest key, and its summary names every key. A value by rank is a `double[]` with `ByRank`
 after its name. A renamed or removed key removes its constant, so code reading it stops compiling.
 
+A tuning key with the value of a field of the record has no constant in `Constants`. The record's `fieldSources` names
+the key: a field of kind `ConstantsRow` has the value of one row, and its `tuning` keys are that row. Apocalypse's
+`castTime` is `AbilityCastTime`, its summary names the key `CastTime`, and `Constants` has no `CastTime`. A weapon ability's
+fields are its ability's, and a key of its weapon power with the row of one of those fields has no constant either. A key
+with a value by rank keeps its constant, since the field is the first rank.
+
 Two keys of a record with one name and different values are CODEX038. A hand-written constant or static readonly field
 with the name of a member of the class's `Constants` is CODEX039: read the generated value. A hand-written member with
 the name of a generated field constant or `Constants` is a build error (CODEX009, CODEX013 and the other "is a member"

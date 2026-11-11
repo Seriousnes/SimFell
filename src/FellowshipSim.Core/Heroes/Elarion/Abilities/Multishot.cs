@@ -31,7 +31,7 @@ public partial class Multishot : ElarionAbility
     public Multishot(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
         BaseCoefficient = Constants.AgilityCoefficient;
-        FocusCost = Constants.Cost;
+        FocusCost = AbilityCost;
         AoeTargetThreshold = Constants.TargetCountThreshold;
     }
 

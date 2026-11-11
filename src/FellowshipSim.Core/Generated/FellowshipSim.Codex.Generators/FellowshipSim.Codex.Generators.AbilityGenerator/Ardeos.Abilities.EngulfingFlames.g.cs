@@ -28,7 +28,7 @@ partial class EngulfingFlames
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1586.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1586.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1586; tuning <c>CastTime</c>.</summary>
     public const double AbilityCastTime = 1.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1586.</summary>
@@ -37,7 +37,7 @@ partial class EngulfingFlames
     /// <summary>Game data: <c>duration</c> of ability 1586.</summary>
     public const int AbilityDuration = 9;
 
-    /// <summary>Game data: <c>period</c> of ability 1586.</summary>
+    /// <summary>Game data: <c>period</c> of ability 1586; tuning <c>Period</c>.</summary>
     public const double AbilityPeriod = 1.5;
 
     /// <summary>Game data: <c>range</c> of ability 1586.</summary>
@@ -51,9 +51,6 @@ partial class EngulfingFlames
 
         /// <summary>Game data: tuning <c>IncreasedDotCritChance.CritChanceIncrease, Ardeos.Talent.IncreasedDotCritChance.CritChanceIncrease</c> of ability 1586; Ardeos (hero 7), talent Firestarter (talent 149).</summary>
         public const double IncreasedDotCritChanceCritChanceIncrease = 0.2;
-
-        /// <summary>Game data: tuning <c>CastTime</c> of ability 1586.</summary>
-        public const double CastTime = 1.5;
 
         /// <summary>Game data: tuning <c>Charges.NumCharges</c> of ability 1586.</summary>
         public const int ChargesNumCharges = 3;
@@ -72,9 +69,6 @@ partial class EngulfingFlames
 
         /// <summary>Game data: tuning <c>InstantCastedSingleDot.MainTargetBonus.BombReward</c> of ability 1586; Engulfing Flames (effect 1832).</summary>
         public const double InstantCastedSingleDotMainTargetBonusBombReward = 0.45;
-
-        /// <summary>Game data: tuning <c>Period</c> of ability 1586.</summary>
-        public const double Period = 1.5;
 
         /// <summary>Game data: tuning <c>TickChanceToAddResource</c> of ability 1586.</summary>
         public const int TickChanceToAddResource = 1;

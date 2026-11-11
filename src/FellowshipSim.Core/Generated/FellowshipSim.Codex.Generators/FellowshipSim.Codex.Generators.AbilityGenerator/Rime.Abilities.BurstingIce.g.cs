@@ -25,7 +25,7 @@ partial class BurstingIce
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1031.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1031.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1031; tuning <c>CastingDuration</c>.</summary>
     public const int AbilityCastTime = 2;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1031.</summary>
@@ -63,9 +63,6 @@ partial class BurstingIce
 
         /// <summary>Game data: tuning <c>BuffWhileActive.DamageScaleOtherAbilities</c> of ability 1031; Winter's Embrace (effect 2303).</summary>
         public const double BuffWhileActiveDamageScaleOtherAbilities = 1.2;
-
-        /// <summary>Game data: tuning <c>CastingDuration</c> of ability 1031.</summary>
-        public const int CastingDuration = 2;
 
         /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 1031.</summary>
         public const int DamageScalingTargetCountThreshold = 5;

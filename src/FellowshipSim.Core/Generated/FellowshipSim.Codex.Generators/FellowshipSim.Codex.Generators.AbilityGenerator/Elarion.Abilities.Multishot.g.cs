@@ -25,7 +25,7 @@ partial class Multishot
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1318.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>cost</c> of ability 1318.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 1318; tuning <c>Cost</c>.</summary>
     public const int AbilityCost = 20;
 
     /// <summary>Game data: <c>resource</c> of ability 1318.</summary>
@@ -54,9 +54,6 @@ partial class Multishot
 
         /// <summary>Game data: tuning <c>CleaveAngel</c> of ability 1318.</summary>
         public const int CleaveAngel = 100;
-
-        /// <summary>Game data: tuning <c>Cost</c> of ability 1318.</summary>
-        public const int Cost = 20;
 
         /// <summary>Game data: tuning <c>DamageBounceSelfBuff.CooldownReductionInSeconds</c> of ability 1318.</summary>
         public const int DamageBounceSelfBuffCooldownReductionInSeconds = 3;

@@ -22,7 +22,7 @@ partial class Charge
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 974.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>duration</c> of ability 974.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 974; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 2;
 
     /// <summary>Game data: <c>range</c> of ability 974.</summary>
@@ -45,9 +45,6 @@ partial class Charge
 
         /// <summary>Game data: tuning <c>ComboPointReward</c> of ability 974.</summary>
         public const int ComboPointReward = 0;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 974.</summary>
-        public const int Duration = 2;
 
         /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 974.</summary>
         public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;

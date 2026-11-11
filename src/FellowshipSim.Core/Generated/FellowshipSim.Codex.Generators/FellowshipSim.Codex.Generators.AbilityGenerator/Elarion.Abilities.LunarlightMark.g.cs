@@ -25,7 +25,7 @@ partial class LunarlightMark
     /// <summary>Game data: <c>resource</c> of ability 1310.</summary>
     public const string AbilityResource = "Focus";
 
-    /// <summary>Game data: <c>duration</c> of ability 1310.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1310; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 15;
 
     /// <summary>Game data: <c>range</c> of ability 1310.</summary>
@@ -46,11 +46,11 @@ partial class LunarlightMark
         /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.DamageMultiplier</c> of ability 1310.</summary>
         public const int DamageBounceSelfBuffDamageMultiplier = 1;
 
-        /// <summary>Game data: tuning <c>Duration, InstantNoCooldownProc.Duration</c> of ability 1310.</summary>
-        public const int Duration = 15;
-
         /// <summary>Game data: tuning <c>Hero.AbilitySpamProtectionCooldown.Default.Duration</c> of ability 1310.</summary>
         public const double HeroAbilitySpamProtectionCooldownDefaultDuration = 0.4;
+
+        /// <summary>Game data: tuning <c>InstantNoCooldownProc.Duration</c> of ability 1310; Resurgent Winds (effect 2074), talent Resurgent Winds (talent 126).</summary>
+        public const int InstantNoCooldownProcDuration = 15;
 
         /// <summary>Game data: tuning <c>MaxStacks</c> of ability 1310.</summary>
         public const int MaxStacks = 20;

@@ -13,15 +13,12 @@ partial class AncestralInstinct
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 756.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Tex_yellow_14_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 756.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 756; tuning <c>Duration</c>, <c>Gunde.Talent.AbilityToBuffChance.Duration</c>.</summary>
     public const int TalentDuration = 6;
 
     /// <summary>Game data: the tuning values of talent 756.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Duration, Gunde.Talent.AbilityToBuffChance.Duration</c> of talent 756; ability 2282.</summary>
-        public const int Duration = 6;
-
         /// <summary>Game data: tuning <c>ProcChance, Gunde.Talent.AbilityToBuffChance.ProcChance</c> of talent 756; ability 2282.</summary>
         public const double ProcChance = 0.4;
 

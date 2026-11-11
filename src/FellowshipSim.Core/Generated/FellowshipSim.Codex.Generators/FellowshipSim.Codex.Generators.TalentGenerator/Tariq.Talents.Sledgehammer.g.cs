@@ -13,7 +13,7 @@ partial class Sledgehammer
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 78.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Nhance_RPG_Icons_ChaoticSpikes_full.webp";
 
-    /// <summary>Game data: <c>radius</c> of talent 78.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 78; tuning <c>Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.Radius</c>.</summary>
     public const int TalentRadius = 500;
 
     /// <summary>Game data: the tuning values of talent 78.</summary>
@@ -21,9 +21,6 @@ partial class Sledgehammer
     {
         /// <summary>Game data: tuning <c>DamageScaler, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.DamageScaler</c> of talent 78; Sledgehammer (ability 2061).</summary>
         public const double DamageScaler = 0.1;
-
-        /// <summary>Game data: tuning <c>Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.Radius</c> of talent 78; Sledgehammer (ability 2061).</summary>
-        public const int HeavySingleTargetAttackTalentHeavySingleTargetAttackAoeRadius = 500;
 
         /// <summary>Game data: tuning <c>TargetThresholdForDamageScale, Ink.HeavySingleTargetAttack.Talent.HeavySingleTargetAttackAoe.TargetThresholdForDamageScale</c> of talent 78; Sledgehammer (ability 2061).</summary>
         public const int TargetThresholdForDamageScale = 8;

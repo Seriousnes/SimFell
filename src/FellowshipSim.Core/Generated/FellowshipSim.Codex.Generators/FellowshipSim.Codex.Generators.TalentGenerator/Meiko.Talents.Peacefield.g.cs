@@ -13,15 +13,12 @@ partial class Peacefield
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 174.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Elements_77_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 174.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 174; tuning <c>Duration</c>, <c>Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.Duration</c>.</summary>
     public const int TalentDuration = 9;
 
     /// <summary>Game data: the tuning values of talent 174.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Duration, Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.Duration</c> of talent 174; Peacefield (ability 1547).</summary>
-        public const int Duration = 9;
-
         /// <summary>Game data: tuning <c>PercentageOfTotalHeal, Meiko.InstantSelfDefensive.Talent.ApplyHot.Hot.PercentageOfTotalHeal</c> of talent 174; Peacefield (ability 1547).</summary>
         public const double PercentageOfTotalHeal = 0.8;
 

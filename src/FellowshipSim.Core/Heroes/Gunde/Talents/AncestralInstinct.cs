@@ -11,7 +11,7 @@ public partial class AncestralInstinct : Talent
     public const int EffectId = 3225;
     public const string ProcKey = "ancestral_instinct";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Constants.Duration,
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, TalentDuration,
         modifiers: StatModifier.Add(StatType.PrimaryAttributeMultiplier, Constants.StrengthMultiplier - 1.0)) with { IsProc = true };
 
     public override string Name => TalentName;

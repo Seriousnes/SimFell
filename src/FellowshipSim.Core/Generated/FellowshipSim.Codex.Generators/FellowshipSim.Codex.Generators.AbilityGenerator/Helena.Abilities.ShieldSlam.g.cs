@@ -31,7 +31,7 @@ partial class ShieldSlam
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 977.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>cost</c> of ability 977.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 977; tuning <c>ComboPointCost</c>.</summary>
     public const int AbilityCost = 3;
 
     /// <summary>Game data: <c>resource</c> of ability 977.</summary>
@@ -66,9 +66,6 @@ partial class ShieldSlam
 
         /// <summary>Game data: tuning <c>CleaveRadius</c> of ability 977.</summary>
         public const int CleaveRadius = 500;
-
-        /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 977.</summary>
-        public const int ComboPointCost = 3;
 
         /// <summary>Game data: tuning <c>Helena.BouncyProjectile.ToughnessFromDamageDealtScaler</c> of ability 977; Shield Throw (ability 985).</summary>
         public const double BouncyProjectileToughnessFromDamageDealtScaler = 0.2;

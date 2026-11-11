@@ -22,7 +22,7 @@ partial class InfernalWave
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1276.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1276.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1276; tuning <c>CastTime</c>.</summary>
     public const double AbilityCastTime = 1.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1276.</summary>
@@ -34,9 +34,6 @@ partial class InfernalWave
     /// <summary>Game data: the tuning values of ability 1276.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>CastTime</c> of ability 1276.</summary>
-        public const double CastTime = 1.5;
-
         /// <summary>Game data: tuning <c>CastedDotBoostProjectileBonusBuff.BuffDuration</c> of ability 1276; Infernal Doom (effect 1808), talent Flare up (talent 159).</summary>
         public const int CastedDotBoostProjectileBonusBuffBuffDuration = 12;
 

@@ -31,7 +31,7 @@ partial class Shockwave
     /// <summary>Game data: <c>resource</c> of ability 979.</summary>
     public const string AbilityResource = "Combo Points";
 
-    /// <summary>Game data: <c>duration</c> of ability 979.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 979; tuning <c>Duration</c>.</summary>
     public const double AbilityDuration = 0.5;
 
     /// <summary>Game data: <c>radius</c> of ability 979.</summary>
@@ -48,9 +48,6 @@ partial class Shockwave
 
         /// <summary>Game data: tuning <c>DebuffIconDuration</c> of ability 979.</summary>
         public const int DebuffIconDuration = 5;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 979.</summary>
-        public const double Duration = 0.5;
 
         /// <summary>Game data: tuning <c>IncreasedToughnessAndDamage.DamageMultiplier.DamageMultiplierAtFullToughness</c> of ability 979; talent Greater Shockwave (talent 643).</summary>
         public const double IncreasedToughnessAndDamageDamageMultiplierDamageMultiplierAtFullToughness = 0.3;

@@ -28,7 +28,7 @@ partial class HighwindArrow
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1313.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1313.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1313; tuning <c>CastDuration</c>.</summary>
     public const int AbilityCastTime = 2;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1313.</summary>
@@ -60,9 +60,6 @@ partial class HighwindArrow
 
         /// <summary>Game data: tuning <c>Bowguy.DamageBounceSelfBuff.Bounce.MaxTargets</c> of ability 1313.</summary>
         public const int DamageBounceSelfBuffBounceMaxTargets = 3;
-
-        /// <summary>Game data: tuning <c>CastDuration</c> of ability 1313.</summary>
-        public const int CastDuration = 2;
 
         /// <summary>Game data: tuning <c>ChanceToHaveIncreasedCritChance.AddedCritChance</c> of ability 1313; talent Lethal Shots (talent 202).</summary>
         public const int ChanceToHaveIncreasedCritChanceAddedCritChance = 1;

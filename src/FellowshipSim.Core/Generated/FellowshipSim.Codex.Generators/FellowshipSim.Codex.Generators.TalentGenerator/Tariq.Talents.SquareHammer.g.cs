@@ -13,7 +13,7 @@ partial class SquareHammer
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 673.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Ink_TimerAbility_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 673.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 673; tuning <c>Duration</c>, <c>Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Buff.Duration</c>.</summary>
     public const int TalentDuration = 4;
 
     /// <summary>Game data: the tuning values of talent 673.</summary>
@@ -21,9 +21,6 @@ partial class SquareHammer
     {
         /// <summary>Game data: tuning <c>AddedExpertisePerStack, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Buff.AddedExpertisePerStack</c> of talent 673; ability 2062, Expertise Additive.</summary>
         public const double AddedExpertisePerStack = 0.08;
-
-        /// <summary>Game data: tuning <c>Duration, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Buff.Duration</c> of talent 673; ability 2062.</summary>
-        public const int Duration = 4;
 
         /// <summary>Game data: tuning <c>StackingBuffConsumedByNextSpender.Stacker.Duration, Ink.AutoAttackBuff.Talent.StackingBuffConsumedByNextSpender.Stacker.Duration</c> of talent 673; Square Hammer (effect 3158).</summary>
         public const int StackingBuffConsumedByNextSpenderStackerDuration = 20;

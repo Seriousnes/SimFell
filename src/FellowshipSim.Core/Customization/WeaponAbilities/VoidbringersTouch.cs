@@ -16,7 +16,7 @@ public partial class VoidbringersTouch : Ability
     public const double CritChance = 1.0;
 
     /// <summary>The debuff on the touched enemy while it stores damage (effect 68, "Voidbringer's Touch").</summary>
-    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, Constants.Duration);
+    public static readonly AuraDef Debuff = AuraDef.Effect(AbilityName, DebuffEffectId, AbilityDuration);
 
     private EnemyTarget? _target;
     private double _stored;
@@ -55,7 +55,7 @@ public partial class VoidbringersTouch : Ability
         target.Auras.Apply(Debuff, ctx.CurrentTime);
         _stored = 0.0;
         int touch = ++_touch;
-        ctx.Schedule(SimTime.FromSeconds(Constants.Duration), c => { if (touch == _touch) Erupt(c); }, Name);
+        ctx.Schedule(SimTime.FromSeconds(AbilityDuration), c => { if (touch == _touch) Erupt(c); }, Name);
     }
 
     /// <summary>

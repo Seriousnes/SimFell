@@ -25,7 +25,7 @@ partial class Apocalypse
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1273.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1273.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1273; tuning <c>CastTime</c>.</summary>
     public const int AbilityCastTime = 3;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1273.</summary>
@@ -45,9 +45,6 @@ partial class Apocalypse
     {
         /// <summary>Game data: tuning <c>AddedCharges.MaxCharges</c> of ability 1273.</summary>
         public const int AddedChargesMaxCharges = 2;
-
-        /// <summary>Game data: tuning <c>CastTime</c> of ability 1273.</summary>
-        public const int CastTime = 3;
 
         /// <summary>Game data: tuning <c>CooldownReductionFromCastedDotDetonate</c> of ability 1273.</summary>
         public const int CooldownReductionFromCastedDotDetonate = 0;

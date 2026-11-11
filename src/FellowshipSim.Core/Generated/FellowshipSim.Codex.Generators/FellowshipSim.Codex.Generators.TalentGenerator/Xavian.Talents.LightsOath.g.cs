@@ -13,7 +13,7 @@ partial class LightsOath
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 568.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Sune_ShiningHalo_full.webp";
 
-    /// <summary>Game data: <c>cost</c> of talent 568.</summary>
+    /// <summary>Game data: <c>cost</c> of talent 568; tuning <c>ProcStackCost</c>, <c>Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCost</c>.</summary>
     public const int TalentCost = 8;
 
     /// <summary>Game data: the tuning values of talent 568.</summary>
@@ -27,9 +27,6 @@ partial class LightsOath
 
         /// <summary>Game data: tuning <c>ProcStackCap, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCap</c> of talent 568; ability 1911.</summary>
         public const int ProcStackCap = 8;
-
-        /// <summary>Game data: tuning <c>ProcStackCost, Sune.DroppedPulseAoe.Talent.StackingBoostBuff.ProcStackCost</c> of talent 568; ability 1911.</summary>
-        public const int ProcStackCost = 8;
     }
 
     public override string? Icon => TalentIcon;

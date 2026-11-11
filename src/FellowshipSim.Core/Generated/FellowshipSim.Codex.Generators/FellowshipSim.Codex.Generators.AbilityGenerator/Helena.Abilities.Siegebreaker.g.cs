@@ -22,7 +22,7 @@ partial class Siegebreaker
     /// <summary>Game data: <c>resource</c> of ability 1515.</summary>
     public const string AbilityResource = "Spirit";
 
-    /// <summary>Game data: <c>duration</c> of ability 1515.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1515; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 20;
 
     /// <summary>Game data: the tuning values of ability 1515.</summary>
@@ -30,9 +30,6 @@ partial class Siegebreaker
     {
         /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1515; DamageScale MultiplyCompound.</summary>
         public const double DamageMultiplier = 1.25;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1515.</summary>
-        public const int Duration = 20;
 
         /// <summary>Game data: tuning <c>IncomingDamageMultiplier</c> of ability 1515; IncomingDamageMultiplier MultiplyCompound.</summary>
         public const double IncomingDamageMultiplier = 0.75;

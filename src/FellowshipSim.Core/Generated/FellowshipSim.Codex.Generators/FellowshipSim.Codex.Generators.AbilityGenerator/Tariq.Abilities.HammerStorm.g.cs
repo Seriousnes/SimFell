@@ -16,9 +16,6 @@ partial class HammerStorm
     /// <summary>Game data: <c>category</c> of ability 1242.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Power;
 
-    /// <summary>Game data: <c>cooldown</c> of ability 1242.</summary>
-    public const double AbilityCooldown = 1.5;
-
     /// <summary>Game data: <c>globalCooldown</c> of ability 1242.</summary>
     public const double AbilityGlobalCooldown = 1.5;
 

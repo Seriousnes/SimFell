@@ -16,7 +16,7 @@ partial class EventHorizon
     /// <summary>Game data: <c>category</c> of ability 1584.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Spirit;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1584.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1584; tuning <c>CastTime</c>.</summary>
     public const double AbilityCastTime = 0.7;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1584.</summary>
@@ -28,23 +28,17 @@ partial class EventHorizon
     /// <summary>Game data: <c>resource</c> of ability 1584.</summary>
     public const string AbilityResource = "Spirit";
 
-    /// <summary>Game data: <c>duration</c> of ability 1584.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1584; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 20;
 
     /// <summary>Game data: the tuning values of ability 1584.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>CastTime</c> of ability 1584.</summary>
-        public const double CastTime = 0.7;
-
         /// <summary>Game data: tuning <c>Cost</c> of ability 1584.</summary>
         public const int Cost = 100;
 
         /// <summary>Game data: tuning <c>DamageMultiplier</c> of ability 1584; DamageScale MultiplyCompound.</summary>
         public const double DamageMultiplier = 1.2;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1584.</summary>
-        public const int Duration = 20;
 
         /// <summary>Game data: tuning <c>HasteToCooldownRecovery</c> of ability 1584.</summary>
         public const int HasteToCooldownRecovery = 1;

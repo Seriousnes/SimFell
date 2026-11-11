@@ -12,7 +12,7 @@ public partial class GrimHarvest : Talent
     public const int EffectId = 3206;
     public const string ProcKey = "grim_harvest";
 
-    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, Constants.Duration) with { IsProc = true };
+    public static readonly AuraDef Buff = AuraDef.Effect(TalentName, EffectId, TalentDuration) with { IsProc = true };
 
     public override string Name => TalentName;
     public override int Id => TalentId;

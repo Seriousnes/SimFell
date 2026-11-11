@@ -22,7 +22,7 @@ partial class FocusedWrath
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1233.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>duration</c> of ability 1233.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1233; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 15;
 
     /// <summary>Game data: <c>range</c> of ability 1233.</summary>
@@ -36,9 +36,6 @@ partial class FocusedWrath
 
         /// <summary>Game data: tuning <c>DamageIncrease</c> of ability 1233.</summary>
         public const double DamageIncrease = 1.1;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1233.</summary>
-        public const int Duration = 15;
 
         /// <summary>Game data: tuning <c>MaxStacksLimit</c> of ability 1233.</summary>
         public const int MaxStacksLimit = 3;

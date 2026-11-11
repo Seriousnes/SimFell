@@ -22,7 +22,7 @@ partial class WindKick
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1102.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = false;
 
-    /// <summary>Game data: <c>cost</c> of ability 1102.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 1102; tuning <c>EnergyCost</c>.</summary>
     public const int AbilityCost = 30;
 
     /// <summary>Game data: <c>range</c> of ability 1102.</summary>
@@ -36,9 +36,6 @@ partial class WindKick
     {
         /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1102.</summary>
         public const double AgilityCoefficient = 0.8775;
-
-        /// <summary>Game data: tuning <c>EnergyCost</c> of ability 1102.</summary>
-        public const int EnergyCost = 30;
 
         /// <summary>Game data: tuning <c>Meiko.DurationalMultipleTeleportDamage.Talent.TargetDebuff.IncreasedDamage</c> of ability 1102; ability 1109, DamageScale Multiplicitive.</summary>
         public const double DurationalMultipleTeleportDamageTalentTargetDebuffIncreasedDamage = 1.1;

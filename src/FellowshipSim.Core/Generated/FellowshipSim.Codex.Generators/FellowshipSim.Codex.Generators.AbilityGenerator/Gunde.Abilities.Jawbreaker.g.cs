@@ -17,12 +17,12 @@ partial class Jawbreaker
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Utility;
 
     /// <summary>Game data: <c>cooldown</c> of ability 1244.</summary>
-    public const int AbilityCooldown = 12;
+    public const int AbilityCooldown = 16;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1244.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>duration</c> of ability 1244.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1244; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 4;
 
     /// <summary>Game data: <c>range</c> of ability 1244.</summary>
@@ -31,9 +31,6 @@ partial class Jawbreaker
     /// <summary>Game data: the tuning values of ability 1244.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1244.</summary>
-        public const int Duration = 4;
-
         /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1244.</summary>
         public const int GECCooldownStaticC = 1;
 

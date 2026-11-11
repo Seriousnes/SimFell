@@ -22,7 +22,7 @@ partial class Interrupt
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1844.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>duration</c> of ability 1844.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 1844; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 4;
 
     /// <summary>Game data: <c>range</c> of ability 1844.</summary>
@@ -31,9 +31,6 @@ partial class Interrupt
     /// <summary>Game data: the tuning values of ability 1844.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1844.</summary>
-        public const int Duration = 4;
-
         /// <summary>Game data: tuning <c>GEC_CooldownStatic_C</c> of ability 1844.</summary>
         public const int GECCooldownStaticC = 1;
 

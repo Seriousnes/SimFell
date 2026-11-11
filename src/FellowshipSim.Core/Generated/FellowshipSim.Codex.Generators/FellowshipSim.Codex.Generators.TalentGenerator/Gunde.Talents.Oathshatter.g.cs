@@ -13,7 +13,7 @@ partial class Oathshatter
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 762.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_DoubleAxe_full.webp";
 
-    /// <summary>Game data: <c>radius</c> of talent 762.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 762; tuning <c>Gunde.HeavyMeleeDotBased.Talent.CritToAoe.Radius</c>.</summary>
     public const int TalentRadius = 700;
 
     /// <summary>Game data: the tuning values of talent 762.</summary>
@@ -24,9 +24,6 @@ partial class Oathshatter
 
         /// <summary>Game data: tuning <c>AoeDamageScaler, Gunde.HeavyMeleeDotBased.Talent.CritToAoe.AoeDamageScaler</c> of talent 762; ability 2274.</summary>
         public const double AoeDamageScaler = 0.5;
-
-        /// <summary>Game data: tuning <c>Gunde.HeavyMeleeDotBased.Talent.CritToAoe.Radius</c> of talent 762; ability 2274.</summary>
-        public const int HeavyMeleeDotBasedTalentCritToAoeRadius = 700;
 
         /// <summary>Game data: tuning <c>TargetThresholdScaling, Gunde.HeavyMeleeDotBased.Talent.CritToAoe.TargetThresholdScaling</c> of talent 762; ability 2274.</summary>
         public const int TargetThresholdScaling = 10;

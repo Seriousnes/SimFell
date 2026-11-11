@@ -19,7 +19,7 @@ partial class StoneStomp
     /// <summary>Game data: <c>cooldown</c> of ability 1107.</summary>
     public const int AbilityCooldown = 60;
 
-    /// <summary>Game data: <c>cost</c> of ability 1107.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 1107; tuning <c>YellowResourceCost</c>.</summary>
     public const int AbilityCost = 2;
 
     /// <summary>Game data: <c>resource</c> of ability 1107.</summary>
@@ -66,8 +66,5 @@ partial class StoneStomp
 
         /// <summary>Game data: tuning <c>Width</c> of ability 1107.</summary>
         public const int Width = 200;
-
-        /// <summary>Game data: tuning <c>YellowResourceCost</c> of ability 1107.</summary>
-        public const int YellowResourceCost = 2;
     }
 }

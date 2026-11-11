@@ -34,16 +34,16 @@ partial class Chronoshift
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 1558.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 1558.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 1558; tuning <c>CastDuration</c> of weapon power 355.</summary>
     public const int AbilityCastTime = 1;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1558.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>channelTime</c> of ability 1558.</summary>
+    /// <summary>Game data: <c>channelTime</c> of ability 1558; tuning <c>Channel.Duration</c> of weapon power 355.</summary>
     public const int AbilityChannelTime = 3;
 
-    /// <summary>Game data: <c>channelTick</c> of ability 1558.</summary>
+    /// <summary>Game data: <c>channelTick</c> of ability 1558; tuning <c>Channel.Tick</c> of weapon power 355.</summary>
     public const double AbilityChannelTick = 1.5;
 
     /// <summary>Game data: <c>range</c> of ability 1558.</summary>
@@ -55,17 +55,8 @@ partial class Chronoshift
         /// <summary>Game data: tuning <c>Buff.IncomingDamageMultiplier</c> of weapon power 355; Asha's Arcane Embrace (effect 2279), IncomingDamageMultiplier MultiplyCompound.</summary>
         public const double BuffIncomingDamageMultiplier = 0.5;
 
-        /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 355; Chronoshift (ability 1558).</summary>
-        public const int CastDuration = 1;
-
-        /// <summary>Game data: tuning <c>Channel.Duration</c> of weapon power 355; Chronoshift (ability 1558).</summary>
-        public const int ChannelDuration = 3;
-
         /// <summary>Game data: tuning <c>Channel.ReduceCooldownsPerTickPercentage</c> of weapon power 355; Chronoshift (ability 1558).</summary>
         public const double ChannelReduceCooldownsPerTickPercentage = 0.05;
-
-        /// <summary>Game data: tuning <c>Channel.Tick</c> of weapon power 355; Chronoshift (ability 1558).</summary>
-        public const double ChannelTick = 1.5;
 
         /// <summary>Game data: tuning <c>Channel.WhileActiveAddedCooldownRecovery</c> of weapon power 355; Chronoshift (ability 1558), CooldownRecovery Multiplicitive.</summary>
         public const int ChannelWhileActiveAddedCooldownRecovery = 8;

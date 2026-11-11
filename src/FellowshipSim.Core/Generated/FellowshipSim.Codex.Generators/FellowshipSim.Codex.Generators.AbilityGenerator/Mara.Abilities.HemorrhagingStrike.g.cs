@@ -16,9 +16,6 @@ partial class HemorrhagingStrike
     /// <summary>Game data: <c>category</c> of ability 1208.</summary>
     public const global::FellowshipSim.Core.Domain.AbilityCategory AbilityCategory = global::FellowshipSim.Core.Domain.AbilityCategory.Power;
 
-    /// <summary>Game data: <c>cooldown</c> of ability 1208.</summary>
-    public const int AbilityCooldown = 2;
-
     /// <summary>Game data: <c>globalCooldown</c> of ability 1208.</summary>
     public const int AbilityGlobalCooldown = 1;
 
@@ -34,7 +31,7 @@ partial class HemorrhagingStrike
     /// <summary>Game data: <c>resource</c> of ability 1208.</summary>
     public const string AbilityResource = "Energy";
 
-    /// <summary>Game data: <c>period</c> of ability 1208.</summary>
+    /// <summary>Game data: <c>period</c> of ability 1208; tuning <c>TickInterval</c>.</summary>
     public const int AbilityPeriod = 3;
 
     /// <summary>Game data: <c>range</c> of ability 1208.</summary>
@@ -78,8 +75,5 @@ partial class HemorrhagingStrike
 
         /// <summary>Game data: tuning <c>Talent.IncreasedCritChance.AdditionalCritChance</c> of ability 1208; talent Puncture (talent 123), CritChance Additive.</summary>
         public const double TalentIncreasedCritChanceAdditionalCritChance = 0.15;
-
-        /// <summary>Game data: tuning <c>TickInterval</c> of ability 1208.</summary>
-        public const int TickInterval = 3;
     }
 }

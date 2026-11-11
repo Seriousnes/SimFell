@@ -34,27 +34,21 @@ partial class ZeralethsHunger
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 162.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 162.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 162; tuning <c>CastDuration</c> of weapon power 358.</summary>
     public const double AbilityCastTime = 0.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 162.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>channelTime</c> of ability 162.</summary>
+    /// <summary>Game data: <c>channelTime</c> of ability 162; tuning <c>ChannelDuration</c> of weapon power 358.</summary>
     public const int AbilityChannelTime = 3;
 
-    /// <summary>Game data: <c>channelTick</c> of ability 162.</summary>
+    /// <summary>Game data: <c>channelTick</c> of ability 162; tuning <c>TickInterval</c> of weapon power 358.</summary>
     public const double AbilityChannelTick = 0.5;
 
     /// <summary>Game data: the tuning values of weapon power 358.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-        public const double CastDuration = 0.5;
-
-        /// <summary>Game data: tuning <c>ChannelDuration</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-        public const int ChannelDuration = 3;
-
         /// <summary>Game data: tuning <c>DamageAoeRadius</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
         public const int DamageAoeRadius = 700;
 
@@ -81,8 +75,5 @@ partial class ZeralethsHunger
 
         /// <summary>Game data: tuning <c>TargetMaxRange</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
         public const int TargetMaxRange = 3000;
-
-        /// <summary>Game data: tuning <c>TickInterval</c> of weapon power 358; Zeraleth's Hunger (ability 162).</summary>
-        public const double TickInterval = 0.5;
     }
 }

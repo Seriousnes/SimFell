@@ -25,13 +25,13 @@ partial class ShieldsUp
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 984.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>cost</c> of ability 984.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 984; tuning <c>ComboPointCost</c>.</summary>
     public const int AbilityCost = 3;
 
     /// <summary>Game data: <c>resource</c> of ability 984.</summary>
     public const string AbilityResource = "Combo Points";
 
-    /// <summary>Game data: <c>duration</c> of ability 984.</summary>
+    /// <summary>Game data: <c>duration</c> of ability 984; tuning <c>Duration</c>.</summary>
     public const int AbilityDuration = 12;
 
     /// <summary>Game data: the tuning values of ability 984.</summary>
@@ -42,12 +42,6 @@ partial class ShieldsUp
 
         /// <summary>Game data: tuning <c>BlockChanceScale</c> of ability 984; BlockChance Additive.</summary>
         public const double BlockChanceScale = 0.25;
-
-        /// <summary>Game data: tuning <c>ComboPointCost</c> of ability 984.</summary>
-        public const int ComboPointCost = 3;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 984.</summary>
-        public const int Duration = 12;
 
         /// <summary>Game data: tuning <c>Helena.BouncyProjectile.ToughnessFromDamageDealtScaler</c> of ability 984; Shield Throw (ability 985).</summary>
         public const double BouncyProjectileToughnessFromDamageDealtScaler = 0.2;

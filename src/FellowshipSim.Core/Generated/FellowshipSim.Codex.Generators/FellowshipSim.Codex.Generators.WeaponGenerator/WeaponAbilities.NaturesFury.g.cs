@@ -34,7 +34,7 @@ partial class NaturesFury
     /// <summary>Game data: <c>globalCooldownScalesWithHaste</c> of ability 161.</summary>
     public const bool AbilityGlobalCooldownScalesWithHaste = true;
 
-    /// <summary>Game data: <c>castTime</c> of ability 161.</summary>
+    /// <summary>Game data: <c>castTime</c> of ability 161; tuning <c>CastDuration</c> of weapon power 356.</summary>
     public const double AbilityCastTime = 1.5;
 
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 161.</summary>
@@ -48,9 +48,6 @@ partial class NaturesFury
     {
         /// <summary>Game data: tuning <c>AbilityAddedCritChance</c> of weapon power 356; Nature's Fury (ability 161), CritChance Additive.</summary>
         public const double AbilityAddedCritChance = 0.3;
-
-        /// <summary>Game data: tuning <c>CastDuration</c> of weapon power 356; Nature's Fury (ability 161).</summary>
-        public const double CastDuration = 1.5;
 
         /// <summary>Game data: tuning <c>Damage.PrimaryAttributeCoefficient</c> of weapon power 356; effect 82.</summary>
         public const double DamagePrimaryAttributeCoefficient = 13.977;

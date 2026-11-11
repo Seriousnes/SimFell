@@ -28,7 +28,7 @@ partial class Detonate
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 1275.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>cost</c> of ability 1275.</summary>
+    /// <summary>Game data: <c>cost</c> of ability 1275; tuning <c>BombCost</c>.</summary>
     public const int AbilityCost = 1;
 
     /// <summary>Game data: <c>resource</c> of ability 1275.</summary>
@@ -39,9 +39,6 @@ partial class Detonate
     {
         /// <summary>Game data: tuning <c>BetweenHitDelay</c> of ability 1275.</summary>
         public const double BetweenHitDelay = 0.3;
-
-        /// <summary>Game data: tuning <c>BombCost</c> of ability 1275.</summary>
-        public const int BombCost = 1;
 
         /// <summary>Game data: tuning <c>BoostsIncomingDamage.DamageMultiplier</c> of ability 1275; effect 3174, talent Devouring Flame (legendary power 616).</summary>
         public const double BoostsIncomingDamageDamageMultiplier = 1.07;

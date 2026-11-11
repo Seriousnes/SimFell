@@ -28,10 +28,10 @@ partial class ReaversEdge
     /// <summary>Game data: <c>castTimeScalesWithHaste</c> of ability 2290.</summary>
     public const bool AbilityCastTimeScalesWithHaste = true;
 
-    /// <summary>Game data: <c>range</c> of ability 2290.</summary>
+    /// <summary>Game data: <c>range</c> of ability 2290; tuning <c>AoeRadius</c>.</summary>
     public const int AbilityRange = 700;
 
-    /// <summary>Game data: <c>radius</c> of ability 2290.</summary>
+    /// <summary>Game data: <c>radius</c> of ability 2290; tuning <c>AoeRadius</c>.</summary>
     public const int AbilityRadius = 700;
 
     /// <summary>Game data: <c>maxTargets</c> of ability 2290.</summary>
@@ -40,9 +40,6 @@ partial class ReaversEdge
     /// <summary>Game data: the tuning values of ability 2290.</summary>
     public static class Constants
     {
-        /// <summary>Game data: tuning <c>AoeRadius</c> of ability 2290.</summary>
-        public const int AoeRadius = 700;
-
         /// <summary>Game data: tuning <c>DamageScalingTargetCountThreshold</c> of ability 2290.</summary>
         public const int DamageScalingTargetCountThreshold = 8;
 

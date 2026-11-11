@@ -22,7 +22,8 @@ namespace FellowshipSim.Codex.Generators;
 /// proc roll), and <c>&lt;Slot&gt;ItemId</c>, <c>&lt;Slot&gt;ItemName</c> and <c>&lt;Slot&gt;ItemIcon</c> for each item
 /// granting the passive (one item line per hero, one constant set per item ID). <c>RelicPassiveItems</c> is a
 /// <c>public static readonly RelicItem[]</c> of those items, each with its ID, name and icon URL. The record's tuning values are in a nested <c>Constants</c>
-/// under their <see cref="TuningNames"/> names, with no hero as the record's hero. The class's own part has the passive's
+/// under their <see cref="TuningNames"/> names, with no hero as the record's hero. A tuning key with a field's value
+/// (<see cref="FieldTuning"/>) has no constant in <c>Constants</c>, and the field's summary names it. The class's own part has the passive's
 /// behaviour and its <c>Id</c>, <c>Name</c> and <c>Items</c> overrides. <c>GameIcons.RelicItems</c> has the icon URLs of
 /// the items in the slots of the items granting a relic passive, other than those granting a passive with a class, by ID.
 /// A member of the class or a base class with a
@@ -59,7 +60,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     /// A constant of a relic passive record: its name, C# type and literal, and its summary. An item constant with no type
     /// has several items under its name, and its summary names them.
     /// </summary>
-    private sealed record Constant(string Name, string Type, string Literal, string Summary);
+    private sealed record Constant(string Name, string Type, string Literal, string Summary, string? Field = null);
 
     /// <summary>An item granting a relic passive: its ID, name, slot and icon URL (empty for none).</summary>
     private sealed record Item(int Id, string Name, string Slot, string Icon);
@@ -186,7 +187,12 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
             string name = p.Name!.Trim();
             // Each item has a line per hero: one item per ID.
             var granting = items.Where(i => i.PassiveId == p.Id).Select(i => i.Item).Distinct().OrderBy(i => i.Id).ToList();
-            records.Add(new Record(p.Id, name, PascalCase(name), new([.. granting]), new([.. FieldsOf(p)]), new([.. TuningsOf(p)])));
+            var fields = FieldsOf(p);
+            var keys = FieldTuning.KeysOf(p, fields.Select(f => f.Field).OfType<string>(), p);
+            var merged = new HashSet<string>(keys.Values.SelectMany(k => k), StringComparer.Ordinal);
+            records.Add(new Record(p.Id, name, PascalCase(name), new([.. granting]),
+                new([.. fields.Select(f => f.Field != null && keys.TryGetValue(f.Field, out var k) ? f with { Summary = FieldTuning.Summary(f.Summary, k) } : f)]),
+                new([.. TuningsOf(p).Where(t => !merged.Contains(t.Key))])));
         }
         // The slots of the items granting a relic passive, and every item of those slots with an icon.
         var relicSlots = new HashSet<string>(items.Select(i => i.Item.Slot), StringComparer.Ordinal);
@@ -207,7 +213,7 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
         {
             fields.Add(new Constant("RelicPassiveIcon", "string", Literal(Textures.Url(icon)), $"Game data: the full size image URL of <c>icon</c> of relic passive {p.Id}."));
         }
-        AddNumber(fields, "RelicPassiveCooldown", p.Cooldown, $"Game data: <c>cooldown</c> of relic passive {p.Id}.");
+        AddNumber(fields, "RelicPassiveCooldown", p.Cooldown, $"Game data: <c>cooldown</c> of relic passive {p.Id}.", "cooldown");
         if (p.ProcRolls is [{ ProcsPerMinute: { } ppm } roll])
         {
             string formula = roll.Formula is { Length: > 0 } f ? $" ({Escape(f)})" : "";
@@ -220,11 +226,11 @@ public sealed class RelicPassiveGenerator : IIncrementalGenerator
     /// <summary>The URL of a texture's full size image; empty for no texture.</summary>
     private static string UrlOf(string? texture) => texture is { Length: > 0 } ? Textures.Url(texture) : "";
 
-    private static void AddNumber(List<Constant> fields, string name, double? value, string summary)
+    private static void AddNumber(List<Constant> fields, string name, double? value, string summary, string? field = null)
     {
         if (value is not { } v) return;
         bool whole = v == Math.Floor(v) && Math.Abs(v) <= int.MaxValue;
-        fields.Add(new Constant(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary));
+        fields.Add(new Constant(name, whole ? "int" : "double", whole ? ((int)v).ToString(CultureInfo.InvariantCulture) : Number(v), summary, field));
     }
 
     /// <summary>The record's tuning keys, in the order of the game data.</summary>

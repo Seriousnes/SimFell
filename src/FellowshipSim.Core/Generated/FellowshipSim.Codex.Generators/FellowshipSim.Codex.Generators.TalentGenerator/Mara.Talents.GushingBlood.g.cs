@@ -13,7 +13,7 @@ partial class GushingBlood
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 122.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/Berserker5_full.webp";
 
-    /// <summary>Game data: <c>radius</c> of talent 122.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 122; tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.MaxRadius</c>.</summary>
     public const int TalentRadius = 600;
 
     /// <summary>Game data: the tuning values of talent 122.</summary>
@@ -33,9 +33,6 @@ partial class GushingBlood
 
         /// <summary>Game data: tuning <c>Mara.ChargedDoubleAttackBuilder.Poison.BleedMultiplier</c> of talent 122; Predator's Rush (effect 1715), DamageScale MultiplyCompound.</summary>
         public const double ChargedDoubleAttackBuilderPoisonBleedMultiplier = 1.5;
-
-        /// <summary>Game data: tuning <c>Mara.ChargedResourceRefillSelfBuff.Talent.BleedAttackSpenderBleedAoe.MaxRadius</c> of talent 122; ability 1517.</summary>
-        public const int ChargedResourceRefillSelfBuffTalentBleedAttackSpenderBleedAoeMaxRadius = 600;
     }
 
     public override string? Icon => TalentIcon;

@@ -13,7 +13,7 @@ partial class GrimHarvest
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 766.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Gunde_Sawblade_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 766.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 766; tuning <c>Duration</c>, <c>Gunde.TargetedAoeProjectile.Talent.Empowered.Duration</c>.</summary>
     public const int TalentDuration = 8;
 
     /// <summary>Game data: the tuning values of talent 766.</summary>
@@ -21,9 +21,6 @@ partial class GrimHarvest
     {
         /// <summary>Game data: tuning <c>AddedCritChance, Gunde.TargetedAoeProjectile.Talent.Empowered.AddedCritChance</c> of talent 766; ability 2263.</summary>
         public const int AddedCritChance = 1;
-
-        /// <summary>Game data: tuning <c>Duration, Gunde.TargetedAoeProjectile.Talent.Empowered.Duration</c> of talent 766; ability 2263.</summary>
-        public const int Duration = 8;
 
         /// <summary>Game data: tuning <c>ProcChance, Gunde.TargetedAoeProjectile.Talent.Empowered.ProcChance</c> of talent 766; ability 2263.</summary>
         public const double ProcChance = 0.06;

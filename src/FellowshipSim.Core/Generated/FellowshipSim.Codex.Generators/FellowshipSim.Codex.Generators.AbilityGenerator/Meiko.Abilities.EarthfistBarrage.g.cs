@@ -19,10 +19,10 @@ partial class EarthfistBarrage
     /// <summary>Game data: <c>cooldown</c> of ability 1112.</summary>
     public const int AbilityCooldown = 45;
 
-    /// <summary>Game data: <c>channelTime</c> of ability 1112.</summary>
+    /// <summary>Game data: <c>channelTime</c> of ability 1112; tuning <c>Duration</c>.</summary>
     public const int AbilityChannelTime = 1;
 
-    /// <summary>Game data: <c>channelTick</c> of ability 1112.</summary>
+    /// <summary>Game data: <c>channelTick</c> of ability 1112; tuning <c>TickInterval</c>.</summary>
     public const double AbilityChannelTick = 0.25;
 
     /// <summary>Game data: <c>resource</c> of ability 1112.</summary>
@@ -36,9 +36,6 @@ partial class EarthfistBarrage
     {
         /// <summary>Game data: tuning <c>AgilityCoefficient</c> of ability 1112.</summary>
         public const double AgilityCoefficient = 1.2696;
-
-        /// <summary>Game data: tuning <c>Duration</c> of ability 1112.</summary>
-        public const int Duration = 1;
 
         /// <summary>Game data: tuning <c>FinalHit.AgilityCoefficient</c> of ability 1112.</summary>
         public const double FinalHitAgilityCoefficient = 2.9383;
@@ -78,9 +75,6 @@ partial class EarthfistBarrage
 
         /// <summary>Game data: tuning <c>Talent.IncreasedDamage</c> of ability 1112; DamageScale Multiplicitive.</summary>
         public const double TalentIncreasedDamage = 1.15;
-
-        /// <summary>Game data: tuning <c>TickInterval</c> of ability 1112.</summary>
-        public const double TickInterval = 0.25;
 
         /// <summary>Game data: tuning <c>YellowEnergyCost</c> of ability 1112.</summary>
         public const int YellowEnergyCost = 3;

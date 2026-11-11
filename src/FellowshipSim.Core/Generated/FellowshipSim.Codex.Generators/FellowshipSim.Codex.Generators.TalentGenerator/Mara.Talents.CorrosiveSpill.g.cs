@@ -13,10 +13,10 @@ partial class CorrosiveSpill
     /// <summary>Game data: the full size image URL of <c>icon</c> of talent 206.</summary>
     public const string TalentIcon = "https://cdn.codex.fellowshipanalyzer.com/ui/T_Icon_Unholy_197_full.webp";
 
-    /// <summary>Game data: <c>duration</c> of talent 206.</summary>
+    /// <summary>Game data: <c>duration</c> of talent 206; tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Duration</c>.</summary>
     public const int TalentDuration = 3;
 
-    /// <summary>Game data: <c>radius</c> of talent 206.</summary>
+    /// <summary>Game data: <c>radius</c> of talent 206; tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Radius</c>.</summary>
     public const int TalentRadius = 500;
 
     /// <summary>Game data: the tuning values of talent 206.</summary>
@@ -33,12 +33,6 @@ partial class CorrosiveSpill
 
         /// <summary>Game data: tuning <c>Debuff.TickInterval, Mara.Talent.ComboPointsChanceAoeDamage.Debuff.TickInterval</c> of talent 206; Corrosive Spill (effect 2310).</summary>
         public const double DebuffTickInterval = 1.5;
-
-        /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Duration</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-        public const int TalentComboPointsChanceAoeDamageDuration = 3;
-
-        /// <summary>Game data: tuning <c>Mara.Talent.ComboPointsChanceAoeDamage.Radius</c> of talent 206; Corrosive Spill (ability 1583).</summary>
-        public const int TalentComboPointsChanceAoeDamageRadius = 500;
     }
 
     public override string? Icon => TalentIcon;
