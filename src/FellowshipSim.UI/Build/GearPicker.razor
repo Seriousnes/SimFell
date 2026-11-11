@@ -46,7 +46,7 @@
                 bool equipped = worn?.Id == item.Id;
                 <button @key="item.Id" type="button" role="option" class="picker-row item @(equipped ? "selected" : "")" aria-selected="@equipped"
                         @onclick="() => Pick(item.Id)">
-                    <img class="item-icon @(item.Legendary ? "legendary" : "")" src="@GameIcons.Url(item.Icon)" alt="" width="36" height="36" loading="lazy" />
+                    <img class="item-icon @(item.Legendary ? "legendary" : "")" src="@item.Icon" alt="" width="36" height="36" loading="lazy" />
                     <span class="item-name">
                         <span class="@(item.Legendary ? "legendary-name" : "")">@item.Name</span>
                         @if (equipped)
@@ -105,9 +105,8 @@
 
     private int Tempers => Editor.Tempers(Slot);
 
-    /// <summary>The icon of an empty <paramref name="slot"/> (the game's; legs are its waist).</summary>
-    public static string EmptyIconUrl(GearSlot slot) =>
-        GameIcons.Url($"T_Icons_Gear_{(GearSlots.Kind(slot) == GearKind.Legs ? "Waist" : GearSlots.Kind(slot).ToString())}");
+    /// <summary>The icon URL of an empty <paramref name="slot"/>.</summary>
+    public static string EmptyIconUrl(GearSlot slot) => GameGearData.EmptySlotIcons[GearSlots.Kind(slot)];
 
     private string Label(string column) => column == "Main" ? Editor.Catalog.MainStatShort : column;
 

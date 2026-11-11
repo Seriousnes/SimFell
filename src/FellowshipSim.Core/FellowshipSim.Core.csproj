@@ -26,7 +26,8 @@
 
   <!--
     Game data in codex-export/ (tools/download-codex-export.sh): each creature's, dungeon's, hero's, ability's, talent's,
-    legendary's, augmentation's, glyph's, weapon's and relic passive's class (FellowshipSim.Codex.Generators).
+    legendary's, augmentation's, glyph's, weapon's and relic passive's class, and every hero's gear (GameGearData), from
+    FellowshipSim.Codex.Generators.
   -->
   <PropertyGroup>
     <CodexExportFolder>$(MSBuildThisFileDirectory)../../codex-export/</CodexExportFolder>

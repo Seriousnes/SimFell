@@ -36,3 +36,8 @@ CODEX036 | Codex | Error | DungeonGenerator: a dungeon constant's name is a memb
 CODEX037 | Codex | Warning | DungeonGenerator: a dungeon placement names no creature record
 CODEX038 | Codex | Error | TuningNames: two tuning keys of a record have different values and one constant name
 CODEX039 | Codex | Error | TuningNames: a hand-written constant or static readonly field of the class has the name of a member of its Constants
+CODEX040 | Codex | Error | ItemGenerator: an item has a stat no build holds
+CODEX041 | Codex | Error | ItemGenerator: an item at its most tempers has other stats than its untempered stats and the tempers
+CODEX042 | Codex | Error | ItemGenerator: a wearable slot has no GearKind member
+CODEX043 | Codex | Error | ItemGenerator: two items of one hero have one ID
+CODEX044 | Codex | Error | ItemGenerator: a weapon power grants no ability
