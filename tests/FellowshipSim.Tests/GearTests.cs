@@ -42,12 +42,14 @@ public class GearTests
     }
 
     [Fact]
-    public void A_Temper_Adds_One_To_Each_Of_An_Items_Stats()
+    public void A_Temper_Adds_One_To_Each_Stat_And_The_Stamina_Per_Temper_To_Stamina()
     {
-        // Game data: Bonebleached Headwrap at item level 315, untempered and at full tempers.
+        // Game data: Bonebleached Headwrap at item level 315, untempered and at full tempers. A temper at item level 315 adds
+        // 2 Stamina (items.temperStaminaMultiplierAtItemLevel).
         var headwrap = GearItem.Find("Rime", 5885)!;
+        Assert.Equal(2, headwrap.StaminaPerTemper);
         Assert.Equal(new GearStats(22, 7, 11, 0, 0, 5), headwrap.StatsAt(0));
-        Assert.Equal(new GearStats(30, 15, 19, 0, 0, 13), headwrap.StatsAt(8));
+        Assert.Equal(new GearStats(38, 15, 19, 0, 0, 13), headwrap.StatsAt(8));
         Assert.Equal(headwrap.StatsAt(8), headwrap.StatsAt(12));
         // A legendary takes no tempers.
         var helm = GearItem.Find("Rime", 5899)!;
@@ -96,9 +98,9 @@ public class GearTests
         Assert.Equal(5926, editor.Build.Relic1ItemId);
         Assert.Equal(GearItem.Find("Rime", 5984)!.WeaponAbilityId, editor.Build.WeaponAbilityId);
 
-        // Two fewer tempers on the head take 2 from each of its stats.
+        // Two fewer tempers on the head take 2 from each of its stats and 4 from its Stamina.
         editor.SetTempers(GearSlot.Head, 6);
-        Assert.Equal(expected + new GearStats(-2, -2, -2, 0, 0, -2), Stats(editor.Build));
+        Assert.Equal(expected + new GearStats(-4, -2, -2, 0, 0, -2), Stats(editor.Build));
 
         // A legendary in its slot is the build's legendary; emptying a slot takes its item off.
         editor.Wear(GearSlot.Chest, 5898);

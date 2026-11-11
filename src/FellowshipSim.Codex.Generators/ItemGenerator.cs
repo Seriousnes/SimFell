@@ -19,7 +19,7 @@ namespace FellowshipSim.Codex.Generators;
 /// <c>items.slotNames</c> with a slot weight in <c>statCalculation.slotWeights</c>. Its gear kind is the <c>GearKind</c>
 /// member of the slot's name or of its singular (the game's <c>Wrists</c> is <c>GearKind.Wrist</c>). Each item has its stats
 /// untempered at its drop item level (<c>dropItemLevels</c>), from FellowshipAnalyzer.Codex.SDK's stat calculation, its
-/// most tempers, its dungeon sources, its weapon power's ability and its icon URL. <c>EmptySlotIcons</c> has each gear
+/// most tempers, the Stamina a temper adds (<c>items.temperStaminaMultiplierAtItemLevel</c>), its dungeon sources, its weapon power's ability and its icon URL. <c>EmptySlotIcons</c> has each gear
 /// kind's empty slot icon URL from <c>slotIcons</c>. A stat no build holds is CODEX040, an item at its most tempers with
 /// stats other than its untempered stats and the tempers is CODEX041, a wearable slot with no <c>GearKind</c> member is
 /// CODEX042, two items of one hero with one ID are CODEX043, and a weapon power granting no ability is CODEX044. The game
@@ -58,10 +58,10 @@ public sealed class ItemGenerator : IIncrementalGenerator
         "Item {0} ({1}) of {2} grants weapon power {3}, and the weapon power grants no ability", "Codex", DiagnosticSeverity.Error, true);
 
     /// <summary>
-    /// A hero's item: its hero, ID, name and slot, its item level and most tempers, whether it is legendary, its weapon
-    /// ability, its untempered stats, its dungeon sources and its icon URL.
+    /// A hero's item: its hero, ID, name and slot, its item level, most tempers and Stamina per temper, whether it is
+    /// legendary, its weapon ability, its untempered stats, its dungeon sources and its icon URL.
     /// </summary>
-    private sealed record Item(string Hero, int Id, string Name, string Slot, int ItemLevel, int MaxTempers, bool Legendary,
+    private sealed record Item(string Hero, int Id, string Name, string Slot, int ItemLevel, int MaxTempers, int StaminaPerTemper, bool Legendary,
         int WeaponAbilityId, EquatableArray<int> Stats, EquatableArray<string> Dungeons, string Icon);
 
     /// <summary>A wearable slot and its empty slot icon URL; an empty icon for a slot with no <c>slotIcons</c> entry.</summary>
@@ -144,13 +144,15 @@ public sealed class ItemGenerator : IIncrementalGenerator
             string id = document.Id.ToString(CultureInfo.InvariantCulture);
             int level = export.DropItemLevel(document);
             int maxTempers = export.MaxUpgrades(document, new ItemScaling { ItemLevel = level }) ?? 0;
+            // A multiplier with a fraction fails the temper check.
+            int staminaPerTemper = (int)Math.Round(Tempering.StaminaMultiplier(settings.Items, level));
             int[]? stats = StatsOf(export, document, level, 0, hero, problems);
             if (stats == null) continue;
             if (maxTempers > 0 && StatsOf(export, document, level, maxTempers, hero, problems) is { } most)
             {
-                // Each stat but Stamina gains one per temper.
-                int[] expected = [.. stats.Select((s, i) => s == 0 || i == StaminaIndex ? s : s + maxTempers)];
-                if (!most.Where((_, i) => i != StaminaIndex).SequenceEqual(expected.Where((_, i) => i != StaminaIndex)))
+                // Stamina gains the Stamina per temper, and each other stat one, per temper.
+                int[] expected = [.. stats.Select((s, i) => s == 0 ? 0 : s + maxTempers * (i == StaminaIndex ? staminaPerTemper : 1))];
+                if (!most.SequenceEqual(expected))
                 {
                     problems.Add(new Problem(TemperCheck.Id, new([id, name, hero, $"[{string.Join(", ", most)}]", $"[{string.Join(", ", expected)}]"])));
                 }
@@ -169,7 +171,7 @@ public sealed class ItemGenerator : IIncrementalGenerator
                 }
             }
             string icon = document.Icon is { Length: > 0 } texture ? Url(texture) : "";
-            items.Add(new Item(hero, document.Id, name, slot, level, maxTempers, document.Rarity == Rarity.Legendary, weaponAbility,
+            items.Add(new Item(hero, document.Id, name, slot, level, maxTempers, staminaPerTemper, document.Rarity == Rarity.Legendary, weaponAbility,
                 new([.. stats]), new([.. dungeons]), icon));
         }
         return new Export(new([.. items]), new([.. slots]), new([.. problems]), buildDate);
@@ -253,7 +255,7 @@ public sealed class ItemGenerator : IIncrementalGenerator
             foreach (var item in hero.OrderBy(i => kindList.IndexOf(kindOf[i.Slot])).ThenBy(i => i.Name, StringComparer.Ordinal))
             {
                 source.Append("            new(").Append(item.Id).Append(", ").Append(Literal(item.Name)).Append(", GearKind.").Append(kindOf[item.Slot])
-                    .Append(", ").Append(item.ItemLevel).Append(", ").Append(item.MaxTempers).Append(", ").Append(item.Legendary ? "true" : "false")
+                    .Append(", ").Append(item.ItemLevel).Append(", ").Append(item.MaxTempers).Append(", ").Append(item.StaminaPerTemper).Append(", ").Append(item.Legendary ? "true" : "false")
                     .Append(", ").Append(item.WeaponAbilityId).Append(", new(").Append(string.Join(", ", item.Stats)).Append("), [")
                     .Append(string.Join(", ", item.Dungeons.Select(Literal))).Append("], ").Append(Literal(item.Icon)).Append("),\n");
             }
