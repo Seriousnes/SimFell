@@ -59,6 +59,11 @@ dealer's (`Engine/Replay/DungeonReader`):
   its own with the spawns of its creature met within 3 seconds of it.
 - A pull's duration runs from its first contact to its last death. Its downtime is the time since the pulls before it
   ended; a pull starting before that end joins the pull before it through `pull_with` at its log offset.
+- Each enemy is in combat from its own first contact (`first_seen`) to its own death (`dies`), or from its pull's start
+  when it dies without contact. A pull's enemies of one creature within 2 seconds of each other in both are one line with
+  the mean of each, and each boss has a line.
+- The affixes are the affixes of the fight's `dungeonstart` event that the engine models. Each Anomalous Orb line has
+  `priority=1`.
 
 **Export** shows the dungeon as text, with **Copy** and **Download**:
 
@@ -67,12 +72,14 @@ dealer's (`Engine/Replay/DungeonReader`):
 dungeon=Default
 difficulty=10
 time_limit=1800
+affixes=anomalous_orbs,storm_shield
 # Imps and their captain.
 pull.1=/duration=40
 pull.1+=/count=5,name=Imp,spirit_points=3,hit_points=7857
 # Big Cast is interruptible.
 pull.1+=/count=1,name="Ogre Captain",spirit_points=10,priority=1,hit_points=11546,interrupt_ability="Big Cast",cooldown=20,cast_time=2.5
-pull.2=/count=4,name=Ghoul,hit_points=5000
+pull.2=/count=4,name=Ghoul,hit_points=5000,dies=30
+pull.2+=/count=2,name=Ghoul,hit_points=5000,first_seen=12.5
 pull.2+=/duration=45,downtime=20
 pull.3=/count=3,name=Bat,spirit_points=2,hit_points=3374
 pull.3+=/duration=30,chain_with=2
@@ -88,15 +95,37 @@ group has a comment starts with its options line, or with an empty `pull.X=/` li
 `difficulty` is an Eternal level, 0 for Base. Each difficulty multiplies creature health and damage by the game's scale
 for it: 1.31 at Base, 58.26 at Eternal 10 and 351.49 at Eternal 32 for health.
 
+`affixes` names the run's dungeon affixes, separated by commas. A text without it has none. The dungeon editor has a
+checkbox for each.
+
+- `anomalous_orbs` (Anomalous Orbs): each enemy line named `Anomalous Orb` is an orb. A text with no such line has three
+  orbs 128 to 148 seconds into the run, then every 128 to 148 seconds of combat, each in combat for 13 seconds. An orb is a priority target
+  (`target.is_priority`) with 0 Spirit Points. It casts Detonate (`target.casting`) from entering combat. The party stops
+  each cast after 2.15 seconds, and the orb casts again 9 seconds later, or 12 seconds after an interrupt of the hero's.
+  An orb takes 4 times the damage while it is not casting. Its death gives the hero a stack of Anomalous Residue: 480
+  power of the orb's gem colour for 60 seconds, 3 stacks of a colour at most.
+- `storm_shield` (Storm Shield): every 59 to 72 seconds of the run, the hero has Storm Shield for 8 seconds, then
+  Storm's Fury for 20 seconds: 20% crit chance.
+
+A wave of orbs or a charge due in a boss fight comes 12.4 seconds later, and a boss's end drops it for a new wait.
+
 `pull.X=/` starts pull X and `pull.X+=/` adds a line to it. A pull name has letters, digits and `_`. A line is an enemy
 group (`count=`), a boss (`boss.N`; several make a council) or the pull's options. Group values: `count`, `name` (in
 quotes when it has a comma), `spirit_points` (each enemy's), `priority=1`, `hit_points` (the creature's health, before
 the difficulty scale), `interrupt_ability`, `cooldown` and `cast_time` (2.5 s unless given; the first cast is one
-cooldown after the enemy arrives). A group without `spirit_points` or `hit_points` takes the value of the game data's
-creature of its name, so `name="Ancient Koros"` alone is the boss with its game data health and Spirit Points. Pull
-options:
+cooldown after the enemy arrives), `first_seen` and `dies`. A group without `spirit_points` or `hit_points` takes the
+value of the game data's creature of its name, so `name="Ancient Koros"` alone is the boss with its game data health and
+Spirit Points.
 
-- `duration`: seconds over which the pull's enemies' health falls from full to none. Every pull has one.
+A group's enemies enter combat `first_seen` seconds after their pull starts (0 unless given) and die `dies` seconds after
+it starts (the pull's `duration` unless given). Each enemy's health falls from full to none between the two. `dies` is
+more than `first_seen` and at most the pull's `duration`. In the example, pull 2's first four Ghouls die 30 s into the
+pull, and two more enter combat at 12.5 s and die at the pull's 45 s. While a pull has no enemy in combat and one still to
+enter, the fight is as in downtime: the hero takes no action. `active_enemies` counts the enemies in combat.
+
+Pull options:
+
+- `duration`: seconds from the pull's start to its enemies' deaths. Every pull has one.
 - `downtime`: seconds before the pull starts, after the pull before it ends.
 - `chain_with=X`: the pull starts as pull X ends, with no downtime.
 - `pull_with=X`: pull X's enemies join this pull, at its start or at one trigger: `offset_ms` after the start,
@@ -105,7 +134,7 @@ options:
 - `final=1`: the pull's boss is the final boss.
 
 Pulls run in the order of their `pull.X=/` lines. A pull taken in by another runs with it, and a chained pull runs as the
-pull it names ends. The fight's length variance varies each `duration`.
+pull it names ends. The fight's length variance varies each `duration`, `first_seen` and `dies`.
 
 Action lists read the fight with these values:
 
@@ -121,7 +150,7 @@ Action lists read the fight with these values:
 | `dungeon_event.fight.remains` | seconds until the fight ends, an estimate in a dungeon |
 | `target.is_boss` | 1 when the target is a boss |
 | `target.is_priority` | 1 when the target is a priority target |
-| `target.time_to_die` | seconds until the target dies, from its health loss so far, its pull duration, or the training dummy fight's end |
+| `target.time_to_die` | seconds until the target dies, from its health loss so far, its group's `dies` or pull duration, or the training dummy fight's end |
 | `target.casting` | 1 when the target is casting an interruptible ability |
 | `target.cast.remains` | seconds until the target's cast ends; 0 when it is not casting |
 
