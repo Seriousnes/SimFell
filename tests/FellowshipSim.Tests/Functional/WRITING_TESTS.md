@@ -28,12 +28,15 @@ The whole suite runs in well under a second, since every fight is a few seconds 
 ## The core rules
 
 - **Normative.** The test states the game's rule. A failure means the engine is wrong or the rule changed. Never bend a test to match the
-  engine. When the rule is unverified, skip the test (see Skipping).
+  engine. When the game is known to differ from its tooltip (from logs or game data), the test states what the game does. When the rule is
+  unverified, the test still runs, with a TODO (see Unverified rules).
 - **One rule per test**, as one tooltip or one sentence of a tooltip states it. "Ice Blitz makes you deal 20% more damage for 20 seconds,
   and does not use the global cooldown" is one test. A cost and a buff, which would be stated separately, are two tests.
 - **Deterministic by intent.** The test forces every random outcome it reads, so nothing depends on the seed (see Dice).
 - **State first.** Assert state before and after the action. Read events only for timing, order and per-hit values (see Asserting).
 - **Durations are checked on both sides of their end**, not through the engine's prediction (see Time boundaries).
+- **Hit timing is not tested.** When a hit lands within a cast (spin spacing, an extra strike's delay, a proc's first attack) almost
+  never matters, so no test checks it unless the user asks for one (see Time boundaries).
 - **Damage is a ratio** between two fights that differ only by the thing tested (see Damage).
 - **Readable as pseudo-code.** Someone who knows the game but not the engine can read the body and agree with it line by line.
 
@@ -43,6 +46,11 @@ The whole suite runs in well under a second, since every fight is a few seconds 
 
 - `Cast<T>()` casts and returns once the hero is free again (cast, channel and global cooldown over). `TryCast` returns the refusal
   instead of throwing.
+- `StartCast<T>()` starts a cast and returns at once, with the cast under way: to try another cast in the middle of it
+  (`f.StartCast<FocusedShot>(); f.Wait(0.5); f.TryCast<EventHorizon>()`). `Wait` lets the cast go on. Use it extremely rarely: only in
+  a test whose very point is that one action blocks another.
+- `CastWhenReady` waits out exactly the ability's cooldown first, for a test that casts one ability again and again. A loop that casts
+  until something happens has a bound (`for (int cast = 0; cast < 50 && ...; cast++)`), so a broken rule fails instead of hanging.
 - `Wait`/`WaitUntil` let time pass.
 - Between calls the fight is paused, so the test reads the state at an exact time.
 
@@ -57,6 +65,7 @@ goes through `SimulationContext.Outcomes`. The harness forces those outcomes by 
 | `StepVerbs` | reads and sets state |
 | `StepQueries` | reads events |
 | `StepAsserts` | holds the tolerances |
+| `TickMath` | `FullTicks` and `PartialTick`, for tick counts stated as a formula |
 | `Checks` | collects several checks in one test |
 
 Nothing outside the tests uses the harness. Its own tests are `Harness/StepDriverTests`.
@@ -69,6 +78,10 @@ Nothing outside the tests uses the harness. Its own tests are `Harness/StepDrive
   - `SpiritRefund`: what a Spirit Refund gives every hero, as a theory over the heroes.
   - `CriticalStrike`: how much a critical strike deals, grievous ones included. It uses Rime's Frost Bolt as the instrument, since the rule
     does not depend on the hero.
+  - `RisingSpirit`, `SpiritPoints`: the Spirit Refund's buff, and Spirit Points' generation and cap.
+- `Gear/`: one file per item, over every hero that can wear it, named `<Kind><Item>.cs` in a folder per kind: `Aspects/AspectRubyStorm`,
+  `Gems/GemEmerald`, `Glyphs/GlyphMonarch`, `Relics/RelicAccursedTrophy`, `Sigils/SigilKindling`, `Weapons/WeaponChronoshift`.
+  `Weapons/WeaponCooldowns` has every weapon ability's cooldown, and which can be cast during the global cooldown.
 - One folder per hero (`Rime/`), one file per category. Each file and its class carry the hero's name before the category
   (`Rime/RimeAbilities.cs`). All files share one namespace, so without the name the test explorer would show several `Abilities`.
 
@@ -146,11 +159,13 @@ public void Frost_Bolt_Gives_3_Anima_When_The_Cast_Completes()
 
 - `StepFights.Rime()` builds a bare hero: no gear, no talents, 0% crit, 0% Spirit. `StepFights.Of("Rime", ...)` is the same builder, for
   tests that run over several heroes. Both take `haste`, `enemies`, `talents`, `crit`, `spirit`, `mainStat`, `expertise`,
-  `weaponAbilityId`, `legendaries` and `gemPower`.
+  `weaponAbilityId`, `legendaries`, `gemPower`, `glyphs`, `augmentations` (aspects and sigils) and `relics`.
+  `StepFights.Ranked(TheMonarch.GlyphId, rank)` is a glyph, aspect or sigil at a rank, or nothing at rank 0.
 - **The main stat is `mainStat`, never Intellect, Strength or Agility.** Every hero's main stat works the same way, and what the game calls
   it is cosmetic. Realistic values are around 100–200.
 - **Set-up shortcuts** for state are fine and expected: `f.Set(Hero.SpiritPoints, 100)`, `f.Apply(GlacialAssault.Buff, stacks: 4)`,
-  `f.RimeOf().WinterOrbs = 2`. Say why in a comment on the line. Use the hero's own class (`f.RimeOf()`) only for the hero's own state.
+  `f.RimeOf().WinterOrbs = 2`, `f.ResetCooldown<StarfallVolley>()`, `f.Remove(Chronoshift.Barrier)`. Say why in a comment on the line. Use the hero's own class (`f.RimeOf()`) only for the hero's own state.
+  `f.Defeat(enemy)` kills an enemy, since the engine's enemies die on a schedule, never from damage. `f.SetHealth(0.26)` wounds one.
 - **Real sources, not engine values.** An effect comes from what gives it in the game: a talent, a gem's power
   (`gemPower: new() { [GemColor.Emerald] = 1500 }` for Blessing of the Commander - II), a weapon. Never set an engine stat
   (`f.Hero.Stats.CooldownReductionPct = 0.1`) or add an engine hook with made-up values, or the test would pass on a rule no player can
@@ -183,13 +198,13 @@ f.Cast<FrostBolt>();
 Assert.Equal(3, f.Amount(Rime.Anima));
 ```
 
-- **Read state through the verbs** (`Has`, `Stacks`, `Amount`, `Haste`, `Spirit`, `IsReady`, `Charges`, `Enemies`), not through
-  `f.Hero....(…, f.Now)` or `f.Context...`. When a set-up line already sets the starting state (`f.RimeOf().WinterOrbs = orbs`), don't
-  assert it again.
+- **Read state through the verbs** (`Has`, `Stacks`, `Amount`, `Haste`, `Spirit`, `Expertise`, `MainStat`, `Health`, `GemPower`, `IsReady`,
+  `Charges`, `AccelerationRate`, `Enemies`, `HasDebuff("Searing Blaze")`), not through `f.Hero....(…, f.Now)` or `f.Context...`. When a
+  set-up line already sets the starting state (`f.RimeOf().WinterOrbs = orbs`), don't assert it again.
 - **Events are for timing, order and per-hit values.** `Cast` returns only once the hero is free again, so state cannot show the middle of
   a cast: `Assert.Equal(f.CompletedAt("Frost Bolt"), f.Gains("Anima").Single().Time.TotalSeconds)`.
-- **Read events through the named queries** (`Damage`, `Gains`, `Spends`, `Overflows`, `CastsStarted`, `CastsCompleted`, `AurasRemoved`,
-  `CompletedAt`, `LastCastDuration`). Never filter `f.Events` in a test.
+- **Read events through the named queries** (`Damage`, `AllDamage`, `DamageBetween`, `Crits`, `DirectHits`, `Ticks`, `Gains`, `Spends`,
+  `Overflows`, `CastsStarted`, `CastsCompleted`, `AurasRemoved`, `CompletedAt`, `LastCastDuration`). Never filter `f.Events` in a test.
 - **A misspelled hit name is silent.**
   - Casts and resources are looked up in the hero's own lists, and a name the hero does not have throws.
   - Auras are named by their definition (`BurstingIce.WintersEmbrace`), so a typo does not compile.
@@ -231,6 +246,13 @@ Assert.True(f.IsReady(ability));
 - A channel's cast completes when the channel starts, so `LastCastDuration` is 0 for it. Its length is the time the cast returns
   (`f.Seconds()` after `f.Cast<FreezingTorrent>()` at 0s).
 
+### Hit timing
+
+Precise timing is irrelevant almost all the time. Test how long a buff, debuff, cooldown or window lasts, as above: that decides what
+lands in it. Do not test when a hit lands within a cast (the spacing of spins within a cast, an extra strike's delay, a proc's or
+a summon's first attack, a travel time), unless the user asks for that test. A small time offset is out of the sim's current scope: it
+does not model flight time for most abilities. Waiting long enough for the hits to land (`f.Wait(4.0); // the comet falls`) is fine.
+
 ## Damage
 
 ```csharp
@@ -265,6 +287,12 @@ AssertRatio(1.2, blitzBoltDamage / plainBoltDamage);
 - Assert counts, stacks and resources exactly, with `Assert.Equal`.
 - **A rule stated as a formula is checked against the formula**, written out in the test from the row's inputs
   (`int hits = FullTicks(3.0, tick) + PartialTick(3.0, tick, 0.1)`), not against numbers worked out by hand.
+- **Tick counts**: floor(duration / period x (1 + haste)), plus 1 when a last partial tick comes. Its threshold is the time left after
+  the last full tick:
+  - a damage over time (a Dot or Hot effect) gives a partial tick when at least 0.1 seconds (3 server frames) are left:
+    `PartialTick(duration, tick, 0.1)`;
+  - another periodic effect, such as a channel whose hits are counted, gives one when at least a server frame (1/30 second) is left:
+    `PartialTick(duration, tick, PeriodicEffect.ServerFrameSeconds)`. This one is not fully confirmed in game; say so in the doc comment.
 - A wider tolerance needs a reason in the doc comment.
 
 ## Naming abilities
@@ -288,16 +316,14 @@ are read by their game name: `f.Damage("Frost Swallows")`.
 - A helper sets up or measures. It never hides the assert. The one exception to "never hides the act" is the fight-building local
   function of Damage, where the test is the comparison.
 
-## Skipping
+## Unverified rules
 
-A skipped test states a rule the engine does not meet yet, or one not yet confirmed. Its `Skip` reason says which. Its doc comment has a
-`TODO` saying what to check or fix, and what the engine does today:
+A test whose rule is not confirmed still runs. Its doc comment says where the engine's behaviour comes from (a log, "per the user", or
+nothing) and has a `TODO` saying what to confirm: "TODO: confirm in the game data whether the threshold counts the blast's own target"
+(Glacial Assault's explosion).
 
-- **Unverified in game:** `Skip = "To check in game: ..."`, with a TODO such as "check in game whether the stacked enemy counts" (Coalescing
-  Frost's area damage reduction).
-- **Engine disagrees with a confirmed rule:** a reason naming what the engine does.
-
-Skip only the failing rows of a theory. A skipped test is still a written test, never a placeholder with `Assert.Fail`.
+Skip a test only when the engine disagrees with a confirmed rule, with a reason naming what the engine does. A skipped test is still a
+written test, never a placeholder with `Assert.Fail`.
 
 ## Open questions
 

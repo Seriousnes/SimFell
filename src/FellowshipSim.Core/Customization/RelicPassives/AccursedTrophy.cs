@@ -13,8 +13,13 @@ public partial class AccursedTrophy : RelicPassive
 
     /// <summary>Tooltip: "increasing your Primary Stat by 20%". The relic passive record has no tuning value.</summary>
     public const double PrimaryStatBonus = 1.2;
+    /// <summary>
+    /// Per the user: it stacks with no maximum (a second ultimate within its duration adds a stack). The game has no cap; 50
+    /// is beyond reach.
+    /// </summary>
+    public const int MaxStacks = 50;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Drakheim's Absolution", EffectId, DurationSeconds,
+    public static readonly AuraDef Buff = AuraDef.Effect("Drakheim's Absolution", EffectId, DurationSeconds, MaxStacks,
         modifiers: StatModifier.More(StatType.PrimaryAttribute, PrimaryStatBonus));
 
     public override int Id => RelicPassiveId;

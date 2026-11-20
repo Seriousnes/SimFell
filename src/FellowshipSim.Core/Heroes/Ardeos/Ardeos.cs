@@ -107,6 +107,8 @@ public sealed partial class Ardeos : Hero, ITargetEffects
         AddResource(Cinders);
         SpiritRefundResource = Cinders;
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
 
         Abilities.Add(new FireBall(this));
         Abilities.Add(new FireFrogs(this));

@@ -73,6 +73,8 @@ public sealed partial class Meiko : Hero
     {
         AddResource(ComboPoints);
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         GlobalCooldownSeconds = GlobalCooldown;
         GlobalCooldownScalesWithHaste = false;
         SpiritPointsPerSpiritRefund = SpiritPointsPerRefund;

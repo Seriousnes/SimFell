@@ -6,12 +6,11 @@ namespace FellowshipSim.Tests.Functional;
 
 /// <summary>
 /// Rime's abilities, on a bare Rime (no talents unless the test is about one): each ability's own rule first, then how it works with the
-/// others. Resource gains and costs, cast times and cooldowns have their own files; Spirit Refund, which every hero shares, is in
-/// Generic/SpiritRefund.cs.
+/// others. Resource gains and costs, cast times and cooldowns have their own files, and his legendaries Specific/RimeLegendaries.cs;
+/// Spirit Refund, which every hero shares, is in Generic/SpiritRefund.cs.
 /// </summary>
 public class RimeAbilities
 {
-    private const string StackedEnemyApart = "To check in game: the engine gives the stacked enemy the full hit and the others sqrt(5 / (enemies - 1))";
 
     // ---- Damage and targeting
 
@@ -118,13 +117,13 @@ public class RimeAbilities
     }
 
     /// <summary>
-    /// Every Frost Swallow that hits adds 0.1 seconds to Ice Blitz. A Cold Snap during Ice Blitz sends 3 swallows, so Ice Blitz lasts
-    /// 20.3 seconds; with Flight of the Navir up it sends 8, so it lasts 20.8.
+    /// Every Frost Swallow that hits adds 0.1 seconds to Ice Blitz: it lasts 20 seconds plus 0.1 per swallow hit, which the test counts
+    /// from the fight. A Cold Snap during Ice Blitz sends 3 swallows, and 8 with Flight of the Navir up (checked in their own tests).
     /// </summary>
     [Theory]
-    [InlineData(false, 3)]
-    [InlineData(true, 8)]
-    public void Each_Swallow_Hit_Extends_Ice_Blitz_By_0_1_Seconds(bool withFlight, int swallowHits)
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Each_Swallow_Hit_Extends_Ice_Blitz_By_0_1_Seconds(bool withFlight)
     {
         var f = StepFights.Rime();
 
@@ -134,10 +133,42 @@ public class RimeAbilities
 
         f.Cast<ColdSnap>();
         f.Wait(3.0); // the swallows land
+        int swallowHits = f.Damage("Frost Swallows").Count;
         double end = start + 20.0 + 0.1 * swallowHits;
 
         using var check = new Checks(f);
-        check.Equal(swallowHits, f.Damage("Frost Swallows").Count);
+        check.True(swallowHits > 0, "the swallows hit");
+        f.WaitUntil(end - 0.1);
+        check.True(f.Has(IceBlitz.Buff));
+        f.WaitUntil(end + 0.1);
+        check.False(f.Has(IceBlitz.Buff));
+    }
+
+    /// <summary>
+    /// Every Frost Swallow that hits extends Ice Blitz by 0.1 seconds, whatever sent it: with Flight of the Navir's circling swallows,
+    /// Cascading Blitz's swallow for each Anima, and the Bursting Ice pulses of Bursting Swallows (whose Anima sends more still), Ice
+    /// Blitz lasts 20 seconds plus 0.1 per swallow hit, which the test counts from the fight.
+    ///
+    /// Bursting Swallows' chance is forced on for the first 2 rolls only, so the chain ends.
+    /// </summary>
+    [Fact]
+    public void Swallows_From_Every_Source_Extend_Ice_Blitz_By_0_1_Seconds_Each()
+    {
+        var f = StepFights.Rime(talents: [CascadingBlitz.TalentId, BurstingSwallows.TalentId]);
+        int rolls = 0;
+        f.ForceProcs(key => key == BurstingSwallows.ProcKey ? rolls++ < 2 : null);
+
+        f.Cast<IceBlitz>();
+        double start = f.CompletedAt("Ice Blitz");
+        f.Cast<FlightOfTheNavir>();
+
+        f.Cast<ColdSnap>();
+        f.Wait(4.0); // the chain ends
+        int swallowHits = f.Damage("Frost Swallows").Count;
+        double end = start + 20.0 + 0.1 * swallowHits;
+
+        using var check = new Checks(f);
+        check.True(swallowHits > 8, "swallows beyond the Cold Snap's 8 hit"); // so the talents sent some
         f.WaitUntil(end - 0.1);
         check.True(f.Has(IceBlitz.Buff));
         f.WaitUntil(end + 0.1);
@@ -359,10 +390,6 @@ public class RimeAbilities
 
     // ---- Area damage reduction: past a number of enemies, each enemy takes the hit times sqrt(threshold / enemies)
 
-    /// <summary>The value of the first hit named <paramref name="hit"/> on each enemy, one per enemy hit.</summary>
-    private static List<double> FirstHitOnEachEnemy(StepDriver f, string hit) =>
-        f.Damage(hit).GroupBy(h => h.Target).Select(g => g.First().Value).ToList();
-
     /// <summary>
     /// Bursting Ice's pulses lose damage once they hit more than 5 enemies: each enemy takes the damage times
     /// sqrt(5 / enemies), so the total damage does not grow as fast as the crowd.
@@ -383,8 +410,8 @@ public class RimeAbilities
             return f;
         }
 
-        double alone = FirstHitOnEachEnemy(Fight(1), "Bursting Ice").Single();
-        var crowd = FirstHitOnEachEnemy(Fight(enemies), "Bursting Ice");
+        double alone = Fight(1).FirstHitOnEachEnemy("Bursting Ice").Single();
+        var crowd = Fight(enemies).FirstHitOnEachEnemy("Bursting Ice");
 
         double expected = enemies <= 5 ? 1.0 : Math.Sqrt(5.0 / enemies);
 
@@ -412,8 +439,8 @@ public class RimeAbilities
             return f;
         }
 
-        double alone = FirstHitOnEachEnemy(Fight(1), "Ice Comet").Single();
-        var crowd = FirstHitOnEachEnemy(Fight(enemies), "Ice Comet");
+        double alone = Fight(1).FirstHitOnEachEnemy("Ice Comet").Single();
+        var crowd = Fight(enemies).FirstHitOnEachEnemy("Ice Comet");
 
         double expected = enemies <= 12 ? 1.0 : Math.Sqrt(12.0 / enemies);
 
@@ -424,18 +451,86 @@ public class RimeAbilities
     }
 
     /// <summary>
-    /// With Coalescing Frost, the eruption of frost stacks loses damage once it hits more than 5 enemies: each enemy
-    /// takes the damage times sqrt(5 / enemies).
-    ///
-    /// TODO: check in game whether the stacked enemy counts. The engine gives it the full hit and the others sqrt(5 / (enemies - 1)):
-    /// at 10 enemies, 0.745 times the hit.
+    /// With Icy Talons, Rising Talons loses damage once it hits more than 12 enemies: each enemy takes the damage times
+    /// sqrt(12 / enemies).
     /// </summary>
     [Theory]
-    [InlineData(5)]
-    [InlineData(6, Skip = StackedEnemyApart)]
-    [InlineData(10, Skip = StackedEnemyApart)]
-    [InlineData(20, Skip = StackedEnemyApart)]
-    public void Coalescing_Frost_Eruption_Loses_Damage_Past_5_Enemies(int enemies)
+    [InlineData(12)]
+    [InlineData(13)]
+    [InlineData(24)]
+    [InlineData(48)]
+    public void Rising_Talons_Loses_Damage_Past_12_Enemies(int enemies)
+    {
+        StepDriver Fight(int n)
+        {
+            var f = StepFights.Rime(enemies: n, talents: [IcyTalons.TalentId]).WithoutDamageSpread();
+            f.RimeOf().WinterOrbs = 1; // one wave
+
+            f.Cast<RisingTalons>();
+            f.Wait(5.0); // the wave lands
+            return f;
+        }
+
+        double alone = Fight(1).FirstHitOnEachEnemy("Rising Talons").Single();
+        var crowd = Fight(enemies).FirstHitOnEachEnemy("Rising Talons");
+
+        double expected = enemies <= 12 ? 1.0 : Math.Sqrt(12.0 / enemies);
+
+        using var check = new Checks();
+        check.Equal(enemies, crowd.Count, what: "enemies hit");
+        for (int i = 0; i < crowd.Count; i++)
+            check.Ratio(expected, crowd[i] / alone, what: $"enemy {i + 1}");
+    }
+
+    /// <summary>
+    /// With Glacial Assault, the explosion of a 4-stack Glacial Blast loses damage once it hits more than 12 enemies, not
+    /// counting the target the blast strikes: each enemy takes the damage times sqrt(12 / enemies hit). It hits 40 enemies at most.
+    ///
+    /// From one log (yMAZVJL9hTpFjqbC fight 7: 0.2598 of the spike "on 16"), which does not say whether 16 counts the target. TODO: confirm
+    /// in the game data whether the threshold counts the blast's own target.
+    /// </summary>
+    [Theory]
+    [InlineData(12)]
+    [InlineData(13)]
+    [InlineData(24)]
+    [InlineData(36)]
+    public void Glacial_Assault_Explosion_Loses_Damage_Past_12_Enemies_Not_Counting_The_Target(int enemiesHit)
+    {
+        StepDriver Fight(int hit)
+        {
+            var f = StepFights.Rime(enemies: 1 + hit, talents: [GlacialAssault.TalentId]).WithoutDamageSpread(); // the target, plus the enemies the explosion hits
+            f.Apply(GlacialAssault.Buff, stacks: 4);
+            f.RimeOf().WinterOrbs = 2; // enough to cast it
+
+            f.Cast<GlacialBlast>();
+            f.Wait(3.0); // the explosion lands
+            return f;
+        }
+
+        double alone = Fight(1).FirstHitOnEachEnemy("Glacial Assault").Single();
+        var crowd = Fight(enemiesHit).FirstHitOnEachEnemy("Glacial Assault");
+
+        double expected = enemiesHit <= 12 ? 1.0 : Math.Sqrt(12.0 / enemiesHit);
+
+        using var check = new Checks();
+        check.Equal(enemiesHit, crowd.Count, what: "enemies hit");
+        for (int i = 0; i < crowd.Count; i++)
+            check.Ratio(expected, crowd[i] / alone, what: $"enemy {i + 1}");
+    }
+
+    /// <summary>
+    /// With Coalescing Frost, the eruption of frost stacks hits the stacked enemy in full, and the enemies around it lose damage once
+    /// there are more than 5 of them: each takes the damage times sqrt(5 / enemies around).
+    ///
+    /// From combat logs (10 fights, 300 eruptions: CoalescingFrost.cs); the tooltip suggests every enemy hit counts and loses damage.
+    /// TODO: confirm in the game data that the stacked enemy is left out of the count and of the reduction.
+    /// </summary>
+    [Theory]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(10)]
+    [InlineData(20)]
+    public void Coalescing_Frost_Eruption_Hits_Its_Enemy_In_Full_And_The_Others_Lose_Damage_Past_5(int enemies)
     {
         StepDriver Fight(int n)
         {
@@ -446,14 +541,17 @@ public class RimeAbilities
             return f;
         }
 
-        double alone = FirstHitOnEachEnemy(Fight(1), "Coalescing Frost").Single();
-        var crowd = FirstHitOnEachEnemy(Fight(enemies), "Coalescing Frost");
+        double alone = Fight(1).FirstHitOnEachEnemy("Coalescing Frost").Single();
+        var crowd = Fight(enemies);
+        string? stacked = crowd.Damage<FreezingTorrent>()[0].Target;
+        var eruption = crowd.Damage("Coalescing Frost").GroupBy(h => h.Target).Select(g => g.First()).ToList();
 
-        double expected = enemies <= 5 ? 1.0 : Math.Sqrt(5.0 / enemies);
+        int around = enemies - 1;
+        double expectedAround = around <= 5 ? 1.0 : Math.Sqrt(5.0 / around);
 
         using var check = new Checks();
-        check.Equal(enemies, crowd.Count, what: "enemies hit");
-        for (int i = 0; i < crowd.Count; i++)
-            check.Ratio(expected, crowd[i] / alone, what: $"enemy {i + 1}");
+        check.Equal(enemies, eruption.Count, what: "enemies hit");
+        foreach (var hit in eruption)
+            check.Ratio(hit.Target == stacked ? 1.0 : expectedAround, hit.Value / alone, what: hit.Target == stacked ? "the stacked enemy" : hit.Target);
     }
 }

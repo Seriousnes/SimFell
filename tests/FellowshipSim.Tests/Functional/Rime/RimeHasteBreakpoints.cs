@@ -10,18 +10,6 @@ namespace FellowshipSim.Tests.Functional;
 /// </summary>
 public class RimeHasteBreakpoints
 {
-    private const string UnderOneFrame = "To check in game: the engine counts a last partial tick shorter than one server frame";
-
-    /// <summary>
-    /// How many full ticks of <paramref name="tick"/> seconds fit in <paramref name="duration"/>. Rounded before the floor: in floating
-    /// point 2.8 / 0.4 is 6.999999999999999, which is 7 ticks.
-    /// </summary>
-    private static int FullTicks(double duration, double tick) => (int)Math.Floor(duration / tick + 1e-9);
-
-    /// <summary>1 when at least <paramref name="threshold"/> seconds are left after the full ticks, for a last partial tick; else 0.</summary>
-    private static int PartialTick(double duration, double tick, double threshold) =>
-        duration - FullTicks(duration, tick) * tick >= threshold - 1e-9 ? 1 : 0;
-
     /// <summary>
     /// Bursting Ice ticks every 0.5 seconds for 3 seconds, faster with haste. It hits once per full tick that fits in the 3 seconds,
     /// floor(3 / 0.5 x (1 + haste)), plus a last partial hit when at least 0.1 seconds are left after the last full tick.
@@ -54,12 +42,13 @@ public class RimeHasteBreakpoints
 
     /// <summary>
     /// Freezing Torrent ticks every 0.4 seconds, faster with haste, and once more as soon as you start channelling. It hits once per
-    /// full tick that fits in the channel, plus that first tick, plus a last partial tick when at least one server frame (1/30
-    /// second) is left after the last full tick. Supreme Torrent makes the channel 2.8 seconds instead of 2; Soulfrost Torrent makes
-    /// it tick 1.4 times faster.
+    /// full tick that fits in the channel, plus that first tick, plus a last partial tick whenever any time is left after the last full
+    /// tick, even less than one server frame (1/30 second). Supreme Torrent makes the channel 2.8 seconds instead of 2; Soulfrost
+    /// Torrent makes it tick 1.4 times faster.
     ///
-    /// TODO: check in game whether a partial tick happens when less than one server frame is left after the last full tick, as in the
-    /// skipped rows. The engine counts one there.
+    /// The partial tick under one server frame is from combat logs: 67 channels in 15 fights end with two ticks 0-3ms apart
+    /// (FreezingTorrent.cs).
+    /// TODO: confirm in the game data that the channel's final tick has no minimum.
     /// </summary>
     [Theory]
     [InlineData(false, false, 0.00)]
@@ -78,10 +67,10 @@ public class RimeHasteBreakpoints
     [InlineData(true, false, 0.00)]
     [InlineData(true, false, 0.05)]
     [InlineData(true, false, 0.10)]
-    [InlineData(true, false, 0.15, Skip = UnderOneFrame)]
+    [InlineData(true, false, 0.15)]
     [InlineData(true, false, 0.20)]
     [InlineData(true, false, 0.25)]
-    [InlineData(true, false, 0.30, Skip = UnderOneFrame)]
+    [InlineData(true, false, 0.30)]
     [InlineData(true, false, 0.35)]
     [InlineData(true, false, 0.40)]
     [InlineData(true, false, 0.45)]
@@ -91,13 +80,13 @@ public class RimeHasteBreakpoints
     [InlineData(false, true, 0.00)]
     [InlineData(false, true, 0.05)]
     [InlineData(false, true, 0.10)]
-    [InlineData(false, true, 0.15, Skip = UnderOneFrame)]
+    [InlineData(false, true, 0.15)]
     [InlineData(false, true, 0.20)]
     [InlineData(false, true, 0.25)]
-    [InlineData(false, true, 0.30, Skip = UnderOneFrame)]
+    [InlineData(false, true, 0.30)]
     [InlineData(false, true, 0.35)]
     [InlineData(false, true, 0.40)]
-    [InlineData(false, true, 0.45, Skip = UnderOneFrame)]
+    [InlineData(false, true, 0.45)]
     [InlineData(false, true, 0.50)]
     [InlineData(false, true, 0.75)]
     [InlineData(false, true, 1.00)]
@@ -112,14 +101,14 @@ public class RimeHasteBreakpoints
     [InlineData(true, true, 0.40)]
     [InlineData(true, true, 0.45)]
     [InlineData(true, true, 0.50)]
-    [InlineData(true, true, 0.75, Skip = UnderOneFrame)]
+    [InlineData(true, true, 0.75)]
     [InlineData(true, true, 1.00)]
-    public void Freezing_Torrent_Hits_On_Cast_Once_Per_Full_Tick_Plus_A_Partial_Over_One_Server_Frame(bool supreme, bool soulfrost,
+    public void Freezing_Torrent_Hits_On_Cast_Once_Per_Full_Tick_Plus_A_Partial_For_Any_Time_Left(bool supreme, bool soulfrost,
         double haste)
     {
         double channel = supreme ? 2.8 : 2.0;
         double tick = 0.4 / (soulfrost ? 1.4 : 1.0) / (1 + haste);
-        int hits = 1 + FullTicks(channel, tick) + PartialTick(channel, tick, 1.0 / 30); // the tick on cast, the full ticks, a partial one
+        int hits = 1 + FullTicks(channel, tick) + PartialTick(channel, tick, 1e-6); // the tick on cast, the full ticks, a partial one
         var talents = new List<int>();
         if (supreme) talents.Add(SupremeTorrent.TalentId);
         if (soulfrost) talents.Add(SoulfrostTorrent.TalentId);

@@ -21,9 +21,10 @@ public enum StepEventKind
 /// ability, hit, resource or aura.
 ///
 /// <see cref="Value"/> is the damage dealt, the amount of resource gained, spent or lost, or the aura's stacks; 0 for casts. Damage events
-/// also have <see cref="Target"/> (the enemy hit), <see cref="CritChance"/> (1 or 0 when the engine forces the crit) and <see cref="IsCrit"/>.
+/// also have <see cref="Target"/> (the enemy hit), <see cref="CritChance"/> (1 or 0 when the engine forces the crit), <see cref="IsCrit"/>
+/// and <see cref="AbilityId"/> (the hit's combat-log ID, which tells a damage over time effect's ticks from the direct hit with the same name).
 /// </summary>
-public readonly record struct StepEvent(SimTime Time, StepEventKind Kind, string Name, double Value = 0, string? Target = null, double CritChance = 0, bool IsCrit = false);
+public readonly record struct StepEvent(SimTime Time, StepEventKind Kind, string Name, double Value = 0, string? Target = null, double CritChance = 0, bool IsCrit = false, int AbilityId = 0);
 
 /// <summary>
 /// Runs a fight where the test, not an action list, decides what the hero casts.
@@ -103,11 +104,23 @@ public sealed class StepDriver
     public CastAttempt TryCast(Ability ability, EnemyTarget? target = null)
     {
         // TODO: raise a warning when the hero is not free here (a cast in step-by-step mode starts with a free hero).
-        target ??= Enemy;
-        Hero.CurrentTarget = target;
-        var attempt = Context.BeginCast(Hero, ability, target);
+        var attempt = StartCast(ability, target);
         if (attempt.Succeeded) WaitUntilFree();
         return attempt;
+    }
+
+    public CastAttempt StartCast<T>(EnemyTarget? target = null) where T : Ability => StartCast(Ability<T>(), target);
+
+    /// <summary>Starts <paramref name="ability"/> and returns at once, with the cast under way and time not moved: to try another cast
+    /// in the middle of it (<c>f.StartCast&lt;FocusedShot&gt;(); f.Wait(0.5); f.TryCast&lt;EventHorizon&gt;()</c>). <see cref="Wait"/>
+    /// lets the cast go on. Returns the engine's answer, as <see cref="TryCast(Ability, EnemyTarget?)"/>.
+    /// Use it extremely rarely: only in a test whose very point is that one action blocks another. Every other test casts with
+    /// <see cref="Cast(Ability, EnemyTarget?)"/>, which starts each cast with the hero free.</summary>
+    public CastAttempt StartCast(Ability ability, EnemyTarget? target = null)
+    {
+        target ??= Enemy;
+        Hero.CurrentTarget = target;
+        return Context.BeginCast(Hero, ability, target);
     }
 
     /// <summary>Runs the fight for <paramref name="seconds"/> with the hero idle: every event due in that time happens (ticks, landing
@@ -127,13 +140,13 @@ public sealed class StepDriver
 
     private void Subscribe()
     {
-        void Add(StepEventKind kind, string name, double value = 0, string? target = null, double critChance = 0, bool isCrit = false) =>
-            _events.Add(new StepEvent(Now, kind, name, value, target, critChance, isCrit));
+        void Add(StepEventKind kind, string name, double value = 0, string? target = null, double critChance = 0, bool isCrit = false, int abilityId = 0) =>
+            _events.Add(new StepEvent(Now, kind, name, value, target, critChance, isCrit, abilityId));
 
         Hero.OnCastStarted += (a, _, _) => Add(StepEventKind.CastStarted, a.Name);
         Hero.OnCastCompleted += (a, _, _) => Add(StepEventKind.CastCompleted, a.Name);
         Hero.OnCastCancelled += (a, _, _) => Add(StepEventKind.CastCancelled, a.Name);
-        Hero.OnDamageDealt += (in DamageContext hit) => Add(StepEventKind.Damage, hit.AbilityName, hit.Amount, hit.Target?.Name, hit.CritChance, hit.IsCrit);
+        Hero.OnDamageDealt += (in DamageContext hit) => Add(StepEventKind.Damage, hit.AbilityName, hit.Amount, hit.Target?.Name, hit.CritChance, hit.IsCrit, hit.AbilityId);
         Hero.OnResourceGained += (r, amount, _, _) => Add(StepEventKind.ResourceGained, r.Name, amount);
         Hero.OnResourceSpent += (r, amount, _) => Add(StepEventKind.ResourceSpent, r.Name, amount);
         Hero.OnResourceOverflow += (r, amount, _) => Add(StepEventKind.ResourceOverflow, r.Name, amount);

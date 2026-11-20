@@ -3,12 +3,15 @@ namespace FellowshipSim.Core.Customization.Sigils;
 /// <summary>
 /// Sigil 46: "Standing still for a time grants you Patient Soul, increasing your Max Health and your Expertise
 /// rating. Patient Soul persists for a time after you start moving." The engine does not
-/// simulate movement: a sim keeps it up, a replay follows the log (situational aura). UNVERIFIED: no log has this sigil;
-/// the game data has two Patient Soul effects (2149, 2150) and the first is assumed.
+/// simulate movement: a sim keeps it up, a replay follows the log (situational aura). The game data has two Patient Soul
+/// effects (2149, 2150), both MaxHealth MultiplyCompound <see cref="MaxHealthMultiplier"/>; the engine uses 2149, though
+/// an Ardeos combatantinfo of RawGearStatsTests, whose logged health has it, showed 2150.
 /// </summary>
 public partial class PatientSoul : Sigil
 {
     public const int BuffEffectId = 2149;
+    /// <summary>Max health, every rank (game data effects 2149 and 2150).</summary>
+    public const double MaxHealthMultiplier = 1.05;
 
     public static readonly AuraDef Buff = AuraDef.Effect("Patient Soul", BuffEffectId);
 
@@ -16,5 +19,6 @@ public partial class PatientSoul : Sigil
     public override string Name => SigilName;
 
     public override void Bind(Hero hero) =>
-        hero.SituationalAuras.Add(Buff.WithModifiers(StatModifier.Add(StatType.ExpertiseRating, ForRank(Constants.BuffAdditionalExpertiseRatingByRank))));
+        hero.SituationalAuras.Add(Buff.WithModifiers(StatModifier.Add(StatType.ExpertiseRating, ForRank(Constants.BuffAdditionalExpertiseRatingByRank)),
+            StatModifier.More(StatType.MaxHealth, MaxHealthMultiplier)));
 }

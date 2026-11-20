@@ -69,6 +69,8 @@ public sealed partial class Xavian : Hero
         AddResource(Mana);
         SpiritRefundResource = Mana;
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
 
         Abilities.Add(new Attack(this));
         Abilities.Add(new SunStrike(this));

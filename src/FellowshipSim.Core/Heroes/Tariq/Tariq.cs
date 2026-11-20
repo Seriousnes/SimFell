@@ -51,6 +51,8 @@ public sealed partial class Tariq : Hero
         AddResource(Fury);
         SpiritRefundResource = Fury;
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         SpiritPointsPerSpiritRefund = SpiritPointsPerRefund;
 
         Abilities.Add(new WildSwing(this));

@@ -81,6 +81,8 @@ public sealed partial class Gunde : Hero
     public override void Initialize()
     {
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         // Owed in Blood's stacks come from feathers Gunde walks over: a replay follows the log's stacks.
         SituationalAuras.Add(OwedInBlood.Buff);
 

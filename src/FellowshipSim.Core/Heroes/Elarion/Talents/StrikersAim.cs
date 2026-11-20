@@ -11,8 +11,10 @@ namespace FellowshipSim.Core.Heroes.Elarion.Talents;
 public partial class StrikersAim : Talent
 {
     public const int BuffEffectId = 3179;
+    /// <summary>Final Crescendo's arrow ricochets 8 times, and each ricochet that finds no enemy gives a stack (per the user).</summary>
+    public const int MaxStacks = 8;
 
-    public static readonly AuraDef Buff = AuraDef.Effect("Striker's Aim", BuffEffectId, Constants.NoBounceBuffBuffDuration, Constants.NoBounceBuffMaxStacks,
+    public static readonly AuraDef Buff = AuraDef.Effect("Striker's Aim", BuffEffectId, Constants.NoBounceBuffBuffDuration, MaxStacks,
         StatModifier.Add(StatType.Expertise, Constants.NoBounceBuffExpertiseAdded));
 
     public override string Name => TalentName;
@@ -23,7 +25,7 @@ public partial class StrikersAim : Talent
         if (hero.GetAbility<HighwindArrow>() is not { } highwind) return;
         highwind.RicochetsMissed += (ctx, missed) =>
         {
-            int stacks = Math.Min(Constants.NoBounceBuffMaxStacks, missed);
+            int stacks = Math.Min(MaxStacks, missed);
             if (stacks <= hero.Auras.GetStacks(Buff, ctx.CurrentTime)) return;
             hero.Auras.Apply(Buff, ctx.CurrentTime, setStacks: stacks);
             Decay(ctx, hero.Auras.Get(Buff, ctx.CurrentTime)!);

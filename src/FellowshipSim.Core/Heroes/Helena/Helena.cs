@@ -87,6 +87,8 @@ public sealed partial class Helena : Hero
     {
         AddResource(Toughness);
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         SpiritPointsPerSpiritRefund = SpiritPointsPerRefund;
 
         Abilities.Add(new Attack(this));

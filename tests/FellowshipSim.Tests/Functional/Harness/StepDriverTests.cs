@@ -36,6 +36,19 @@ public class StepDriverTests
         check.True(f.IsFree);
     }
 
+    /// <summary>A cast as long as the global cooldown returns when both end: Frost Bolt is a 1.5 second cast inside a 1.5 second global cooldown.</summary>
+    [Fact]
+    public void A_Cast_As_Long_As_The_Global_Cooldown_Returns_When_Both_End()
+    {
+        var f = StepFights.Rime();
+
+        f.Cast<FrostBolt>();
+
+        using var check = new Checks(f);
+        check.Seconds(1.5, f.Seconds());
+        check.True(f.IsFree);
+    }
+
     /// <summary>A cast longer than the global cooldown returns when the cast ends: Bursting Ice is 2 seconds, the global cooldown 1.5.</summary>
     [Fact]
     public void A_Cast_Longer_Than_The_Global_Cooldown_Returns_When_The_Cast_Ends()
@@ -90,6 +103,67 @@ public class StepDriverTests
         check.True(casts[0].Kind == StepEventKind.CastStarted, "the start comes first");
         check.Seconds(0.0, casts[0].Time.TotalSeconds);
         check.Seconds(2.0, casts[1].Time.TotalSeconds);
+    }
+
+    /// <summary>ResetCooldown makes an ability on cooldown ready at once, every charge included.</summary>
+    [Fact]
+    public void ResetCooldown_Makes_The_Ability_Ready_At_Once()
+    {
+        var f = StepFights.Rime();
+
+        f.Cast<BurstingIce>();
+        f.Cast<ColdSnap>();
+        f.Cast<ColdSnap>();
+
+        f.ResetCooldown<BurstingIce>();
+        f.ResetCooldown<ColdSnap>();
+
+        using var check = new Checks(f);
+        check.True(f.IsReady<BurstingIce>());
+        check.Equal(2, f.Charges<ColdSnap>());
+    }
+
+    /// <summary>StartCast returns as the cast starts, without moving the clock, so another cast can be tried during it; Wait lets the
+    /// cast go on to its end.</summary>
+    [Fact]
+    public void StartCast_Returns_As_The_Cast_Starts_And_Wait_Lets_It_Complete()
+    {
+        var f = StepFights.Rime();
+
+        var attempt = f.StartCast<BurstingIce>(); // a 2 second cast
+
+        using var check = new Checks(f);
+        check.True(attempt.Succeeded);
+        check.Equal(0.0, f.Seconds());
+        check.False(f.IsFree);
+        check.Equal(0, f.CastsCompleted("Bursting Ice").Count);
+        f.Wait(1.0);
+        check.False(f.TryCast<FrostBolt>().Succeeded, "a cast tried during it is refused");
+        f.Wait(1.1);
+        check.Equal(1, f.CastsCompleted("Bursting Ice").Count);
+    }
+
+    /// <summary>Remove takes an aura off at once.</summary>
+    [Fact]
+    public void Remove_Takes_An_Aura_Off()
+    {
+        var f = StepFights.Rime();
+        f.Apply(IceBlitz.Buff);
+
+        f.Remove(IceBlitz.Buff);
+
+        Assert.False(f.Has(IceBlitz.Buff));
+    }
+
+    /// <summary>AccelerationRate is 1 for a cooldown nothing speeds up: it runs in real time.</summary>
+    [Fact]
+    public void AccelerationRate_Is_1_With_Nothing_Speeding_The_Cooldown_Up()
+    {
+        var f = StepFights.Rime();
+
+        f.Cast<BurstingIce>();
+
+        Assert.Equal(1.0, f.AccelerationRate<BurstingIce>());
     }
 
     // ---- Checks

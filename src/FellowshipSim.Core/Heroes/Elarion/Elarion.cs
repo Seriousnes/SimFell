@@ -68,6 +68,8 @@ public sealed partial class Elarion : Hero
         AddResource(Focus);
         SpiritRefundResource = Focus;
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         SpiritPointsPerSpiritRefund = SpiritPointsPerRefund;
 
         Salvo = new LunarlightSalvo(this);

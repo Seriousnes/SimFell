@@ -90,6 +90,8 @@ public sealed partial class Mara : Hero
         // spend; the Energy through OnSpiritRefund below.
         SpiritRefundResource = ComboPoints;
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         GlobalCooldownSeconds = GlobalCooldown;
         GlobalCooldownScalesWithHaste = false;
 

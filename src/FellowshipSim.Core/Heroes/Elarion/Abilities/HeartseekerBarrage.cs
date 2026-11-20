@@ -23,13 +23,15 @@ public partial class HeartseekerBarrage : ElarionAbility
 
     public HeartseekerBarrage(Elarion owner) : base(owner, AbilityId, AbilityName, AbilityCategory)
     {
+        TargetedOffensive = true;
         BaseCoefficient = Constants.AgilityCoefficient;
         FocusCost = Constants.Cost;
         SetCooldown(AbilityCooldown);
         SetChannel(AbilityChannelTime, AbilityChannelTick);
-        // Combat logs (pWmcV42K39GHTLQX fight 23 @ 81.335): a hasted channel fires its arrows on its target, all
-        // of full damage: the part of a tick left at the end fires one more arrow.
-        ChannelPartialFinalTick = true;
+        // Per the user: an arrow per full tick, never a partial one. UNVERIFIED: a datamine is pending; the combat log
+        // pWmcV42K39GHTLQX fight 23 @ 81.335 read as one more arrow from the part of a tick left, which the user takes for an
+        // underestimated haste.
+        ChannelPartialFinalTick = false;
     }
 
     /// <summary>Fusillade: the channel lasts longer.</summary>

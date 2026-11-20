@@ -60,6 +60,8 @@ public sealed partial class Rime : Hero
         AddResource(WinterOrbsResource);
         SpiritRefundResource = WinterOrbsResource;
         ClassDamageTuning = HeroBalancingDamageAura;
+        Stats.BaseHealth = HeroBaseHealth;
+        Stats.StaminaToMaxHealth = HeroStaminaToMaxHealthMultiplier;
         SpiritPointsPerSpiritRefund = SpiritPointsPerRefund;
 
         Abilities.Add(new ColdSnap(this));
